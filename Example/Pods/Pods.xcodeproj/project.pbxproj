@@ -23,6 +23,8 @@
 		4C43A90AA1E8F520B5D64FDBFF306B06 /* SocketRocket-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 85962C6624CBCD1120531969BA52B2D1 /* SocketRocket-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DCD9A964BEACC3D09BCF4955B327091 /* AsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = EC2A6B9732560C7DDF7A4D2D70D352C8 /* AsyncUdpSocket.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		5044FBABDEFCD575DBBF301CA812B02D /* cmp.h in Headers */ = {isa = PBXBuildFile; fileRef = A437095FD935803743C430D21033AFE8 /* cmp.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		505DB36F1BB5F67300EB580D /* MDWamp.h in Headers */ = {isa = PBXBuildFile; fileRef = 505DB36D1BB5F67300EB580D /* MDWamp.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		505DB3701BB5F67300EB580D /* MDWamp.m in Sources */ = {isa = PBXBuildFile; fileRef = 505DB36E1BB5F67300EB580D /* MDWamp.m */; settings = {ASSET_TAGS = (); }; };
 		570685C66573F8E526299262B6968A0A /* MPMessagePack-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5082850B50811A75171C6D2A755154EF /* MPMessagePack-dummy.m */; };
 		593440E3A17E3979588894CA3FC6652C /* GCDAsyncUdpSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 139705BDFD1B85A7F4A9B697DD292F01 /* GCDAsyncUdpSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5A959FD72FF3F04570B7D5B787262CAA /* MPMessagePackWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 99A39AF3AEC28B0F051B76406BC405C2 /* MPMessagePackWriter.m */; };
@@ -219,6 +221,8 @@
 		419A14985BE292CEE6B2CB1192C77E8A /* GHODict.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GHODict.h; path = GHODictionary/GHODict.h; sourceTree = "<group>"; };
 		42BDDF50222F58EF640BEE37826E2C8B /* Pods-Riffle_Tests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Riffle_Tests-resources.sh"; sourceTree = "<group>"; };
 		4EA989FA2C19D5F3209B49E55F033090 /* GHODictionary.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GHODictionary.h; path = GHODictionary/GHODictionary.h; sourceTree = "<group>"; };
+		505DB36D1BB5F67300EB580D /* MDWamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDWamp.h; sourceTree = "<group>"; };
+		505DB36E1BB5F67300EB580D /* MDWamp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDWamp.m; sourceTree = "<group>"; };
 		5082850B50811A75171C6D2A755154EF /* MPMessagePack-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "MPMessagePack-dummy.m"; sourceTree = "<group>"; };
 		559D148E4F22382C1891B60164C40B20 /* MPMessagePackClient.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPMessagePackClient.h; path = RPC/MPMessagePackClient.h; sourceTree = "<group>"; };
 		5743080DBD80E493DF15A385A5742C83 /* CocoaAsyncSocket-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CocoaAsyncSocket-umbrella.h"; sourceTree = "<group>"; };
@@ -547,6 +551,8 @@
 		BF71E419F286575CEC0C7F6C67AD0AF0 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				505DB36D1BB5F67300EB580D /* MDWamp.h */,
+				505DB36E1BB5F67300EB580D /* MDWamp.m */,
 				99BE89BAAF5F6FB8B5686120E4AB9918 /* Riffle.swift */,
 			);
 			path = Classes;
@@ -703,6 +709,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				505DB36F1BB5F67300EB580D /* MDWamp.h in Headers */,
 				3F5A26A4967438451D31C4FE081846C3 /* Riffle-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -991,6 +998,7 @@
 			files = (
 				344B93D3EB2684858E0D12454D789D68 /* Riffle-dummy.m in Sources */,
 				67F7AFD13D32EBC05287827A9053C819 /* Riffle.swift in Sources */,
+				505DB3701BB5F67300EB580D /* MDWamp.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1161,6 +1169,7 @@
 				PRODUCT_NAME = Riffle;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1559,6 +1568,7 @@
 				PRODUCT_NAME = Riffle;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";

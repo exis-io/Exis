@@ -7,13 +7,16 @@
 //
 
 import Foundation
+//import MDWamp
 
 public class BlinkingLabel : UILabel {
     public func startBlinking() {
         let options : UIViewAnimationOptions = UIViewAnimationOptions.Repeat
         UIView.animateWithDuration(0.25, delay:0.0, options:options, animations: {
             self.alpha = 0
-            }, completion: nil)
+        }, completion: nil)
+        
+//        let w = MDWamp()
     }
     
     public func stopBlinking() {
@@ -21,3 +24,6 @@ public class BlinkingLabel : UILabel {
         layer.removeAllAnimations()
     }
 }
+
+//class RiffleSession: NSObject, MDWampClientDelegate {
+//}
