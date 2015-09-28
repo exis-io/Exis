@@ -372,6 +372,7 @@
 		50F2265F1BB8E4A300ECFF76 /* MDWampTransports.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDWampTransports.h; sourceTree = "<group>"; };
 		50F226601BB8E4A300ECFF76 /* MDWampTransportWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDWampTransportWebSocket.h; sourceTree = "<group>"; };
 		50F226611BB8E4A300ECFF76 /* MDWampTransportWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDWampTransportWebSocket.m; sourceTree = "<group>"; };
+		50F226E81BB8ED0F00ECFF76 /* Riffle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Riffle.h; sourceTree = "<group>"; };
 		559D148E4F22382C1891B60164C40B20 /* MPMessagePackClient.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPMessagePackClient.h; path = RPC/MPMessagePackClient.h; sourceTree = "<group>"; };
 		5743080DBD80E493DF15A385A5742C83 /* CocoaAsyncSocket-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CocoaAsyncSocket-umbrella.h"; sourceTree = "<group>"; };
 		5981FE9571261D848D4555A39AD94286 /* SocketRocket.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SocketRocket.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -817,6 +818,7 @@
 			children = (
 				50F226111BB8E4A300ECFF76 /* MDWamp */,
 				99BE89BAAF5F6FB8B5686120E4AB9918 /* Riffle.swift */,
+				50F226E81BB8ED0F00ECFF76 /* Riffle.h */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
