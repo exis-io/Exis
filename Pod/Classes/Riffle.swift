@@ -19,14 +19,14 @@ let NODE = "ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
 }
 
 
-class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
+public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     var socket: MDWampTransportWebSocket
     var session: MDWamp
     
     var delegate: RiffleDelegate?
     
     
-    init(pdid: String) {
+    public init(pdid: String) {
         socket = MDWampTransportWebSocket(server:NSURL(string: NODE), protocolVersions:[kMDWampProtocolWamp2msgpack, kMDWampProtocolWamp2json])
         
         // Oh, the hacks you'll see
@@ -36,7 +36,7 @@ class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         session = MDWamp(transport: socket, realm: pdid, delegate: self)
     }
     
-    func connect() {
+    public func connect() {
         if delegate == nil {
             delegate = self
         }
@@ -44,17 +44,17 @@ class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         session.connect()
     }
     
-    func handle(args: AnyObject...) {
+    public func handle(args: AnyObject...) {
         
     }
     
     //MARK: Delegates
-    func mdwamp(wamp: MDWamp!, sessionEstablished info: [NSObject : AnyObject]!) {
+    public func mdwamp(wamp: MDWamp!, sessionEstablished info: [NSObject : AnyObject]!) {
         print("Session Established!")
         delegate!.onJoin()
     }
     
-    func mdwamp(wamp: MDWamp!, closedSession code: Int, reason: String!, details: [NSObject : AnyObject]!) {
+    public func mdwamp(wamp: MDWamp!, closedSession code: Int, reason: String!, details: [NSObject : AnyObject]!) {
         print("Session Closed!")
         delegate!.onLeave()
     }
@@ -69,7 +69,7 @@ class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     
     
     //MARK: Messaging Patterns
-    func register(endpoint: String, callback: (AnyObject... ) -> ()) {
+    public func register(endpoint: String, callback: (AnyObject... ) -> ()) {
         session.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
             print("Someone called hello: ", invocation)
             
@@ -88,7 +88,7 @@ class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         }
     }
     
-    func call(endpoint: String, args: AnyObject...) {
+    public func call(endpoint: String, args: AnyObject...) {
         session.call(endpoint, payload: args) { (result: MDWampResult!, err: NSError!) -> Void in
             if err != nil {
                 print("ERR: ", err)
@@ -99,7 +99,7 @@ class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         }
     }
     
-    func publish(endpoint: String, args: AnyObject...) {
+    public func publish(endpoint: String, args: AnyObject...) {
         session.publishTo(endpoint, payload: args, result: { (err: NSError!) -> Void in
             if let e = err {
                 print("Error: ", e)
@@ -107,7 +107,7 @@ class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         })
     }
     
-    func subscribe(endpoint: String, callback: (AnyObject...) -> ()) {
+    public func subscribe(endpoint: String, callback: (AnyObject...) -> ()) {
         session.subscribe(endpoint, onEvent: { (event: MDWampEvent!) -> Void in
             print("Sub came in: ", event)
             
