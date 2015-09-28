@@ -7,7 +7,6 @@
 //
 
 import Foundation
-//import MDWamp
 
 public class BlinkingLabel : UILabel {
     public func startBlinking() {
@@ -24,7 +23,7 @@ public class BlinkingLabel : UILabel {
     }
     
     public func doSomething() -> String {
-        
+        let a = MDWamp()
         return ""
     }
 }
