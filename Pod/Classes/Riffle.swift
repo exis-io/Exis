@@ -13,7 +13,7 @@ let NODE = "ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
 
 
 // Sets itself as the delegate if none provided
-@objc protocol RiffleDelegate {
+@objc public protocol RiffleDelegate {
     func onJoin()
     func onLeave()
 }
@@ -59,11 +59,11 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         delegate!.onLeave()
     }
     
-    func onJoin() {
+    public func onJoin() {
         // Called when a session closes. Setup here.
     }
     
-    func onLeave() {
+    public func onLeave() {
         // called when a session closes. Do any cleanup here
     }
     
