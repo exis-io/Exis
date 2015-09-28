@@ -165,13 +165,6 @@
 			remoteGlobalIDString = 4E5B00798464D0A1F6802977EFCDFD5B;
 			remoteInfo = Riffle;
 		};
-		372D6E3FC59FB28CB7A432BDFACE4CEF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6EDB90AC17BBAE3390155C0B3A0B24D0;
-			remoteInfo = "Riffle-Riffle";
-		};
 		381E43D8C84596EB4517FE013690C3B7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
@@ -1111,7 +1104,6 @@
 			dependencies = (
 				FD3076414535C82391B3CA845658E54E /* PBXTargetDependency */,
 				51A803B5960B65071BC2820D645BC893 /* PBXTargetDependency */,
-				CFBA51D81DD5B4A7F373DF7B96FFCAB4 /* PBXTargetDependency */,
 				04639C2C464492744DB0DFEF5D66CA1E /* PBXTargetDependency */,
 			);
 			name = Riffle;
@@ -1431,12 +1423,6 @@
 			name = CocoaAsyncSocket;
 			target = 78B350D3B77CAEC4C89CC147B86D495D /* CocoaAsyncSocket */;
 			targetProxy = 66E5DE63BAAA4625FAA74F71F5667E6F /* PBXContainerItemProxy */;
-		};
-		CFBA51D81DD5B4A7F373DF7B96FFCAB4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "Riffle-Riffle";
-			target = 6EDB90AC17BBAE3390155C0B3A0B24D0 /* Riffle-Riffle */;
-			targetProxy = 372D6E3FC59FB28CB7A432BDFACE4CEF /* PBXContainerItemProxy */;
 		};
 		E467CE67A5790CCA51F555A88F08EDB5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1763,6 +1749,7 @@
 				PRODUCT_NAME = Riffle;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;
@@ -1775,6 +1762,7 @@
 				PRODUCT_NAME = Riffle;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Debug;
