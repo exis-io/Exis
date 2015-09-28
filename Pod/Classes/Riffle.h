@@ -3,7 +3,7 @@
 //  Pods
 //
 //  Created by Mickey Barboi on 9/27/15.
-//
+// I don't know if this is needed or not, but compilation can hiccough otherwise
 //
 
 #ifndef Riffle_h
