@@ -23,7 +23,7 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     var socket: MDWampTransportWebSocket
     var session: MDWamp
     
-    var delegate: RiffleDelegate?
+    public var delegate: RiffleDelegate?
     
     
     public init(pdid: String) {
