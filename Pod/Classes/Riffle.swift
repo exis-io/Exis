@@ -15,13 +15,17 @@ public class BlinkingLabel : UILabel {
         UIView.animateWithDuration(0.25, delay:0.0, options:options, animations: {
             self.alpha = 0
         }, completion: nil)
-        
-//        let w = MDWamp()
+
     }
     
     public func stopBlinking() {
         alpha = 1
         layer.removeAllAnimations()
+    }
+    
+    public func doSomething() -> String {
+        
+        return ""
     }
 }
 

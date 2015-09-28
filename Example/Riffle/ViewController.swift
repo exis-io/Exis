@@ -39,6 +39,9 @@ class ViewController: UIViewController {
             blinkingLabel.startBlinking()
         }
         isBlinking = !isBlinking
+        blinkingLabel.doSomething()
     }
+    
+//    blinkingLabel.doSomething()
     
 }

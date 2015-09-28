@@ -1,9 +1,9 @@
 //
-//  MDWampClient.h
+//  MDWampSerialization.h
 //  MDWamp
 //
-//  Created by Niko Usai on 13/12/13.
-//  Copyright (c) 2013 mogui.it. All rights reserved.
+//  Created by Niko Usai on 09/03/14.
+//  Copyright (c) 2014 mogui.it. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -18,10 +18,11 @@
 //  limitations under the License.
 //
 
+#import <Foundation/Foundation.h>
 
+@protocol MDWampSerialization <NSObject>
 
-@interface MDWamp : NSObject
-
-@property NSString *firstName;
+- (id) pack:(NSArray*)arguments;
+- (NSArray*) unpack:(NSData *)data;
 
 @end
