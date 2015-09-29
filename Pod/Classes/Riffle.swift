@@ -77,26 +77,14 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     // Testing a sample call
     func _subscribe(endpoint: String, fn: ([AnyObject]) -> ()) {
         // This is the real subscrive method
+        
         session.subscribe(endpoint, onEvent: { (event: MDWampEvent!) -> Void in
-            print("Sub came in: ", event)
-            
-            //print("", event.subscription)
-            //print("", event.publication)
-            //print("", event.topic)
-            print("", event.details)
-            print("", event.arguments)
-            //print("", event.argumentsKw)
-            //print("", event.event)
-            
-            //fn(self.extractArgs(event.arguments))
+            // Trigger the callback
             fn(event.arguments[0] as! [AnyObject])
             
             }) { (err: NSError!) -> Void in
                 if let e = err {
                     print("An error occured: ", e)
-                }
-                else {
-                    print("Sub completed")
                 }
         }
     }
@@ -140,31 +128,6 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
             }
         }
     }
-    
-    //    public func subscribe(endpoint: String, callback: (AnyObject...) -> ()) {
-    //        session.subscribe(endpoint, onEvent: { (event: MDWampEvent!) -> Void in
-    //            print("Sub came in: ", event)
-    //
-    //            //print("", event.subscription)
-    //            //print("", event.publication)
-    //            //print("", event.topic)
-    //            print("", event.details)
-    //            print("", event.arguments)
-    //            //print("", event.argumentsKw)
-    //            //print("", event.event)
-    //
-    //            callback(event.arguments)
-    //
-    //            }) { (err: NSError!) -> Void in
-    //                if let e = err {
-    //                    print("An error occured: ", e)
-    //                }
-    //                else {
-    //                    print("Sub completed")
-    //                }
-    //        }
-    //    }
-    
     
     //MARK: Utility
     func extractArgs(args: [AnyObject]) -> [AnyObject] {
