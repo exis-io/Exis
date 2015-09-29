@@ -800,9 +800,9 @@
 		BF71E419F286575CEC0C7F6C67AD0AF0 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				50F226E81BB8ED0F00ECFF76 /* Riffle.h */,
 				50F226111BB8E4A300ECFF76 /* MDWamp */,
 				99BE89BAAF5F6FB8B5686120E4AB9918 /* Riffle.swift */,
-				50F226E81BB8ED0F00ECFF76 /* Riffle.h */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -1702,6 +1702,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E2B9313C892CE11E472E2BCA08D73003 /* CocoaAsyncSocket-Private.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 7.4.2;
 				DEFINES_MODULE = YES;
@@ -1719,6 +1720,7 @@
 				PRODUCT_NAME = CocoaAsyncSocket;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1785,6 +1787,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E2B9313C892CE11E472E2BCA08D73003 /* CocoaAsyncSocket-Private.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 7.4.2;
 				DEFINES_MODULE = YES;

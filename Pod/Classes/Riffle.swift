@@ -132,17 +132,78 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     }
 }
 
-/*
-Getting the signature from provided handler:
 
-func f(a: Int, b: Int) {
+////////////////////
+// Cumin
+////////////////////
+
+/*
+ Cumin allows for type-safe deferred method evaluation
+ through currying. Not sure how to make it play without variadic generics, though there might be a way
+
+TODO: 
+    throw a well known error on miscast
+    throw a well known error if args size doesn't match
+    hold method weakly, dont call if deallocd
+*/
+
+/////////////////
+// *None
+/////////////////
+
+// NoneNone
+func cumin(fn: () -> ()) -> ([Any]) -> () {
+    return { (args: [Any]) in
+        return fn()
+    }
 }
 
-let y = Mirror(reflecting: f)
+// OneNone
+func cumin<A>(fn: A -> ()) -> ([Any]) -> () {
+    return { (args: [Any]) in
+        return fn(args[0] as! A)
+    }
+}
 
-let types = y.subjectType
-print(types)
+// TwoNone
+func cumin<A, B>(fn: (A, B) -> ()) -> ([Any]) -> () {
+    return { (args: [Any]) -> () in
+        return fn(args[0] as! A, args[0] as! B)
+    }
+}
 
 
-*/
+// ThreeNone
+func cumin<A, B, C>(fn: (A, B, C) -> ()) -> ([Any]) -> () {
+    return { (args: [Any]) -> () in
+        return fn(args[0] as! A, args[0] as! B, args[0] as! C)
+    }
+}
+
+
+/////////////////
+// *One
+/////////////////
+// OneOne
+func cumin<A, R>(fn: A -> R) -> ([Any]) -> R {
+    return { (args: [Any]) -> R in
+        return fn(args[0] as! A)
+    }
+}
+
+// TwoOne
+func cumin<A, B, R>(fn: (A, B) -> R) -> ([Any]) -> R {
+    return { (args: [Any]) -> R in
+        return fn(args[0] as! A, args[0] as! B)
+    }
+}
+// ThreeOne
+func cumin<A, B, C, R>(fn: (A, B, C) -> R) -> ([Any]) -> R {
+    return { (args: [Any]) -> R in
+        return fn(args[0] as! A, args[0] as! B, args[0] as! C)
+    }
+}
+
+
+
 
