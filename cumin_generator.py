@@ -1,5 +1,9 @@
 '''
 Generator for Cumin functions. 
+
+TODO:
+    Get rid of empty angle brackets
+    
 '''
 
 import os
@@ -17,11 +21,12 @@ def renderCumin(args, ret):
 [AnyObject]) in fn(%s) }\n}' % (both, args, ret, ret, p)
 
 def renderCaller(name, args, ret):
+    both = ', '.join(args + ret)
     args = ', '.join(args)
     ret = ', '.join(ret)
 
     return 'public func %s<%s>(pdid: String, _ fn: (%s) -> (%s))  {\n\t_%s(\
-pdid, fn: cumin(fn))\n}' % (name, args, args, ret, name,)
+pdid, fn: cumin(fn))\n}' % (name, both, args, ret, name,)
 
 def main():
     c, r, s = [], [], []

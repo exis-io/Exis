@@ -14,19 +14,19 @@ public func register<A, B, C>(pdid: String, _ fn: (A, B, C) -> ())  {
 	_register(pdid, fn: cumin(fn))
 }
 
-public func register<>(pdid: String, _ fn: () -> (R))  {
+public func register<R>(pdid: String, _ fn: () -> (R))  {
 	_register(pdid, fn: cumin(fn))
 }
 
-public func register<A>(pdid: String, _ fn: (A) -> (R))  {
+public func register<A, R>(pdid: String, _ fn: (A) -> (R))  {
 	_register(pdid, fn: cumin(fn))
 }
 
-public func register<A, B>(pdid: String, _ fn: (A, B) -> (R))  {
+public func register<A, B, R>(pdid: String, _ fn: (A, B) -> (R))  {
 	_register(pdid, fn: cumin(fn))
 }
 
-public func register<A, B, C>(pdid: String, _ fn: (A, B, C) -> (R))  {
+public func register<A, B, C, R>(pdid: String, _ fn: (A, B, C) -> (R))  {
 	_register(pdid, fn: cumin(fn))
 }
 
