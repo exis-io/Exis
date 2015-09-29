@@ -153,57 +153,39 @@ TODO:
 
 // NoneNone
 func cumin(fn: () -> ()) -> ([Any]) -> () {
-    return { (args: [Any]) in
-        return fn()
-    }
+    return { (args: [Any]) in fn() }
 }
 
 // OneNone
 func cumin<A>(fn: A -> ()) -> ([Any]) -> () {
-    return { (args: [Any]) in
-        return fn(args[0] as! A)
-    }
+    return { (args: [Any]) in fn(args[0] as! A) }
 }
+
 
 // TwoNone
 func cumin<A, B>(fn: (A, B) -> ()) -> ([Any]) -> () {
-    return { (args: [Any]) -> () in
-        return fn(args[0] as! A, args[0] as! B)
-    }
+    return { (args: [Any]) -> () in fn(args[0] as! A, args[0] as! B) }
 }
-
 
 // ThreeNone
 func cumin<A, B, C>(fn: (A, B, C) -> ()) -> ([Any]) -> () {
-    return { (args: [Any]) -> () in
-        return fn(args[0] as! A, args[0] as! B, args[0] as! C)
-    }
+    return { (args: [Any]) -> () in fn(args[0] as! A, args[0] as! B, args[0] as! C) }
 }
-
 
 /////////////////
 // *One
 /////////////////
 // OneOne
 func cumin<A, R>(fn: A -> R) -> ([Any]) -> R {
-    return { (args: [Any]) -> R in
-        return fn(args[0] as! A)
-    }
+    return { (args: [Any]) -> R in fn(args[0] as! A) }
 }
 
 // TwoOne
 func cumin<A, B, R>(fn: (A, B) -> R) -> ([Any]) -> R {
-    return { (args: [Any]) -> R in
-        return fn(args[0] as! A, args[0] as! B)
-    }
+    return { (args: [Any]) -> R in fn(args[0] as! A, args[0] as! B) }
 }
+
 // ThreeOne
 func cumin<A, B, C, R>(fn: (A, B, C) -> R) -> ([Any]) -> R {
-    return { (args: [Any]) -> R in
-        return fn(args[0] as! A, args[0] as! B, args[0] as! C)
-    }
+    return { (args: [Any]) -> R in fn(args[0] as! A, args[0] as! B, args[0] as! C) }
 }
-
-
-
-
