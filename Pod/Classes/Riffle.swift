@@ -8,9 +8,7 @@
 
 import Foundation
 
-let NODE = "ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
-//let NODE = "ws://localhost:8000/ws"
-
+var NODE = ""
 
 // Sets itself as the delegate if none provided
 @objc public protocol RiffleDelegate {
@@ -19,12 +17,16 @@ let NODE = "ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
 }
 
 
+// Seting URL-- Better to use a singleton.
+public func setFabric(url: String) {
+    NODE = url
+}
+
 public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     var socket: MDWampTransportWebSocket
     var session: MDWamp
     
     public var delegate: RiffleDelegate?
-    
     
     public init(pdid: String) {
         socket = MDWampTransportWebSocket(server:NSURL(string: NODE), protocolVersions:[kMDWampProtocolWamp2msgpack, kMDWampProtocolWamp2json])
@@ -134,10 +136,11 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     
     func _register(endpoint: String, fn: ([AnyObject]) -> ()) {
         session.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
-            print("Someone called hello: ", invocation)
             
             // WARNING- have to implement return!
             fn(invocation.arguments[0] as! [AnyObject])
+            
+            wamp.resultForInvocation(invocation, arguments: [], argumentsKw: [:])
             
             }, cancelHandler: { () -> Void in
                 print("Register Cancelled!")
@@ -162,13 +165,13 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     
     
     //MARK: OLD CODE
-    public func call(endpoint: String, args: AnyObject...) {
+    public func call(endpoint: String, args: AnyObject..., handler: ([AnyObject]) -> ()) {
         session.call(endpoint, payload: args) { (result: MDWampResult!, err: NSError!) -> Void in
             if err != nil {
                 print("ERR: ", err)
             }
             else {
-                print("Call completed")
+                handler(result.arguments == nil ? [] : result.arguments)
             }
         }
     }
