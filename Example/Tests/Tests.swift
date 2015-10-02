@@ -2,6 +2,8 @@ import UIKit
 import XCTest
 import Riffle
 
+// See here for getting the logic tests working: http://stackoverflow.com/questions/27500940/how-to-let-the-app-know-if-its-running-unit-tests-in-a-pure-swift-project
+
 class Tests: XCTestCase {
     
     override func setUp() {

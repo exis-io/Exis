@@ -25,17 +25,19 @@ public func setFabric(url: String) {
 public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     var socket: MDWampTransportWebSocket
     var session: MDWamp
+    public var domain: String
     
     public var delegate: RiffleDelegate?
     
-    public init(pdid: String) {
+    
+    public init(domain d: String) {
         socket = MDWampTransportWebSocket(server:NSURL(string: NODE), protocolVersions:[kMDWampProtocolWamp2msgpack, kMDWampProtocolWamp2json])
-        
+        domain = d
         // Oh, the hacks you'll see
         session = MDWamp()
         super.init()
         
-        session = MDWamp(transport: socket, realm: pdid, delegate: self)
+        session = MDWamp(transport: socket, realm: domain, delegate: self)
     }
     
     public func connect() {
@@ -49,6 +51,7 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     public func handle(args: AnyObject...) {
         
     }
+    
     
     //MARK: Delegates
     public func mdwamp(wamp: MDWamp!, sessionEstablished info: [NSObject : AnyObject]!) {
@@ -71,52 +74,52 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     
     
     //MARK: Messaging Patterns with a dash of Cumin
-    public func register(pdid: String, _ fn: () -> ())  {
-        _register(pdid, fn: cumin(fn))
+    public func register(domain: String, _ fn: () -> ())  {
+        _register(domain, fn: cumin(fn))
     }
     
-    public func register<A>(pdid: String, _ fn: (A) -> ())  {
-        _register(pdid, fn: cumin(fn))
+    public func register<A>(domain: String, _ fn: (A) -> ())  {
+        _register(domain, fn: cumin(fn))
     }
     
-    public func register<A, B>(pdid: String, _ fn: (A, B) -> ())  {
-        _register(pdid, fn: cumin(fn))
+    public func register<A, B>(domain: String, _ fn: (A, B) -> ())  {
+        _register(domain, fn: cumin(fn))
     }
     
-    public func register<A, B, C>(pdid: String, _ fn: (A, B, C) -> ())  {
-        _register(pdid, fn: cumin(fn))
+    public func register<A, B, C>(domain: String, _ fn: (A, B, C) -> ())  {
+        _register(domain, fn: cumin(fn))
     }
     
-    public func register<R>(pdid: String, _ fn: () -> (R))  {
-        _register(pdid, fn: cumin(fn))
+    public func register<R: AnyObject>(domain: String, _ fn: () -> (R))  {
+        _register(domain, fn: cumin(fn))
     }
     
-    public func register<A, R>(pdid: String, _ fn: (A) -> (R))  {
-        _register(pdid, fn: cumin(fn))
+    public func register<A, R: AnyObject>(domain: String, _ fn: (A) -> (R))  {
+        _register(domain, fn: cumin(fn))
     }
     
-    public func register<A, B, R>(pdid: String, _ fn: (A, B) -> (R))  {
-        _register(pdid, fn: cumin(fn))
+    public func register<A, B, R: AnyObject>(domain: String, _ fn: (A, B) -> (R))  {
+        _register(domain, fn: cumin(fn))
     }
     
-    public func register<A, B, C, R>(pdid: String, _ fn: (A, B, C) -> (R))  {
-        _register(pdid, fn: cumin(fn))
+    public func register<A, B, C, R: AnyObject>(domain: String, _ fn: (A, B, C) -> (R))  {
+        _register(domain, fn: cumin(fn))
     }
     
-    public func subscribe(pdid: String, _ fn: () -> ())  {
-        _subscribe(pdid, fn: cumin(fn))
+    public func subscribe(domain: String, _ fn: () -> ())  {
+        _subscribe(domain, fn: cumin(fn))
     }
     
-    public func subscribe<A>(pdid: String, _ fn: (A) -> ())  {
-        _subscribe(pdid, fn: cumin(fn))
+    public func subscribe<A>(domain: String, _ fn: (A) -> ())  {
+        _subscribe(domain, fn: cumin(fn))
     }
     
-    public func subscribe<A, B>(pdid: String, _ fn: (A, B) -> ())  {
-        _subscribe(pdid, fn: cumin(fn))
+    public func subscribe<A, B>(domain: String, _ fn: (A, B) -> ())  {
+        _subscribe(domain, fn: cumin(fn))
     }
     
-    public func subscribe<A, B, C>(pdid: String, _ fn: (A, B, C) -> ())  {
-        _subscribe(pdid, fn: cumin(fn))
+    public func subscribe<A, B, C>(domain: String, _ fn: (A, B, C) -> ())  {
+        _subscribe(domain, fn: cumin(fn))
     }
     
     
@@ -137,9 +140,7 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     func _register(endpoint: String, fn: ([AnyObject]) -> ()) {
         session.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
             
-            // WARNING- have to implement return!
             fn(invocation.arguments[0] as! [AnyObject])
-            
             wamp.resultForInvocation(invocation, arguments: [], argumentsKw: [:])
             
             }, cancelHandler: { () -> Void in
@@ -149,12 +150,11 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         }
     }
     
-    func _register<R>(endpoint: String, fn: ([AnyObject]) -> (R)) {
+    func _register<R: AnyObject>(endpoint: String, fn: ([AnyObject]) -> (R)) {
         session.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
-            print("Someone called hello: ", invocation)
             
-            // WARNING- have to implement return!
-            fn(invocation.arguments[0] as! [AnyObject])
+            var result = fn(invocation.arguments as! [AnyObject])
+            wamp.resultForInvocation(invocation, arguments: [result], argumentsKw: [:])
             
             }, cancelHandler: { () -> Void in
                 print("Register Cancelled!")
@@ -165,24 +165,27 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     
     
     //MARK: OLD CODE
-    public func call(endpoint: String, args: AnyObject..., handler: ([AnyObject]) -> ()) {
+    public func call(endpoint: String, _ args: AnyObject..., handler: (([AnyObject]) -> ())?) {
         session.call(endpoint, payload: args) { (result: MDWampResult!, err: NSError!) -> Void in
             if err != nil {
                 print("ERR: ", err)
             }
             else {
-                handler(result.arguments == nil ? [] : result.arguments)
+                if let h = handler {
+                    h(result.arguments == nil ? [] : result.arguments)
+                }
             }
         }
     }
     
-    public func publish(endpoint: String, args: AnyObject...) {
+    public func publish(endpoint: String, _ args: AnyObject...) {
         session.publishTo(endpoint, args: args, kw: [:], options: [:]) { (err: NSError!) -> Void in
             if let e = err {
                 print("Error: ", e)
             }
         }
     }
+    
     
     //MARK: Utility
     func extractArgs(args: [AnyObject]) -> [AnyObject] {
@@ -226,19 +229,19 @@ func cumin<A, B, C>(fn: (A, B, C) -> ()) -> ([AnyObject]) -> () {
     return { (args: [AnyObject]) in fn(args[0] as! A, args[1] as! B, args[2] as! C) }
 }
 
-func cumin<R>(fn: () -> (R)) -> ([AnyObject]) -> (R) {
+func cumin<R: AnyObject>(fn: () -> (R)) -> ([AnyObject]) -> (R) {
     return { (args: [AnyObject]) in fn() }
 }
 
-func cumin<A, R>(fn: (A) -> (R)) -> ([AnyObject]) -> (R) {
+func cumin<A, R: AnyObject>(fn: (A) -> (R)) -> ([AnyObject]) -> (R) {
     return { (args: [AnyObject]) in fn(args[0] as! A) }
 }
 
-func cumin<A, B, R>(fn: (A, B) -> (R)) -> ([AnyObject]) -> (R) {
+func cumin<A, B, R: AnyObject>(fn: (A, B) -> (R)) -> ([AnyObject]) -> (R) {
     return { (args: [AnyObject]) in fn(args[0] as! A, args[1] as! B) }
 }
 
-func cumin<A, B, C, R>(fn: (A, B, C) -> (R)) -> ([AnyObject]) -> (R) {
+func cumin<A, B, C, R: AnyObject>(fn: (A, B, C) -> (R)) -> ([AnyObject]) -> (R) {
     return { (args: [AnyObject]) in fn(args[0] as! A, args[1] as! B, args[2] as! C) }
 }
 
