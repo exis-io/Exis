@@ -52,6 +52,10 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         
     }
     
+    public func stuffy() -> String {
+        return stuff()
+    }
+    
     
     //MARK: Delegates
     public func mdwamp(wamp: MDWamp!, sessionEstablished info: [NSObject : AnyObject]!) {
@@ -128,7 +132,7 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         // This is the real subscrive method
         session.subscribe(endpoint, onEvent: { (event: MDWampEvent!) -> Void in
             // Trigger the callback
-            fn(event.arguments[0] as! [AnyObject])
+            fn(event.arguments)
             
             }) { (err: NSError!) -> Void in
                 if let e = err {
@@ -140,26 +144,26 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     func _register(endpoint: String, fn: ([AnyObject]) -> ()) {
         session.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
             
-            fn(invocation.arguments[0] as! [AnyObject])
+            fn(invocation.arguments)
             wamp.resultForInvocation(invocation, arguments: [], argumentsKw: [:])
             
             }, cancelHandler: { () -> Void in
                 print("Register Cancelled!")
             }) { (err: NSError!) -> Void in
-                print("Registration completed.")
+                //print("Registration completed: \(endpoint)")
         }
     }
     
     func _register<R: AnyObject>(endpoint: String, fn: ([AnyObject]) -> (R)) {
         session.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
             
-            var result = fn(invocation.arguments as! [AnyObject])
+            let result = fn(invocation.arguments)
             wamp.resultForInvocation(invocation, arguments: [result], argumentsKw: [:])
             
             }, cancelHandler: { () -> Void in
                 print("Register Cancelled!")
             }) { (err: NSError!) -> Void in
-                print("Registration completed.")
+                //print("Registration completed: \(endpoint)")
         }
     }
     
@@ -168,7 +172,7 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     public func call(endpoint: String, _ args: AnyObject..., handler: (([AnyObject]) -> ())?) {
         session.call(endpoint, payload: args) { (result: MDWampResult!, err: NSError!) -> Void in
             if err != nil {
-                print("ERR: ", err)
+                print("Call Error for endpoint \(endpoint): \(err)")
             }
             else {
                 if let h = handler {
@@ -182,6 +186,7 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         session.publishTo(endpoint, args: args, kw: [:], options: [:]) { (err: NSError!) -> Void in
             if let e = err {
                 print("Error: ", e)
+                print("Publish Error for endpoint \"\(endpoint)\": \(e)")
             }
         }
     }
@@ -244,6 +249,7 @@ func cumin<A, B, R: AnyObject>(fn: (A, B) -> (R)) -> ([AnyObject]) -> (R) {
 func cumin<A, B, C, R: AnyObject>(fn: (A, B, C) -> (R)) -> ([AnyObject]) -> (R) {
     return { (args: [AnyObject]) in fn(args[0] as! A, args[1] as! B, args[2] as! C) }
 }
+
 
 
 
