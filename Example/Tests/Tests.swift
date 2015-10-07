@@ -2,6 +2,7 @@ import UIKit
 import XCTest
 import Riffle
 
+
 // Static testing methods 
 func add(a: Int, b: Int) -> Int {
     return a + b
@@ -18,18 +19,7 @@ func echo(a: String) -> String {
 class Dog: RiffleModel {
     var name: String = ""
     
-    init(name n: String) {
-        super.init()
-        name = n
-    }
-    
-    required init() {
-        super.init()
-    }
-
-    required init!(coder: NSCoder!) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    // Cant implement an init! Not sure why.
 }
 
 
@@ -87,6 +77,7 @@ class ObjectConverterTests: XCTestCase {
         
         let json: [NSObject: AnyObject] = ["name": "Fido"]
         let result = convert(json, Dog.self)!
+        
         XCTAssertEqual(result.name, "Fido")
     }
 }
