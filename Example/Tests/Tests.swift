@@ -17,7 +17,7 @@ func echo(a: String) -> String {
 }
 
 class Dog: RiffleModel {
-    var name: String = ""
+    var name: String?
     
     // Cant implement an init! Not sure why.
 }

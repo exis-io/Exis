@@ -11,11 +11,16 @@
     through currying. Not sure how to make it play without variadic generics, though there might be a way
 
     TODO:
-    throw a well known error on miscast
-    throw a well known error if args size doesn't match
-    hold method weakly, dont call if deallocd EDIT: actually, dont hold the method at all-- evaluate at execution time
+        throw a well known error on miscast
+        throw a well known error if args size doesn't match
+        hold method weakly, dont call if deallocd EDIT: actually, dont hold the method at all-- evaluate at execution time
 
-    NOTES"
+    NOTES:
+        Stupid generics.
+        Could be useful http://stackoverflow.com/questions/27591366/swift-generic-type-cast
+
+    Works to detect an array, but from there...
+    if t is ArrayProtocol.Type {
 */
 
 import Foundation
@@ -36,37 +41,38 @@ public func convert <A, T>(a:A?, _ t:T.Type) -> T? {
     }
     
     // Primitive conversion
-    if t.self == String.self && a.dynamicType == NSString.self {
-        return String(a) as? T
-    }
-
-    if t.self == Int.self && a.dynamicType == NSNumber.self {
+    // TODO: check to make sure the passed type is valid: a.dynamicType == NSNumber.self
+    switch t {
+    case is Int.Type:
         return Int(a as! NSNumber) as? T
-    }
-
-    if t.self == Double.self && a.dynamicType == NSNumber.self {
+        
+    case is Double.Type:
         return Double(a as! NSNumber) as? T
-    }
-
-    if t.self == Float.self && a.dynamicType == NSNumber.self {
+        
+    case is Float.Type:
         return Float(a as! NSNumber) as? T
+        
+    case is String.Type:
+        return String(a) as? T
+        
+    default: break
     }
 
-    // TODO: Boolean, arrays, dicts,
-    // NOTE: Can we try and do internal casts on list and dict elements? Essentially applying this recursively?
-    // TODO: arrays of model objects! This fits into the above, but needs to be considered!
-    
-    // Works to detect an array, but from there...
-    //if t is ArrayProtocol.Type {
-    
     // Attempt a model conversion
     if let Klass = t as? RiffleModel.Type {
-        return MTLJSONAdapter.modelOfClass(Klass, fromJSONDictionary: a as! [NSObject:AnyObject]) as! T
-//        let ret = Klass.init()
-//        
-//        // Make sure the argument is a dictionary
-//        ret.deserialize(a as! [String:AnyObject])
-//        return ret as! T
+        return (MTLJSONAdapter.modelOfClass(Klass, fromJSONDictionary: a as! [NSObject:AnyObject]) as! T)
+    }
+    
+    // TODO: Boolean, dicts,
+    
+    // Collections, applied recursively
+    if let source = a as? NSArray {
+        switch t {
+        case is [String].Type:
+            return (source.map { convert($0, String.self)! } as! T)
+        default:
+            print("aww")
+        }
     }
     
     return nil
