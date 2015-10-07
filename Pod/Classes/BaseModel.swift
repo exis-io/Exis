@@ -7,32 +7,18 @@
 //
 
 import Foundation
+import Mantle
 
-class RiffleModel {
-    required init() {
-        
-    }
-    
-    func serialize() -> [String:AnyObject] {
-        return [:]
-    }
-    
-    func deserialize(json: [String:AnyObject]) {
-        
-    }
-}
 
-class RiffleModel : MTLModel, MTLJSONSerializing {
+public class RiffleModel : MTLModel, MTLJSONSerializing {
     var id = -1
-    var created_at: NSDate?
-    var updated_at: NSDate?
     
-    override func isEqual(object: AnyObject?) -> Bool {
+    override public func isEqual(object: AnyObject?) -> Bool {
         if object_getClassName(self) != object_getClassName(object) {
             return false
         }
         
-        if let object = object as? BaseObject {
+        if let object = object as? RiffleModel {
             return id == object.id
         } else {
             return false
@@ -45,15 +31,31 @@ class RiffleModel : MTLModel, MTLJSONSerializing {
         return NSValueTransformer(forName: MTLURLValueTransformerName)!
     }
     
-    class func JSONKeyPathsByPropertyKey() -> [NSObject : AnyObject]! {
+    public class func JSONKeyPathsByPropertyKey() -> [NSObject : AnyObject]! {
         return [:]
     }
     
-    class func JSONTransformerForKey(key: String) -> NSValueTransformer? {
-        if key == "created_at" || key == "updated_at" {
-            return NetworkUtils.dateFormatter()
-        }
-        
+    public class func JSONTransformerForKey(key: String) -> NSValueTransformer? {
         return nil
+    }
+    
+    //MARK: Old Placeholder Methods
+    required override public init() {
+        super.init()
+        
+        // A random integer. Have to deal with colliding ids. This is an ok base case
+        id = Int(arc4random_uniform(UInt32.max))
+    }
+
+    required public init!(coder: NSCoder!) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func serialize() -> [String:AnyObject] {
+        return [:]
+    }
+    
+    func deserialize(json: [String:AnyObject]) {
+        
     }
 }

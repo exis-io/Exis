@@ -15,6 +15,23 @@ func echo(a: String) -> String {
     return a
 }
 
+class Dog: RiffleModel {
+    var name: String = ""
+    
+    init(name n: String) {
+        super.init()
+        name = n
+    }
+    
+    required init() {
+        super.init()
+    }
+
+    required init!(coder: NSCoder!) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 
 // Cuminication tests. Ensure the cuminicated functions are able to receive the parameters they expect
 class CuminTests: XCTestCase {
@@ -60,5 +77,16 @@ class StringConverterTests: XCTestCase {
         let x: String = "hello"
         let y = NSString(string: "hello")
         XCTAssertEqual(x, convert(y, String.self))
+    }
+}
+
+class ObjectConverterTests: XCTestCase {
+    func testSerialization() {
+        //let d = Dog()
+        //d.name = "Fido"
+        
+        let json: [NSObject: AnyObject] = ["name": "Fido"]
+        let result = convert(json, Dog.self)!
+        XCTAssertEqual(result.name, "Fido")
     }
 }

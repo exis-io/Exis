@@ -19,6 +19,7 @@
 */
 
 import Foundation
+import Mantle
 
 // Hack to get the arrays to detect
 protocol ArrayProtocol{}
@@ -60,11 +61,12 @@ public func convert <A, T>(a:A?, _ t:T.Type) -> T? {
     
     // Attempt a model conversion
     if let Klass = t as? RiffleModel.Type {
-        let ret = Klass.init()
-        
-        // Make sure the argument is a dictionary
-        ret.deserialize(a as! [String:AnyObject])
-        return ret as! T
+        return MTLJSONAdapter.modelOfClass(Klass, fromJSONDictionary: a as! [NSObject:AnyObject]) as! T
+//        let ret = Klass.init()
+//        
+//        // Make sure the argument is a dictionary
+//        ret.deserialize(a as! [String:AnyObject])
+//        return ret as! T
     }
     
     return nil
