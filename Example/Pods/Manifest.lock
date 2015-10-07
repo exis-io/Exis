@@ -1,10 +1,14 @@
 PODS:
   - CocoaAsyncSocket (7.4.2)
   - GHODictionary (1.0.9)
+  - Mantle (1.5.5):
+    - Mantle/extobjc (= 1.5.5)
+  - Mantle/extobjc (1.5.5)
   - MPMessagePack (1.2.2):
     - GHODictionary
-  - Riffle (0.1.0):
+  - Riffle (0.1.11):
     - CocoaAsyncSocket
+    - Mantle (~> 1.5)
     - MPMessagePack
     - SocketRocket
   - SocketRocket (0.4.1)
@@ -14,13 +18,14 @@ DEPENDENCIES:
 
 EXTERNAL SOURCES:
   Riffle:
-    :path: "../"
+    :path: ../
 
 SPEC CHECKSUMS:
   CocoaAsyncSocket: f5783bdedd232d91b89769bc4b5a1580aed518ad
   GHODictionary: 1f7873492445e0f33ac19575a358c3c91926b564
+  Mantle: 1b29072a707453975b200a173cf77ec1e2810b75
   MPMessagePack: d319b1defc053dc52432dfa0672b0c6325c48c56
-  Riffle: ac1fab165e46da1514c626b1b2242ff1b09bd7e7
+  Riffle: 1b1a34f7f6329d89aff3e5cd25e324b77e9ff35b
   SocketRocket: ee0b5c34182d37bb4f1f8d628bbe737718126daa
 
 COCOAPODS: 0.38.2

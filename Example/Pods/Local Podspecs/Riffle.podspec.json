@@ -28,6 +28,9 @@
     ],
     "CocoaAsyncSocket": [
 
+    ],
+    "Mantle": [
+      "~>1.5"
     ]
   }
 }
