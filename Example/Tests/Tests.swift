@@ -2,67 +2,63 @@ import UIKit
 import XCTest
 import Riffle
 
-// See here for getting the logic tests working: http://stackoverflow.com/questions/27500940/how-to-let-the-app-know-if-its-running-unit-tests-in-a-pure-swift-project
+// Static testing methods 
+func add(a: Int, b: Int) -> Int {
+    return a + b
+}
 
-class Tests: XCTestCase {
+func nothing() {
     
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+}
+
+func echo(a: String) -> String {
+    return a
+}
+
+
+// Cuminication tests. Ensure the cuminicated functions are able to receive the parameters they expect
+class CuminTests: XCTestCase {
+    func testString() {
+        let c = cumin(echo)
+        XCTAssertEqual(c(["a"]), "a")
     }
     
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
-    
-    func testsWork() {
-        XCTAssert(true)
+    func testNSString() {
+        let c = cumin(echo)
+        let oldString = NSString(string: "a")
+        XCTAssertEqual(c([oldString]), "a")
     }
 }
 
-class CuminTests: XCTestCase {
-    // these test combinations of cumin interceptors
-//    func testNoneNone() {
-//        func f() {
-//        }
-//        
-//        XCTAssertEqual((), cumin(f)([]), "Cumin: None None")
-//    }
+
+// Tests for the converter functions and related functionality
+// The name of the testing function describes what we're converting from
+//NOTE: These may not work as expected given that the equality may not be checking the classes
+class IntConverterTests: XCTestCase {
+    func testInt() {
+        let x: Int = 1
+        let y = 1
+        XCTAssertEqual(x, convert(y, Int.self))
+    }
     
-//    func testOneNone() {
-//        func double(a: Int) -> Int {
-//            return a * 2
-//        }
-//        
-//        let d = cumin(double)
-//        XCTAssertEqual(4, d([2]), "Handles single arg and single return")
-//    }
-//    
-//    func testTwoNone() {
-//        func double(a: Int) -> Int {
-//            return a * 2
-//        }
-//        
-//        let d = cumin(double)
-//        XCTAssertEqual(4, d([2]), "Handles single arg and single return")
-//    }
-//    
-//    func testThreeNone() {
-//        func double(a: Int) -> Int {
-//            return a * 2
-//        }
-//        
-//        let d = cumin(double)
-//        XCTAssertEqual(4, d([2]), "Handles single arg and single return")
-//    }
-//    
-//    func testOneOne() {
-//        func double(a: Int) -> Int {
-//            return a * 2
-//        }
-//        
-//        let d = cumin(double)
-//        XCTAssertEqual(4, d([2]), "Handles single arg and single return")
-//    }
+    func testNumber() {
+        let x: Int = 1
+        let y = NSNumber(integer: 1)
+        XCTAssertEqual(x, convert(y, Int.self))
+    }
+}
+
+
+class StringConverterTests: XCTestCase {
+    func testString() {
+        let x: String = "hello"
+        let y = "hello"
+        XCTAssertEqual(x, convert(y, String.self))
+    }
+    
+    func testNSString() {
+        let x: String = "hello"
+        let y = NSString(string: "hello")
+        XCTAssertEqual(x, convert(y, String.self))
+    }
 }

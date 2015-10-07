@@ -14,6 +14,14 @@ public func register<A, B, C>(pdid: String, _ fn: (A, B, C) -> ())  {
 	_register(pdid, fn: cumin(fn))
 }
 
+public func register<A, B, C, D>(pdid: String, _ fn: (A, B, C, D) -> ())  {
+	_register(pdid, fn: cumin(fn))
+}
+
+public func register<A, B, C, D, E>(pdid: String, _ fn: (A, B, C, D, E) -> ())  {
+	_register(pdid, fn: cumin(fn))
+}
+
 public func register<R>(pdid: String, _ fn: () -> (R))  {
 	_register(pdid, fn: cumin(fn))
 }
@@ -27,6 +35,62 @@ public func register<A, B, R>(pdid: String, _ fn: (A, B) -> (R))  {
 }
 
 public func register<A, B, C, R>(pdid: String, _ fn: (A, B, C) -> (R))  {
+	_register(pdid, fn: cumin(fn))
+}
+
+public func register<A, B, C, D, R>(pdid: String, _ fn: (A, B, C, D) -> (R))  {
+	_register(pdid, fn: cumin(fn))
+}
+
+public func register<A, B, C, D, E, R>(pdid: String, _ fn: (A, B, C, D, E) -> (R))  {
+	_register(pdid, fn: cumin(fn))
+}
+
+public func register<R, S>(pdid: String, _ fn: () -> (R, S))  {
+	_register(pdid, fn: cumin(fn))
+}
+
+public func register<A, R, S>(pdid: String, _ fn: (A) -> (R, S))  {
+	_register(pdid, fn: cumin(fn))
+}
+
+public func register<A, B, R, S>(pdid: String, _ fn: (A, B) -> (R, S))  {
+	_register(pdid, fn: cumin(fn))
+}
+
+public func register<A, B, C, R, S>(pdid: String, _ fn: (A, B, C) -> (R, S))  {
+	_register(pdid, fn: cumin(fn))
+}
+
+public func register<A, B, C, D, R, S>(pdid: String, _ fn: (A, B, C, D) -> (R, S))  {
+	_register(pdid, fn: cumin(fn))
+}
+
+public func register<A, B, C, D, E, R, S>(pdid: String, _ fn: (A, B, C, D, E) -> (R, S))  {
+	_register(pdid, fn: cumin(fn))
+}
+
+public func register<R, S, T>(pdid: String, _ fn: () -> (R, S, T))  {
+	_register(pdid, fn: cumin(fn))
+}
+
+public func register<A, R, S, T>(pdid: String, _ fn: (A) -> (R, S, T))  {
+	_register(pdid, fn: cumin(fn))
+}
+
+public func register<A, B, R, S, T>(pdid: String, _ fn: (A, B) -> (R, S, T))  {
+	_register(pdid, fn: cumin(fn))
+}
+
+public func register<A, B, C, R, S, T>(pdid: String, _ fn: (A, B, C) -> (R, S, T))  {
+	_register(pdid, fn: cumin(fn))
+}
+
+public func register<A, B, C, D, R, S, T>(pdid: String, _ fn: (A, B, C, D) -> (R, S, T))  {
+	_register(pdid, fn: cumin(fn))
+}
+
+public func register<A, B, C, D, E, R, S, T>(pdid: String, _ fn: (A, B, C, D, E) -> (R, S, T))  {
 	_register(pdid, fn: cumin(fn))
 }
 
@@ -46,35 +110,107 @@ public func subscribe<A, B, C>(pdid: String, _ fn: (A, B, C) -> ())  {
 	_subscribe(pdid, fn: cumin(fn))
 }
 
-func cumin<>(fn: () -> ()) -> ([AnyObject]) -> () {
-	return { (args: [AnyObject]) in fn() }
+public func subscribe<A, B, C, D>(pdid: String, _ fn: (A, B, C, D) -> ())  {
+	_subscribe(pdid, fn: cumin(fn))
 }
 
-func cumin<A>(fn: (A) -> ()) -> ([AnyObject]) -> () {
-	return { (args: [AnyObject]) in fn(args[0] as! A) }
+public func subscribe<A, B, C, D, E>(pdid: String, _ fn: (A, B, C, D, E) -> ())  {
+	_subscribe(pdid, fn: cumin(fn))
 }
 
-func cumin<A, B>(fn: (A, B) -> ()) -> ([AnyObject]) -> () {
-	return { (args: [AnyObject]) in fn(args[0] as! A, args[1] as! B) }
+public func cumin<>(fn: () -> ()) -> ([AnyObject]) -> () {
+	return { (a: [AnyObject]) in fn() }
 }
 
-func cumin<A, B, C>(fn: (A, B, C) -> ()) -> ([AnyObject]) -> () {
-	return { (args: [AnyObject]) in fn(args[0] as! A, args[1] as! B, args[2] as! C) }
+public func cumin<A>(fn: (A) -> ()) -> ([AnyObject]) -> () {
+	return { (a: [AnyObject]) in fn(A.self < a[0]) }
 }
 
-func cumin<R>(fn: () -> (R)) -> ([AnyObject]) -> (R) {
-	return { (args: [AnyObject]) in fn() }
+public func cumin<A, B>(fn: (A, B) -> ()) -> ([AnyObject]) -> () {
+	return { (a: [AnyObject]) in fn(A.self < a[0], B.self < a[1]) }
 }
 
-func cumin<A, R>(fn: (A) -> (R)) -> ([AnyObject]) -> (R) {
-	return { (args: [AnyObject]) in fn(args[0] as! A) }
+public func cumin<A, B, C>(fn: (A, B, C) -> ()) -> ([AnyObject]) -> () {
+	return { (a: [AnyObject]) in fn(A.self < a[0], B.self < a[1], C.self < a[2]) }
 }
 
-func cumin<A, B, R>(fn: (A, B) -> (R)) -> ([AnyObject]) -> (R) {
-	return { (args: [AnyObject]) in fn(args[0] as! A, args[1] as! B) }
+public func cumin<A, B, C, D>(fn: (A, B, C, D) -> ()) -> ([AnyObject]) -> () {
+	return { (a: [AnyObject]) in fn(A.self < a[0], B.self < a[1], C.self < a[2], D.self < a[3]) }
 }
 
-func cumin<A, B, C, R>(fn: (A, B, C) -> (R)) -> ([AnyObject]) -> (R) {
-	return { (args: [AnyObject]) in fn(args[0] as! A, args[1] as! B, args[2] as! C) }
+public func cumin<A, B, C, D, E>(fn: (A, B, C, D, E) -> ()) -> ([AnyObject]) -> () {
+	return { (a: [AnyObject]) in fn(A.self < a[0], B.self < a[1], C.self < a[2], D.self < a[3], E.self < a[4]) }
+}
+
+public func cumin<R>(fn: () -> (R)) -> ([AnyObject]) -> (R) {
+	return { (a: [AnyObject]) in fn() }
+}
+
+public func cumin<A, R>(fn: (A) -> (R)) -> ([AnyObject]) -> (R) {
+	return { (a: [AnyObject]) in fn(A.self < a[0]) }
+}
+
+public func cumin<A, B, R>(fn: (A, B) -> (R)) -> ([AnyObject]) -> (R) {
+	return { (a: [AnyObject]) in fn(A.self < a[0], B.self < a[1]) }
+}
+
+public func cumin<A, B, C, R>(fn: (A, B, C) -> (R)) -> ([AnyObject]) -> (R) {
+	return { (a: [AnyObject]) in fn(A.self < a[0], B.self < a[1], C.self < a[2]) }
+}
+
+public func cumin<A, B, C, D, R>(fn: (A, B, C, D) -> (R)) -> ([AnyObject]) -> (R) {
+	return { (a: [AnyObject]) in fn(A.self < a[0], B.self < a[1], C.self < a[2], D.self < a[3]) }
+}
+
+public func cumin<A, B, C, D, E, R>(fn: (A, B, C, D, E) -> (R)) -> ([AnyObject]) -> (R) {
+	return { (a: [AnyObject]) in fn(A.self < a[0], B.self < a[1], C.self < a[2], D.self < a[3], E.self < a[4]) }
+}
+
+public func cumin<R, S>(fn: () -> (R, S)) -> ([AnyObject]) -> (R, S) {
+	return { (a: [AnyObject]) in fn() }
+}
+
+public func cumin<A, R, S>(fn: (A) -> (R, S)) -> ([AnyObject]) -> (R, S) {
+	return { (a: [AnyObject]) in fn(A.self < a[0]) }
+}
+
+public func cumin<A, B, R, S>(fn: (A, B) -> (R, S)) -> ([AnyObject]) -> (R, S) {
+	return { (a: [AnyObject]) in fn(A.self < a[0], B.self < a[1]) }
+}
+
+public func cumin<A, B, C, R, S>(fn: (A, B, C) -> (R, S)) -> ([AnyObject]) -> (R, S) {
+	return { (a: [AnyObject]) in fn(A.self < a[0], B.self < a[1], C.self < a[2]) }
+}
+
+public func cumin<A, B, C, D, R, S>(fn: (A, B, C, D) -> (R, S)) -> ([AnyObject]) -> (R, S) {
+	return { (a: [AnyObject]) in fn(A.self < a[0], B.self < a[1], C.self < a[2], D.self < a[3]) }
+}
+
+public func cumin<A, B, C, D, E, R, S>(fn: (A, B, C, D, E) -> (R, S)) -> ([AnyObject]) -> (R, S) {
+	return { (a: [AnyObject]) in fn(A.self < a[0], B.self < a[1], C.self < a[2], D.self < a[3], E.self < a[4]) }
+}
+
+public func cumin<R, S, T>(fn: () -> (R, S, T)) -> ([AnyObject]) -> (R, S, T) {
+	return { (a: [AnyObject]) in fn() }
+}
+
+public func cumin<A, R, S, T>(fn: (A) -> (R, S, T)) -> ([AnyObject]) -> (R, S, T) {
+	return { (a: [AnyObject]) in fn(A.self < a[0]) }
+}
+
+public func cumin<A, B, R, S, T>(fn: (A, B) -> (R, S, T)) -> ([AnyObject]) -> (R, S, T) {
+	return { (a: [AnyObject]) in fn(A.self < a[0], B.self < a[1]) }
+}
+
+public func cumin<A, B, C, R, S, T>(fn: (A, B, C) -> (R, S, T)) -> ([AnyObject]) -> (R, S, T) {
+	return { (a: [AnyObject]) in fn(A.self < a[0], B.self < a[1], C.self < a[2]) }
+}
+
+public func cumin<A, B, C, D, R, S, T>(fn: (A, B, C, D) -> (R, S, T)) -> ([AnyObject]) -> (R, S, T) {
+	return { (a: [AnyObject]) in fn(A.self < a[0], B.self < a[1], C.self < a[2], D.self < a[3]) }
+}
+
+public func cumin<A, B, C, D, E, R, S, T>(fn: (A, B, C, D, E) -> (R, S, T)) -> ([AnyObject]) -> (R, S, T) {
+	return { (a: [AnyObject]) in fn(A.self < a[0], B.self < a[1], C.self < a[2], D.self < a[3], E.self < a[4]) }
 }
 

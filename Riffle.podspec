@@ -41,4 +41,5 @@ Pod::Spec.new do |s|
     s.dependency 'SocketRocket'
     s.dependency 'MPMessagePack'
     s.dependency 'CocoaAsyncSocket'
+# s.dependancy 'Mantle', '~>1.5'
 end

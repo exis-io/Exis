@@ -24,6 +24,8 @@
 		4DCD9A964BEACC3D09BCF4955B327091 /* AsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = EC2A6B9732560C7DDF7A4D2D70D352C8 /* AsyncUdpSocket.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		5001BDD11BC47677004696B7 /* Cumin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5001BDD01BC47677004696B7 /* Cumin.swift */; settings = {ASSET_TAGS = (); }; };
 		5001BDD21BC476D5004696B7 /* Cumin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5001BDD01BC47677004696B7 /* Cumin.swift */; };
+		5001BDD41BC47A64004696B7 /* BaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5001BDD31BC47A64004696B7 /* BaseModel.swift */; settings = {ASSET_TAGS = (); }; };
+		5001BDD51BC47A70004696B7 /* BaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5001BDD31BC47A64004696B7 /* BaseModel.swift */; };
 		5044FBABDEFCD575DBBF301CA812B02D /* cmp.h in Headers */ = {isa = PBXBuildFile; fileRef = A437095FD935803743C430D21033AFE8 /* cmp.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50F226621BB8E4A300ECFF76 /* NSMutableArray+MDStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 50F226131BB8E4A300ECFF76 /* NSMutableArray+MDStack.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50F226631BB8E4A300ECFF76 /* NSMutableArray+MDStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 50F226141BB8E4A300ECFF76 /* NSMutableArray+MDStack.m */; settings = {ASSET_TAGS = (); }; };
@@ -290,6 +292,7 @@
 		42BDDF50222F58EF640BEE37826E2C8B /* Pods-Riffle_Tests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Riffle_Tests-resources.sh"; sourceTree = "<group>"; };
 		4EA989FA2C19D5F3209B49E55F033090 /* GHODictionary.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GHODictionary.h; path = GHODictionary/GHODictionary.h; sourceTree = "<group>"; };
 		5001BDD01BC47677004696B7 /* Cumin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cumin.swift; sourceTree = "<group>"; };
+		5001BDD31BC47A64004696B7 /* BaseModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseModel.swift; sourceTree = "<group>"; };
 		5082850B50811A75171C6D2A755154EF /* MPMessagePack-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "MPMessagePack-dummy.m"; sourceTree = "<group>"; };
 		50F226131BB8E4A300ECFF76 /* NSMutableArray+MDStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+MDStack.h"; sourceTree = "<group>"; };
 		50F226141BB8E4A300ECFF76 /* NSMutableArray+MDStack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+MDStack.m"; sourceTree = "<group>"; };
@@ -807,6 +810,7 @@
 				50F226111BB8E4A300ECFF76 /* MDWamp */,
 				99BE89BAAF5F6FB8B5686120E4AB9918 /* Riffle.swift */,
 				5001BDD01BC47677004696B7 /* Cumin.swift */,
+				5001BDD31BC47A64004696B7 /* BaseModel.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -1210,6 +1214,7 @@
 			files = (
 				0BBD54DC94314EE52CFC5862692D9528 /* AsyncSocket.m in Sources */,
 				4DCD9A964BEACC3D09BCF4955B327091 /* AsyncUdpSocket.m in Sources */,
+				5001BDD41BC47A64004696B7 /* BaseModel.swift in Sources */,
 				4853E736A7B1741442A63F0129DE72F5 /* CocoaAsyncSocket-dummy.m in Sources */,
 				7CE847934B6EB70C17058810F4DB998B /* GCDAsyncSocket.m in Sources */,
 				5001BDD11BC47677004696B7 /* Cumin.swift in Sources */,
@@ -1263,6 +1268,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5001BDD51BC47A70004696B7 /* BaseModel.swift in Sources */,
 				5001BDD21BC476D5004696B7 /* Cumin.swift in Sources */,
 				50F226881BB8E4A300ECFF76 /* MDWampPublish.m in Sources */,
 				50F226701BB8E4A300ECFF76 /* MDWampAuthenticate.m in Sources */,

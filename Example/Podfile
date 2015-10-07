@@ -7,6 +7,5 @@ end
 
 target 'Riffle_Tests', :exclusive => true do
   pod "Riffle", :path => "../"
-
   
 end

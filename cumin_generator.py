@@ -9,15 +9,15 @@ TODO:
 import os
 
 generics = ['A', 'B', 'C', 'D', 'E', 'F']
-returns = ['R', 'S']
+returns = ['R', 'S', 'T', 'U', 'V']
 
 def renderCumin(args, ret):
-    p = ', '.join(["args[%s] as! %s" % (i, x) for i, x in enumerate(args)])
+    p = ', '.join(["%s.self < a[%s]" % (x, i) for i, x in enumerate(args)])
     both = ', '.join(args + ret)
     args = ', '.join(args)
     ret = ', '.join(ret)
 
-    return 'func cumin<%s>(fn: (%s) -> (%s)) -> ([AnyObject]) -> (%s) {\n\treturn { (args: \
+    return 'public func cumin<%s>(fn: (%s) -> (%s)) -> ([AnyObject]) -> (%s) {\n\treturn { (a: \
 [AnyObject]) in fn(%s) }\n}' % (both, args, ret, ret, p)
 
 def renderCaller(name, args, ret):
@@ -32,8 +32,8 @@ def main():
     c, r, s = [], [], []
 
     # Generate cumins
-    for j in range(2):
-        for i in range(0, 4):
+    for j in range(4):
+        for i in range(0, 6):
             if j == 0:
                 s.append(renderCaller('subscribe', generics[:i], returns[:j]))
 
