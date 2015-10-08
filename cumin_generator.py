@@ -25,6 +25,7 @@ def renderCaller(name, args, ret):
     args = ', '.join(args)
     ret = ', '.join(ret)
 
+
     return 'public func %s<%s>(pdid: String, _ fn: (%s) -> (%s))  {\n\t_%s(\
 pdid, fn: cumin(fn))\n}' % (name, both, args, ret, name,)
 
