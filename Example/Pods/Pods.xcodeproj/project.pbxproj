@@ -142,7 +142,6 @@
 		C3641551AEBEAD78B8813D37887D2E5A /* MTLManagedObjectAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 907E3C1AF2E81D66D32AFD8CDE9B6993 /* MTLManagedObjectAdapter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C52C7478AE5A5BCAE35DFAFE6E8BA206 /* MDWampSubscribe.m in Sources */ = {isa = PBXBuildFile; fileRef = B80B0CF06BDBC548AAF298BD846B903C /* MDWampSubscribe.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		C540ABF15B94EED9BD704526C3DE2ADA /* GHODict.h in Headers */ = {isa = PBXBuildFile; fileRef = 988DD89CF71282D56F987DDDA43819C3 /* GHODict.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C577333C2786A3489FD4FFE5302C1E20 /* Riffle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E7198F68F41DCA0DAD3325478BB40903 /* Riffle.bundle */; };
 		C5FC8B60968B1ED29CEE84D8D6BE2148 /* MDWampSubscribed.m in Sources */ = {isa = PBXBuildFile; fileRef = FD82A53E0954CB6875ED3C4FED70823A /* MDWampSubscribed.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		C6FC47D97A2D286F81429F03A88D8C05 /* MDWampSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E2A5219D4AE1D1A3F6E3E6B5D67797A /* MDWampSerialization.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C729C5EBECC22A0DE1A4D7A5A27A294B /* MDWampEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 85773F58015D614B089AC993FFC67D0B /* MDWampEvent.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
@@ -1453,7 +1452,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C577333C2786A3489FD4FFE5302C1E20 /* Riffle.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

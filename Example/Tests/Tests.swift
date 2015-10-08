@@ -72,9 +72,6 @@ class StringConverterTests: XCTestCase {
 
 class ObjectConverterTests: XCTestCase {
     func testSerialization() {
-        //let d = Dog()
-        //d.name = "Fido"
-        
         let json: [NSObject: AnyObject] = ["name": "Fido"]
         let result = convert(json, Dog.self)!
         
