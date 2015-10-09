@@ -11,7 +11,7 @@
 #import "NSString+MDString.h"
 
 // Debug Boilerplate
-#ifdef DEBUG
+#ifdef DEBUGY
 #define MDWampDebugLog(fmt, ...) NSLog((@"%s " fmt), __PRETTY_FUNCTION__, ##__VA_ARGS__);
 #else
 #define MDWampDebugLog(fmt, ...)
