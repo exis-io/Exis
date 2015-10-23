@@ -49,11 +49,9 @@ func testBasicRiffle() {
 }
 
 func main() {
-	result, err := riffle.Cumin(someFunc, []interface{}{"hello", 2})
-	fmt.Println(result)
-	fmt.Println(err)
-
-	// testBasicRiffle()
-
+	// result, err := riffle.Cumin(someFunc, []interface{}{"hello", 2})
+	// fmt.Println(result)
 	// fmt.Println(err)
+
+	testBasicRiffle()
 }
