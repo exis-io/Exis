@@ -2,61 +2,13 @@ package main
 
 import (
 	"fmt"
-	"reflect"
 
 	"github.com/exis-io/riffle"
 )
 
-//////////////////////////////////////////
-// Basics of Cumin
-//////////////////////////////////////////
-func testReflection(fn interface{}, args []interface{}) error {
-	reciever := reflect.TypeOf(fn)
-	// fnValue := reflect.ValueOf(fn)
-
-	// Check to make sure the pointer is actually a functions
-	if reciever.Kind() != reflect.Func {
-		return fmt.Errorf("Handler is not a function!")
-	}
-
-	// Iterate over the params listed in the method and try their casts
-	// values := make([]reflect.Value, len(args))
-	for i := 0; i < reciever.NumIn(); i++ {
-		param := reciever.In(i)
-		arg := reflect.ValueOf(args[i])
-
-		if param != arg.Type() {
-			return fmt.Errorf("Cuminication failed. Expected type %s for argument at position %d in function %s. Recieved %s.", param, i, reciever, arg.Type())
-		}
-
-		fmt.Println(reciever.In(i))
-		incomingArgument := reflect.ValueOf(args[i])
-		fmt.Println(incomingArgument)
-		// fmt.Printf("Expected: %s, Incoming: %s, Matches: %b", t.In(i), incomingArgument.Type(), t.In(i) == incomingArgument.Type())
-		// values[x] = reflect.ValueOf(args[x])
-	}
-
-	return nil
-}
-
-// The working magic. Goooo magic.
-func testReflectiveCast() {
-	args := []interface{}{"hello", 2}
-	values := make([]reflect.Value, len(args))
-
-	for x := range args {
-		values[x] = reflect.ValueOf(args[x])
-	}
-
-	fmt.Println(args)
-	fmt.Println(values)
-
-	fn := reflect.ValueOf(someFunc)
-	fn.Call(values)
-}
-
-func someFunc(a string, b int) {
+func someFunc(a string, b int) int {
 	fmt.Println(a, b)
+	return 1
 }
 
 //////////////////////////////////////////
@@ -97,9 +49,11 @@ func testBasicRiffle() {
 }
 
 func main() {
-	err := testReflection(someFunc, []interface{}{"hello", 2})
-	// testBasicRiffle()
-	// testReflectiveCast()
-
+	result, err := riffle.Cumin(someFunc, []interface{}{"hello", 2})
+	fmt.Println(result)
 	fmt.Println(err)
+
+	// testBasicRiffle()
+
+	// fmt.Println(err)
 }
