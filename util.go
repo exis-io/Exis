@@ -13,9 +13,9 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-// NewID generates a random WAMP ID.
-func NewID() ID {
-	return ID(rand.Int63n(maxId))
+// NewID generates a random WAMP uint.
+func NewID() uint {
+	return uint(rand.Int63n(maxId))
 }
 
 // func PprintMap(m interface{}) {

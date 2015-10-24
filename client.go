@@ -5,25 +5,6 @@ import (
 	"time"
 )
 
-var (
-	abortUnexpectedMsg = &Abort{
-		Details: map[string]interface{}{},
-		Reason:  "turnpike.error.unexpected_message_type",
-	}
-	abortNoAuthHandler = &Abort{
-		Details: map[string]interface{}{},
-		Reason:  "turnpike.error.no_handler_for_authmethod",
-	}
-	abortAuthFailure = &Abort{
-		Details: map[string]interface{}{},
-		Reason:  "turnpike.error.authentication_failure",
-	}
-	goodbyeClient = &Goodbye{
-		Details: map[string]interface{}{},
-		Reason:  ErrCloseRealm,
-	}
-)
-
 // A Client routes messages to/from a WAMP Node.
 type Client struct {
 	Peer
@@ -33,9 +14,9 @@ type Client struct {
 	Auth map[string]AuthFunc
 	// ReceiveDone is notified when the client's connection to the Node is lost.
 	ReceiveDone  chan bool
-	listeners    map[ID]chan Message
-	events       map[ID]*eventDesc
-	procedures   map[ID]*procedureDesc
+	listeners    map[uint]chan Message
+	events       map[uint]*eventDesc
+	procedures   map[uint]*procedureDesc
 	requestCount uint
 	pdid         URI
 }
@@ -56,20 +37,14 @@ func NewWebsocketClient(serialization Serialization, url string) (*Client, error
 	if err != nil {
 		return nil, err
 	}
-	return NewClient(p), nil
-}
-
-// NewClient takes a connected Peer and returns a new Client
-func NewClient(p Peer) *Client {
-	c := &Client{
+	return &Client{
 		Peer:           p,
 		ReceiveTimeout: 10 * time.Second,
-		listeners:      make(map[ID]chan Message),
-		events:         make(map[ID]*eventDesc),
-		procedures:     make(map[ID]*procedureDesc),
+		listeners:      make(map[uint]chan Message),
+		events:         make(map[uint]*eventDesc),
+		procedures:     make(map[uint]*procedureDesc),
 		requestCount:   0,
-	}
-	return c
+	}, nil
 }
 
 // JoinRealm joins a WAMP realm, but does not handle challenge/response authentication.
@@ -200,9 +175,9 @@ func (c *Client) Close() error {
 	return nil
 }
 
-// func (c *Client) nextID() ID {
+// func (c *Client) nextID() uint {
 // 	c.requestCount++
-// 	return ID(c.requestCount)
+// 	return uint(c.requestCount)
 // }
 
 // Receive handles messages from the server until this client disconnects.
@@ -251,8 +226,8 @@ func (c *Client) Receive() {
 	}
 }
 
-func (c *Client) notifyListener(msg Message, requestId ID) {
-	// pass in the request ID so we don't have to do any type assertion
+func (c *Client) notifyListener(msg Message, requestId uint) {
+	// pass in the request uint so we don't have to do any type assertion
 	if l, ok := c.listeners[requestId]; ok {
 		l <- msg
 	} else {
@@ -301,16 +276,16 @@ func (c *Client) handleInvocation(msg *Invocation) {
 	}
 }
 
-func (c *Client) registerListener(id ID) {
+func (c *Client) registerListener(id uint) {
 	//log.Println("register listener:", id)
 	wait := make(chan Message, 1)
 	c.listeners[id] = wait
 }
 
-func (c *Client) waitOnListener(id ID) (msg Message, err error) {
+func (c *Client) waitOnListener(id uint) (msg Message, err error) {
 	//log.Println("wait on listener:", id)
 	if wait, ok := c.listeners[id]; !ok {
-		return nil, fmt.Errorf("unknown listener ID: %v", id)
+		return nil, fmt.Errorf("unknown listener uint: %v", id)
 	} else {
 		select {
 		case msg = <-wait:
@@ -355,7 +330,7 @@ func (c *Client) Subscribe(topic string, fn EventHandler) error {
 // Unsubscribe removes the registered EventHandler from the topic.
 func (c *Client) Unsubscribe(topic string) error {
 	var (
-		subscriptionID ID
+		subscriptionID uint
 		found          bool
 	)
 	for id, desc := range c.events {
@@ -438,7 +413,7 @@ func (c *Client) BasicRegister(procedure string, fn BasicMethodHandler) error {
 // Unregister removes a procedure with the Node
 func (c *Client) Unregister(procedure string) error {
 	var (
-		procedureID ID
+		procedureID uint
 		found       bool
 	)
 	for id, p := range c.procedures {

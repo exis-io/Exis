@@ -6,6 +6,25 @@ type Message interface {
 	// Pdid() string
 }
 
+var (
+	abortUnexpectedMsg = &Abort{
+		Details: map[string]interface{}{},
+		Reason:  "turnpike.error.unexpected_message_type",
+	}
+	abortNoAuthHandler = &Abort{
+		Details: map[string]interface{}{},
+		Reason:  "turnpike.error.no_handler_for_authmethod",
+	}
+	abortAuthFailure = &Abort{
+		Details: map[string]interface{}{},
+		Reason:  "turnpike.error.authentication_failure",
+	}
+	goodbyeClient = &Goodbye{
+		Details: map[string]interface{}{},
+		Reason:  ErrCloseRealm,
+	}
+)
+
 type MessageType int
 
 func (mt MessageType) New() Message {
@@ -169,9 +188,6 @@ const (
 // See the documentation for specifics: https://github.com/tavendo/WAMP/blob/master/spec/basic.md#uris
 type URI string
 
-// An ID is a unique, non-negative number. Different uses may have additional restrictions.
-type ID uint
-
 // [HELLO, Realm|uri, Details|dict]
 type Hello struct {
 	Realm   URI
@@ -184,7 +200,7 @@ func (msg *Hello) MessageType() MessageType {
 
 // [WELCOME, Session|id, Details|dict]
 type Welcome struct {
-	Id      ID
+	Id      uint
 	Details map[string]interface{}
 }
 
@@ -249,7 +265,7 @@ func (msg *Heartbeat) MessageType() MessageType {
 // [ERROR, REQUEST.Type|int, REQUEST.Request|id, Details|dict, Error|uri, Arguments|list, ArgumentsKw|dict]
 type Error struct {
 	Type        MessageType
-	Request     ID
+	Request     uint
 	Details     map[string]interface{}
 	Error       URI
 	Arguments   []interface{}          `wamp:"omitempty"`
@@ -264,7 +280,7 @@ func (msg *Error) MessageType() MessageType {
 // [PUBLISH, Request|id, Options|dict, Topic|uri, Arguments|list]
 // [PUBLISH, Request|id, Options|dict, Topic|uri, Arguments|list, ArgumentsKw|dict]
 type Publish struct {
-	Request     ID
+	Request     uint
 	Options     map[string]interface{}
 	Topic       URI
 	Arguments   []interface{}          `wamp:"omitempty"`
@@ -277,8 +293,8 @@ func (msg *Publish) MessageType() MessageType {
 
 // [PUBLISHED, PUBLISH.Request|id, Publication|id]
 type Published struct {
-	Request     ID
-	Publication ID
+	Request     uint
+	Publication uint
 }
 
 func (msg *Published) MessageType() MessageType {
@@ -287,7 +303,7 @@ func (msg *Published) MessageType() MessageType {
 
 // [SUBSCRIBE, Request|id, Options|dict, Topic|uri]
 type Subscribe struct {
-	Request ID
+	Request uint
 	Options map[string]interface{}
 	Topic   URI
 }
@@ -298,8 +314,8 @@ func (msg *Subscribe) MessageType() MessageType {
 
 // [SUBSCRIBED, SUBSCRIBE.Request|id, Subscription|id]
 type Subscribed struct {
-	Request      ID
-	Subscription ID
+	Request      uint
+	Subscription uint
 }
 
 func (msg *Subscribed) MessageType() MessageType {
@@ -308,8 +324,8 @@ func (msg *Subscribed) MessageType() MessageType {
 
 // [UNSUBSCRIBE, Request|id, SUBSCRIBED.Subscription|id]
 type Unsubscribe struct {
-	Request      ID
-	Subscription ID
+	Request      uint
+	Subscription uint
 }
 
 func (msg *Unsubscribe) MessageType() MessageType {
@@ -318,7 +334,7 @@ func (msg *Unsubscribe) MessageType() MessageType {
 
 // [UNSUBSCRIBED, UNSUBSCRIBE.Request|id]
 type Unsubscribed struct {
-	Request ID
+	Request uint
 }
 
 func (msg *Unsubscribed) MessageType() MessageType {
@@ -330,8 +346,8 @@ func (msg *Unsubscribed) MessageType() MessageType {
 // [EVENT, SUBSCRIBED.Subscription|id, PUBLISHED.Publication|id, Details|dict, PUBLISH.Arguments|list,
 //     PUBLISH.ArgumentsKw|dict]
 type Event struct {
-	Subscription ID
-	Publication  ID
+	Subscription uint
+	Publication  uint
 	Details      map[string]interface{}
 	Arguments    []interface{}          `wamp:"omitempty"`
 	ArgumentsKw  map[string]interface{} `wamp:"omitempty"`
@@ -352,7 +368,7 @@ type CallResult struct {
 // [CALL, Request|id, Options|dict, Procedure|uri, Arguments|list]
 // [CALL, Request|id, Options|dict, Procedure|uri, Arguments|list, ArgumentsKw|dict]
 type Call struct {
-	Request     ID
+	Request     uint
 	Options     map[string]interface{}
 	Procedure   URI
 	Arguments   []interface{}          `wamp:"omitempty"`
@@ -367,7 +383,7 @@ func (msg *Call) MessageType() MessageType {
 // [RESULT, CALL.Request|id, Details|dict, YIELD.Arguments|list]
 // [RESULT, CALL.Request|id, Details|dict, YIELD.Arguments|list, YIELD.ArgumentsKw|dict]
 type Result struct {
-	Request     ID
+	Request     uint
 	Details     map[string]interface{}
 	Arguments   []interface{}          `wamp:"omitempty"`
 	ArgumentsKw map[string]interface{} `wamp:"omitempty"`
@@ -379,7 +395,7 @@ func (msg *Result) MessageType() MessageType {
 
 // [REGISTER, Request|id, Options|dict, Procedure|uri]
 type Register struct {
-	Request   ID
+	Request   uint
 	Options   map[string]interface{}
 	Procedure URI
 }
@@ -390,8 +406,8 @@ func (msg *Register) MessageType() MessageType {
 
 // [REGISTERED, REGISTER.Request|id, Registration|id]
 type Registered struct {
-	Request      ID
-	Registration ID
+	Request      uint
+	Registration uint
 }
 
 func (msg *Registered) MessageType() MessageType {
@@ -400,8 +416,8 @@ func (msg *Registered) MessageType() MessageType {
 
 // [UNREGISTER, Request|id, REGISTERED.Registration|id]
 type Unregister struct {
-	Request      ID
-	Registration ID
+	Request      uint
+	Registration uint
 }
 
 func (msg *Unregister) MessageType() MessageType {
@@ -410,7 +426,7 @@ func (msg *Unregister) MessageType() MessageType {
 
 // [UNREGISTERED, UNREGISTER.Request|id]
 type Unregistered struct {
-	Request ID
+	Request uint
 }
 
 func (msg *Unregistered) MessageType() MessageType {
@@ -421,8 +437,8 @@ func (msg *Unregistered) MessageType() MessageType {
 // [INVOCATION, Request|id, REGISTERED.Registration|id, Details|dict, CALL.Arguments|list]
 // [INVOCATION, Request|id, REGISTERED.Registration|id, Details|dict, CALL.Arguments|list, CALL.ArgumentsKw|dict]
 type Invocation struct {
-	Request      ID
-	Registration ID
+	Request      uint
+	Registration uint
 	Details      map[string]interface{}
 	Arguments    []interface{}          `wamp:"omitempty"`
 	ArgumentsKw  map[string]interface{} `wamp:"omitempty"`
@@ -436,7 +452,7 @@ func (msg *Invocation) MessageType() MessageType {
 // [YIELD, INVOCATION.Request|id, Options|dict, Arguments|list]
 // [YIELD, INVOCATION.Request|id, Options|dict, Arguments|list, ArgumentsKw|dict]
 type Yield struct {
-	Request     ID
+	Request     uint
 	Options     map[string]interface{}
 	Arguments   []interface{}          `wamp:"omitempty"`
 	ArgumentsKw map[string]interface{} `wamp:"omitempty"`
@@ -448,7 +464,7 @@ func (msg *Yield) MessageType() MessageType {
 
 // [CANCEL, CALL.Request|id, Options|dict]
 type Cancel struct {
-	Request ID
+	Request uint
 	Options map[string]interface{}
 }
 
@@ -458,7 +474,7 @@ func (msg *Cancel) MessageType() MessageType {
 
 // [INTERRUPT, INVOCATION.Request|id, Options|dict]
 type Interrupt struct {
-	Request ID
+	Request uint
 	Options map[string]interface{}
 }
 
@@ -507,8 +523,8 @@ func destination(m *Message) (URI, error) {
 	}
 }
 
-// Given a message, return the request ID
-func requestID(m *Message) ID {
+// Given a message, return the request uint
+func requestID(m *Message) uint {
 	switch msg := (*m).(type) {
 	case *Publish:
 		return msg.Request
@@ -520,5 +536,5 @@ func requestID(m *Message) ID {
 		return msg.Request
 	}
 
-	return ID(0)
+	return uint(0)
 }

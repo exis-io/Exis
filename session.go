@@ -14,7 +14,7 @@ const (
 
 type Session struct {
 	Peer
-	Id   ID
+	Id   uint
 	pdid URI
 
 	// authid is the highest domain the agent has been authenticated as,
