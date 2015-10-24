@@ -18,7 +18,7 @@ var (
 		Details: map[string]interface{}{},
 		Reason:  "turnpike.error.authentication_failure",
 	}
-	goodbyeClient = &Goodbye{
+	goodbyeSession = &Goodbye{
 		Details: map[string]interface{}{},
 		Reason:  ErrCloseRealm,
 	}

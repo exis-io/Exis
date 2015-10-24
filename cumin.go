@@ -20,11 +20,18 @@ func Cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 		param := reciever.In(i)
 		arg := reflect.ValueOf(args[i])
 
+		// If the types don't match exactly attempt a construction
 		if param != arg.Type() {
-			return ret, fmt.Errorf("Cuminication failed. Expected type %s for argument at position %d in function %s. Recieved %s.", param, i, reciever, arg.Type())
-		}
+			// Try a conversion
+			if arg.Type().ConvertibleTo(param) {
+				values[i] = arg.Convert(param)
+				continue
+			}
 
-		values[i] = arg
+			return ret, fmt.Errorf("Cuminication failed. Expected %s for arg[%d] in  (%s), got %s.", param, i, reciever, arg.Type())
+		} else {
+			values[i] = arg
+		}
 	}
 
 	// Perform the call
