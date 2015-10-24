@@ -209,27 +209,25 @@ func (c *Session) Unregister(procedure string) error {
 }
 
 // Publish publishes an EVENT to all subscribed peers.
-func (c *Session) Publish(topic string, args []interface{}, kwargs map[string]interface{}) error {
+func (c *Session) Publish(topic string, args ...interface{}) error {
 	return c.Send(&Publish{
-		Request:     NewID(),
-		Options:     make(map[string]interface{}),
-		Domain:      topic,
-		Arguments:   args,
-		ArgumentsKw: kwargs,
+		Request:   NewID(),
+		Options:   make(map[string]interface{}),
+		Domain:    topic,
+		Arguments: args,
 	})
 }
 
 // Call calls a procedure given a URI.
-func (c *Session) Call(procedure string, args []interface{}, kwargs map[string]interface{}) (*Result, error) {
+func (c *Session) Call(procedure string, args ...interface{}) ([]interface{}, error) {
 	id := NewID()
 	c.registerListener(id)
 
 	call := &Call{
-		Request:     id,
-		Domain:      procedure,
-		Options:     make(map[string]interface{}),
-		Arguments:   args,
-		ArgumentsKw: kwargs,
+		Request:   id,
+		Domain:    procedure,
+		Options:   make(map[string]interface{}),
+		Arguments: args,
 	}
 
 	if err := c.Send(call); err != nil {
@@ -245,7 +243,7 @@ func (c *Session) Call(procedure string, args []interface{}, kwargs map[string]i
 	} else if result, ok := msg.(*Result); !ok {
 		return nil, fmt.Errorf(formatUnexpectedMessage(msg, RESULT))
 	} else {
-		return result, nil
+		return result.Arguments, nil
 	}
 }
 

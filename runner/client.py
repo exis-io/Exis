@@ -20,10 +20,10 @@ class Component(ApplicationSession):
     def onJoin(self, details):
         print("session attached")
 
-        res = yield self.call('xs.testerer/hello', 2, 3)
+        res = yield self.call('xs.gotestserver/hello', 2, 3)
         print 'Called add with 2 + 3 = ', res
 
-        res = yield self.publish('xs.testerer/sub', 2, 3)
+        res = yield self.publish('xs.gotestserver/sub', 2, 3)
         print 'Published'
         # print 'Asking the other guy to die'
         # res = yield self.call('pd.damouse/kill')

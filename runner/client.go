@@ -14,8 +14,9 @@ func main() {
 		return
 	}
 
+	// Values come out as an array, which I find meh. Should cuminize again
 	ret, err := session.Call("xs.gotestserver/hello", 2, 3)
+	fmt.Println("Call with result and error:", ret, err)
 
-	fmt.Println(ret)
-	fmt.Println(err)
+	session.Publish("xs.gotestserver/sub", 4, 5)
 }
