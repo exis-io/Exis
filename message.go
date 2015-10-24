@@ -3,7 +3,6 @@ package riffle
 // Message is a generic container for a WAMP message.
 type Message interface {
 	MessageType() MessageType
-	// Pdid() string
 }
 
 var (
@@ -271,13 +270,13 @@ func (msg *Error) MessageType() MessageType {
 	return ERROR
 }
 
-// [PUBLISH, Request|id, Options|dict, Topic|uri]
-// [PUBLISH, Request|id, Options|dict, Topic|uri, Arguments|list]
-// [PUBLISH, Request|id, Options|dict, Topic|uri, Arguments|list, ArgumentsKw|dict]
+// [PUBLISH, Request|id, Options|dict, Domain|uri]
+// [PUBLISH, Request|id, Options|dict, Domain|uri, Arguments|list]
+// [PUBLISH, Request|id, Options|dict, Domain|uri, Arguments|list, ArgumentsKw|dict]
 type Publish struct {
 	Request     uint
 	Options     map[string]interface{}
-	Topic       string
+	Domain      string
 	Arguments   []interface{}          `wamp:"omitempty"`
 	ArgumentsKw map[string]interface{} `wamp:"omitempty"`
 }
@@ -296,11 +295,11 @@ func (msg *Published) MessageType() MessageType {
 	return PUBLISHED
 }
 
-// [SUBSCRIBE, Request|id, Options|dict, Topic|uri]
+// [SUBSCRIBE, Request|id, Options|dict, Domain|uri]
 type Subscribe struct {
 	Request uint
 	Options map[string]interface{}
-	Topic   string
+	Domain  string
 }
 
 func (msg *Subscribe) MessageType() MessageType {
@@ -359,13 +358,13 @@ type CallResult struct {
 	Err    string
 }
 
-// [CALL, Request|id, Options|dict, Procedure|uri]
-// [CALL, Request|id, Options|dict, Procedure|uri, Arguments|list]
-// [CALL, Request|id, Options|dict, Procedure|uri, Arguments|list, ArgumentsKw|dict]
+// [CALL, Request|id, Options|dict, Domain|uri]
+// [CALL, Request|id, Options|dict, Domain|uri, Arguments|list]
+// [CALL, Request|id, Options|dict, Domain|uri, Arguments|list, ArgumentsKw|dict]
 type Call struct {
 	Request     uint
 	Options     map[string]interface{}
-	Procedure   string
+	Domain      string
 	Arguments   []interface{}          `wamp:"omitempty"`
 	ArgumentsKw map[string]interface{} `wamp:"omitempty"`
 }
@@ -388,11 +387,11 @@ func (msg *Result) MessageType() MessageType {
 	return RESULT
 }
 
-// [REGISTER, Request|id, Options|dict, Procedure|uri]
+// [REGISTER, Request|id, Options|dict, Domain|uri]
 type Register struct {
-	Request   uint
-	Options   map[string]interface{}
-	Procedure string
+	Request uint
+	Options map[string]interface{}
+	Domain  string
 }
 
 func (msg *Register) MessageType() MessageType {
@@ -502,15 +501,15 @@ func destination(m *Message) (string, error) {
 	switch msg := msg.(type) {
 
 	case *Publish:
-		return msg.Topic, nil
+		return msg.Domain, nil
 	case *Subscribe:
-		return msg.Topic, nil
+		return msg.Domain, nil
 
 	// Dealer messages
 	case *Register:
-		return msg.Procedure, nil
+		return msg.Domain, nil
 	case *Call:
-		return msg.Procedure, nil
+		return msg.Domain, nil
 
 	default:
 		//log.Println("Unhandled message:", msg.MessageType())

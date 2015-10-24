@@ -33,11 +33,11 @@ const (
 
 	// A Dealer could not perform a call, since no procedure is currently
 	// registered under the given URI.
-	ErrNoSuchProcedure = "wamp.error.no_such_procedure"
+	ErrNoSuchDomain = "wamp.error.no_such_procedure"
 
 	// A procedure could not be registered, since a procedure with the given URI
 	// is already registered.
-	ErrProcedureAlreadyExists = "wamp.error.procedure_already_exists"
+	ErrDomainAlreadyExists = "wamp.error.procedure_already_exists"
 
 	// A Dealer could not perform an unregister, since the given registration is
 	// not active.

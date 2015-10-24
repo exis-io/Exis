@@ -307,7 +307,7 @@ func (c *Client) Subscribe(topic string, fn EventHandler) error {
 	sub := &Subscribe{
 		Request: id,
 		Options: make(map[string]interface{}),
-		Topic:   topic,
+		Domain:  topic,
 	}
 	if err := c.Send(sub); err != nil {
 		return err
@@ -375,9 +375,9 @@ func (c *Client) Register(procedure string, fn MethodHandler, options map[string
 	id := NewID()
 	c.registerListener(id)
 	register := &Register{
-		Request:   id,
-		Options:   options,
-		Procedure: procedure,
+		Request: id,
+		Options: options,
+		Domain:  procedure,
 	}
 	if err := c.Send(register); err != nil {
 		return err
@@ -423,7 +423,7 @@ func (c *Client) Unregister(procedure string) error {
 		}
 	}
 	if !found {
-		return fmt.Errorf("Procedure %s is not registered with this client.", procedure)
+		return fmt.Errorf("Domain %s is not registered with this client.", procedure)
 	}
 	id := NewID()
 	c.registerListener(id)
@@ -454,7 +454,7 @@ func (c *Client) Publish(topic string, args []interface{}, kwargs map[string]int
 	return c.Send(&Publish{
 		Request:     NewID(),
 		Options:     make(map[string]interface{}),
-		Topic:       topic,
+		Domain:      topic,
 		Arguments:   args,
 		ArgumentsKw: kwargs,
 	})
@@ -467,7 +467,7 @@ func (c *Client) Call(procedure string, args []interface{}, kwargs map[string]in
 
 	call := &Call{
 		Request:     id,
-		Procedure:   procedure,
+		Domain:      procedure,
 		Options:     make(map[string]interface{}),
 		Arguments:   args,
 		ArgumentsKw: kwargs,
