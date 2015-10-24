@@ -55,11 +55,11 @@ type websocketPeer struct {
 func NewWebsocketPeer(serialization Serialization, url, origin string) (Peer, error) {
 	switch serialization {
 	case JSON:
-		return newWebsocketPeer(url, jsonWebsocketProtocol, origin,
+		return newWebsocketPeer(url, "wamp.2.json", origin,
 			new(JSONSerializer), websocket.TextMessage,
 		)
 	case MSGPACK:
-		return newWebsocketPeer(url, msgpackWebsocketProtocol, origin,
+		return newWebsocketPeer(url, "wamp.2.msgpack", origin,
 			new(MessagePackSerializer), websocket.BinaryMessage,
 		)
 	default:
