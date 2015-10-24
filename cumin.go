@@ -35,16 +35,13 @@ func Cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 	}
 
 	// Perform the call
-	var result []reflect.Value
-	result = reflect.ValueOf(fn).Call(values)
-	// fmt.Println("Cumin result: ", result[0].Int())
+	result := reflect.ValueOf(fn).Call(values)
 
 	for _, x := range result {
 		ret = append(ret, x.Interface())
 	}
 
-	// Return the result of the function
-
 	// Catch any exceptions this produces and pass them to the function that sent them... or a handler block?
+
 	return ret, nil
 }
