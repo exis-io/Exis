@@ -63,17 +63,20 @@ func Start(url string, domain string) (*Session, error) {
 type EventHandler func(args []interface{}, kwargs map[string]interface{})
 
 // Subscribe registers the EventHandler to be called for every message in the provided topic.
-func (c *Session) Subscribe(topic string, fn EventHandler) error {
+func (c *Session) Subscribe(topic string, fn interface{}) error {
 	id := NewID()
 	c.registerListener(id)
+
 	sub := &Subscribe{
 		Request: id,
 		Options: make(map[string]interface{}),
 		Domain:  topic,
 	}
+
 	if err := c.Send(sub); err != nil {
 		return err
 	}
+
 	// wait to receive SUBSCRIBED message
 	msg, err := c.waitOnListener(id)
 	if err != nil {
@@ -132,7 +135,6 @@ type MethodHandler func(
 	args []interface{}, kwargs map[string]interface{}, details map[string]interface{},
 ) (result *CallResult)
 
-// Register registers a MethodHandler procedure with the Node.
 func (c *Session) Register(procedure string, fn interface{}, options map[string]interface{}) error {
 	id := NewID()
 	c.registerListener(id)
@@ -157,7 +159,6 @@ func (c *Session) Register(procedure string, fn interface{}, options map[string]
 		return fmt.Errorf(formatUnexpectedMessage(msg, REGISTERED))
 	} else {
 		// register the event handler with this registration
-		fmt.Println(registered)
 		c.procedures[registered.Registration] = &procedureDesc{procedure, fn}
 	}
 	return nil

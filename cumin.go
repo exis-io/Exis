@@ -35,10 +35,12 @@ func Cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 	}
 
 	// Perform the call
-	result := reflect.ValueOf(fn).Call(values)
+	var result []reflect.Value
+	result = reflect.ValueOf(fn).Call(values)
+	// fmt.Println("Cumin result: ", result[0].Int())
 
-	for x := range result {
-		ret = append(ret, x)
+	for _, x := range result {
+		ret = append(ret, x.Interface())
 	}
 
 	// Return the result of the function

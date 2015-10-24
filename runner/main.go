@@ -17,20 +17,27 @@ func someFunc(a string, b int) int {
 
 var kill chan bool
 
-// func subArrived(args []interface{}, kwargs map[string]interface{}, details map[string]interface{}) (result *riffle.CallResult) {
-// 	fmt.Println("\nCall received with args: %s", args)
+func subArrived(args []interface{}, kwargs map[string]interface{}, details map[string]interface{}) (result *riffle.CallResult) {
+	fmt.Println("\nCall received with args: %s", args)
 
-// 	kill <- true
+	kill <- true
 
-// 	result = &riffle.CallResult{
-// 		Args: make([]interface{}, 0),
-// 	}
+	result = &riffle.CallResult{
+		Args: make([]interface{}, 0),
+	}
 
-// 	return
-// }
+	return
+}
 
-func someCall(a int, b int) {
-	fmt.Println("\nCall received with args: %s, %s", a, b)
+func someCall(a int, b int) int {
+	ret := a + b
+
+	fmt.Println("Call received with args and return:", a, b, ret)
+	return ret
+}
+
+func somePub(a int, b int) {
+	fmt.Println("Pub received with args:", a, b)
 	kill <- true
 }
 
@@ -44,14 +51,9 @@ func testBasicRiffle() {
 		return
 	}
 
-	// url := "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
-	// client, _ := riffle.NewWebsocketSession(riffle.JSON, url)
-
-	// "Join a realm", which means try to authenticate using the hackied old system
-	// session.JoinRealm("xs.testerer", nil)
-	// go client.Receive()
-
 	session.Register("xs.testerer/hello", someCall, nil)
+	session.Subscribe("xs.testerer/sub", somePub)
+
 	// client.Call("xs.testerer/hello", nil, nil)
 
 	// End when the client is disconnected

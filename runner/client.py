@@ -21,8 +21,10 @@ class Component(ApplicationSession):
         print("session attached")
 
         res = yield self.call('xs.testerer/hello', 2, 3)
-        # print 'Called add with 2 + 3 = ', res
+        print 'Called add with 2 + 3 = ', res
 
+        res = yield self.publish('xs.testerer/sub', 2, 3)
+        print 'Published'
         # print 'Asking the other guy to die'
         # res = yield self.call('pd.damouse/kill')
 
@@ -34,10 +36,6 @@ class Component(ApplicationSession):
     def onDisconnect(self):
         print("disconnected")
         reactor.stop()
-
-    def pong(self):
-        print 'Pong! Server was able to route the message in!'
-        self.leave()
 
 
 if __name__ == '__main__':

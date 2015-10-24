@@ -39,7 +39,7 @@ type procedureDesc struct {
 
 type eventDesc struct {
 	topic   string
-	handler EventHandler
+	handler interface{}
 }
 
 type AuthFunc func(map[string]interface{}, map[string]interface{}) (string, map[string]interface{}, error)
@@ -82,7 +82,8 @@ func (c *Session) Receive() {
 
 		case *Event:
 			if event, ok := c.events[msg.Subscription]; ok {
-				go event.handler(msg.Arguments, msg.ArgumentsKw)
+				go Cumin(event.handler, msg.Arguments)
+				// go event.handler(msg.Arguments, msg.ArgumentsKw)
 			} else {
 				//log.Println("no handler registered for subscription:", msg.Subscription)
 			}
@@ -128,47 +129,26 @@ func (c *Session) notifyListener(msg Message, requestId uint) {
 }
 
 func (c *Session) handleInvocation(msg *Invocation) {
-	fmt.Printf("Invocation in: %s", *msg)
 	if proc, ok := c.procedures[msg.Registration]; ok {
 		go func() {
-			// result := proc.handler(msg.Arguments, msg.ArgumentsKw, msg.Details)
 			result, err := Cumin(proc.handler, msg.Arguments)
 
+			// fmt.Println("Result: ", result)
 			var tosend Message
 
-			// tosend = &Yield{
-			// 	Request:     msg.Request,
-			// 	Options:     make(map[string]interface{}),
-			// 	Arguments:   result.Args,
-			// 	ArgumentsKw: result.Kwargs,
-			// }
-
-			// if result.Err != "" {
-			// 	tosend = &Error{
-			// 		Type:        INVOCATION,
-			// 		Request:     msg.Request,
-			// 		Details:     make(map[string]interface{}),
-			// 		Arguments:   result.Args,
-			// 		ArgumentsKw: result.Kwargs,
-			// 		Error:       result.Err,
-			// 	}
-			// }
-
 			tosend = &Yield{
-				Request:     msg.Request,
-				Options:     make(map[string]interface{}),
-				Arguments:   result,
-				ArgumentsKw: make(map[string]interface{}),
+				Request:   msg.Request,
+				Options:   make(map[string]interface{}),
+				Arguments: result,
 			}
 
 			if err != nil {
 				tosend = &Error{
-					Type:        INVOCATION,
-					Request:     msg.Request,
-					Details:     make(map[string]interface{}),
-					Arguments:   result,
-					ArgumentsKw: make(map[string]interface{}),
-					Error:       err.Error(),
+					Type:      INVOCATION,
+					Request:   msg.Request,
+					Details:   make(map[string]interface{}),
+					Arguments: result,
+					Error:     err.Error(),
 				}
 			}
 
