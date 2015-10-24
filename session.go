@@ -13,10 +13,15 @@ type Session struct {
 	Auth           map[string]AuthFunc
 	ReceiveDone    chan bool
 	listeners      map[uint]chan Message
-	events         map[uint]*eventDesc
-	procedures     map[uint]*procedureDesc
+	events         map[uint]*boundEndpoint
+	procedures     map[uint]*boundEndpoint
 	requestCount   uint
 	pdid           string
+}
+
+type boundEndpoint struct {
+	endpoint string
+	handler  interface{}
 }
 
 // Connect to the node with the given URL
@@ -46,8 +51,8 @@ func Start(url string, domain string) (*Session, error) {
 		Connection:     connection,
 		ReceiveTimeout: 10 * time.Second,
 		listeners:      make(map[uint]chan Message),
-		events:         make(map[uint]*eventDesc),
-		procedures:     make(map[uint]*procedureDesc),
+		events:         make(map[uint]*boundEndpoint),
+		procedures:     make(map[uint]*boundEndpoint),
 		requestCount:   0,
 	}
 
@@ -84,27 +89,17 @@ func (c *Session) Subscribe(topic string, fn interface{}) error {
 		return fmt.Errorf(formatUnexpectedMessage(msg, SUBSCRIBED))
 	} else {
 		// register the event handler with this subscription
-		c.events[subscribed.Subscription] = &eventDesc{topic, fn}
+		c.events[subscribed.Subscription] = &boundEndpoint{topic, fn}
 	}
 	return nil
 }
 
 // Unsubscribe removes the registered EventHandler from the topic.
 func (c *Session) Unsubscribe(topic string) error {
-	var (
-		subscriptionID uint
-		found          bool
-	)
+	subscriptionID, _, ok := bindingForEndpoint(c.events, topic)
 
-	for id, desc := range c.events {
-		if desc.topic == topic {
-			subscriptionID = id
-			found = true
-		}
-	}
-
-	if !found {
-		return fmt.Errorf("Event %s is not registered with this client.", topic)
+	if !ok {
+		return fmt.Errorf("Domain %s is not registered with this client.", topic)
 	}
 
 	id := NewID()
@@ -157,31 +152,22 @@ func (c *Session) Register(procedure string, fn interface{}, options map[string]
 		return fmt.Errorf(formatUnexpectedMessage(msg, REGISTERED))
 	} else {
 		// register the event handler with this registration
-		c.procedures[registered.Registration] = &procedureDesc{procedure, fn}
+		c.procedures[registered.Registration] = &boundEndpoint{procedure, fn}
 	}
 	return nil
 }
 
 // Unregister removes a procedure with the Node
 func (c *Session) Unregister(procedure string) error {
-	var (
-		procedureID uint
-		found       bool
-	)
+	procedureID, _, ok := bindingForEndpoint(c.procedures, procedure)
 
-	for id, p := range c.procedures {
-		if p.name == procedure {
-			procedureID = id
-			found = true
-		}
-	}
-
-	if !found {
+	if !ok {
 		return fmt.Errorf("Domain %s is not registered with this client.", procedure)
 	}
 
 	id := NewID()
 	c.registerListener(id)
+
 	unregister := &Unregister{
 		Request:      id,
 		Registration: procedureID,
@@ -337,4 +323,14 @@ func (c *Session) joinRealmCRA(realm string, details map[string]interface{}) (ma
 		go c.Receive()
 		return welcome.Details, nil
 	}
+}
+
+func bindingForEndpoint(bindings map[uint]*boundEndpoint, endpoint string) (uint, *boundEndpoint, bool) {
+	for id, p := range bindings {
+		if p.endpoint == endpoint {
+			return id, p, true
+		}
+	}
+
+	return 0, nil, false
 }

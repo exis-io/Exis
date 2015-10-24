@@ -32,16 +32,6 @@ type Connection interface {
 	Receive() <-chan Message
 }
 
-type procedureDesc struct {
-	name    string
-	handler interface{}
-}
-
-type eventDesc struct {
-	topic   string
-	handler interface{}
-}
-
 type AuthFunc func(map[string]interface{}, map[string]interface{}) (string, map[string]interface{}, error)
 
 func formatUnexpectedMessage(msg Message, expected MessageType) string {
