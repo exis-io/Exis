@@ -59,9 +59,6 @@ func Start(url string, domain string) (*Session, error) {
 // Handler methods
 /////////////////////////////////////////////
 
-// EventHandler handles a publish event.
-type EventHandler func(args []interface{}, kwargs map[string]interface{})
-
 // Subscribe registers the EventHandler to be called for every message in the provided topic.
 func (c *Session) Subscribe(topic string, fn interface{}) error {
 	id := NewID()
@@ -98,25 +95,30 @@ func (c *Session) Unsubscribe(topic string) error {
 		subscriptionID uint
 		found          bool
 	)
+
 	for id, desc := range c.events {
 		if desc.topic == topic {
 			subscriptionID = id
 			found = true
 		}
 	}
+
 	if !found {
 		return fmt.Errorf("Event %s is not registered with this client.", topic)
 	}
 
 	id := NewID()
 	c.registerListener(id)
+
 	sub := &Unsubscribe{
 		Request:      id,
 		Subscription: subscriptionID,
 	}
+
 	if err := c.Send(sub); err != nil {
 		return err
 	}
+
 	// wait to receive UNSUBSCRIBED message
 	msg, err := c.waitOnListener(id)
 	if err != nil {
@@ -126,14 +128,10 @@ func (c *Session) Unsubscribe(topic string) error {
 	} else if _, ok := msg.(*Unsubscribed); !ok {
 		return fmt.Errorf(formatUnexpectedMessage(msg, UNSUBSCRIBED))
 	}
+
 	delete(c.events, subscriptionID)
 	return nil
 }
-
-// MethodHandler is an RPC endpoint.
-type MethodHandler func(
-	args []interface{}, kwargs map[string]interface{}, details map[string]interface{},
-) (result *CallResult)
 
 func (c *Session) Register(procedure string, fn interface{}, options map[string]interface{}) error {
 	id := NewID()
@@ -209,11 +207,11 @@ func (c *Session) Unregister(procedure string) error {
 }
 
 // Publish publishes an EVENT to all subscribed peers.
-func (c *Session) Publish(topic string, args ...interface{}) error {
+func (c *Session) Publish(endpoint string, args ...interface{}) error {
 	return c.Send(&Publish{
 		Request:   NewID(),
 		Options:   make(map[string]interface{}),
-		Domain:    topic,
+		Domain:    endpoint,
 		Arguments: args,
 	})
 }
