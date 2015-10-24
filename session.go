@@ -237,16 +237,16 @@ func (c *Client) JoinRealm(realm string, details map[string]interface{}) (map[st
     }
 
     if err := c.Send(&Hello{Realm: realm, Details: details}); err != nil {
-        c.Peer.Close()
+        c.Connection.Close()
         return nil, err
     }
 
-    if msg, err := GetMessageTimeout(c.Peer, c.ReceiveTimeout); err != nil {
-        c.Peer.Close()
+    if msg, err := GetMessageTimeout(c.Connection, c.ReceiveTimeout); err != nil {
+        c.Connection.Close()
         return nil, err
     } else if welcome, ok := msg.(*Welcome); !ok {
         c.Send(abortUnexpectedMsg)
-        c.Peer.Close()
+        c.Connection.Close()
         return nil, fmt.Errorf(formatUnexpectedMessage(msg, WELCOME))
     } else {
         go c.Receive()
@@ -262,34 +262,34 @@ func (c *Client) joinRealmCRA(realm string, details map[string]interface{}) (map
     }
     details["authmethods"] = authmethods
     if err := c.Send(&Hello{Realm: realm, Details: details}); err != nil {
-        c.Peer.Close()
+        c.Connection.Close()
         return nil, err
     }
-    if msg, err := GetMessageTimeout(c.Peer, c.ReceiveTimeout); err != nil {
-        c.Peer.Close()
+    if msg, err := GetMessageTimeout(c.Connection, c.ReceiveTimeout); err != nil {
+        c.Connection.Close()
         return nil, err
     } else if challenge, ok := msg.(*Challenge); !ok {
         c.Send(abortUnexpectedMsg)
-        c.Peer.Close()
+        c.Connection.Close()
         return nil, fmt.Errorf(formatUnexpectedMessage(msg, CHALLENGE))
     } else if authFunc, ok := c.Auth[challenge.AuthMethod]; !ok {
         c.Send(abortNoAuthHandler)
-        c.Peer.Close()
+        c.Connection.Close()
         return nil, fmt.Errorf("no auth handler for method: %s", challenge.AuthMethod)
     } else if signature, authDetails, err := authFunc(details, challenge.Extra); err != nil {
         c.Send(abortAuthFailure)
-        c.Peer.Close()
+        c.Connection.Close()
         return nil, err
     } else if err := c.Send(&Authenticate{Signature: signature, Extra: authDetails}); err != nil {
-        c.Peer.Close()
+        c.Connection.Close()
         return nil, err
     }
-    if msg, err := GetMessageTimeout(c.Peer, c.ReceiveTimeout); err != nil {
-        c.Peer.Close()
+    if msg, err := GetMessageTimeout(c.Connection, c.ReceiveTimeout); err != nil {
+        c.Connection.Close()
         return nil, err
     } else if welcome, ok := msg.(*Welcome); !ok {
         c.Send(abortUnexpectedMsg)
-        c.Peer.Close()
+        c.Connection.Close()
         return nil, fmt.Errorf(formatUnexpectedMessage(msg, WELCOME))
     } else {
         go c.Receive()

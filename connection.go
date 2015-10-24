@@ -5,13 +5,22 @@ import (
     "time"
 )
 
+// A Sender can send a message to its peer.
+//
+// For clients, this sends a message to the Node, and for Nodes,
+// this sends a message to the client.
+type Sender interface {
+    // Send a message to the peer
+    Send(Message) error
+}
+
 // AuthFunc takes the HELLO details and CHALLENGE details and returns the
 // signature string and a details map
 type AuthFunc func(map[string]interface{}, map[string]interface{}) (string, map[string]interface{}, error)
 
 // A Client routes messages to/from a WAMP Node.
 type Client struct {
-    Peer
+    Connection
     ReceiveTimeout time.Duration
     Auth           map[string]AuthFunc
     ReceiveDone    chan bool
@@ -34,12 +43,12 @@ type eventDesc struct {
 
 // Creates a new websocket client.
 func NewWebsocketClient(serialization Serialization, url string) (*Client, error) {
-    p, err := NewWebsocketPeer(serialization, url, "")
+    p, err := NewWebsocketConnection(serialization, url, "")
     if err != nil {
         return nil, err
     }
     return &Client{
-        Peer:           p,
+        Connection:     p,
         ReceiveTimeout: 10 * time.Second,
         listeners:      make(map[uint]chan Message),
         events:         make(map[uint]*eventDesc),
@@ -78,7 +87,7 @@ func (c *Client) Close() error {
         return err
     }
 
-    if err := c.Peer.Close(); err != nil {
+    if err := c.Connection.Close(); err != nil {
         return fmt.Errorf("error closing client connection: %v", err)
     }
     return nil
@@ -93,7 +102,7 @@ func (c *Client) Close() error {
 //
 // This function blocks and is most commonly run in a goroutine.
 func (c *Client) Receive() {
-    for msg := range c.Peer.Receive() {
+    for msg := range c.Connection.Receive() {
 
         switch msg := msg.(type) {
 
