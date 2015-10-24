@@ -53,7 +53,13 @@ func (c *Client) JoinRealm(realm string, details map[string]interface{}) (map[st
 		details = map[string]interface{}{}
 	}
 
-	details["roles"] = clientRoles()
+	details["roles"] = map[string]map[string]interface{}{
+		"publisher":  make(map[string]interface{}),
+		"subscriber": make(map[string]interface{}),
+		"callee":     make(map[string]interface{}),
+		"caller":     make(map[string]interface{}),
+	}
+
 	if c.Auth != nil && len(c.Auth) > 0 {
 		return c.joinRealmCRA(realm, details)
 	}
@@ -123,15 +129,6 @@ func (c *Client) joinRealmCRA(realm string, details map[string]interface{}) (map
 	}
 }
 
-func clientRoles() map[string]map[string]interface{} {
-	return map[string]map[string]interface{}{
-		"publisher":  make(map[string]interface{}),
-		"subscriber": make(map[string]interface{}),
-		"callee":     make(map[string]interface{}),
-		"caller":     make(map[string]interface{}),
-	}
-}
-
 func formatUnexpectedMessage(msg Message, expected MessageType) string {
 	s := fmt.Sprintf("received unexpected %s message while waiting for %s", msg.MessageType(), expected)
 	switch m := msg.(type) {
@@ -169,6 +166,7 @@ func (c *Client) Close() error {
 	if err := c.LeaveRealm(); err != nil {
 		return err
 	}
+
 	if err := c.Peer.Close(); err != nil {
 		return fmt.Errorf("error closing client connection: %v", err)
 	}
@@ -374,11 +372,13 @@ type MethodHandler func(
 func (c *Client) Register(procedure string, fn MethodHandler, options map[string]interface{}) error {
 	id := NewID()
 	c.registerListener(id)
+
 	register := &Register{
 		Request: id,
 		Options: options,
 		Domain:  procedure,
 	}
+
 	if err := c.Send(register); err != nil {
 		return err
 	}
@@ -398,39 +398,31 @@ func (c *Client) Register(procedure string, fn MethodHandler, options map[string
 	return nil
 }
 
-// BasicMethodHandler is an RPC endpoint that doesn't expect the `Details` map
-type BasicMethodHandler func(args []interface{}, kwargs map[string]interface{}) (result *CallResult)
-
-// BasicRegister registers a BasicMethodHandler procedure with the Node
-func (c *Client) BasicRegister(procedure string, fn BasicMethodHandler) error {
-	wrap := func(args []interface{}, kwargs map[string]interface{},
-		details map[string]interface{}) (result *CallResult) {
-		return fn(args, kwargs)
-	}
-	return c.Register(procedure, wrap, make(map[string]interface{}))
-}
-
 // Unregister removes a procedure with the Node
 func (c *Client) Unregister(procedure string) error {
 	var (
 		procedureID uint
 		found       bool
 	)
+
 	for id, p := range c.procedures {
 		if p.name == procedure {
 			procedureID = id
 			found = true
 		}
 	}
+
 	if !found {
 		return fmt.Errorf("Domain %s is not registered with this client.", procedure)
 	}
+
 	id := NewID()
 	c.registerListener(id)
 	unregister := &Unregister{
 		Request:      id,
 		Registration: procedureID,
 	}
+
 	if err := c.Send(unregister); err != nil {
 		return err
 	}
@@ -444,6 +436,7 @@ func (c *Client) Unregister(procedure string) error {
 	} else if _, ok := msg.(*Unregistered); !ok {
 		return fmt.Errorf(formatUnexpectedMessage(msg, UNREGISTERED))
 	}
+
 	// register the event handler with this unregistration
 	delete(c.procedures, procedureID)
 	return nil

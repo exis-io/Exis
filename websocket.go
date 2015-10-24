@@ -71,6 +71,7 @@ func newWebsocketPeer(url, protocol, origin string, serializer Serializer, paylo
 	dialer := websocket.Dialer{
 		Subprotocols: []string{protocol},
 	}
+
 	conn, _, err := dialer.Dial(url, nil)
 	if err != nil {
 		return nil, err
@@ -91,17 +92,22 @@ func newWebsocketPeer(url, protocol, origin string, serializer Serializer, paylo
 // TODO: make this just add the message to a channel so we don't block
 func (ep *websocketPeer) Send(msg Message) error {
 	b, err := ep.serializer.Serialize(msg)
+
 	if err != nil {
 		return err
 	}
+
 	ep.connLock.Lock()
 	err = ep.conn.WriteMessage(ep.payloadType, b)
 	ep.connLock.Unlock()
+
 	return err
 }
+
 func (ep *websocketPeer) Receive() <-chan Message {
 	return ep.messages
 }
+
 func (ep *websocketPeer) Close() error {
 	closeMsg := websocket.FormatCloseMessage(websocket.CloseNormalClosure, "goodbye")
 	err := ep.conn.WriteControl(websocket.CloseMessage, closeMsg, time.Now().Add(5*time.Second))
