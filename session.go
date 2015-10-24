@@ -15,7 +15,7 @@ const (
 type Session struct {
 	Peer
 	Id   uint
-	pdid URI
+	pdid string
 
 	// authid is the highest domain the agent has been authenticated as,
 	// so it is the one we should use for permissions checking.
@@ -24,7 +24,7 @@ type Session struct {
 	// TODO: Remove once authentication is enabled for all agents.
 	authLevel int
 
-	kill chan URI
+	kill chan string
 }
 
 func (s Session) String() string {

@@ -183,14 +183,9 @@ const (
 	YIELD        MessageType = 70 //	Rx 	Tx
 )
 
-// URIs are dot-separated identifiers, where each component *should* only contain letters, numbers or underscores.
-//
-// See the documentation for specifics: https://github.com/tavendo/WAMP/blob/master/spec/basic.md#uris
-type URI string
-
 // [HELLO, Realm|uri, Details|dict]
 type Hello struct {
-	Realm   URI
+	Realm   string
 	Details map[string]interface{}
 }
 
@@ -211,7 +206,7 @@ func (msg *Welcome) MessageType() MessageType {
 // [ABORT, Details|dict, Reason|uri]
 type Abort struct {
 	Details map[string]interface{}
-	Reason  URI
+	Reason  string
 }
 
 func (msg *Abort) MessageType() MessageType {
@@ -241,7 +236,7 @@ func (msg *Authenticate) MessageType() MessageType {
 // [GOODBYE, Details|dict, Reason|uri]
 type Goodbye struct {
 	Details map[string]interface{}
-	Reason  URI
+	Reason  string
 }
 
 func (msg *Goodbye) MessageType() MessageType {
@@ -267,7 +262,7 @@ type Error struct {
 	Type        MessageType
 	Request     uint
 	Details     map[string]interface{}
-	Error       URI
+	Error       string
 	Arguments   []interface{}          `wamp:"omitempty"`
 	ArgumentsKw map[string]interface{} `wamp:"omitempty"`
 }
@@ -282,7 +277,7 @@ func (msg *Error) MessageType() MessageType {
 type Publish struct {
 	Request     uint
 	Options     map[string]interface{}
-	Topic       URI
+	Topic       string
 	Arguments   []interface{}          `wamp:"omitempty"`
 	ArgumentsKw map[string]interface{} `wamp:"omitempty"`
 }
@@ -305,7 +300,7 @@ func (msg *Published) MessageType() MessageType {
 type Subscribe struct {
 	Request uint
 	Options map[string]interface{}
-	Topic   URI
+	Topic   string
 }
 
 func (msg *Subscribe) MessageType() MessageType {
@@ -361,7 +356,7 @@ func (msg *Event) MessageType() MessageType {
 type CallResult struct {
 	Args   []interface{}
 	Kwargs map[string]interface{}
-	Err    URI
+	Err    string
 }
 
 // [CALL, Request|id, Options|dict, Procedure|uri]
@@ -370,7 +365,7 @@ type CallResult struct {
 type Call struct {
 	Request     uint
 	Options     map[string]interface{}
-	Procedure   URI
+	Procedure   string
 	Arguments   []interface{}          `wamp:"omitempty"`
 	ArgumentsKw map[string]interface{} `wamp:"omitempty"`
 }
@@ -397,7 +392,7 @@ func (msg *Result) MessageType() MessageType {
 type Register struct {
 	Request   uint
 	Options   map[string]interface{}
-	Procedure URI
+	Procedure string
 }
 
 func (msg *Register) MessageType() MessageType {
@@ -501,7 +496,7 @@ func (e NoDestinationError) Error() string {
 }
 
 // Given a message, return the intended endpoint
-func destination(m *Message) (URI, error) {
+func destination(m *Message) (string, error) {
 	msg := *m
 
 	switch msg := msg.(type) {

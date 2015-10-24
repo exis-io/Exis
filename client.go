@@ -18,7 +18,7 @@ type Client struct {
 	events       map[uint]*eventDesc
 	procedures   map[uint]*procedureDesc
 	requestCount uint
-	pdid         URI
+	pdid         string
 }
 
 type procedureDesc struct {
@@ -58,7 +58,7 @@ func (c *Client) JoinRealm(realm string, details map[string]interface{}) (map[st
 		return c.joinRealmCRA(realm, details)
 	}
 
-	if err := c.Send(&Hello{Realm: URI(realm), Details: details}); err != nil {
+	if err := c.Send(&Hello{Realm: realm, Details: details}); err != nil {
 		c.Peer.Close()
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func (c *Client) joinRealmCRA(realm string, details map[string]interface{}) (map
 		authmethods = append(authmethods, m)
 	}
 	details["authmethods"] = authmethods
-	if err := c.Send(&Hello{Realm: URI(realm), Details: details}); err != nil {
+	if err := c.Send(&Hello{Realm: realm, Details: details}); err != nil {
 		c.Peer.Close()
 		return nil, err
 	}
@@ -269,7 +269,7 @@ func (c *Client) handleInvocation(msg *Invocation) {
 			Type:    INVOCATION,
 			Request: msg.Request,
 			Details: make(map[string]interface{}),
-			Error:   URI(fmt.Sprintf("no handler for registration: %v", msg.Registration)),
+			Error:   fmt.Sprintf("no handler for registration: %v", msg.Registration),
 		}); err != nil {
 			//log.Println("error sending message:", err)
 		}
@@ -307,7 +307,7 @@ func (c *Client) Subscribe(topic string, fn EventHandler) error {
 	sub := &Subscribe{
 		Request: id,
 		Options: make(map[string]interface{}),
-		Topic:   URI(topic),
+		Topic:   topic,
 	}
 	if err := c.Send(sub); err != nil {
 		return err
@@ -377,7 +377,7 @@ func (c *Client) Register(procedure string, fn MethodHandler, options map[string
 	register := &Register{
 		Request:   id,
 		Options:   options,
-		Procedure: URI(procedure),
+		Procedure: procedure,
 	}
 	if err := c.Send(register); err != nil {
 		return err
@@ -454,7 +454,7 @@ func (c *Client) Publish(topic string, args []interface{}, kwargs map[string]int
 	return c.Send(&Publish{
 		Request:     NewID(),
 		Options:     make(map[string]interface{}),
-		Topic:       URI(topic),
+		Topic:       topic,
 		Arguments:   args,
 		ArgumentsKw: kwargs,
 	})
@@ -467,7 +467,7 @@ func (c *Client) Call(procedure string, args []interface{}, kwargs map[string]in
 
 	call := &Call{
 		Request:     id,
-		Procedure:   URI(procedure),
+		Procedure:   procedure,
 		Options:     make(map[string]interface{}),
 		Arguments:   args,
 		ArgumentsKw: kwargs,

@@ -9,7 +9,7 @@ package riffle
 
 // func newTestNode() *node {
 // 	Node := NewNode()
-// 	Node.RegisterRealm(URI("turnpike.test"), Realm{})
+// 	Node.RegisterRealm("turnpike.test", Realm{})
 // 	return Node.(*node)
 // }
 
@@ -47,7 +47,7 @@ package riffle
 // func TestJoinRealmWithAuth(t *testing.T) {
 // 	Convey("Given a server accepting client connections", t, func() {
 // 		Node := newTestNode()
-// 		Node.RegisterRealm(URI("turnpike.test.auth"), Realm{
+// 		Node.RegisterRealm("turnpike.test.auth", Realm{
 // 			CRAuthenticators: map[string]CRAuthenticator{"testauth": &testCRAuthenticator{}},
 // 		})
 

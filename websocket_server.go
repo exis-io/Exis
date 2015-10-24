@@ -84,7 +84,7 @@ const (
 // // GetLocalClient returns a client connected to the specified realm
 // func (s *WebsocketServer) GetLocalClient(realm string, details map[string]interface{}) (*Client, error) {
 // 	//out.Debug("Request for local client for realm: %s", realm)
-// 	if peer, err := s.Node.GetLocalPeer(URI(realm), details); err != nil {
+// 	if peer, err := s.Node.GetLocalPeer(realm, details); err != nil {
 // 		return nil, err
 // 	} else {
 // 		c := NewClient(peer)
