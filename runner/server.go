@@ -6,7 +6,7 @@ import (
 	"github.com/exis-io/riffle"
 )
 
-var kill chan bool
+var session *riffle.Session
 
 func someCall(a int, b int) int {
 	ret := a + b
@@ -17,13 +17,12 @@ func someCall(a int, b int) int {
 
 func somePub(a int, b int) {
 	fmt.Println("Pub received with args:", a, b)
-	kill <- true
+	session.Leave()
 }
 
 func main() {
-	kill = make(chan bool)
-
-	session, err := riffle.Start("ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws", "xs.gotestserver")
+	s, err := riffle.Start("ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws", "xs.gotestserver")
+	session = s
 
 	if err != nil {
 		fmt.Println(err)
@@ -33,8 +32,8 @@ func main() {
 	session.Register("xs.gotestserver/hello", someCall, nil)
 	session.Subscribe("xs.gotestserver/sub", somePub)
 
-	// End when the client is disconnected
-	<-kill
+	// Block and recieve
+	session.Receive()
 
 	fmt.Println("Done!")
 }

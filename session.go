@@ -2,6 +2,7 @@ package riffle
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -58,6 +59,49 @@ func Start(url string, domain string) (*Session, error) {
 
 	client.JoinRealm(domain, nil)
 	return client, nil
+}
+
+// Receive handles messages from the server until this client disconnects.
+// This function blocks and is most commonly run in a goroutine.
+func (c *Session) Receive() {
+	for msg := range c.Connection.Receive() {
+
+		switch msg := msg.(type) {
+
+		case *Event:
+			if event, ok := c.events[msg.Subscription]; ok {
+				go Cumin(event.handler, msg.Arguments)
+			} else {
+				log.Println("no handler registered for subscription:", msg.Subscription)
+			}
+
+		case *Invocation:
+			c.handleInvocation(msg)
+
+		case *Registered:
+			c.notifyListener(msg, msg.Request)
+		case *Subscribed:
+			c.notifyListener(msg, msg.Request)
+		case *Unsubscribed:
+			c.notifyListener(msg, msg.Request)
+		case *Unregistered:
+			c.notifyListener(msg, msg.Request)
+		case *Result:
+			c.notifyListener(msg, msg.Request)
+		case *Error:
+			c.notifyListener(msg, msg.Request)
+
+		case *Goodbye:
+			break
+
+		default:
+			log.Println("unhandled message:", msg.MessageType(), msg)
+		}
+	}
+
+	if c.ReceiveDone != nil {
+		c.ReceiveDone <- true
+	}
 }
 
 /////////////////////////////////////////////
@@ -251,13 +295,6 @@ func (c *Session) Leave() error {
 func (c *Session) JoinRealm(realm string, details map[string]interface{}) (map[string]interface{}, error) {
 	if details == nil {
 		details = map[string]interface{}{}
-	}
-
-	details["roles"] = map[string]map[string]interface{}{
-		"publisher":  make(map[string]interface{}),
-		"subscriber": make(map[string]interface{}),
-		"callee":     make(map[string]interface{}),
-		"caller":     make(map[string]interface{}),
 	}
 
 	if c.Auth != nil && len(c.Auth) > 0 {
