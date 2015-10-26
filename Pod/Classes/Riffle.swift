@@ -129,20 +129,6 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         }
     }
     
-    
-    public func call(endpoint: String, _ args: AnyObject..., handler: (([AnyObject]) -> ())?) {
-        session.call(endpoint, payload: serialize(args)) { (result: MDWampResult!, err: NSError!) -> Void in
-            if err != nil {
-                print("Call Error for endpoint \(endpoint): \(err)")
-            }
-            else {
-                if let h = handler {
-                    h(result.arguments == nil ? [] : result.arguments)
-                }
-            }
-        }
-    }
-    
     public func publish(endpoint: String, _ args: AnyObject...) {
         session.publishTo(endpoint, args: serialize(args), kw: [:], options: [:]) { (err: NSError!) -> Void in
             if let e = err {
@@ -283,27 +269,28 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         _subscribe(pdid, fn: cumin(fn))
     }
     
-    public func call(pdid: String, _ args: AnyObject..., fn: () -> ())  {
-        _call(pdid, args: args, fn: cumin(fn))
+    public func call(pdid: String, _ args: AnyObject..., handler fn: (() -> ())?)  {
+        _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
     }
     
-    public func call<A>(pdid: String, _ args: AnyObject..., fn: (A) -> ())  {
-        _call(pdid, args: args, fn: cumin(fn))
+    public func call<A>(pdid: String, _ args: AnyObject..., handler fn: ((A) -> ())?)  {
+        _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
     }
     
-    public func call<A, B>(pdid: String, _ args: AnyObject..., fn: (A, B) -> ())  {
-        _call(pdid, args: args, fn: cumin(fn))
+    public func call<A, B>(pdid: String, _ args: AnyObject..., handler fn: ((A, B) -> ())?)  {
+        _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
     }
     
-    public func call<A, B, C>(pdid: String, _ args: AnyObject..., fn: (A, B, C) -> ())  {
-        _call(pdid, args: args, fn: cumin(fn))
+    public func call<A, B, C>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C) -> ())?)  {
+        _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
     }
     
-    public func call<A, B, C, D>(pdid: String, _ args: AnyObject..., fn: (A, B, C, D) -> ())  {
-        _call(pdid, args: args, fn: cumin(fn))
+    public func call<A, B, C, D>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?)  {
+        _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
     }
     
-    public func call<A, B, C, D, E>(pdid: String, _ args: AnyObject..., fn: (A, B, C, D, E) -> ())  {
-        _call(pdid, args: args, fn: cumin(fn))
+    public func call<A, B, C, D, E>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D, E) -> ())?)  {
+        _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
     }
+    
 }

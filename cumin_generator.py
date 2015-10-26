@@ -12,7 +12,7 @@ generics = ['A', 'B', 'C', 'D', 'E', 'F']
 returns = ['R', 'S', 'T', 'U', 'V']
 
 callerTemplate = 'public func %s<%s>(pdid: String, _ fn: (%s) -> (%s))  {\n\t_%s(pdid, fn: cumin(fn))\n}'
-callTemplate = 'public func %s<%s>(pdid: String, _ args: AnyObject..., fn: (%s) -> (%s))  {\n\t_%s(pdid, args, fn: cumin(fn))\n}'
+callTemplate = 'public func %s<%s>(pdid: String, _ args: AnyObject..., handler fn: ((%s) -> (%s))?)  {\n\t_%s(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))\n}'
 
 def renderCumin(args, ret):
     p = ', '.join(["%s.self < a[%s]" % (x, i) for i, x in enumerate(args)])

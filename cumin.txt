@@ -118,28 +118,28 @@ public func subscribe<A, B, C, D, E>(pdid: String, _ fn: (A, B, C, D, E) -> ()) 
 	_subscribe(pdid, fn: cumin(fn))
 }
 
-public func call(pdid: String, _ args: AnyObject..., fn: () -> ())  {
-	_call(pdid, args: args, fn: cumin(fn))
+public func call(pdid: String, _ args: AnyObject..., handler fn: (() -> ())?)  {
+	_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 }
 
-public func call<A>(pdid: String, _ args: AnyObject..., fn: (A) -> ())  {
-	_call(pdid, args: args, fn: cumin(fn))
+public func call<A>(pdid: String, _ args: AnyObject..., handler fn: ((A) -> ())?)  {
+	_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 }
 
-public func call<A, B>(pdid: String, _ args: AnyObject..., fn: (A, B) -> ())  {
-	_call(pdid, args: args, fn: cumin(fn))
+public func call<A, B>(pdid: String, _ args: AnyObject..., handler fn: ((A, B) -> ())?)  {
+	_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 }
 
-public func call<A, B, C>(pdid: String, _ args: AnyObject..., fn: (A, B, C) -> ())  {
-	_call(pdid, args: args, fn: cumin(fn))
+public func call<A, B, C>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C) -> ())?)  {
+	_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 }
 
-public func call<A, B, C, D>(pdid: String, _ args: AnyObject..., fn: (A, B, C, D) -> ())  {
-	_call(pdid, args: args, fn: cumin(fn))
+public func call<A, B, C, D>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?)  {
+	_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 }
 
-public func call<A, B, C, D, E>(pdid: String, _ args: AnyObject..., fn: (A, B, C, D, E) -> ())  {
-	_call(pdid, args: args, fn: cumin(fn))
+public func call<A, B, C, D, E>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D, E) -> ())?)  {
+	_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 }
 
 public func cumin<>(fn: () -> ()) -> ([AnyObject]) -> () {
