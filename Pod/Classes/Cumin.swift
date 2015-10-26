@@ -68,6 +68,8 @@ public func convert <A, T>(a:A, _ t:T.Type) -> T? {
     default: break
     }
     
+    //    print(T.self)
+    
     // Attempt a model conversion
     if let Klass = t as? RiffleModel.Type {
         return (MTLJSONAdapter.modelOfClass(Klass, fromJSONDictionary: a as! [NSObject:AnyObject]) as! T)
@@ -81,7 +83,7 @@ public func convert <A, T>(a:A, _ t:T.Type) -> T? {
         case is [String].Type:
             return (source.map { convert($0, String.self)! } as! T)
         default:
-            print("aww")
+            print("TODO: The rest of these are not implemented!")
         }
     }
     
@@ -112,7 +114,7 @@ precedence 155
 
 func <- <T> (t:T.Type, object: AnyObject) -> T {
     let a = convert(object, t)
-    print(a!)
+    //    print(a)
     return a!
 }
 
