@@ -60,7 +60,7 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     }
     
     public func mdwamp(wamp: MDWamp!, closedSession code: Int, reason: String!, details: [NSObject : AnyObject]!) {
-        print("Session Closed!")
+        print("Session Closed. Code: \(code), reason: \(reason), details: \(details)")
         delegate!.onLeave()
     }
     
@@ -105,7 +105,11 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         session.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
             
             let result = fn(invocation.arguments)
-            wamp.resultForInvocation(invocation, arguments: [result as! AnyObject], argumentsKw: [:])
+            if let autoArray = result as? [AnyObject] {
+                wamp.resultForInvocation(invocation, arguments: autoArray, argumentsKw: [:])
+            } else {
+                wamp.resultForInvocation(invocation, arguments: [result as! AnyObject], argumentsKw: [:])
+            }
             
             }, cancelHandler: { () -> Void in
                 print("Register Cancelled!")
