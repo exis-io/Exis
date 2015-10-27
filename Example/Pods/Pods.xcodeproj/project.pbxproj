@@ -76,6 +76,8 @@
 		4C43A90AA1E8F520B5D64FDBFF306B06 /* SocketRocket-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 85962C6624CBCD1120531969BA52B2D1 /* SocketRocket-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		505F97691BE026BC0067A5C5 /* ConverterExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505F97681BE026BC0067A5C5 /* ConverterExtensions.swift */; settings = {ASSET_TAGS = (); }; };
 		505F976A1BE0273B0067A5C5 /* ConverterExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505F97681BE026BC0067A5C5 /* ConverterExtensions.swift */; };
+		505F976C1BE02E180067A5C5 /* GenericWrappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505F976B1BE02E180067A5C5 /* GenericWrappers.swift */; settings = {ASSET_TAGS = (); }; };
+		505F976D1BE02E490067A5C5 /* GenericWrappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505F976B1BE02E180067A5C5 /* GenericWrappers.swift */; };
 		50D9F174A0684F53CEFFB9ED45E09C79 /* NSValueTransformer+MTLPredefinedTransformerAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 97CD6091668DF7513D365D905D438A78 /* NSValueTransformer+MTLPredefinedTransformerAdditions.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		50F732367A025A2012BFBDC290128F0B /* cmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD501CD0E7E3C6F817C2627A5FD09B4 /* cmp.c */; };
 		53D7FCDC70718D9708B1F4825CCABEE9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28ECA2850CC14064297977E04173756F /* Foundation.framework */; };
@@ -381,6 +383,7 @@
 		4F0CC422E0B4CBC5C79F3CFC5A78012C /* MDWamp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MDWamp.h; sourceTree = "<group>"; };
 		5044B5A14E3B94A0A8DEAAC293B8DA96 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		505F97681BE026BC0067A5C5 /* ConverterExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConverterExtensions.swift; sourceTree = "<group>"; };
+		505F976B1BE02E180067A5C5 /* GenericWrappers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenericWrappers.swift; sourceTree = "<group>"; };
 		5620EAF23D71DF6DF2EE1E25BC293DE7 /* MDWampPublish.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MDWampPublish.h; sourceTree = "<group>"; };
 		5695CDBEAB79F0B6AD55BEDCB938F4C3 /* EXTRuntimeExtensions.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = EXTRuntimeExtensions.m; path = Mantle/extobjc/EXTRuntimeExtensions.m; sourceTree = "<group>"; };
 		578B08CD6FFECF30CC20C1206B96979D /* AsyncSocket.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = AsyncSocket.h; path = Source/RunLoop/AsyncSocket.h; sourceTree = "<group>"; };
@@ -1075,6 +1078,7 @@
 				499A818FC89D4E0AAD4BB32827E4270E /* Riffle.h */,
 				9A8D54C6640C2C13AA20A1AA05349A50 /* Riffle.swift */,
 				505F97681BE026BC0067A5C5 /* ConverterExtensions.swift */,
+				505F976B1BE02E180067A5C5 /* GenericWrappers.swift */,
 				A1024A2CBC8383247AB97AD8C117FB29 /* src */,
 			);
 			path = Classes;
@@ -1471,6 +1475,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				505F976D1BE02E490067A5C5 /* GenericWrappers.swift in Sources */,
 				505F976A1BE0273B0067A5C5 /* ConverterExtensions.swift in Sources */,
 				E1C14FB9FD04D2E784CA4E80CB2E2424 /* BaseModel.swift in Sources */,
 				EA31D52A6A1C3CC00182DA3C723EA575 /* Cumin.swift in Sources */,
@@ -1555,6 +1560,7 @@
 				505F97691BE026BC0067A5C5 /* ConverterExtensions.swift in Sources */,
 				43C1A1DFAFD76D297AE5A3EE527A9703 /* CocoaAsyncSocket-dummy.m in Sources */,
 				48A940B360B85E5CB26F132906C1F5EE /* GCDAsyncSocket.m in Sources */,
+				505F976C1BE02E180067A5C5 /* GenericWrappers.swift in Sources */,
 				28000601098C34E366C778DB0D847A38 /* GCDAsyncUdpSocket.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

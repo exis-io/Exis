@@ -13,6 +13,7 @@ returns = ['R', 'S', 'T', 'U', 'V']
 
 callerTemplate = 'public func %s<%s>(pdid: String, _ fn: (%s) -> (%s))  {\n\t_%s(pdid, fn: cumin(fn))\n}'
 callTemplate = 'public func %s<%s>(pdid: String, _ args: AnyObject..., handler fn: ((%s) -> (%s))?)  {\n\t_%s(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))\n}'
+outputTemplate = "// Straight Boilerplate-- make the compiler happy\nimport Foundation\n\npublic extension RiffleSession {\n"
 
 def convertible(args):
     # Adds the convertible tag to all the given generic arguments
@@ -48,8 +49,13 @@ def main():
             c.append(renderCumin(generics[:i], returns[:j]))
 
     e = r + s + n + c
-    with open(os.path.join(os.getcwd(), 'cumin.txt'), 'w') as f:
-        [f.write(x + '\n\n') for x in e]
+    with open(os.path.join(os.getcwd(), 'Pod/Classes/GenericWrappers.swift'), 'w') as f:
+        f.write(outputTemplate)
+        e = r + s + n 
+        [f.write('\t' + x + '\n\n') for x in e]
+        f.write("}\n\n")
+
+        [f.write(x + '\n\n') for x in c]
 
 if __name__ == '__main__':
     main()
