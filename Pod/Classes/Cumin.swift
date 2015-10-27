@@ -26,66 +26,43 @@ if t is ArrayProtocol.Type {
 import Foundation
 import Mantle
 
-// Hack to get the arrays to detect
-protocol ArrayProtocol{}
-extension Array: ArrayProtocol {}
+func convert<A: AnyObject, T: Cuminicable>(a: A?, _ t: T.Type) -> T? {
+    if let x = a {
+        return t.convert(x) as? T
+    }
+    
+    return nil
+}
 
-
-// MARK: Converters
-public func convert <A, T>(a:A, _ t:T.Type) -> T? {
-    // Attempts to convert the given argument to the expected type
+func convert<A: AnyObject, T: CollectionType where T.Generator.Element: Cuminicable>(a: A?, _ t: T.Type) -> T? {
+    // Attempt to convert an array of arbitrary elements to collection of Cuminicable elements. The sequence is passed
+    // as a type of these elements as understood from the method signature where they're declared.
     
-    // If the type casts out the box it is most likely the intended type
-    if let z = a as? T {
-        return z
-    }
+    // The expected sequence element type
+    // Not implemented: recursive handling of nested data structures
+    let CuminicableElement = T.Generator.Element.self
+    print(CuminicableElement)
     
-    // Begin the OSX bug
-    if "\(T.self)" == "Int" {
-        return unsafeBitCast(Int(a as! NSNumber), T.self)
-    }
-    
-    if "\(T.self)" == "String" {
-        return unsafeBitCast(String(a as! NSString), T.self)
-    }
-    
-    // Primitive conversion
-    // TODO: check to make sure the passed type is valid: a.dynamicType == NSNumber.self
-    
-    switch t {
-    case is Int:
-        return Int(a as! NSNumber) as? T
+    // Attempt to process the incoming parameters as an array
+    if let x = a as? NSArray {
+        var ret: [T.Generator.Element] = []
         
-    case is Double.Type:
-        return Double(a as! NSNumber) as? T
-        
-    case is Float.Type:
-        return Float(a as! NSNumber) as? T
-        
-    case is String.Type:
-        return String(a) as? T
-        
-    default: break
-    }
-    
-    //    print(T.self)
-    
-    // Attempt a model conversion
-    if let Klass = t as? RiffleModel.Type {
-        return (MTLJSONAdapter.modelOfClass(Klass, fromJSONDictionary: a as! [NSObject:AnyObject]) as! T)
-    }
-    
-    // TODO: Boolean, dicts,
-    
-    // Collections, applied recursively
-    if let source = a as? NSArray {
-        switch t {
-        case is [String].Type:
-            return (source.map { convert($0, String.self)! } as! T)
-        default:
-            print("TODO: The rest of these are not implemented!")
+        for e in x {
+            if let converted = CuminicableElement.convert(e) as? T.Generator.Element {
+                ret.append(converted)
+            } else {
+                // If a single one of the casts fail, stop processing the collection.
+                // This behavior may not always be expected since it does not allow collections of optionals
+                
+                // TODO: Print out or return some flavor of log here?
+                return nil
+            }
         }
+        
+        return ret as? T
     }
+    
+    // Can cover arrays here, too
     
     return nil
 }
@@ -112,11 +89,117 @@ associativity right
 precedence 155
 }
 
-func <- <T> (t:T.Type, object: AnyObject) -> T {
+func <- <T: CN> (t:T.Type, object: AnyObject) -> T {
     let a = convert(object, t)
-    //    print(a)
+    // This would be an exxcellent place to catch cumin errors
+    // Throwing is likely the easiest way to deal with them
+    
     return a!
 }
+
+
+/*
+public func convert <A, T>(a:A, _ t:T.Type) -> T? {
+// Attempts to convert the given argument to the expected type
+
+// If the type casts out the box it is most likely the intended type
+if let z = a as? T {
+return z
+}
+
+// Begin the OSX bug
+if "\(T.self)" == "Int" {
+return unsafeBitCast(Int(a as! NSNumber), T.self)
+}
+
+if "\(T.self)" == "String" {
+return unsafeBitCast(String(a as! NSString), T.self)
+}
+
+// Primitive conversion
+// TODO: check to make sure the passed type is valid: a.dynamicType == NSNumber.self
+
+switch t {
+case is Int:
+return Int(a as! NSNumber) as? T
+
+case is Double.Type:
+return Double(a as! NSNumber) as? T
+
+case is Float.Type:
+return Float(a as! NSNumber) as? T
+
+case is String.Type:
+return String(a) as? T
+
+default: break
+}
+
+// Attempt a model conversion
+if let Klass = t as? RiffleModel.Type {
+return (MTLJSONAdapter.modelOfClass(Klass, fromJSONDictionary: a as! [NSObject:AnyObject]) as! T)
+}
+
+// TODO: Boolean, dicts,
+
+// Collections, applied recursively
+// Going to have to apply the osx bug fix here too... string checking required
+if let source = a as? NSArray {
+
+// If we're reciving an array and its empty, it doesn't matter what you expected to get back (right?)
+// Alternatively, this could just be an error, in which case you're screwed
+if source.count == 0 {
+return [] as! T
+}
+
+let element = source.firstObject!
+print(element)
+
+if let r = element as? RiffleModel.Type {
+print("ISARIFFLEMODEL")
+}
+
+switch t {
+case is [String].Type:
+return (source.map { convert($0, String.self)! } as! T)
+case is [Bool].Type:
+return (source.map { convert($0, Bool.self)! } as! T)
+case is [Int].Type:
+return (source.map { convert($0, Int.self)! } as! T)
+case is [Float].Type:
+return (source.map { convert($0, Float.self)! } as! T)
+case is [RiffleModel].Type:
+return (source.map { convert($0, RiffleModel.self)! } as! T)
+default:
+print("UNIMPLEMENTED COLLECTION: \(source.dynamicType)")
+//            print(source)
+print(t)
+
+if let Klass = t as? [RiffleModel].Type {
+print("Able to extrace the programmic types: Klass")
+}
+}
+}
+
+return nil
+}
+
+
+public func serialize(args: [AnyObject]) -> [AnyObject] {
+// Converts types for serialization, mostly RiffleModels
+var ret: [AnyObject] = []
+
+for a in args {
+if let object = a as? RiffleModel {
+ret.append(MTLJSONAdapter.JSONDictionaryFromModel(object))
+} else {
+ret.append(a)
+}
+}
+
+return ret
+}
+*/
 
 
 //MARK: Cumin Overloads
@@ -124,95 +207,95 @@ public func cumin(fn: () -> ()) -> ([AnyObject]) -> () {
     return { (a: [AnyObject]) in fn() }
 }
 
-public func cumin<A>(fn: (A) -> ()) -> ([AnyObject]) -> () {
+public func cumin<A: CN>(fn: (A) -> ()) -> ([AnyObject]) -> () {
     return { (a: [AnyObject]) in fn(A.self <- a[0]) }
 }
 
-public func cumin<A, B>(fn: (A, B) -> ()) -> ([AnyObject]) -> () {
+public func cumin<A: CN, B: CN>(fn: (A, B) -> ()) -> ([AnyObject]) -> () {
     return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1]) }
 }
 
-public func cumin<A, B, C>(fn: (A, B, C) -> ()) -> ([AnyObject]) -> () {
+public func cumin<A: CN, B: CN, C: CN>(fn: (A, B, C) -> ()) -> ([AnyObject]) -> () {
     return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
 }
 
-public func cumin<A, B, C, D>(fn: (A, B, C, D) -> ()) -> ([AnyObject]) -> () {
+public func cumin<A: CN, B: CN, C: CN, D: CN>(fn: (A, B, C, D) -> ()) -> ([AnyObject]) -> () {
     return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3]) }
 }
 
-public func cumin<A, B, C, D, E>(fn: (A, B, C, D, E) -> ()) -> ([AnyObject]) -> () {
+public func cumin<A: CN, B: CN, C: CN, D: CN, E: CN>(fn: (A, B, C, D, E) -> ()) -> ([AnyObject]) -> () {
     return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4]) }
 }
 
-public func cumin<R>(fn: () -> (R)) -> ([AnyObject]) -> (R) {
+public func cumin<R: CN>(fn: () -> (R)) -> ([AnyObject]) -> (R) {
     return { (a: [AnyObject]) in fn() }
 }
 
-public func cumin<A, R>(fn: (A) -> (R)) -> ([AnyObject]) -> (R) {
+public func cumin<A: CN, R: CN>(fn: (A) -> (R)) -> ([AnyObject]) -> (R) {
     return { (a: [AnyObject]) in fn(A.self <- a[0]) }
 }
 
-public func cumin<A, B, R>(fn: (A, B) -> (R)) -> ([AnyObject]) -> (R) {
+public func cumin<A: CN, B: CN, R: CN>(fn: (A, B) -> (R)) -> ([AnyObject]) -> (R) {
     return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1]) }
 }
 
-public func cumin<A, B, C, R>(fn: (A, B, C) -> (R)) -> ([AnyObject]) -> (R) {
+public func cumin<A: CN, B: CN, C: CN, R: CN>(fn: (A, B, C) -> (R)) -> ([AnyObject]) -> (R) {
     return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
 }
 
-public func cumin<A, B, C, D, R>(fn: (A, B, C, D) -> (R)) -> ([AnyObject]) -> (R) {
+public func cumin<A: CN, B: CN, C: CN, D: CN, R: CN>(fn: (A, B, C, D) -> (R)) -> ([AnyObject]) -> (R) {
     return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3]) }
 }
 
-public func cumin<A, B, C, D, E, R>(fn: (A, B, C, D, E) -> (R)) -> ([AnyObject]) -> (R) {
+public func cumin<A: CN, B: CN, C: CN, D: CN, E: CN, R: CN>(fn: (A, B, C, D, E) -> (R)) -> ([AnyObject]) -> (R) {
     return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4]) }
 }
 
-public func cumin<R, S>(fn: () -> (R, S)) -> ([AnyObject]) -> (R, S) {
+public func cumin<R: CN, S: CN>(fn: () -> (R, S)) -> ([AnyObject]) -> (R, S) {
     return { (a: [AnyObject]) in fn() }
 }
 
-public func cumin<A, R, S>(fn: (A) -> (R, S)) -> ([AnyObject]) -> (R, S) {
+public func cumin<A: CN, R: CN, S: CN>(fn: (A) -> (R, S)) -> ([AnyObject]) -> (R, S) {
     return { (a: [AnyObject]) in fn(A.self <- a[0]) }
 }
 
-public func cumin<A, B, R, S>(fn: (A, B) -> (R, S)) -> ([AnyObject]) -> (R, S) {
+public func cumin<A: CN, B: CN, R: CN, S: CN>(fn: (A, B) -> (R, S)) -> ([AnyObject]) -> (R, S) {
     return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1]) }
 }
 
-public func cumin<A, B, C, R, S>(fn: (A, B, C) -> (R, S)) -> ([AnyObject]) -> (R, S) {
+public func cumin<A: CN, B: CN, C: CN, R: CN, S: CN>(fn: (A, B, C) -> (R, S)) -> ([AnyObject]) -> (R, S) {
     return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
 }
 
-public func cumin<A, B, C, D, R, S>(fn: (A, B, C, D) -> (R, S)) -> ([AnyObject]) -> (R, S) {
+public func cumin<A: CN, B: CN, C: CN, D: CN, R: CN, S: CN>(fn: (A, B, C, D) -> (R, S)) -> ([AnyObject]) -> (R, S) {
     return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3]) }
 }
 
-public func cumin<A, B, C, D, E, R, S>(fn: (A, B, C, D, E) -> (R, S)) -> ([AnyObject]) -> (R, S) {
+public func cumin<A: CN, B: CN, C: CN, D: CN, E: CN, R: CN, S: CN>(fn: (A, B, C, D, E) -> (R, S)) -> ([AnyObject]) -> (R, S) {
     return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4]) }
 }
 
-public func cumin<R, S, T>(fn: () -> (R, S, T)) -> ([AnyObject]) -> (R, S, T) {
+public func cumin<R: CN, S: CN, T: CN>(fn: () -> (R, S, T)) -> ([AnyObject]) -> (R, S, T) {
     return { (a: [AnyObject]) in fn() }
 }
 
-public func cumin<A, R, S, T>(fn: (A) -> (R, S, T)) -> ([AnyObject]) -> (R, S, T) {
+public func cumin<A: CN, R: CN, S: CN, T: CN>(fn: (A) -> (R, S, T)) -> ([AnyObject]) -> (R, S, T) {
     return { (a: [AnyObject]) in fn(A.self <- a[0]) }
 }
 
-public func cumin<A, B, R, S, T>(fn: (A, B) -> (R, S, T)) -> ([AnyObject]) -> (R, S, T) {
+public func cumin<A: CN, B: CN, R: CN, S: CN, T: CN>(fn: (A, B) -> (R, S, T)) -> ([AnyObject]) -> (R, S, T) {
     return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1]) }
 }
 
-public func cumin<A, B, C, R, S, T>(fn: (A, B, C) -> (R, S, T)) -> ([AnyObject]) -> (R, S, T) {
+public func cumin<A: CN, B: CN, C: CN, R: CN, S: CN, T: CN>(fn: (A, B, C) -> (R, S, T)) -> ([AnyObject]) -> (R, S, T) {
     return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
 }
 
-public func cumin<A, B, C, D, R, S, T>(fn: (A, B, C, D) -> (R, S, T)) -> ([AnyObject]) -> (R, S, T) {
+public func cumin<A: CN, B: CN, C: CN, D: CN, R: CN, S: CN, T: CN>(fn: (A, B, C, D) -> (R, S, T)) -> ([AnyObject]) -> (R, S, T) {
     return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3]) }
 }
 
-public func cumin<A, B, C, D, E, R, S, T>(fn: (A, B, C, D, E) -> (R, S, T)) -> ([AnyObject]) -> (R, S, T) {
+public func cumin<A: CN, B: CN, C: CN, D: CN, E: CN, R: CN, S: CN, T: CN>(fn: (A, B, C, D, E) -> (R, S, T)) -> ([AnyObject]) -> (R, S, T) {
     return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4]) }
 }
 

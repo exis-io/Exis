@@ -34,7 +34,6 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         socket = MDWampTransportWebSocket(server:NSURL(string: NODE), protocolVersions:[kMDWampProtocolWamp2msgpack, kMDWampProtocolWamp2json])
         domain = d
         // Oh, the hacks you'll see
-
         session = MDWamp()
         super.init()
         
@@ -158,95 +157,95 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<A>(pdid: String, _ fn: (A) -> ())  {
+    public func register<A: CN>(pdid: String, _ fn: (A) -> ())  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<A, B>(pdid: String, _ fn: (A, B) -> ())  {
+    public func register<A: CN, B: CN>(pdid: String, _ fn: (A, B) -> ())  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<A, B, C>(pdid: String, _ fn: (A, B, C) -> ())  {
+    public func register<A: CN, B: CN, C: CN>(pdid: String, _ fn: (A, B, C) -> ())  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<A, B, C, D>(pdid: String, _ fn: (A, B, C, D) -> ())  {
+    public func register<A: CN, B: CN, C: CN, D: CN>(pdid: String, _ fn: (A, B, C, D) -> ())  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<A, B, C, D, E>(pdid: String, _ fn: (A, B, C, D, E) -> ())  {
+    public func register<A: CN, B: CN, C: CN, D: CN, E: CN>(pdid: String, _ fn: (A, B, C, D, E) -> ())  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<R>(pdid: String, _ fn: () -> (R))  {
+    public func register<R: CN>(pdid: String, _ fn: () -> (R))  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<A, R>(pdid: String, _ fn: (A) -> (R))  {
+    public func register<A: CN, R: CN>(pdid: String, _ fn: (A) -> (R))  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<A, B, R>(pdid: String, _ fn: (A, B) -> (R))  {
+    public func register<A: CN, B: CN, R: CN>(pdid: String, _ fn: (A, B) -> (R))  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<A, B, C, R>(pdid: String, _ fn: (A, B, C) -> (R))  {
+    public func register<A: CN, B: CN, C: CN, R: CN>(pdid: String, _ fn: (A, B, C) -> (R))  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<A, B, C, D, R>(pdid: String, _ fn: (A, B, C, D) -> (R))  {
+    public func register<A: CN, B: CN, C: CN, D: CN, R: CN>(pdid: String, _ fn: (A, B, C, D) -> (R))  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<A, B, C, D, E, R>(pdid: String, _ fn: (A, B, C, D, E) -> (R))  {
+    public func register<A: CN, B: CN, C: CN, D: CN, E: CN, R: CN>(pdid: String, _ fn: (A, B, C, D, E) -> (R))  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<R, S>(pdid: String, _ fn: () -> (R, S))  {
+    public func register<R: CN, S: CN>(pdid: String, _ fn: () -> (R, S))  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<A, R, S>(pdid: String, _ fn: (A) -> (R, S))  {
+    public func register<A: CN, R: CN, S: CN>(pdid: String, _ fn: (A) -> (R, S))  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<A, B, R, S>(pdid: String, _ fn: (A, B) -> (R, S))  {
+    public func register<A: CN, B: CN, R: CN, S: CN>(pdid: String, _ fn: (A, B) -> (R, S))  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<A, B, C, R, S>(pdid: String, _ fn: (A, B, C) -> (R, S))  {
+    public func register<A: CN, B: CN, C: CN, R: CN, S: CN>(pdid: String, _ fn: (A, B, C) -> (R, S))  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<A, B, C, D, R, S>(pdid: String, _ fn: (A, B, C, D) -> (R, S))  {
+    public func register<A: CN, B: CN, C: CN, D: CN, R: CN, S: CN>(pdid: String, _ fn: (A, B, C, D) -> (R, S))  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<A, B, C, D, E, R, S>(pdid: String, _ fn: (A, B, C, D, E) -> (R, S))  {
+    public func register<A: CN, B: CN, C: CN, D: CN, E: CN, R: CN, S: CN>(pdid: String, _ fn: (A, B, C, D, E) -> (R, S))  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<R, S, T>(pdid: String, _ fn: () -> (R, S, T))  {
+    public func register<R: CN, S: CN, T: CN>(pdid: String, _ fn: () -> (R, S, T))  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<A, R, S, T>(pdid: String, _ fn: (A) -> (R, S, T))  {
+    public func register<A: CN, R: CN, S: CN, T: CN>(pdid: String, _ fn: (A) -> (R, S, T))  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<A, B, R, S, T>(pdid: String, _ fn: (A, B) -> (R, S, T))  {
+    public func register<A: CN, B: CN, R: CN, S: CN, T: CN>(pdid: String, _ fn: (A, B) -> (R, S, T))  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<A, B, C, R, S, T>(pdid: String, _ fn: (A, B, C) -> (R, S, T))  {
+    public func register<A: CN, B: CN, C: CN, R: CN, S: CN, T: CN>(pdid: String, _ fn: (A, B, C) -> (R, S, T))  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<A, B, C, D, R, S, T>(pdid: String, _ fn: (A, B, C, D) -> (R, S, T))  {
+    public func register<A: CN, B: CN, C: CN, D: CN, R: CN, S: CN, T: CN>(pdid: String, _ fn: (A, B, C, D) -> (R, S, T))  {
         _register(pdid, fn: cumin(fn))
     }
     
-    public func register<A, B, C, D, E, R, S, T>(pdid: String, _ fn: (A, B, C, D, E) -> (R, S, T))  {
+    public func register<A: CN, B: CN, C: CN, D: CN, E: CN, R: CN, S: CN, T: CN>(pdid: String, _ fn: (A, B, C, D, E) -> (R, S, T))  {
         _register(pdid, fn: cumin(fn))
     }
     
@@ -254,23 +253,23 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         _subscribe(pdid, fn: cumin(fn))
     }
     
-    public func subscribe<A>(pdid: String, _ fn: (A) -> ())  {
+    public func subscribe<A: CN>(pdid: String, _ fn: (A) -> ())  {
         _subscribe(pdid, fn: cumin(fn))
     }
     
-    public func subscribe<A, B>(pdid: String, _ fn: (A, B) -> ())  {
+    public func subscribe<A: CN, B: CN>(pdid: String, _ fn: (A, B) -> ())  {
         _subscribe(pdid, fn: cumin(fn))
     }
     
-    public func subscribe<A, B, C>(pdid: String, _ fn: (A, B, C) -> ())  {
+    public func subscribe<A: CN, B: CN, C: CN>(pdid: String, _ fn: (A, B, C) -> ())  {
         _subscribe(pdid, fn: cumin(fn))
     }
     
-    public func subscribe<A, B, C, D>(pdid: String, _ fn: (A, B, C, D) -> ())  {
+    public func subscribe<A: CN, B: CN, C: CN, D: CN>(pdid: String, _ fn: (A, B, C, D) -> ())  {
         _subscribe(pdid, fn: cumin(fn))
     }
     
-    public func subscribe<A, B, C, D, E>(pdid: String, _ fn: (A, B, C, D, E) -> ())  {
+    public func subscribe<A: CN, B: CN, C: CN, D: CN, E: CN>(pdid: String, _ fn: (A, B, C, D, E) -> ())  {
         _subscribe(pdid, fn: cumin(fn))
     }
     
@@ -278,24 +277,25 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
     }
     
-    public func call<A>(pdid: String, _ args: AnyObject..., handler fn: ((A) -> ())?)  {
+    public func call<A: CN>(pdid: String, _ args: AnyObject..., handler fn: ((A) -> ())?)  {
         _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
     }
     
-    public func call<A, B>(pdid: String, _ args: AnyObject..., handler fn: ((A, B) -> ())?)  {
+    public func call<A: CN, B: CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B) -> ())?)  {
         _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
     }
     
-    public func call<A, B, C>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C) -> ())?)  {
+    public func call<A: CN, B: CN, C: CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C) -> ())?)  {
         _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
     }
     
-    public func call<A, B, C, D>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?)  {
+    public func call<A: CN, B: CN, C: CN, D: CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?)  {
         _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
     }
     
-    public func call<A, B, C, D, E>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D, E) -> ())?)  {
+    public func call<A: CN, B: CN, C: CN, D: CN, E: CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D, E) -> ())?)  {
         _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
     }
+    
     
 }

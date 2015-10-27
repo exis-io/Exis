@@ -14,17 +14,21 @@ returns = ['R', 'S', 'T', 'U', 'V']
 callerTemplate = 'public func %s<%s>(pdid: String, _ fn: (%s) -> (%s))  {\n\t_%s(pdid, fn: cumin(fn))\n}'
 callTemplate = 'public func %s<%s>(pdid: String, _ args: AnyObject..., handler fn: ((%s) -> (%s))?)  {\n\t_%s(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))\n}'
 
+def convertible(args):
+    # Adds the convertible tag to all the given generic arguments
+    return [x + ": CN" for x in args]
+
 def renderCumin(args, ret):
-    p = ', '.join(["%s.self < a[%s]" % (x, i) for i, x in enumerate(args)])
-    both = ', '.join(args + ret)
+    p = ', '.join(["%s.self <- a[%s]" % (x, i) for i, x in enumerate(args)])
+    both = ', '.join(convertible(args + ret))
     args = ', '.join(args)
     ret = ', '.join(ret)
 
-    return 'public func cumin<%s>(fn: (%s) -> (%s)) -> ([AnyObject]) -> (%s) {\n\treturn { (a: \
-[AnyObject]) in fn(%s) }\n}' % (both, args, ret, ret, p)
+    return ('public func cumin<%s>(fn: (%s) -> (%s)) -> ([AnyObject]) -> (%s) {\n\treturn { (a: \
+[AnyObject]) in fn(%s) }\n}' % (both, args, ret, ret, p)).replace("<>", "")
 
 def renderCaller(template, name, args, ret):
-    both = ', '.join(args + ret)
+    both = ', '.join(convertible(args + ret))
     args = ', '.join(args)
     ret = ', '.join(ret)
 

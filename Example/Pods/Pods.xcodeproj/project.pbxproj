@@ -74,6 +74,8 @@
 		48A940B360B85E5CB26F132906C1F5EE /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = E37A0984ADC76832B8B5D7FE9D10DD48 /* GCDAsyncSocket.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		4B8D984522086A0C47D2183625A01042 /* MDWampTransportRawSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = CE48F7FCDC1F8EA5B6D07F841BC9BAA6 /* MDWampTransportRawSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4C43A90AA1E8F520B5D64FDBFF306B06 /* SocketRocket-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 85962C6624CBCD1120531969BA52B2D1 /* SocketRocket-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		505F97691BE026BC0067A5C5 /* ConverterExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505F97681BE026BC0067A5C5 /* ConverterExtensions.swift */; settings = {ASSET_TAGS = (); }; };
+		505F976A1BE0273B0067A5C5 /* ConverterExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505F97681BE026BC0067A5C5 /* ConverterExtensions.swift */; };
 		50D9F174A0684F53CEFFB9ED45E09C79 /* NSValueTransformer+MTLPredefinedTransformerAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 97CD6091668DF7513D365D905D438A78 /* NSValueTransformer+MTLPredefinedTransformerAdditions.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		50F732367A025A2012BFBDC290128F0B /* cmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD501CD0E7E3C6F817C2627A5FD09B4 /* cmp.c */; };
 		53D7FCDC70718D9708B1F4825CCABEE9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28ECA2850CC14064297977E04173756F /* Foundation.framework */; };
@@ -378,6 +380,7 @@
 		4EEEF93113BC1B35F53C3F4B5A7E93E4 /* GHODictionary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = GHODictionary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F0CC422E0B4CBC5C79F3CFC5A78012C /* MDWamp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MDWamp.h; sourceTree = "<group>"; };
 		5044B5A14E3B94A0A8DEAAC293B8DA96 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		505F97681BE026BC0067A5C5 /* ConverterExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConverterExtensions.swift; sourceTree = "<group>"; };
 		5620EAF23D71DF6DF2EE1E25BC293DE7 /* MDWampPublish.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MDWampPublish.h; sourceTree = "<group>"; };
 		5695CDBEAB79F0B6AD55BEDCB938F4C3 /* EXTRuntimeExtensions.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = EXTRuntimeExtensions.m; path = Mantle/extobjc/EXTRuntimeExtensions.m; sourceTree = "<group>"; };
 		578B08CD6FFECF30CC20C1206B96979D /* AsyncSocket.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = AsyncSocket.h; path = Source/RunLoop/AsyncSocket.h; sourceTree = "<group>"; };
@@ -1071,6 +1074,7 @@
 				66B6D58FA367D413B9BA1184E86E14FD /* Cumin.swift */,
 				499A818FC89D4E0AAD4BB32827E4270E /* Riffle.h */,
 				9A8D54C6640C2C13AA20A1AA05349A50 /* Riffle.swift */,
+				505F97681BE026BC0067A5C5 /* ConverterExtensions.swift */,
 				A1024A2CBC8383247AB97AD8C117FB29 /* src */,
 			);
 			path = Classes;
@@ -1467,6 +1471,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				505F976A1BE0273B0067A5C5 /* ConverterExtensions.swift in Sources */,
 				E1C14FB9FD04D2E784CA4E80CB2E2424 /* BaseModel.swift in Sources */,
 				EA31D52A6A1C3CC00182DA3C723EA575 /* Cumin.swift in Sources */,
 				DADBF29D1C418D9615E6F29D50AC4E44 /* MDWamp.m in Sources */,
@@ -1547,6 +1552,7 @@
 			files = (
 				555F9E69CED20016B9F616451D21EEAD /* AsyncSocket.m in Sources */,
 				303BAB623487F0B1E22B9D7B54349020 /* AsyncUdpSocket.m in Sources */,
+				505F97691BE026BC0067A5C5 /* ConverterExtensions.swift in Sources */,
 				43C1A1DFAFD76D297AE5A3EE527A9703 /* CocoaAsyncSocket-dummy.m in Sources */,
 				48A940B360B85E5CB26F132906C1F5EE /* GCDAsyncSocket.m in Sources */,
 				28000601098C34E366C778DB0D847A38 /* GCDAsyncUdpSocket.m in Sources */,
@@ -1964,6 +1970,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 782C6563F36F6252B3CCB7A63BBDE6B6 /* CocoaAsyncSocket-Private.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 7.4.2;
 				DEFINES_MODULE = YES;
@@ -1981,6 +1988,7 @@
 				PRODUCT_NAME = CocoaAsyncSocket;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -2102,6 +2110,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 782C6563F36F6252B3CCB7A63BBDE6B6 /* CocoaAsyncSocket-Private.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 7.4.2;
 				DEFINES_MODULE = YES;
