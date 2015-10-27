@@ -72,3 +72,4 @@
 //- (void) onAuthFailForCall:(NSString *)procCall withError:(NSString *)errorDetails;
 //
 @end
+

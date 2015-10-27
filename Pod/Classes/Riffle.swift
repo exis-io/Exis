@@ -34,6 +34,7 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         socket = MDWampTransportWebSocket(server:NSURL(string: NODE), protocolVersions:[kMDWampProtocolWamp2msgpack, kMDWampProtocolWamp2json])
         domain = d
         // Oh, the hacks you'll see
+
         session = MDWamp()
         super.init()
         
