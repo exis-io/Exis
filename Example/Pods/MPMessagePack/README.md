@@ -1,7 +1,6 @@
-MPMessagePack
-===========
+# MPMessagePack
 
-Objective-C implementation for [MessagePack](http://msgpack.org/). 
+[MessagePack](http://msgpack.org/) framework.
 
 MessagePack is an efficient binary serialization format. It lets you exchange data among multiple languages like JSON. But it's faster and smaller.
 
@@ -59,21 +58,39 @@ id obj2 = [reader read:&error]; // Read another object
 
 # RPC
 
-Should be compatible with [msgpack-rpc](https://github.com/msgpack-rpc/msgpack-rpc). It also supports a framing option where it will send the number of bytes for the following object (as a msgpack'ed number).
+See [msgpack-rpc](https://github.com/msgpack-rpc/msgpack-rpc). 
+
+It also supports a framing option where it will prefix the rpc message with the number of bytes (as a msgpack'ed number).
 
 ## Client
+
+Request with completion block:
 
 ```objc
 MPMessagePackClient *client = [[MPMessagePackClient alloc] init];
 [client openWithHost:@"localhost" port:93434 completion:^(NSError *error) {
   // If error we failed
-  [client sendRequestWithMethod:@"test" params:@{@"param1": @(1)} completion:^(NSError *error, id result) {
+  [client sendRequestWithMethod:@"test" params:@[@{@"arg": @(1)}] completion:^(NSError *error, id result) {
     // If error we failed
     // Otherwise the result
   }];
 }];
 ```
 
+You can also request synchronously:
+
+```objc
+NSError *error = nil;
+id result = [client sendRequestWithMethod:@"test" params:@[@{@"arg": @(1)}] messageId:3 timeout:5.0 error:&error];
+// error.code == MPRPCErrorRequestTimeout on timeout
+```
+
+And cancel in progress requests:
+
+```objc
+BOOL cancelled = [client cancelRequestWithMessageId:3];
+// cancelled == YES, if the request was in progress and we cancelled it
+```
 
 ## Server
 

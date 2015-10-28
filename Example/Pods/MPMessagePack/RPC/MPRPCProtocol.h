@@ -14,11 +14,21 @@
 extern NSString *const MPErrorInfoKey;
 
 typedef NS_ENUM (NSInteger, MPRPCError) {
+  MPRPCErrorNone = 0,
   MPRPCErrorSocketCreateError = -3,
   MPRPCErrorSocketOpenError = -6,
   MPRPCErrorSocketOpenTimeout = -7,
-  MPRPCErrorInvalidRequest = -20,
+  MPRPCErrorRequestInvalid = -20,
+  MPRPCErrorRequestTimeout = -21,
+  MPRPCErrorRequestCanceled = -22,
+  MPRPCErrorResponseInvalid = -30,
 };
+
+typedef void (^MPErrorHandler)(NSError *error);
+// Callback after we send request
+typedef void (^MPRequestCompletion)(NSError *error, id result);
+typedef void (^MPRequestHandler)(NSNumber *messageId, NSString *method, NSArray *params, MPRequestCompletion completion);
+
 
 @interface MPRPCProtocol : NSObject
 

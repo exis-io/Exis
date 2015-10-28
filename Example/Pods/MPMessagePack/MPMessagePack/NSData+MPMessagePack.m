@@ -21,6 +21,20 @@
   return [hexString lowercaseString];
 }
 
++ (NSData *)mp_dataFromHexString:(NSString *)str {
+  const char *chars = [str UTF8String];
+  NSMutableData *data = [NSMutableData dataWithCapacity:str.length / 2];
+  char byteChars[3] = {0, 0, 0};
+  unsigned long wholeByte;
+  for (int i = 0; i < str.length; i += 2) {
+    byteChars[0] = chars[i];
+    byteChars[1] = chars[i + 1];
+    wholeByte = strtoul(byteChars, NULL, 16);
+    [data appendBytes:&wholeByte length:1];
+  }
+  return data;
+}
+
 - (NSDictionary *)mp_dict:(NSError **)error {
   return [self mp_dict:0 error:error];
 }
