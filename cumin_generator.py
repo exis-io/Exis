@@ -21,21 +21,25 @@ callTemplate = '\tpublic func %s<%s>(pdid: String, _ args: AnyObject..., handler
 cuminTemplate = 'public func cumin<%s>(fn: (%s) -> (%s)) -> ([AnyObject]) -> (%s) {\n\treturn { (a: [AnyObject]) in fn(%s) }\n}'
 
 
-def convertible(args):
-    # Adds the convertible tag to all the given generic arguments
-    return [x + ": CN" for x in args]
+def renderGenericList(args, array):
+    if array:
+        collectionGenerics = ', '.join(map(lambda x: "%s: CL" % x, args))
+        wherables = ', '.join(map(lambda x: "%s.Generator.Element : CN" % x, args))
+        return collectionGenerics +  ' where ' + wherables if wherables is not '' else collectionGenerics      
+    else:
+        return ', '.join([x + ": CN" for x in args])
 
-def renderCumin(args, ret):
+def renderCumin(args, ret, renderingArrays):
     p = ', '.join(["%s.self <- a[%s]" % (x, i) for i, x in enumerate(args)])
-    both = ', '.join(convertible(args + ret))
+    both = renderGenericList(args + ret, renderingArrays)   
     args = ', '.join(args)
     ret = ', '.join(ret)
 
     return ('public func cumin<%s>(fn: (%s) -> (%s)) -> ([AnyObject]) -> (%s) {\n\treturn { (a: \
 [AnyObject]) in fn(%s) }\n}' % (both, args, ret, ret, p)).replace("<>", "")
 
-def renderCaller(template, name, args, ret):
-    both = ', '.join(convertible(args + ret))
+def renderCaller(template, name, args, ret, renderingArrays):
+    both = renderGenericList(args + ret, renderingArrays)    
     args = ', '.join(args)
     ret = ', '.join(ret)
 
@@ -66,25 +70,58 @@ def main():
     c, r, s, n = [], [], [], []
     out = PRODUCTION
 
+    # The big renderSets are waaay too big-- it actually freezes xcode when attempting to compile. 
+    # For now, just allow ONLY array returns and regular old returns
+
     # Generate cumins
     for j in range(4):
         for i in range(0, 7):
             if j == 0:
-                s += renderSet(callerTemplate, 'subscribe', generics[:i], returns[:j], False)
-                n += renderSet(callTemplate, 'call', generics[:i], returns[:j], False)
 
-            r += renderSet(callerTemplate, 'register', generics[:i], returns[:j], False)
-            c += renderSet(cuminTemplate, 'cumin', generics[:i], returns[:j], True)
+                # We have to limit the array ones, since they get out of hand quickly
+                if i < 5:
+                    s += renderSet(callerTemplate, 'subscribe', generics[:i], returns[:j], False)
+                    n += renderSet(callTemplate, 'call', generics[:i], returns[:j], False)
+                else:
+                    s.append(renderCaller(callerTemplate, 'subscribe', generics[:i], returns[:j], False))
+                    s.append(renderCaller(callerTemplate, 'subscribe', generics[:i], returns[:j], True))
 
-    e = r + s + n + c
+            #     n.append(renderCaller(callTemplate, 'call', generics[:i], returns[:j], False))
+            #     n.append(renderCaller(callTemplate, 'call', generics[:i], returns[:j], True))
+
+            # r.append(renderCaller(callerTemplate, 'register', generics[:i], returns[:j], False))
+            # r.append(renderCaller(callerTemplate, 'register', generics[:i], returns[:j], True))
+
+            # c.append(renderCumin(generics[:i], returns[:j], False))
+            # c.append(renderCumin(generics[:i], returns[:j], True))
+
+            if j == 0 and i < 5:
+                r += renderSet(callerTemplate, 'register', generics[:i], returns[:j], False)
+                c += renderSet(cuminTemplate, 'cumin', generics[:i], returns[:j], True)
+            else:
+                r.append(renderCaller(callerTemplate, 'register', generics[:i], returns[:j], False))
+                # r.append(renderCaller(callerTemplate, 'register', generics[:i], returns[:j], True))
+
+                c.append(renderCumin(generics[:i], returns[:j], False))
+                c.append(renderCumin(generics[:i], returns[:j], True))
+
     with open(os.path.join(os.getcwd(), out), 'w') as f:
         f.write(outputTemplate)
-        e = r + s + n 
+        e = seperateLists(r) + seperateLists(s) + seperateLists(n) 
 
         [f.write(x + '\n\n') for x in e]
         f.write("}\n\n")
 
-        [f.write(x + '\n\n') for x in c]
+        [f.write(x + '\n\n') for x in seperateLists(c)]
+
+# Splits off the listy lines from the unlisty ones
+def seperateLists(prints):
+    withoutLists, withLists = [], []
+
+    for x in prints:
+        withoutLists.append(x) if 'Generator' in x else withLists.append(x)
+
+    return withLists + withoutLists
 
 # Apply some different formatting to the passed list of characters
 def binaryMask(source, normalFmt, maskedFmt, tailfmt):
