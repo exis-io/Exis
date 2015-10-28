@@ -145,7 +145,6 @@ public extension RiffleSession {
 	public func call<A: CN, B: CN, C: CN, D: CN, E: CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D, E) -> ())?)  {
 	_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 }
-
 }
 
 public func cumin(fn: () -> ()) -> ([AnyObject]) -> () {

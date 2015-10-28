@@ -28,7 +28,6 @@ networking code with something that doesn't look like networking code at all!
     # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
     s.requires_arc = true
-    s.platform = {osx: "10.8", ios: "8.0"}
 
     s.source_files = 'Pod/Classes/**/*'
     s.resource_bundles = {
