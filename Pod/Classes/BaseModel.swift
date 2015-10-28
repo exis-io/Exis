@@ -40,6 +40,10 @@ public class RiffleModel : MTLModel, MTLJSONSerializing, Cuminicable {
         return nil
     }
     
+    public static func brutalize<T: Cuminicable>(object: Cuminicable, _ t: T.Type) -> Cuminicable? {
+        return nil
+    }
+    
     //MARK: Old Placeholder Methods
     //    required override public init() {
     //        super.init()
@@ -52,8 +56,8 @@ public class RiffleModel : MTLModel, MTLJSONSerializing, Cuminicable {
     //    func serialize() -> [String:AnyObject] {
     //        return [:]
     //    }
-    //    
+    //
     //    func deserialize(json: [String:AnyObject]) {
-    //        
+    //
     //    }
 }
