@@ -53,18 +53,22 @@ def renderSet(template, name, args, ret, cuminSpecific):
         finalWheres = ', '. join(wheres)
         finalBoth = finalGenerics +  ' where ' + finalWheres if finalWheres is not '' else finalGenerics         
 
-        templated = (template % (name, finalBoth, finalArgs, finalReturns, lastReplace,)).replace("<>", "")
-        result.append(templated)
+        if cuminSpecific:
+            templated = template % (finalBoth, finalArgs, finalReturns, finalReturns, lastReplace,)
+        else:
+            templated = template % (name, finalBoth, finalArgs, finalReturns, lastReplace,)
+
+        result.append(templated.replace("<>", ""))
 
     return result
 
 def main():
     c, r, s, n = [], [], [], []
-    out = DEV
+    out = PRODUCTION
 
     # Generate cumins
-    for j in range(2):
-        for i in range(0, 2):
+    for j in range(4):
+        for i in range(0, 4):
             if j == 0:
                 s += renderSet(callerTemplate, 'subscribe', generics[:i], returns[:j], False)
                 n += renderSet(callTemplate, 'call', generics[:i], returns[:j], False)
