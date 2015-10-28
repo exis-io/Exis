@@ -68,7 +68,7 @@ def main():
 
     # Generate cumins
     for j in range(4):
-        for i in range(0, 4):
+        for i in range(0, 7):
             if j == 0:
                 s += renderSet(callerTemplate, 'subscribe', generics[:i], returns[:j], False)
                 n += renderSet(callTemplate, 'call', generics[:i], returns[:j], False)
