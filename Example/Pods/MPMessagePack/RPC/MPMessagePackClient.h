@@ -9,8 +9,10 @@
 #import <Foundation/Foundation.h>
 
 #import "MPDefines.h"
+#import "MPRPCProtocol.h"
 
 typedef NS_ENUM (NSInteger, MPMessagePackClientStatus) {
+  MPMessagePackClientStatusNone = 0,
   MPMessagePackClientStatusClosed = 1,
   MPMessagePackClientStatusOpening,
   MPMessagePackClientStatusOpen,
@@ -18,62 +20,77 @@ typedef NS_ENUM (NSInteger, MPMessagePackClientStatus) {
 
 typedef NS_OPTIONS (NSInteger, MPMessagePackOptions) {
   MPMessagePackOptionsNone = 0,
+  // If true, the message is wrapped in a frame
   MPMessagePackOptionsFramed = 1 << 0,
 };
 
 @protocol MPMessagePackCoder
-- (id)encodeObject:(id)obj;
+- (nonnull id)encodeObject:(nonnull id)obj;
 @end
 
 @class MPMessagePackClient;
 
-typedef void (^MPErrorHandler)(NSError *error);
-// Callback after we send request
-typedef void (^MPRequestCompletion)(NSError *error, id result);
-typedef void (^MPRequestHandler)(NSNumber *messageId, NSString *method, NSArray *params, MPRequestCompletion completion);
-
-
 @protocol MPMessagePackClientDelegate <NSObject>
-- (void)client:(MPMessagePackClient *)client didError:(NSError *)error fatal:(BOOL)fatal;
-- (void)client:(MPMessagePackClient *)client didChangeStatus:(MPMessagePackClientStatus)status;
-- (void)client:(MPMessagePackClient *)client didReceiveNotificationWithMethod:(NSString *)method params:(NSArray *)params;
+- (void)client:(nonnull MPMessagePackClient *)client didError:(nonnull NSError *)error fatal:(BOOL)fatal;
+- (void)client:(nonnull MPMessagePackClient *)client didChangeStatus:(MPMessagePackClientStatus)status;
+- (void)client:(nonnull MPMessagePackClient *)client didReceiveNotificationWithMethod:(nonnull NSString *)method params:(nonnull NSArray *)params;
 @end
 
-@interface MPMessagePackClient : NSObject <NSStreamDelegate, MPMessagePackCoder>
+@interface MPMessagePackClient : NSObject
 
 @property (weak) id<MPMessagePackClientDelegate> delegate;
-@property (copy) MPRequestHandler requestHandler;
+@property (nullable, copy) MPRequestHandler requestHandler;
 @property (readonly, nonatomic) MPMessagePackClientStatus status;
-@property id<MPMessagePackCoder> coder;
+@property (nullable) id<MPMessagePackCoder> coder;
 
-- (instancetype)initWithName:(NSString *)name options:(MPMessagePackOptions)options;
+- (nonnull instancetype)initWithName:(nonnull NSString *)name options:(MPMessagePackOptions)options;
 
-- (void)openWithHost:(NSString *)host port:(UInt32)port completion:(MPCompletion)completion;
+- (void)openWithHost:(nonnull NSString *)host port:(UInt32)port completion:(nonnull MPCompletion)completion;
 
-- (BOOL)openWithSocket:(NSString *)unixSocket completion:(MPCompletion)completion;
+- (BOOL)openWithSocket:(nonnull NSString *)unixSocket completion:(nonnull MPCompletion)completion;
 
-- (void)setInputStream:(NSInputStream *)inputStream outputStream:(NSOutputStream *)outputStream;
+- (void)setInputStream:(nonnull NSInputStream *)inputStream outputStream:(nonnull NSOutputStream *)outputStream;
 
 - (void)close;
 
 /*!
- Send RPC request.
+ Send RPC request asyncronously with completion block.
  
  @param method Method name
- @param params Params Method params. If coder is set on client will encode params.
- @param messageId Unique message identifier
+ @param params Method args. If coder is set on client, we will use it to encode.
+ @param messageId Unique message identifier. Responses will use this message ID.
  @param completion Response
  */
-- (NSArray *)sendRequestWithMethod:(NSString *)method params:(NSArray *)params messageId:(NSInteger)messageId completion:(MPRequestCompletion)completion;
+- (void)sendRequestWithMethod:(nonnull NSString *)method params:(nonnull NSArray *)params messageId:(NSInteger)messageId completion:(nonnull MPRequestCompletion)completion;
 
 /*!
- If you are using the requestHandler, use this method to send a response.
+ Send a response.
 
  @param result Result
  @param error Error
- @param messageId Message id (should match request message id)
+ @param messageId Message ID (will match request message ID)
  */
-- (void)sendResponseWithResult:(id)result error:(id)error messageId:(NSInteger)messageId;
+- (void)sendResponseWithResult:(nullable id)result error:(nullable id)error messageId:(NSInteger)messageId;
+
+/*!
+ Send request synchronously.
+ 
+ @param method Method name
+ @param params Method args. If coder is set on client, we will use it to encode.
+ @param messageId Unique message identifier. Responses will use this message ID.
+ @param timeout Timeout
+ @param error Out error
+ @result Result of method invocation
+ */
+- (nullable id)sendRequestWithMethod:(nonnull NSString *)method params:(nonnull NSArray *)params messageId:(NSInteger)messageId timeout:(NSTimeInterval)timeout error:(NSError * _Nonnull * _Nonnull)error;
+
+/*!
+ Cancel request.
+ 
+ @param messageId Message id
+ @result Return YES if cancelled
+ */
+- (BOOL)cancelRequestWithMessageId:(NSInteger)messageId;
 
 @end
 

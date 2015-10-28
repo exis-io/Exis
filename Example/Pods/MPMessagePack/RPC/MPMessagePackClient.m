@@ -9,11 +9,12 @@
 #import "MPMessagePackClient.h"
 
 #import "MPMessagePack.h"
-#import "MPRPCProtocol.h"
+#import "MPRequest.h"
+#import "MPDispatchRequest.h"
 #include <sys/socket.h>
 #include <sys/un.h>
 
-@interface MPMessagePackClient ()
+@interface MPMessagePackClient () <NSStreamDelegate, MPMessagePackCoder>
 @property MPRPCProtocol *protocol;
 @property NSString *name;
 @property MPMessagePackOptions options;
@@ -22,7 +23,7 @@
 @property NSInputStream *inputStream;
 @property NSOutputStream *outputStream;
 
-@property NSMutableArray *queue;
+@property NSMutableArray *bufferQueue;
 
 @property NSMutableDictionary *requests;
 
@@ -35,6 +36,9 @@
 @property CFSocketNativeHandle nativeSocket; // For native local socket
 @end
 
+
+typedef void (^MPDispatchSignal)(NSInteger messageId);
+
 @implementation MPMessagePackClient
 
 - (instancetype)init {
@@ -45,7 +49,7 @@
   if ((self = [super init])) {
     _name = name;
     _options = options;
-    _queue = [NSMutableArray array];
+    _bufferQueue = [NSMutableArray array];
     _readBuffer = [NSMutableData data];
     _requests = [NSMutableDictionary dictionary];
     _protocol = [[MPRPCProtocol alloc] init];
@@ -54,8 +58,8 @@
 }
 
 - (void)dealloc {
-    _inputStream.delegate = nil;
-    _outputStream.delegate = nil;
+  _inputStream.delegate = nil;
+  _outputStream.delegate = nil;
 }
 
 - (void)setInputStream:(NSInputStream *)inputStream outputStream:(NSOutputStream *)outputStream {
@@ -112,21 +116,18 @@
   self.status = MPMessagePackClientStatusClosed;
 }
 
-- (NSArray *)sendRequestWithMethod:(NSString *)method params:(NSArray *)params messageId:(NSInteger)messageId completion:(MPRequestCompletion)completion {
+- (void)sendRequestWithMethod:(NSString *)method params:(NSArray *)params messageId:(NSInteger)messageId completion:(MPRequestCompletion)completion {
   params = [self encodeObject:params];
-  NSArray *request = @[@(0), @(messageId), method, params ? params : NSNull.null];
-
   NSError *error = nil;
   NSData *data = [_protocol encodeRequestWithMethod:method params:params messageId:messageId options:0 framed:(_options & MPMessagePackOptionsFramed) error:&error];
   if (!data) {
     completion(error, nil);
-    return nil;
+    return;
   }
 
-  _requests[@(messageId)] = completion;
+  _requests[@(messageId)] = [MPRequest requestWithCompletion:completion];
   //MPDebug(@"Send: %@", [request componentsJoinedByString:@", "]);
   [self writeData:data];
-  return request;
 }
 
 - (id)encodeObject:(id)object {
@@ -174,7 +175,7 @@
 
 - (void)writeData:(NSData *)data {
   NSAssert(data.length > 0, @"Data was empty");
-  [_queue addObject:data];
+  [_bufferQueue addObject:data];
   [self checkQueue];
 }
 
@@ -182,7 +183,7 @@
   while (YES) {
     if (![_outputStream hasSpaceAvailable]) break;
     
-    NSMutableData *data = [_queue firstObject];
+    NSMutableData *data = [_bufferQueue firstObject];
     if (!data) break;
     
     NSUInteger length = data.length - _writeIndex;
@@ -201,7 +202,7 @@
     } else if (bytesWritten != length) {
       _writeIndex += bytesWritten;
     } else {
-      if ([_queue count] > 0) [_queue removeObjectAtIndex:0];
+      if ([_bufferQueue count] > 0) [_bufferQueue removeObjectAtIndex:0];
       _writeIndex = 0;
     }
   }
@@ -236,7 +237,7 @@
     }
     if (!frameSize) return;
     if (![frameSize isKindOfClass:NSNumber.class]) {
-      [self handleError:MPMakeError(502, @"[%@] Expected number for frame size. You need to have framing on for both sides?", _name) fatal:YES];
+      [self handleError:MPMakeError(MPRPCErrorResponseInvalid, @"[%@] Expected number for frame size. You need to have framing on for both sides?", _name) fatal:YES];
       return;
     }
     if (_readBuffer.length < (frameSize.unsignedIntegerValue + reader.index)) {
@@ -312,13 +313,13 @@
     }
     
     id result = MPIfNull(message[3], nil);
-    MPRequestCompletion completion = _requests[messageId];
-    if (!completion) {
+    MPRequest *request = _requests[messageId];
+    [_requests removeObjectForKey:messageId];
+    if (!request.completion) {
       MPErr(@"No completion block for request: %@", messageId);
-      [self handleError:MPMakeError(501, @"[%@] Got response for unknown request", _name) fatal:NO];
+      [self handleError:MPMakeError(MPRPCErrorResponseInvalid, @"[%@] Got response for unknown request", _name) fatal:NO];
     } else {
-      [_requests removeObjectForKey:messageId];
-      completion(error, result);
+      [request completeWithResult:result error:error];
     }
   } else if (type == 2) {
     NSString *method = MPIfNull(message[1], nil);
@@ -341,6 +342,66 @@
     [self close];
   }
 }
+
+#pragma mark Dispatch
+
+- (id)sendRequestWithMethod:(NSString *)method params:(NSArray *)params messageId:(NSInteger)messageId timeout:(NSTimeInterval)timeout error:(NSError **)error {
+  MPDispatchRequest *dispatchRequest = [MPDispatchRequest dispatchRequest];
+
+  MPDebug(@"Send request: %@", @(messageId));
+  [self sendRequestWithMethod:method params:params messageId:messageId completion:^(NSError *requestError, id result) {
+    MPDebug(@"Done: %@", @(messageId));
+    dispatchRequest.result = result;
+    dispatchRequest.error = requestError;
+    [self _signalDispatch:messageId dispatchRequest:dispatchRequest];
+  }];
+
+  [self _waitDispatch:messageId dispatchRequest:dispatchRequest timeout:timeout];
+  if (dispatchRequest.error) {
+    *error = dispatchRequest.error;
+    return nil;
+  }
+
+  if (!dispatchRequest.result) return [NSNull null];
+  return dispatchRequest.result;
+}
+
+- (BOOL)_signalDispatch:(NSInteger)messageId dispatchRequest:(MPDispatchRequest *)dispatchRequest {
+  if (!dispatchRequest) {
+    MPErr(@"No request to signal (%@)", @(messageId));
+    return NO;
+  }
+
+  MPDebug(@"Signal: %@", dispatchRequest);
+  long signalStatus = dispatch_semaphore_signal(dispatchRequest.semaphore);
+  MPDebug(@"Signal status: %@", @(signalStatus));
+  return (signalStatus != 0);
+}
+
+- (void)_waitDispatch:(NSInteger)messageId dispatchRequest:(MPDispatchRequest *)dispatchRequest timeout:(NSTimeInterval)timeout {
+  if (!dispatchRequest.semaphore) {
+    dispatchRequest.error = MPMakeError(MPRPCErrorResponseInvalid, @"Nothing to wait on. Response already timed out, canceled or responded?");
+    return;
+  }
+
+  MPDebug(@"Wait: %@", @(messageId));
+
+  dispatch_time_t time = timeout > 0 ? dispatch_time(DISPATCH_TIME_NOW, timeout * NSEC_PER_SEC) : DISPATCH_TIME_FOREVER;
+  long status = dispatch_semaphore_wait(dispatchRequest.semaphore, time);
+
+  if (status != 0 && !dispatchRequest.error) dispatchRequest.error = MPMakeError(MPRPCErrorRequestTimeout, @"Request timeout");
+}
+
+- (BOOL)cancelRequestWithMessageId:(NSInteger)messageId {
+  MPDebug(@"Cancel: %@", @(messageId));
+  MPRequest *request = _requests[@(messageId)];
+  if (!request.completion) return NO;
+
+  [request completeWithResult:nil error:MPMakeError(MPRPCErrorRequestCanceled, @"Cancelled")];
+  return YES;
+}
+
+#pragma mark Stream Events
 
 NSString *MPNSStringFromNSStreamEvent(NSStreamEvent e) {
   NSMutableString *str = [[NSMutableString alloc] init];

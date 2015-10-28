@@ -16,7 +16,8 @@
 extern NSString *const AsyncUdpSocketException;
 extern NSString *const AsyncUdpSocketErrorDomain;
 
-typedef NS_ENUM(NSInteger, AsyncUdpSocketError) {
+enum AsyncUdpSocketError
+{
 	AsyncUdpSocketCFSocketError = kCFSocketError,	// From CFSocketError enum
 	AsyncUdpSocketNoError = 0,                      // Never used
 	AsyncUdpSocketBadParameter,                     // Used if given a bad parameter (such as an improper address)
@@ -25,6 +26,7 @@ typedef NS_ENUM(NSInteger, AsyncUdpSocketError) {
 	AsyncUdpSocketSendTimeoutError,
 	AsyncUdpSocketReceiveTimeoutError
 };
+typedef enum AsyncUdpSocketError AsyncUdpSocketError;
 
 @interface AsyncUdpSocket : NSObject
 {
