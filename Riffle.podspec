@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = "Riffle"
-    s.version          = "0.1.31"
+    s.version          = "0.1.32"
     s.summary          = "Client side library for connecting to a fabric."
 
     s.ios.deployment_target = "8.0"
@@ -34,4 +34,9 @@ networking code with something that doesn't look like networking code at all!
     s.dependency 'Mantle', '1.5'
 
 
+    s.subspec 'ios' do |ios|
+    end
+
+    s.subspec 'osx' do |osx|
+    end
 end
