@@ -139,3 +139,32 @@ extension Bool: Cuminicable {
         return nil
     }
 }
+
+
+
+// MARK: Tuple Handling
+func arrayForTuple(tuple: Any?) -> [AnyObject]? {
+    // Returns a tuple as a list of AnyObjects. If the passed arg is not a tuple, returns nil
+    // If passed Void, returns an empty list.
+    // If passed nil, returns nil.
+    // If any returned element of the tuple is not AnyObject, returns nil
+    
+    // CANT handle nil values within the tuple
+    
+    if tuple == nil {
+        return nil
+    }
+    
+    let reflection = Mirror(reflecting: tuple!)
+    var arr : [AnyObject] = []
+    
+    for value in reflection.children {
+        if let val = value.value as? AnyObject {
+            arr.append(val)
+        } else {
+            return nil
+        }
+    }
+    
+    return arr
+}

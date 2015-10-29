@@ -31,9 +31,12 @@ def renderGenericList(args, array):
 
 def renderCumin(args, ret, renderingArrays):
     p = ', '.join(["%s.self <- a[%s]" % (x, i) for i, x in enumerate(args)])
-    both = renderGenericList(args + ret, renderingArrays)   
+    both = renderGenericList(args, renderingArrays)
+
     args = ', '.join(args)
     ret = ', '.join(ret)
+
+    both = ', '.join([ret, both])
 
     return ('public func cumin<%s>(fn: (%s) -> (%s)) -> ([AnyObject]) -> (%s) {\n\treturn { (a: \
 [AnyObject]) in fn(%s) }\n}' % (both, args, ret, ret, p)).replace("<>", "")
@@ -68,13 +71,13 @@ def renderSet(template, name, args, ret, cuminSpecific):
 
 def main():
     c, r, s, n = [], [], [], []
-    out = PRODUCTION
+    out = DEV
 
     # The big renderSets are waaay too big-- it actually freezes xcode when attempting to compile. 
     # For now, just allow ONLY array returns and regular old returns
 
     # Generate cumins
-    for j in range(4):
+    for j in range(2):
         for i in range(0, 7):
             if j == 0:
 

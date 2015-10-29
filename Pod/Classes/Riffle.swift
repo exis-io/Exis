@@ -79,7 +79,7 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         // This is the real subscrive method
         session.subscribe(endpoint, onEvent: { (event: MDWampEvent!) -> Void in
             // Trigger the callback
-            print(event.arguments)
+            //print(event.arguments)
             fn(event.arguments)
             
             }) { (err: NSError!) -> Void in
@@ -104,12 +104,17 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     
     func _register<R>(endpoint: String, fn: ([AnyObject]) -> (R)) {
         session.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
-            
             let result = fn(invocation.arguments)
+            
             if let autoArray = result as? [AnyObject] {
                 wamp.resultForInvocation(invocation, arguments: autoArray, argumentsKw: [:])
             } else {
-                wamp.resultForInvocation(invocation, arguments: [result as! AnyObject], argumentsKw: [:])
+                if let tupledArray = arrayForTuple(result) {
+                    wamp.resultForInvocation(invocation, arguments: tupledArray, argumentsKw: [:])
+                } else {
+                    print("WARN: Tuple interpretation failed!")
+                    wamp.resultForInvocation(invocation, arguments: [], argumentsKw: [:])
+                }
             }
             
             }, cancelHandler: { () -> Void in
