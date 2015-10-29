@@ -14,13 +14,6 @@ TODO:
 throw a well known error on miscast
 throw a well known error if args size doesn't match
 hold method weakly, dont call if deallocd EDIT: actually, dont hold the method at all-- evaluate at execution time
-
-NOTES:
-Stupid generics.
-Could be useful http://stackoverflow.com/questions/27591366/swift-generic-type-cast
-
-Works to detect an array, but from there...
-if t is ArrayProtocol.Type {
 */
 
 import Foundation
@@ -53,14 +46,14 @@ func convert<A: AnyObject, T: CollectionType where T.Generator.Element: Cuminica
     // as a type of these elements as understood from the method signature where they're declared.
     
     // The expected sequence element type
-    // Not implemented: recursive handling of nested data structures
-    let CuminicableElement = T.Generator.Element.self
+    // Not implemented: recursive handling of nested data structures-- this is very important!
     
     // Attempt to process the incoming parameters as an array
     if let x = a as? NSArray {
         var ret: [T.Generator.Element] = []
         
         for e in x {
+            // Check for failure?
             let converted = T.Generator.Element.self <- e
             ret.append(converted)
             
@@ -85,7 +78,7 @@ func convert<A: AnyObject, T: CollectionType where T.Generator.Element: Cuminica
         return unsafeBitCast(ret, T.self)
     }
     
-    // Can cover arrays here, too
+    // Cover dicts and nesting here!
     
     return nil
 }

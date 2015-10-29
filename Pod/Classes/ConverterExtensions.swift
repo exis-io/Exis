@@ -141,7 +141,6 @@ extension Bool: Cuminicable {
 }
 
 
-
 // MARK: Tuple Handling
 func arrayForTuple(tuple: Any?) -> [AnyObject]? {
     // Returns a tuple as a list of AnyObjects. If the passed arg is not a tuple, returns nil
@@ -151,6 +150,8 @@ func arrayForTuple(tuple: Any?) -> [AnyObject]? {
     
     // CANT handle nil values within the tuple
     
+    print(tuple)
+    
     if tuple == nil {
         return nil
     }
@@ -159,6 +160,12 @@ func arrayForTuple(tuple: Any?) -> [AnyObject]? {
     var arr : [AnyObject] = []
     
     for value in reflection.children {
+        print(value.value)
+        
+        if let c = value.value as? Cuminicable {
+            print("Is Cumin")
+        }
+        
         if let val = value.value as? AnyObject {
             arr.append(val)
         } else {

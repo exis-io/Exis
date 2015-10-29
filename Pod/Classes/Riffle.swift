@@ -98,7 +98,9 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
             }, cancelHandler: { () -> Void in
                 print("Register Cancelled!")
             }) { (err: NSError!) -> Void in
-                //print("Registration completed: \(endpoint)")
+                if err != nil {
+                    print("Error registering endoing: \(endpoint), \(err)")
+                }
         }
     }
     
@@ -109,18 +111,22 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
             if let autoArray = result as? [AnyObject] {
                 wamp.resultForInvocation(invocation, arguments: autoArray, argumentsKw: [:])
             } else {
-                if let tupledArray = arrayForTuple(result) {
-                    wamp.resultForInvocation(invocation, arguments: tupledArray, argumentsKw: [:])
-                } else {
-                    print("WARN: Tuple interpretation failed!")
-                    wamp.resultForInvocation(invocation, arguments: [], argumentsKw: [:])
-                }
+                wamp.resultForInvocation(invocation, arguments: [result as! AnyObject], argumentsKw: [:])
+                
+                //                if let tupledArray = arrayForTuple(result) {
+                //                    wamp.resultForInvocation(invocation, arguments: tupledArray, argumentsKw: [:])
+                //                } else {
+                //                    print("WARN: Tuple interpretation failed! Returning []")
+                //                    wamp.resultForInvocation(invocation, arguments: [], argumentsKw: [:])
+                //                }
             }
             
             }, cancelHandler: { () -> Void in
                 print("Register Cancelled!")
             }) { (err: NSError!) -> Void in
-                //print("Registration completed: \(endpoint)")
+                if err != nil {
+                    print("Error registering endoing: \(endpoint), \(err)")
+                }
         }
     }
     
