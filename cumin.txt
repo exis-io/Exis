@@ -30,31 +30,31 @@ public extension RiffleSession {
 		_register(pdid, fn: cumin(fn))
 	}
 
-	public func register<R: CN>(pdid: String, _ fn: () -> (R))  {
+	public func register<R>(pdid: String, _ fn: () -> (R))  {
 		_register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, R: CN>(pdid: String, _ fn: (A) -> (R))  {
+	public func register<A: CN, R>(pdid: String, _ fn: (A) -> (R))  {
 		_register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CN, R: CN>(pdid: String, _ fn: (A, B) -> (R))  {
+	public func register<A: CN, B: CN, R>(pdid: String, _ fn: (A, B) -> (R))  {
 		_register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CN, C: CN, R: CN>(pdid: String, _ fn: (A, B, C) -> (R))  {
+	public func register<A: CN, B: CN, C: CN, R>(pdid: String, _ fn: (A, B, C) -> (R))  {
 		_register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CN, C: CN, D: CN, R: CN>(pdid: String, _ fn: (A, B, C, D) -> (R))  {
+	public func register<A: CN, B: CN, C: CN, D: CN, R>(pdid: String, _ fn: (A, B, C, D) -> (R))  {
 		_register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CN, C: CN, D: CN, E: CN, R: CN>(pdid: String, _ fn: (A, B, C, D, E) -> (R))  {
+	public func register<A: CN, B: CN, C: CN, D: CN, E: CN, R>(pdid: String, _ fn: (A, B, C, D, E) -> (R))  {
 		_register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CN, C: CN, D: CN, E: CN, F: CN, R: CN>(pdid: String, _ fn: (A, B, C, D, E, F) -> (R))  {
+	public func register<A: CN, B: CN, C: CN, D: CN, E: CN, F: CN, R>(pdid: String, _ fn: (A, B, C, D, E, F) -> (R))  {
 		_register(pdid, fn: cumin(fn))
 	}
 
@@ -448,43 +448,43 @@ public func cumin<A: CN, B: CN, C: CN, D: CN>(fn: (A, B, C, D) -> ()) -> ([AnyOb
 	return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3]) }
 }
 
-public func cumin<, A: CN, B: CN, C: CN, D: CN, E: CN>(fn: (A, B, C, D, E) -> ()) -> ([AnyObject]) -> () {
+public func cumin<A: CN, B: CN, C: CN, D: CN, E: CN>(fn: (A, B, C, D, E) -> ()) -> ([AnyObject]) -> () {
 	return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4]) }
 }
 
-public func cumin<, A: CN, B: CN, C: CN, D: CN, E: CN, F: CN>(fn: (A, B, C, D, E, F) -> ()) -> ([AnyObject]) -> () {
+public func cumin<A: CN, B: CN, C: CN, D: CN, E: CN, F: CN>(fn: (A, B, C, D, E, F) -> ()) -> ([AnyObject]) -> () {
 	return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5]) }
 }
 
-public func cumin<R, >(fn: () -> (R)) -> ([AnyObject]) -> (R) {
+public func cumin<R>(fn: () -> (R)) -> ([AnyObject]) -> (R) {
 	return { (a: [AnyObject]) in fn() }
 }
 
-public func cumin<R, >(fn: () -> (R)) -> ([AnyObject]) -> (R) {
+public func cumin<R>(fn: () -> (R)) -> ([AnyObject]) -> (R) {
 	return { (a: [AnyObject]) in fn() }
 }
 
-public func cumin<R, A: CN>(fn: (A) -> (R)) -> ([AnyObject]) -> (R) {
+public func cumin<A: CN, R>(fn: (A) -> (R)) -> ([AnyObject]) -> (R) {
 	return { (a: [AnyObject]) in fn(A.self <- a[0]) }
 }
 
-public func cumin<R, A: CN, B: CN>(fn: (A, B) -> (R)) -> ([AnyObject]) -> (R) {
+public func cumin<A: CN, B: CN, R>(fn: (A, B) -> (R)) -> ([AnyObject]) -> (R) {
 	return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1]) }
 }
 
-public func cumin<R, A: CN, B: CN, C: CN>(fn: (A, B, C) -> (R)) -> ([AnyObject]) -> (R) {
+public func cumin<A: CN, B: CN, C: CN, R>(fn: (A, B, C) -> (R)) -> ([AnyObject]) -> (R) {
 	return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
 }
 
-public func cumin<R, A: CN, B: CN, C: CN, D: CN>(fn: (A, B, C, D) -> (R)) -> ([AnyObject]) -> (R) {
+public func cumin<A: CN, B: CN, C: CN, D: CN, R>(fn: (A, B, C, D) -> (R)) -> ([AnyObject]) -> (R) {
 	return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3]) }
 }
 
-public func cumin<R, A: CN, B: CN, C: CN, D: CN, E: CN>(fn: (A, B, C, D, E) -> (R)) -> ([AnyObject]) -> (R) {
+public func cumin<A: CN, B: CN, C: CN, D: CN, E: CN, R>(fn: (A, B, C, D, E) -> (R)) -> ([AnyObject]) -> (R) {
 	return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4]) }
 }
 
-public func cumin<R, A: CN, B: CN, C: CN, D: CN, E: CN, F: CN>(fn: (A, B, C, D, E, F) -> (R)) -> ([AnyObject]) -> (R) {
+public func cumin<A: CN, B: CN, C: CN, D: CN, E: CN, F: CN, R>(fn: (A, B, C, D, E, F) -> (R)) -> ([AnyObject]) -> (R) {
 	return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5]) }
 }
 
@@ -592,35 +592,35 @@ public func cumin<A: CL, B: CL, C: CL, D: CL where A.Generator.Element : CN, B.G
 	return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3]) }
 }
 
-public func cumin<, A: CL, B: CL, C: CL, D: CL, E: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN, E.Generator.Element : CN>(fn: (A, B, C, D, E) -> ()) -> ([AnyObject]) -> () {
+public func cumin<A: CL, B: CL, C: CL, D: CL, E: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN, E.Generator.Element : CN>(fn: (A, B, C, D, E) -> ()) -> ([AnyObject]) -> () {
 	return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4]) }
 }
 
-public func cumin<, A: CL, B: CL, C: CL, D: CL, E: CL, F: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN, E.Generator.Element : CN, F.Generator.Element : CN>(fn: (A, B, C, D, E, F) -> ()) -> ([AnyObject]) -> () {
+public func cumin<A: CL, B: CL, C: CL, D: CL, E: CL, F: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN, E.Generator.Element : CN, F.Generator.Element : CN>(fn: (A, B, C, D, E, F) -> ()) -> ([AnyObject]) -> () {
 	return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5]) }
 }
 
-public func cumin<R, A: CL where A.Generator.Element : CN>(fn: (A) -> (R)) -> ([AnyObject]) -> (R) {
+public func cumin<A: CL, R where A.Generator.Element : CN>(fn: (A) -> (R)) -> ([AnyObject]) -> (R) {
 	return { (a: [AnyObject]) in fn(A.self <- a[0]) }
 }
 
-public func cumin<R, A: CL, B: CL where A.Generator.Element : CN, B.Generator.Element : CN>(fn: (A, B) -> (R)) -> ([AnyObject]) -> (R) {
+public func cumin<A: CL, B: CL, R where A.Generator.Element : CN, B.Generator.Element : CN>(fn: (A, B) -> (R)) -> ([AnyObject]) -> (R) {
 	return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1]) }
 }
 
-public func cumin<R, A: CL, B: CL, C: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN>(fn: (A, B, C) -> (R)) -> ([AnyObject]) -> (R) {
+public func cumin<A: CL, B: CL, C: CL, R where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN>(fn: (A, B, C) -> (R)) -> ([AnyObject]) -> (R) {
 	return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
 }
 
-public func cumin<R, A: CL, B: CL, C: CL, D: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(fn: (A, B, C, D) -> (R)) -> ([AnyObject]) -> (R) {
+public func cumin<A: CL, B: CL, C: CL, D: CL, R where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(fn: (A, B, C, D) -> (R)) -> ([AnyObject]) -> (R) {
 	return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3]) }
 }
 
-public func cumin<R, A: CL, B: CL, C: CL, D: CL, E: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN, E.Generator.Element : CN>(fn: (A, B, C, D, E) -> (R)) -> ([AnyObject]) -> (R) {
+public func cumin<A: CL, B: CL, C: CL, D: CL, E: CL, R where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN, E.Generator.Element : CN>(fn: (A, B, C, D, E) -> (R)) -> ([AnyObject]) -> (R) {
 	return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4]) }
 }
 
-public func cumin<R, A: CL, B: CL, C: CL, D: CL, E: CL, F: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN, E.Generator.Element : CN, F.Generator.Element : CN>(fn: (A, B, C, D, E, F) -> (R)) -> ([AnyObject]) -> (R) {
+public func cumin<A: CL, B: CL, C: CL, D: CL, E: CL, F: CL, R where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN, E.Generator.Element : CN, F.Generator.Element : CN>(fn: (A, B, C, D, E, F) -> (R)) -> ([AnyObject]) -> (R) {
 	return { (a: [AnyObject]) in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5]) }
 }
 

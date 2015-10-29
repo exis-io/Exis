@@ -21,28 +21,29 @@ callTemplate = '\tpublic func %s<%s>(pdid: String, _ args: AnyObject..., handler
 cuminTemplate = 'public func cumin<%s>(fn: (%s) -> (%s)) -> ([AnyObject]) -> (%s) {\n\treturn { (a: [AnyObject]) in fn(%s) }\n}'
 
 
-def renderGenericList(args, array):
+def renderGenericList(args, ret, array):
+    # To genericate the return types, remove the "ret" call
     if array:
-        collectionGenerics = ', '.join(map(lambda x: "%s: CL" % x, args))
+        collectionGenerics = ', '.join(map(lambda x: "%s: CL" % x, args) + ret)
         wherables = ', '.join(map(lambda x: "%s.Generator.Element : CN" % x, args))
         return collectionGenerics +  ' where ' + wherables if wherables is not '' else collectionGenerics      
     else:
-        return ', '.join([x + ": CN" for x in args])
+        return ', '.join([x + ": CN" for x in args] + ret)
 
 def renderCumin(args, ret, renderingArrays):
     p = ', '.join(["%s.self <- a[%s]" % (x, i) for i, x in enumerate(args)])
-    both = renderGenericList(args, renderingArrays)
+    both = renderGenericList(args, ret, renderingArrays)
 
     args = ', '.join(args)
     ret = ', '.join(ret)
 
-    both = ', '.join([ret, both])
+    # both = ', '.join([ret, both])
 
     return ('public func cumin<%s>(fn: (%s) -> (%s)) -> ([AnyObject]) -> (%s) {\n\treturn { (a: \
 [AnyObject]) in fn(%s) }\n}' % (both, args, ret, ret, p)).replace("<>", "")
 
 def renderCaller(template, name, args, ret, renderingArrays):
-    both = renderGenericList(args + ret, renderingArrays)    
+    both = renderGenericList(args, ret, renderingArrays)    
     args = ', '.join(args)
     ret = ', '.join(ret)
 
@@ -71,7 +72,7 @@ def renderSet(template, name, args, ret, cuminSpecific):
 
 def main():
     c, r, s, n = [], [], [], []
-    out = DEV
+    out = PRODUCTION
 
     # The big renderSets are waaay too big-- it actually freezes xcode when attempting to compile. 
     # For now, just allow ONLY array returns and regular old returns
