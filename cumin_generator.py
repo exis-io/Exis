@@ -20,8 +20,8 @@ callerTemplate = '\tpublic func %s<%s>(pdid: String, _ fn: (%s) -> (%s)) {\n\t\t
 callTemplate = '\tpublic func %s<%s>(pdid: String, _ args: AnyObject..., handler fn: ((%s) -> (%s))?) {\n\t\t_%s(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))\n\t}'
 
 # The firstis used for modeling collections of cuminicable items. Second is for arbitrary cuminicables
-cuminCollectionTemplate = 'public func cumin<%s>(fn: (%s) -> (%s)) -> ([AnyObject]) throws -> (%s) {\n\treturn { (a: [AnyObject]) in try apc(a, %s); fn(%s) }\n}'
-cuminTemplate = 'public func cumin<%s>(fn: (%s) -> (%s)) -> ([AnyObject]) throws -> (%s) {\n\treturn { (a: [AnyObject]) in try apc(a, %s); fn(%s) }\n}'
+cuminCollectionTemplate = 'public func cumin<%s>(fn: (%s) -> (%s)) -> ([AnyObject]) throws -> (%s) {\n\treturn { (a: [AnyObject]) in fn(%s) }\n}'
+cuminTemplate = 'public func cumin<%s>(fn: (%s) -> (%s)) -> ([AnyObject]) throws -> (%s) {\n\treturn { (a: [AnyObject]) in fn(%s) }\n}'
 
 
 def renderGenericList(args, ret, array):
@@ -40,7 +40,7 @@ def renderCumin(args, ret, renderingArrays):
     finalArgs = ', '.join(args)
     ret = ', '.join(ret)
 
-    return (cuminCollectionTemplate % (both, finalArgs, ret, ret, str(len(args)), p)).replace("<>", "")
+    return (cuminCollectionTemplate % (both, finalArgs, ret, ret, p)).replace("<>", "")
 
 def renderCaller(template, name, args, ret, renderingArrays):
     both = renderGenericList(args, ret, renderingArrays)    
@@ -62,7 +62,7 @@ def renderSet(template, name, args, ret, cuminSpecific):
         finalBoth = finalGenerics +  ' where ' + finalWheres if finalWheres is not '' else finalGenerics         
 
         if cuminSpecific:
-            templated = template % (finalBoth, finalArgs, finalReturns, finalReturns, str(len(args)), lastReplace,)
+            templated = template % (finalBoth, finalArgs, finalReturns, finalReturns, lastReplace,)
         else:
             templated = template % (name, finalBoth, finalArgs, finalReturns, lastReplace,)
 

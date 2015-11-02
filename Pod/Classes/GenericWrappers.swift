@@ -429,194 +429,194 @@ public extension RiffleSession {
 }
 
 public func cumin(fn: () -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 0); fn() }
+	return { (a: [AnyObject]) in fn() }
 }
 
 public func cumin<A: CN>(fn: (A) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 1); fn(try A.self <- a[0]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0]) }
 }
 
 public func cumin<A: CN, B: CN>(fn: (A, B) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 2); fn(try A.self <- a[0], try B.self <- a[1]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1]) }
 }
 
 public func cumin<A: CN, B: CN, C: CN>(fn: (A, B, C) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 3); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2]) }
 }
 
 public func cumin<A: CN, B: CN, C: CN, D: CN>(fn: (A, B, C, D) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 4); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
 }
 
 public func cumin<A: CN, B: CN, C: CN, D: CN, E: CN>(fn: (A, B, C, D, E) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 5); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3], try E.self <- a[4]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3], try E.self <- a[4]) }
 }
 
 public func cumin<A: CN, B: CN, C: CN, D: CN, E: CN, F: CN>(fn: (A, B, C, D, E, F) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 6); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3], try E.self <- a[4], try F.self <- a[5]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3], try E.self <- a[4], try F.self <- a[5]) }
 }
 
 public func cumin<R>(fn: () -> (R)) -> ([AnyObject]) throws -> (R) {
-	return { (a: [AnyObject]) in try apc(a, 0); fn() }
+	return { (a: [AnyObject]) in fn() }
 }
 
 public func cumin<A: CN, R>(fn: (A) -> (R)) -> ([AnyObject]) throws -> (R) {
-	return { (a: [AnyObject]) in try apc(a, 1); fn(try A.self <- a[0]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0]) }
 }
 
 public func cumin<A: CN, B: CN, R>(fn: (A, B) -> (R)) -> ([AnyObject]) throws -> (R) {
-	return { (a: [AnyObject]) in try apc(a, 2); fn(try A.self <- a[0], try B.self <- a[1]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1]) }
 }
 
 public func cumin<A: CN, B: CN, C: CN, R>(fn: (A, B, C) -> (R)) -> ([AnyObject]) throws -> (R) {
-	return { (a: [AnyObject]) in try apc(a, 3); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2]) }
 }
 
 public func cumin<A: CN, B: CN, C: CN, D: CN, R>(fn: (A, B, C, D) -> (R)) -> ([AnyObject]) throws -> (R) {
-	return { (a: [AnyObject]) in try apc(a, 4); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
 }
 
 public func cumin<A: CN, B: CN, C: CN, D: CN, E: CN, R>(fn: (A, B, C, D, E) -> (R)) -> ([AnyObject]) throws -> (R) {
-	return { (a: [AnyObject]) in try apc(a, 5); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3], try E.self <- a[4]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3], try E.self <- a[4]) }
 }
 
 public func cumin<A: CN, B: CN, C: CN, D: CN, E: CN, F: CN, R>(fn: (A, B, C, D, E, F) -> (R)) -> ([AnyObject]) throws -> (R) {
-	return { (a: [AnyObject]) in try apc(a, 6); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3], try E.self <- a[4], try F.self <- a[5]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3], try E.self <- a[4], try F.self <- a[5]) }
 }
 
 public func cumin<A: CL where A.Generator.Element : CN>(fn: (A) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 1); fn(try A.self <- a[0]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0]) }
 }
 
 public func cumin<A: CN, B: CL where B.Generator.Element : CN>(fn: (A, B) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 2); fn(try A.self <- a[0], try B.self <- a[1]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1]) }
 }
 
 public func cumin<A: CL, B: CN where A.Generator.Element : CN>(fn: (A, B) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 2); fn(try A.self <- a[0], try B.self <- a[1]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1]) }
 }
 
 public func cumin<A: CL, B: CL where A.Generator.Element : CN, B.Generator.Element : CN>(fn: (A, B) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 2); fn(try A.self <- a[0], try B.self <- a[1]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1]) }
 }
 
 public func cumin<A: CN, B: CN, C: CL where C.Generator.Element : CN>(fn: (A, B, C) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 3); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2]) }
 }
 
 public func cumin<A: CN, B: CL, C: CN where B.Generator.Element : CN>(fn: (A, B, C) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 3); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2]) }
 }
 
 public func cumin<A: CN, B: CL, C: CL where B.Generator.Element : CN, C.Generator.Element : CN>(fn: (A, B, C) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 3); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2]) }
 }
 
 public func cumin<A: CL, B: CN, C: CN where A.Generator.Element : CN>(fn: (A, B, C) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 3); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2]) }
 }
 
 public func cumin<A: CL, B: CN, C: CL where A.Generator.Element : CN, C.Generator.Element : CN>(fn: (A, B, C) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 3); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2]) }
 }
 
 public func cumin<A: CL, B: CL, C: CN where A.Generator.Element : CN, B.Generator.Element : CN>(fn: (A, B, C) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 3); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2]) }
 }
 
 public func cumin<A: CL, B: CL, C: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN>(fn: (A, B, C) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 3); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2]) }
 }
 
 public func cumin<A: CN, B: CN, C: CN, D: CL where D.Generator.Element : CN>(fn: (A, B, C, D) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 4); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
 }
 
 public func cumin<A: CN, B: CN, C: CL, D: CN where C.Generator.Element : CN>(fn: (A, B, C, D) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 4); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
 }
 
 public func cumin<A: CN, B: CN, C: CL, D: CL where C.Generator.Element : CN, D.Generator.Element : CN>(fn: (A, B, C, D) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 4); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
 }
 
 public func cumin<A: CN, B: CL, C: CN, D: CN where B.Generator.Element : CN>(fn: (A, B, C, D) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 4); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
 }
 
 public func cumin<A: CN, B: CL, C: CN, D: CL where B.Generator.Element : CN, D.Generator.Element : CN>(fn: (A, B, C, D) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 4); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
 }
 
 public func cumin<A: CN, B: CL, C: CL, D: CN where B.Generator.Element : CN, C.Generator.Element : CN>(fn: (A, B, C, D) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 4); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
 }
 
 public func cumin<A: CN, B: CL, C: CL, D: CL where B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(fn: (A, B, C, D) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 4); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
 }
 
 public func cumin<A: CL, B: CN, C: CN, D: CN where A.Generator.Element : CN>(fn: (A, B, C, D) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 4); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
 }
 
 public func cumin<A: CL, B: CN, C: CN, D: CL where A.Generator.Element : CN, D.Generator.Element : CN>(fn: (A, B, C, D) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 4); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
 }
 
 public func cumin<A: CL, B: CN, C: CL, D: CN where A.Generator.Element : CN, C.Generator.Element : CN>(fn: (A, B, C, D) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 4); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
 }
 
 public func cumin<A: CL, B: CN, C: CL, D: CL where A.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(fn: (A, B, C, D) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 4); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
 }
 
 public func cumin<A: CL, B: CL, C: CN, D: CN where A.Generator.Element : CN, B.Generator.Element : CN>(fn: (A, B, C, D) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 4); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
 }
 
 public func cumin<A: CL, B: CL, C: CN, D: CL where A.Generator.Element : CN, B.Generator.Element : CN, D.Generator.Element : CN>(fn: (A, B, C, D) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 4); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
 }
 
 public func cumin<A: CL, B: CL, C: CL, D: CN where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN>(fn: (A, B, C, D) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 4); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
 }
 
 public func cumin<A: CL, B: CL, C: CL, D: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(fn: (A, B, C, D) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 4); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
 }
 
 public func cumin<A: CL, B: CL, C: CL, D: CL, E: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN, E.Generator.Element : CN>(fn: (A, B, C, D, E) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 5); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3], try E.self <- a[4]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3], try E.self <- a[4]) }
 }
 
 public func cumin<A: CL, B: CL, C: CL, D: CL, E: CL, F: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN, E.Generator.Element : CN, F.Generator.Element : CN>(fn: (A, B, C, D, E, F) -> ()) -> ([AnyObject]) throws -> () {
-	return { (a: [AnyObject]) in try apc(a, 6); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3], try E.self <- a[4], try F.self <- a[5]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3], try E.self <- a[4], try F.self <- a[5]) }
 }
 
 public func cumin<A: CL, R where A.Generator.Element : CN>(fn: (A) -> (R)) -> ([AnyObject]) throws -> (R) {
-	return { (a: [AnyObject]) in try apc(a, 1); fn(try A.self <- a[0]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0]) }
 }
 
 public func cumin<A: CL, B: CL, R where A.Generator.Element : CN, B.Generator.Element : CN>(fn: (A, B) -> (R)) -> ([AnyObject]) throws -> (R) {
-	return { (a: [AnyObject]) in try apc(a, 2); fn(try A.self <- a[0], try B.self <- a[1]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1]) }
 }
 
 public func cumin<A: CL, B: CL, C: CL, R where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN>(fn: (A, B, C) -> (R)) -> ([AnyObject]) throws -> (R) {
-	return { (a: [AnyObject]) in try apc(a, 3); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2]) }
 }
 
 public func cumin<A: CL, B: CL, C: CL, D: CL, R where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(fn: (A, B, C, D) -> (R)) -> ([AnyObject]) throws -> (R) {
-	return { (a: [AnyObject]) in try apc(a, 4); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3]) }
 }
 
 public func cumin<A: CL, B: CL, C: CL, D: CL, E: CL, R where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN, E.Generator.Element : CN>(fn: (A, B, C, D, E) -> (R)) -> ([AnyObject]) throws -> (R) {
-	return { (a: [AnyObject]) in try apc(a, 5); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3], try E.self <- a[4]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3], try E.self <- a[4]) }
 }
 
 public func cumin<A: CL, B: CL, C: CL, D: CL, E: CL, F: CL, R where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN, E.Generator.Element : CN, F.Generator.Element : CN>(fn: (A, B, C, D, E, F) -> (R)) -> ([AnyObject]) throws -> (R) {
-	return { (a: [AnyObject]) in try apc(a, 6); fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3], try E.self <- a[4], try F.self <- a[5]) }
+	return { (a: [AnyObject]) in fn(try A.self <- a[0], try B.self <- a[1], try C.self <- a[2], try D.self <- a[3], try E.self <- a[4], try F.self <- a[5]) }
 }
 
