@@ -16,9 +16,12 @@ returns = ['R', 'S', 'T', 'U', 'V', 'X', 'Y', 'Z']
 
 outputTemplate = "// Straight Boilerplate-- make the compiler happy\nimport Foundation\n\npublic extension RiffleSession {\n"
 
-callerTemplate = '\tpublic func %s<%s>(pdid: String, _ fn: (%s) -> (%s)) throws {\n\t\t_%s(pdid, fn: try cumin(fn))\n\t}'
-callTemplate = '\tpublic func %s<%s>(pdid: String, _ args: AnyObject..., handler fn: ((%s) -> (%s))?) throws {\n\t\t_%s(pdid, args: args, fn: fn == nil ? nil: try cumin(fn!))\n\t}'
-cuminTemplate = 'public func cumin<%s>(fn: (%s) -> (%s)) throws -> ([AnyObject]) throws -> (%s) {\n\treturn { (a: [AnyObject]) in fn(%s) }\n}'
+callerTemplate = '\tpublic func %s<%s>(pdid: String, _ fn: (%s) -> (%s)) {\n\t\t_%s(pdid, fn: cumin(fn))\n\t}'
+callTemplate = '\tpublic func %s<%s>(pdid: String, _ args: AnyObject..., handler fn: ((%s) -> (%s))?) {\n\t\t_%s(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))\n\t}'
+
+# The firstis used for modeling collections of cuminicable items. Second is for arbitrary cuminicables
+cuminCollectionTemplate = 'public func cumin<%s>(fn: (%s) -> (%s)) -> ([AnyObject]) throws -> (%s) {\n\treturn { (a: [AnyObject]) in fn(%s) }\n}'
+cuminTemplate = 'public func cumin<%s>(fn: (%s) -> (%s)) -> ([AnyObject]) throws -> (%s) {\n\treturn { (a: [AnyObject]) in fn(%s) }\n}'
 
 
 def renderGenericList(args, ret, array):
@@ -37,10 +40,7 @@ def renderCumin(args, ret, renderingArrays):
     args = ', '.join(args)
     ret = ', '.join(ret)
 
-    # both = ', '.join([ret, both])
-
-    return ('public func cumin<%s>(fn: (%s) -> (%s)) throws -> ([AnyObject]) throws -> (%s) {\n\treturn { (a: \
-[AnyObject]) in fn(%s) }\n}' % (both, args, ret, ret, p)).replace("<>", "")
+    return (cuminCollectionTemplate % (both, args, ret, ret, p)).replace("<>", "")
 
 def renderCaller(template, name, args, ret, renderingArrays):
     both = renderGenericList(args, ret, renderingArrays)    

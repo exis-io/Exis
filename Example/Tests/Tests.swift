@@ -24,18 +24,18 @@ class Dog: RiffleModel {
 
 
 // Cuminication tests. Ensure the cuminicated functions are able to receive the parameters they expect
-class CuminTests: XCTestCase {
-    func testString() {
-        let c = cumin(echo)
-        XCTAssertEqual(c(["a"]), "a")
-    }
-    
-    func testNSString() {
-        let c = cumin(echo)
-        let oldString = NSString(string: "a")
-        XCTAssertEqual(c([oldString]), "a")
-    }
-}
+//class CuminTests: XCTestCase {
+//    func testString() {
+//        let c = cumin(echo)
+//        XCTAssertEqual(c(["a"]), "a")
+//    }
+//    
+//    func testNSString() {
+//        let c = cumin(echo)
+//        let oldString = NSString(string: "a")
+//        XCTAssertEqual(c([oldString]), "a")
+//    }
+//}
 
 
 // Tests for the converter functions and related functionality
