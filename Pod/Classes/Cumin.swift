@@ -21,6 +21,15 @@ import Mantle
 
 public enum CuminError: ErrorType {
     case InvalidTypes(String, String)
+    case InvalidNumberParams(Int, Int)
+}
+
+func apc(arr: [AnyObject], _ len: Int) throws {
+    // Assert Parameter Count
+    // make sure the passed array has exactly the expected number of arguments
+    if arr.count != len {
+        throw CuminError.InvalidNumberParams(arr.count, len)
+    }
 }
 
 func convert<A: AnyObject, T: Cuminicable>(a: A?, _ t: T.Type) throws -> T {
