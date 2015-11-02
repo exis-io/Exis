@@ -16,9 +16,9 @@ returns = ['R', 'S', 'T', 'U', 'V', 'X', 'Y', 'Z']
 
 outputTemplate = "// Straight Boilerplate-- make the compiler happy\nimport Foundation\n\npublic extension RiffleSession {\n"
 
-callerTemplate = '\tpublic func %s<%s>(pdid: String, _ fn: (%s) -> (%s))  {\n\t\t_%s(pdid, fn: cumin(fn))\n\t}'
-callTemplate = '\tpublic func %s<%s>(pdid: String, _ args: AnyObject..., handler fn: ((%s) -> (%s))?)  {\n\t\t_%s(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))\n\t}'
-cuminTemplate = 'public func cumin<%s>(fn: (%s) -> (%s)) -> ([AnyObject]) -> (%s) {\n\treturn { (a: [AnyObject]) in fn(%s) }\n}'
+callerTemplate = '\tpublic func %s<%s>(pdid: String, _ fn: (%s) -> (%s)) throws {\n\t\t_%s(pdid, fn: try cumin(fn))\n\t}'
+callTemplate = '\tpublic func %s<%s>(pdid: String, _ args: AnyObject..., handler fn: ((%s) -> (%s))?) throws {\n\t\t_%s(pdid, args: args, fn: fn == nil ? nil: try cumin(fn!))\n\t}'
+cuminTemplate = 'public func cumin<%s>(fn: (%s) -> (%s)) throws -> ([AnyObject]) throws -> (%s) {\n\treturn { (a: [AnyObject]) in fn(%s) }\n}'
 
 
 def renderGenericList(args, ret, array):
@@ -31,7 +31,7 @@ def renderGenericList(args, ret, array):
         return ', '.join([x + ": CN" for x in args] + ret)
 
 def renderCumin(args, ret, renderingArrays):
-    p = ', '.join(["%s.self <- a[%s]" % (x, i) for i, x in enumerate(args)])
+    p = ', '.join(["try %s.self <- a[%s]" % (x, i) for i, x in enumerate(args)])
     both = renderGenericList(args, ret, renderingArrays)
 
     args = ', '.join(args)
@@ -39,7 +39,7 @@ def renderCumin(args, ret, renderingArrays):
 
     # both = ', '.join([ret, both])
 
-    return ('public func cumin<%s>(fn: (%s) -> (%s)) -> ([AnyObject]) -> (%s) {\n\treturn { (a: \
+    return ('public func cumin<%s>(fn: (%s) -> (%s)) throws -> ([AnyObject]) throws -> (%s) {\n\treturn { (a: \
 [AnyObject]) in fn(%s) }\n}' % (both, args, ret, ret, p)).replace("<>", "")
 
 def renderCaller(template, name, args, ret, renderingArrays):
@@ -54,7 +54,7 @@ def renderSet(template, name, args, ret, cuminSpecific):
     finalArgs = ', '.join(args)
     finalReturns = ', '.join(ret)
 
-    lastReplace = ', '.join(["%s.self <- a[%s]" % (x, i) for i, x in enumerate(args)]) if cuminSpecific else name
+    lastReplace = ', '.join(["try %s.self <- a[%s]" % (x, i) for i, x in enumerate(args)]) if cuminSpecific else name
 
     for generics, wheres in binaryMask(args + ret, "%s: CN", "%s: CL", "%s.Generator.Element : CN"):
         finalGenerics = ', '.join(generics)

@@ -19,7 +19,11 @@ hold method weakly, dont call if deallocd EDIT: actually, dont hold the method a
 import Foundation
 import Mantle
 
-func convert<A: AnyObject, T: Cuminicable>(a: A?, _ t: T.Type) -> T? {
+public enum CuminError: ErrorType {
+    case InvalidTypes(String, String)
+}
+
+func convert<A: AnyObject, T: Cuminicable>(a: A?, _ t: T.Type) throws -> T {
     //print("Expecting: \(T.self)")
     //print("Incoming: \(a)")
     
@@ -27,7 +31,9 @@ func convert<A: AnyObject, T: Cuminicable>(a: A?, _ t: T.Type) -> T? {
         let ret = t.convert(x)
         
         // If nothing was returned then no possible conversion was possible
-        guard let castResult = ret else { return nil }
+        guard let castResult = ret else {
+            throw CuminError.InvalidTypes("\(T.self)", "\(a)")
+        }
         
         if let finalResult = castResult as? T {
             return finalResult
@@ -41,10 +47,10 @@ func convert<A: AnyObject, T: Cuminicable>(a: A?, _ t: T.Type) -> T? {
         }
     }
     
-    return nil
+    throw CuminError.InvalidTypes("\(T.self)", "\(a)")
 }
 
-func convert<A: AnyObject, T: CollectionType where T.Generator.Element: Cuminicable>(a: A?, _ t: T.Type) -> T? {
+func convert<A: AnyObject, T: CollectionType where T.Generator.Element: Cuminicable>(a: A?, _ t: T.Type) throws -> T {
     // Attempt to convert an array of arbitrary elements to collection of Cuminicable elements. The sequence is passed
     // as a type of these elements as understood from the method signature where they're declared.
     
@@ -59,22 +65,7 @@ func convert<A: AnyObject, T: CollectionType where T.Generator.Element: Cuminica
         var ret: [T.Generator.Element] = []
         
         for e in x {
-            // Check for failure?
-            let converted = T.Generator.Element.self <- e
-            //print("Converted item: \(converted)")
-            ret.append(converted)
-            
-            /*
-            if let converted = CuminicableElement.convert(e) as? T.Generator.Element {
-            ret.append(converted)
-            } else {
-            // If a single one of the casts fail, stop processing the collection.
-            // This behavior may not always be expected since it does not allow collections of optionals
-            
-            // TODO: Print out or return some flavor of log here?
-            return nil
-            }
-            */
+            ret.append(try T.Generator.Element.self <- e)
         }
         
         if let cast = ret as? T {
@@ -88,11 +79,11 @@ func convert<A: AnyObject, T: CollectionType where T.Generator.Element: Cuminica
     
     // If this is an array and nothing was passed in return empty array
     let ret: [T.Generator.Element] = []
-    return ret as? T
+    return ret as! T
     
     // Cover dicts and nesting here!
     
-    return nil
+    throw CuminError.InvalidTypes("\(T.self)", "\(a)")
 }
 
 public func serialize(args: [AnyObject]) -> [AnyObject] {
@@ -119,14 +110,10 @@ associativity right
 precedence 155
 }
 
-func <- <T: CN> (t:T.Type, object: AnyObject) -> T {
-    let a = convert(object, t)
-    //print(a)
-    return a!
+func <- <T: CN> (t:T.Type, object: AnyObject) throws -> T {
+    return try convert(object, t)
 }
 
-func <- <T: CollectionType where T.Generator.Element: CN> (t:T.Type, object: AnyObject) -> T {
-    let a = convert(object, t)
-    //print(a)
-    return a!
+func <- <T: CollectionType where T.Generator.Element: CN> (t:T.Type, object: AnyObject) throws -> T {
+    return try convert(object, t)
 }

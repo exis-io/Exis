@@ -75,24 +75,37 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     
     
     // MARK: Real Calls
-    func _subscribe(endpoint: String, fn: ([AnyObject]) -> ()) {
+    func _subscribe(endpoint: String, fn: ([AnyObject]) throws -> ()) {
         // This is the real subscrive method
         session.subscribe(endpoint, onEvent: { (event: MDWampEvent!) -> Void in
-            // Trigger the callback
-            //print(event.arguments)
-            fn(event.arguments)
+
+            do {
+                try fn(event.arguments)
+            } catch CuminError.InvalidTypes(let expected, let recieved) {
+                print("Unable to convert: expected \(expected) but received \(recieved)")
+            } catch {
+                print("PANIC! Unknown exception!")
+            }
             
-            }) { (err: NSError!) -> Void in
+            })
+            { (err: NSError!) -> Void in
                 if let e = err {
                     print("An error occured: ", e)
-                }
+            }
         }
     }
     
-    func _register(endpoint: String, fn: ([AnyObject]) -> ()) {
+    func _register(endpoint: String, fn: ([AnyObject]) throws -> ()) {
         session.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
             
-            fn(invocation.arguments)
+            do {
+                try fn(invocation.arguments)
+            } catch CuminError.InvalidTypes(let expected, let recieved) {
+                print("Unable to convert: expected \(expected) but received \(recieved)")
+            } catch {
+                print("PANIC! Unknown exception!")
+            }
+            
             wamp.resultForInvocation(invocation, arguments: [], argumentsKw: [:])
             
             }, cancelHandler: { () -> Void in
@@ -104,21 +117,24 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         }
     }
     
-    func _register<R>(endpoint: String, fn: ([AnyObject]) -> (R)) {
+    func _register<R>(endpoint: String, fn: ([AnyObject]) throws -> (R)) {
         session.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
-            let result = fn(invocation.arguments)
+            var result: R?
+            
+            do {
+                try fn(invocation.arguments)
+                result = try fn(invocation.arguments)
+            } catch CuminError.InvalidTypes(let expected, let recieved) {
+                print("Unable to convert: expected \(expected) but received \(recieved)")
+                result = nil
+            } catch {
+                print("PANIC! Unknown exception!")
+            }
             
             if let autoArray = result as? [AnyObject] {
                 wamp.resultForInvocation(invocation, arguments: serialize(autoArray), argumentsKw: [:])
             } else {
                 wamp.resultForInvocation(invocation, arguments: serialize([result as! AnyObject]), argumentsKw: [:])
-                
-                //                if let tupledArray = arrayForTuple(result) {
-                //                    wamp.resultForInvocation(invocation, arguments: tupledArray, argumentsKw: [:])
-                //                } else {
-                //                    print("WARN: Tuple interpretation failed! Returning []")
-                //                    wamp.resultForInvocation(invocation, arguments: [], argumentsKw: [:])
-                //                }
             }
             
             }, cancelHandler: { () -> Void in
@@ -130,7 +146,7 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         }
     }
     
-    func _call(endpoint: String, args: [AnyObject], fn: (([AnyObject]) -> ())?) {
+    func _call(endpoint: String, args: [AnyObject], fn: (([AnyObject]) throws -> ())?) {
         // The caller received the result of the call from the callee
         
         session.call(endpoint, payload: serialize(args)) { (result: MDWampResult!, err: NSError!) -> Void in
@@ -139,7 +155,14 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
             }
             else {
                 if let h = fn {
-                    h(result.arguments == nil ? [] : result.arguments)
+                    do {
+                        try h(result.arguments == nil ? [] : result.arguments)
+                    } catch CuminError.InvalidTypes(let expected, let recieved) {
+                        print("Unable to convert: expected \(expected) but received \(recieved)")
+                    } catch {
+                        print("PANIC! Unknown exception!")
+                    }
+                    
                 }
             }
         }
