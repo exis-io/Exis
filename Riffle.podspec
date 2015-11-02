@@ -7,35 +7,36 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = "Riffle"
-  s.version          = "0.1.2"
-  s.summary          = "Client side library for connecting to a fabric."
+    s.name             = "Riffle"
+    s.version          = "0.1.32"
+    s.summary          = "Client side library for connecting to a fabric."
 
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!  
-  s.description      = <<-DESC
+    s.ios.deployment_target = "8.0"
+    s.osx.deployment_target = "10.10"
+
+    s.description      = <<-DESC
 Riffle allows for simple interaction with a Fabric. This library is meant to replace your
 networking code with something that doesn't look like networking code at all!
                        DESC
 
-    s.homepage         = "https://github.com/paradroplabs/riffle-swift"
+    s.homepage         = "https://github.com/exis-io/swiftRiffle"
     s.license          = 'MIT'
     s.author           = { "Mickey Barboi" => "damouse007@gmail.com" }
-    s.source           = { :git => "https://github.com/paradroplabs/riffle-swift.git", :tag => s.version.to_s }
-    # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+    s.source           = { :git => "https://github.com/exis-io/swiftRiffle.git", :tag => s.version.to_s }
 
     s.requires_arc = true
 
     s.source_files = 'Pod/Classes/**/*'
-    s.resource_bundles = {
-        'Riffle' => ['Pod/Assets/*.png']
-    }
 
     s.dependency 'SocketRocket', '0.4.1'
     s.dependency 'MPMessagePack', '1.3.2'
     s.dependency 'CocoaAsyncSocket', '7.4.1'
     s.dependency 'Mantle', '1.5'
+
+
+    s.subspec 'ios' do |ios|
+    end
+
+    s.subspec 'osx' do |osx|
+    end
 end

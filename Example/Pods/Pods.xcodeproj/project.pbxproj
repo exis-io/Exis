@@ -62,7 +62,6 @@
 		52E6D34F2B9190CE5445723EC2F264C2 /* MDWampAuthenticate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B409A71B23891577ED56922F97CA5B0 /* MDWampAuthenticate.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		53FA2C7781C5EB266E5C96D5BDE5BFC0 /* MPMessagePackReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F35212E194C1B155E5458886075034 /* MPMessagePackReader.m */; };
 		55CE9B3ACCA7642C35533FBC6DEC9FBE /* NSArray+MPMessagePack.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C5010BF0671657F7DF319B0ECF787EA /* NSArray+MPMessagePack.m */; };
-		56A2C41DD99C75CA22447CA4DE1F543F /* Riffle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 39BDB953513B3C6414918DF1FD53BE21 /* Riffle.bundle */; };
 		59ADE5207E2FEFDEC6F7B86D5EA81FA7 /* MPDispatchRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = F28E6242B88AAB6E2879626B9DE66895 /* MPDispatchRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59D09A516C5094B5C2C6195A8DA58FE3 /* NSDictionary+MPMessagePack.m in Sources */ = {isa = PBXBuildFile; fileRef = 079A65CCEB6EA30A3EE6287C5D0CF178 /* NSDictionary+MPMessagePack.m */; };
 		5CA2BAD996C33CE96578A353B9A2E653 /* GCDAsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F0145172CCEF9478A076FDA758D436D /* GCDAsyncUdpSocket.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
@@ -257,13 +256,6 @@
 			remoteGlobalIDString = 283E2609D30F290501ACB967CF1DF357;
 			remoteInfo = Mantle;
 		};
-		3C8C72C5D6AA3A9E9C863CE33E0A3B08 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 55243AB555683197AFBC567E0FC30F79;
-			remoteInfo = "Riffle-Riffle";
-		};
 		49272112AAC3F6EAA2704FBCE3A01A9C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
@@ -377,7 +369,6 @@
 		3898F7FD6FEFD5684BED51DFFDCA1F90 /* MTLValueTransformer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MTLValueTransformer.h; path = Mantle/MTLValueTransformer.h; sourceTree = "<group>"; };
 		38FBAFF814946AC3E62F237F3889084B /* MTLValueTransformer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MTLValueTransformer.m; path = Mantle/MTLValueTransformer.m; sourceTree = "<group>"; };
 		3991C5D0BF66D274DBABD3BAF7F05E15 /* NSString+MDString.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSString+MDString.m"; sourceTree = "<group>"; };
-		39BDB953513B3C6414918DF1FD53BE21 /* Riffle.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Riffle.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A56F8A7AF48F74F3AA61689A2A6482A /* GCDAsyncSocket.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GCDAsyncSocket.h; path = GCD/GCDAsyncSocket.h; sourceTree = "<group>"; };
 		3AB1463D9519F878DCD8B189C781C9C8 /* MPMessagePackServer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPMessagePackServer.h; path = RPC/MPMessagePackServer.h; sourceTree = "<group>"; };
 		3B409A71B23891577ED56922F97CA5B0 /* MDWampAuthenticate.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MDWampAuthenticate.m; sourceTree = "<group>"; };
@@ -559,13 +550,6 @@
 				BB906C56F9852EBB5789C3D2BF186ABB /* Mantle.framework in Frameworks */,
 				F4DE3813E569ADDE13B5545586CED0D6 /* MPMessagePack.framework in Frameworks */,
 				E6DA2518056C8D89A66FC89B6483B447 /* SocketRocket.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		361CA08A320185C41D7E4B9414F3ECD9 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1062,7 +1046,6 @@
 				9C6862F2A1CA6BF5D37A0B53AAA2A8CD /* MPMessagePack.framework */,
 				A27FB862BBC78DB4FAD7525003E92026 /* Pods_Riffle_Example.framework */,
 				3111D8E963E11449EC81BFAD09EDF722 /* Pods_Riffle_Tests.framework */,
-				39BDB953513B3C6414918DF1FD53BE21 /* Riffle.bundle */,
 				B2C601350D0C01415A4EFE9466ADFCF8 /* Riffle.framework */,
 				E636DB244A5C97A8F61A99C7D5E80F40 /* SocketRocket.framework */,
 			);
@@ -1263,23 +1246,6 @@
 			productReference = 13332E7519C7795EB57F2A8CAC318462 /* Mantle.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		55243AB555683197AFBC567E0FC30F79 /* Riffle-Riffle */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 49164F18875D15A9A0B581CF1A57DE84 /* Build configuration list for PBXNativeTarget "Riffle-Riffle" */;
-			buildPhases = (
-				172C64770B4B9A6FF0D64DD0F65F224D /* Sources */,
-				361CA08A320185C41D7E4B9414F3ECD9 /* Frameworks */,
-				B43F5FCB3F0AEF69761E90A0794C72C9 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Riffle-Riffle";
-			productName = "Riffle-Riffle";
-			productReference = 39BDB953513B3C6414918DF1FD53BE21 /* Riffle.bundle */;
-			productType = "com.apple.product-type.bundle";
-		};
 		9F78F82122E7077043B24F153EACE9D3 /* Riffle */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9ABBFD9F91C8E2B1367DBEC688E8DC5E /* Build configuration list for PBXNativeTarget "Riffle" */;
@@ -1295,7 +1261,6 @@
 				56148279FE87BF8254389CDB71364535 /* PBXTargetDependency */,
 				988AD316EF98A9355791CF27A3544E9B /* PBXTargetDependency */,
 				4EC8BFE585C864D7F26CE056C0B0AEA0 /* PBXTargetDependency */,
-				E72FB0327BAD64D0FCB841DECA853160 /* PBXTargetDependency */,
 				EBA487AAD8FFB8B510BAB0C77AB25B47 /* PBXTargetDependency */,
 			);
 			name = Riffle;
@@ -1446,7 +1411,6 @@
 				E72DDDA59E051087F6441E7CE50CE902 /* Pods-Riffle_Example */,
 				A59D0486870BD2B93E4B8969273328BF /* Pods-Riffle_Tests */,
 				9F78F82122E7077043B24F153EACE9D3 /* Riffle */,
-				55243AB555683197AFBC567E0FC30F79 /* Riffle-Riffle */,
 				D66D7F0E35D12326355ED469B52C4AFF /* SocketRocket */,
 			);
 		};
@@ -1457,27 +1421,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				56A2C41DD99C75CA22447CA4DE1F543F /* Riffle.bundle in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B43F5FCB3F0AEF69761E90A0794C72C9 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		172C64770B4B9A6FF0D64DD0F65F224D /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		2DF3F0F8353563B8D63EA23C11ECF758 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1711,12 +1660,6 @@
 			target = DE479E4186454105FB6CA9FAEA62AF0D /* GHODictionary */;
 			targetProxy = 093FBF096E31DCF13175491F671079A2 /* PBXContainerItemProxy */;
 		};
-		E72FB0327BAD64D0FCB841DECA853160 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "Riffle-Riffle";
-			target = 55243AB555683197AFBC567E0FC30F79 /* Riffle-Riffle */;
-			targetProxy = 3C8C72C5D6AA3A9E9C863CE33E0A3B08 /* PBXContainerItemProxy */;
-		};
 		EBA487AAD8FFB8B510BAB0C77AB25B47 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = SocketRocket;
@@ -1817,18 +1760,6 @@
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
-		};
-		27D0E5DCA66F9793EE6DE1289E3F6849 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 054A7CB6A33DEBDFCB56E1ED911BE789 /* Riffle.xcconfig */;
-			buildSettings = {
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				PRODUCT_NAME = Riffle;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				WRAPPER_EXTENSION = bundle;
-			};
-			name = Debug;
 		};
 		3420E351139D01F56855B20D559820AB /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -2258,18 +2189,6 @@
 			};
 			name = Release;
 		};
-		FD0AC830D74887CF823C12A3965F8963 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 054A7CB6A33DEBDFCB56E1ED911BE789 /* Riffle.xcconfig */;
-			buildSettings = {
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				PRODUCT_NAME = Riffle;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				WRAPPER_EXTENSION = bundle;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2278,15 +2197,6 @@
 			buildConfigurations = (
 				552D02D5BA751AC2E8790D2811D496CA /* Debug */,
 				10DE1947DAC0ED28F6C0A9F9BD75D546 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		49164F18875D15A9A0B581CF1A57DE84 /* Build configuration list for PBXNativeTarget "Riffle-Riffle" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				27D0E5DCA66F9793EE6DE1289E3F6849 /* Debug */,
-				FD0AC830D74887CF823C12A3965F8963 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

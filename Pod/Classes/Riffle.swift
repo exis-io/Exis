@@ -109,9 +109,9 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
             let result = fn(invocation.arguments)
             
             if let autoArray = result as? [AnyObject] {
-                wamp.resultForInvocation(invocation, arguments: autoArray, argumentsKw: [:])
+                wamp.resultForInvocation(invocation, arguments: serialize(autoArray), argumentsKw: [:])
             } else {
-                wamp.resultForInvocation(invocation, arguments: [result as! AnyObject], argumentsKw: [:])
+                wamp.resultForInvocation(invocation, arguments: serialize([result as! AnyObject]), argumentsKw: [:])
                 
                 //                if let tupledArray = arrayForTuple(result) {
                 //                    wamp.resultForInvocation(invocation, arguments: tupledArray, argumentsKw: [:])
