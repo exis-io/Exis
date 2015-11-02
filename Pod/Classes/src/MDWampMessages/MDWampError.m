@@ -57,7 +57,7 @@
 - (NSError *) makeError
 {
     NSDictionary *info;
-    if (self.details) {
+    if (self.details != nil && ![self.details isEqual: [NSNull null]]) {
         info = [self.details mutableCopy];
         [(NSMutableDictionary*)info setObject:self.error forKey:NSLocalizedDescriptionKey];
     } else {
