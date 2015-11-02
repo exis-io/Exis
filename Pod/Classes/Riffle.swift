@@ -98,7 +98,6 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     func _register(endpoint: String, fn: ([AnyObject]) throws -> ()) {
         session.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
             
-            // TODO: catch the other exceptions and report them?
             do {
                 try fn(invocation.arguments)
             } catch CuminError.InvalidTypes(let expected, let recieved) {
