@@ -4,36 +4,22 @@ import Cocoa
 
 var str = "Hello, playground"
 
-func arrayForTuple<T>(tuple: Any?, _ returnType: T.Type) -> [T]? {
-    if tuple == nil {
-        return nil
+protocol Boo {}
+extension Int: Boo {}
+
+let x = [1, 2, 3]
+
+let y = x as! AnyObject
+print(y)
+
+if let z = y as? [AnyObject] {
+    print(z)
+    
+    if let a = z as? [Int] {
+        print(a)
     }
-    
-    let reflection = Mirror(reflecting: tuple!)
-    var arr : [T] = []
-    
-    for value in reflection.children {
-        if let val = value.value as? T {
-            arr.append(val)
-        } else {
-            return nil
-        }
-    }
-    
-    return arr
 }
 
-func f() -> (Int, String) {
-    return (3, "")
+if let b = y as? [Boo] {
+    print(b)
 }
-
-let b = f()
-arrayForTuple(b, Any.self)
-
-let a = (1, 2)
-let converted = arrayForTuple(a, Any.self)
-print(converted)
-
-
-let x: Int = 1
-var result: Float?
