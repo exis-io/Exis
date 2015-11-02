@@ -78,11 +78,11 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     func _subscribe(endpoint: String, fn: ([AnyObject]) throws -> ()) {
         // This is the real subscrive method
         session.subscribe(endpoint, onEvent: { (event: MDWampEvent!) -> Void in
-
+            
             do {
                 try fn(event.arguments)
             } catch CuminError.InvalidTypes(let expected, let recieved) {
-                print("Unable to convert: expected \(expected) but received \(recieved)")
+                print("WARN: cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) subscribed at endpoint \(endpoint)")
             } catch {
                 print("PANIC! Unknown exception!")
             }
@@ -91,7 +91,7 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
             { (err: NSError!) -> Void in
                 if let e = err {
                     print("An error occured: ", e)
-            }
+                }
         }
     }
     
@@ -101,7 +101,7 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
             do {
                 try fn(invocation.arguments)
             } catch CuminError.InvalidTypes(let expected, let recieved) {
-                print("Unable to convert: expected \(expected) but received \(recieved)")
+                print("WARN: cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) registered at endpoint \(endpoint)")
             } catch {
                 print("PANIC! Unknown exception!")
             }
@@ -110,7 +110,8 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
             
             }, cancelHandler: { () -> Void in
                 print("Register Cancelled!")
-            }) { (err: NSError!) -> Void in
+            })
+            { (err: NSError!) -> Void in
                 if err != nil {
                     print("Error registering endoing: \(endpoint), \(err)")
                 }
@@ -121,11 +122,12 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         session.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
             var result: R?
             
+            // print("Invocation on \(endpoint)")
+            
             do {
-                try fn(invocation.arguments)
                 result = try fn(invocation.arguments)
             } catch CuminError.InvalidTypes(let expected, let recieved) {
-                print("Unable to convert: expected \(expected) but received \(recieved)")
+                print("WARN: cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) registered at endpoint \(endpoint)")
                 result = nil
             } catch {
                 print("PANIC! Unknown exception!")
@@ -139,7 +141,8 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
             
             }, cancelHandler: { () -> Void in
                 print("Register Cancelled!")
-            }) { (err: NSError!) -> Void in
+            })
+            { (err: NSError!) -> Void in
                 if err != nil {
                     print("Error registering endoing: \(endpoint), \(err)")
                 }
@@ -158,7 +161,7 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
                     do {
                         try h(result.arguments == nil ? [] : result.arguments)
                     } catch CuminError.InvalidTypes(let expected, let recieved) {
-                        print("Unable to convert: expected \(expected) but received \(recieved)")
+                        print("WARN: cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) subscribed at endpoint \(endpoint)")
                     } catch {
                         print("PANIC! Unknown exception!")
                     }
