@@ -26,6 +26,7 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     var socket: MDWampTransportWebSocket
     var session: MDWamp
     public var domain: String
+    public var token: String?
     
     public var delegate: RiffleDelegate?
     
@@ -34,6 +35,7 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     public init(domain d: String) {
         socket = MDWampTransportWebSocket(server:NSURL(string: NODE), protocolVersions:[kMDWampProtocolWamp2msgpack, kMDWampProtocolWamp2json])
         domain = d
+        
         // Oh, the hacks you'll see
         session = MDWamp()
         super.init()
@@ -41,9 +43,14 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         session = MDWamp(transport: socket, realm: domain, delegate: self)
     }
     
+    
     public func connect() {
         if delegate == nil {
             delegate = self
+        }
+        
+        if let t = token {
+            session.token = t
         }
         
         session.connect()
@@ -122,7 +129,7 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         session.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
             var result: R?
             
-            print("Invocation on \(endpoint)")
+            // print("Invocation on \(endpoint)")
             
             do {
                 result = try fn(invocation.arguments)
@@ -181,18 +188,10 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
     }
     
     public func unregister(endpoint: String) {
-        session.unregisterRPC(endpoint) { (err: NSError!) -> Void in
-            if let e = err {
-                print("WARN: error occured while unregistering endpoint \(endpoint): \(e)")
-            }
-        }
+        session.unregisterRPC(endpoint, result: nil)
     }
     
     public func unsubscribe(endpoint: String) {
-        session.unsubscribe(endpoint) { (err: NSError!) -> Void in
-            if let e = err {
-                print("WARN: error occured while unregistering endpoint \(endpoint): \(e)")
-            }
-        }
+        session.unsubscribe(endpoint, result: nil)
     }
 }

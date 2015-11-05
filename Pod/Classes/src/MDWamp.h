@@ -48,6 +48,8 @@ typedef NS_ENUM(NSInteger, MDWampConnectionCloseCode) {
  */
 @property (nonatomic, readonly) NSString *serialization;
 
+@property (strong, nonatomic) NSString *token;
+
 /**
  * The delegate must implement the MDWampClientDelegate
  * it is not retained
@@ -191,10 +193,10 @@ typedef NS_ENUM(NSInteger, MDWampConnectionCloseCode) {
  * @return NSNUmber     the requestID of the call (usable for a cancel request)
  */
 - (NSNumber *) call:(NSString*)procUri
-         args:(NSArray*)args
-       kwArgs:(NSDictionary*)argsKw
-      options:(NSDictionary*)options
-     complete:(void(^)(MDWampResult *result, NSError *error))completeBlock;
+               args:(NSArray*)args
+             kwArgs:(NSDictionary*)argsKw
+            options:(NSDictionary*)options
+           complete:(void(^)(MDWampResult *result, NSError *error))completeBlock;
 
 /**
  *  Call a remote procedure with an arbitrary payload, you can specify an array of session id to exclude or include
@@ -207,10 +209,10 @@ typedef NS_ENUM(NSInteger, MDWampConnectionCloseCode) {
  * @return NSNUmber     the requestID of the call (usable for a cancel request)
  */
 - (NSNumber *) call:(NSString*)procUri
-      payload:(id)payload
-      exclude:(NSArray*)exclude
-     eligible:(NSArray*)eligible
-     complete:(void(^)(MDWampResult *result, NSError *error))completeBlock;
+            payload:(id)payload
+            exclude:(NSArray*)exclude
+           eligible:(NSArray*)eligible
+           complete:(void(^)(MDWampResult *result, NSError *error))completeBlock;
 
 /**
  *  Call a remote procedure with an arbitrary payload
@@ -221,8 +223,8 @@ typedef NS_ENUM(NSInteger, MDWampConnectionCloseCode) {
  * @return NSNUmber     the requestID of the call (usable for a cancel request)
  */
 - (NSNumber *) call:(NSString*)procUri
-      payload:(id)payload
-     complete:(void(^)(MDWampResult *result, NSError *error))completeBlock;
+            payload:(id)payload
+           complete:(void(^)(MDWampResult *result, NSError *error))completeBlock;
 
 /**
  *  Cancel the given request call

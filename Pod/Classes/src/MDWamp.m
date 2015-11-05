@@ -163,11 +163,14 @@
     NSAssert(ser != nil, @"Serialization %@ doesn't exists", ser);
     self.serializator = [[ser alloc] init];
     
-    NSDictionary* helloDetails = [self.config getHelloDetails];
+    NSMutableDictionary *helloDetails = [NSMutableDictionary dictionaryWithDictionary:[self.config getHelloDetails]];
+    
+    if (self.token != nil) {
+        [helloDetails setObject:@[@"token"] forKey:@"authmethods"];
+    }
     
     // send hello message
-    MDWampHello* hello =
-    [[MDWampHello alloc] initWithPayload:@[ self.realm, helloDetails ]];
+    MDWampHello* hello = [[MDWampHello alloc] initWithPayload:@[ self.realm, helloDetails ]];
     hello.realm = self.realm;
     [self sendMessage:hello];
     
@@ -545,10 +548,14 @@
     } else if ([message isKindOfClass:[MDWampChallenge class]]) {
         MDWampChallenge *challenge = (MDWampChallenge *)message;
         
-        // WAMP CRA
-        // If I've no config object something is wrong :P
-        // Default WampClient hasn't any auth
-        if ([challenge.authMethod isEqualToString:kMDWampAuthMethodCRA] &&  self.config && self.config.sharedSecret) {
+        // Token based authentication
+        if ([challenge.authMethod isEqualToString:@"token"] &&  self.token) {
+            NSLog(@"Recieved challenge for token based authentication ");
+            
+            MDWampAuthenticate *auth = [[MDWampAuthenticate alloc] initWithPayload:@[self.token, @{}]];
+            [self sendMessage:auth];
+            
+        } else if ([challenge.authMethod isEqualToString:kMDWampAuthMethodCRA] &&  self.config && self.config.sharedSecret) {
             
             // deferred challenge signing
             if (self.config && self.config.deferredWampCRASigningBlock) {
