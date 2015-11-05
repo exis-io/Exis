@@ -8,7 +8,7 @@
 
 import Foundation
 
-var NODE = ""
+var NODE = "wss://node.exis.io:8000/wss"
 
 // Sets itself as the delegate if none provided
 @objc public protocol RiffleDelegate {
