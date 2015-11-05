@@ -89,9 +89,9 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
             do {
                 try fn(event.arguments)
             } catch CuminError.InvalidTypes(let expected, let recieved) {
-                print("WARN: cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) subscribed at endpoint \(endpoint)")
+                rifflog.warn(": cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) subscribed at endpoint \(endpoint)")
             } catch {
-                print("PANIC! Unknown exception!")
+                rifflog.panic(" Unknown exception!")
             }
             
             })
@@ -108,9 +108,9 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
             do {
                 try fn(invocation.arguments)
             } catch CuminError.InvalidTypes(let expected, let recieved) {
-                print("WARN: cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) registered at endpoint \(endpoint)")
+                rifflog.warn(": cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) registered at endpoint \(endpoint)")
             } catch {
-                print("PANIC! Unknown exception!")
+                rifflog.panic(" Unknown exception!")
             }
             
             wamp.resultForInvocation(invocation, arguments: [], argumentsKw: [:])
@@ -129,15 +129,15 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         session.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
             var result: R?
             
-            // print("Invocation on \(endpoint)")
+            print("Invocation on \(endpoint)")
             
             do {
                 result = try fn(invocation.arguments)
             } catch CuminError.InvalidTypes(let expected, let recieved) {
-                print("WARN: cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) registered at endpoint \(endpoint)")
+                rifflog.warn(": cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) registered at endpoint \(endpoint)")
                 result = nil
             } catch {
-                print("PANIC! Unknown exception!")
+                rifflog.panic(" Unknown exception!")
             }
             
             if let autoArray = result as? [AnyObject] {
@@ -168,9 +168,9 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
                     do {
                         try h(result.arguments == nil ? [] : result.arguments)
                     } catch CuminError.InvalidTypes(let expected, let recieved) {
-                        print("WARN: cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) subscribed at endpoint \(endpoint)")
+                        rifflog.warn(": cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) subscribed at endpoint \(endpoint)")
                     } catch {
-                        print("PANIC! Unknown exception!")
+                        rifflog.panic(" Unknown exception!")
                     }
                     
                 }

@@ -109,6 +109,8 @@ public func serialize(args: [AnyObject]) -> [AnyObject] {
         }
     }
     
+    print(ret)
+    
     return ret
 }
 
