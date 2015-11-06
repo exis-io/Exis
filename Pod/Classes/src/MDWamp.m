@@ -550,7 +550,7 @@
         
         // Token based authentication
         if ([challenge.authMethod isEqualToString:@"token"] &&  self.token) {
-            NSLog(@"Recieved challenge for token based authentication ");
+            //NSLog(@"Recieved challenge for token based authentication ");
             
             MDWampAuthenticate *auth = [[MDWampAuthenticate alloc] initWithPayload:@[self.token, @{}]];
             [self sendMessage:auth];
