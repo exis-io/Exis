@@ -24,6 +24,10 @@ class Dog: RiffleModel {
     }
 }
 
+func ==(lhs: Dog, rhs: Dog) -> Bool {
+    return lhs.id == rhs.id
+}
+
 class ViewController: UIViewController {
     var alpha: AlphaSession?
     var beta: BetaSession?
@@ -59,8 +63,6 @@ class ViewController: UIViewController {
         testPSTypeCollections()
         
         // Primitive Types
-        psTypes()
-        
         rcTypes(4)
         
         // Riffle Objects
@@ -76,71 +78,80 @@ class ViewController: UIViewController {
     func testPSTypes() {
         // What kinds of types can be returned
         alpha!.subscribe("xs.alpha/1") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
-            print("1 : Sub receiving single types:", a, b, c, d, e)
-            print("                     expecting: 1 2.0 3.0 4 true\n")
+            //print("1 : Sub receiving single types:", a, b, c, d, e)
+            
+            assert(a == 1)
+            assert(b == 2.2)
+            assert(c == 3.3)
+            assert(d == "4")
+            assert(e == true)
         }
 
-        beta!.publish("xs.alpha/1", 1, 2.0, 3.0, "4", true)
+        beta!.publish("xs.alpha/1", 1, 2.2, 3.3, "4", true)
     }
     
     func testPSTypeCollections() {
         // What kinds of types can be returned
         alpha!.subscribe("xs.alpha/2") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
-            print("2 : Sub receiving typed collections:", a, b, c, d, e)
-            print("                          expecting: [1, 2] [3.0, 4.0] [5.0, 6.0] [\"7\", \"8\"] [true, false]\n")
+            //print("Received: \(a) \(b) \(c) \(d) \(e), expecting 1 2.2 3.3 4 true")
+            
+            assert(a == [1, 2])
+            assert(b == [2.2, 3.3])
+            assert(c == [4.4, 5.5])
+            assert(d == ["6", "7"])
+            assert(e == [true, false])
         }
         
-        beta!.publish("xs.alpha/2", [1, 2], [3.0, 4.0], [5.0, 6.0], ["7", "8"], [true, false])
+        beta!.publish("xs.alpha/2", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
         
     }
     
     
     // MARK: Single Types
-    func psTypes() {
-        // Test receiving types in invocation
-        
-        alpha!.register("xs.alpha/3") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
-            print("3 : Register receiving single types:", a, b, c, d, e)
-            print("                     expecting: 1 2.0 3.0 4 true\n")
-        }
-        
-        beta!.call("xs.alpha/3", 1, 2.0, 3.0, "4", true, handler: nil)
-    }
-    
     func rcTypes(t: Int) {
+        
         // Test both sending and receiving types
         // Test receiving collections in invocation
         alpha!.register("xs.alpha/\(t)") { (a: Int, b: Float, c: Double, d: String, e: Bool) -> AnyObject in
-            print("\(t) : Register receiving single types:", a, b, c, d, e)
-            print("                          expecting: 1 2.0 3.0 4 true\n")
-            return [a, b, c, d]
+            //print("Received: \(a) \(b) \(c) \(d) \(e), expecting 1 2.2 3.3 4 true")
+            
+            assert(a == 1)
+            assert(b == 2.2)
+            assert(c == 3.3)
+            assert(d == "4")
+            assert(e == true)
+            
+            return [a, b, c, d, e]
         }
         
         // WARNING: cant receive 5 elements in return
         
-        beta!.call("xs.alpha/\(t)", 1, 2.0, 3.0, "4", true, handler: { (a: Int, b: Float, c: Double, d: String) in
-            print("\(t) : Call receiving single types:", a, b, c, d)
-            print("                      expecting: 1 2.0 3.0 4\n")
+        beta!.call("xs.alpha/\(t)", 1, 2.2, 3.3, "4", true, handler: { (a: Int, b: Float, c: Double, d: String) in
+            assert(a == 1)
+            assert(b == 2.2)
+            assert(c == 3.3)
+            assert(d == "4")
+            //assert(e == true)
         })
     }
     
     
     // MARK: Object Returns
     func roObjects(t: Int) {
-        let dog = Dog().ini(1, "1")
+        let dog = Dog().ini(1, "2")
         
         // Test both sending and receiving types
         // Test receiving collections in invocation
         
         alpha!.register("xs.alpha/\(t)") { (d: Dog) -> AnyObject in
-            print("\(t) : Register receiving object:", d)
-            print("                       expecting: \(dog)\n")
+            //print("Recieved:\(d), expecting: \(dog)")
+            assert(d == dog)
             return d
         }
         
-        beta!.call("xs.alpha/\(t)", Dog().ini(1, "1"), handler: { (d: Dog) in
-            print("\(t) : Call receiving object:", d)
-            print("                   expecting: \(dog)\n")
+        beta!.call("xs.alpha/\(t)", dog, handler: { (d: Dog) in
+            //print("\(t) Recieved\(d), expecting \(dog)")
+            assert(d == dog)
         })
     }
     
@@ -171,19 +182,16 @@ class ViewController: UIViewController {
     
     func roColletionsNoArg(t: Int) {
         // WARNING: Cant accept collections and return something!
-        
+
         let dogs = [Dog().ini(1, "1"), Dog().ini(2, "1"), Dog().ini(3, "1")]
-        
-        // Test both sending and receiving types
-        // Test receiving collections in invocation
         
         alpha!.register("xs.alpha/\(t)") { (s: String) -> AnyObject in
             return [dogs]
         }
         
-        beta!.call("xs.alpha/\(t)", "string", handler: { (dogs: [Dog]) in
-            print("\(t) : Call receiving object collection:", dogs.count)
-            print("                            expecting: 3\n")
+        beta!.call("xs.alpha/\(t)", "string", handler: { (d: [Dog]) in
+            //print("\(t) : Call receiving object collection:", dogs.count)
+            assert(dogs == d)
         })
 
     }
@@ -219,10 +227,6 @@ class AlphaSession: RiffleSession {
     override func onJoin() {
         parent!.alphaFinished()
     }
-    
-    
-    
-    
 }
 
 class BetaSession: RiffleSession {
@@ -230,28 +234,5 @@ class BetaSession: RiffleSession {
     
     override func onJoin() {
         parent!.betaFinished()
-        
-        // Testing sending all kinds of types
-        //publish("xs.alpha/types", 1, 2.0, 3.0, "4", true)
-        
-        // Testing sending collections of all kinds of types
-        //publish("xs.alpha/collections", [1, 2], [3.0, 4.0], [5.0, 6.0], ["7", "8"], [true, false])
-        
-        // Fails: too many args in call return
-        //call("xs.alpha/callType", 1, 2.0, 3.0, "4", true)  { (a: Int, b: Float, c: Double, d: String, e: Bool ) in
-        //    print("4 : Call receiving single types:", a, b, c, d, e)
-        //    print("                      expecting: 1 2.0 3.0 4 true\n")
-        //}
-
-        // Fails: number of args
-        //call("xs.alpha/callType")  { (a: Int, b: Float, c: Double, d: String) in
-        //    print("4 : Call receiving single types:", a, b, c, d)
-        //    print("                      expecting: 1 2.0 3.0 4\n")
-        //}
-        
-        //Testing return of many model objects
-        //call("xs.alpha/callType") { (dogs: [Dog]) in
-        //    print("Received \(dogs.count) dogs")
-        //}
     }
 }
