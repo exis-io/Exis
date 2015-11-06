@@ -1,7 +1,7 @@
 // Straight Boilerplate-- make the compiler happy
 import Foundation
 
-public extension RiffleSession {
+public extension RiffleAgent {
 	public func register(pdid: String, _ fn: () -> ()) {
 		_register(pdid, fn: cumin(fn))
 	}

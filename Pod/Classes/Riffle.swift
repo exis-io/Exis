@@ -24,70 +24,128 @@ public func setFabric(url: String) {
     NODE = url
 }
 
-public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
-    var socket: MDWampTransportWebSocket
-    var session: MDWamp
-    public var domain: String
-    public var token: String?
+
+// Base connection for all agents connecting to a fabric
+class RiffleConnection: NSObject, MDWampClientDelegate {
+    var agents: [RiffleAgent] = []
     
+    var open = false
+    var opening = false
+    
+    var socket: MDWampTransportWebSocket?
+    var session: MDWamp?
+
+    
+    func mdwamp(wamp: MDWamp!, sessionEstablished info: [NSObject : AnyObject]!) {
+        if !open { _ = agents.map { $0.delegate?.onJoin() } }
+        open = true
+        opening = false
+    }
+    
+    func mdwamp(wamp: MDWamp!, closedSession code: Int, reason: String!, details: [NSObject : AnyObject]!) {
+        if open { _ = agents.map { $0.delegate?.onLeave() } }
+        open = false
+        opening = false
+    }
+    
+    func addAgent(agent: RiffleAgent) {
+        if agents.contains(agent) {
+            print("Agent \(agent.domain) is already connected.")
+            return
+        }
+        
+        agents.append(agent)
+        
+        if open {
+            agent.delegate?.onJoin()
+        }
+    }
+    
+    func connect(agent: RiffleAgent, token: String?) {
+        
+        if !open && !opening {
+            socket = MDWampTransportWebSocket(server:NSURL(string: NODE), protocolVersions:[kMDWampProtocolWamp2msgpack, kMDWampProtocolWamp2json])
+            session = MDWamp(transport: socket, realm: agent.domain, delegate: self)
+            
+            if let t = token {
+                session!.token = t
+            }
+            
+            rifflog.debug("Opening new session.")
+            session!.connect()
+            opening = true
+        } else {
+            print("Cant connection. Connection open: \(open), opening: \(opening)")
+        }
+    }
+    
+    func removeAgent(agent: RiffleAgent) {
+        if !agents.contains(agent) {
+            print("Agent \(agent.domain) is not connected.")
+            return
+        }
+        
+        // remove agent from array
+    }
+}
+
+//public class RiffleApp: RiffleAgent {}
+
+public class RiffleAgent: NSObject, RiffleDelegate {
+    public var domain: String
     public var delegate: RiffleDelegate?
+    
+    var connection: RiffleConnection
+    var superdomain: RiffleAgent?
     
     
     // MARK: Initialization
     public init(domain d: String) {
-        socket = MDWampTransportWebSocket(server:NSURL(string: NODE), protocolVersions:[kMDWampProtocolWamp2msgpack, kMDWampProtocolWamp2json])
+        // Initialize this agent as the Application domain, or the root domain
+        // for this instance of the application
+        
         domain = d
+        connection = RiffleConnection()
         
-        // Oh, the hacks you'll see
-        session = MDWamp()
         super.init()
-        
-        session = MDWamp(transport: socket, realm: domain, delegate: self)
+        delegate = self
     }
     
+    public init(name: String, superdomain: RiffleAgent) {
+        // Initialize this agent as a subdomain of the given domain. Does not
+        // connect. If "connect" is called on either the superdomain or this domain
+        // both will be connected
+        
+        domain = superdomain.domain + "." + name
+        connection = superdomain.connection
+        
+        super.init()
+        delegate = self
+        connection.addAgent(self)
+    }
     
-    public func connect() {
-        if delegate == nil {
-            delegate = self
+    public func connect(token: String? = nil) -> RiffleAgent {
+        // Connect this agent and any agents connected to this one
+        // superdomains and subdomains
+        
+        connection.addAgent(self)
+        
+        if superdomain != nil && superdomain!.connection.open {
+            superdomain!.connect()
+        } else {
+            connection.connect(self, token: token)
         }
         
-        if let t = token {
-            session.token = t
-        }
-        
-        session.connect()
-    }
-    
-    public func handle(args: AnyObject...) {
-        
-    }
-    
-    
-    //MARK: Delegates
-    public func mdwamp(wamp: MDWamp!, sessionEstablished info: [NSObject : AnyObject]!) {
-        print("Session Established!")
-        delegate!.onJoin()
-    }
-    
-    public func mdwamp(wamp: MDWamp!, closedSession code: Int, reason: String!, details: [NSObject : AnyObject]!) {
-        print("Session Closed. Code: \(code), reason: \(reason), details: \(details)")
-        delegate!.onLeave()
-    }
-    
-    public func onJoin() {
-        // Called when a session closes. Setup here.
-    }
-    
-    public func onLeave() {
-        // called when a session closes. Do any cleanup here
+        return self
     }
     
     
     // MARK: Real Calls
-    func _subscribe(endpoint: String, fn: ([AnyObject]) throws -> ()) {
-        // This is the real subscrive method
-        session.subscribe(endpoint, onEvent: { (event: MDWampEvent!) -> Void in
-            
+    func _subscribe(action: String, fn: ([AnyObject]) throws -> ()) {
+        let endpoint = makeEndpoint(action)
+        rifflog.debug("\(domain) SUB: \(endpoint)")
+        
+        connection.session!.subscribe(endpoint, onEvent: { (event: MDWampEvent!) -> Void in
             do {
                 try fn(event.arguments)
             } catch CuminError.InvalidTypes(let expected, let recieved) {
@@ -97,15 +155,18 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
             }
             
             })
-            { (err: NSError!) -> Void in
-                if let e = err {
-                    print("An error occured: ", e)
-                }
+        { (err: NSError!) -> Void in
+            if let e = err {
+                print("An error occured: ", e)
+            }
         }
     }
     
-    func _register(endpoint: String, fn: ([AnyObject]) throws -> ()) {
-        session.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
+    func _register(action: String, fn: ([AnyObject]) throws -> ()) {
+        let endpoint = makeEndpoint(action)
+        rifflog.debug("\(domain) REG: \(endpoint)")
+        
+        connection.session!.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
             
             do {
                 try fn(invocation.arguments)
@@ -120,15 +181,18 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
             }, cancelHandler: { () -> Void in
                 print("Register Cancelled!")
             })
-            { (err: NSError!) -> Void in
-                if err != nil {
-                    print("Error registering endoing: \(endpoint), \(err)")
-                }
+        { (err: NSError!) -> Void in
+            if err != nil {
+                print("Error registering endoing: \(endpoint), \(err)")
+            }
         }
     }
     
-    func _register<R>(endpoint: String, fn: ([AnyObject]) throws -> (R)) {
-        session.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
+    func _register<R>(action: String, fn: ([AnyObject]) throws -> (R)) {
+        let endpoint = makeEndpoint(action)
+        rifflog.debug("\(domain) REG: \(endpoint)")
+        
+        connection.session!.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
             var result: R?
             
             rifflog.debug("Invocation on \(endpoint)")
@@ -151,17 +215,18 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
             }, cancelHandler: { () -> Void in
                 print("Register Cancelled!")
             })
-            { (err: NSError!) -> Void in
-                if err != nil {
-                    print("Error registering endoing: \(endpoint), \(err)")
-                }
+        { (err: NSError!) -> Void in
+            if err != nil {
+                print("Error registering endoing: \(endpoint), \(err)")
+            }
         }
     }
     
-    func _call(endpoint: String, args: [AnyObject], fn: (([AnyObject]) throws -> ())?) {
-        // The caller received the result of the call from the callee
+    func _call(action: String, args: [AnyObject], fn: (([AnyObject]) throws -> ())?) {
+        let endpoint = makeEndpoint(action)
+        rifflog.debug("\(domain) CALL: \(endpoint)")
         
-        session.call(endpoint, payload: serialize(args)) { (result: MDWampResult!, err: NSError!) -> Void in
+        connection.session!.call(endpoint, payload: serialize(args)) { (result: MDWampResult!, err: NSError!) -> Void in
             if err != nil {
                 print("Call Error for endpoint \(endpoint): \(err)")
             }
@@ -181,8 +246,11 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         }
     }
     
-    public func publish(endpoint: String, _ args: AnyObject...) {
-        session.publishTo(endpoint, args: serialize(args), kw: [:], options: [:]) { (err: NSError!) -> Void in
+    public func publish(action: String, _ args: AnyObject...) {
+        let endpoint = makeEndpoint(action)
+        rifflog.debug("\(domain) PUB: \(endpoint)")
+        
+        connection.session!.publishTo(endpoint, args: serialize(args), kw: [:], options: [:]) { (err: NSError!) -> Void in
             if let e = err {
                 print("Error: ", e)
                 print("Publish Error for endpoint \"\(endpoint)\": \(e)")
@@ -190,11 +258,37 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         }
     }
     
-    public func unregister(endpoint: String) {
-        session.unregisterRPC(endpoint, result: nil)
+    public func unregister(action: String) {
+        let endpoint = makeEndpoint(action)
+        rifflog.debug("\(domain) UNREG: \(endpoint)")
+        
+        connection.session!.unregisterRPC(endpoint, result: nil)
     }
     
-    public func unsubscribe(endpoint: String) {
-        session.unsubscribe(endpoint, result: nil)
+    public func unsubscribe(action: String) {
+        let endpoint = makeEndpoint(action)
+        rifflog.debug("\(domain) UNSUB: \(endpoint)")
+        
+        connection.session!.unsubscribe(endpoint, result: nil)
+    }
+    
+    
+    // MARK: Delegate Calls
+    public func onJoin() {
+        
+    }
+    
+    public func onLeave() {
+        
+    }
+    
+    
+    // MARK: Utilities
+    func makeEndpoint(action: String) -> String {
+        if action.containsString("xs.") {
+            return action
+        }
+        
+        return domain + "/" + action
     }
 }

@@ -28,57 +28,87 @@ func ==(lhs: Dog, rhs: Dog) -> Bool {
     return lhs.id == rhs.id
 }
 
+class AlphaSession: RiffleAgent {
+    var parent: ViewController?
+    var connected = false
+    
+    override func onJoin() {
+        print("\(domain) joined")
+        connected = true
+        parent!.connections()
+    }
+}
+
+class BetaSession: RiffleAgent {
+    var parent: ViewController?
+    var connected = false
+    
+    override func onJoin() {
+        print("\(domain) joined")
+        connected = true
+        parent!.connections()
+    }
+}
+
+
 class ViewController: UIViewController {
+    var app: RiffleAgent?
     var alpha: AlphaSession?
     var beta: BetaSession?
     
-    var isBlinking = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setFabric("ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws")
         rifflog.DEBUG = true
+        setFabric("ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws")
         
-        beta = BetaSession(domain: "xs.beta")
-        alpha = AlphaSession(domain: "xs.alpha")
+        alpha = AlphaSession(domain: "xs.tester.alpha")
+        beta = BetaSession(domain: "xs.tester.beta")
         
-        alpha!.parent = self
-        beta!.parent = self
+        alpha?.parent = self
+        beta?.parent = self
         
-        alpha!.connect()
+        alpha?.connect()
+        beta?.connect()
+        
+        //app = RiffleAgent(domain: "xs.tester")
+        //alpha = AlphaSession(name: "alpha", superdomain: app!)
+        //beta = BetaSession(name: "beta", superdomain: app!)
+        //app!.connect()
     }
     
-    func alphaFinished() {
-        beta!.connect()
+    func connections() {
+        if alpha!.connected && beta!.connected {
+            print("Starting tests")
+            startTests()
+        }
     }
     
-    func betaFinished() {
-        startTests()
-    }
-    
+
     // Tests
     func startTests() {
+        
         // Publish/Subscribe
-        testPSTypes()
-        testPSTypeCollections()
+        testPSTypes(1)
+        testPSTypeCollections(2)
         
         // Primitive Types
-        rcTypes(4)
+        rcTypes(3)
         
         // Riffle Objects
-        roObjects(5)
+        roObjects(4)
         
         // RiffleObect Collections
-        roColletions(6)
-        roColletionsNoArg(7)
+        roColletions(5)
+        roColletionsNoArg(6)
     }
     
     
     // MARK: Publish/Subscribe
-    func testPSTypes() {
+    func testPSTypes(t: Int) {
         // What kinds of types can be returned
-        alpha!.subscribe("xs.alpha/1") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
-            //print("1 : Sub receiving single types:", a, b, c, d, e)
+        alpha!.subscribe("\(t)") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
+            print("1 : Sub receiving single types:", a, b, c, d, e)
             
             assert(a == 1)
             assert(b == 2.2)
@@ -87,12 +117,12 @@ class ViewController: UIViewController {
             assert(e == true)
         }
 
-        beta!.publish("xs.alpha/1", 1, 2.2, 3.3, "4", true)
+        beta!.publish("xs.tester.alpha/\(t)", 1, 2.2, 3.3, "4", true)
     }
     
-    func testPSTypeCollections() {
+    func testPSTypeCollections(t: Int) {
         // What kinds of types can be returned
-        alpha!.subscribe("xs.alpha/2") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
+        alpha!.subscribe("\(t)") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
             //print("Received: \(a) \(b) \(c) \(d) \(e), expecting 1 2.2 3.3 4 true")
             
             assert(a == [1, 2])
@@ -102,7 +132,7 @@ class ViewController: UIViewController {
             assert(e == [true, false])
         }
         
-        beta!.publish("xs.alpha/2", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
+        beta!.publish("xs.tester.alpha/\(t)", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
         
     }
     
@@ -112,7 +142,7 @@ class ViewController: UIViewController {
         
         // Test both sending and receiving types
         // Test receiving collections in invocation
-        alpha!.register("xs.alpha/\(t)") { (a: Int, b: Float, c: Double, d: String, e: Bool) -> AnyObject in
+        alpha!.register("\(t)") { (a: Int, b: Float, c: Double, d: String, e: Bool) -> AnyObject in
             //print("Received: \(a) \(b) \(c) \(d) \(e), expecting 1 2.2 3.3 4 true")
             
             assert(a == 1)
@@ -126,7 +156,7 @@ class ViewController: UIViewController {
         
         // WARNING: cant receive 5 elements in return
         
-        beta!.call("xs.alpha/\(t)", 1, 2.2, 3.3, "4", true, handler: { (a: Int, b: Float, c: Double, d: String) in
+        beta!.call("xs.tester.alpha/\(t)", 1, 2.2, 3.3, "4", true, handler: { (a: Int, b: Float, c: Double, d: String) in
             assert(a == 1)
             assert(b == 2.2)
             assert(c == 3.3)
@@ -143,13 +173,13 @@ class ViewController: UIViewController {
         // Test both sending and receiving types
         // Test receiving collections in invocation
         
-        alpha!.register("xs.alpha/\(t)") { (d: Dog) -> AnyObject in
+        alpha!.register("\(t)") { (d: Dog) -> AnyObject in
             //print("Recieved:\(d), expecting: \(dog)")
             assert(d == dog)
             return d
         }
         
-        beta!.call("xs.alpha/\(t)", dog, handler: { (d: Dog) in
+        beta!.call("xs.tester.alpha/\(t)", dog, handler: { (d: Dog) in
             //print("\(t) Recieved\(d), expecting \(dog)")
             assert(d == dog)
         })
@@ -185,11 +215,11 @@ class ViewController: UIViewController {
 
         let dogs = [Dog().ini(1, "1"), Dog().ini(2, "1"), Dog().ini(3, "1")]
         
-        alpha!.register("xs.alpha/\(t)") { (s: String) -> AnyObject in
+        alpha!.register("\(t)") { (s: String) -> AnyObject in
             return [dogs]
         }
         
-        beta!.call("xs.alpha/\(t)", "string", handler: { (d: [Dog]) in
+        beta!.call("xs.tester.alpha/\(t)", "string", handler: { (d: [Dog]) in
             //print("\(t) : Call receiving object collection:", dogs.count)
             assert(dogs == d)
         })
@@ -218,21 +248,4 @@ class ViewController: UIViewController {
         return ([1, 2], [1.0, 2.0], [3.0, 4.0], ["Hey!", "There!"], [true, false])
     }
     */
-}
-
-
-class AlphaSession: RiffleSession {
-    var parent: ViewController?
-    
-    override func onJoin() {
-        parent!.alphaFinished()
-    }
-}
-
-class BetaSession: RiffleSession {
-    var parent: ViewController?
-    
-    override func onJoin() {
-        parent!.betaFinished()
-    }
 }
