@@ -72,7 +72,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         rifflog.DEBUG = true
         
-        //setFabric("ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws")
+        setFabric("ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws")
         
         /*
         alpha = AlphaSession(domain: "xs.tester.alpha")

@@ -9,6 +9,7 @@
 import Foundation
 
 var NODE = "wss://node.exis.io:8000/wss"
+var NOPERM = false
 
 public let rifflog = RiffleLogger()
 
@@ -25,6 +26,12 @@ public func setFabric(url: String) {
 }
 
 
+public func setDevMode() {
+    NODE = "ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
+    NOPERM = false
+}
+
+
 // Base connection for all agents connecting to a fabric
 class RiffleConnection: NSObject, MDWampClientDelegate {
     var agents: [RiffleAgent] = []
@@ -34,15 +41,17 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
     
     var socket: MDWampTransportWebSocket?
     var session: MDWamp?
-
+    
     
     func mdwamp(wamp: MDWamp!, sessionEstablished info: [NSObject : AnyObject]!) {
+        rifflog.debug("Connection has been opened")
         if !open { _ = agents.map { $0.delegate?.onJoin() } }
         open = true
         opening = false
     }
     
     func mdwamp(wamp: MDWamp!, closedSession code: Int, reason: String!, details: [NSObject : AnyObject]!) {
+        rifflog.debug("Connection has been closed")
         if open { _ = agents.map { $0.delegate?.onLeave() } }
         open = false
         opening = false
@@ -52,10 +61,9 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
         
         if agents.contains(agent) {
             print("Agent \(agent.domain) is already connected.")
-            return
+        } else {
+            agents.append(agent)
         }
-        
-        agents.append(agent)
         
         if open {
             agent.delegate?.onJoin()
@@ -75,10 +83,15 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
                 self.session!.connect()
             }
             
+            if NOPERM {
+                rifflog.debug("Opening new session.")
+                self.session!.connect()
+                return
+            }
+            
             if let t = token {
                 connect(t)
             } else {
-                print("\(agent.name), \(agent.superdomain?.name)")
                 attemptAuth(agent.name!, superdomain: agent.superdomain!.domain, completed: { (token) -> () in
                     connect(token)
                 })
@@ -94,19 +107,19 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
         login(domain, requesting: superdomain, success: { (token: String) -> () in
             rifflog.debug("Auth 0 completed")
             completed(token: token)
-        }) { () -> () in
-            register(domain, requesting: superdomain, success: { () in
-                rifflog.debug("Registration completed")
-                login(domain, requesting: superdomain, success: { (token: String) -> () in
-                    rifflog.debug("Auth 0 completed")
-                    completed(token: token)
-                }) { () -> () in
-                        print("WARN: Domain \(domain) registered, but unable to login.")
-                }
-                
-            }, fail: { () in
-                print("WARN: Unable to register domain \(domain) as subdomain of \(superdomain)")
-            })
+            }) { () -> () in
+                register(domain, requesting: superdomain, success: { () in
+                    rifflog.debug("Registration completed")
+                    login(domain, requesting: superdomain, success: { (token: String) -> () in
+                        rifflog.debug("Auth 0 completed")
+                        completed(token: token)
+                        }) { () -> () in
+                            print("WARN: Domain \(domain) registered, but unable to login.")
+                    }
+                    
+                    }, fail: { () in
+                        print("WARN: Unable to register domain \(domain) as subdomain of \(superdomain)")
+                })
         }
         
         // Else attempt to register
@@ -145,8 +158,7 @@ public class RiffleAgent: NSObject, RiffleDelegate {
         name = d
         
         super.init()
-        unowned let weakSelf = self
-        delegate = weakSelf
+        delegate = self
     }
     
     public init(name n: String, superdomain s: RiffleAgent) {
@@ -161,8 +173,7 @@ public class RiffleAgent: NSObject, RiffleDelegate {
         
         super.init()
         delegate = self
-        unowned let weakSelf = self
-        connection.addAgent(weakSelf)
+        connection.addAgent(self)
     }
     
     deinit {
@@ -178,7 +189,7 @@ public class RiffleAgent: NSObject, RiffleDelegate {
         connection.addAgent(weakSelf)
         
         if superdomain != nil && superdomain!.connection.open {
-            superdomain!.join()
+            superdomain!.join(token)
         } else {
             connection.connect(weakSelf, token: token)
         }
@@ -207,12 +218,12 @@ public class RiffleAgent: NSObject, RiffleDelegate {
             }
             
             })
-        { (err: NSError!) -> Void in
-            if let e = err {
-                print("An error occured: ", e)
-            } else {
-                self.subscriptions.append(endpoint)
-            }
+            { (err: NSError!) -> Void in
+                if let e = err {
+                    print("An error occured: ", e)
+                } else {
+                    self.subscriptions.append(endpoint)
+                }
         }
     }
     
@@ -237,12 +248,12 @@ public class RiffleAgent: NSObject, RiffleDelegate {
             }, cancelHandler: { () -> Void in
                 print("Register Cancelled!")
             })
-        { (err: NSError!) -> Void in
-            if err != nil {
-                print("Error registering endoint: \(endpoint), \(err)")
-            } else {
-                self.registrations.append(endpoint)
-            }
+            { (err: NSError!) -> Void in
+                if err != nil {
+                    print("Error registering endoint: \(endpoint), \(err)")
+                } else {
+                    self.registrations.append(endpoint)
+                }
         }
     }
     
@@ -273,12 +284,12 @@ public class RiffleAgent: NSObject, RiffleDelegate {
             }, cancelHandler: { () -> Void in
                 print("Register Cancelled!")
             })
-        { (err: NSError!) -> Void in
-            if err != nil {
-                print("Error registering endoing: \(endpoint), \(err)")
-            } else {
-                self.registrations.append(endpoint)
-            }
+            { (err: NSError!) -> Void in
+                if err != nil {
+                    print("Error registering endoing: \(endpoint), \(err)")
+                } else {
+                    self.registrations.append(endpoint)
+                }
         }
     }
     
@@ -347,11 +358,11 @@ public class RiffleAgent: NSObject, RiffleDelegate {
     
     // MARK: Delegate Calls
     public func onJoin() {
-        
+        rifflog.debug("Agent Default onJoin")
     }
     
     public func onLeave() {
-        
+        rifflog.debug("Agent Default onLeave")
     }
     
     
