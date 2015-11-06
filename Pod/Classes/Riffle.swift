@@ -9,9 +9,8 @@
 import Foundation
 
 var NODE = "wss://node.exis.io:8000/wss"
-var DEBUG = true
 
-public let rifflog = Logger()
+public let rifflog = RiffleLogger()
 
 // Sets itself as the delegate if none provided
 @objc public protocol RiffleDelegate {

@@ -33,6 +33,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setFabric("ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws")
+        rifflog.DEBUG = true
         
         beta = BetaSession(domain: "xs.beta")
         alpha = AlphaSession(domain: "xs.alpha")
