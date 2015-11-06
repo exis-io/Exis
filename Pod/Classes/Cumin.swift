@@ -109,8 +109,7 @@ public func serialize(args: [AnyObject]) -> [AnyObject] {
         }
     }
     
-    print(ret)
-    
+    //rifflog.debug("Serializer returning \(ret.count) arguments")
     return ret
 }
 

@@ -9,6 +9,9 @@
 import Foundation
 
 var NODE = "wss://node.exis.io:8000/wss"
+var DEBUG = true
+
+public let rifflog = Logger()
 
 // Sets itself as the delegate if none provided
 @objc public protocol RiffleDelegate {
@@ -129,7 +132,7 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
         session.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
             var result: R?
             
-            print("Invocation on \(endpoint)")
+            rifflog.debug("Invocation on \(endpoint)")
             
             do {
                 result = try fn(invocation.arguments)
@@ -166,6 +169,7 @@ public class RiffleSession: NSObject, MDWampClientDelegate, RiffleDelegate {
             else {
                 if let h = fn {
                     do {
+                        //rifflog.debug("Arguments for call: \(result.arguments.count)")
                         try h(result.arguments == nil ? [] : result.arguments)
                     } catch CuminError.InvalidTypes(let expected, let recieved) {
                         rifflog.warn(": cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) subscribed at endpoint \(endpoint)")

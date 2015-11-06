@@ -8,8 +8,6 @@
 
 import Foundation
 
-var DEBUG = true
-
 public class Logger {
     func debug(s: String) {
         if DEBUG {
@@ -25,5 +23,3 @@ public class Logger {
         print("PANIC: \(s)")
     }
 }
-
-public let rifflog = Logger()
