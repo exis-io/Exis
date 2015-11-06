@@ -6,8 +6,19 @@
 //  Copyright (c) 2015 Mickey Barboi. All rights reserved.
 //
 
+/*
+// This DOES NOT WORK: all return types have to be AnyObject or nothing!
+func returnCollections() -> (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool])  {
+return ([1, 2], [1.0, 2.0], [3.0, 4.0], ["Hey!", "There!"], [true, false])
+}
+
+
+*/
+
+
 import UIKit
 import Riffle
+import AFNetworking
 
 class Dog: RiffleModel {
     var id = -1
@@ -60,8 +71,10 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         rifflog.DEBUG = true
-        setFabric("ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws")
         
+        //setFabric("ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws")
+        
+        /*
         alpha = AlphaSession(domain: "xs.tester.alpha")
         beta = BetaSession(domain: "xs.tester.beta")
         
@@ -70,14 +83,21 @@ class ViewController: UIViewController {
         
         alpha?.join()
         beta?.join()
+        */
         
-        //app = RiffleAgent(domain: "xs.tester")
-        //alpha = AlphaSession(name: "alpha", superdomain: app!)
+        app = RiffleAgent(domain: "xs.demo.damouse.exagainst")
+        alpha = AlphaSession(name: "alpha", superdomain: app!)
+        alpha?.parent = self
         //beta = BetaSession(name: "beta", superdomain: app!)
-        //app!.connect()
+        alpha!.join()
     }
     
     func connections() {
+        if alpha == nil || beta == nil {
+            print("Connections completing, one of the sessions is nil")
+            return
+        }
+        
         if alpha!.connected && beta!.connected {
             print("Starting tests")
             startTests()
@@ -230,8 +250,6 @@ class ViewController: UIViewController {
 
     }
     
-    
-    
     func testRCCallTypes() {
         // Test recieving types from call result
     }
@@ -240,20 +258,60 @@ class ViewController: UIViewController {
         // Test recieving collections from call result
     }
     
-
-    
     func testRCRegisterCallTypeCollections() {
         // Test both sending and receiving collections
     }
     
-    /*
-    // This DOES NOT WORK: all return types have to be AnyObject or nothing!
-    func returnCollections() -> (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool])  {
-        return ([1, 2], [1.0, 2.0], [3.0, 4.0], ["Hey!", "There!"], [true, false])
-    }
-    */
-    
     func testUnSub() {
         // Make sure the other session takes down its calls when it gets nilled out
+    }
+    
+    
+    @IBAction func register(sender: AnyObject) {
+        var manager = AFHTTPRequestOperationManager()
+        manager.requestSerializer = AFJSONRequestSerializer() as AFJSONRequestSerializer
+        manager.responseSerializer = AFJSONResponseSerializer() as AFJSONResponseSerializer
+        
+        manager.requestSerializer.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        manager.requestSerializer.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        let args = [
+            "domain": "bibble",
+            "requestingdomain":"xs.demo.damouse.exagainst"
+        ]
+        
+        manager.POST("https://node.exis.io:8880/register", parameters: args, success: { (op: AFHTTPRequestOperation, ret: AnyObject) -> Void in
+            print("Success")
+            
+        }) { (op: AFHTTPRequestOperation, err: NSError) -> Void in
+            print("Failed: \(err)")
+        }
+    }
+    
+    @IBAction func login(sender: AnyObject) {
+        var manager = AFHTTPRequestOperationManager()
+        manager.requestSerializer = AFJSONRequestSerializer() as AFJSONRequestSerializer
+        manager.responseSerializer = AFJSONResponseSerializer() as AFJSONResponseSerializer
+        
+        manager.requestSerializer.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        manager.requestSerializer.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        let args = [
+            "domain": "bibble",
+            "requestingdomain":"xs.demo.damouse.exagainst"
+        ]
+        
+        manager.POST("https://node.exis.io:8880/login", parameters: args, success: { (op: AFHTTPRequestOperation, ret: AnyObject) -> Void in
+            print("Success")
+            
+            if let json = ret as? [String: AnyObject] {
+                let token = json["login_token"]
+                print(token!)
+            }
+            
+            print("\(ret)")
+        }) { (op: AFHTTPRequestOperation, err: NSError) -> Void in
+            print("Failed: \(err)")
+        }
     }
 }

@@ -1,24 +1,23 @@
 {
   "name": "Riffle",
-  "version": "0.1.2",
+  "version": "0.1.40",
   "summary": "Client side library for connecting to a fabric.",
+  "platforms": {
+    "ios": "8.0",
+    "osx": "10.10"
+  },
   "description": "Riffle allows for simple interaction with a Fabric. This library is meant to replace your\nnetworking code with something that doesn't look like networking code at all!",
-  "homepage": "https://github.com/paradroplabs/riffle-swift",
+  "homepage": "https://github.com/exis-io/swiftRiffle",
   "license": "MIT",
   "authors": {
     "Mickey Barboi": "damouse007@gmail.com"
   },
   "source": {
-    "git": "https://github.com/paradroplabs/riffle-swift.git",
-    "tag": "0.1.2"
+    "git": "https://github.com/exis-io/swiftRiffle.git",
+    "tag": "0.1.40"
   },
   "requires_arc": true,
   "source_files": "Pod/Classes/**/*",
-  "resource_bundles": {
-    "Riffle": [
-      "Pod/Assets/*.png"
-    ]
-  },
   "dependencies": {
     "SocketRocket": [
       "0.4.1"
@@ -31,6 +30,17 @@
     ],
     "Mantle": [
       "1.5"
+    ],
+    "AFNetworking": [
+      "2.6.1"
     ]
-  }
+  },
+  "subspecs": [
+    {
+      "name": "ios"
+    },
+    {
+      "name": "osx"
+    }
+  ]
 }

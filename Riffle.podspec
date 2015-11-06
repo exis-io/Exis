@@ -32,7 +32,7 @@ networking code with something that doesn't look like networking code at all!
     s.dependency 'MPMessagePack', '1.3.2'
     s.dependency 'CocoaAsyncSocket', '7.4.1'
     s.dependency 'Mantle', '1.5'
-
+    s.dependency 'AFNetworking', '2.6.1'
 
     s.subspec 'ios' do |ios|
     end

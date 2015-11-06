@@ -67,17 +67,50 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
         if !open && !opening {
             socket = MDWampTransportWebSocket(server:NSURL(string: NODE), protocolVersions:[kMDWampProtocolWamp2msgpack, kMDWampProtocolWamp2json])
             session = MDWamp(transport: socket, realm: agent.domain, delegate: self)
+            opening = true
             
-            if let t = token {
-                session!.token = t
+            let connect = { (t: String) in
+                self.session!.token = t
+                rifflog.debug("Opening new session.")
+                self.session!.connect()
             }
             
-            rifflog.debug("Opening new session.")
-            session!.connect()
-            opening = true
+            if let t = token {
+                connect(t)
+            } else {
+                print("\(agent.name), \(agent.superdomain?.name)")
+                attemptAuth(agent.name!, superdomain: agent.superdomain!.domain, completed: { (token) -> () in
+                    connect(token)
+                })
+            }
+            
         } else {
             print("Cant connection. Connection open: \(open), opening: \(opening)")
         }
+    }
+    
+    func attemptAuth(domain: String, superdomain: String, completed: (token: String) -> ()) {
+        // Login, register, login, fail
+        login(domain, requesting: superdomain, success: { (token: String) -> () in
+            rifflog.debug("Auth 0 completed")
+            completed(token: token)
+        }) { () -> () in
+            register(domain, requesting: superdomain, success: { () in
+                rifflog.debug("Registration completed")
+                login(domain, requesting: superdomain, success: { (token: String) -> () in
+                    rifflog.debug("Auth 0 completed")
+                    completed(token: token)
+                }) { () -> () in
+                        print("WARN: Domain \(domain) registered, but unable to login.")
+                }
+                
+            }, fail: { () in
+                print("WARN: Unable to register domain \(domain) as subdomain of \(superdomain)")
+            })
+        }
+        
+        // Else attempt to register
+        // Return the token for node auth
     }
     
     func removeAgent(agent: RiffleAgent) {
@@ -96,6 +129,7 @@ public class RiffleAgent: NSObject, RiffleDelegate {
     
     var connection: RiffleConnection
     var superdomain: RiffleAgent?
+    var name: String?
     
     var registrations: [String] = []
     var subscriptions: [String] = []
@@ -108,19 +142,22 @@ public class RiffleAgent: NSObject, RiffleDelegate {
         
         domain = d
         connection = RiffleConnection()
+        name = d
         
         super.init()
         unowned let weakSelf = self
         delegate = weakSelf
     }
     
-    public init(name: String, superdomain: RiffleAgent) {
+    public init(name n: String, superdomain s: RiffleAgent) {
         // Initialize this agent as a subdomain of the given domain. Does not
         // connect. If "connect" is called on either the superdomain or this domain
         // both will be connected
         
-        domain = superdomain.domain + "." + name
-        connection = superdomain.connection
+        superdomain = s
+        domain = s.domain + "." + n
+        connection = s.connection
+        name = n
         
         super.init()
         delegate = self
