@@ -1,0 +1,6 @@
+framework module MPMessagePack {
+  umbrella header "Pods-Riffle_Tests-MPMessagePack-umbrella.h"
+
+  export *
+  module * { export * }
+}

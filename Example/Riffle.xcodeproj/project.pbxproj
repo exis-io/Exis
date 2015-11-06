@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2AA099112EE9CC861909F865 /* Pods_Riffle_Backend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76122E74C0A78D1CC608BCE4 /* Pods_Riffle_Backend.framework */; };
 		3F49E229E84377B89F9BF464 /* Pods_Riffle_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA177ED3F63730C700757B10 /* Pods_Riffle_Example.framework */; };
+		5006C3AF1BED713A0076B68E /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5006C3AE1BED713A0076B68E /* main.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
@@ -27,11 +29,25 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		5006C3AA1BED713A0076B68E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		2746608C820598D2354B96A9 /* Riffle.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Riffle.podspec; path = ../Riffle.podspec; sourceTree = "<group>"; };
 		3192466CBEF223381B58C848 /* Pods-Riffle_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Riffle_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Riffle_Example/Pods-Riffle_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		3275DFFFF5ACCEF7E137C77C /* Pods_Riffle_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Riffle_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A282C0909F4D17C0D412CE2 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		5006C3AC1BED713A0076B68E /* Riffle_Backend */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Riffle_Backend; sourceTree = BUILT_PRODUCTS_DIR; };
+		5006C3AE1BED713A0076B68E /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		502DDEBB1BE19F57008EC0EB /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* Riffle_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Riffle_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -44,13 +60,24 @@
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		739A44A74D62E10F799BFA53 /* Pods-Riffle_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Riffle_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Riffle_Tests/Pods-Riffle_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		76122E74C0A78D1CC608BCE4 /* Pods_Riffle_Backend.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Riffle_Backend.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7EB3365AEFA7D3DCF8870F2A /* Pods-Riffle_Backend.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Riffle_Backend.release.xcconfig"; path = "Pods/Target Support Files/Pods-Riffle_Backend/Pods-Riffle_Backend.release.xcconfig"; sourceTree = "<group>"; };
 		90F92AA839C4C7EF51A87633 /* Pods-Riffle_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Riffle_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Riffle_Tests/Pods-Riffle_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		9132A5CDD02D8D8A52024B31 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		C8429F62F2E9CDACE87EBA3C /* Pods-Riffle_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Riffle_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Riffle_Example/Pods-Riffle_Example.release.xcconfig"; sourceTree = "<group>"; };
+		C8E667A9A9A1AC3D9F0FE1E9 /* Pods-Riffle_Backend.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Riffle_Backend.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Riffle_Backend/Pods-Riffle_Backend.debug.xcconfig"; sourceTree = "<group>"; };
 		FA177ED3F63730C700757B10 /* Pods_Riffle_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Riffle_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5006C3A91BED713A0076B68E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2AA099112EE9CC861909F865 /* Pods_Riffle_Backend.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		607FACCD1AFB9204008FA782 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -70,12 +97,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5006C3AD1BED713A0076B68E /* Riffle_Backend */ = {
+			isa = PBXGroup;
+			children = (
+				5006C3AE1BED713A0076B68E /* main.swift */,
+			);
+			path = Riffle_Backend;
+			sourceTree = "<group>";
+		};
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Example for Riffle */,
 				607FACE81AFB9204008FA782 /* Tests */,
+				5006C3AD1BED713A0076B68E /* Riffle_Backend */,
 				607FACD11AFB9204008FA782 /* Products */,
 				846BEA464E20EAFEC5FE351F /* Pods */,
 				E68CD4094F9862266055B9F5 /* Frameworks */,
@@ -87,6 +123,7 @@
 			children = (
 				607FACD01AFB9204008FA782 /* Riffle_Example.app */,
 				607FACE51AFB9204008FA782 /* Riffle_Tests.xctest */,
+				5006C3AC1BED713A0076B68E /* Riffle_Backend */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -148,6 +185,8 @@
 				C8429F62F2E9CDACE87EBA3C /* Pods-Riffle_Example.release.xcconfig */,
 				739A44A74D62E10F799BFA53 /* Pods-Riffle_Tests.debug.xcconfig */,
 				90F92AA839C4C7EF51A87633 /* Pods-Riffle_Tests.release.xcconfig */,
+				C8E667A9A9A1AC3D9F0FE1E9 /* Pods-Riffle_Backend.debug.xcconfig */,
+				7EB3365AEFA7D3DCF8870F2A /* Pods-Riffle_Backend.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -157,6 +196,7 @@
 			children = (
 				FA177ED3F63730C700757B10 /* Pods_Riffle_Example.framework */,
 				3275DFFFF5ACCEF7E137C77C /* Pods_Riffle_Tests.framework */,
+				76122E74C0A78D1CC608BCE4 /* Pods_Riffle_Backend.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -164,6 +204,26 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		5006C3AB1BED713A0076B68E /* Riffle_Backend */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5006C3B21BED713A0076B68E /* Build configuration list for PBXNativeTarget "Riffle_Backend" */;
+			buildPhases = (
+				6C74C4451801FAF473BFFE0A /* Check Pods Manifest.lock */,
+				5006C3A81BED713A0076B68E /* Sources */,
+				5006C3A91BED713A0076B68E /* Frameworks */,
+				5006C3AA1BED713A0076B68E /* CopyFiles */,
+				A59497E0840B494081122BB1 /* Copy Pods Resources */,
+				5006C3B31BED724A0076B68E /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Riffle_Backend;
+			productName = Riffle_Backend;
+			productReference = 5006C3AC1BED713A0076B68E /* Riffle_Backend */;
+			productType = "com.apple.product-type.tool";
+		};
 		607FACCF1AFB9204008FA782 /* Riffle_Example */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "Riffle_Example" */;
@@ -215,6 +275,9 @@
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = CocoaPods;
 				TargetAttributes = {
+					5006C3AB1BED713A0076B68E = {
+						CreatedOnToolsVersion = 7.0.1;
+					};
 					607FACCF1AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
 						DevelopmentTeam = MBE45279K3;
@@ -239,6 +302,7 @@
 			targets = (
 				607FACCF1AFB9204008FA782 /* Riffle_Example */,
 				607FACE41AFB9204008FA782 /* Riffle_Tests */,
+				5006C3AB1BED713A0076B68E /* Riffle_Backend */,
 			);
 		};
 /* End PBXProject section */
@@ -278,6 +342,19 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Riffle_Example/Pods-Riffle_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		5006C3B31BED724A0076B68E /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Riffle_Backend/Pods-Riffle_Backend-frameworks.sh\"\n";
 		};
 		5DDF898E35527001892B3958 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -324,6 +401,21 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
+		6C74C4451801FAF473BFFE0A /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
 		7D40BA94090AA014E94D0F52 /* Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -337,6 +429,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Riffle_Tests/Pods-Riffle_Tests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A59497E0840B494081122BB1 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Riffle_Backend/Pods-Riffle_Backend-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		CBDC5BB867D724EAA5ECD37B /* Check Pods Manifest.lock */ = {
@@ -357,6 +464,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5006C3A81BED713A0076B68E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5006C3AF1BED713A0076B68E /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		607FACCC1AFB9204008FA782 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -404,6 +519,27 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		5006C3B01BED713A0076B68E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C8E667A9A9A1AC3D9F0FE1E9 /* Pods-Riffle_Backend.debug.xcconfig */;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		5006C3B11BED713A0076B68E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7EB3365AEFA7D3DCF8870F2A /* Pods-Riffle_Backend.release.xcconfig */;
+			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		607FACED1AFB9204008FA782 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -557,6 +693,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5006C3B21BED713A0076B68E /* Build configuration list for PBXNativeTarget "Riffle_Backend" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5006C3B01BED713A0076B68E /* Debug */,
+				5006C3B11BED713A0076B68E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		607FACCB1AFB9204008FA782 /* Build configuration list for PBXProject "Riffle" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

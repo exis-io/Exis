@@ -1,0 +1,6 @@
+framework module Mantle {
+  umbrella header "Pods-Riffle_Tests-Mantle-umbrella.h"
+
+  export *
+  module * { export * }
+}
