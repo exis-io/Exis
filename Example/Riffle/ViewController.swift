@@ -68,8 +68,8 @@ class ViewController: UIViewController {
         alpha?.parent = self
         beta?.parent = self
         
-        alpha?.connect()
-        beta?.connect()
+        alpha?.join()
+        beta?.join()
         
         //app = RiffleAgent(domain: "xs.tester")
         //alpha = AlphaSession(name: "alpha", superdomain: app!)
@@ -81,6 +81,10 @@ class ViewController: UIViewController {
         if alpha!.connected && beta!.connected {
             print("Starting tests")
             startTests()
+            
+            // Cant get the sessions to disconnect when nil'd...
+            //beta = nil
+            //alpha = nil
         }
     }
     
@@ -108,7 +112,7 @@ class ViewController: UIViewController {
     func testPSTypes(t: Int) {
         // What kinds of types can be returned
         alpha!.subscribe("\(t)") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
-            print("1 : Sub receiving single types:", a, b, c, d, e)
+            //print("1 : Sub receiving single types:", a, b, c, d, e)
             
             assert(a == 1)
             assert(b == 2.2)
@@ -248,4 +252,8 @@ class ViewController: UIViewController {
         return ([1, 2], [1.0, 2.0], [3.0, 4.0], ["Hey!", "There!"], [true, false])
     }
     */
+    
+    func testUnSub() {
+        // Make sure the other session takes down its calls when it gets nilled out
+    }
 }

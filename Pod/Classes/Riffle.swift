@@ -49,6 +49,7 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
     }
     
     func addAgent(agent: RiffleAgent) {
+        
         if agents.contains(agent) {
             print("Agent \(agent.domain) is already connected.")
             return
@@ -89,14 +90,15 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
     }
 }
 
-//public class RiffleApp: RiffleAgent {}
-
 public class RiffleAgent: NSObject, RiffleDelegate {
     public var domain: String
     public var delegate: RiffleDelegate?
     
     var connection: RiffleConnection
     var superdomain: RiffleAgent?
+    
+    var registrations: [String] = []
+    var subscriptions: [String] = []
     
     
     // MARK: Initialization
@@ -108,7 +110,8 @@ public class RiffleAgent: NSObject, RiffleDelegate {
         connection = RiffleConnection()
         
         super.init()
-        delegate = self
+        unowned let weakSelf = self
+        delegate = weakSelf
     }
     
     public init(name: String, superdomain: RiffleAgent) {
@@ -121,22 +124,34 @@ public class RiffleAgent: NSObject, RiffleDelegate {
         
         super.init()
         delegate = self
-        connection.addAgent(self)
+        unowned let weakSelf = self
+        connection.addAgent(weakSelf)
     }
     
-    public func connect(token: String? = nil) -> RiffleAgent {
+    deinit {
+        rifflog.debug("\(domain) going down")
+        //self.leave()
+    }
+    
+    public func join(token: String? = nil) -> RiffleAgent {
         // Connect this agent and any agents connected to this one
         // superdomains and subdomains
         
-        connection.addAgent(self)
+        unowned let weakSelf = self
+        connection.addAgent(weakSelf)
         
         if superdomain != nil && superdomain!.connection.open {
-            superdomain!.connect()
+            superdomain!.join()
         } else {
-            connection.connect(self, token: token)
+            connection.connect(weakSelf, token: token)
         }
         
         return self
+    }
+    
+    public func leave() {
+        _ = registrations.map { self.unregister($0) }
+        _ = subscriptions.map { self.unsubscribe($0) }
     }
     
     
@@ -158,6 +173,8 @@ public class RiffleAgent: NSObject, RiffleDelegate {
         { (err: NSError!) -> Void in
             if let e = err {
                 print("An error occured: ", e)
+            } else {
+                self.subscriptions.append(endpoint)
             }
         }
     }
@@ -167,6 +184,8 @@ public class RiffleAgent: NSObject, RiffleDelegate {
         rifflog.debug("\(domain) REG: \(endpoint)")
         
         connection.session!.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
+            
+            rifflog.debug("INVOCATION: \(endpoint)")
             
             do {
                 try fn(invocation.arguments)
@@ -183,7 +202,9 @@ public class RiffleAgent: NSObject, RiffleDelegate {
             })
         { (err: NSError!) -> Void in
             if err != nil {
-                print("Error registering endoing: \(endpoint), \(err)")
+                print("Error registering endoint: \(endpoint), \(err)")
+            } else {
+                self.registrations.append(endpoint)
             }
         }
     }
@@ -195,7 +216,7 @@ public class RiffleAgent: NSObject, RiffleDelegate {
         connection.session!.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
             var result: R?
             
-            rifflog.debug("Invocation on \(endpoint)")
+            rifflog.debug("INVOCATION: \(endpoint)")
             
             do {
                 result = try fn(invocation.arguments)
@@ -218,6 +239,8 @@ public class RiffleAgent: NSObject, RiffleDelegate {
         { (err: NSError!) -> Void in
             if err != nil {
                 print("Error registering endoing: \(endpoint), \(err)")
+            } else {
+                self.registrations.append(endpoint)
             }
         }
     }
@@ -262,14 +285,26 @@ public class RiffleAgent: NSObject, RiffleDelegate {
         let endpoint = makeEndpoint(action)
         rifflog.debug("\(domain) UNREG: \(endpoint)")
         
-        connection.session!.unregisterRPC(endpoint, result: nil)
+        connection.session!.unregisterRPC(endpoint) { (err: NSError!) -> Void in
+            if err != nil {
+                print("Error unregistering endoint: \(endpoint), \(err)")
+            } else {
+                self.registrations.removeObject(endpoint)
+            }
+        }
     }
     
     public func unsubscribe(action: String) {
         let endpoint = makeEndpoint(action)
         rifflog.debug("\(domain) UNSUB: \(endpoint)")
         
-        connection.session!.unsubscribe(endpoint, result: nil)
+        connection.session!.unsubscribe(endpoint) { (err: NSError!) -> Void in
+            if err != nil {
+                print("Error unsubscribing endoint: \(endpoint), \(err)")
+            } else {
+                self.subscriptions.removeObject(endpoint)
+            }
+        }
     }
     
     
@@ -290,5 +325,16 @@ public class RiffleAgent: NSObject, RiffleDelegate {
         }
         
         return domain + "/" + action
+    }
+}
+
+
+extension RangeReplaceableCollectionType where Generator.Element : Equatable {
+    
+    // Remove first collection element that is equal to the given `object`:
+    mutating func removeObject(object : Generator.Element) {
+        if let index = self.indexOf(object) {
+            self.removeAtIndex(index)
+        }
     }
 }
