@@ -16,38 +16,8 @@
                     <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1VI-rD-a2J">
-                                <rect key="frame" x="240" y="38" width="120" height="30"/>
-                                <animations/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="120" id="lK0-to-0Jn"/>
-                                </constraints>
-                                <state key="normal" title="Register"/>
-                                <connections>
-                                    <action selector="register:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="8hx-IL-xio"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9Op-gm-07b">
-                                <rect key="frame" x="240" y="85" width="120" height="30"/>
-                                <animations/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="120" id="OKh-Sv-Tei"/>
-                                </constraints>
-                                <state key="normal" title="Login"/>
-                                <connections>
-                                    <action selector="login:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="Vo8-9h-fcE"/>
-                                </connections>
-                            </button>
-                        </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="9Op-gm-07b" firstAttribute="top" secondItem="1VI-rD-a2J" secondAttribute="bottom" constant="17" id="GMZ-5F-DGO"/>
-                            <constraint firstItem="9Op-gm-07b" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="MXC-1p-9y1"/>
-                            <constraint firstItem="1VI-rD-a2J" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="gqP-Mr-W5V"/>
-                            <constraint firstItem="1VI-rD-a2J" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="18" id="vdf-7Q-GOs"/>
-                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>

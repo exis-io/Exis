@@ -164,7 +164,6 @@
 		BD393A247D1918398EAF9CC9CD6753BC /* MDWampUnregistered.m in Sources */ = {isa = PBXBuildFile; fileRef = 097EDB35017292F0A0598AC1032F6598 /* MDWampUnregistered.m */; };
 		BD4CCB95064A7E678AAB6C78FD95EC15 /* MPMessagePackClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BD619F76EA94478FB3B1821EC96F1DA /* MPMessagePackClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF31AD303D8B7F82EFAAAE966BBC8847 /* SRWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 58FA6E70F99CEF34746076DBE8787E98 /* SRWebSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C017CA33A130ED14DE60EE86CAD2EE4C /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5E87C0BC5ECA60C8E6BF1FF421C723 /* Logger.swift */; };
 		C028EECA95838CE512BB85640AD73245 /* MDWampAbort.h in Headers */ = {isa = PBXBuildFile; fileRef = F03368086BD355DBC23897EF5DC4C8CA /* MDWampAbort.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C03042C5E37723BD0EA1351B42EDDEDB /* MTLJSONAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 06744D2FFBF7FCA6FB6D577431662483 /* MTLJSONAdapter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C087B9B3A493BC8232CBA4DB1CB47A67 /* AFNetworkReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CC958234C21DF392D91602AB1B2A0FEA /* AFNetworkReachabilityManager.m */; };
@@ -445,7 +444,6 @@
 		2CCA03CD87B2366A876C6A434490EBF4 /* Mantle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Mantle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D4ABCC71875EE4EA3449B312FE1CDEA /* GHODictionary-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "GHODictionary-prefix.pch"; sourceTree = "<group>"; };
 		2E55A208034BD7FF8560E44462783966 /* cmp.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = cmp.c; path = MPMessagePack/cmp.c; sourceTree = "<group>"; };
-		2E5E87C0BC5ECA60C8E6BF1FF421C723 /* Logger.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		2EDF678B16D82845A38431296B06D02B /* UIImageView+AFNetworking.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIImageView+AFNetworking.m"; path = "UIKit+AFNetworking/UIImageView+AFNetworking.m"; sourceTree = "<group>"; };
 		301BE9F8D1E2B1F04C2E9F1E24CE6838 /* MDWampEvent.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MDWampEvent.h; sourceTree = "<group>"; };
 		30752E663AA67C96F1570518EE45D27F /* AFNetworking.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AFNetworking.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -975,7 +973,6 @@
 				712AC19EEB10D4CFA00A01EF5EFF631C /* Cumin.swift */,
 				483398E543181B04181A3174DC72FFFB /* GenericWrappers.swift */,
 				E7FB92FACBFB508DC9CA34466B104573 /* Hello.swift */,
-				2E5E87C0BC5ECA60C8E6BF1FF421C723 /* Logger.swift */,
 				5DF64DDBF32F2EF3534DA0DA8B1413A4 /* Riffle.h */,
 				14B0FAD87914CE24B5E13B7DA001ECCB /* Riffle.swift */,
 				50CAC74B1BECFB27005E605F /* Auth.swift */,
@@ -1810,7 +1807,6 @@
 				32E83EC0BAFFC426DC802FAFDCE76D0E /* Cumin.swift in Sources */,
 				E0D2E4AD26B3BBD41A96839623F47D91 /* GenericWrappers.swift in Sources */,
 				470300B77EC55AEBDCCCC4C1C549FDA6 /* Hello.swift in Sources */,
-				C017CA33A130ED14DE60EE86CAD2EE4C /* Logger.swift in Sources */,
 				024467BFEC39F620159CBBFE4832C631 /* MDWamp.m in Sources */,
 				AE2E4359CFE90FFD5A9234F07847431E /* MDWampAbort.m in Sources */,
 				EFA8DF79A311BF247A2E883C8BD4534E /* MDWampAuthenticate.m in Sources */,

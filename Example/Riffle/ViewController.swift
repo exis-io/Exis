@@ -63,33 +63,39 @@ class BetaSession: RiffleAgent {
 
 
 class ViewController: UIViewController {
-    var app: RiffleAgent?
-    var alpha: AlphaSession?
-    var beta: BetaSession?
+    var app: RiffleAgent!
+    var alpha: AlphaSession!
+    var beta: BetaSession!
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        rifflog.DEBUG = true
         
-        setFabric("ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws")
+        // Turn on debug logging
+        Riffle.setDebug()
         
-        /*
+        // Connect to the development fabric
+        Riffle.setDevFabric()
+        
         alpha = AlphaSession(domain: "xs.tester.alpha")
         beta = BetaSession(domain: "xs.tester.beta")
         
-        alpha?.parent = self
-        beta?.parent = self
+        alpha.parent = self
+        beta.parent = self
         
-        alpha?.join()
-        beta?.join()
-        */
-        
+        alpha.join()
+        beta.join()
+
+        /*
         app = RiffleAgent(domain: "xs.demo.damouse.exagainst")
         alpha = AlphaSession(name: "alpha", superdomain: app!)
-        alpha?.parent = self
-        //beta = BetaSession(name: "beta", superdomain: app!)
-        alpha!.join()
+        beta = BetaSession(name: "beta", superdomain: app!)
+        
+        alpha.parent = self
+        beta.parent = self
+       
+        alpha.join()
+        */
     }
     
     func connections() {
@@ -98,7 +104,7 @@ class ViewController: UIViewController {
             return
         }
         
-        if alpha!.connected && beta!.connected {
+        if alpha.connected && beta.connected {
             print("Starting tests")
             startTests()
             
@@ -131,7 +137,7 @@ class ViewController: UIViewController {
     // MARK: Publish/Subscribe
     func testPSTypes(t: Int) {
         // What kinds of types can be returned
-        alpha!.subscribe("\(t)") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
+        alpha.subscribe("\(t)") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
             //print("1 : Sub receiving single types:", a, b, c, d, e)
             
             assert(a == 1)
@@ -141,12 +147,12 @@ class ViewController: UIViewController {
             assert(e == true)
         }
 
-        beta!.publish("xs.tester.alpha/\(t)", 1, 2.2, 3.3, "4", true)
+        beta.publish("xs.tester.alpha/\(t)", 1, 2.2, 3.3, "4", true)
     }
     
     func testPSTypeCollections(t: Int) {
         // What kinds of types can be returned
-        alpha!.subscribe("\(t)") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
+        alpha.subscribe("\(t)") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
             //print("Received: \(a) \(b) \(c) \(d) \(e), expecting 1 2.2 3.3 4 true")
             
             assert(a == [1, 2])
@@ -156,7 +162,7 @@ class ViewController: UIViewController {
             assert(e == [true, false])
         }
         
-        beta!.publish("xs.tester.alpha/\(t)", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
+        beta.publish("xs.tester.alpha/\(t)", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
         
     }
     
@@ -166,7 +172,7 @@ class ViewController: UIViewController {
         
         // Test both sending and receiving types
         // Test receiving collections in invocation
-        alpha!.register("\(t)") { (a: Int, b: Float, c: Double, d: String, e: Bool) -> AnyObject in
+        alpha.register("\(t)") { (a: Int, b: Float, c: Double, d: String, e: Bool) -> AnyObject in
             //print("Received: \(a) \(b) \(c) \(d) \(e), expecting 1 2.2 3.3 4 true")
             
             assert(a == 1)
@@ -180,7 +186,7 @@ class ViewController: UIViewController {
         
         // WARNING: cant receive 5 elements in return
         
-        beta!.call("xs.tester.alpha/\(t)", 1, 2.2, 3.3, "4", true, handler: { (a: Int, b: Float, c: Double, d: String) in
+        beta.call("xs.tester.alpha/\(t)", 1, 2.2, 3.3, "4", true, handler: { (a: Int, b: Float, c: Double, d: String) in
             assert(a == 1)
             assert(b == 2.2)
             assert(c == 3.3)
@@ -197,13 +203,13 @@ class ViewController: UIViewController {
         // Test both sending and receiving types
         // Test receiving collections in invocation
         
-        alpha!.register("\(t)") { (d: Dog) -> AnyObject in
+        alpha.register("\(t)") { (d: Dog) -> AnyObject in
             //print("Recieved:\(d), expecting: \(dog)")
             assert(d == dog)
             return d
         }
         
-        beta!.call("xs.tester.alpha/\(t)", dog, handler: { (d: Dog) in
+        beta.call("xs.tester.alpha/\(t)", dog, handler: { (d: Dog) in
             //print("\(t) Recieved\(d), expecting \(dog)")
             assert(d == dog)
         })
@@ -219,7 +225,7 @@ class ViewController: UIViewController {
         // Test both sending and receiving types
         // Test receiving collections in invocation
         /*
-        alpha!.register("xs.alpha/\(t)") { (d: [Dog]) -> AnyObject in
+        alpha.register("xs.alpha/\(t)") { (d: [Dog]) -> AnyObject in
             print("\(t) : Register receiving model object:", d.count)
             print("                          expecting: \(dogs.count)\n")
             return d
@@ -227,7 +233,7 @@ class ViewController: UIViewController {
         
         // WARNING: cant receive 5 elements in return
         
-        beta!.call("xs.alpha/\(t)", [Dog(), Dog(), Dog()], handler: { (dogs: [Dog]) in
+        beta.call("xs.alpha/\(t)", [Dog(), Dog(), Dog()], handler: { (dogs: [Dog]) in
             print("\(t) : Call receiving object collection:", dogs)
             print("                      expecting: 1 2.0 3.0 4\n")
         })
@@ -239,11 +245,11 @@ class ViewController: UIViewController {
 
         let dogs = [Dog().ini(1, "1"), Dog().ini(2, "1"), Dog().ini(3, "1")]
         
-        alpha!.register("\(t)") { (s: String) -> AnyObject in
+        alpha.register("\(t)") { (s: String) -> AnyObject in
             return [dogs]
         }
         
-        beta!.call("xs.tester.alpha/\(t)", "string", handler: { (d: [Dog]) in
+        beta.call("xs.tester.alpha/\(t)", "string", handler: { (d: [Dog]) in
             //print("\(t) : Call receiving object collection:", dogs.count)
             assert(dogs == d)
         })
@@ -264,54 +270,5 @@ class ViewController: UIViewController {
     
     func testUnSub() {
         // Make sure the other session takes down its calls when it gets nilled out
-    }
-    
-    
-    @IBAction func register(sender: AnyObject) {
-        var manager = AFHTTPRequestOperationManager()
-        manager.requestSerializer = AFJSONRequestSerializer() as AFJSONRequestSerializer
-        manager.responseSerializer = AFJSONResponseSerializer() as AFJSONResponseSerializer
-        
-        manager.requestSerializer.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        manager.requestSerializer.setValue("application/json", forHTTPHeaderField: "Accept")
-        
-        let args = [
-            "domain": "bibble",
-            "requestingdomain":"xs.demo.damouse.exagainst"
-        ]
-        
-        manager.POST("https://node.exis.io:8880/register", parameters: args, success: { (op: AFHTTPRequestOperation, ret: AnyObject) -> Void in
-            print("Success")
-            
-        }) { (op: AFHTTPRequestOperation, err: NSError) -> Void in
-            print("Failed: \(err)")
-        }
-    }
-    
-    @IBAction func login(sender: AnyObject) {
-        var manager = AFHTTPRequestOperationManager()
-        manager.requestSerializer = AFJSONRequestSerializer() as AFJSONRequestSerializer
-        manager.responseSerializer = AFJSONResponseSerializer() as AFJSONResponseSerializer
-        
-        manager.requestSerializer.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        manager.requestSerializer.setValue("application/json", forHTTPHeaderField: "Accept")
-        
-        let args = [
-            "domain": "bibble",
-            "requestingdomain":"xs.demo.damouse.exagainst"
-        ]
-        
-        manager.POST("https://node.exis.io:8880/login", parameters: args, success: { (op: AFHTTPRequestOperation, ret: AnyObject) -> Void in
-            print("Success")
-            
-            if let json = ret as? [String: AnyObject] {
-                let token = json["login_token"]
-                print(token!)
-            }
-            
-            print("\(ret)")
-        }) { (op: AFHTTPRequestOperation, err: NSError) -> Void in
-            print("Failed: \(err)")
-        }
     }
 }

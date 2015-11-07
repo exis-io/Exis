@@ -9,28 +9,48 @@
 import Foundation
 
 var NODE = "wss://node.exis.io:8000/wss"
-var NOPERM = false
+var SOFTNODE = false
+var DEBUG = false
 
-public let rifflog = RiffleLogger()
+
+public class Riffle {
+    public static func setDevFabric(node: String = "ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws") {
+        NODE = node
+        SOFTNODE = true
+    }
+    
+    public static func setFabric(url: String) {
+        NODE = url
+    }
+
+    public static func setDebug() {
+        DEBUG = true
+    }
+    
+    public static func log(s: String) {
+        
+    }
+    
+    static func debug(s: String) {
+        if DEBUG {
+            print(s)
+        }
+    }
+    
+    static func warn(s: String) {
+        print("WARN: \(s)")
+    }
+    
+    static func panic(s: String) {
+        print("PANIC: \(s)")
+    }
+}
 
 // Sets itself as the delegate if none provided
 @objc public protocol RiffleDelegate {
     func onJoin()
     func onLeave()
 }
-
-
-// Seting URL-- Better to use a singleton.
-public func setFabric(url: String) {
-    NODE = url
-}
-
-
-public func setDevMode(node: String = "ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws") {
-    NODE = node
-    NOPERM = false
-}
-
 
 // Base connection for all agents connecting to a fabric
 class RiffleConnection: NSObject, MDWampClientDelegate {
@@ -44,14 +64,14 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
     
     
     func mdwamp(wamp: MDWamp!, sessionEstablished info: [NSObject : AnyObject]!) {
-        rifflog.debug("Connection has been opened")
+        Riffle.debug("Connection has been opened")
         if !open { _ = agents.map { $0.delegate?.onJoin() } }
         open = true
         opening = false
     }
     
     func mdwamp(wamp: MDWamp!, closedSession code: Int, reason: String!, details: [NSObject : AnyObject]!) {
-        rifflog.debug("Connection has been closed")
+        Riffle.debug("Connection has been closed")
         if open { _ = agents.map { $0.delegate?.onLeave() } }
         open = false
         opening = false
@@ -59,9 +79,7 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
     
     func addAgent(agent: RiffleAgent) {
         
-        if agents.contains(agent) {
-            print("Agent \(agent.domain) is already connected.")
-        } else {
+        if !agents.contains(agent) {
             agents.append(agent)
         }
         
@@ -77,23 +95,18 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
             session = MDWamp(transport: socket, realm: agent.domain, delegate: self)
             opening = true
             
-            let connect = { (t: String) in
-                self.session!.token = t
-                rifflog.debug("Opening new session.")
-                self.session!.connect()
-            }
-            
-            if NOPERM {
-                rifflog.debug("Opening new session.")
+            if SOFTNODE {
                 self.session!.connect()
                 return
             }
             
             if let t = token {
-                connect(t)
+                self.session!.token = t
+                self.session!.connect()
             } else {
-                attemptAuth(agent.name!, superdomain: agent.superdomain!.domain, completed: { (token) -> () in
-                    connect(token)
+                attemptAuth(agent.name!, superdomain: agent.superdomain!.domain, completed: { (t) -> () in
+                    self.session!.token = t
+                    self.session!.connect()
                 })
             }
             
@@ -105,13 +118,13 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
     func attemptAuth(domain: String, superdomain: String, completed: (token: String) -> ()) {
         // Login, register, login, fail
         login(domain, requesting: superdomain, success: { (token: String) -> () in
-            rifflog.debug("Auth 0 completed")
+            Riffle.debug("Auth 0 completed")
             completed(token: token)
             }) { () -> () in
                 register(domain, requesting: superdomain, success: { () in
-                    rifflog.debug("Registration completed")
+                    Riffle.debug("Registration completed")
                     login(domain, requesting: superdomain, success: { (token: String) -> () in
-                        rifflog.debug("Auth 0 completed")
+                        Riffle.debug("Auth 0 completed")
                         completed(token: token)
                         }) { () -> () in
                             print("WARN: Domain \(domain) registered, but unable to login.")
@@ -177,7 +190,7 @@ public class RiffleAgent: NSObject, RiffleDelegate {
     }
     
     deinit {
-        //rifflog.debug("\(domain) going down")
+        //Riffle.debug("\(domain) going down")
         //self.leave()
     }
     
@@ -205,15 +218,15 @@ public class RiffleAgent: NSObject, RiffleDelegate {
     // MARK: Real Calls
     func _subscribe(action: String, fn: ([AnyObject]) throws -> ()) {
         let endpoint = makeEndpoint(action)
-        rifflog.debug("\(domain) SUB: \(endpoint)")
+        Riffle.debug("\(domain) SUB: \(endpoint)")
         
         connection.session!.subscribe(endpoint, onEvent: { (event: MDWampEvent!) -> Void in
             do {
                 try fn(event.arguments)
             } catch CuminError.InvalidTypes(let expected, let recieved) {
-                rifflog.warn(": cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) subscribed at endpoint \(endpoint)")
+                Riffle.warn(": cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) subscribed at endpoint \(endpoint)")
             } catch {
-                rifflog.panic(" Unknown exception!")
+                Riffle.panic(" Unknown exception!")
             }
             
             })
@@ -228,18 +241,18 @@ public class RiffleAgent: NSObject, RiffleDelegate {
     
     func _register(action: String, fn: ([AnyObject]) throws -> ()) {
         let endpoint = makeEndpoint(action)
-        rifflog.debug("\(domain) REG: \(endpoint)")
+        Riffle.debug("\(domain) REG: \(endpoint)")
         
         connection.session!.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
             
-            rifflog.debug("INVOCATION: \(endpoint)")
+            Riffle.debug("INVOCATION: \(endpoint)")
             
             do {
                 try fn(invocation.arguments)
             } catch CuminError.InvalidTypes(let expected, let recieved) {
-                rifflog.warn(": cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) registered at endpoint \(endpoint)")
+                Riffle.warn(": cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) registered at endpoint \(endpoint)")
             } catch {
-                rifflog.panic(" Unknown exception!")
+                Riffle.panic(" Unknown exception!")
             }
             
             wamp.resultForInvocation(invocation, arguments: [], argumentsKw: [:])
@@ -258,20 +271,20 @@ public class RiffleAgent: NSObject, RiffleDelegate {
     
     func _register<R>(action: String, fn: ([AnyObject]) throws -> (R)) {
         let endpoint = makeEndpoint(action)
-        rifflog.debug("\(domain) REG: \(endpoint)")
+        Riffle.debug("\(domain) REG: \(endpoint)")
         
         connection.session!.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
             var result: R?
             
-            rifflog.debug("INVOCATION: \(endpoint)")
+            Riffle.debug("INVOCATION: \(endpoint)")
             
             do {
                 result = try fn(invocation.arguments)
             } catch CuminError.InvalidTypes(let expected, let recieved) {
-                rifflog.warn(": cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) registered at endpoint \(endpoint)")
+                Riffle.warn(": cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) registered at endpoint \(endpoint)")
                 result = nil
             } catch {
-                rifflog.panic(" Unknown exception!")
+                Riffle.panic(" Unknown exception!")
             }
             
             if let autoArray = result as? [AnyObject] {
@@ -294,21 +307,21 @@ public class RiffleAgent: NSObject, RiffleDelegate {
     
     func _call(action: String, args: [AnyObject], fn: (([AnyObject]) throws -> ())?) {
         let endpoint = makeEndpoint(action)
-        rifflog.debug("\(domain) CALL: \(endpoint)")
+        Riffle.debug("\(domain) CALL: \(endpoint)")
         
         connection.session!.call(endpoint, payload: serialize(args)) { (result: MDWampResult!, err: NSError!) -> Void in
             if err != nil {
-                print("Call Error for endpoint \(endpoint): \(err)")
+                Riffle.warn("Call Error for endpoint \(endpoint): [\(err.localizedDescription)]")
             }
             else {
                 if let h = fn {
                     do {
-                        //rifflog.debug("Arguments for call: \(result.arguments.count)")
+                        //Riffle.debug("Arguments for call: \(result.arguments.count)")
                         try h(result.arguments == nil ? [] : result.arguments)
                     } catch CuminError.InvalidTypes(let expected, let recieved) {
-                        rifflog.warn(": cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) subscribed at endpoint \(endpoint)")
+                        Riffle.warn(": cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) subscribed at endpoint \(endpoint)")
                     } catch {
-                        rifflog.panic(" Unknown exception!")
+                        Riffle.panic(" Unknown exception!")
                     }
                     
                 }
@@ -318,7 +331,7 @@ public class RiffleAgent: NSObject, RiffleDelegate {
     
     public func publish(action: String, _ args: AnyObject...) {
         let endpoint = makeEndpoint(action)
-        rifflog.debug("\(domain) PUB: \(endpoint)")
+        Riffle.debug("\(domain) PUB: \(endpoint)")
         
         connection.session!.publishTo(endpoint, args: serialize(args), kw: [:], options: [:]) { (err: NSError!) -> Void in
             if let e = err {
@@ -330,7 +343,7 @@ public class RiffleAgent: NSObject, RiffleDelegate {
     
     public func unregister(action: String) {
         let endpoint = makeEndpoint(action)
-        rifflog.debug("\(domain) UNREG: \(endpoint)")
+        Riffle.debug("\(domain) UNREG: \(endpoint)")
         
         connection.session!.unregisterRPC(endpoint) { (err: NSError!) -> Void in
             if err != nil {
@@ -343,7 +356,7 @@ public class RiffleAgent: NSObject, RiffleDelegate {
     
     public func unsubscribe(action: String) {
         let endpoint = makeEndpoint(action)
-        rifflog.debug("\(domain) UNSUB: \(endpoint)")
+        Riffle.debug("\(domain) UNSUB: \(endpoint)")
         
         connection.session!.unsubscribe(endpoint) { (err: NSError!) -> Void in
             if err != nil {
@@ -357,11 +370,11 @@ public class RiffleAgent: NSObject, RiffleDelegate {
     
     // MARK: Delegate Calls
     public func onJoin() {
-        rifflog.debug("Agent Default onJoin")
+        Riffle.debug("Agent Default onJoin")
     }
     
     public func onLeave() {
-        rifflog.debug("Agent Default onLeave")
+        Riffle.debug("Agent Default onLeave")
     }
     
     
