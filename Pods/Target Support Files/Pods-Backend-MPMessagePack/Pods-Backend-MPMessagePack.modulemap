@@ -1,0 +1,6 @@
+framework module MPMessagePack {
+  umbrella header "Pods-Backend-MPMessagePack-umbrella.h"
+
+  export *
+  module * { export * }
+}
