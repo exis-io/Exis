@@ -1,6 +1,0 @@
-framework module MPMessagePack {
-  umbrella header "Pods-Riffle_Example-MPMessagePack-umbrella.h"
-
-  export *
-  module * { export * }
-}

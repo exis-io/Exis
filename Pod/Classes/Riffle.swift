@@ -177,7 +177,7 @@ public class RiffleAgent: NSObject, RiffleDelegate {
     }
     
     deinit {
-        rifflog.debug("\(domain) going down")
+        //rifflog.debug("\(domain) going down")
         //self.leave()
     }
     
@@ -185,13 +185,12 @@ public class RiffleAgent: NSObject, RiffleDelegate {
         // Connect this agent and any agents connected to this one
         // superdomains and subdomains
         
-        unowned let weakSelf = self
-        connection.addAgent(weakSelf)
+        connection.addAgent(self)
         
         if superdomain != nil && superdomain!.connection.open {
             superdomain!.join(token)
         } else {
-            connection.connect(weakSelf, token: token)
+            connection.connect(self, token: token)
         }
         
         return self
