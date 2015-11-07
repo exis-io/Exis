@@ -9,6 +9,8 @@
 import Foundation
 import AFNetworking
 
+
+// MARK: HTTP Auth
 func register(domain: String, requesting: String, success: () -> (), fail: () -> ()) {
     
     let args = [
@@ -48,7 +50,7 @@ func login(domain: String, requesting: String, success: (token: String) -> (), f
 }
 
 func manager() -> AFHTTPRequestOperationManager {
-    var manager = AFHTTPRequestOperationManager()
+    let manager = AFHTTPRequestOperationManager()
     manager.requestSerializer = AFJSONRequestSerializer() as AFJSONRequestSerializer
     manager.responseSerializer = AFJSONResponseSerializer() as AFJSONResponseSerializer
     

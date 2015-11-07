@@ -73,6 +73,9 @@
 		4F093F6FBA6E6B060CF66145CF214E14 /* AFNetworkReachabilityManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA064D1A16B9468DD300EDDFAF5ADF8 /* AFNetworkReachabilityManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		502D5F205E2BF44AB8F0054AAF57E112 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E9C5B6DDCF164EA6C4D2C1069BA911A /* Foundation.framework */; };
 		50CAC74C1BECFB27005E605F /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50CAC74B1BECFB27005E605F /* Auth.swift */; settings = {ASSET_TAGS = (); }; };
+		50F70D541BEEC49A006E7384 /* Agent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F70D531BEEC49A006E7384 /* Agent.swift */; settings = {ASSET_TAGS = (); }; };
+		50F70D561BEEC4BA006E7384 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F70D551BEEC4BA006E7384 /* Connection.swift */; settings = {ASSET_TAGS = (); }; };
+		50F70D581BEEC4CD006E7384 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F70D571BEEC4CD006E7384 /* Utils.swift */; settings = {ASSET_TAGS = (); }; };
 		53FA2C7781C5EB266E5C96D5BDE5BFC0 /* MPMessagePackReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7F1A9D56A8B12B6B0197581BB16FCA /* MPMessagePackReader.m */; };
 		55CE9B3ACCA7642C35533FBC6DEC9FBE /* NSArray+MPMessagePack.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D72E3CCA54B2C8EC36E207EEFBF6625 /* NSArray+MPMessagePack.m */; };
 		56C8D4F00869E61F210A24E0EE8F3A13 /* UIActivityIndicatorView+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FDCFEE542F6ABCE8AADED7128713B1B /* UIActivityIndicatorView+AFNetworking.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -478,6 +481,9 @@
 		4D0D63667B06F1D177C161AF2FCC9F18 /* MDWampCancel.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MDWampCancel.m; sourceTree = "<group>"; };
 		50ACB970E0E7E3A5611B4EE0185DB77B /* Mantle.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = Mantle.modulemap; sourceTree = "<group>"; };
 		50CAC74B1BECFB27005E605F /* Auth.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
+		50F70D531BEEC49A006E7384 /* Agent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Agent.swift; sourceTree = "<group>"; };
+		50F70D551BEEC4BA006E7384 /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
+		50F70D571BEEC4CD006E7384 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		51CB81333B6A426D6093583A22CB7F50 /* CocoaAsyncSocket-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "CocoaAsyncSocket-dummy.m"; sourceTree = "<group>"; };
 		51D752CED193AFE6EC40810EECB5D71D /* MDWampMessageFactory.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MDWampMessageFactory.m; sourceTree = "<group>"; };
 		51F82C1CD73945C578E81348DC1ACBDD /* MDWampSerializations.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MDWampSerializations.h; sourceTree = "<group>"; };
@@ -976,6 +982,9 @@
 				5DF64DDBF32F2EF3534DA0DA8B1413A4 /* Riffle.h */,
 				14B0FAD87914CE24B5E13B7DA001ECCB /* Riffle.swift */,
 				50CAC74B1BECFB27005E605F /* Auth.swift */,
+				50F70D551BEEC4BA006E7384 /* Connection.swift */,
+				50F70D531BEEC49A006E7384 /* Agent.swift */,
+				50F70D571BEEC4CD006E7384 /* Utils.swift */,
 				6C67565062FC8648E19DAF2EE07388F4 /* src */,
 			);
 			path = Classes;
@@ -1822,9 +1831,11 @@
 				784F76531F72ADE4F5756099649204AC /* MDWampHello.m in Sources */,
 				40F7F0141F1E35AF1A05DAC594FC8F0D /* MDWampInterrupt.m in Sources */,
 				E8C487064AA9939E276DE3D4E78A19DA /* MDWampInvocation.m in Sources */,
+				50F70D581BEEC4CD006E7384 /* Utils.swift in Sources */,
 				596AAD9FE2F88AFF7F5DEECEFB031710 /* MDWampMessageFactory.m in Sources */,
 				3EFA38EA543C1FF255E8171B1B5A2E5B /* MDWampPublish.m in Sources */,
 				F63A8171AE459DBF500F5ECDF6D0A659 /* MDWampPublished.m in Sources */,
+				50F70D561BEEC4BA006E7384 /* Connection.swift in Sources */,
 				1F34C1C620CE06BC68A025776C5F10D8 /* MDWampRegister.m in Sources */,
 				1763FA5A05D97A1C3375BF7699B2FF5B /* MDWampRegistered.m in Sources */,
 				CE25D75CF240798DB25C8A341503A3E6 /* MDWampResult.m in Sources */,
@@ -1843,6 +1854,7 @@
 				81BDF313C9A3CF4C286E53FA6584DAAF /* NSMutableArray+MDStack.m in Sources */,
 				0E60FDCD722413EB9CCDD200FB28E472 /* NSString+MDString.m in Sources */,
 				E09F654E15259016EB54515DE1EF4B13 /* Riffle-dummy.m in Sources */,
+				50F70D541BEEC49A006E7384 /* Agent.swift in Sources */,
 				D91ABCF6BF7923DF5EBBAB7D22712AF1 /* Riffle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
