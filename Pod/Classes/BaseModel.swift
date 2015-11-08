@@ -27,14 +27,18 @@ public class RiffleModel : MTLModel, MTLJSONSerializing, Cuminicable {
     
     
     //Boilerplate Mantle code
-    
     public class func JSONKeyPathsByPropertyKey() -> [NSObject : AnyObject]! {
-        return [:]
+        return NSDictionary.mtl_identityPropertyMapWithModel(self)
     }
     
     public static func convert(object: AnyObject) -> Cuminicable? {
         if let a = object as? [NSObject: AnyObject] {
-            return MTLJSONAdapter.modelOfClass(self, fromJSONDictionary: a) as? Cuminicable
+            do {
+            return try MTLJSONAdapter.modelOfClass(self, fromJSONDictionary: a) as? Cuminicable
+            } catch {
+                Riffle.warn("Unable to transform object to \(self.dynamicType)")
+                return nil
+            }
         }
         
         return nil
@@ -43,21 +47,4 @@ public class RiffleModel : MTLModel, MTLJSONSerializing, Cuminicable {
     public static func brutalize<T: Cuminicable>(object: Cuminicable, _ t: T.Type) -> Cuminicable? {
         return nil
     }
-    
-    //MARK: Old Placeholder Methods
-    //    required override public init() {
-    //        super.init()
-    //
-    //        // A random integer. Have to deal with colliding ids. This is an ok base case
-    //        id = Int(arc4random_uniform(UInt32.max))
-    //    }
-    
-    
-    //    func serialize() -> [String:AnyObject] {
-    //        return [:]
-    //    }
-    //
-    //    func deserialize(json: [String:AnyObject]) {
-    //
-    //    }
 }

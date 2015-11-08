@@ -139,6 +139,11 @@ public class RiffleAgent: NSObject, RiffleDelegate {
             
             do {
                 result = try fn(invocation.arguments)
+                
+                if let r = result as? AnyObject {
+                    let serialized = try serialize(r)
+                    wamp.resultForInvocation(invocation, arguments: serialized, argumentsKw: [:])
+                }
             } catch CuminError.InvalidTypes(let expected, let recieved) {
                 Riffle.warn(": cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) registered at endpoint \(endpoint)")
                 result = nil
@@ -146,11 +151,11 @@ public class RiffleAgent: NSObject, RiffleDelegate {
                 Riffle.panic(" Unknown exception!")
             }
             
-            if let autoArray = result as? [AnyObject] {
-                wamp.resultForInvocation(invocation, arguments: serialize(autoArray), argumentsKw: [:])
-            } else {
-                wamp.resultForInvocation(invocation, arguments: serialize([result as! AnyObject]), argumentsKw: [:])
-            }
+//            if let autoArray = result as? [AnyObject] {
+//                wamp.resultForInvocation(invocation, arguments: serialize(autoArray), argumentsKw: [:])
+//            } else {
+//                wamp.resultForInvocation(invocation, arguments: serialize([result as! AnyObject]), argumentsKw: [:])
+//            }
             
             }, cancelHandler: { () -> Void in
                 print("Register Cancelled!")
@@ -167,8 +172,16 @@ public class RiffleAgent: NSObject, RiffleDelegate {
     func _call(action: String, args: [AnyObject], fn: (([AnyObject]) throws -> ())?) {
         let endpoint = makeEndpoint(action)
         Riffle.debug("\(domain) CALL: \(endpoint)")
+        var serialized: [AnyObject]?
         
-        connection.session!.call(endpoint, payload: serialize(args)) { (result: MDWampResult!, err: NSError!) -> Void in
+        do {
+            serialized = try serialize(args)
+        } catch {
+            Riffle.panic("Unable to serialize arguments!")
+            return
+        }
+        
+        connection.session!.call(endpoint, payload: serialized) { (result: MDWampResult!, err: NSError!) -> Void in
             if err != nil {
                 Riffle.warn("Call Error for endpoint \(endpoint): [\(err.localizedDescription)]")
             }
@@ -190,9 +203,18 @@ public class RiffleAgent: NSObject, RiffleDelegate {
     
     public func publish(action: String, _ args: AnyObject...) {
         let endpoint = makeEndpoint(action)
+        var serialized: [AnyObject]?
+        
         Riffle.debug("\(domain) PUB: \(endpoint)")
         
-        connection.session!.publishTo(endpoint, args: serialize(args), kw: [:], options: [:]) { (err: NSError!) -> Void in
+        do {
+            serialized = try serialize(args)
+        } catch {
+            Riffle.panic("Unable to serialize arguments!")
+            return
+        }
+        
+        connection.session!.publishTo(endpoint, args: serialized, kw: [:], options: [:]) { (err: NSError!) -> Void in
             if let e = err {
                 print("Error: ", e)
                 print("Publish Error for endpoint \"\(endpoint)\": \(e)")
