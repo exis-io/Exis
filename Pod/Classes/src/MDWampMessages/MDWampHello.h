@@ -21,8 +21,8 @@
 #import <Foundation/Foundation.h>
 #import "MDWampMessage.h"
 
-@interface MDWampHello : NSObject<MDWampMessage>
-@property (nonatomic, strong) NSString *realm;
-@property (nonatomic, strong) NSDictionary *details;
-@property (nonatomic, readonly) NSDictionary *roles;
-@end
+//@interface MDWampHello : NSObject<MDWampMessage>
+//@property (nonatomic, strong) NSString *realm;
+//@property (nonatomic, strong) NSDictionary *details;
+//@property (nonatomic, readonly) NSDictionary *roles;
+//@end

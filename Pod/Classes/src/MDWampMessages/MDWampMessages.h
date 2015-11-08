@@ -24,7 +24,7 @@
 #import "MDWampMessageFactory.h"
 #import "MDWampMessage.h"
 
-#import "MDWampHello.h"
+//#import "MDWampHello.h"
 #import "MDWampWelcome.h"
 #import "MDWampGoodbye.h"
 #import "MDWampAbort.h"

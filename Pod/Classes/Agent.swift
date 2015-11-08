@@ -9,12 +9,12 @@
 import Foundation
 
 public class RiffleAgent: NSObject, RiffleDelegate {
+    public var name: String?
     public var domain: String
     public var delegate: RiffleDelegate?
     
     var connection: RiffleConnection
     var superdomain: RiffleAgent?
-    var name: String?
     
     var registrations: [String] = []
     var subscriptions: [String] = []

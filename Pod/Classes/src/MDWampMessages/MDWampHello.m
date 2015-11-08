@@ -20,30 +20,30 @@
 
 #import "MDWampHello.h"
 
-@implementation MDWampHello
-
-- (id)initWithPayload:(NSArray *)payload
-{
-    self = [super init];
-    if (self) {
-        NSMutableArray *tmp = [payload mutableCopy];
-        self.realm = [tmp shift];
-        self.details = [tmp shift];
-
-    }
-    return self;
-}
-
-- (NSArray *) marshall
-{
-    NSNumber *code = [[MDWampMessageFactory sharedFactory] codeFromObject:self];
-    return @[code, self.realm, self.details ];
-    
-}
-
-- (NSDictionary*)roles
-{
-    return self.details[@"roles"];
-}
-
-@end
+//@implementation MDWampHello
+//
+//- (id)initWithPayload:(NSArray *)payload
+//{
+//    self = [super init];
+//    if (self) {
+//        NSMutableArray *tmp = [payload mutableCopy];
+//        self.realm = [tmp shift];
+//        self.details = [tmp shift];
+//
+//    }
+//    return self;
+//}
+//
+//- (NSArray *) marshall
+//{
+//    NSNumber *code = [[MDWampMessageFactory sharedFactory] codeFromObject:self];
+//    return @[code, self.realm, self.details ];
+//    
+//}
+//
+//- (NSDictionary*)roles
+//{
+//    return self.details[@"roles"];
+//}
+//
+//@end

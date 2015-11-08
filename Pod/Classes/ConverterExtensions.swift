@@ -14,11 +14,15 @@ public protocol Cuminicable {
     
     // Assume the object passed in is of the same type as this object
     // Apply an unsafebitcast to the object to make it play nicely with the return types
+    // Required on OSX console apps since the app and the framework link against different versions of swift stdlib
     static func brutalize<T: Cuminicable>(object: Cuminicable, _ t: T.Type) -> Cuminicable?
 }
 
+
+// Used to shorten Generic Wrappers
 public typealias CN = Cuminicable
 public typealias CL = CollectionType
+
 
 // Attempting to make a catch all method for the brutal casts
 func _brutalize<A, T: Cuminicable>(object: Cuminicable, _ expected: A.Type, _ t: T.Type) -> Cuminicable? {
