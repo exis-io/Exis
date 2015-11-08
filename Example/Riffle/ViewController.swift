@@ -21,23 +21,19 @@ import Riffle
 import AFNetworking
 
 class Dog: RiffleModel {
-    var id = -1
+
     var name = ""
     
     func ini(i: Int, _ n: String) -> Dog {
-        id = i
         name = n
         return self
     }
     
     override func description() -> String! {
-        return "\(id),\(name)"
+        return "\(fabricId),\(name)"
     }
 }
 
-func ==(lhs: Dog, rhs: Dog) -> Bool {
-    return lhs.id == rhs.id
-}
 
 class AlphaSession: RiffleAgent {
     var parent: ViewController?

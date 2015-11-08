@@ -11,6 +11,8 @@ import Mantle
 
 
 public class RiffleModel : MTLModel, MTLJSONSerializing, Cuminicable {
+    public var fabricId = Int(arc4random_uniform(UInt32.max))
+    
     
     //Boilerplate Mantle code
     public class func JSONKeyPathsByPropertyKey() -> [NSObject : AnyObject]! {
@@ -75,3 +77,6 @@ extension RangeReplaceableCollectionType where Generator.Element : MTLJSONSerial
     }
 }
 
+public func ==(lhs: RiffleModel, rhs: RiffleModel) -> Bool {
+    return lhs.fabricId == rhs.fabricId
+}
