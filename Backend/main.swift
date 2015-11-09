@@ -53,6 +53,15 @@ class Container: RiffleAgent {
         
         players.append(newPlayer)
         
+        // Add Demo players
+        for i in 0...2 {
+            let player = Player()
+            player.domain = app.domain + ".demo\(i)"
+            player.hand = answers.randomElements(10, remove: true)
+            player.demo = true
+            players.append(player)
+        }
+        
         return [newPlayer.hand, players, state]
     }
     
