@@ -26,8 +26,6 @@ class LandingViewController: UIViewController, RiffleDelegate {
     
     
     override func viewWillAppear(animated: Bool) {
-        Riffle.setDevFabric()
-        
         // View setup and styling
         IHKeyboardAvoiding.setAvoidingView(viewLogin)
         
