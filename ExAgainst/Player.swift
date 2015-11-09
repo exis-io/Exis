@@ -15,7 +15,7 @@ class Player: RiffleModel {
     var domain = ""
     var score = 0
     var czar = false
-    
+    var demo = false
     var hand: [String] = []
     var pick: String?
     
