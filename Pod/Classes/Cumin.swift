@@ -17,7 +17,6 @@ hold method weakly, dont call if deallocd EDIT: actually, dont hold the method a
 */
 
 import Foundation
-import Mantle
 
 public enum CuminError: ErrorType {
     case InvalidTypes(String, String)

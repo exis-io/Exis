@@ -166,7 +166,7 @@ func arrayForTuple(tuple: Any?) -> [AnyObject]? {
     for value in reflection.children {
         print(value.value)
         
-        if let c = value.value as? Cuminicable {
+        if let _ = value.value as? Cuminicable {
             print("Is Cumin")
         }
         

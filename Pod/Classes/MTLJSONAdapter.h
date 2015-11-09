@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MTLModel.h"
 
 @protocol MTLModel;
 @protocol MTLTransformerErrorHandling;
@@ -258,7 +259,6 @@ extern const NSInteger MTLJSONAdapterErrorInvalidJSONMapping;
 
 @end
 
-@class MTLModel;
 
 @interface MTLJSONAdapter (Deprecated)
 

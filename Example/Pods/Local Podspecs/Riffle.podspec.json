@@ -1,6 +1,6 @@
 {
   "name": "Riffle",
-  "version": "0.1.43",
+  "version": "0.1.51",
   "summary": "Client side library for connecting to a fabric.",
   "platforms": {
     "ios": "8.0",
@@ -10,11 +10,11 @@
   "homepage": "https://github.com/exis-io/swiftRiffle",
   "license": "MIT",
   "authors": {
-    "Mickey Barboi": "damouse007@gmail.com"
+    "Damouse": "damouse007@gmail.com"
   },
   "source": {
     "git": "https://github.com/exis-io/swiftRiffle.git",
-    "tag": "0.1.43"
+    "tag": "0.1.51"
   },
   "requires_arc": true,
   "source_files": "Pod/Classes/**/*",
@@ -28,19 +28,8 @@
     "CocoaAsyncSocket": [
       "7.4.1"
     ],
-    "Mantle": [
-      "2.0.5"
-    ],
     "AFNetworking": [
       "2.6.1"
     ]
-  },
-  "subspecs": [
-    {
-      "name": "ios"
-    },
-    {
-      "name": "osx"
-    }
-  ]
+  }
 }
