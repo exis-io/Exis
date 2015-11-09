@@ -41,6 +41,8 @@ class Container: RiffleAgent {
         app.subscribe("sessionLeft", playerLeft)
     }
     
+    
+    // MARK: Game State
     func addPlayer(domain: String) -> AnyObject {
         // Add the new player and draw them a hand. Let everyone else in the room know theres a new player
         

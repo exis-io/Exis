@@ -37,6 +37,7 @@ class LandingViewController: UIViewController, RiffleDelegate {
     }
     
     
+    // MARK: Actions
     @IBAction func login(sender: AnyObject) {
         textfieldUsername.resignFirstResponder()
         let name = textfieldUsername.text!
@@ -53,6 +54,8 @@ class LandingViewController: UIViewController, RiffleDelegate {
         container.call("play", me.domain, handler: startPlaying)
     }
     
+    
+    // MARK: Fabric Interaction
     func startPlaying(cards: [String], players: [Player]) {
         // Result of the call to the Room when a player starts playing
         let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("game") as! GameViewController
