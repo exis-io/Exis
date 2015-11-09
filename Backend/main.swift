@@ -18,7 +18,6 @@ let EMPTY_TIME = 1.0
 
 
 let app = RiffleAgent(domain: "xs.demo.damouse.cardsagainst")
-//Riffle.setDevFabric()
 
 
 class Container: RiffleAgent {
@@ -83,6 +82,20 @@ class Container: RiffleAgent {
     
     func pick(player: Player, card: String) {
         // Player picked a card. This action depends on the current state of play
+        
+        let player = players.filter { $0.domain == player.domain }[0]
+        
+        if state == "Answering" && player.pick == nil {
+            player.pick = card
+            player.hand.removeObject(card)
+            
+        } else if state == "Choosing" && player.czar {
+            let winner = players.filter { $0.pick == card }[0]
+            startTimer(0.0, selector: "startScoring:", info: winner.domain)
+            
+        } else {
+            print("Player pick in wrong round!")
+        }
         
         print("Player: \(player.domain) answered \(card)")
     }
