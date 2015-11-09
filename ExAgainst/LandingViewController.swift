@@ -27,6 +27,7 @@ class LandingViewController: UIViewController, RiffleDelegate {
     
     override func viewWillAppear(animated: Bool) {
         Riffle.setDevFabric()
+        Riffle.setDebug()
         
         // View setup and styling
         IHKeyboardAvoiding.setAvoidingView(viewLogin)
@@ -37,38 +38,31 @@ class LandingViewController: UIViewController, RiffleDelegate {
         viewLogo.animate()
         viewLogin.animate()
     }
-
+    
     
     @IBAction func login(sender: AnyObject) {
-        // Log the user in
-        
-        // Get the name entered in the textfield and send the keyboard down
         textfieldUsername.resignFirstResponder()
         let name = textfieldUsername.text!
         
-        // Create objects for each domain were going to interact with
         app = RiffleAgent(domain: "xs.demo.damouse.cardsagainst")
         container = RiffleAgent(name: "container", superdomain: app)
         
-        // Create our domain and join the fabric
         me = RiffleAgent(name: name, superdomain: app)
         me.delegate = self
         me.join()
     }
     
     @IBAction func play(sender: AnyObject) {
-        // Called when the player presses the "Play" button. Request cards and the players in the room
         container.call("play", me.domain, handler: startPlaying)
     }
     
-    func startPlaying(cards: [String], players: [Player], state: String) {
+    func startPlaying(cards: [String], players: [Player]) {
         // Result of the call to the Room when a player starts playing
         let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("game") as! GameViewController
         
         controller.currentPlayer = players.filter { $0.domain == self.me.domain }[0]
         controller.currentPlayer.hand = cards
         controller.players = players
-        controller.state = state
         
         controller.me = self.me
         controller.app = self.app
@@ -78,11 +72,8 @@ class LandingViewController: UIViewController, RiffleDelegate {
     }
     
     func onJoin() {
-        // Dismiss the login view once connected 
-        
         print("Agent joined")
         
-        // Animations
         viewLogin.animation = "zoomOut"
         viewLogin.animate()
         viewButtons.animation = "zoomIn"

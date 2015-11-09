@@ -10,21 +10,6 @@
 
 import Foundation
 
-
-// Utility function to generate random strings
-func randomStringWithLength (len : Int) -> String {
-    let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-    let randomString : NSMutableString = NSMutableString(capacity: len)
-    
-    for (var i=0; i < len; i++){
-        let rand = arc4random_uniform(UInt32(letters.length))
-        randomString.appendFormat("%C", letters.characterAtIndex(Int(rand)))
-    }
-    
-    return String(randomString)
-}
-
-
 // Remove element by value
 extension RangeReplaceableCollectionType where Generator.Element : Equatable {
     mutating func removeObject(object : Generator.Element) {
@@ -40,7 +25,7 @@ extension Array {
     mutating func randomElements(number: Int, remove: Bool = false) -> [Generator.Element] {
         var ret: [Generator.Element] = []
         
-        for _ in 0...number {
+        for _ in 0...number - 1 {
             let i = Int(arc4random_uniform(UInt32(self.count)))
             ret.append(self[i])
             
@@ -52,7 +37,6 @@ extension Array {
         return ret
     }
 }
-
 
 // Load the json file with the given name and return the strings
 func loadCards(name: String) -> [String] {

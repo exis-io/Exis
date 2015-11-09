@@ -93,7 +93,7 @@ class PlayerCollectionDelegate: NSObject, UICollectionViewDataSource, UICollecti
     var collection: UICollectionView
     var parent: GameViewController
     var appName: String
-    
+    var activeCell: PlayerCell?
     
     init(collectionview: UICollectionView, parent p: GameViewController, baseAppName: String) {
         collection = collectionview
@@ -105,11 +105,45 @@ class PlayerCollectionDelegate: NSObject, UICollectionViewDataSource, UICollecti
         collection.dataSource = self
     }
     
+    func flashCell(target: Player) {
+        var index = 0
+        
+        for i in 0...players.count {
+            if players[i] == target {
+                index = i
+                break
+            }
+        }
+        
+        let cell = collection.cellForItemAtIndexPath(NSIndexPath(forRow: index, inSection: 0))
+        UIView.animateWithDuration(0.15, animations: { () -> Void in
+            cell?.backgroundColor = UIColor.whiteColor()
+            }) { (_ :Bool) -> Void in
+                cell?.backgroundColor = UIColor.blackColor()
+        }
+    }
+    
     func refreshPlayers(incoming: [Player]) {
         players = incoming
         collection.reloadData()
     }
     
+    func setCzar(target: Player) {
+        if activeCell != nil {
+            activeCell!.backgroundColor = UIColor.clearColor()
+        }
+        
+        var index = 0
+        for i in 0...players.count {
+            if players[i] == target {
+                index = i
+                break
+            }
+        }
+        
+        activeCell = collection.cellForItemAtIndexPath(NSIndexPath(forRow: index, inSection: 0)) as! PlayerCell
+        activeCell!.backgroundColor = UIColor.grayColor()
+    }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("player", forIndexPath: indexPath) as! PlayerCell
@@ -126,28 +160,7 @@ class PlayerCollectionDelegate: NSObject, UICollectionViewDataSource, UICollecti
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        return CGSize(width: collectionView.frame.size.width / 2, height: 100)
-    }
-    
-    func flashCell(target: Player) {
-//        var index = -1
-        
-//        for i in 0...players.count {
-//            if model[i] == target {
-//                index = i
-//                break
-//            }
-//        }
-        
-        // Why does this fail?
-        let index = players.indexOf(target)!
-        
-        let cell = collection.cellForItemAtIndexPath(NSIndexPath(forRow: index, inSection: 0))
-        UIView.animateWithDuration(0.15, animations: { () -> Void in
-            cell?.backgroundColor = UIColor.whiteColor()
-            }) { (_ :Bool) -> Void in
-                cell?.backgroundColor = UIColor.blackColor()
-        }
+        return CGSize(width: parent.view.frame.size.width / 2, height: 40)
     }
 }
 
@@ -159,11 +172,11 @@ class CardCell: RMSwipeTableViewCell {
     func resetContentView() {
         UIView.animateWithDuration(0.15, animations: { () -> Void in
             self.contentView.frame = CGRectOffset(self.contentView.bounds, 0.0, 0.0)
-        }) { (b: Bool) -> Void in
-            self.shouldAnimateCellReset = true
-            self.cleanupBackView()
-            self.interruptPanGestureHandler = false
-            self.panner.enabled = true
+            }) { (b: Bool) -> Void in
+                self.shouldAnimateCellReset = true
+                self.cleanupBackView()
+                self.interruptPanGestureHandler = false
+                self.panner.enabled = true
         }
     }
 }
@@ -186,7 +199,7 @@ class TickingView: M13ProgressViewBar {
             timer!.invalidate()
             timer = nil
         }
-
+        
         self.primaryColor = UIColor.whiteColor()
         self.secondaryColor = UIColor.blackColor()
         
