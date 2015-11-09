@@ -1,0 +1,6 @@
+framework module M13ProgressSuite {
+  umbrella header "M13ProgressSuite-umbrella.h"
+
+  export *
+  module * { export * }
+}
