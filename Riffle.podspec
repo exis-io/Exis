@@ -39,6 +39,4 @@ networking code with something that doesn't look like networking code at all!
 
     s.subspec 'osx' do |osx|
     end
-
-    s.deterministic_uuids = false
 end
