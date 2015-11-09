@@ -41,6 +41,11 @@ class GameViewController: UIViewController {
         
         collectionDelegate.refreshPlayers(players)
         tableDelegate.refreshCards(currentPlayer.hand)
+        
+        container.subscribe("answering", answering)
+        container.subscribe("choosing", picking)
+        container.subscribe("scoring", scoring)
+        me.register("draw", draw)
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -54,8 +59,49 @@ class GameViewController: UIViewController {
     
     
     // MARK: Game Logics
+    func answering(newCzar: Player, question: String, time: Double) {
+        print("Answering. New czar: \(newCzar.domain)")
+        
+        labelActiveCard.text = question
+        _ = players.map { $0.czar = $0 == newCzar }
+        collectionDelegate.setCzar(newCzar)
+        tableDelegate.refreshCards(newCzar == me ? [] : currentPlayer.hand)
+        viewProgress.countdown(time)
+    }
+    
+    func picking(answers: [String], time: Double) {
+        print("Picking")
+        
+        for answer in answers {
+            if currentPlayer.hand.contains(answer) {
+                currentPlayer.hand.removeObject(answer)
+            }
+        }
+        
+        tableDelegate.refreshCards(answers)
+        viewProgress.countdown(time)
+    }
+    
+    func scoring(player: Player, time: Double) {
+        print("Scoring. Player: \(player.domain) won")
+        
+        for p in players {
+            if p == player {
+                p.score += 1
+            }
+        }
+        
+        collectionDelegate.refreshPlayers(players)
+        collectionDelegate.flashCell(player)
+        viewProgress.countdown(time)
+    }
+    
     func playerSwiped(card: String) {
         // Called when a player swipes a cell with the card that cell represents
         container.call("pick", currentPlayer, card, handler: nil)
+    }
+    
+    func draw(cards: [String]) {
+        currentPlayer.hand += cards
     }
 }
