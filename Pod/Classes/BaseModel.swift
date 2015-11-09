@@ -40,6 +40,16 @@ public class RiffleModel : MTLModel, MTLJSONSerializing, Cuminicable {
         return nil
     }
     
+    public override func description() -> String! {
+        do {
+            let json = try MTLJSONAdapter.JSONDictionaryFromModel(self, error: ())
+            return "<\(self.dynamicType): \(json)>"
+        } catch {
+            Riffle.warn("Unable to transform object to \(self.dynamicType)")
+            return nil
+        }
+    }
+    
     public func jsonFromRiffle() -> [NSObject : AnyObject]! {
         // Dont use this yet
         

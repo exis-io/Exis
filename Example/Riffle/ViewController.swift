@@ -28,15 +28,8 @@ public class Dog: RiffleModel {
         name = n
         return self
     }
-    
-//    override func description() -> String! {
-//        return "\(self.fabricId),\(name)"
-//    }
 }
 
-public func ==(lhs: Dog, rhs: Dog) -> Bool {
-    return lhs.name == rhs.name
-}
 
 
 class AlphaSession: RiffleAgent {
@@ -204,13 +197,13 @@ class ViewController: UIViewController {
         // Test receiving collections in invocation
         
         alpha.register("\(t)") { (d: Dog) -> AnyObject in
-            //print("Recieved:\(d), expecting: \(dog)")
+            print("Recieved:\(d), expecting: \(dog)")
             assert(d == dog)
             return d
         }
         
         beta.call("xs.tester.alpha/\(t)", dog, handler: { (d: Dog) in
-            //print("\(t) Recieved\(d), expecting \(dog)")
+            print("\(t) Recieved\(d), expecting \(dog)")
             assert(d == dog)
         })
     }
@@ -250,8 +243,8 @@ class ViewController: UIViewController {
         }
         
         beta.call("xs.tester.alpha/\(t)", "string", handler: { (d: [Dog]) in
-            //print("\(t) : Call receiving object collection:", dogs.count)
-//            assert(dogs == d)
+            print("\(t) : Call receiving object collection:", dogs.count)
+            assert(dogs == d)
         })
 
     }

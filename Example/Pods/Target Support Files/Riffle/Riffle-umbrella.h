@@ -45,7 +45,7 @@
 #import "MDWampTransports.h"
 #import "MDWampTransportWebSocket.h"
 
-//#import "MTLModel.h"
+#import "MTLModel.h"
 #import "MTLJSONAdapter.h"
 #import "MTLModel+NSCoding.h"
 #import "MTLValueTransformer.h"
