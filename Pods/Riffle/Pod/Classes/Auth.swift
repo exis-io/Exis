@@ -22,7 +22,7 @@ func register(domain: String, requesting: String, success: () -> (), fail: () ->
         Riffle.debug("Success")
         success()
     }) { (op: AFHTTPRequestOperation, err: NSError) -> Void in
-        Riffle.debug("Failed: \(err)")
+        Riffle.warn("Failed: \(err)")
         fail()
     }
 }
@@ -41,8 +41,6 @@ func login(domain: String, requesting: String, success: (token: String) -> (), f
             let token = json["login_token"] as! String
             success(token: token)
         }
-        
-        print("\(ret)")
     }) { (op: AFHTTPRequestOperation, err: NSError) -> Void in
             Riffle.debug("Failed: \(err)")
         fail()

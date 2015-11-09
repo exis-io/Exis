@@ -18,7 +18,7 @@ let EMPTY_TIME = 1.0
 
 
 let app = RiffleAgent(domain: "xs.demo.damouse.cardsagainst")
-Riffle.setDevFabric()
+//Riffle.setDevFabric()
 
 
 class Container: RiffleAgent {
