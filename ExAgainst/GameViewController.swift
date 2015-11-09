@@ -24,13 +24,13 @@ class GameViewController: UIViewController {
     
     var tableDelegate: CardTableDelegate!
     var collectionDelegate: PlayerCollectionDelegate!
-    
-    var players: [Player] = []
-    var currentPlayer: Player!
-    
     var app: RiffleAgent!
     var container: RiffleAgent!
     var me: RiffleAgent!
+    
+    var players: [Player] = []
+    var currentPlayer: Player!
+    var state: String = "Scoring"
     
     
     override func viewDidLoad() {
