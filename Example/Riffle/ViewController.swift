@@ -30,7 +30,7 @@ class Dog: RiffleModel {
     }
     
     override func description() -> String! {
-        return "\(fabricId),\(name)"
+        return "\(self.fabricId),\(name)"
     }
 }
 

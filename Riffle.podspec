@@ -21,7 +21,7 @@ networking code with something that doesn't look like networking code at all!
 
     s.homepage         = "https://github.com/exis-io/swiftRiffle"
     s.license          = 'MIT'
-    s.author           = { "Mickey Barboi" => "damouse007@gmail.com" }
+    s.author           = { "Damouse" => "damouse007@gmail.com" }
     s.source           = { :git => "https://github.com/exis-io/swiftRiffle.git", :tag => s.version.to_s }
 
     s.requires_arc = true
@@ -39,4 +39,6 @@ networking code with something that doesn't look like networking code at all!
 
     s.subspec 'osx' do |osx|
     end
+
+    s.deterministic_uuids = false
 end
