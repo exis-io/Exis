@@ -94,7 +94,7 @@ func convert<A: AnyObject, T: CollectionType where T.Generator.Element: Cuminica
     //throw CuminError.InvalidTypes("\(T.self)", "\(a)")
 }
 
-public func serialize(convert: AnyObject) throws -> [AnyObject] {
+func serialize(convert: AnyObject) throws -> [AnyObject] {
     // Converts types for serialization, mostly RiffleModels
     var ret: [AnyObject] = []
     var args: [AnyObject] = []
