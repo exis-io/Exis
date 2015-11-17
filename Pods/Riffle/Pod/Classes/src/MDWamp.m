@@ -28,7 +28,7 @@
 #import "MDWampSerializations.h"
 #import "MDWampMessageFactory.h"
 
-
+#import <Riffle/Riffle-Swift.h>
 
 
 @interface MDWamp () <MDWampTransportDelegate, NSURLConnectionDelegate>

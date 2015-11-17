@@ -9,6 +9,8 @@
 import Foundation
 import AFNetworking
 
+
+// MARK: HTTP Auth
 func register(domain: String, requesting: String, success: () -> (), fail: () -> ()) {
     
     let args = [
@@ -17,10 +19,10 @@ func register(domain: String, requesting: String, success: () -> (), fail: () ->
     ]
     
     manager().POST("https://node.exis.io:8880/register", parameters: args, success: { (op: AFHTTPRequestOperation, ret: AnyObject) -> Void in
-        rifflog.debug("Success")
+        Riffle.debug("Success")
         success()
     }) { (op: AFHTTPRequestOperation, err: NSError) -> Void in
-        rifflog.debug("Failed: \(err)")
+        Riffle.debug("Failed: \(err)")
         fail()
     }
 }
@@ -33,7 +35,7 @@ func login(domain: String, requesting: String, success: (token: String) -> (), f
     ]
     
     manager().POST("https://node.exis.io:8880/login", parameters: args, success: { (op: AFHTTPRequestOperation, ret: AnyObject) -> Void in
-        rifflog.debug("Success")
+        Riffle.debug("Success")
         
         if let json = ret as? [String: AnyObject] {
             let token = json["login_token"] as! String
@@ -42,13 +44,13 @@ func login(domain: String, requesting: String, success: (token: String) -> (), f
         
         print("\(ret)")
     }) { (op: AFHTTPRequestOperation, err: NSError) -> Void in
-            rifflog.debug("Failed: \(err)")
+            Riffle.debug("Failed: \(err)")
         fail()
     }
 }
 
 func manager() -> AFHTTPRequestOperationManager {
-    var manager = AFHTTPRequestOperationManager()
+    let manager = AFHTTPRequestOperationManager()
     manager.requestSerializer = AFJSONRequestSerializer() as AFJSONRequestSerializer
     manager.responseSerializer = AFJSONResponseSerializer() as AFJSONResponseSerializer
     

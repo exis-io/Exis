@@ -17,7 +17,6 @@ hold method weakly, dont call if deallocd EDIT: actually, dont hold the method a
 */
 
 import Foundation
-import Mantle
 
 public enum CuminError: ErrorType {
     case InvalidTypes(String, String)
@@ -92,24 +91,32 @@ func convert<A: AnyObject, T: CollectionType where T.Generator.Element: Cuminica
     
     // Cover dicts and nesting here!
     
-    throw CuminError.InvalidTypes("\(T.self)", "\(a)")
+    //throw CuminError.InvalidTypes("\(T.self)", "\(a)")
 }
 
-public func serialize(args: [AnyObject]) -> [AnyObject] {
+public func serialize(convert: AnyObject) throws -> [AnyObject] {
     // Converts types for serialization, mostly RiffleModels
     var ret: [AnyObject] = []
+    var args: [AnyObject] = []
+    
+    if let autoArray = convert as? [AnyObject] {
+        args = autoArray
+    } else {
+        args = [convert]
+    }
     
     for a in args {
         if let object = a as? RiffleModel {
-            ret.append(MTLJSONAdapter.JSONDictionaryFromModel(object))
+            let converted = try MTLJSONAdapter.JSONDictionaryFromModel(object, error: ())
+            ret.append(converted)
         } else if let objects = a as? [RiffleModel] {
-            ret.append(MTLJSONAdapter.JSONArrayFromModels(objects))
+            let converted = try MTLJSONAdapter.JSONArrayFromModels(objects, error: ())
+            ret.append(converted)
         } else {
             ret.append(a)
         }
     }
     
-    //rifflog.debug("Serializer returning \(ret.count) arguments")
     return ret
 }
 
