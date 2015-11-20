@@ -109,7 +109,7 @@ class Room: RiffleAgent {
             }
         }
         
-        publish("picking", pickers.map({ $0.pick! }), PICK_TIME
+        publish("picking", pickers.map({ $0.pick! }), PICK_TIME)
         
         timer.startTimer(PICK_TIME, selector: "startScoring:")
     }
