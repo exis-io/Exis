@@ -34,21 +34,6 @@ class Container: RiffleAgent {
     }
     
     
-    // MARK: Game State
-    func addPlayer(domain: String) -> AnyObject {
-        // Add the new player and draw them a hand. Let everyone else in the room know theres a new player
-        
-        print("Adding Player \(domain)")
-        
-        let newPlayer = Player()
-        newPlayer.domain = domain
-        newPlayer.hand = answers.randomElements(4, remove: true)
-        
-        players.append(newPlayer)
-        
-        return [newPlayer.hand, players, state]
-    }
-    
     func play(player: String) -> AnyObject {
         var emptyRooms = rooms.filter { $0.players.count < 6 }
         var room: Room

@@ -35,12 +35,9 @@ class LandingViewController: UIViewController, RiffleDelegate {
     ]
     
     override func viewWillAppear(animated: Bool) {
-<<<<<<< HEAD
-=======
         Riffle.setDevFabric()
         //Riffle.setDebug()
         
->>>>>>> pretty
         // View setup and styling
         IHKeyboardAvoiding.setAvoidingView(viewLogin)
         
@@ -49,16 +46,6 @@ class LandingViewController: UIViewController, RiffleDelegate {
         
         viewLogo.animate()
         viewLogin.animate()
-<<<<<<< HEAD
-    }
-    
-    
-    // MARK: Actions
-    @IBAction func login(sender: AnyObject) {
-        textfieldUsername.resignFirstResponder()
-        let name = textfieldUsername.text!
-=======
->>>>>>> pretty
         
         labelTips.morphingEffect = .Scale
         labelTips.text = tips[0]
@@ -66,13 +53,7 @@ class LandingViewController: UIViewController, RiffleDelegate {
     }
     
     
-<<<<<<< HEAD
-    
-    // MARK: Fabric Interaction
-    func startPlaying(cards: [String], players: [Player]) {
-=======
     func startPlaying(cards: [String], players: [Player], state: String, room: String) {
->>>>>>> pretty
         // Result of the call to the Room when a player starts playing
         let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("game") as! GameViewController
         

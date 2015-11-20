@@ -15,11 +15,7 @@ class Player: RiffleModel {
     var domain = ""
     var score = 0
     var czar = false
-<<<<<<< HEAD:ExAgainst/Player.swift
-    var demo = false
-=======
     var demo = true
->>>>>>> pretty:ExAgainst/Models.swift
     var hand: [String] = []
     var pick: String?
     
