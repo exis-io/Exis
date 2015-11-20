@@ -9,27 +9,30 @@
 import Foundation
 import Riffle
 
-class Room: NSObject {
+class Room: RiffleAgent {
     var timer: NSTimer?
     
     var state: String = "Empty"
     var players: [Player] = []
     var czar: Player?
-    var questions = loadCards("q13")
-    var answers = loadCards("a13")
-    
+
+    var questions: [String]!
+    var answers: [String]!
+
     
     override func onJoin() {
-        print("Container joined")
-        
-        register("leave", playerLeft)
         register("play", addPlayer)
         register("pick", pick)
-        
-        // Called automatically when a domain leaves the fabric
-        app.subscribe("sessionLeft", playerLeft)
     }
     
+    func removePlayer(player: Player) {
+        print("Removing player: \(player.domain)")
+        
+        // reshuffle the players cards
+        
+        // remove the player from the rotation
+        players.removeObject(player)
+    }
     
     func addPlayer(domain: String) -> AnyObject {
         // Add the new player and draw them a hand. Let everyone else in the room know theres a new player
@@ -53,21 +56,7 @@ class Room: NSObject {
         
         startTimer(EMPTY_TIME, selector: "startAnswering")
         
-        return [newPlayer.hand, players, state]
-    }
-    
-    func playerLeft(player: Player) {
-        // The player left the game. Remove the given player, reshuffle their cards, and notify the other players
-        questions = loadCards("q13")
-        answers = loadCards("a13")
-        players = []
-        state = "Scoring"
-        czar = nil
-        
-        if let t = timer {
-            t.invalidate()
-            timer = nil
-        }
+        return [newPlayer.hand, players, state, self.name!]
     }
     
     func pick(player: Player, card: String) {

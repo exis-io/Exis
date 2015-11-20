@@ -56,7 +56,7 @@ class LandingViewController: UIViewController, RiffleDelegate {
         container.call("play", me.domain, handler: startPlaying)
     }
     
-    func startPlaying(cards: [String], players: [Player]) {
+    func startPlaying(cards: [String], players: [Player], state: String, room: String) {
         // Result of the call to the Room when a player starts playing
         let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("game") as! GameViewController
         
@@ -64,9 +64,12 @@ class LandingViewController: UIViewController, RiffleDelegate {
         controller.currentPlayer.hand = cards
         controller.players = players
         
+        controller.state = state
         controller.me = self.me
         controller.app = self.app
-        controller.container = self.container
+        controller.room = RiffleAgent(name: room, superdomain: container)
+        
+        print("Creating a new domain with domain :\(controller.room.domain)")
         
         presentControllerTranslucent(self, target: controller)
     }
