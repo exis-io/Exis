@@ -6,6 +6,14 @@
 //  Copyright © 2015 paradrop. All rights reserved.
 //
 
+/*
+    First controller to be presented, implements login and game selection.
+
+    Connections to the fabric are established in the login method. Once a login has occured
+    users can touch play, triggering the startPlaying method. Since a room of play can only include a
+    handful of players and the app should be playable by anyone
+*/
+
 import UIKit
 import Riffle
 import Spring
