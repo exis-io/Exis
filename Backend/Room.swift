@@ -10,7 +10,7 @@ import Foundation
 import Riffle
 
 class Room: RiffleAgent {
-    var timer: NSTimer?
+    var timer = DelayedCaller(target: self)
     
     var state: String = "Empty"
     var players: [Player] = []
@@ -55,7 +55,7 @@ class Room: RiffleAgent {
             players.append(player)
         }
         
-        startTimer(EMPTY_TIME, selector: "startAnswering")
+        timer.startTimer(EMPTY_TIME, selector: "startAnswering")
         
         return [newPlayer.hand, players, state, self.name!]
     }
@@ -73,7 +73,7 @@ class Room: RiffleAgent {
         } else if state == "Picking" && player.czar {
             print("Ending Choosing early")
             let winner = players.filter { $0.pick == card }[0]
-            startTimer(0.0, selector: "startScoring:", info: winner.domain)
+            timer.startTimer(0.0, selector: "startScoring:", info: winner.domain)
             
         } else {
             //print("Player pick in wrong round!")
@@ -86,7 +86,7 @@ class Room: RiffleAgent {
         
         setNextCzar()
         publish("answering", czar!, questions.randomElements(1, remove: false)[0], PICK_TIME)
-        startTimer(PICK_TIME, selector: "startPicking")
+        timer.startTimer(PICK_TIME, selector: "startPicking")
     }
     
     func startPicking() {
@@ -104,7 +104,7 @@ class Room: RiffleAgent {
         
         publish("picking", pickers.map({ $0.pick! }), PICK_TIME)
         
-        startTimer(PICK_TIME, selector: "startScoring:")
+        timer.startTimer(PICK_TIME, selector: "startScoring:")
     }
     
     func startScoring(timer: NSTimer) {
@@ -143,7 +143,7 @@ class Room: RiffleAgent {
             publish("scoring", winner!, "BASDBASB", SCORE_TIME)
         }
         
-        startTimer(SCORE_TIME, selector: "startAnswering")
+        timer.startTimer(SCORE_TIME, selector: "startAnswering")
     }
     
     func setNextCzar() {
@@ -159,18 +159,5 @@ class Room: RiffleAgent {
         }
         
         print("New Czar: \(czar!.domain)")
-    }
-    
-    
-    // MARK: Utilities
-    func startTimer(time: NSTimeInterval, selector: String, info: AnyObject? = nil) {
-        // Calls the given function after (time) seconds. Used to count down the seconds on the current round
-        
-        if timer != nil {
-            timer!.invalidate()
-            timer = nil
-        }
-        
-        timer = NSTimer.scheduledTimerWithTimeInterval(time, target: self, selector: Selector(selector), userInfo: info, repeats: false)
     }
 }

@@ -61,3 +61,25 @@ func randomStringWithLength (len : Int) -> String {
     
     return String(randomString)
 }
+
+
+// Routinely calls a function
+class DelayedCaller {
+    var timer: NSTimer?
+    var target: AnyObject
+    
+    init(target t: AnyObject) {
+        target = t
+    }
+    
+    func startTimer(time: NSTimeInterval, selector: String, info: AnyObject? = nil) {
+        // Calls the given function after (time) seconds. Used to count down the seconds on the current round
+        
+        if timer != nil {
+            timer!.invalidate()
+            timer = nil
+        }
+        
+        timer = NSTimer.scheduledTimerWithTimeInterval(time, target: target, selector: Selector(selector), userInfo: info, repeats: false)
+    }
+}

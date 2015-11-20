@@ -17,6 +17,7 @@
             <string>LiberationSans</string>
             <string>LiberationSans</string>
             <string>LiberationSans</string>
+            <string>LiberationSans</string>
         </mutableArray>
     </customFonts>
     <scenes>
@@ -342,7 +343,7 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UHB-aJ-vrT" customClass="SpringView" customModule="Spring">
                                 <rect key="frame" x="20" y="450" width="560" height="150"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jf8-LM-Rao">
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jf8-LM-Rao">
                                         <rect key="frame" x="0.0" y="55" width="560" height="40"/>
                                         <animations/>
                                         <fontDescription key="fontDescription" name="LiberationSans" family="Liberation Sans" pointSize="25"/>
@@ -426,10 +427,21 @@
                                     </mask>
                                 </variation>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jkI-KQ-XtE" customClass="LTMorphingLabel" customModule="LTMorphingLabel">
+                                <rect key="frame" x="20" y="291.5" width="560" height="57.5"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="57.5" id="MY9-Ow-gDb"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="LiberationSans" family="Liberation Sans" pointSize="18"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
+                            <constraint firstItem="jkI-KQ-XtE" firstAttribute="centerY" secondItem="44Z-ii-qof" secondAttribute="centerY" constant="20" id="0Bw-f9-W7B"/>
                             <constraint firstItem="ojl-Ah-P14" firstAttribute="leading" secondItem="44Z-ii-qof" secondAttribute="leadingMargin" id="6PY-5b-vU8"/>
                             <constraint firstAttribute="trailingMargin" secondItem="ojl-Ah-P14" secondAttribute="trailing" id="8Y4-8X-yyJ"/>
                             <constraint firstItem="wmH-M0-3dJ" firstAttribute="height" secondItem="44Z-ii-qof" secondAttribute="height" multiplier="0.5" id="9g7-ZY-fgc"/>
@@ -437,16 +449,19 @@
                             <constraint firstItem="UHB-aJ-vrT" firstAttribute="leading" secondItem="44Z-ii-qof" secondAttribute="leadingMargin" id="Lc8-lJ-6wg"/>
                             <constraint firstItem="yph-8o-zg5" firstAttribute="top" secondItem="ojl-Ah-P14" secondAttribute="bottom" id="LxZ-14-0Zd"/>
                             <constraint firstItem="ojl-Ah-P14" firstAttribute="height" secondItem="44Z-ii-qof" secondAttribute="height" multiplier="0.25" id="No0-pt-g22"/>
+                            <constraint firstItem="jkI-KQ-XtE" firstAttribute="trailing" secondItem="44Z-ii-qof" secondAttribute="trailingMargin" id="PaP-Gg-grN"/>
                             <constraint firstAttribute="trailingMargin" secondItem="UHB-aJ-vrT" secondAttribute="trailing" id="Qqs-WC-YZG"/>
                             <constraint firstAttribute="trailingMargin" secondItem="wmH-M0-3dJ" secondAttribute="trailing" id="d4s-kB-HJP"/>
                             <constraint firstItem="UHB-aJ-vrT" firstAttribute="height" secondItem="44Z-ii-qof" secondAttribute="height" multiplier="0.25" id="frW-JS-LxZ"/>
                             <constraint firstItem="wmH-M0-3dJ" firstAttribute="top" secondItem="vTK-5y-CzM" secondAttribute="bottom" id="kZY-qJ-Cvq"/>
                             <constraint firstItem="yph-8o-zg5" firstAttribute="top" secondItem="UHB-aJ-vrT" secondAttribute="bottom" id="qFr-Ob-taz"/>
                             <constraint firstItem="wmH-M0-3dJ" firstAttribute="centerX" secondItem="44Z-ii-qof" secondAttribute="centerX" id="qJJ-dT-jiC"/>
+                            <constraint firstItem="jkI-KQ-XtE" firstAttribute="leading" secondItem="44Z-ii-qof" secondAttribute="leadingMargin" id="z7Y-Gw-jOP"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="buttonLogin" destination="g0a-Js-pY2" id="lmU-1d-5qR"/>
+                        <outlet property="labelTips" destination="jkI-KQ-XtE" id="l82-IZ-jcF"/>
                         <outlet property="textfieldUsername" destination="h8x-Ht-lcm" id="b2M-gW-3zU"/>
                         <outlet property="viewButtons" destination="UHB-aJ-vrT" id="O7b-NL-yoy"/>
                         <outlet property="viewLogin" destination="ojl-Ah-P14" id="Z3b-3A-riX"/>

@@ -10,7 +10,7 @@ import UIKit
 import Riffle
 import Spring
 import IHKeyboardAvoiding
-
+import LTMorphingLabel
 
 class LandingViewController: UIViewController, RiffleDelegate {
     @IBOutlet weak var buttonLogin: UIButton!
@@ -18,6 +18,7 @@ class LandingViewController: UIViewController, RiffleDelegate {
     @IBOutlet weak var viewButtons: SpringView!
     @IBOutlet weak var viewLogin: SpringView!
     @IBOutlet weak var textfieldUsername: UITextField!
+    @IBOutlet weak var labelTips: LTMorphingLabel!
     
     var app: RiffleAgent!
     var me: RiffleAgent!

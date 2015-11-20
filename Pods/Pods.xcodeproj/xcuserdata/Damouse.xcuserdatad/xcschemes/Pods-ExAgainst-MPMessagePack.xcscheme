@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '77CF0115E37F7F0920163C02'
+               BlueprintIdentifier = 'F5F006987501968685953CA1'
                BlueprintName = 'Pods-ExAgainst-MPMessagePack'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'MPMessagePack.framework'>

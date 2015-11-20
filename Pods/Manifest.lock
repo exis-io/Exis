@@ -23,10 +23,11 @@ PODS:
   - CocoaAsyncSocket (7.4.1)
   - GHODictionary (1.0.9)
   - IHKeyboardAvoiding (2.5)
+  - LTMorphingLabel (0.0.9)
   - M13ProgressSuite (1.2.7)
   - MPMessagePack (1.3.2):
     - GHODictionary
-  - Riffle (0.1.53):
+  - Riffle (0.1.57):
     - AFNetworking (= 2.6.1)
     - CocoaAsyncSocket (= 7.4.1)
     - MPMessagePack (= 1.3.2)
@@ -37,6 +38,7 @@ PODS:
 
 DEPENDENCIES:
   - IHKeyboardAvoiding
+  - LTMorphingLabel (~> 0.0.9)
   - M13ProgressSuite
   - Riffle
   - RMSwipeTableViewCell
@@ -57,9 +59,10 @@ SPEC CHECKSUMS:
   CocoaAsyncSocket: 7cbf214b27f8e7f7574db6a3fd96352ffaed433d
   GHODictionary: 1f7873492445e0f33ac19575a358c3c91926b564
   IHKeyboardAvoiding: 8f14fed93405dd2c44ce070a26f780d9e477538c
+  LTMorphingLabel: 4235a403f99f0e0e503389da660e0fec324549d9
   M13ProgressSuite: 03d194af6359da440641ba758aed5a18b0386a86
   MPMessagePack: 23bbb933ef1046edcf104e3556ab4a6b4b0a69d4
-  Riffle: 64457d66459b39aeb4167048d7a4aef99b1b404f
+  Riffle: 65615a1d5fa1de138dc4544a9b510db4623ca6cb
   RMSwipeTableViewCell: ef3a5fc804cf0d5fb70fe1195c088cc40b3fde3c
   SocketRocket: ee0b5c34182d37bb4f1f8d628bbe737718126daa
   Spring: 3f02b5dc3308572ef177b3cad0fa7bbc4b0706f7
