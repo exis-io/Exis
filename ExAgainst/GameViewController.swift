@@ -112,6 +112,11 @@ class GameViewController: UIViewController {
     
     func playerSwiped(card: String) {
         // Called when a player swipes a cell with the card that cell represents
+        
+        if tableDelegate.cards.count != 1 && (state == "Answering" || state == "Picking" && currentPlayer.czar) {
+            tableDelegate.removeCellsExcept([card])
+        }
+        
         room.call("pick", currentPlayer, card, handler: nil)
     }
     

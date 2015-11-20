@@ -109,19 +109,23 @@ class PlayerCollectionDelegate: NSObject, UICollectionViewDataSource, UICollecti
         var index = 0
         
         for i in 0...players.count {
-            if players[i] == target {
+            if players[i].domain == target.domain {
                 index = i
                 break
             }
         }
         
-        let cell = collection.cellForItemAtIndexPath(NSIndexPath(forRow: index, inSection: 0))!
-        let playerCell = cell as! PlayerCell
+        let cell = collection.cellForItemAtIndexPath(NSIndexPath(forRow: index, inSection: 0))
         
-        UIView.animateWithDuration(0.15, animations: { () -> Void in
-            playerCell.viewBackground.backgroundColor = UIColor.whiteColor()
-        }) { (_ :Bool) -> Void in
-            playerCell.viewBackground.backgroundColor = UIColor.blackColor()
+        if let playerCell = cell as? PlayerCell {
+            print(cell)
+            print("TARGET: \(target), cell: \(cell)")
+            
+            UIView.animateWithDuration(0.15, animations: { () -> Void in
+                playerCell.viewBackground.backgroundColor = UIColor.whiteColor()
+            }) { (_ :Bool) -> Void in
+                playerCell.viewBackground.backgroundColor = UIColor.blackColor()
+            }
         }
     }
     

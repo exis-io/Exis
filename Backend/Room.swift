@@ -10,7 +10,7 @@ import Foundation
 import Riffle
 
 class Room: RiffleAgent {
-    var timer = DelayedCaller(target: self)
+    var timer: DelayedCaller!
     
     var state: String = "Empty"
     var players: [Player] = []
@@ -21,6 +21,8 @@ class Room: RiffleAgent {
 
     
     override func onJoin() {
+        timer = DelayedCaller(target: self)
+        
         register("play", addPlayer)
         register("pick", pick)
     }
@@ -30,9 +32,16 @@ class Room: RiffleAgent {
         print("Removing player: \(player.domain)")
         
         // reshuffle the players cards
+        answers.appendContentsOf(player.hand)
+        
+        if let p = player.pick {
+            answers.append(p)
+        }
         
         // remove the player from the rotation
         players.removeObject(player)
+        
+        publish("left", player)
     }
     
     func addPlayer(domain: String) -> AnyObject {
@@ -107,14 +116,14 @@ class Room: RiffleAgent {
         timer.startTimer(PICK_TIME, selector: "startScoring:")
     }
     
-    func startScoring(timer: NSTimer) {
+    func startScoring(t: NSTimer) {
         print("    Scoring -- ")
         state = "Scoring"
         
         var pickers = players.filter { !$0.czar }
         var winner: Player?
         
-        if let domain = timer.userInfo as? String {
+        if let domain = t.userInfo as? String {
             winner = players.filter { $0.domain == domain }[0]
         } else {
             print("No players picked cards! Choosing one at random")

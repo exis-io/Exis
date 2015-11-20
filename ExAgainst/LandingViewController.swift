@@ -24,6 +24,15 @@ class LandingViewController: UIViewController, RiffleDelegate {
     var me: RiffleAgent!
     var container: RiffleAgent!
     
+    //var timer: DelayedCaller!
+    
+    
+    let tips = [
+        "Swipe right to pick a card",
+        "Each round a new player picks the winner",
+        "Check out exis.io",
+        "Creative Commons BY-NC-SA 2.0 license."
+    ]
     
     override func viewWillAppear(animated: Bool) {
         Riffle.setDevFabric()
@@ -37,6 +46,10 @@ class LandingViewController: UIViewController, RiffleDelegate {
         
         viewLogo.animate()
         viewLogin.animate()
+        
+        labelTips.morphingEffect = .Scale
+        labelTips.text = tips[0]
+        NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: Selector("rotateText"), userInfo: nil, repeats: true)
     }
     
     
@@ -84,5 +97,9 @@ class LandingViewController: UIViewController, RiffleDelegate {
     
     @IBAction func play(sender: AnyObject) {
         container.call("play", me.domain, handler: startPlaying)
+    }
+    
+    func rotateText() {
+        labelTips.text = tips[(tips.indexOf(labelTips.text)! + 1) % (tips.count)]
     }
 }

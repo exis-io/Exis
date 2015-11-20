@@ -40,7 +40,6 @@ class Container: RiffleAgent {
         
         if emptyRooms.count == 0 {
             room = Room(name: "room" + randomStringWithLength(6), superdomain: self)
-            print("New room name: \(room.name)")
             room.questions = questions
             room.answers = answers
             rooms.append(room)
