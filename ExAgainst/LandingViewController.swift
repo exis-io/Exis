@@ -26,7 +26,7 @@ class LandingViewController: UIViewController, RiffleDelegate {
     
     
     override func viewWillAppear(animated: Bool) {
-        //Riffle.setDevFabric()
+        Riffle.setDevFabric()
         //Riffle.setDebug()
         
         // View setup and styling
@@ -46,8 +46,8 @@ class LandingViewController: UIViewController, RiffleDelegate {
         
         app = RiffleAgent(domain: "xs.demo.damouse.cardsagainst")
         container = RiffleAgent(name: "container", superdomain: app)
-        
         me = RiffleAgent(name: name, superdomain: app)
+        
         me.delegate = self
         me.join()
     }

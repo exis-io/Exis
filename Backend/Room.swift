@@ -1,26 +1,15 @@
 //
-//  main.swift
-//  Backend
+//  Room.swift
+//  ExAgainst
 //
-//  Created by Damouse on 11/7/15.
+//  Created by Mickey Barboi on 11/19/15.
 //  Copyright © 2015 exis. All rights reserved.
 //
 
 import Foundation
 import Riffle
 
-
-// How long each round takes, in seconds
-let ANSWER_TIME = 5.0
-let PICK_TIME = 5.0
-let SCORE_TIME = 3.0
-let EMPTY_TIME = 1.0
-
-Riffle.setDevFabric()
-let app = RiffleAgent(domain: "xs.demo.damouse.cardsagainst")
-
-
-class Container: RiffleAgent {
+class Room: NSObject {
     var timer: NSTimer?
     
     var state: String = "Empty"
@@ -36,7 +25,7 @@ class Container: RiffleAgent {
         register("leave", playerLeft)
         register("play", addPlayer)
         register("pick", pick)
-
+        
         // Called automatically when a domain leaves the fabric
         app.subscribe("sessionLeft", playerLeft)
     }
@@ -178,7 +167,7 @@ class Container: RiffleAgent {
         
         print("New Czar: \(czar!.domain)")
     }
-
+    
     
     // MARK: Utilities
     func startTimer(time: NSTimeInterval, selector: String, info: AnyObject? = nil) {
@@ -192,7 +181,3 @@ class Container: RiffleAgent {
         timer = NSTimer.scheduledTimerWithTimeInterval(time, target: self, selector: Selector(selector), userInfo: info, repeats: false)
     }
 }
-
-Container(name: "container", superdomain: app).join()
-NSRunLoop.currentRunLoop().run()
-

@@ -26,6 +26,7 @@
 		50F70DB31BF057AB006E7384 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F70DB11BF0577A006E7384 /* Utilities.swift */; settings = {ASSET_TAGS = (); }; };
 		50F70DB61BF0B20F006E7384 /* a13.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 50F70DB41BF099CD006E7384 /* a13.json */; };
 		50F70DB71BF0B20F006E7384 /* q13.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 50F70DB51BF099CD006E7384 /* q13.json */; };
+		50FE3E401BFEAE6800E3BC29 /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50FE3E3F1BFEAE6800E3BC29 /* Room.swift */; settings = {ASSET_TAGS = (); }; };
 		8F5C893767A7F73EF01F182E /* Pods_ExAgainst.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BC63F525F921A9A06200A3D /* Pods_ExAgainst.framework */; };
 /* End PBXBuildFile section */
 
@@ -67,6 +68,7 @@
 		50F70DB11BF0577A006E7384 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		50F70DB41BF099CD006E7384 /* a13.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = a13.json; sourceTree = "<group>"; };
 		50F70DB51BF099CD006E7384 /* q13.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = q13.json; sourceTree = "<group>"; };
+		50FE3E3F1BFEAE6800E3BC29 /* Room.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
 		5B1EDCBA6EBCDCC6DE125E9F /* Pods-Backend.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Backend.release.xcconfig"; path = "Pods/Target Support Files/Pods-Backend/Pods-Backend.release.xcconfig"; sourceTree = "<group>"; };
 		6BC63F525F921A9A06200A3D /* Pods_ExAgainst.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExAgainst.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7045586F9225E3D701E9004D /* Pods_Backend.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Backend.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -128,6 +130,7 @@
 			isa = PBXGroup;
 			children = (
 				50CAC8341BEE97A1005E605F /* main.swift */,
+				50FE3E3F1BFEAE6800E3BC29 /* Room.swift */,
 			);
 			name = Container;
 			path = Backend;
@@ -367,6 +370,7 @@
 			files = (
 				50F70DB21BF0577A006E7384 /* Utilities.swift in Sources */,
 				50CAC8401BEE9FBB005E605F /* GameViewController.swift in Sources */,
+				50FE3E401BFEAE6800E3BC29 /* Room.swift in Sources */,
 				50CAC83E1BEE9FBB005E605F /* Player.swift in Sources */,
 				50CAC8411BEE9FBB005E605F /* Views.swift in Sources */,
 				50CAC83F1BEE9FBB005E605F /* LandingViewController.swift in Sources */,
