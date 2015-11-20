@@ -9,6 +9,7 @@
         <mutableArray key="LiberationSans-Bold.ttf">
             <string>LiberationSans-Bold</string>
             <string>LiberationSans-Bold</string>
+            <string>LiberationSans-Bold</string>
         </mutableArray>
         <mutableArray key="LiberationSans-Regular.ttf">
             <string>LiberationSans</string>
@@ -237,32 +238,71 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="u7Z-yI-E9g" customClass="SpringView" customModule="Spring">
+                                <rect key="frame" x="20" y="474" width="560" height="126"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RQT-KT-eUA">
+                                        <rect key="frame" x="0.0" y="0.0" width="560" height="126"/>
+                                        <animations/>
+                                        <fontDescription key="fontDescription" name="LiberationSans-Bold" family="Liberation Sans" pointSize="23"/>
+                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <animations/>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="RQT-KT-eUA" secondAttribute="trailing" id="Ek0-9F-ers"/>
+                                    <constraint firstItem="RQT-KT-eUA" firstAttribute="top" secondItem="u7Z-yI-E9g" secondAttribute="top" id="WqC-dh-Vrg"/>
+                                    <constraint firstAttribute="bottom" secondItem="RQT-KT-eUA" secondAttribute="bottom" id="iSc-tp-SLp"/>
+                                    <constraint firstItem="RQT-KT-eUA" firstAttribute="leading" secondItem="u7Z-yI-E9g" secondAttribute="leading" id="nRI-yW-3uW"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="autostart" value="NO"/>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="autohide" value="NO"/>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="animation" value="zoomIn"/>
+                                </userDefinedRuntimeAttributes>
+                            </view>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="L2b-9W-dKb" secondAttribute="trailing" id="59I-uq-0y0"/>
+                            <constraint firstItem="u7Z-yI-E9g" firstAttribute="leading" secondItem="suc-Cu-f4h" secondAttribute="leadingMargin" id="8kt-lg-xC6"/>
                             <constraint firstAttribute="trailing" secondItem="wOs-lQ-ALW" secondAttribute="trailing" id="Cjy-bg-0ro"/>
+                            <constraint firstItem="dkJ-FF-djK" firstAttribute="top" secondItem="u7Z-yI-E9g" secondAttribute="bottom" id="Dbc-5W-0yc"/>
                             <constraint firstItem="xuF-bi-CC7" firstAttribute="top" secondItem="wOs-lQ-ALW" secondAttribute="bottom" id="IxX-si-bzt"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="u7Z-yI-E9g" secondAttribute="trailing" id="PcV-iI-KaL"/>
                             <constraint firstItem="wOs-lQ-ALW" firstAttribute="leading" secondItem="suc-Cu-f4h" secondAttribute="leading" id="RSY-P7-Mng"/>
                             <constraint firstItem="L2b-9W-dKb" firstAttribute="top" secondItem="OqS-ng-Ih2" secondAttribute="bottom" id="T3v-FT-Van"/>
                             <constraint firstAttribute="trailingMargin" secondItem="OqS-ng-Ih2" secondAttribute="trailing" constant="-20" id="V6t-k8-NBr"/>
                             <constraint firstItem="L2b-9W-dKb" firstAttribute="leading" secondItem="suc-Cu-f4h" secondAttribute="leading" id="Z0e-jV-bbv"/>
                             <constraint firstAttribute="trailing" secondItem="xuF-bi-CC7" secondAttribute="trailing" id="ZzE-nU-2sX"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="u7Z-yI-E9g" secondAttribute="trailing" id="bty-74-JLv"/>
                             <constraint firstItem="dkJ-FF-djK" firstAttribute="top" secondItem="L2b-9W-dKb" secondAttribute="bottom" id="cHG-Rz-Keg"/>
                             <constraint firstItem="wOs-lQ-ALW" firstAttribute="top" secondItem="4Lf-rQ-yYq" secondAttribute="bottom" id="iAb-pv-KIq"/>
+                            <constraint firstItem="u7Z-yI-E9g" firstAttribute="top" secondItem="L2b-9W-dKb" secondAttribute="top" id="lzU-gL-3uN"/>
                             <constraint firstItem="OqS-ng-Ih2" firstAttribute="leading" secondItem="suc-Cu-f4h" secondAttribute="leadingMargin" constant="-20" id="mvh-Hd-v8K"/>
                             <constraint firstItem="L2b-9W-dKb" firstAttribute="top" secondItem="xuF-bi-CC7" secondAttribute="bottom" id="ppG-Tz-VnV"/>
                             <constraint firstItem="xuF-bi-CC7" firstAttribute="leading" secondItem="suc-Cu-f4h" secondAttribute="leading" id="vOq-dq-0Wb"/>
+                            <constraint firstItem="u7Z-yI-E9g" firstAttribute="leading" secondItem="suc-Cu-f4h" secondAttribute="leadingMargin" id="xPa-wK-m41"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="8kt-lg-xC6"/>
+                                <exclude reference="PcV-iI-KaL"/>
+                            </mask>
+                        </variation>
                     </view>
                     <navigationItem key="navigationItem" id="YAd-TY-Ptz"/>
                     <connections>
                         <outlet property="buttonBack" destination="63o-Is-RPw" id="Uv5-IF-AbU"/>
                         <outlet property="collectionPlayers" destination="L2b-9W-dKb" id="gZy-sM-Qwh"/>
                         <outlet property="labelActiveCard" destination="M21-Hh-XMu" id="9Y0-Cw-fa3"/>
+                        <outlet property="labelRound" destination="RQT-KT-eUA" id="CAa-eh-EU8"/>
                         <outlet property="tableCard" destination="xuF-bi-CC7" id="MPb-nR-7Gf"/>
                         <outlet property="viewProgress" destination="OqS-ng-Ih2" id="PLX-b1-SYi"/>
+                        <outlet property="viewRound" destination="u7Z-yI-E9g" id="qjD-61-Wlg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kUP-0Y-NiD" userLabel="First Responder" sceneMemberID="firstResponder"/>

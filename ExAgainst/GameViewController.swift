@@ -12,7 +12,7 @@ import UIKit
 import Riffle
 import RMSwipeTableViewCell
 import M13ProgressSuite
-
+import Spring
 
 class GameViewController: UIViewController {
     
@@ -21,6 +21,8 @@ class GameViewController: UIViewController {
     @IBOutlet weak var tableCard: UITableView!
     @IBOutlet weak var collectionPlayers: UICollectionView!
     @IBOutlet weak var buttonBack: UIButton!
+    @IBOutlet weak var viewRound: SpringView!
+    @IBOutlet weak var labelRound: UILabel!
     
     var tableDelegate: CardTableDelegate!
     var collectionDelegate: PlayerCollectionDelegate!

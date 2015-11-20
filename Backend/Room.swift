@@ -31,14 +31,12 @@ class Room: RiffleAgent {
     func removePlayer(player: Player) {
         print("Removing player: \(player.domain)")
         
-        // reshuffle the players cards
         answers.appendContentsOf(player.hand)
         
         if let p = player.pick {
             answers.append(p)
         }
         
-        // remove the player from the rotation
         players.removeObject(player)
         
         publish("left", player)
@@ -85,7 +83,7 @@ class Room: RiffleAgent {
             timer.startTimer(0.0, selector: "startScoring:", info: winner.domain)
             
         } else {
-            //print("Player pick in wrong round!")
+            print("Player pick in wrong round!")
         }
     }
     
@@ -111,7 +109,7 @@ class Room: RiffleAgent {
             }
         }
         
-        publish("picking", pickers.map({ $0.pick! }), PICK_TIME)
+        publish("picking", pickers.map({ $0.pick! }), PICK_TIME
         
         timer.startTimer(PICK_TIME, selector: "startScoring:")
     }

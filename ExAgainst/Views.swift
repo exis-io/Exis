@@ -243,3 +243,7 @@ func presentControllerTranslucent(source: UIViewController, target: UIViewContro
     source.presentViewController(target, animated: true, completion: nil)
 }
 
+//func flashView() {
+//    viewLogin.animation = "zoomOut"
+//    viewLogin.animate()
+//}
