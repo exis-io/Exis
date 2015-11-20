@@ -109,17 +109,23 @@ class PlayerCollectionDelegate: NSObject, UICollectionViewDataSource, UICollecti
         var index = 0
         
         for i in 0...players.count {
-            if players[i] == target {
+            if players[i].domain == target.domain {
                 index = i
                 break
             }
         }
         
         let cell = collection.cellForItemAtIndexPath(NSIndexPath(forRow: index, inSection: 0))
-        UIView.animateWithDuration(0.15, animations: { () -> Void in
-            cell?.backgroundColor = UIColor.whiteColor()
+        
+        if let playerCell = cell as? PlayerCell {
+            print(cell)
+            print("TARGET: \(target), cell: \(cell)")
+            
+            UIView.animateWithDuration(0.15, animations: { () -> Void in
+                playerCell.viewBackground.backgroundColor = UIColor.whiteColor()
             }) { (_ :Bool) -> Void in
-                cell?.backgroundColor = UIColor.blackColor()
+                playerCell.viewBackground.backgroundColor = UIColor.blackColor()
+            }
         }
     }
     
@@ -130,7 +136,7 @@ class PlayerCollectionDelegate: NSObject, UICollectionViewDataSource, UICollecti
     
     func setCzar(target: Player) {
         if activeCell != nil {
-            activeCell!.backgroundColor = UIColor.clearColor()
+            activeCell!.viewBackground.backgroundColor = UIColor.clearColor()
         }
         
         var index = 0
@@ -142,7 +148,7 @@ class PlayerCollectionDelegate: NSObject, UICollectionViewDataSource, UICollecti
         }
         
         activeCell = collection.cellForItemAtIndexPath(NSIndexPath(forRow: index, inSection: 0)) as! PlayerCell
-        activeCell!.backgroundColor = UIColor.grayColor()
+        activeCell!.viewBackground.backgroundColor = UIColor.grayColor()
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -151,6 +157,7 @@ class PlayerCollectionDelegate: NSObject, UICollectionViewDataSource, UICollecti
         
         cell.labelName.text = player.domain.stringByReplacingOccurrencesOfString(appName + ".", withString: "")
         cell.labelScore.text = "\(player.score)"
+        cell.viewBackground.layer.borderColor = UIColor.whiteColor().CGColor
         
         return cell
     }
@@ -183,6 +190,7 @@ class CardCell: RMSwipeTableViewCell {
 
 class PlayerCell: UICollectionViewCell {
     @IBOutlet weak var labelName: UILabel!
+    @IBOutlet weak var viewBackground: UIView!
     @IBOutlet weak var labelScore: UILabel!
 }
 
@@ -235,3 +243,7 @@ func presentControllerTranslucent(source: UIViewController, target: UIViewContro
     source.presentViewController(target, animated: true, completion: nil)
 }
 
+//func flashView() {
+//    viewLogin.animation = "zoomOut"
+//    viewLogin.animate()
+//}

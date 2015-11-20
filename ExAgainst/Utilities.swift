@@ -47,3 +47,39 @@ func loadCards(name: String) -> [String] {
         return element["text"] as! String
     }
 }
+
+// Utility function to generate random strings
+func randomStringWithLength (len : Int) -> String {
+    
+    let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    let randomString : NSMutableString = NSMutableString(capacity: len)
+    
+    for (var i=0; i < len; i++){
+        let rand = arc4random_uniform(UInt32(letters.length))
+        randomString.appendFormat("%C", letters.characterAtIndex(Int(rand)))
+    }
+    
+    return String(randomString)
+}
+
+
+// Routinely calls a function
+class DelayedCaller {
+    var timer: NSTimer?
+    var target: AnyObject
+    
+    init(target t: AnyObject) {
+        target = t
+    }
+    
+    func startTimer(time: NSTimeInterval, selector: String, info: AnyObject? = nil) {
+        // Calls the given function after (time) seconds. Used to count down the seconds on the current round
+        
+        if timer != nil {
+            timer!.invalidate()
+            timer = nil
+        }
+        
+        timer = NSTimer.scheduledTimerWithTimeInterval(time, target: target, selector: Selector(selector), userInfo: info, repeats: false)
+    }
+}

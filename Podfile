@@ -7,6 +7,7 @@ target :ExAgainst, :exclusive => true do
     pod 'IHKeyboardAvoiding'
     pod 'RMSwipeTableViewCell'
     pod 'M13ProgressSuite'
+    pod 'LTMorphingLabel', '~> 0.0.9'
 end
 
 target :Backend, :exclusive => true do

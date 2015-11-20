@@ -17,28 +17,20 @@ let SCORE_TIME = 3.0
 let EMPTY_TIME = 1.0
 
 
+Riffle.setDevFabric()
 let app = RiffleAgent(domain: "xs.demo.damouse.cardsagainst")
 
 
 class Container: RiffleAgent {
-    var timer: NSTimer?
-    
-    var state: String = "Empty"
-    var players: [Player] = []
-    var czar: Player?
+    var rooms: [Room] = []
     var questions = loadCards("q13")
     var answers = loadCards("a13")
     
     
     override func onJoin() {
         print("Container joined")
-        
-        register("leave", playerLeft)
-        register("play", addPlayer)
-        register("pick", pick)
-
-        // Called automatically when a domain leaves the fabric
         app.subscribe("sessionLeft", playerLeft)
+        register("play", play)
     }
     
     
@@ -57,39 +49,32 @@ class Container: RiffleAgent {
         return [newPlayer.hand, players, state]
     }
     
-    func playerLeft(player: Player) {
-        // The player left the game. Remove the given player, reshuffle their cards, and notify the other players
-        questions = loadCards("q13")
-        answers = loadCards("a13")
-        players = []
-        state = "Scoring"
-        czar = nil
+    func play(player: String) -> AnyObject {
+        var emptyRooms = rooms.filter { $0.players.count < 6 }
+        var room: Room
         
-        if let t = timer {
-            t.invalidate()
-            timer = nil
-        }
-    }
-    
-    func pick(player: Player, card: String) {
-        // Player picked a card. This action depends on the current state of play
-        
-        print("Player: \(player.domain) answered \(card)")
-    }
-    
-
-    // MARK: Utilities
-    func startTimer(time: NSTimeInterval, selector: String, info: AnyObject? = nil) {
-        // Calls the given function after (time) seconds. Used to count down the seconds on the current round
-        
-        if timer != nil {
-            timer!.invalidate()
-            timer = nil
+        if emptyRooms.count == 0 {
+            room = Room(name: "room" + randomStringWithLength(6), superdomain: self)
+            room.questions = questions
+            room.answers = answers
+            rooms.append(room)
+        } else {
+            room = emptyRooms.randomElements(1)[0]
         }
         
-        timer = NSTimer.scheduledTimerWithTimeInterval(time, target: self, selector: Selector(selector), userInfo: info, repeats: false)
+        return room.addPlayer(player as String)
     }
     
+    func playerLeft(domain: String) {
+        for room in rooms {
+            for player in room.players {
+                if player.domain == domain {
+                    room.removePlayer(player)
+                    return
+                }
+            }
+        }
+    }
 }
 
 Container(name: "container", superdomain: app).join()
