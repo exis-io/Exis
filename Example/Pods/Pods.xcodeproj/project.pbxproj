@@ -71,6 +71,7 @@
 		4F093F6FBA6E6B060CF66145CF214E14 /* AFNetworkReachabilityManager.h in Headers */ = {isa = PBXBuildFile; fileRef = EBCFAEF2A4C628119EB58FE8A746205D /* AFNetworkReachabilityManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F0C0C470EA4518A27FACB39CCFB3F09 /* MDWampInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B360012DFFC9FE3F196AA4F525F27D9 /* MDWampInvocation.m */; };
 		502D5F205E2BF44AB8F0054AAF57E112 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E32266B8C4A0D9780D5A3C7D75B11EA /* Foundation.framework */; };
+		503D300C1BFEDBFA007C8B67 /* Riffle.h in Sources */ = {isa = PBXBuildFile; fileRef = 6B522112A019BBEF3A5FF6376C421107 /* Riffle.h */; };
 		50F70D7B1BF037A6006E7384 /* Mantle.h in Headers */ = {isa = PBXBuildFile; fileRef = 50F70D5E1BF037A6006E7384 /* Mantle.h */; settings = {ASSET_TAGS = (); }; };
 		50F70D7C1BF037A6006E7384 /* MTLJSONAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50F70D5F1BF037A6006E7384 /* MTLJSONAdapter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50F70D7D1BF037A6006E7384 /* MTLJSONAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 50F70D601BF037A6006E7384 /* MTLJSONAdapter.m */; settings = {ASSET_TAGS = (); }; };
@@ -1651,6 +1652,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				503D300C1BFEDBFA007C8B67 /* Riffle.h in Sources */,
 				EE716DC8088A3A52A4669911375EB654 /* Agent.swift in Sources */,
 				8F1F3CE91114336109D40317D1686B62 /* Auth.swift in Sources */,
 				10DD975940F679EC848E03D20621C92E /* BaseModel.swift in Sources */,

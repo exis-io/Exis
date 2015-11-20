@@ -14,7 +14,7 @@ public class MDWampHello: NSObject, MDWampMessage {
     public var roles: [NSString: NSObject] = [:]
     
     required public init!(payload: [AnyObject]!) {
-        self.realm = payload[0] as! NSString
+        self.realm = (payload[0] as! NSString)
         self.details = payload[1] as! [NSString : NSObject]
     }
     
