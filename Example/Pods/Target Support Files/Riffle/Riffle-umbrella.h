@@ -1,6 +1,6 @@
 #import <UIKit/UIKit.h>
 
-#import "Riffle.h"
+//#import "Riffle.h"
 
 #import "NSMutableArray+MDStack.h"
 #import "NSString+MDString.h"
@@ -44,6 +44,8 @@
 #import "MDWampTransportRawSocket.h"
 #import "MDWampTransports.h"
 #import "MDWampTransportWebSocket.h"
+
+#import <Riffle/MTLJSONAdapter.h>
 
 #import "MTLModel.h"
 #import "MTLJSONAdapter.h"
