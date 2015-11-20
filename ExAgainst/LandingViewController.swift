@@ -19,7 +19,6 @@ class LandingViewController: UIViewController, RiffleDelegate {
     @IBOutlet weak var viewLogin: SpringView!
     @IBOutlet weak var textfieldUsername: UITextField!
     
-    // The agent connection classes
     var app: RiffleAgent!
     var me: RiffleAgent!
     var container: RiffleAgent!
@@ -40,6 +39,36 @@ class LandingViewController: UIViewController, RiffleDelegate {
     }
     
     
+    func startPlaying(cards: [String], players: [Player], state: String, room: String) {
+        // Result of the call to the Room when a player starts playing
+        let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("game") as! GameViewController
+        
+        controller.currentPlayer = players.filter { $0.domain == self.me.domain }[0]
+        controller.currentPlayer.hand = cards
+        controller.players = players
+        
+        controller.state = state
+        controller.me = self.me
+        controller.app = self.app
+        controller.room = RiffleAgent(name: room, superdomain: container)
+        
+        presentControllerTranslucent(self, target: controller)
+    }
+    
+    
+    func onJoin() {
+        print("Agent joined")
+        
+        viewLogin.animation = "zoomOut"
+        viewLogin.animate()
+        viewButtons.animation = "zoomIn"
+        viewButtons.animate()
+    }
+    
+    func onLeave() {
+        print("Agent left")
+    }
+    
     @IBAction func login(sender: AnyObject) {
         textfieldUsername.resignFirstResponder()
         let name = textfieldUsername.text!
@@ -54,36 +83,5 @@ class LandingViewController: UIViewController, RiffleDelegate {
     
     @IBAction func play(sender: AnyObject) {
         container.call("play", me.domain, handler: startPlaying)
-    }
-    
-    func startPlaying(cards: [String], players: [Player], state: String, room: String) {
-        // Result of the call to the Room when a player starts playing
-        let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("game") as! GameViewController
-        
-        controller.currentPlayer = players.filter { $0.domain == self.me.domain }[0]
-        controller.currentPlayer.hand = cards
-        controller.players = players
-        
-        controller.state = state
-        controller.me = self.me
-        controller.app = self.app
-        controller.room = RiffleAgent(name: room, superdomain: container)
-        
-        print("Creating a new domain with domain :\(controller.room.domain)")
-        
-        presentControllerTranslucent(self, target: controller)
-    }
-    
-    func onJoin() {
-        print("Agent joined")
-        
-        viewLogin.animation = "zoomOut"
-        viewLogin.animate()
-        viewButtons.animation = "zoomIn"
-        viewButtons.animate()
-    }
-    
-    func onLeave() {
-        print("Agent left")
     }
 }

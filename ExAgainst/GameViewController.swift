@@ -44,7 +44,7 @@ class GameViewController: UIViewController {
         tableDelegate.refreshCards(currentPlayer.hand)
         
         room.subscribe("answering", answering)
-        room.subscribe("choosing", picking)
+        room.subscribe("picking", picking)
         room.subscribe("scoring", scoring)
         me.register("draw", draw)
     }
@@ -67,7 +67,7 @@ class GameViewController: UIViewController {
         labelActiveCard.text = question
         _ = players.map { $0.czar = $0 == newCzar }
         collectionDelegate.setCzar(newCzar)
-        tableDelegate.refreshCards(newCzar == me ? [] : currentPlayer.hand)
+        tableDelegate.refreshCards(newCzar.domain == me.domain ? [] : currentPlayer.hand)
         viewProgress.countdown(time)
     }
     
@@ -75,17 +75,25 @@ class GameViewController: UIViewController {
         print("Picking")
         state = "Picking"
         
+        var found = false
+        
         for answer in answers {
             if currentPlayer.hand.contains(answer) {
+                print("Removed card: \(answer)")
+                found = true
                 currentPlayer.hand.removeObject(answer)
             }
+        }
+        
+        if !found && !currentPlayer.czar {
+            print("WARN-- no card removed! Hand: \(currentPlayer.hand), answers: \(answers)")
         }
         
         tableDelegate.refreshCards(answers)
         viewProgress.countdown(time)
     }
     
-    func scoring(player: Player, time: Double) {
+    func scoring(player: Player, card: String, time: Double) {
         print("Scoring. Player: \(player.domain) won")
         state = "Scoring"
         
@@ -97,6 +105,8 @@ class GameViewController: UIViewController {
         
         collectionDelegate.refreshPlayers(players)
         collectionDelegate.flashCell(player)
+        tableDelegate.refreshCards([card])
+        
         viewProgress.countdown(time)
     }
     

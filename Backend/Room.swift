@@ -25,6 +25,7 @@ class Room: RiffleAgent {
         register("pick", pick)
     }
     
+    
     func removePlayer(player: Player) {
         print("Removing player: \(player.domain)")
         
@@ -64,39 +65,35 @@ class Room: RiffleAgent {
         
         let player = players.filter { $0.domain == player.domain }[0]
         
-        if state == "Answering" && player.pick == nil {
+        if state == "Answering" && player.pick == nil && !player.czar {
             player.pick = card
             player.hand.removeObject(card)
+            print("Player: \(player.domain) answered: \(card)")
             
-        } else if state == "Choosing" && player.czar {
+        } else if state == "Picking" && player.czar {
             print("Ending Choosing early")
             let winner = players.filter { $0.pick == card }[0]
             startTimer(0.0, selector: "startScoring:", info: winner.domain)
             
         } else {
-            print("Player pick in wrong round!")
+            //print("Player pick in wrong round!")
         }
-        
-        print("Player: \(player.domain) answered \(card)")
     }
     
     func startAnswering() {
-        print("STATE: Answering")
+        print("    Answering -- ")
         state = "Answering"
         
-        let question = questions.randomElements(1, remove: false)
         setNextCzar()
-        
         publish("answering", czar!, questions.randomElements(1, remove: false)[0], PICK_TIME)
-        
         startTimer(PICK_TIME, selector: "startPicking")
     }
     
     func startPicking() {
-        print("STATE: Picking")
+        print("    Picking -- ")
         state = "Picking"
         
-        var pickers = players.filter { !$0.czar }
+        let pickers = players.filter { !$0.czar }
         
         // Autopick for players that didnt pick
         for player in pickers {
@@ -111,7 +108,7 @@ class Room: RiffleAgent {
     }
     
     func startScoring(timer: NSTimer) {
-        print("STATE: scoring")
+        print("    Scoring -- ")
         state = "Scoring"
         
         var pickers = players.filter { !$0.czar }
@@ -137,8 +134,15 @@ class Room: RiffleAgent {
             p.hand += newAnswer
             p.pick = nil
         }
+
+        if let p = winner!.pick {
+            publish("scoring", winner!, winner!.pick!, SCORE_TIME)
+        }
+        else {
+            print("The winner doesn't have a listed pick!")
+            publish("scoring", winner!, "BASDBASB", SCORE_TIME)
+        }
         
-        publish("scoring", winner!, SCORE_TIME)
         startTimer(SCORE_TIME, selector: "startAnswering")
     }
     
