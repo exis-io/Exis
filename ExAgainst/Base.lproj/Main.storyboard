@@ -241,8 +241,8 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="u7Z-yI-E9g" customClass="SpringView" customModule="Spring">
                                 <rect key="frame" x="0.0" y="474" width="600" height="126"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RQT-KT-eUA">
-                                        <rect key="frame" x="0.0" y="0.0" width="600" height="126"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RQT-KT-eUA">
+                                        <rect key="frame" x="20" y="0.0" width="560" height="126"/>
                                         <animations/>
                                         <fontDescription key="fontDescription" name="LiberationSans-Bold" family="Liberation Sans" pointSize="23"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -252,15 +252,18 @@
                                 <animations/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="RQT-KT-eUA" secondAttribute="trailing" id="Ek0-9F-ers"/>
+                                    <constraint firstAttribute="trailing" secondItem="RQT-KT-eUA" secondAttribute="trailing" constant="20" id="Ek0-9F-ers"/>
                                     <constraint firstItem="RQT-KT-eUA" firstAttribute="top" secondItem="u7Z-yI-E9g" secondAttribute="top" id="WqC-dh-Vrg"/>
                                     <constraint firstAttribute="bottom" secondItem="RQT-KT-eUA" secondAttribute="bottom" id="iSc-tp-SLp"/>
-                                    <constraint firstItem="RQT-KT-eUA" firstAttribute="leading" secondItem="u7Z-yI-E9g" secondAttribute="leading" id="nRI-yW-3uW"/>
+                                    <constraint firstItem="RQT-KT-eUA" firstAttribute="leading" secondItem="u7Z-yI-E9g" secondAttribute="leading" constant="20" id="nRI-yW-3uW"/>
                                 </constraints>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="autostart" value="NO"/>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="autohide" value="NO"/>
                                     <userDefinedRuntimeAttribute type="string" keyPath="animation" value="fadeIn"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="duration">
+                                        <real key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
                         </subviews>

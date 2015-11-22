@@ -254,7 +254,8 @@ func presentControllerTranslucent(source: UIViewController, target: UIViewContro
 
 func blur(target: UIView) {
     let effect = UIVisualEffectView(effect: UIBlurEffect(style: .Dark))
-    effect.frame = target.frame
+    effect.frame = target.bounds
+    effect.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
     target.insertSubview(effect, atIndex:0)
 
 }
@@ -267,7 +268,7 @@ func flashView(view: SpringView, label: UILabel, text: String) {
     
     view.animateNext {
         view.animation = "fadeOut"
-        view.animateTo()
+        view.animate()
     }
 }
 

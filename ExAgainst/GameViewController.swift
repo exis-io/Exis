@@ -65,21 +65,19 @@ class GameViewController: UIViewController {
     
     // MARK: Game Logics
     func answering(newCzar: Player, question: String, time: Double) {
-        print("Answering. New czar: \(newCzar.domain)")
-        state = "Answering"
-        flashView(viewRound, label: labelRound, text: "Pick a card!")
-        
         labelActiveCard.text = question
         _ = players.map { $0.czar = $0 == newCzar }
         collectionDelegate.setCzar(newCzar)
         tableDelegate.refreshCards(newCzar.domain == me.domain ? [] : currentPlayer.hand)
         viewProgress.countdown(time)
+        
+        flashView(viewRound, label: labelRound, text: currentPlayer.czar ? "You're the czar" : "Choose a card")
+        state = "Answering"
     }
     
     func picking(answers: [String], time: Double) {
-        print("Picking")
+        flashView(viewRound, label: labelRound, text: currentPlayer.czar ? "Choose a winner" : "Czar picking a winner")
         state = "Picking"
-        flashView(viewRound, label: labelRound, text: "Someone picking")
         
         var found = false
         
@@ -100,9 +98,9 @@ class GameViewController: UIViewController {
     }
     
     func scoring(player: Player, card: String, time: Double) {
-        print("Scoring. Player: \(player.domain) won")
+        let prettyName = player.domain.stringByReplacingOccurrencesOfString(app.domain + ".", withString: "")
+        flashView(viewRound, label: labelRound, text: "\(prettyName) won!")
         state = "Scoring"
-        flashView(viewRound, label: labelRound, text: "\(player.domain) won!")
         
         for p in players {
             if p == player {
