@@ -49,6 +49,8 @@ class GameViewController: UIViewController {
         room.subscribe("picking", picking)
         room.subscribe("scoring", scoring)
         me.register("draw", draw)
+        
+        blur(viewRound)
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -65,6 +67,7 @@ class GameViewController: UIViewController {
     func answering(newCzar: Player, question: String, time: Double) {
         print("Answering. New czar: \(newCzar.domain)")
         state = "Answering"
+        flashView(viewRound, label: labelRound, text: "Pick a card!")
         
         labelActiveCard.text = question
         _ = players.map { $0.czar = $0 == newCzar }
@@ -76,6 +79,7 @@ class GameViewController: UIViewController {
     func picking(answers: [String], time: Double) {
         print("Picking")
         state = "Picking"
+        flashView(viewRound, label: labelRound, text: "Someone picking")
         
         var found = false
         
@@ -98,6 +102,7 @@ class GameViewController: UIViewController {
     func scoring(player: Player, card: String, time: Double) {
         print("Scoring. Player: \(player.domain) won")
         state = "Scoring"
+        flashView(viewRound, label: labelRound, text: "\(player.domain) won!")
         
         for p in players {
             if p == player {

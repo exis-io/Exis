@@ -11,7 +11,7 @@ import Foundation
 import Riffle
 import RMSwipeTableViewCell
 import M13ProgressSuite
-
+import Spring
 
 class CardTableDelegate: NSObject, UITableViewDelegate, UITableViewDataSource, RMSwipeTableViewCellDelegate {
     var cards: [String] = []
@@ -147,8 +147,14 @@ class PlayerCollectionDelegate: NSObject, UICollectionViewDataSource, UICollecti
             }
         }
         
-        activeCell = collection.cellForItemAtIndexPath(NSIndexPath(forRow: index, inSection: 0)) as! PlayerCell
-        activeCell!.viewBackground.backgroundColor = UIColor.grayColor()
+        let c = collection.cellForItemAtIndexPath(NSIndexPath(forRow: index, inSection: 0))
+        
+        if c != nil {
+            if let cell = c as? PlayerCell {
+                activeCell = cell
+                activeCell!.viewBackground.backgroundColor = UIColor.grayColor()
+            }
+        }
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -237,13 +243,34 @@ func presentControllerTranslucent(source: UIViewController, target: UIViewContro
     let effect = UIVisualEffectView(effect: UIBlurEffect(style: .Dark))
     effect.frame = target.view.frame
     target.view.insertSubview(effect, atIndex:0)
+    
+    //blur(target.view)
+    
     target.modalPresentationStyle = .OverFullScreen
     source.modalPresentationStyle = .CurrentContext
     
     source.presentViewController(target, animated: true, completion: nil)
 }
 
-//func flashView() {
-//    viewLogin.animation = "zoomOut"
-//    viewLogin.animate()
-//}
+func blur(target: UIView) {
+    let effect = UIVisualEffectView(effect: UIBlurEffect(style: .Dark))
+    effect.frame = target.frame
+    target.insertSubview(effect, atIndex:0)
+
+}
+
+func flashView(view: SpringView, label: UILabel, text: String) {
+    label.text = text
+    
+    view.animation = "fadeIn"
+    view.animate()
+    
+    view.animateNext {
+        view.animation = "fadeOut"
+        view.animateTo()
+    }
+}
+
+
+
+

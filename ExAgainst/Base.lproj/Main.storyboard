@@ -238,11 +238,11 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
-                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="u7Z-yI-E9g" customClass="SpringView" customModule="Spring">
-                                <rect key="frame" x="20" y="474" width="560" height="126"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="u7Z-yI-E9g" customClass="SpringView" customModule="Spring">
+                                <rect key="frame" x="0.0" y="474" width="600" height="126"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RQT-KT-eUA">
-                                        <rect key="frame" x="0.0" y="0.0" width="560" height="126"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RQT-KT-eUA">
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="126"/>
                                         <animations/>
                                         <fontDescription key="fontDescription" name="LiberationSans-Bold" family="Liberation Sans" pointSize="23"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -250,7 +250,7 @@
                                     </label>
                                 </subviews>
                                 <animations/>
-                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="RQT-KT-eUA" secondAttribute="trailing" id="Ek0-9F-ers"/>
                                     <constraint firstItem="RQT-KT-eUA" firstAttribute="top" secondItem="u7Z-yI-E9g" secondAttribute="top" id="WqC-dh-Vrg"/>
@@ -260,7 +260,7 @@
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="autostart" value="NO"/>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="autohide" value="NO"/>
-                                    <userDefinedRuntimeAttribute type="string" keyPath="animation" value="zoomIn"/>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="animation" value="fadeIn"/>
                                 </userDefinedRuntimeAttributes>
                             </view>
                         </subviews>
@@ -278,14 +278,14 @@
                             <constraint firstAttribute="trailingMargin" secondItem="OqS-ng-Ih2" secondAttribute="trailing" constant="-20" id="V6t-k8-NBr"/>
                             <constraint firstItem="L2b-9W-dKb" firstAttribute="leading" secondItem="suc-Cu-f4h" secondAttribute="leading" id="Z0e-jV-bbv"/>
                             <constraint firstAttribute="trailing" secondItem="xuF-bi-CC7" secondAttribute="trailing" id="ZzE-nU-2sX"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="u7Z-yI-E9g" secondAttribute="trailing" id="bty-74-JLv"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="u7Z-yI-E9g" secondAttribute="trailing" constant="-20" id="bty-74-JLv"/>
                             <constraint firstItem="dkJ-FF-djK" firstAttribute="top" secondItem="L2b-9W-dKb" secondAttribute="bottom" id="cHG-Rz-Keg"/>
                             <constraint firstItem="wOs-lQ-ALW" firstAttribute="top" secondItem="4Lf-rQ-yYq" secondAttribute="bottom" id="iAb-pv-KIq"/>
                             <constraint firstItem="u7Z-yI-E9g" firstAttribute="top" secondItem="L2b-9W-dKb" secondAttribute="top" id="lzU-gL-3uN"/>
                             <constraint firstItem="OqS-ng-Ih2" firstAttribute="leading" secondItem="suc-Cu-f4h" secondAttribute="leadingMargin" constant="-20" id="mvh-Hd-v8K"/>
                             <constraint firstItem="L2b-9W-dKb" firstAttribute="top" secondItem="xuF-bi-CC7" secondAttribute="bottom" id="ppG-Tz-VnV"/>
                             <constraint firstItem="xuF-bi-CC7" firstAttribute="leading" secondItem="suc-Cu-f4h" secondAttribute="leading" id="vOq-dq-0Wb"/>
-                            <constraint firstItem="u7Z-yI-E9g" firstAttribute="leading" secondItem="suc-Cu-f4h" secondAttribute="leadingMargin" id="xPa-wK-m41"/>
+                            <constraint firstItem="u7Z-yI-E9g" firstAttribute="leading" secondItem="suc-Cu-f4h" secondAttribute="leadingMargin" constant="-20" id="xPa-wK-m41"/>
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
