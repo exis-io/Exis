@@ -200,9 +200,8 @@ class PlayerCell: UICollectionViewCell {
     @IBOutlet weak var labelScore: UILabel!
 }
 
-
+// A simple subclass of the progress views that ticks down over time
 class TickingView: M13ProgressViewBar {
-    // A simple subclass that ticks down when given a time
     var timer: NSTimer?
     var current: Double = 1.0
     var increment: Double = 0.1
@@ -244,11 +243,8 @@ func presentControllerTranslucent(source: UIViewController, target: UIViewContro
     effect.frame = target.view.frame
     target.view.insertSubview(effect, atIndex:0)
     
-    //blur(target.view)
-    
     target.modalPresentationStyle = .OverFullScreen
     source.modalPresentationStyle = .CurrentContext
-    
     source.presentViewController(target, animated: true, completion: nil)
 }
 
@@ -262,7 +258,6 @@ func blur(target: UIView) {
 
 func flashView(view: SpringView, label: UILabel, text: String) {
     label.text = text
-    
     view.animation = "fadeIn"
     view.animate()
     

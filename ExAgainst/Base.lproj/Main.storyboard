@@ -50,8 +50,8 @@
                                             <action selector="leave:" destination="y5l-PD-fLC" eventType="touchUpInside" id="SjE-96-4Zw"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Waiting for more Players" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M21-Hh-XMu">
-                                        <rect key="frame" x="40" y="0.0" width="509" height="100"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Waiting for more Players" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M21-Hh-XMu">
+                                        <rect key="frame" x="36" y="0.0" width="554" height="100"/>
                                         <animations/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" name="LiberationSans-Bold" family="Liberation Sans" pointSize="22"/>
@@ -65,7 +65,7 @@
                                     <constraint firstItem="63o-Is-RPw" firstAttribute="centerY" secondItem="wOs-lQ-ALW" secondAttribute="centerY" id="1Lo-ho-pJl"/>
                                     <constraint firstAttribute="height" constant="100" id="7nP-Qo-fFf"/>
                                     <constraint firstItem="63o-Is-RPw" firstAttribute="leading" secondItem="wOs-lQ-ALW" secondAttribute="leading" constant="2" id="Pcr-fj-PsB"/>
-                                    <constraint firstAttribute="trailing" secondItem="M21-Hh-XMu" secondAttribute="trailing" constant="55" id="Rn6-fT-elj"/>
+                                    <constraint firstAttribute="trailing" secondItem="M21-Hh-XMu" secondAttribute="trailing" constant="10" id="Rn6-fT-elj"/>
                                     <constraint firstItem="M21-Hh-XMu" firstAttribute="top" secondItem="wOs-lQ-ALW" secondAttribute="top" id="SBi-KX-gUY"/>
                                     <constraint firstItem="M21-Hh-XMu" firstAttribute="leading" secondItem="63o-Is-RPw" secondAttribute="trailing" constant="4" id="XBW-8Q-SpD"/>
                                     <constraint firstAttribute="bottom" secondItem="M21-Hh-XMu" secondAttribute="bottom" id="pRP-E3-3qY"/>

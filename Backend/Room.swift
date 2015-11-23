@@ -26,6 +26,7 @@ class Room: RiffleAgent {
         
         register("play", addPlayer)
         register("pick", pick)
+        register("leave", removePlayer)
     }
     
     
