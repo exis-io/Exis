@@ -40,6 +40,7 @@ class Container: RiffleAgent {
         
         if emptyRooms.count == 0 {
             room = Room(name: "room" + randomStringWithLength(6), superdomain: self)
+            room.parent = self
             room.questions = questions
             room.answers = answers
             rooms.append(room)
@@ -48,6 +49,11 @@ class Container: RiffleAgent {
         }
         
         return room.addPlayer(player as String)
+    }
+    
+    func closeRoom(room: Room) {
+        print("Closing room.")
+        rooms.removeObject(room)
     }
     
     func playerLeft(domain: String) {

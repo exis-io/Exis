@@ -82,4 +82,11 @@ class DelayedCaller {
         
         timer = NSTimer.scheduledTimerWithTimeInterval(time, target: target, selector: Selector(selector), userInfo: info, repeats: false)
     }
+    
+    func cancel() {
+        if timer != nil {
+            timer!.invalidate()
+            timer = nil
+        }
+    }
 }

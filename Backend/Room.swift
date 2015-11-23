@@ -10,6 +10,7 @@ import Foundation
 import Riffle
 
 class Room: RiffleAgent {
+    var parent: Container!
     var timer: DelayedCaller!
     
     var state: String = "Empty"
@@ -38,8 +39,14 @@ class Room: RiffleAgent {
         }
         
         players.removeObject(player)
-        
         publish("left", player)
+        
+        // Close the room if there are only demo players left
+        if players.reduce(0, combine: { $0 + ($1.demo ? 0 : 1) }) == 0 {
+            parent.closeRoom(self)
+            parent = nil
+            timer.cancel()
+        }
     }
     
     func addPlayer(domain: String) -> AnyObject {
@@ -109,6 +116,10 @@ class Room: RiffleAgent {
             }
         }
         
+        for p in players {
+            print(p.pick)
+        }
+        
         publish("picking", pickers.map({ $0.pick! }), PICK_TIME)
         
         timer.startTimer(PICK_TIME, selector: "startScoring:")
@@ -129,8 +140,9 @@ class Room: RiffleAgent {
         }
         
         winner!.score += 1
+        publish("scoring", winner!, winner!.pick!, SCORE_TIME)
         
-        // draw cards for all players
+        // draw cards for all players, nil their picks
         for p in pickers {
             if let c = p.pick {
                 answers.append(c)
@@ -140,14 +152,6 @@ class Room: RiffleAgent {
             let newAnswer = answers.randomElements(1, remove: true)
             p.hand += newAnswer
             p.pick = nil
-        }
-
-        if let p = winner!.pick {
-            publish("scoring", winner!, winner!.pick!, SCORE_TIME)
-        }
-        else {
-            print("The winner doesn't have a listed pick!")
-            publish("scoring", winner!, "BASDBASB", SCORE_TIME)
         }
         
         timer.startTimer(SCORE_TIME, selector: "startAnswering")
