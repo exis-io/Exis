@@ -9,7 +9,7 @@
 import Foundation
 import Riffle
 
-class Room: RiffleAgent {
+class Room: RiffleDomain {
     var parent: Container!
     var timer: DelayedCaller!
     

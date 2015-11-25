@@ -8,13 +8,13 @@
 
 import Foundation
 
-public class RiffleAgent: NSObject, RiffleDelegate {
+public class RiffleDomain: NSObject, RiffleDelegate {
     public var name: String?
     public var domain: String
     public var delegate: RiffleDelegate?
     
     var connection: RiffleConnection
-    var superdomain: RiffleAgent?
+    var superdomain: RiffleDomain?
     
     var registrations: [String] = []
     var subscriptions: [String] = []
@@ -33,7 +33,7 @@ public class RiffleAgent: NSObject, RiffleDelegate {
         delegate = self
     }
     
-    public init(name n: String, superdomain s: RiffleAgent) {
+    public init(name n: String, superdomain s: RiffleDomain) {
         // Initialize this agent as a subdomain of the given domain. Does not
         // connect. If "connect" is called on either the superdomain or this domain
         // both will be connected
@@ -53,7 +53,7 @@ public class RiffleAgent: NSObject, RiffleDelegate {
         //self.leave()
     }
     
-    public func join(token: String? = nil) -> RiffleAgent {
+    public func join(token: String? = nil) -> RiffleDomain {
         // Connect this agent and any agents connected to this one
         // superdomains and subdomains
         
