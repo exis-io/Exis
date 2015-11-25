@@ -88,7 +88,6 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "Pods-ExisiOSBackend/CocoaAsyncSocket.framework"
   install_framework "Pods-ExisiOSBackend/GHODictionary.framework"
   install_framework "Pods-ExisiOSBackend/MPMessagePack.framework"
-  install_framework "Pods-ExisiOSBackend/Mantle.framework"
   install_framework "Pods-ExisiOSBackend/Riffle.framework"
   install_framework "Pods-ExisiOSBackend/SocketRocket.framework"
 fi
@@ -97,7 +96,6 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "Pods-ExisiOSBackend/CocoaAsyncSocket.framework"
   install_framework "Pods-ExisiOSBackend/GHODictionary.framework"
   install_framework "Pods-ExisiOSBackend/MPMessagePack.framework"
-  install_framework "Pods-ExisiOSBackend/Mantle.framework"
   install_framework "Pods-ExisiOSBackend/Riffle.framework"
   install_framework "Pods-ExisiOSBackend/SocketRocket.framework"
 fi

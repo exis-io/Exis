@@ -88,7 +88,6 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "Pods-Backend/CocoaAsyncSocket.framework"
   install_framework "Pods-Backend/GHODictionary.framework"
   install_framework "Pods-Backend/MPMessagePack.framework"
-  install_framework "Pods-Backend/Mantle.framework"
   install_framework "Pods-Backend/Riffle.framework"
   install_framework "Pods-Backend/SocketRocket.framework"
 fi
@@ -97,7 +96,6 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "Pods-Backend/CocoaAsyncSocket.framework"
   install_framework "Pods-Backend/GHODictionary.framework"
   install_framework "Pods-Backend/MPMessagePack.framework"
-  install_framework "Pods-Backend/Mantle.framework"
   install_framework "Pods-Backend/Riffle.framework"
   install_framework "Pods-Backend/SocketRocket.framework"
 fi
