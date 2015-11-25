@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = "Riffle"
-    s.version          = "0.1.60"
+    s.version          = "0.1.61"
     s.summary          = "Client side library for connecting to a fabric."
 
     s.ios.deployment_target = "8.0"
@@ -32,5 +32,4 @@ networking code with something that doesn't look like networking code at all!
     s.dependency 'MPMessagePack', '1.3.2'
     s.dependency 'CocoaAsyncSocket', '7.4.1'
     s.dependency 'AFNetworking', '2.6.1'
-    #s.dependency 'PromiseKit', '3.0.0'
 end
