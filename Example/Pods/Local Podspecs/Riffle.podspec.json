@@ -1,6 +1,6 @@
 {
   "name": "Riffle",
-  "version": "0.1.51",
+  "version": "0.1.58",
   "summary": "Client side library for connecting to a fabric.",
   "platforms": {
     "ios": "8.0",
@@ -14,7 +14,7 @@
   },
   "source": {
     "git": "https://github.com/exis-io/swiftRiffle.git",
-    "tag": "0.1.51"
+    "tag": "0.1.58"
   },
   "requires_arc": true,
   "source_files": "Pod/Classes/**/*",
@@ -30,6 +30,9 @@
     ],
     "AFNetworking": [
       "2.6.1"
+    ],
+    "PromiseKit": [
+      "3.0.0"
     ]
   }
 }

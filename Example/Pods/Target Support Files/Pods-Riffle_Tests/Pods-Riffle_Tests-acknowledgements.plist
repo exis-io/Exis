@@ -113,6 +113,22 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 		</dict>
 		<dict>
 			<key>FooterText</key>
+			<string>See README.markdown for full license text.</string>
+			<key>Title</key>
+			<string>OMGHTTPURLRQ</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>FooterText</key>
+			<string>@see README</string>
+			<key>Title</key>
+			<string>PromiseKit</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>FooterText</key>
 			<string>Copyright (c) 2015 Mickey Barboi &lt;damouse007@gmail.com&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

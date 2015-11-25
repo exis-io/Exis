@@ -88,6 +88,8 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "Pods-Riffle_Tests/CocoaAsyncSocket.framework"
   install_framework "Pods-Riffle_Tests/GHODictionary.framework"
   install_framework "Pods-Riffle_Tests/MPMessagePack.framework"
+  install_framework "Pods-Riffle_Tests/OMGHTTPURLRQ.framework"
+  install_framework "Pods-Riffle_Tests/PromiseKit.framework"
   install_framework "Pods-Riffle_Tests/Riffle.framework"
   install_framework "Pods-Riffle_Tests/SocketRocket.framework"
 fi
@@ -96,6 +98,8 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "Pods-Riffle_Tests/CocoaAsyncSocket.framework"
   install_framework "Pods-Riffle_Tests/GHODictionary.framework"
   install_framework "Pods-Riffle_Tests/MPMessagePack.framework"
+  install_framework "Pods-Riffle_Tests/OMGHTTPURLRQ.framework"
+  install_framework "Pods-Riffle_Tests/PromiseKit.framework"
   install_framework "Pods-Riffle_Tests/Riffle.framework"
   install_framework "Pods-Riffle_Tests/SocketRocket.framework"
 fi
