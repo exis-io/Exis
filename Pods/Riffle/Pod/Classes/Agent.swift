@@ -25,9 +25,9 @@ public class RiffleAgent: NSObject, RiffleDelegate {
         // Initialize this agent as the Application domain, or the root domain
         // for this instance of the application
         
-        domain = d
+        domain = env("DOMAIN", d)
         connection = RiffleConnection()
-        name = d
+        name = domain
         
         super.init()
         delegate = self

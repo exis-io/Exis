@@ -17,7 +17,7 @@ let SCORE_TIME = 3.0
 let EMPTY_TIME = 1.0
 
 
-Riffle.setDevFabric()
+//Riffle.setDevFabric()
 let app = RiffleAgent(domain: "xs.demo.damouse.cardsagainst")
 
 
@@ -68,6 +68,6 @@ class Container: RiffleAgent {
     }
 }
 
-Container(name: "container", superdomain: app).join()
+Container(name: "Osxcontainer.container", superdomain: app).join()
 NSRunLoop.currentRunLoop().run()
 
