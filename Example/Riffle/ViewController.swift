@@ -32,7 +32,7 @@ public class Dog: RiffleModel {
 
 
 
-class AlphaSession: RiffleAgent {
+class AlphaSession: RiffleDomain {
     var parent: ViewController?
     var connected = false
     
@@ -43,7 +43,7 @@ class AlphaSession: RiffleAgent {
     }
 }
 
-class BetaSession: RiffleAgent {
+class BetaSession: RiffleDomain {
     var parent: ViewController?
     var connected = false
     
@@ -56,7 +56,7 @@ class BetaSession: RiffleAgent {
 
 
 class ViewController: UIViewController {
-    var app: RiffleAgent!
+    var app: RiffleDomain!
     var alpha: AlphaSession!
     var beta: BetaSession!
     
