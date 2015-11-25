@@ -6,13 +6,11 @@
 //  Copyright © 2015 paradrop. All rights reserved.
 //
 
-/*
-    First controller to be presented, implements login and game selection.
-
-    Connections to the fabric are established in the login method. Once a login has occured
-    users can touch play, triggering the startPlaying method. Since a room of play can only include a
-    handful of players and the app should be playable by anyone
-*/
+//  First controller to be presented, implements login and game selection.
+//
+//  Connections to the fabric are established in the login method. Once a login has occured
+//  users can touch play, triggering the startPlaying method. Since a room of play can only include a
+//  handful of players and the app should be playable by anyone
 
 import UIKit
 import Riffle
@@ -44,9 +42,7 @@ class LandingViewController: UIViewController, RiffleDelegate {
     
     override func viewWillAppear(animated: Bool) {
         Riffle.setDevFabric()
-        //Riffle.setDebug()
         
-        // View setup and styling
         IHKeyboardAvoiding.setAvoidingView(viewLogin)
         
         textfieldUsername.layer.borderColor = UIColor.whiteColor().CGColor

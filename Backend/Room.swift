@@ -29,7 +29,6 @@ class Room: RiffleAgent {
         register("leave", removePlayer)
     }
     
-    
     func removePlayer(player: Player) {
         print("Removing player: \(player.domain)")
         
