@@ -1,1 +1,1 @@
-../../../Riffle/Pod/Classes/src/Categories/NSString+MDString.h
+../../../../../../../../../code/ios/swiftRiffle/Pod/Classes/src/Categories/NSString+MDString.h
