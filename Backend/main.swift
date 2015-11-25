@@ -9,8 +9,6 @@
 import Foundation
 import Riffle
 
-print("Container Starting")
-
 
 // How long each round takes, in seconds
 let ANSWER_TIME = 5.0
@@ -22,7 +20,6 @@ let token = "tyXIUowkckzbDWLm6MlT8wngluL4SUUM+uexMCPiIASJuGhJPz6rAc/BEfm/+zV6Y5j
 
 //Riffle.setDevFabric()
 let app = RiffleDomain(domain: "xs.demo.damouse.cardsagainst")
-
 
 
 class Container: RiffleDomain {

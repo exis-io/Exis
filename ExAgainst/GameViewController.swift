@@ -31,9 +31,9 @@ class GameViewController: UIViewController {
     var currentPlayer: Player!
     var state: String!
     
-    var app: RiffleAgent!
-    var room: RiffleAgent!
-    var me: RiffleAgent!
+    var app: RiffleDomain!
+    var room: RiffleDomain!
+    var me: RiffleDomain!
     
     
     override func viewDidLoad() {

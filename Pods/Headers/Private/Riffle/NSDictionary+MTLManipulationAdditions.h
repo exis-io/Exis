@@ -1,1 +1,1 @@
-../../../Riffle/Pod/Classes/NSDictionary+MTLManipulationAdditions.h
+../../../../../../../../../code/ios/swiftRiffle/Pod/Classes/NSDictionary+MTLManipulationAdditions.h

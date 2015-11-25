@@ -26,9 +26,9 @@ class LandingViewController: UIViewController, RiffleDelegate {
     @IBOutlet weak var textfieldUsername: UITextField!
     @IBOutlet weak var labelTips: LTMorphingLabel!
     
-    var app: RiffleAgent!
-    var me: RiffleAgent!
-    var container: RiffleAgent!
+    var app: RiffleDomain!
+    var me: RiffleDomain!
+    var container: RiffleDomain!
     
     //var timer: DelayedCaller!
     
@@ -68,7 +68,7 @@ class LandingViewController: UIViewController, RiffleDelegate {
         controller.state = state
         controller.me = self.me
         controller.app = self.app
-        controller.room = RiffleAgent(name: room, superdomain: container)
+        controller.room = RiffleDomain(name: room, superdomain: container)
         
         presentControllerTranslucent(self, target: controller)
     }
@@ -91,9 +91,9 @@ class LandingViewController: UIViewController, RiffleDelegate {
         textfieldUsername.resignFirstResponder()
         let name = textfieldUsername.text!
         
-        app = RiffleAgent(domain: "xs.demo.damouse.cardsagainst")
-        container = RiffleAgent(name: "container", superdomain: app)
-        me = RiffleAgent(name: name, superdomain: app)
+        app = RiffleDomain(domain: "xs.demo.damouse.cardsagainst")
+        container = RiffleDomain(name: "container", superdomain: app)
+        me = RiffleDomain(name: name, superdomain: app)
         
         me.delegate = self
         me.join()

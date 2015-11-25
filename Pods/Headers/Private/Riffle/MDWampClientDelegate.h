@@ -1,1 +1,1 @@
-../../../Riffle/Pod/Classes/src/MDWampClientDelegate.h
+../../../../../../../../../code/ios/swiftRiffle/Pod/Classes/src/MDWampClientDelegate.h
