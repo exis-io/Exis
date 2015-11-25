@@ -36,7 +36,7 @@ class Container: RiffleDomain {
         app.subscribe("sessionLeft", playerLeft)
         register("play", play)
         
-//        app.call("xs.demo.Bouncer/listRoles", "xs.demo.damouse.cardsagainst", handler: { (res: [String]) in
+//        app.call("xs.demo.Bouncer/newDynamicRole", "xs.demo.damouse.cardsagainst", handler: { (res: String) in
 //            print("Result: \(res)")
 //        })
     }

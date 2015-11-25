@@ -3552,6 +3552,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_VERSION = A;
 				GCC_PREFIX_HEADER = "Target Support Files/Pods-Backend-Riffle/Pods-Backend-Riffle-prefix.pch";
@@ -3716,6 +3717,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_PREFIX_HEADER = "Target Support Files/Pods-ExAgainst-Riffle/Pods-ExAgainst-Riffle-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/Pods-ExAgainst-Riffle/Info.plist";
@@ -4371,6 +4373,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_VERSION = A;
 				GCC_PREFIX_HEADER = "Target Support Files/Pods-Backend-Riffle/Pods-Backend-Riffle-prefix.pch";
@@ -4623,6 +4626,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_PREFIX_HEADER = "Target Support Files/Pods-ExAgainst-Riffle/Pods-ExAgainst-Riffle-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/Pods-ExAgainst-Riffle/Info.plist";

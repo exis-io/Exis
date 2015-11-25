@@ -109,7 +109,7 @@
 			isa = PBXGroup;
 			children = (
 				50CAC81B1BEE9763005E605F /* ExAgainst */,
-				50CAC8331BEE97A1005E605F /* Container */,
+				50CAC8331BEE97A1005E605F /* Backend */,
 				50CAC8421BEE9FC9005E605F /* Resources */,
 				F4DB55571911C73521355EA1 /* Pods */,
 				034D37008B598120C7989A10 /* Frameworks */,
@@ -139,13 +139,12 @@
 			path = ExAgainst;
 			sourceTree = "<group>";
 		};
-		50CAC8331BEE97A1005E605F /* Container */ = {
+		50CAC8331BEE97A1005E605F /* Backend */ = {
 			isa = PBXGroup;
 			children = (
 				50CAC8341BEE97A1005E605F /* main.swift */,
 				50FE3E3F1BFEAE6800E3BC29 /* Room.swift */,
 			);
-			name = Container;
 			path = Backend;
 			sourceTree = "<group>";
 		};
