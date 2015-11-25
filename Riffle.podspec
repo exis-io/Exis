@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = "Riffle"
-    s.version          = "0.1.59"
+    s.version          = "0.1.60"
     s.summary          = "Client side library for connecting to a fabric."
 
     s.ios.deployment_target = "8.0"
