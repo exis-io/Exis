@@ -1,1 +1,1 @@
-../../../../../../../../../code/ios/swiftRiffle/Pod/Classes/Mantle.h
+../../../Riffle/Pod/Classes/Mantle.h

@@ -44,7 +44,7 @@ func login(domain: String, requesting: String, success: (token: String) -> (), f
         
         print("\(ret)")
     }) { (op: AFHTTPRequestOperation, err: NSError) -> Void in
-            Riffle.debug("Failed: \(err)")
+        Riffle.debug("Failed: \(err)")
         fail()
     }
 }

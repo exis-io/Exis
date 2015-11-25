@@ -40,13 +40,11 @@ DEPENDENCIES:
   - IHKeyboardAvoiding
   - LTMorphingLabel (~> 0.0.9)
   - M13ProgressSuite
-  - Riffle (from `~/code/ios/swiftRiffle/`)
+  - Riffle
   - RMSwipeTableViewCell
   - Spring (from `https://github.com/MengTo/Spring.git`, branch `swift2`)
 
 EXTERNAL SOURCES:
-  Riffle:
-    :path: ~/code/ios/swiftRiffle/
   Spring:
     :branch: swift2
     :git: https://github.com/MengTo/Spring.git

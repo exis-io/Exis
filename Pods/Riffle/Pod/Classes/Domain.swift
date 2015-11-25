@@ -25,7 +25,8 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         // Initialize this agent as the Application domain, or the root domain
         // for this instance of the application
         
-        domain = env("DOMAIN", d)
+//        domain = env("DOMAIN", d)
+        domain = d
         connection = RiffleConnection()
         name = domain
         
@@ -38,8 +39,14 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         // connect. If "connect" is called on either the superdomain or this domain
         // both will be connected
         
+        // A little hacky
+        if n.containsString("/") {
+            domain = s.domain + n
+        } else {
+            domain = s.domain + "." + n
+        }
+        
         superdomain = s
-        domain = s.domain + "." + n
         connection = s.connection
         name = n
         

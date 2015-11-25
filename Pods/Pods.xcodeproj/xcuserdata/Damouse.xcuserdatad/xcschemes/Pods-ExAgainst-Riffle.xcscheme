@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = 'F4A99695484E144A39265DFB'
-               BlueprintName = 'Pods-Backend-SocketRocket'
+               BlueprintIdentifier = 'F47E203CE14B234D5B976D07'
+               BlueprintName = 'Pods-ExAgainst-Riffle'
                ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'SocketRocket.framework'>
+               BuildableName = 'Riffle.framework'>
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

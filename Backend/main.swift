@@ -10,16 +10,19 @@ import Foundation
 import Riffle
 
 
+// This is used for testing the container locally.
+let token = "tyXIUowkckzbDWLm6MlT8wngluL4SUUM+uexMCPiIASJuGhJPz6rAc/BEfm/+zV6Y5jbOs+ca+PD3iTFKphPzvoJyrFzewU0ZAriVGBcYsO+w7z7uBw9EJYWv/o2BDqsXgRwqcgBj1RrVqrBwIBZvRxEax0kgZe7drKPjloMEQ0="
+
+
 // How long each round takes, in seconds
 let ANSWER_TIME = 5.0
 let PICK_TIME = 5.0
 let SCORE_TIME = 3.0
 let EMPTY_TIME = 1.0
 
-let token = "tyXIUowkckzbDWLm6MlT8wngluL4SUUM+uexMCPiIASJuGhJPz6rAc/BEfm/+zV6Y5jbOs+ca+PD3iTFKphPzvoJyrFzewU0ZAriVGBcYsO+w7z7uBw9EJYWv/o2BDqsXgRwqcgBj1RrVqrBwIBZvRxEax0kgZe7drKPjloMEQ0="
 
-//Riffle.setDevFabric()
 let app = RiffleDomain(domain: "xs.demo.damouse.cardsagainst")
+//Riffle.setDebug()
 
 
 class Container: RiffleDomain {
@@ -32,6 +35,10 @@ class Container: RiffleDomain {
         print("Container joined")
         app.subscribe("sessionLeft", playerLeft)
         register("play", play)
+        
+//        app.call("xs.demo.Bouncer/listRoles", "xs.demo.damouse.cardsagainst", handler: { (res: [String]) in
+//            print("Result: \(res)")
+//        })
     }
     
     
@@ -40,7 +47,7 @@ class Container: RiffleDomain {
         var room: Room
         
         if emptyRooms.count == 0 {
-            room = Room(name: "room" + randomStringWithLength(6), superdomain: self)
+            room = Room(name: "/room" + randomStringWithLength(6), superdomain: self)
             room.parent = self
             room.questions = questions
             room.answers = answers

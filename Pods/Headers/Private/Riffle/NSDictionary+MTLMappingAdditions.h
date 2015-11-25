@@ -1,1 +1,1 @@
-../../../../../../../../../code/ios/swiftRiffle/Pod/Classes/NSDictionary+MTLMappingAdditions.h
+../../../Riffle/Pod/Classes/NSDictionary+MTLMappingAdditions.h

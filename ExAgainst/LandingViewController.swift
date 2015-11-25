@@ -18,6 +18,7 @@ import Spring
 import IHKeyboardAvoiding
 import LTMorphingLabel
 
+
 class LandingViewController: UIViewController, RiffleDelegate {
     @IBOutlet weak var buttonLogin: UIButton!
     @IBOutlet weak var viewLogo: SpringView!
@@ -30,8 +31,6 @@ class LandingViewController: UIViewController, RiffleDelegate {
     var me: RiffleDomain!
     var container: RiffleDomain!
     
-    //var timer: DelayedCaller!
-    
     
     let tips = [
         "Swipe right to pick a card",
@@ -41,7 +40,8 @@ class LandingViewController: UIViewController, RiffleDelegate {
     ]
     
     override func viewWillAppear(animated: Bool) {
-        Riffle.setDevFabric()
+//        Riffle.setDevFabric()
+//        Riffle.setDebug()
         
         IHKeyboardAvoiding.setAvoidingView(viewLogin)
         
@@ -93,9 +93,14 @@ class LandingViewController: UIViewController, RiffleDelegate {
         
         app = RiffleDomain(domain: "xs.demo.damouse.cardsagainst")
         container = RiffleDomain(name: "container", superdomain: app)
-        me = RiffleDomain(name: name, superdomain: app)
         
+        // FIXME
+        me = RiffleDomain(name: name, superdomain: app)
+        //me = RiffleDomain(name: "user", superdomain: app)
         me.delegate = self
+        
+        //me.join("yG9FySWBR1KdgcLaBTrqONHBBZ3r0WtVW6Z/g1cHuTSylanEcs8mrwbh3rLAq87TNXbMOMn2PH7tftaFZyWWAUTs1iDTwsvQ6MpKKAa3CIFB0vFVYWmnCj6xb057TAuHWRdCXZ2RHtzq9Mnzwjwgu6P2pJCJbuHRWzN1CizWUsU=")
+        
         me.join()
     }
     
