@@ -2,7 +2,7 @@ use_frameworks!
 
 target :ExAgainst, :exclusive => true do
     platform :ios, '9.0'
-    pod 'Riffle', :path => '~/code/ios/swiftRiffle'
+    pod 'Riffle'
     pod 'Spring', :git => 'https://github.com/MengTo/Spring.git', :branch => 'swift2'
     pod 'IHKeyboardAvoiding'
     pod 'RMSwipeTableViewCell'
@@ -12,5 +12,5 @@ end
 
 target :Backend, :exclusive => true do
     platform :osx, '10.10'
-    pod 'Riffle', :path => '~/code/ios/swiftRiffle'
+    pod 'Riffle'
 end
