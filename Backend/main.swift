@@ -45,9 +45,7 @@ class Container: RiffleDomain {
             ["target": self.domain + "/$/scoring", "verb":"s"]
         ]
         
-        app.call("xs.demo.Bouncer/addDynamicRole", "player", self.domain, permissions, handler: { (res: String) in
-            print("Successfully created dynamic role: \(res)")
-        })
+        app.call("xs.demo.Bouncer/addDynamicRole", "player", self.domain, permissions, handler: nil)
         
         // Create one room
         app.call("xs.demo.Bouncer/newDynamicRole", "player", self.domain, handler: { (res: String) in
@@ -77,7 +75,7 @@ class Container: RiffleDomain {
     
     func closeRoom(room: Room) {
         print("Closing room.")
-        rooms.removeObject(room)
+        //rooms.removeObject(room)
     }
     
     func playerLeft(domain: String) {

@@ -48,6 +48,7 @@ class GameViewController: UIViewController {
         room.subscribe("answering", answering)
         room.subscribe("picking", picking)
         room.subscribe("scoring", scoring)
+        
         me.register("draw", draw)
         
         blur(viewRound)
@@ -55,7 +56,9 @@ class GameViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         room.call("leave", currentPlayer, handler: nil)
+        
         room.leave()
+        me.leave()
     }
     
     @IBAction func leave(sender: AnyObject) {
@@ -127,6 +130,6 @@ class GameViewController: UIViewController {
     
     func draw(cards: [String]) {
         currentPlayer.hand += cards
-        // update the table
+        // update the table if we're currently displaying the hand
     }
 }

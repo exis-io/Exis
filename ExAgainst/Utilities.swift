@@ -10,7 +10,7 @@
 
 import Foundation
 
-// Remove element by value
+// Remove element by value. Does nothing if the object does not exist in the array
 extension RangeReplaceableCollectionType where Generator.Element : Equatable {
     mutating func removeObject(object : Generator.Element) {
         if let index = self.indexOf(object) {

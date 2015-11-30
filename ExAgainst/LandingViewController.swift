@@ -70,12 +70,15 @@ class LandingViewController: UIViewController, RiffleDelegate {
         controller.app = self.app
         controller.room = RiffleDomain(name: room, superdomain: container)
         
+        // Give the dealer permission to call draw on us
+        self.app.call("xs.demo.Bouncer/setPerm", self.container.domain, self.me.domain + "/draw", handler: nil)
+        
         presentControllerTranslucent(self, target: controller)
     }
     
     
     func onJoin() {
-        print("Agent joined")
+        print("Domain joined")
         
         viewLogin.animation = "zoomOut"
         viewLogin.animate()
@@ -84,7 +87,7 @@ class LandingViewController: UIViewController, RiffleDelegate {
     }
     
     func onLeave() {
-        print("Agent left")
+        print("Domain left")
     }
     
     @IBAction func login(sender: AnyObject) {
@@ -94,13 +97,8 @@ class LandingViewController: UIViewController, RiffleDelegate {
         app = RiffleDomain(domain: "xs.demo.damouse.cardsagainst")
         container = RiffleDomain(name: "Osxcontainer.gamelogic", superdomain: app)
         
-        // FIXME
         me = RiffleDomain(name: name, superdomain: app)
-        //me = RiffleDomain(name: "user", superdomain: app)
         me.delegate = self
-        
-        //me.join("yG9FySWBR1KdgcLaBTrqONHBBZ3r0WtVW6Z/g1cHuTSylanEcs8mrwbh3rLAq87TNXbMOMn2PH7tftaFZyWWAUTs1iDTwsvQ6MpKKAa3CIFB0vFVYWmnCj6xb057TAuHWRdCXZ2RHtzq9Mnzwjwgu6P2pJCJbuHRWzN1CizWUsU=")
-        
         me.join()
     }
     

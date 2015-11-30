@@ -13,14 +13,14 @@ class Room: RiffleDomain {
     var parent: Container!
     var timer: DelayedCaller!
     
+    var dynamicRoleId: String!
     var state: String = "Empty"
+    
     var players: [Player] = []
     var czar: Player?
-
     var questions: [String]!
     var answers: [String]!
-
-    var dynamicRoleId: String!
+    
     
     override func onJoin() {
         timer = DelayedCaller(target: self)
@@ -38,40 +38,47 @@ class Room: RiffleDomain {
             answers.append(p)
         }
         
+        print("Length of players before remove: \(players.count)")
         players.removeObject(player)
+        print("Length of players after remove: \(players.count)")
         publish("left", player)
         
+        // What happens if the current player is a czar?
+        
+        // remove the role from the player that left, ensuring they can't call our endpoints anymore
+        app.call("xs.demo.Bouncer/revokeDynamicRole", self.dynamicRoleId, "player", parent.domain, [player.domain], handler: nil)
+        
         // Close the room if there are only demo players left
-        if players.reduce(0, combine: { $0 + ($1.demo ? 0 : 1) }) == 0 {
-            parent.closeRoom(self)
-            parent = nil
-            timer.cancel()
-        }
+//        if players.reduce(0, combine: { $0 + ($1.demo ? 0 : 1) }) == 0 {
+//            parent.closeRoom(self)
+//            parent = nil
+//            timer.cancel()
+//        }
     }
     
     func addPlayer(domain: String) -> AnyObject {
         // Add the new player and draw them a hand. Let everyone else in the room know theres a new player
-        
         print("Adding Player \(domain)")
         
         let newPlayer = Player()
         newPlayer.domain = domain
+        newPlayer.demo = false
         newPlayer.hand = answers.randomElements(4, remove: true)
         
         players.append(newPlayer)
         
         // Add dynamic role
-        app.call("xs.demo.Bouncer/assignDynamicRole", self.dynamicRoleId, "player", parent.domain, [domain], handler: { (res: String) in
-            print("Result: \(res)")
-        })
+        app.call("xs.demo.Bouncer/assignDynamicRole", self.dynamicRoleId, "player", parent.domain, [domain], handler: nil)
         
         // Add Demo players
-        for i in 0...2 {
-            let player = Player()
-            player.domain = app.domain + ".demo\(i)"
-            player.hand = answers.randomElements(10, remove: true)
-            player.demo = true
-            players.append(player)
+        if players.count < 3 {
+            for i in 0...2 {
+                let player = Player()
+                player.domain = app.domain + ".demo\(i)"
+                player.hand = answers.randomElements(10, remove: true)
+                player.demo = true
+                players.append(player)
+            }
         }
         
         timer.startTimer(EMPTY_TIME, selector: "startAnswering")
@@ -121,10 +128,6 @@ class Room: RiffleDomain {
             }
         }
         
-        for p in players {
-            print(p.pick)
-        }
-        
         publish("picking", pickers.map({ $0.pick! }), PICK_TIME)
         
         timer.startTimer(PICK_TIME, selector: "startScoring:")
@@ -157,6 +160,11 @@ class Room: RiffleDomain {
             let newAnswer = answers.randomElements(1, remove: true)
             p.hand += newAnswer
             p.pick = nil
+            
+            // If this isn't a demo player deal them a new card
+            if !p.demo {
+                call(p.domain + "/draw", newAnswer, handler: nil)
+            }
         }
         
         timer.startTimer(SCORE_TIME, selector: "startAnswering")
