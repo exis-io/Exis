@@ -191,6 +191,7 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         connection.session!.call(endpoint, payload: serialized) { (result: MDWampResult!, err: NSError!) -> Void in
             if err != nil {
                 Riffle.warn("Call Error for endpoint \(endpoint): [\(err.localizedDescription)]")
+                //print(err)
             }
             else {
                 if let h = fn {

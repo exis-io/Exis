@@ -11,7 +11,7 @@ import Riffle
 
 
 // This is used for testing the container locally.
-let token = "tyXIUowkckzbDWLm6MlT8wngluL4SUUM+uexMCPiIASJuGhJPz6rAc/BEfm/+zV6Y5jbOs+ca+PD3iTFKphPzvoJyrFzewU0ZAriVGBcYsO+w7z7uBw9EJYWv/o2BDqsXgRwqcgBj1RrVqrBwIBZvRxEax0kgZe7drKPjloMEQ0="
+let token = "2ftG4nLny2qfM-9apHuECRr8U3gPJj9ZtaMuW928p-eYzvCoxx7ChvP.HwITsCbo3l0XzY528FS2lMBIQOYlAx70nWvUL9F36HK0HA.maI5xJ1Gz1PMQA993jQfkcnhIJJhHn0QXJAnIiaSDmiTgJ2BqAVmtJK5icL7qW0SHjMo_"
 
 
 // How long each round takes, in seconds
@@ -36,9 +36,28 @@ class Container: RiffleDomain {
         app.subscribe("sessionLeft", playerLeft)
         register("play", play)
         
-//        app.call("xs.demo.Bouncer/newDynamicRole", "xs.demo.damouse.cardsagainst", handler: { (res: String) in
-//            print("Result: \(res)")
-//        })
+        // Set up a dynamic role for this container
+        let permissions = [
+            ["target": self.domain + "/$/pick", "verb":"c"],
+            ["target": self.domain + "/$/leave", "verb":"c"],
+            ["target": self.domain + "/$/answering", "verb":"s"],
+            ["target": self.domain + "/$/picking", "verb":"s"],
+            ["target": self.domain + "/$/scoring", "verb":"s"]
+        ]
+        
+        app.call("xs.demo.Bouncer/addDynamicRole", "player", self.domain, permissions, handler: { (res: String) in
+            print("Successfully created dynamic role: \(res)")
+        })
+        
+        // Create one room
+        app.call("xs.demo.Bouncer/newDynamicRole", "player", self.domain, handler: { (res: String) in
+            let room = Room(name: "/" + res, superdomain: self)
+            room.parent = self
+            room.dynamicRoleId = res
+            room.questions = self.questions
+            room.answers = self.answers
+            self.rooms.append(room)
+        })
     }
     
     
@@ -47,11 +66,8 @@ class Container: RiffleDomain {
         var room: Room
         
         if emptyRooms.count == 0 {
-            room = Room(name: "/room" + randomStringWithLength(6), superdomain: self)
-            room.parent = self
-            room.questions = questions
-            room.answers = answers
-            rooms.append(room)
+            print("WARN: no empty rooms found. Unable to allocate space for player!")
+            room = emptyRooms.randomElements(1)[0]
         } else {
             room = emptyRooms.randomElements(1)[0]
         }
@@ -76,6 +92,6 @@ class Container: RiffleDomain {
     }
 }
 
-Container(name: "container", superdomain: app).join(token)
+Container(name: "Osxcontainer.gamelogic", superdomain: app).join(token)
 NSRunLoop.currentRunLoop().run()
 

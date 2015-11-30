@@ -127,5 +127,6 @@ class GameViewController: UIViewController {
     
     func draw(cards: [String]) {
         currentPlayer.hand += cards
+        // update the table
     }
 }

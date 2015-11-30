@@ -20,11 +20,11 @@ class Room: RiffleDomain {
     var questions: [String]!
     var answers: [String]!
 
+    var dynamicRoleId: String!
     
     override func onJoin() {
         timer = DelayedCaller(target: self)
         
-        register("play", addPlayer)
         register("pick", pick)
         register("leave", removePlayer)
     }
@@ -59,6 +59,11 @@ class Room: RiffleDomain {
         newPlayer.hand = answers.randomElements(4, remove: true)
         
         players.append(newPlayer)
+        
+        // Add dynamic role
+        app.call("xs.demo.Bouncer/assignDynamicRole", self.dynamicRoleId, "player", parent.domain, [domain], handler: { (res: String) in
+            print("Result: \(res)")
+        })
         
         // Add Demo players
         for i in 0...2 {

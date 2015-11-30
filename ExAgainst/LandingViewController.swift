@@ -92,7 +92,7 @@ class LandingViewController: UIViewController, RiffleDelegate {
         let name = textfieldUsername.text!
         
         app = RiffleDomain(domain: "xs.demo.damouse.cardsagainst")
-        container = RiffleDomain(name: "container", superdomain: app)
+        container = RiffleDomain(name: "Osxcontainer.gamelogic", superdomain: app)
         
         // FIXME
         me = RiffleDomain(name: name, superdomain: app)
