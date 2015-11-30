@@ -13,16 +13,14 @@ import Riffle
 // This is used for testing the container locally.
 let token = "2ftG4nLny2qfM-9apHuECRr8U3gPJj9ZtaMuW928p-eYzvCoxx7ChvP.HwITsCbo3l0XzY528FS2lMBIQOYlAx70nWvUL9F36HK0HA.maI5xJ1Gz1PMQA993jQfkcnhIJJhHn0QXJAnIiaSDmiTgJ2BqAVmtJK5icL7qW0SHjMo_"
 
-
 // How long each round takes, in seconds
-let ANSWER_TIME = 5.0
-let PICK_TIME = 5.0
-let SCORE_TIME = 3.0
+let ANSWER_TIME = 10.0
+let PICK_TIME = 8.0
+let SCORE_TIME = 5.0
 let EMPTY_TIME = 1.0
 
-
-let app = RiffleDomain(domain: "xs.demo.damouse.cardsagainst")
-//Riffle.setDebug()
+// The app domain
+let app = RiffleDomain(domain: "xs.demo.exis.cardsagainst")
 
 
 class Container: RiffleDomain {
