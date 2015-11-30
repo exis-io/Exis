@@ -10,7 +10,7 @@ import Foundation
 
 // Base connection for all agents connecting to a fabric
 class RiffleConnection: NSObject, MDWampClientDelegate {
-    var agents: [RiffleAgent] = []
+    var agents: [RiffleDomain] = []
     
     var open = false
     var opening = false
@@ -33,7 +33,7 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
         opening = false
     }
     
-    func addAgent(agent: RiffleAgent) {
+    func addAgent(agent: RiffleDomain) {
         
         if !agents.contains(agent) {
             agents.append(agent)
@@ -44,7 +44,7 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
         }
     }
     
-    func connect(agent: RiffleAgent, token: String?) {
+    func connect(agent: RiffleDomain, token: String?) {
         
         if !open && !opening {
             socket = MDWampTransportWebSocket(server:NSURL(string: NODE), protocolVersions:[kMDWampProtocolWamp2msgpack, kMDWampProtocolWamp2json])
@@ -72,30 +72,30 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
     }
     
     func attemptAuth(domain: String, superdomain: String, completed: (token: String) -> ()) {
-        // Login, register, login, fail
         login(domain, requesting: superdomain, success: { (token: String) -> () in
             Riffle.debug("Auth 0 completed")
             completed(token: token)
-            }) { () -> () in
-                register(domain, requesting: superdomain, success: { () in
-                    Riffle.debug("Registration completed")
-                    login(domain, requesting: superdomain, success: { (token: String) -> () in
-                        Riffle.debug("Auth 0 completed")
-                        completed(token: token)
-                        }) { () -> () in
-                            print("WARN: Domain \(domain) registered, but unable to login.")
-                    }
-                    
-                    }, fail: { () in
-                        print("WARN: Unable to register domain \(domain) as subdomain of \(superdomain)")
-                })
+        }) { () -> () in
+            register(domain, requesting: superdomain, success: { () in
+                Riffle.debug("Registration completed")
+                
+                login(domain, requesting: superdomain, success: { (token: String) -> () in
+                    Riffle.debug("Auth 0 completed")
+                    completed(token: token)
+                }) { () -> () in
+                    print("WARN: Domain \(domain) registered, but unable to login.")
+                }
+                
+                }, fail: { () in
+                    print("WARN: Unable to register domain \(domain) as subdomain of \(superdomain)")
+            })
         }
         
         // Else attempt to register
         // Return the token for node auth
     }
     
-    func removeAgent(agent: RiffleAgent) {
+    func removeAgent(agent: RiffleDomain) {
         if !agents.contains(agent) {
             print("Agent \(agent.domain) is not connected.")
             return

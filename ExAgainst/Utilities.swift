@@ -10,12 +10,24 @@
 
 import Foundation
 
-// Remove element by value
+// Remove element by value. Returns true if the object was removed, else false
 extension RangeReplaceableCollectionType where Generator.Element : Equatable {
-    mutating func removeObject(object : Generator.Element) {
-        if let index = self.indexOf(object) {
-            self.removeAtIndex(index)
+    mutating func removeObject(object : Generator.Element) -> Bool {
+        var remove: Self.Index? = nil
+        
+        for element in self {
+            if element == object {
+                remove = self.indexOf(element)
+                break
+            }
         }
+        
+        if let r = remove {
+            self.removeAtIndex(r)
+            return true
+        }
+        
+        return false
     }
 }
 
@@ -45,5 +57,48 @@ func loadCards(name: String) -> [String] {
     
     return x.map { (element: [String: AnyObject]) -> String in
         return element["text"] as! String
+    }
+}
+
+// Utility function to generate random strings
+func randomStringWithLength (len : Int) -> String {
+    
+    let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    let randomString : NSMutableString = NSMutableString(capacity: len)
+    
+    for (var i=0; i < len; i++){
+        let rand = arc4random_uniform(UInt32(letters.length))
+        randomString.appendFormat("%C", letters.characterAtIndex(Int(rand)))
+    }
+    
+    return String(randomString)
+}
+
+
+// Routinely calls a function
+class DelayedCaller {
+    var timer: NSTimer?
+    var target: AnyObject
+    
+    init(target t: AnyObject) {
+        target = t
+    }
+    
+    func startTimer(time: NSTimeInterval, selector: String, info: AnyObject? = nil) {
+        // Calls the given function after (time) seconds. Used to count down the seconds on the current round
+        
+        if timer != nil {
+            timer!.invalidate()
+            timer = nil
+        }
+        
+        timer = NSTimer.scheduledTimerWithTimeInterval(time, target: target, selector: Selector(selector), userInfo: info, repeats: false)
+    }
+    
+    func cancel() {
+        if timer != nil {
+            timer!.invalidate()
+            timer = nil
+        }
     }
 }
