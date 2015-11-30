@@ -82,7 +82,7 @@ class Container: RiffleDomain {
         for room in rooms {
             for player in room.players {
                 if player.domain == domain {
-                    room.removePlayer(player)
+                    room.removePlayer(domain)
                     return
                 }
             }

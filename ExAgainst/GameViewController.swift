@@ -55,7 +55,7 @@ class GameViewController: UIViewController {
     }
     
     override func viewWillDisappear(animated: Bool) {
-        room.call("leave", currentPlayer, handler: nil)
+        room.call("leave", currentPlayer.domain, handler: nil)
         
         room.leave()
         me.leave()

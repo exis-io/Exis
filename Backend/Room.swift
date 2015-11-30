@@ -29,21 +29,20 @@ class Room: RiffleDomain {
         register("leave", removePlayer)
     }
     
-    func removePlayer(player: Player) {
+    func removePlayer(domain: String) {
+        let player = players.filter { $0.domain == domain }[0]
         print("Removing player: \(player.domain)")
-        
         answers.appendContentsOf(player.hand)
         
         if let p = player.pick {
             answers.append(p)
         }
         
-        print("Length of players before remove: \(players.count)")
         players.removeObject(player)
-        print("Length of players after remove: \(players.count)")
         publish("left", player)
         
         // What happens if the current player is a czar?
+        // Either zombie or reset play
         
         // remove the role from the player that left, ensuring they can't call our endpoints anymore
         app.call("xs.demo.Bouncer/revokeDynamicRole", self.dynamicRoleId, "player", parent.domain, [player.domain], handler: nil)

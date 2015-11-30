@@ -40,14 +40,10 @@ class LandingViewController: UIViewController, RiffleDelegate {
     ]
     
     override func viewWillAppear(animated: Bool) {
-//        Riffle.setDevFabric()
-//        Riffle.setDebug()
-        
-        IHKeyboardAvoiding.setAvoidingView(viewLogin)
-        
         textfieldUsername.layer.borderColor = UIColor.whiteColor().CGColor
         textfieldUsername.attributedPlaceholder = NSAttributedString(string: "Username", attributes: [NSForegroundColorAttributeName: UIColor.whiteColor()])
         
+        IHKeyboardAvoiding.setAvoidingView(viewLogin)
         viewLogo.animate()
         viewLogin.animate()
         
@@ -58,7 +54,6 @@ class LandingViewController: UIViewController, RiffleDelegate {
     
     
     func startPlaying(cards: [String], players: [Player], state: String, room: String) {
-        // Result of the call to the Room when a player starts playing
         let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("game") as! GameViewController
         
         controller.currentPlayer = players.filter { $0.domain == self.me.domain }[0]
@@ -70,7 +65,7 @@ class LandingViewController: UIViewController, RiffleDelegate {
         controller.app = self.app
         controller.room = RiffleDomain(name: room, superdomain: container)
         
-        // Give the dealer permission to call draw on us
+        // Gives the dealer permission to call "/draw" on us as needed
         self.app.call("xs.demo.Bouncer/setPerm", self.container.domain, self.me.domain + "/draw", handler: nil)
         
         presentControllerTranslucent(self, target: controller)
