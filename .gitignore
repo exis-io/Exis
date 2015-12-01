@@ -1,0 +1,8 @@
+sandbox
+test
+build
+node_modules
+*.log
+*.pyc
+*.pid
+Makefile
