@@ -11,7 +11,7 @@ import Riffle
 
 
 // This is used for testing the container locally.
-let token = "2ftG4nLny2qfM-9apHuECRr8U3gPJj9ZtaMuW928p-eYzvCoxx7ChvP.HwITsCbo3l0XzY528FS2lMBIQOYlAx70nWvUL9F36HK0HA.maI5xJ1Gz1PMQA993jQfkcnhIJJhHn0QXJAnIiaSDmiTgJ2BqAVmtJK5icL7qW0SHjMo_"
+let token = "WRnACjVSs.39v7BrteJ7x7vtTmezF7q0tv3kyoA2vdyp4Rt0XF2bYJnWSPS5ejH-NTsCPqVmkBSnEvCb-T9tHEyjwMyzx8.W29bMvzzynK6LykM.mLgovOrMDZolBCWPzGqEAHf3O-WtZ7vbnlRR4ecd5--VOZUOr56zr26ulYA_"
 
 // How long each round takes, in seconds
 let ANSWER_TIME = 10.0
