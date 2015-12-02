@@ -13,6 +13,7 @@ import RMSwipeTableViewCell
 import M13ProgressSuite
 import Spring
 
+
 class CardTableDelegate: NSObject, UITableViewDelegate, UITableViewDataSource, RMSwipeTableViewCellDelegate {
     var cards: [String] = []
     var table: UITableView
@@ -87,6 +88,7 @@ class CardTableDelegate: NSObject, UITableViewDelegate, UITableViewDataSource, R
         table.deleteRowsAtIndexPaths(ret, withRowAnimation: .Left)
     }
 }
+
 
 class PlayerCollectionDelegate: NSObject, UICollectionViewDataSource, UICollectionViewDelegate  {
     var players: [Player] = []
@@ -185,20 +187,22 @@ class CardCell: RMSwipeTableViewCell {
     func resetContentView() {
         UIView.animateWithDuration(0.15, animations: { () -> Void in
             self.contentView.frame = CGRectOffset(self.contentView.bounds, 0.0, 0.0)
-            }) { (b: Bool) -> Void in
-                self.shouldAnimateCellReset = true
-                self.cleanupBackView()
-                self.interruptPanGestureHandler = false
-                self.panner.enabled = true
+        }) { (b: Bool) -> Void in
+            self.shouldAnimateCellReset = true
+            self.cleanupBackView()
+            self.interruptPanGestureHandler = false
+            self.panner.enabled = true
         }
     }
 }
+
 
 class PlayerCell: UICollectionViewCell {
     @IBOutlet weak var labelName: UILabel!
     @IBOutlet weak var viewBackground: UIView!
     @IBOutlet weak var labelScore: UILabel!
 }
+
 
 // A simple subclass of the progress views that ticks down over time
 class TickingView: M13ProgressViewBar {

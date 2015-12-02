@@ -31,7 +31,6 @@ extension RangeReplaceableCollectionType where Generator.Element : Equatable {
     }
 }
 
-
 // Return a random element or elements
 extension Array {
     mutating func randomElements(number: Int, remove: Bool = false) -> [Generator.Element] {

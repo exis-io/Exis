@@ -14,13 +14,16 @@ import Riffle
 class Player: RiffleModel {
     var domain = ""
     var score = 0
-    var czar = false
-    var demo = true
+    
     var hand: [String] = []
     var pick: String?
     
+    var czar = false
+    var demo = true
+    var zombie = false
+    
     override class func ignoreProperties() -> [String] {
-        return ["hand", "pick"]
+        return ["hand", "pick", "zombie"]
     }
 }
 
@@ -31,8 +34,16 @@ func ==(lhs: Player, rhs: Player) -> Bool {
 }
 
 
-// Given a domain, return the player that matches that domain from an array
-func getPlayer(players: [Player], domain: String) -> Player {
-    return players.filter({$0.domain == domain})[0]
+// Given a domain, return the player that matches that domain from an array. If the player is not 
+// present in the array retun nil
+func getPlayer(players: [Player], domain: String) -> Player? {
+    let filtered = players.filter({$0.domain == domain})
+    
+    if filtered.count != 0 {
+        print("Unable to find player with domain \(domain)")
+        return nil
+    }
+    
+    return filtered[0]
 }
 

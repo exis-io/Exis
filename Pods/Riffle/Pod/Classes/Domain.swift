@@ -25,8 +25,7 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         // Initialize this agent as the Application domain, or the root domain
         // for this instance of the application
         
-//        domain = env("DOMAIN", d)
-        domain = d
+        domain = env("DOMAIN", d)
         connection = RiffleConnection()
         name = domain
         
@@ -39,14 +38,8 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         // connect. If "connect" is called on either the superdomain or this domain
         // both will be connected
         
-        // A little hacky
-        if n.containsString("/") {
-            domain = s.domain + n
-        } else {
-            domain = s.domain + "." + n
-        }
-        
         superdomain = s
+        domain = s.domain + "." + n
         connection = s.connection
         name = n
         
@@ -191,7 +184,6 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         connection.session!.call(endpoint, payload: serialized) { (result: MDWampResult!, err: NSError!) -> Void in
             if err != nil {
                 Riffle.warn("Call Error for endpoint \(endpoint): [\(err.localizedDescription)]")
-                //print(err)
             }
             else {
                 if let h = fn {

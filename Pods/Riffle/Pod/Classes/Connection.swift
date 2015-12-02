@@ -56,12 +56,7 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
                 return
             }
             
-            let envToken = env("EXIS_TOKEN", "")
-            
-            if envToken != "" {
-                self.session!.token = envToken
-                self.session!.connect()
-            } else if let t = token {
+            if let t = token {
                 self.session!.token = t
                 self.session!.connect()
             } else {
@@ -77,23 +72,23 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
     }
     
     func attemptAuth(domain: String, superdomain: String, completed: (token: String) -> ()) {
+        // Login, register, login, fail
         login(domain, requesting: superdomain, success: { (token: String) -> () in
             Riffle.debug("Auth 0 completed")
             completed(token: token)
-        }) { () -> () in
-            register(domain, requesting: superdomain, success: { () in
-                Riffle.debug("Registration completed")
-                
-                login(domain, requesting: superdomain, success: { (token: String) -> () in
-                    Riffle.debug("Auth 0 completed")
-                    completed(token: token)
-                }) { () -> () in
-                    print("WARN: Domain \(domain) registered, but unable to login.")
-                }
-                
-                }, fail: { () in
-                    print("WARN: Unable to register domain \(domain) as subdomain of \(superdomain)")
-            })
+            }) { () -> () in
+                register(domain, requesting: superdomain, success: { () in
+                    Riffle.debug("Registration completed")
+                    login(domain, requesting: superdomain, success: { (token: String) -> () in
+                        Riffle.debug("Auth 0 completed")
+                        completed(token: token)
+                        }) { () -> () in
+                            print("WARN: Domain \(domain) registered, but unable to login.")
+                    }
+                    
+                    }, fail: { () in
+                        print("WARN: Unable to register domain \(domain) as subdomain of \(superdomain)")
+                })
         }
         
         // Else attempt to register
