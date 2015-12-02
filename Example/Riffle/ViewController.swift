@@ -63,12 +63,12 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Turn on debug logging
+        // Turn on debug logging and connect to the dev fabric
         Riffle.setDebug()
-        
-        // Connect to the development fabric
         Riffle.setDevFabric()
         
+        // Instantiate two sessions to bounce messages off each other. End to end tests are better for this, but 
+        // this is a playground for now until API freeze
         alpha = AlphaSession(domain: "xs.tester.alpha")
         beta = BetaSession(domain: "xs.tester.beta")
         
@@ -99,10 +99,6 @@ class ViewController: UIViewController {
         if alpha.connected && beta.connected {
             print("Starting tests")
             startTests()
-            
-            // Cant get the sessions to disconnect when nil'd...
-            //beta = nil
-            //alpha = nil
         }
     }
     
@@ -125,7 +121,8 @@ class ViewController: UIViewController {
 //        roColletionsNoArg(6)
         
         // Meta calls
-        testDisclose(7)
+        testDiscloseRegister(7)
+        testDiscloseSubscribe(8)
     }
     
     
@@ -268,7 +265,7 @@ class ViewController: UIViewController {
     
     
     // MARK: Meta calls
-    func testDisclose(t: Int) {
+    func testDiscloseRegister(t: Int) {
         // What kinds of types can be returned
         alpha.register("\(t)#details") { (caller: String, a: Int) in
             print("\(t) : Call receiving single call from caller:", caller, a)
@@ -278,5 +275,17 @@ class ViewController: UIViewController {
         }
         
         beta.call("xs.tester.alpha/\(t)", 1, handler: nil)
+    }
+    
+    func testDiscloseSubscribe(t: Int) {
+//        // What kinds of types can be returned
+//        alpha.subscribe("\(t)#details") { (caller: String, a: Int) in
+//            print("\(t) : Subscribe receiving single call from caller:", caller, a)
+//            
+//            assert(caller == "xs.tester.beta")
+//            assert(a == 1)
+//        }
+//        
+//        beta.publish("xs.tester.alpha/\(t)", 1)
     }
 }
