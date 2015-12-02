@@ -1,21 +1,21 @@
-var riffle = require('riffle');
+var riffle = require('jsriffle');
+riffle.setDevFabric();
+console.log("Starting client")
 
-var connection = new riffle.Connection({
-   url: 'ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws',
-   realm: 'xs.damouse.backend'}
-);
+var connection = new riffle.Connection('xs.damouse.frontend');
 
-connection.onopen = function (session) {
+
+connection.onJoin = function (session) {
     console.log("Connection opened");
 
-    session.publish('xs.damouse.frontend/sub', ["Hello!"]);
+    session.publish('xs.damouse.backend/sub', ["Hello!"]);
 
-    session.call('xs.damouse.frontend/register', []).then(
+    session.call('xs.damouse.backend/register', []).then(
       function (res) {
-         console.log("Result:", res);
+         console.log("Call success: ", res);
       }
    );
 };
 
-console.log("Starting backend")
-connection.open();
+
+connection.join();

@@ -1,17 +1,24 @@
-var riffle = require('riffle');
+var riffle = require('jsriffle');
+riffle.setDevFabric();
+console.log("Starting server")
 
-var connection = new riffle.Connection({
-   url: 'ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws',
-   realm: 'xs.damouse.frontend'}
-);
+var connection = new riffle.Connection('xs.damouse.backend');
 
 function onevent(args) {
   console.log("Event:", args[0]);
 };
 
-connection.onopen = function (session) {
+connection.onJoin = function (session) {
     console.log("Connection opened");
-    session.subscribe('xs.damouse.frontend/sub', onevent);
+    
+    session.subscribe('xs.damouse.backend/sub', onevent).then(
+      function (registration) {
+         console.log("Subscription registered:", registration.id);
+      },
+      function (error) {
+         console.log("Registration failed:", error);
+      }
+   );
 
    function utcnow() {
       console.log("Call receive");
@@ -19,7 +26,7 @@ connection.onopen = function (session) {
       return now.toISOString();
    };
 
-   session.register('xs.damouse.frontend/register', utcnow).then(
+   session.register('xs.damouse.backend/register', utcnow).then(
       function (registration) {
          console.log("Procedure registered:", registration.id);
       },
@@ -29,6 +36,15 @@ connection.onopen = function (session) {
    );
 };
 
+var domain = new riffle.Domain("xs.demo");
 
-console.log("Starting frontend")
-connection.open();
+// var s = d.subdomain("bob");
+
+domain.onJoin = function() {
+    console.log("Domain override join");
+    this.subscribe();
+};
+
+domain.join();
+
+// connection.join();
