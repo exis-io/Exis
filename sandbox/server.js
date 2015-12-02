@@ -1,39 +1,21 @@
 var riffle = require('jsriffle');
 riffle.setDevFabric();
-console.log("Starting server")
-
-function subscriptionHandler(args) {
-    console.log("Publish received:", args[0]);
-};
-
-function registerHandler(args) {
-    console.log("Call received: ",  args[0]);
-    return "Pong"
-};
 
 var app = new riffle.Domain("xs.demo");
 var me = app.subdomain("server");
 
+
 me.onJoin = function() {
-    console.log("Domain " + this.domain + " joined with name ");
+    console.log("Domain " + this.domain + " joined");
 
-    this.subscribe('sub', subscriptionHandler).then(
-        function (registration) {
-            console.log("Subscription registered:", registration.id);
-        },
-        function (error) {
-            console.log("Subscription failed:", error);
-        }
-    );
+    this.subscribe('sub', function (args) {
+        console.log("Publish received:", args[0]);
+    });
 
-    this.register('register', registerHandler).then(
-        function (registration) {
-            console.log("Procedure registered:", registration.id);
-        },
-        function (error) {
-            console.log("Registration failed:", error);
-        }
-    );
+    this.register('register', function(args) {
+        console.log("Call received: ",  args[0]);
+        return "Pong"
+    });
 };
 
 me.join();
