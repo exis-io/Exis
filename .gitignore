@@ -6,3 +6,4 @@ node_modules
 *.pyc
 *.pid
 Makefile
+.DS_Store
