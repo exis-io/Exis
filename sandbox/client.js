@@ -19,3 +19,21 @@ connection.onJoin = function (session) {
 
 
 connection.join();
+
+var app = new riffle.Domain("xs.demo");
+var me = app.subdomain("client")
+var server = domain.subdomain("server")
+
+me.onJoin = function() {
+    console.log("Domain " + this.domain + " joined with name " + this.name);
+
+    server.publish('sub',['Hello!']);
+
+    server.call('register', []).then(
+      function (res) {
+         console.log("Call returned: ", res);
+      }
+   );
+};
+
+me.join();

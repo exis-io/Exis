@@ -11,10 +11,11 @@ function registerHandler(args) {
     return "Pong"
 };
 
-var domain = new riffle.Domain("xs.demo");
+var app = new riffle.Domain("xs.demo");
+var me = app.subdomain("server");
 
-domain.onJoin = function() {
-    console.log("Domain " + this.domain + " joined with name " + this.name);
+me.onJoin = function() {
+    console.log("Domain " + this.domain + " joined with name ");
 
     this.subscribe('sub', subscriptionHandler).then(
         function (registration) {
@@ -35,4 +36,4 @@ domain.onJoin = function() {
     );
 };
 
-domain.join();
+me.join();
