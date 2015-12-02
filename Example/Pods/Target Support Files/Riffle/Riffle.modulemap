@@ -3,4 +3,5 @@ framework module Riffle {
 
   export *
   module * { export * }
+  header "Riffle.h"
 }
