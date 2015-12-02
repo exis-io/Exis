@@ -68,6 +68,7 @@ class Room: RiffleDomain {
         
         // Add dynamic role
         app.call("xs.demo.Bouncer/assignDynamicRole", self.dynamicRoleId, "player", parent.domain, [domain], handler: nil)
+        publish("joined", newPlayer)
         
         // Add Demo players
         if players.count < 3 {

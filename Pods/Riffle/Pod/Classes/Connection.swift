@@ -56,7 +56,7 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
                 return
             }
             
-            let envToken = env("TOKEN", "")
+            let envToken = env("EXIS_TOKEN", "")
             
             if envToken != "" {
                 self.session!.token = envToken

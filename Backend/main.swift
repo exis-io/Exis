@@ -9,6 +9,8 @@
 import Foundation
 import Riffle
 
+// Do not buffer output
+setbuf(__stdoutp, nil);
 
 // This is used for testing the container locally.
 let token = "WRnACjVSs.39v7BrteJ7x7vtTmezF7q0tv3kyoA2vdyp4Rt0XF2bYJnWSPS5ejH-NTsCPqVmkBSnEvCb-T9tHEyjwMyzx8.W29bMvzzynK6LykM.mLgovOrMDZolBCWPzGqEAHf3O-WtZ7vbnlRR4ecd5--VOZUOr56zr26ulYA_"
@@ -22,7 +24,7 @@ let EMPTY_TIME = 1.0
 // The app domain
 let app = RiffleDomain(domain: "xs.demo.exis.cardsagainst")
 
-print("Hello, World!")
+//print("Hello, World!")
 
 class Container: RiffleDomain {
     var rooms: [Room] = []
@@ -41,7 +43,9 @@ class Container: RiffleDomain {
             ["target": self.domain + "/$/leave", "verb":"c"],
             ["target": self.domain + "/$/answering", "verb":"s"],
             ["target": self.domain + "/$/picking", "verb":"s"],
-            ["target": self.domain + "/$/scoring", "verb":"s"]
+            ["target": self.domain + "/$/scoring", "verb":"s"],
+            ["target": self.domain + "/$/left", "verb":"s"],
+            ["target": self.domain + "/$/joined", "verb":"s"]
         ]
         
         app.call("xs.demo.Bouncer/addDynamicRole", "player", self.domain, permissions, handler: nil)
