@@ -31,7 +31,6 @@ public class Dog: RiffleModel {
 }
 
 
-
 class AlphaSession: RiffleDomain {
     var parent: ViewController?
     var connected = false
@@ -111,19 +110,22 @@ class ViewController: UIViewController {
     // Tests
     func startTests() {
         
-        // Publish/Subscribe
-        testPSTypes(1)
-        testPSTypeCollections(2)
+//        // Publish/Subscribe
+//        testPSTypes(1)
+//        testPSTypeCollections(2)
+//        
+//        // Primitive Types
+//        rcTypes(3)
+//        
+//        // Riffle Objects
+//        roObjects(4)
+//        
+//        // RiffleObect Collections
+//        roColletions(5)
+//        roColletionsNoArg(6)
         
-        // Primitive Types
-        rcTypes(3)
-        
-        // Riffle Objects
-        roObjects(4)
-        
-        // RiffleObect Collections
-        roColletions(5)
-        roColletionsNoArg(6)
+        // Meta calls
+        testDisclose(7)
     }
     
     
@@ -246,7 +248,6 @@ class ViewController: UIViewController {
             print("\(t) : Call receiving object collection:", dogs.count)
             assert(dogs == d)
         })
-
     }
     
     func testRCCallTypes() {
@@ -263,5 +264,19 @@ class ViewController: UIViewController {
     
     func testUnSub() {
         // Make sure the other session takes down its calls when it gets nilled out
+    }
+    
+    
+    // MARK: Meta calls
+    func testDisclose(t: Int) {
+        // What kinds of types can be returned
+        alpha.register("\(t)#details") { (caller: String, a: Int) in
+            print("\(t) : Call receiving single call from caller:", caller, a)
+            
+            assert(caller == "xs.tester.beta")
+            assert(a == 1)
+        }
+        
+        beta.call("xs.tester.alpha/\(t)", 1, handler: nil)
     }
 }
