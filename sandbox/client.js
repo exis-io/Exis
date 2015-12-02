@@ -9,9 +9,9 @@ var server = app.subdomain("server");
 me.onJoin = function() {
     console.log("Domain " + this.domain + " joined with name ");
 
-    server.publish('sub', ['Hello!']);
+    server.publish('sub', 'Hello,', 'You scallywag!');
 
-    server.call('register', ["Ping"]).then(
+    server.call('register', "Ping, ", "she wrote").then(
       function (res) {
          console.log("Call returned: ", res);
       }
