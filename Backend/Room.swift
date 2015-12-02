@@ -47,7 +47,7 @@ class Room: RiffleDomain {
         // remove the role from the player that left, ensuring they can't call our endpoints anymore
         app.call("xs.demo.Bouncer/revokeDynamicRole", self.dynamicRoleId, "player", parent.domain, [player.domain], handler: nil)
         
-        // Close the room if there are only demo players left
+        // Close the room if there are only demo players left-- this is deferred until promises get in
 //        if players.reduce(0, combine: { $0 + ($1.demo ? 0 : 1) }) == 0 {
 //            parent.closeRoom(self)
 //            parent = nil
@@ -176,7 +176,7 @@ class Room: RiffleDomain {
             czar!.czar = true
         } else {
             let i = players.indexOf(czar!)!
-            let newCzar = players[(i + 1) % (players.count - 1)]
+            let newCzar = players[(i + 1) % (players.count)]
             czar!.czar = false
             newCzar.czar = true
             czar = newCzar
