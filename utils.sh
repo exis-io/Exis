@@ -46,7 +46,8 @@ ios() {
     echo "Updating ios to version $1"
 
     git tag -a $1 -m $2
-    git push swiftRiffle master
+
+    git push swiftRiffle `git subtree split --prefix ios/swiftRiffle master`:master --force
     git push swiftRiffle --tags
 
     pod trunk push ios/swiftRiffle/Riffle.podspec --allow-warnings
