@@ -24,33 +24,9 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
         this.$get = ["$rootScope", "$q", "$log", "$injector", function ($rootScope, $q, $log, $injector) {
 
-
             var connection;
             var sessionDeferred = $q.defer();
             var sessionPromise = sessionDeferred.promise;
-
-            /**
-             * @param session
-             * @param method
-             * @param extra
-             * @returns {*}
-             *
-             * @description
-             * Gets called when a Challenge Message is sent by the router
-             */
-            var onchallenge = function (session, method, extra) {
-
-                var onChallengeDeferred = $q.defer();
-
-                $rootScope.$broadcast("$wamp.onchallenge", {
-                    promise: onChallengeDeferred,
-                    session: session,
-                    method: method,
-                    extra: extra
-                });
-
-                return onChallengeDeferred.promise;
-            };
 
             /**
              * Interceptors stored in reverse order. Inner interceptors before outer interceptors.
@@ -157,22 +133,10 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
              */
             var interceptorWrapper = function (type, args, callback) {
 
-                /**
-                 * Default result
-                 *
-                 * @param result
-                 * @returns {{result: *, type: *, args: *}}
-                 */
                 var result = function (result) {
                     return {result: result, type: type, args: args};
                 };
 
-                /**
-                 * Default Error
-                 *
-                 * @param error
-                 * @returns {{error: *, type: *, args: *}}
-                 */
                 var error = function (error) {
                     $log.error("$wamp error", {type: type, arguments: args, error: error});
                     return $q.reject({error: error, type: type, args: args});
@@ -216,14 +180,17 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                 open: function () {
                     connection.join();
                 },
-                close: function () {
+                // TODO
+                leave: function () {
                     connection.leave();
                 },
-                subscribe: function (topic, handler, options, subscribedCallback) {
-                    return interceptorWrapper('subscribe', arguments, function () {
-                        return Subscription(topic, handler, options, subscribedCallback);
-                    });
-                },
+                // TODO
+                // subscribe: function (topic, handler, options, subscribedCallback) {
+                //     return interceptorWrapper('subscribe', arguments, function () {
+                //         return Subscription(topic, handler, options, subscribedCallback);
+                //     });
+                // },
+                // TODO
                 subscribeOnScope: function (scope, channel, callback) {
                     return this.subscribe(channel, callback).then(function (subscription) {
                         scope.$on('$destroy', function () {
@@ -231,6 +198,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         });
                     });
                 },
+                // TODO
                 unsubscribe: function (subscription) {
                     return interceptorWrapper('unsubscribe', arguments, function () {
                         return subscription.unsubscribe();
@@ -243,13 +211,21 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         return connection.publish.apply(connection, a);
                     });
                 },
-                register: function (procedure, endpoint, options) {
-                    endpoint = digestWrapper(endpoint);
+                register: function (action, handler) {
+                    handler = digestWrapper(handler);
 
                     return interceptorWrapper('register', arguments, function () {
-                        return connection.register(procedure, endpoint, options);
+                        return connection.register(action, handler);
                     });
                 },
+                subscribe: function (action, handler) {
+                    handler = digestWrapper(handler);
+
+                    return interceptorWrapper('subscribe', arguments, function () {
+                        return connection.subscribe(action, handler);
+                    });
+                },
+                // TODO
                 unregister: function (registration) {
                     return interceptorWrapper('unregister', arguments, function () {
                         return registration.unregister();
