@@ -1,8 +1,4 @@
-build
 node_modules
 *.log
-*.pyc
 *.pid
-Makefile
 .DS_Store
-deploy.py
