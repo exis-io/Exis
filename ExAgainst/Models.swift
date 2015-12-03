@@ -39,8 +39,7 @@ func ==(lhs: Player, rhs: Player) -> Bool {
 func getPlayer(players: [Player], domain: String) -> Player? {
     let filtered = players.filter({$0.domain == domain})
     
-    if filtered.count != 0 {
-        print("Unable to find player with domain \(domain)")
+    if filtered.count != 1 {
         return nil
     }
     

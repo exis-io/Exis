@@ -30,9 +30,13 @@ class Room: RiffleDomain {
     }
     
     func removePlayer(domain: String) {
-        let player = getPlayer(players, domain: domain)
-        player.zombie = true
-        player.demo = true
+        if let player = getPlayer(players, domain: domain) {
+            player.zombie = true
+            player.demo = true
+        } else {
+            print("WARN-- asked to remove player \(domain), not found in players!")
+            let a = czar!
+        }
     }
     
     func addPlayer(domain: String) -> AnyObject {
@@ -46,7 +50,7 @@ class Room: RiffleDomain {
             existingPlayer.zombie = false
             existingPlayer.demo = false
             
-            return [newPlayer.hand, players, state, self.name!]
+            return [existingPlayer.hand, players, state, self.name!]
         }
         
         let newPlayer = Player()
@@ -57,6 +61,7 @@ class Room: RiffleDomain {
         players.append(newPlayer)
         publish("joined", newPlayer)
         
+        print("role: \(self.dynamicRoleId) parent.domain: \(parent.domain), domain: \(domain)")
         // Add dynamic role
         app.call("xs.demo.Bouncer/assignDynamicRole", self.dynamicRoleId, "player", parent.domain, [domain], handler: nil)
         
@@ -199,6 +204,10 @@ class Room: RiffleDomain {
             
             players.removeObject(player)
             publish("left", player)
+            
+            if player.czar {
+                czar = nil
+            }
             
             // remove the role from the player that left, ensuring they can't call our endpoints anymore
             app.call("xs.demo.Bouncer/revokeDynamicRole", self.dynamicRoleId, "player", parent.domain, [player.domain], handler: nil)

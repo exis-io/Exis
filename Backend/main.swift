@@ -13,7 +13,7 @@ import Riffle
 setbuf(__stdoutp, nil);
 
 // This is used for testing the container locally.
-let token = "WRnACjVSs.39v7BrteJ7x7vtTmezF7q0tv3kyoA2vdyp4Rt0XF2bYJnWSPS5ejH-NTsCPqVmkBSnEvCb-T9tHEyjwMyzx8.W29bMvzzynK6LykM.mLgovOrMDZolBCWPzGqEAHf3O-WtZ7vbnlRR4ecd5--VOZUOr56zr26ulYA_"
+let token = "9Hh0hq5Mbvha0iB8z---JXjVHP1SMitlYtSPH2uQHfY3G8bl9hBc3htGJbcC1ijI6OM1Dz2wdMwInTH1YI.DpgU1aozD7eicDyWVtvMkeVh0r3PwP6EvCS5dMaXy1JlfdHwBs4SrvE3gBGW481l0YOT.jbgyecpsvkanRtyRy3g_"
 
 // How long each round takes, in seconds
 let ANSWER_TIME = 10.0
@@ -22,9 +22,7 @@ let SCORE_TIME = 5.0
 let EMPTY_TIME = 1.0
 
 // The app domain
-let app = RiffleDomain(domain: "xs.demo.exis.cardsagainst")
-
-//print("Hello, World!")
+let app = RiffleDomain(domain: "xs.demo.exis.cards")
 
 class Container: RiffleDomain {
     var rooms: [Room] = []
@@ -77,17 +75,15 @@ class Container: RiffleDomain {
     }
     
     func closeRoom(room: Room) {
-        print("Closing room.")
+        //print("Closing room.")
         //rooms.removeObject(room)
     }
     
     func playerLeft(domain: String) {
         for room in rooms {
-            for player in room.players {
-                if player.domain == domain {
-                    room.removePlayer(domain)
-                    return
-                }
+            if let _ = getPlayer(room.players, domain: domain) {
+                room.removePlayer(domain)
+                return
             }
         }
     }
