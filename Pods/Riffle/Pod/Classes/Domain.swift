@@ -6,6 +6,9 @@
 //
 //
 
+// Recorded from the box: xs.demo.exis.biddle.Osxcontainer.gamelogic
+// From live:             xs.demo.exis.biddle.Osxcontainer.gamelogic
+
 import Foundation
 
 public class RiffleDomain: NSObject, RiffleDelegate {
