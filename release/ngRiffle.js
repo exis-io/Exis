@@ -2,7 +2,7 @@
 if (typeof module !== "undefined" && typeof exports !== "undefined" && module.exports === exports){
     var autobahn = require('autobahn');
     var jsriffle = require('jsriffle');
-    module.exports = 'vxWamp';
+    module.exports = 'ngRiffle';
 }
 
 (function () {
@@ -10,9 +10,9 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
     jsriffle.setDevFabric();
 
-    var vxWampModule = angular.module('vxWamp', []).provider('$wamp', $WampProvider);
+    var ngRiffleModule = angular.module('ngRiffle', []).provider('$riffle', $RiffleProvider);
 
-    function $WampProvider() {
+    function $RiffleProvider() {
         var options;
 
         this.init = function (initOptions) {
@@ -63,7 +63,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
             connection = new jsriffle.Domain(options);
 
             connection.onJoin = digestWrapper(function () {
-                $rootScope.$broadcast("$wamp.open");
+                $rootScope.$broadcast("$riffle.open");
                 sessionDeferred.resolve();
             });
 
@@ -71,7 +71,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                 $log.debug("Connection Closed: ", reason, details);
                 sessionDeferred = $q.defer();
                 sessionPromise = sessionDeferred.promise;
-                $rootScope.$broadcast("$wamp.close", {reason: reason, details: details});
+                $rootScope.$broadcast("$riffle.close", {reason: reason, details: details});
             });
 
 
@@ -112,7 +112,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     onOpen();
                 }
 
-                unregister = $rootScope.$on("$wamp.open", onOpen);
+                unregister = $rootScope.$on("$riffle.open", onOpen);
 
                 subscription.promise = deferred.promise;
                 subscription.unsubscribe = function () {
@@ -138,7 +138,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                 };
 
                 var error = function (error) {
-                    $log.error("$wamp error", {type: type, arguments: args, error: error});
+                    $log.error("$riffle error", {type: type, arguments: args, error: error});
                     return $q.reject({error: error, type: type, args: args});
                 };
 
