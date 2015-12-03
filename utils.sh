@@ -79,7 +79,8 @@ ios() {
 
     cd ../appBackendSeed
     pod update
-
+    cd ..
+    
     git add --all
     git commit -m 'Riffle upgrade to v$1'
 
