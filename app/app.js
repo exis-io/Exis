@@ -7,7 +7,7 @@ angular.module('myApp', [
   'myApp.view1',
   'myApp.view2',
   'myApp.version',
-  "vxWamp",
+  "vxWamp"
 ]).
 
 config(['$routeProvider', function($routeProvider) {
