@@ -2,9 +2,10 @@
   <img src ="assets/exis-logo.png" height="200" width="150" /> <br>
   <h3>Stop writing network code. Seriously.</h3>
 
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/exis-io/Exis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 </div>
-
+<div align="center">
+[![Join the chat at https://gitter.im/exis-io/Exis](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/exis-io/Exis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+</div>
 ## Why Exis?
 While we were developing Exis, simplicity and ease of use was at our highest priority.  With Exis, if you can make a function call, you can create incredibly complex apps in just minutes.<br><br>
 No more needing to worry about learning several languages to create the backend suited for your needs.  Instead, use the languages that you know and are comfortable with.  We support WebSockets and HTTP - so if your device can talk to HTTP, it can use Exis.
