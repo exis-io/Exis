@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Darwin
 
 var NODE = "wss://node.exis.io:8000/wss"
 var SOFTNODE = false
@@ -31,16 +32,20 @@ public class Riffle {
     
     static func debug(s: String) {
         if DEBUG {
-            print(s)
+            errout("DEBUG: \(s)")
         }
     }
     
     static func warn(s: String) {
-        print("WARN: \(s)")
+        errout("WARN: \(s)")
     }
     
     static func panic(s: String) {
-        print("PANIC: \(s)")
+        errout("PANIC: \(s)")
+    }
+    
+    static func errout(s: String) {
+        fputs(s, __stderrp)
     }
 }
 
