@@ -18,9 +18,9 @@ fi
 init() {
     echo "Setting remotes for development"
 
-    git remote add -f swiftRiffle git@github.com:exis-io/swiftRiffle.git
-    git remote add -f iosAppBackendSeed   git@github.com:exis-io/iosAppBackendSeed.git
-    git remote add -f iosAppSeed  git@github.com:exis-io/iosAppSeed.git
+    git remote add swiftRiffle git@github.com:exis-io/swiftRiffle.git
+    git remote add iosAppBackendSeed   git@github.com:exis-io/iosAppBackendSeed.git
+    git remote add iosAppSeed  git@github.com:exis-io/iosAppSeed.git
 
     git remote add jsRiffle git@github.com:exis-io/jsRiffle.git
     git remote add ngRiffle git@github.com:exis-io/ngRiffle.git 
@@ -44,9 +44,9 @@ pull() {
 
     git pull origin master
 
-    git subtree pull --prefix=ios/swiftRiffle git@github.com:exis-io/swiftRiffle.git master
-    git subtree pull --prefix=ios/appBackendSeed git@github.com:exis-io/iosAppBackendSeed.git master
-    git subtree pull --prefix=ios/appSeed git@github.com:exis-io/iosAppSeed.git  master
+    # git subtree pull --prefix=ios/swiftRiffle git@github.com:exis-io/swiftRiffle.git master
+    # git subtree pull --prefix=ios/appBackendSeed git@github.com:exis-io/iosAppBackendSeed.git master
+    # git subtree pull --prefix=ios/appSeed git@github.com:exis-io/iosAppSeed.git  master
 
     git subtree pull --prefix js/jsRiffle jsRiffle master
     git subtree pull --prefix js/ngRiffle ngRiffle master
