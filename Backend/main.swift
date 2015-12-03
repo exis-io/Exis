@@ -9,14 +9,7 @@
 import Foundation
 import Riffle
 
-// Do not buffer output-- attempt to capture stdout
-setbuf(__stdoutp, nil);
-print("Container connecting")
-fflush(__stdoutp)
-
-Riffle.setDebug()
-
-// This is used for testing the container locally.
+// Local testing
 let token = "UPQEvy0CJqw6UjSkcizTJKi2ElCUfxPSoixINYIXBs-YvmGHSSa-9P4xgR0-hfiJwkRevzSwwHtxmxCA1tsf8gPtZcpoDK02aZ31KHqWGIFIgueuS9r5ERYFpMrXWPPVGN0Ln84GP.ciH3EBYQahS4NSUF8okXKSU3teboBQTQc_"
 
 // How long each round takes, in seconds

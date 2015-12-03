@@ -61,7 +61,6 @@ class Room: RiffleDomain {
         players.append(newPlayer)
         publish("joined", newPlayer)
         
-        print("role: \(self.dynamicRoleId) parent.domain: \(parent.domain), domain: \(domain)")
         // Add dynamic role
         app.call("xs.demo.Bouncer/assignDynamicRole", self.dynamicRoleId, "player", parent.domain, [domain], handler: nil)
         

@@ -12,7 +12,7 @@ import Darwin
 var NODE = "wss://node.exis.io:8000/wss"
 var SOFTNODE = false
 var DEBUG = false
-var STDERR = true
+var STDERR = false
 
 
 public class Riffle {
