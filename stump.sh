@@ -44,12 +44,12 @@ pull() {
 
     git pull origin master
 
-    git subtree pull --prefix ios/swiftRiffle swiftRiffle master
-    git subtree pull --prefix ios/appBackendSeed iosAppBackendSeed master
-    git subtree pull --prefix ios/appSeed iosAppSeed  master
+    git subtree pull --prefix ios/swiftRiffle swiftRiffle master -m 'Update to stump'
+    git subtree pull --prefix ios/appBackendSeed iosAppBackendSeed master -m 'Update to stump'
+    git subtree pull --prefix ios/appSeed iosAppSeed  master -m 'Update to stump'
 
-    git subtree pull --prefix js/jsRiffle jsRiffle master
-    git subtree pull --prefix js/ngRiffle ngRiffle master
+    git subtree pull --prefix js/jsRiffle jsRiffle master -m 'Update to stump'
+    git subtree pull --prefix js/ngRiffle ngRiffle master -m 'Update to stump'
 }
 
 
@@ -84,7 +84,9 @@ ios() {
     git subtree push --prefix ios/appSeed iosAppSeed master
 }
 
-
+js() {
+    browserify index.js --standalone jsriffle -o jsriffle.js
+}
 
 case "$1" in
     "init") init;;

@@ -1,10 +1,10 @@
 {
   "name": "biddle",
-  "version": "1.0.0",
-  "description": "asdf",
+  "version": "0.1.1",
+  "description": "Tester scripts for jsRiffle",
   "main": "client.js",
   "dependencies": {
-    "riffle": "0.1.0"
+    "jsRiffle": "0.1.1"
   },
   "devDependencies": {},
   "scripts": {
