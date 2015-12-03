@@ -1,6 +1,5 @@
 <div align="center">
-  <img src ="assets/exis-logo.png" height="200" width="150" /> <br> <br>
-  <h1>Exis</h1>
+  <img src ="assets/exis-logo.png" height="200" width="150" /> <br>
   <h3>Stop writing network code. Seriously.</h3>
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/exis-io/Exis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
