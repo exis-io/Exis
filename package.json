@@ -26,7 +26,7 @@
   ],
   "dependencies": {
     "angular": "^1.2.0",
-    "jsriffle": "~0.1.10"
+    "jsriffle": "0.1.1"
   },
   "license": "MIT",
   "devDependencies": {

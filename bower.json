@@ -22,7 +22,6 @@
     ],
     "dependencies": {
         "angular": "^1.2.0",
-        "autobahn": ">= 0.9.5",
-        "ngRiffle": "file://~/code/js/ngRiffle/.git"
+        "autobahn": ">= 0.9.5"
     }
 }
