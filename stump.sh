@@ -78,14 +78,37 @@ ios() {
     cd ../..
 
     git add --all
-    git commit -m 'Riffle upgrade to v$1'
+    git commit -m 'swRiffle upgrade to v $1'
 
     git subtree push --prefix ios/appBackendSeed iosAppBackendSeed master
     git subtree push --prefix ios/appSeed iosAppSeed master
+    git push origin master
 }
 
 js() {
-    browserify index.js --standalone jsriffle -o jsriffle.js
+    echo "Updating ios to version $1"
+
+    browserify js/jsRiffle/index.js --standalone jsRiffle -o js/jsRiffle/release/jsRiffle.js
+    browserify js/jsRiffle/index.js --standalone jsRiffle | uglifyjs > js/jsRiffle/release/jsRiffle.min.js
+
+    git tag -a $1 -m $2
+    git push --tags
+    git add --all
+    git commit -m 'jsRiffle upgrade to v $1'
+
+    git push origin master
+    git subtree push --prefix js/jsRiffle jsRiffle master
+    git subtree push --prefix js/ngRiffle ngRiffle master
+
+    cd js/jsRiffle
+    npm version $1
+    npm publish
+
+    cd ../ngRiffle
+    npm version $1
+    npm publish
+
+    # Install packages in appropriate locations
 }
 
 case "$1" in
@@ -93,7 +116,7 @@ case "$1" in
     "push") push;;
     "pull") pull;;
     "ios") ios $2 $3;;
-    "js") ios $2 $3;;
+    "js") js $2 $3;;
     *) echo "Unknown input $1"
    ;;
 esac
