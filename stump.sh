@@ -57,17 +57,22 @@ ios() {
     echo "Updating ios to version $1"
 
     git subtree push --prefix ios/swiftRiffle swiftRiffle master
+
+    git clone git@github.com:exis-io/swiftRiffle.git
+    cd swiftRiffle
     
     git tag -a $1 -m $2
     git push --tags
-    git push swiftRiffle --tags
 
-    cd ios/swiftRiffle
     pod trunk push --allow-warnings --verbose
 
+    cd ..
+    rm -rf swiftRiffle
+
     # update the seed projects and push them 
-    cd ../appSeed
+    cd ios/appSeed
     pod update
+
     cd ../appBackendSeed
     pod update
     cd ../..
@@ -89,16 +94,26 @@ js() {
     mv jsRiffle.js js/jsRiffle/release/jsRiffle.js
     mv jsRiffle.min.js js/jsRiffle/release/jsRiffle.min.js
 
-    git tag -a $1 -m 'Upgrade to v $1'
-    git push --tags
-    git push ngRiffle --tags
-    git push jsRiffle --tags
     git add --all
     git commit -m 'jsRiffle upgrade to v $1'
 
     git push origin master
     git subtree push --prefix js/jsRiffle jsRiffle master
     git subtree push --prefix js/ngRiffle ngRiffle master
+
+    git clone git@github.com:exis-io/jsRiffle.git
+    cd jsRiffle
+    git tag -a $1 -m 'Upgrade to v $1'
+    git push --tags
+    cd ..
+    rm -rf jsRiffle
+
+    git clone git@github.com:exis-io/ngRiffle.git 
+    cd jsRiffle
+    git tag -a $1 -m 'Upgrade to v $1'
+    git push --tags
+    cd ..
+    rm -rf ngRiffle
 
     cd js/jsRiffle
     npm version $1
