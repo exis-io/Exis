@@ -9,8 +9,10 @@
 import Foundation
 import Riffle
 
+//Riffle.setDebug()
+
 // Local testing
-let token = "UPQEvy0CJqw6UjSkcizTJKi2ElCUfxPSoixINYIXBs-YvmGHSSa-9P4xgR0-hfiJwkRevzSwwHtxmxCA1tsf8gPtZcpoDK02aZ31KHqWGIFIgueuS9r5ERYFpMrXWPPVGN0Ln84GP.ciH3EBYQahS4NSUF8okXKSU3teboBQTQc_"
+let token = "lqX9u87dF.X9T6eppEbaJwoUI7JttlDOVZ5gNmB6-SS5wUjRJman.SXoXU9XLJCOFDhN2wNKg0PkUw7YY30m1Wjq91RIq6mwcD1PvJogEO0RZBvitaAPahjNBp4m.x9hRAeab-5qD9TTV2LscAS4-dOnaLz8lGT-VMhPxj.w7p4_"
 
 // How long each round takes, in seconds
 let ANSWER_TIME = 10.0
@@ -19,7 +21,7 @@ let SCORE_TIME = 5.0
 let EMPTY_TIME = 1.0
 
 // The app domain
-let app = RiffleDomain(domain: "xs.demo.exis.biddle")
+let app = RiffleDomain(domain: "xs.demo.exis.cardsagainst")
 
 class Container: RiffleDomain {
     var rooms: [Room] = []

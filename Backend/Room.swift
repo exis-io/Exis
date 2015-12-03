@@ -31,6 +31,7 @@ class Room: RiffleDomain {
     
     func removePlayer(domain: String) {
         if let player = getPlayer(players, domain: domain) {
+            print("Player marked as zombie: \(domain)")
             player.zombie = true
             player.demo = true
         } else {
@@ -47,6 +48,7 @@ class Room: RiffleDomain {
         // but if a player leaves and then rejoins before their zombie was cleared out then we'll have two players with the same name
         // If the player's name already exists in the app, unzombiefy them instead of creating a new player
         if let existingPlayer = getPlayer(players, domain: domain) {
+            print("Reinstantiating zombie: \(domain)")
             existingPlayer.zombie = false
             existingPlayer.demo = false
             
@@ -59,7 +61,11 @@ class Room: RiffleDomain {
         newPlayer.hand = answers.randomElements(4, remove: true)
         
         players.append(newPlayer)
+        
+        
         publish("joined", newPlayer)
+        
+        print("Role: \(dynamicRoleId) parent: \(parent) domain: \(domain)")
         
         // Add dynamic role
         app.call("xs.demo.Bouncer/assignDynamicRole", self.dynamicRoleId, "player", parent.domain, [domain], handler: nil)
@@ -110,6 +116,7 @@ class Room: RiffleDomain {
         
         removeZombies()
         setNextCzar()
+        
         publish("answering", czar!, questions.randomElements(1, remove: false)[0], PICK_TIME)
         
         timer.startTimer(PICK_TIME, selector: "startPicking")
@@ -194,7 +201,7 @@ class Room: RiffleDomain {
         for player in players {
             if !player.zombie { continue }
             
-            print("Removing player: \(player.domain)")
+            print("Removing zombies: \(player.domain)")
             answers.appendContentsOf(player.hand)
             
             if let p = player.pick {
@@ -212,11 +219,11 @@ class Room: RiffleDomain {
             app.call("xs.demo.Bouncer/revokeDynamicRole", self.dynamicRoleId, "player", parent.domain, [player.domain], handler: nil)
             
             // Close the room if there are only demo players left-- this is deferred until promises get in
-            if players.reduce(0, combine: { $0 + ($1.demo ? 0 : 1) }) == 0 {
-                parent.closeRoom(self)
-                parent = nil
-                timer.cancel()
-            }
+//            if players.reduce(0, combine: { $0 + ($1.demo ? 0 : 1) }) == 0 {
+//                parent.closeRoom(self)
+//                parent = nil
+//                timer.cancel()
+//            }
         }
     }
 }
