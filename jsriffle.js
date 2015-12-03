@@ -660,6 +660,10 @@ Object.defineProperty(Connection.prototype, "isRetrying", {
 exports.Connection = Connection;
 
 function prependDomain(domain, target) {
+    if (target.indexOf("xs.") > -1) {
+        return target
+    }
+
     return domain + "/" + target;
 };
 
@@ -679,7 +683,7 @@ var Domain = function (name) {
     this.domain = name;
     this.connection = null;
     this.session = null;
-    this.pool = []
+    this.pool = [this];
     this.joined = false;
 }; 
 
@@ -708,10 +712,11 @@ Domain.prototype.join = function() {
    self.connection = new riffle.Connection(self.domain);
 
     self.connection.onJoin = function (session) {
-        console.log("Domain joined");
         self.session = session;
+        console.log("internal join: " + self.pool + " " + self.domain);
 
         for (var i = 0; i < self.pool.length; i++)  {
+            console.log("Calling pool " + i);
             self.pool[i].session = session; 
             self.pool[i].connection = this.connection;
         }
@@ -735,6 +740,10 @@ Domain.prototype.onJoin = function() {
     log.debug("Domain " + this.domain + " default join");
 };
 
+Domain.prototype.onLeave = function() {
+    log.debug("Domain " + this.domain + " default leave");
+};
+
 
 // Message patterns
 Domain.prototype.subscribe = function(action, handler) {
@@ -753,6 +762,7 @@ Domain.prototype.call = function() {
 };
 
 Domain.prototype.publish = function() {
+    console.log("Publishing!")
     var args = flattenHash(arguments);
     var action = args.shift();
 
