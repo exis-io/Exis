@@ -2,7 +2,7 @@
 //  ViewController.swift
 //  Riffle
 //
-//  Created by Mickey Barboi on 09/25/2015.
+//  Created by Damouse on 09/25/2015.
 //  Copyright (c) 2015 Mickey Barboi. All rights reserved.
 //
 
