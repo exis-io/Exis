@@ -8,7 +8,7 @@ then
     echo -e "Updating and deployment of riffle libraries\n"
 
     echo "Usage:"
-    echo -e "  remote-init\t\t set up remotes for development"
+    echo -e "  init\t\t set up remotes for development"
     echo -e "  ios\t\t update swiftRiffle. Pass version number and commit message"
     echo -e "  push\t\t push updates on master"
     echo -e "  pull\t\t pull updates on master"
@@ -87,7 +87,7 @@ ios() {
 
 
 case "$1" in
-    "remote-init") init;;
+    "init") init;;
     "push") push;;
     "pull") pull;;
     "ios") ios $2 $3;;
