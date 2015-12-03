@@ -1,7 +1,7 @@
 <div align="center"><img src ="assets/exis-logo.png" height="200" width="150" /> <br> <br> <h1>Exis</h1> <h3>Stop writing network code. Seriously.</h3></div>
 
 <div align="center">
-  [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/exis-io/Exis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+  [![Join the chat at https://gitter.im/exis-io/Exis](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/exis-io/Exis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 </div>
 
 ## Why Exis?
