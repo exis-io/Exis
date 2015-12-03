@@ -12,6 +12,7 @@ import Darwin
 var NODE = "wss://node.exis.io:8000/wss"
 var SOFTNODE = false
 var DEBUG = false
+var STDERR = true
 
 
 public class Riffle {
@@ -32,20 +33,24 @@ public class Riffle {
     
     static func debug(s: String) {
         if DEBUG {
-            errout("DEBUG: \(s)")
+            out("DEBUG: \(s)")
         }
     }
     
     static func warn(s: String) {
-        errout("WARN: \(s)")
+        out("WARN: \(s)")
     }
     
     static func panic(s: String) {
-        errout("PANIC: \(s)")
+        out("PANIC: \(s)")
     }
     
-    static func errout(s: String) {
-        fputs(s, __stderrp)
+    static func out(s: String) {
+        if STDERR {
+            fputs(s, __stderrp)
+        } else {
+            print(s)
+        }
     }
 }
 

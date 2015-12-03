@@ -24,7 +24,7 @@ let SCORE_TIME = 5.0
 let EMPTY_TIME = 1.0
 
 // The app domain
-let app = RiffleDomain(domain: "xs.demo.exis.cardsagainst")
+let app = RiffleDomain(domain: "xs.demo.exis.cards")
 
 class Container: RiffleDomain {
     var rooms: [Room] = []
