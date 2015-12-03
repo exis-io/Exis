@@ -14,8 +14,10 @@ setbuf(__stdoutp, nil);
 print("Container connecting")
 fflush(__stdoutp)
 
+Riffle.setDebug()
+
 // This is used for testing the container locally.
-let token = "9Hh0hq5Mbvha0iB8z---JXjVHP1SMitlYtSPH2uQHfY3G8bl9hBc3htGJbcC1ijI6OM1Dz2wdMwInTH1YI.DpgU1aozD7eicDyWVtvMkeVh0r3PwP6EvCS5dMaXy1JlfdHwBs4SrvE3gBGW481l0YOT.jbgyecpsvkanRtyRy3g_"
+let token = "UPQEvy0CJqw6UjSkcizTJKi2ElCUfxPSoixINYIXBs-YvmGHSSa-9P4xgR0-hfiJwkRevzSwwHtxmxCA1tsf8gPtZcpoDK02aZ31KHqWGIFIgueuS9r5ERYFpMrXWPPVGN0Ln84GP.ciH3EBYQahS4NSUF8okXKSU3teboBQTQc_"
 
 // How long each round takes, in seconds
 let ANSWER_TIME = 10.0
@@ -24,7 +26,7 @@ let SCORE_TIME = 5.0
 let EMPTY_TIME = 1.0
 
 // The app domain
-let app = RiffleDomain(domain: "xs.demo.exis.cards")
+let app = RiffleDomain(domain: "xs.demo.exis.biddle")
 
 class Container: RiffleDomain {
     var rooms: [Room] = []

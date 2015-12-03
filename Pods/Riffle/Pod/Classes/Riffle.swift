@@ -47,7 +47,7 @@ public class Riffle {
     
     static func out(s: String) {
         if STDERR {
-            fputs(s, __stderrp)
+            fputs("\(s)\n", __stderrp)
         } else {
             print(s)
         }

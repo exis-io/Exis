@@ -26,6 +26,7 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         // for this instance of the application
         
         domain = env("DOMAIN", d)
+//        domain = d
         connection = RiffleConnection()
         name = domain
         
