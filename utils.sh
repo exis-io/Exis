@@ -33,6 +33,10 @@ push() {
     # git push iosAppBackendSeed `git subtree split --prefix ios/appBackendSeed master`:master --force
     # git push iosAppSeed `git subtree split --prefix ios/appSeed master`:master --force
 
+    git subtree push --prefix ios/swiftRiffle swiftRiffle master
+    git subtree push --prefix ios/appBackendSeede iosAppBackendSeed master
+    git subtree push --prefix ios/appSeed iosAppSeed master
+
     git subtree push --prefix js/jsRiffle jsRiffle master
     git subtree push --prefix js/ngRiffle ngRiffle master
 
@@ -44,12 +48,12 @@ pull() {
 
     git pull origin master
 
-    # git subtree pull --prefix=ios/swiftRiffle git@github.com:exis-io/swiftRiffle.git master
-    # git subtree pull --prefix=ios/appBackendSeed git@github.com:exis-io/iosAppBackendSeed.git master
-    # git subtree pull --prefix=ios/appSeed git@github.com:exis-io/iosAppSeed.git  master
+    git subtree pull --prefix ios/swiftRiffle swiftRiffle master
+    git subtree pull --prefix ios/appBackendSeed iosAppBackendSeed master
+    git subtree pull --prefix ios/appSeed iosAppSeed  master
 
-    git subtree pull --prefix js/jsRiffle jsRiffle master
-    git subtree pull --prefix js/ngRiffle ngRiffle master
+    # git subtree pull --prefix js/jsRiffle jsRiffle master
+    # git subtree pull --prefix js/ngRiffle ngRiffle master
 }
 
 
