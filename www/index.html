@@ -20,15 +20,12 @@
 
     <!-- your app's js -->
     <script src="js/app.js"></script>
+    <script src="js/controllers/application.js"></script>
+    <script src="js/controllers/room.js"></script>
+    <script src="lib/autobahn/autobahn.js"></script>
+    <script src="lib/angular-wamp/release/angular-wamp.js"></script>
   </head>
-  <body ng-app="starter">
-
-    <ion-pane>
-      <ion-header-bar class="bar-stable">
-        <h1 class="title">Cards Against Humanity</h1>
-      </ion-header-bar>
-      <ion-content>
-      </ion-content>
-    </ion-pane>
+  <body ng-app="cardsAgainst" ng-controller="AppCtrl">
+      <ion-nav-view></ion-nav-view>
   </body>
 </html>
