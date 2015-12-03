@@ -19,8 +19,8 @@ init() {
     echo "Setting remotes for development"
 
     git remote add swiftRiffle git@github.com:exis-io/swiftRiffle.git
-    git remote add iosAppBackendSeed   git@github.com:exis-io/iosAppBackendSeed.git
-    git remote add iosAppSeed  git@github.com:exis-io/iosAppSeed.git
+    git remote add iosAppBackendSeed git@github.com:exis-io/iosAppBackendSeed.git
+    git remote add iosAppSeed git@github.com:exis-io/iosAppSeed.git
 
     git remote add jsRiffle git@github.com:exis-io/jsRiffle.git
     git remote add ngRiffle git@github.com:exis-io/ngRiffle.git 
