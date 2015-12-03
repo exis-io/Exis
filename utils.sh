@@ -33,8 +33,8 @@ pull() {
     echo "Pulling subtrees"
 
     git subtree pull --prefix=ios/swiftRiffle git@github.com:exis-io/swiftRiffle.git master
-    git subtree pull --prefix=ios/appBackendSeed git@github.com:exis-io/iosAppBackendSeed.git
-    git subtree pull --prefix=ios/appSeed git@github.com:exis-io/iosAppSeed.git
+    git subtree pull --prefix=ios/appBackendSeed git@github.com:exis-io/iosAppBackendSeed.git master
+    git subtree pull --prefix=ios/appSeed git@github.com:exis-io/iosAppSeed.git master
 }
 
 
