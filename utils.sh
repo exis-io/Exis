@@ -90,7 +90,7 @@ case "$1" in
     "push") push;;
     "pull") pull;;
     "ios") ios $2 $3;;
-    "js") ios $2 $3;;"
+    "js") ios $2 $3;;
     *) echo "Unknown input $1"
    ;;
 esac
