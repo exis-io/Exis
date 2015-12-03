@@ -72,7 +72,7 @@ module.exports = function (grunt) {
         // Auto-run tasks on file changes
         watch: {
             scripts: {
-                files: ['src/*.js', 'tests/unit/**/*.spec.js', 'tests/lib/**/*.js', 'tests/mocks/**/*.js'],
+                files: ['src/*.js'],
                 tasks: ['test:unit', 'notify:watch'],
                 options: {
                     interrupt: true,
