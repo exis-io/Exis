@@ -9,7 +9,7 @@
 import Foundation
 import Riffle
 
-// Do not buffer output
+// Do not buffer output-- attempt to capture stdout
 setbuf(__stdoutp, nil);
 print("Container connecting")
 fflush(__stdoutp)
