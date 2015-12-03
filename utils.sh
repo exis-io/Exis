@@ -19,6 +19,25 @@ init() {
     git remote add -f swiftRiffle git@github.com:exis-io/swiftRiffle.git
 }
 
+push() {
+    echo "Pushing subtrees"
+
+    git push swiftRiffle `git subtree split --prefix ios/swiftRiffle master`:master --force
+    git push iosAppBackendSeed `git subtree split --prefix ios/appBackendSeed master`:master --force
+    git push iosAppSeed `git subtree split --prefix ios/appSeed master`:master --force
+
+    git push
+}
+
+pull() {
+    echo "Pulling subtrees"
+
+    git subtree pull --prefix=ios/swiftRiffle git@github.com:exis-io/swiftRiffle.git master
+    git subtree pull --prefix=ios/appBackendSeed git@github.com:exis-io/iosAppBackendSeed.git
+    git subtree pull --prefix=ios/appSeed git@github.com:exis-io/iosAppSeed.git
+}
+
+
 ios() {
     echo "Updating ios to version $1"
 
@@ -46,6 +65,8 @@ ios() {
 
 case "$1" in
     "remote-init") init;;
+    "push") push;;
+    "pull") pull;;
     "ios") ios $2 $3;;
     *) echo "Unknown input $1"
    ;;
