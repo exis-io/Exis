@@ -29,10 +29,6 @@ init() {
 push() {
     echo "Pushing subtrees"
 
-    # git push swiftRiffle `git subtree split --prefix ios/swiftRiffle master`:master --force
-    # git push iosAppBackendSeed `git subtree split --prefix ios/appBackendSeed master`:master --force
-    # git push iosAppSeed `git subtree split --prefix ios/appSeed master`:master --force
-
     git subtree push --prefix ios/swiftRiffle swiftRiffle master
     git subtree push --prefix ios/appBackendSeede iosAppBackendSeed master
     git subtree push --prefix ios/appSeed iosAppSeed master
@@ -52,8 +48,8 @@ pull() {
     git subtree pull --prefix ios/appBackendSeed iosAppBackendSeed master
     git subtree pull --prefix ios/appSeed iosAppSeed  master
 
-    # git subtree pull --prefix js/jsRiffle jsRiffle master
-    # git subtree pull --prefix js/ngRiffle ngRiffle master
+    git subtree pull --prefix js/jsRiffle jsRiffle master
+    git subtree pull --prefix js/ngRiffle ngRiffle master
 }
 
 
