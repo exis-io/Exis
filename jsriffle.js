@@ -713,10 +713,8 @@ Domain.prototype.join = function() {
 
     self.connection.onJoin = function (session) {
         self.session = session;
-        console.log("internal join: " + self.pool + " " + self.domain);
 
         for (var i = 0; i < self.pool.length; i++)  {
-            console.log("Calling pool " + i);
             self.pool[i].session = session; 
             self.pool[i].connection = this.connection;
         }
@@ -733,7 +731,8 @@ Domain.prototype.join = function() {
 };
 
 Domain.prototype.leave = function() {
-   
+    // Not done!
+    // this.session.close();
 };
 
 Domain.prototype.onJoin = function() {
@@ -762,7 +761,8 @@ Domain.prototype.call = function() {
 };
 
 Domain.prototype.publish = function() {
-    console.log("Publishing!")
+    console.log("Publishing: " + arguments[0][0]);
+
     var args = flattenHash(arguments);
     var action = args.shift();
 
