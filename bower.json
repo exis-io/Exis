@@ -1,0 +1,30 @@
+{
+    "name": "angular-wamp",
+    "version": "0.1.7",
+    "main": "./release/angular-wamp.js",
+    "authors": [
+        "David Dan <davidwdan@gmail.com>"
+    ],
+    "description": "Angular library for Autobahn.js (WAMP v2)",
+    "keywords": [
+        "WAMP",
+        "websockets",
+        "AutobahnJS",
+        "Thruway",
+        "Ratchet",
+        "Angular"
+    ],
+    "license": "MIT",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "app/bower_components",
+        "test",
+        "tests"
+    ],
+    "dependencies": {
+        "angular": "^1.2.0",
+        "autobahn": ">= 0.9.5"
+    }
+}
