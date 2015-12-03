@@ -76,6 +76,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
          * Configures the AutobhanJS Service
          */
         this.init = function (initOptions) {
+            console.log("Access");
             options = initOptions || {};
         };
 
@@ -416,6 +417,12 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     });
                 },
                 call: function (procedure, args, kwargs, options) {
+                    return interceptorWrapper('call', arguments, function () {
+                        return connection.session.call(procedure, args, kwargs, options);
+                    });
+                },
+                hello: function () {
+                    console.log("Hello!");
                     return interceptorWrapper('call', arguments, function () {
                         return connection.session.call(procedure, args, kwargs, options);
                     });
