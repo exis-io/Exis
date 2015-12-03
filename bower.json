@@ -1,7 +1,7 @@
 {
     "name": "ngRiffle",
     "version": "0.1.12",
-    "main": "./release/ngRiffle.js",
+    "main": "release/ngRiffle.js",
     "authors": [
         "Damouse <damouse007@gmail.com>"
     ],
