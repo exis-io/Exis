@@ -11,6 +11,7 @@ import Riffle
 
 // Do not buffer output
 setbuf(__stdoutp, nil);
+print("Container connecting")
 
 // This is used for testing the container locally.
 let token = "9Hh0hq5Mbvha0iB8z---JXjVHP1SMitlYtSPH2uQHfY3G8bl9hBc3htGJbcC1ijI6OM1Dz2wdMwInTH1YI.DpgU1aozD7eicDyWVtvMkeVh0r3PwP6EvCS5dMaXy1JlfdHwBs4SrvE3gBGW481l0YOT.jbgyecpsvkanRtyRy3g_"
