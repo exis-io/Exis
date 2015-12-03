@@ -8,13 +8,14 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 (function () {
     'use strict';
 
+    jsriffle.setDevFabric();
+
     var vxWampModule = angular.module('vxWamp', []).provider('$wamp', $WampProvider);
 
     function $WampProvider() {
         var options;
 
         this.init = function (initOptions) {
-            console.log("Access");
             options = initOptions || {};
         };
 
@@ -70,9 +71,9 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
              */
             function digestWrapper(func) {
 
-                if (options.disable_digest && options.disable_digest === true) {
-                    return func;
-                }
+                // if (options.disable_digest && options.disable_digest === true) {
+                //     return func;
+                // }
 
                 return function () {
                     var cb = func.apply(this, arguments);
@@ -81,16 +82,16 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                 };
             }
 
-            options = angular.extend({onchallenge: digestWrapper(onchallenge), use_deferred: $q.defer}, options);
+            // options = angular.extend({onchallenge: digestWrapper(onchallenge), use_deferred: $q.defer}, options);
 
-            connection = new autobahn.Connection(options);
-            connection.onopen = digestWrapper(function (session, details) {
-                $log.debug("Congrats!  You're connected to the WAMP server!");
-                $rootScope.$broadcast("$wamp.open", {session: session, details: details});
+            connection = new jsriffle.Domain(options);
+
+            connection.onJoin = digestWrapper(function () {
+                $rootScope.$broadcast("$wamp.open");
                 sessionDeferred.resolve();
             });
 
-            connection.onclose = digestWrapper(function (reason, details) {
+            connection.onLeave = digestWrapper(function (reason, details) {
                 $log.debug("Connection Closed: ", reason, details);
                 sessionDeferred = $q.defer();
                 sessionPromise = sessionDeferred.promise;
@@ -213,21 +214,10 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
             return {
                 connection: connection,
                 open: function () {
-                    //If using WAMP CRA we need to get the authid before the connection can be opened.
-                    if (options.authmethods && options.authmethods.indexOf('wampcra') !== -1 && !options.authid) {
-                        $log.debug("You're using WAMP CRA.  The authid must be set on $wamp before the connection can be opened, ie: $wamp.setAuthId('john.doe')");
-                    } else {
-                        connection.open();
-                    }
-                },
-                setAuthId: function (authid, open) {
-                    options.authid = authid;
-                    if (open) {
-                        connection.open();
-                    }
+                    connection.join();
                 },
                 close: function () {
-                    connection.close();
+                    connection.leave();
                 },
                 subscribe: function (topic, handler, options, subscribedCallback) {
                     return interceptorWrapper('subscribe', arguments, function () {
@@ -246,16 +236,18 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         return subscription.unsubscribe();
                     });
                 },
-                publish: function (topic, args, kwargs, options) {
+                publish: function () {
+                    var a = arguments
+
                     return interceptorWrapper('publish', arguments, function () {
-                        return connection.session.publish(topic, args, kwargs, options);
+                        return connection.publish.apply(connection, a);
                     });
                 },
                 register: function (procedure, endpoint, options) {
                     endpoint = digestWrapper(endpoint);
 
                     return interceptorWrapper('register', arguments, function () {
-                        return connection.session.register(procedure, endpoint, options);
+                        return connection.register(procedure, endpoint, options);
                     });
                 },
                 unregister: function (registration) {
@@ -264,14 +256,10 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     });
                 },
                 call: function (procedure, args, kwargs, options) {
+                    var a = arguments
+
                     return interceptorWrapper('call', arguments, function () {
-                        return connection.session.call(procedure, args, kwargs, options);
-                    });
-                },
-                hello: function () {
-                    console.log(jsriffle.biddle);
-                    return interceptorWrapper('call', arguments, function () {
-                        return connection.session.call(procedure, args, kwargs, options);
+                        return connection.call.apply(connection, a);
                     });
                 }
             };
