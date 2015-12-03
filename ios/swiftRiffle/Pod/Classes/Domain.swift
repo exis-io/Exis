@@ -38,8 +38,14 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         // connect. If "connect" is called on either the superdomain or this domain
         // both will be connected
         
+        // A little hacky
+        if n.containsString("/") {
+            domain = s.domain + n
+        } else {
+            domain = s.domain + "." + n
+        }
+        
         superdomain = s
-        domain = s.domain + "." + n
         connection = s.connection
         name = n
         

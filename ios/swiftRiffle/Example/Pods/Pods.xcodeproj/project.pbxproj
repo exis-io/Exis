@@ -70,8 +70,8 @@
 		4E94B8F460BF431A50D94814F7C8AF61 /* UIActivityIndicatorView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 354D461D5A905E77A22F14B2C898E944 /* UIActivityIndicatorView+AFNetworking.m */; };
 		4F093F6FBA6E6B060CF66145CF214E14 /* AFNetworkReachabilityManager.h in Headers */ = {isa = PBXBuildFile; fileRef = EBCFAEF2A4C628119EB58FE8A746205D /* AFNetworkReachabilityManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F0C0C470EA4518A27FACB39CCFB3F09 /* MDWampInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B360012DFFC9FE3F196AA4F525F27D9 /* MDWampInvocation.m */; };
+		501D2F7A1C0FDBEF00340E40 /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501D2F791C0FDBEF00340E40 /* Domain.swift */; };
 		502D5F205E2BF44AB8F0054AAF57E112 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E32266B8C4A0D9780D5A3C7D75B11EA /* Foundation.framework */; };
-		50533C701C05C45300E046D0 /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50533C6F1C05C45300E046D0 /* Domain.swift */; };
 		50F70D7B1BF037A6006E7384 /* Mantle.h in Headers */ = {isa = PBXBuildFile; fileRef = 50F70D5E1BF037A6006E7384 /* Mantle.h */; };
 		50F70D7C1BF037A6006E7384 /* MTLJSONAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50F70D5F1BF037A6006E7384 /* MTLJSONAdapter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50F70D7D1BF037A6006E7384 /* MTLJSONAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 50F70D601BF037A6006E7384 /* MTLJSONAdapter.m */; };
@@ -444,7 +444,7 @@
 		4ECBABB8678A342E7291B19455FE340D /* MPMessagePack.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPMessagePack.h; path = MPMessagePack/MPMessagePack.h; sourceTree = "<group>"; };
 		4F6D7162C5C525C56BAB3316DE6BEBE1 /* Riffle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Riffle.swift; sourceTree = "<group>"; };
 		4FE54542F3D96920A1B520F84B5DEBBB /* MPMessagePackReader.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPMessagePackReader.h; path = MPMessagePack/MPMessagePackReader.h; sourceTree = "<group>"; };
-		50533C6F1C05C45300E046D0 /* Domain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Domain.swift; path = ../../../stash/Domain.swift; sourceTree = "<group>"; };
+		501D2F791C0FDBEF00340E40 /* Domain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Domain.swift; sourceTree = "<group>"; };
 		50F70D5E1BF037A6006E7384 /* Mantle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mantle.h; sourceTree = "<group>"; };
 		50F70D5F1BF037A6006E7384 /* MTLJSONAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTLJSONAdapter.h; sourceTree = "<group>"; };
 		50F70D601BF037A6006E7384 /* MTLJSONAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTLJSONAdapter.m; sourceTree = "<group>"; };
@@ -723,7 +723,7 @@
 		05372E123F3C3AEBB8B4CE2EF55D0A22 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				50533C6F1C05C45300E046D0 /* Domain.swift */,
+				501D2F791C0FDBEF00340E40 /* Domain.swift */,
 				720F9E1DDE4E9CBBA006904934E7BFA8 /* Auth.swift */,
 				C680941C16AB52DCEAB5BFF40B0D811E /* BaseModel.swift */,
 				B2F25F48B35A506CC50CCAA5DF1DD6FA /* Connection.swift */,
@@ -1654,7 +1654,7 @@
 				8F1F3CE91114336109D40317D1686B62 /* Auth.swift in Sources */,
 				10DD975940F679EC848E03D20621C92E /* BaseModel.swift in Sources */,
 				171E310D32DEFF748934E688E092F8F1 /* Connection.swift in Sources */,
-				50533C701C05C45300E046D0 /* Domain.swift in Sources */,
+				501D2F7A1C0FDBEF00340E40 /* Domain.swift in Sources */,
 				CBBFAE6278B963A01116C610582EDB75 /* ConverterExtensions.swift in Sources */,
 				38697E54919472F62A1D669B42181121 /* Cumin.swift in Sources */,
 				10BEC3709453BDFFE8EC516EF040087B /* GenericWrappers.swift in Sources */,
