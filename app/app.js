@@ -15,10 +15,7 @@ config(['$routeProvider', function($routeProvider) {
 }])
 
 .config(function($wampProvider) {
-    $wampProvider.init({
-        url: 'ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws',
-        realm: 'xs.demo.angular'
-    });
+    $wampProvider.init("xs.demo.ng");
 })
 .run(function($wamp){
     $wamp.open();

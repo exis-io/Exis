@@ -16,9 +16,6 @@ angular.module('myApp.view1', ['ngRoute'])
       $scope.hello = args[0];
    }
 
-   // $wamp.hello()
-   $wamp.hello();
-
    // $wamp.register('xs.demo.angular/register', function(args) {
    //      console.log("Ng received call: " + args[0] + args[1])
    // });
@@ -27,14 +24,15 @@ angular.module('myApp.view1', ['ngRoute'])
    //      console.log("Ng received publish: " + args[0] + args[1])
    // });
 
-   // $wamp.publish('xs.demo.server/sub', ['Hello', 'world!']);
+    console.log("Attempting to publish")
+    $wamp.publish('xs.demo.server/sub', 'Hello', 'world!');
 
-   // $wamp.call('xs.demo.server/register', ['Ping, ', 'you dog']);
+   $wamp.call('xs.demo.server/register', 'Ping, ', 'you dog');
       
 
-   // $scope.$on("$wamp.open", function (event, session) {
-   //      console.log('We are connected to the WAMP Router!'); 
-   //  });
+   $scope.$on("$wamp.open", function (event, session) {
+        console.log('We are connected to the WAMP Router!'); 
+    });
 
    //  $scope.$on("$wamp.close", function (event, data) {
    //      $scope.reason = data.reason;
