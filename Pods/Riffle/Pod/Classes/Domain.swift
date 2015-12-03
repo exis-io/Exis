@@ -28,7 +28,6 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         // Initialize this agent as the Application domain, or the root domain
         // for this instance of the application
         
-//        domain = env("DOMAIN", d)
         domain = d
         connection = RiffleConnection()
         name = domain
@@ -66,6 +65,9 @@ public class RiffleDomain: NSObject, RiffleDelegate {
     public func join(token: String? = nil) -> RiffleDomain {
         // Connect this agent and any agents connected to this one
         // superdomains and subdomains
+        
+        // Set this domain manually
+        self.domain = env("DOMAIN", self.domain)
         
         connection.addAgent(self)
         
