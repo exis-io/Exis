@@ -94,6 +94,16 @@ js() {
     mv jsRiffle.js js/jsRiffle/release/jsRiffle.js
     mv jsRiffle.min.js js/jsRiffle/release/jsRiffle.min.js
 
+    cd js/jsRiffle
+    npm version $1
+    npm publish
+
+    cd ../ngRiffle
+    npm version $1
+    npm publish
+
+    cd ../..
+
     git add --all
     git commit -m 'jsRiffle upgrade to v $1'
 
@@ -109,19 +119,11 @@ js() {
     rm -rf jsRiffle
 
     git clone git@github.com:exis-io/ngRiffle.git 
-    cd jsRiffle
+    cd ngRiffle
     git tag -a $1 -m 'Upgrade to v $1'
     git push --tags
     cd ..
     rm -rf ngRiffle
-
-    cd js/jsRiffle
-    npm version $1
-    npm publish
-
-    cd ../ngRiffle
-    npm version $1
-    npm publish
 }
 
 case "$1" in
