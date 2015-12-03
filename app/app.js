@@ -7,16 +7,16 @@ angular.module('myApp', [
   'myApp.view1',
   'myApp.view2',
   'myApp.version',
-  "vxWamp"
+  "ngRiffle"
 ]).
 
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.otherwise({redirectTo: '/view1'});
 }])
 
-.config(function($wampProvider) {
-    $wampProvider.init("xs.demo.ng");
+.config(function($riffleProvider) {
+    $riffleProvider.init("xs.demo.ng");
 })
-.run(function($wamp){
-    $wamp.open();
+.run(function($riffle){
+    $riffle.open();
 });

@@ -9,26 +9,26 @@ angular.module('myApp.view1', ['ngRoute'])
   });
 }])
 
-.controller('View1Ctrl', function($scope, $wamp) {
+.controller('View1Ctrl', function($scope, $riffle) {
 
-    $wamp.register('xs.demo.angular/register', function(args) {
+    $riffle.register('xs.demo.angular/register', function(args) {
         console.log("Ng received call: " + args[0] + args[1])
     });
 
-    $wamp.subscribe('xs.demo.angular/sub', function(args) {
+    $riffle.subscribe('xs.demo.angular/sub', function(args) {
         console.log("Ng received publish: " + args[0] + args[1])
     });
 
-    $wamp.publish('xs.demo.server/sub', 'Hello', 'world!');
+    $riffle.publish('xs.demo.server/sub', 'Hello', 'world!');
 
-    $wamp.call('xs.demo.server/register', 'Ping, ', 'you dog');
+    $riffle.call('xs.demo.server/register', 'Ping, ', 'you dog');
       
 
-   $scope.$on("$wamp.open", function (event, session) {
-        console.log('We are connected to the WAMP Router!'); 
+   $scope.$on("$riffle.open", function (event, session) {
+        console.log('We are connected to the fabric!'); 
     });
 
-    $scope.$on("$wamp.close", function (event, data) {
+    $scope.$on("$riffle.close", function (event, data) {
         $scope.reason = data.reason;
         $scope.details = data.details;
     });
