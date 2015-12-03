@@ -7,8 +7,8 @@ then
     echo "Usage:"
     echo -e "  remote-init\t\t set up remotes for development"
     echo -e "  ios\t\t update swiftRiffle. Pass version number and commit message"
-    echo -e "  push\t\t push updates. Pass branch name"
-    echo -e "  pull\t\t pull updates. Pass branch name"
+    echo -e "  push\t\t push updates on master"
+    echo -e "  pull\t\t pull updates on master"
     exit
 fi
 
@@ -28,17 +28,17 @@ push() {
     git push iosAppBackendSeed `git subtree split --prefix ios/appBackendSeed master`:master --force
     git push iosAppSeed `git subtree split --prefix ios/appSeed master`:master --force
 
-    git push origin $1
+    git push origin
 }
 
 pull() {
     echo "Pulling subtrees"
 
-    git pull origin $1
+    git pull origin master
 
-    git subtree pull --prefix=ios/swiftRiffle git@github.com:exis-io/swiftRiffle.git $1
-    git subtree pull --prefix=ios/appBackendSeed git@github.com:exis-io/iosAppBackendSeed.git $1
-    git subtree pull --prefix=ios/appSeed git@github.com:exis-io/iosAppSeed.git $1 
+    git subtree pull --prefix=ios/swiftRiffle git@github.com:exis-io/swiftRiffle.git master
+    git subtree pull --prefix=ios/appBackendSeed git@github.com:exis-io/iosAppBackendSeed.git master
+    git subtree pull --prefix=ios/appSeed git@github.com:exis-io/iosAppSeed.git  master
 }
 
 
@@ -76,8 +76,8 @@ ios() {
 
 case "$1" in
     "remote-init") init;;
-    "push") push $2;;
-    "pull") pull $2;;
+    "push") push;;
+    "pull") pull;;
     "ios") ios $2 $3;;
     *) echo "Unknown input $1"
    ;;
