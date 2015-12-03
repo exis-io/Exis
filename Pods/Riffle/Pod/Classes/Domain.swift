@@ -28,7 +28,15 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         // Initialize this agent as the Application domain, or the root domain
         // for this instance of the application
         
-        domain = d
+        // Returns a domain name provided as an environment variable. If the environment variable cannot
+        // be found returns the second parameter by default
+        domain = env("DOMAIN", d)
+        
+        // If the two parameters do *not* match then we are in a container and must infer the app name
+        if domain != d {
+            domain = inferAppName(domain)
+        }
+        
         connection = RiffleConnection()
         name = domain
         
@@ -279,4 +287,18 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         
         return domain + "/" + action
     }
+}
+
+
+// Called in the case where we are *certainly* running in a container-- have to infer the app
+// name as well as the container name
+func inferAppName(domain: String) -> String {
+    var ret = ""
+    let b = domain.componentsSeparatedByString(".")
+    
+    for s in b[0..<(b.count - 2)] {
+        ret += "\(s)."
+    }
+    
+    return ret.substringToIndex(ret.endIndex.predecessor())
 }
