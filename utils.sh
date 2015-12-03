@@ -60,18 +60,18 @@ pull() {
 ios() {
     echo "Updating ios to version $1"
 
-    # git push swiftRiffle `git subtree split --prefix ios/swiftRiffle master`:master --force
+    git subtree push --prefix ios/swiftRiffle swiftRiffle master
 
-    # git clone git@github.com:exis-io/swiftRiffle.git
-    # cd swiftRiffle
+    git clone git@github.com:exis-io/swiftRiffle.git
+    cd swiftRiffle
     
-    # git tag -a $1 -m $2
-    # git push --tags
+    git tag -a $1 -m $2
+    git push --tags
 
-    # pod trunk push --allow-warnings --verbose
+    pod trunk push --allow-warnings --verbose
 
-    # cd ..
-    # rm -rf swiftRiffle
+    cd ..
+    rm -rf swiftRiffle
 
     # update the seed projects and push them 
     cd ios/appSeed
@@ -81,10 +81,10 @@ ios() {
     pod update
 
     git add --all
-    git commit -m 'base project updates'
+    git commit -m 'Riffle upgrade to v$1'
 
-    git push iosAppBackendSeed `git subtree split --prefix ios/appBackendSeed master`:master --force
-    git push iosAppSeed `git subtree split --prefix ios/appSeed master`:master --force
+    git subtree push --prefix ios/appBackendSeede iosAppBackendSeed master
+    git subtree push --prefix ios/appSeed iosAppSeed master
 }
 
 

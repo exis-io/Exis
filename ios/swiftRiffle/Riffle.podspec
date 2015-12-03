@@ -6,9 +6,9 @@
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
 #
 
-Pod::Spec.new do |s| 
+Pod::Spec.new do |s|
     s.name             = "Riffle"
-    s.version          = "0.1.67"
+    s.version          = "0.1.69"
     s.summary          = "Client side library for connecting to a fabric."
 
     s.ios.deployment_target = "8.0"
