@@ -22,7 +22,7 @@ No more needing to worry about learning several languages to create the backend 
 ### Getting Started
 Feel free to check out the examples directory where you can find Xcode projects that will show you how to get started using Exis.
 * [Cards Against Humanity Example](https://github.com/exis-io/CardsAgainst)
-	* [Cards Against Tutorial](http://docs.exis.io/#/pages/samples/SwiftCardsTutorial.md)
+	* Cards Against step-by-step [Tutorial](http://docs.exis.io/#/pages/samples/SwiftCardsTutorial.md)
 	* Here is a simple project that we created to show how powerful Exis is
 
 ### More Information
