@@ -86,19 +86,22 @@ ios() {
 }
 
 js() {
-    echo "Updating ios to version $1"
+    echo "Updating js to version $1"
 
-    browserify js/jsRiffle/index.js --standalone jsRiffle -o js/jsRiffle/release/jsRiffle.js
-    browserify js/jsRiffle/index.js --standalone jsRiffle | uglifyjs > js/jsRiffle/release/jsRiffle.min.js
+    # browserify js/jsRiffle/index.js --standalone jsRiffle -o jsRiffle.js
+    # browserify js/jsRiffle/index.js --standalone jsRiffle | uglifyjs > jsRiffle.min.js
 
-    # git tag -a $1 -m $2
-    # git push --tags
-    # git add --all
-    # git commit -m 'jsRiffle upgrade to v $1'
+    # mv jsRiffle.js js/jsRiffle/release/jsRiffle.js
+    # mv jsRiffle.min.js js/jsRiffle/release/jsRiffle.min.js
 
-    # git push origin master
-    # git subtree push --prefix js/jsRiffle jsRiffle master
-    # git subtree push --prefix js/ngRiffle ngRiffle master
+    git tag -a $1 -m 'Upgrade to v $1'
+    git push --tags
+    git add --all
+    git commit -m 'jsRiffle upgrade to v $1'
+
+    git push origin master
+    git subtree push --prefix js/jsRiffle jsRiffle master
+    git subtree push --prefix js/ngRiffle ngRiffle master
 
     # cd js/jsRiffle
     # npm version $1
