@@ -82,39 +82,39 @@ module.exports = function (grunt) {
         },
 
         // Unit tests
-        karma: {
-            options: {
-                configFile: 'tests/automatic_karma.conf.js'
-            },
-            manual: {
-                configFile: 'tests/manual_karma.conf.js'
-            },
-            singlerun: {},
-            watch: {
-                autowatch: true,
-                singleRun: false
-            },
-            saucelabs: {
-                configFile: 'tests/sauce_karma.conf.js'
-            }
-        },
+        // karma: {
+        //     options: {
+        //         configFile: 'tests/automatic_karma.conf.js'
+        //     },
+        //     manual: {
+        //         configFile: 'tests/manual_karma.conf.js'
+        //     },
+        //     singlerun: {},
+        //     watch: {
+        //         autowatch: true,
+        //         singleRun: false
+        //     },
+        //     saucelabs: {
+        //         configFile: 'tests/sauce_karma.conf.js'
+        //     }
+        // },
 
-        // End to end (e2e) tests
-        protractor: {
-            options: {
-                configFile: "tests/local_protractor.conf.js"
-            },
-            singlerun: {},
-            saucelabs: {
-                options: {
-                    configFile: "tests/sauce_protractor.conf.js",
-                    args: {
-                        sauceUser: process.env.SAUCE_USERNAME,
-                        sauceKey: process.env.SAUCE_ACCESS_KEY
-                    }
-                }
-            }
-        },
+        // // End to end (e2e) tests
+        // protractor: {
+        //     options: {
+        //         configFile: "tests/local_protractor.conf.js"
+        //     },
+        //     singlerun: {},
+        //     saucelabs: {
+        //         options: {
+        //             configFile: "tests/sauce_protractor.conf.js",
+        //             args: {
+        //                 sauceUser: process.env.SAUCE_USERNAME,
+        //                 sauceKey: process.env.SAUCE_ACCESS_KEY
+        //             }
+        //         }
+        //     }
+        // },
 
         // Desktop notificaitons
         notify: {

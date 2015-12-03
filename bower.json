@@ -1,17 +1,14 @@
 {
-    "name": "angular-wamp",
+    "name": "ngRiffle",
     "version": "0.1.7",
-    "main": "./release/angular-wamp.js",
+    "main": "./release/ngRiffle.js",
     "authors": [
-        "David Dan <davidwdan@gmail.com>"
+        "Damouse <damouse007@gmail.com>"
     ],
-    "description": "Angular library for Autobahn.js (WAMP v2)",
+    "description": "Angular library wrapping jsRiffle",
     "keywords": [
         "WAMP",
         "websockets",
-        "AutobahnJS",
-        "Thruway",
-        "Ratchet",
         "Angular"
     ],
     "license": "MIT",
