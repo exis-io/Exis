@@ -1,5 +1,8 @@
 #!/bin/bash 
 
+# git subtree add --prefix js/ngRiffle ngRiffle master
+# 
+
 if [ $# -lt 1 ]
 then
     echo -e "Updating and deployment of riffle libraries\n"
@@ -18,7 +21,9 @@ init() {
     git remote add -f swiftRiffle git@github.com:exis-io/swiftRiffle.git
     git remote add -f iosAppBackendSeed   git@github.com:exis-io/iosAppBackendSeed.git
     git remote add -f iosAppSeed  git@github.com:exis-io/iosAppSeed.git
-    git remote add -f swiftRiffle git@github.com:exis-io/swiftRiffle.git
+
+    git remote add jsRiffle git@github.com:exis-io/jsRiffle.git
+    git remote add ngRiffle git@github.com:exis-io/ngRiffle.git 
 }
 
 push() {
@@ -27,6 +32,9 @@ push() {
     git push swiftRiffle `git subtree split --prefix ios/swiftRiffle master`:master --force
     git push iosAppBackendSeed `git subtree split --prefix ios/appBackendSeed master`:master --force
     git push iosAppSeed `git subtree split --prefix ios/appSeed master`:master --force
+
+    git subtree push --prefix js/jsRiffle jsRiffle master
+    git subtree push --prefix js/ngRiffle ngRiffle master
 
     git push origin
 }
@@ -39,6 +47,9 @@ pull() {
     git subtree pull --prefix=ios/swiftRiffle git@github.com:exis-io/swiftRiffle.git master
     git subtree pull --prefix=ios/appBackendSeed git@github.com:exis-io/iosAppBackendSeed.git master
     git subtree pull --prefix=ios/appSeed git@github.com:exis-io/iosAppSeed.git  master
+
+    git subtree pull --prefix js/jsRiffle jsRiffle master
+    git subtree pull --prefix js/ngRiffle ngRiffle master
 }
 
 
@@ -79,6 +90,7 @@ case "$1" in
     "push") push;;
     "pull") pull;;
     "ios") ios $2 $3;;
+    "js") ios $2 $3;;"
     *) echo "Unknown input $1"
    ;;
 esac
