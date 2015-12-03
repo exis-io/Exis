@@ -9523,8 +9523,8 @@ if (WebSocket) ws.prototype = WebSocket.prototype;
 
 },{}],62:[function(require,module,exports){
 module.exports={
-  "name": "jsRiffle",
-  "version": "0.1.12",
+  "name": "jsriffle",
+  "version": "0.1.13",
   "description": "Riffle allows applications to connect over a fabric",
   "main": "index.js",
   "browser": {
