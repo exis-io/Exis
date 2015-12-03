@@ -36,9 +36,9 @@ pull() {
 
     git pull origin $1
 
-    git subtree pull --prefix=ios/swiftRiffle git@github.com:exis-io/swiftRiffle.git $1 --no-edit
-    git subtree pull --prefix=ios/appBackendSeed git@github.com:exis-io/iosAppBackendSeed.git $1 --no-edit
-    git subtree pull --prefix=ios/appSeed git@github.com:exis-io/iosAppSeed.git $1 --no-edit
+    git subtree pull --prefix=ios/swiftRiffle git@github.com:exis-io/swiftRiffle.git $1
+    git subtree pull --prefix=ios/appBackendSeed git@github.com:exis-io/iosAppBackendSeed.git $1
+    git subtree pull --prefix=ios/appSeed git@github.com:exis-io/iosAppSeed.git $1 
 }
 
 
