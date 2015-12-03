@@ -91,22 +91,22 @@ js() {
     browserify js/jsRiffle/index.js --standalone jsRiffle -o js/jsRiffle/release/jsRiffle.js
     browserify js/jsRiffle/index.js --standalone jsRiffle | uglifyjs > js/jsRiffle/release/jsRiffle.min.js
 
-    git tag -a $1 -m $2
-    git push --tags
-    git add --all
-    git commit -m 'jsRiffle upgrade to v $1'
+    # git tag -a $1 -m $2
+    # git push --tags
+    # git add --all
+    # git commit -m 'jsRiffle upgrade to v $1'
 
-    git push origin master
-    git subtree push --prefix js/jsRiffle jsRiffle master
-    git subtree push --prefix js/ngRiffle ngRiffle master
+    # git push origin master
+    # git subtree push --prefix js/jsRiffle jsRiffle master
+    # git subtree push --prefix js/ngRiffle ngRiffle master
 
-    cd js/jsRiffle
-    npm version $1
-    npm publish
+    # cd js/jsRiffle
+    # npm version $1
+    # npm publish
 
-    cd ../ngRiffle
-    npm version $1
-    npm publish
+    # cd ../ngRiffle
+    # npm version $1
+    # npm publish
 
     # Install packages in appropriate locations
 }
