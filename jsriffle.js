@@ -761,8 +761,6 @@ Domain.prototype.call = function() {
 };
 
 Domain.prototype.publish = function() {
-    console.log("Publishing: " + arguments[0][0]);
-
     var args = flattenHash(arguments);
     var action = args.shift();
 
@@ -779,6 +777,7 @@ Domain.prototype.unregister = function(action) {
 
 exports.Domain = Domain;
 },{"./log.js":6,"./riffle.js":15,"./session.js":16,"./util.js":20,"when":79}],6:[function(require,module,exports){
+(function (global){
 ///////////////////////////////////////////////////////////////////////////////
 //
 //  AutobahnJS - http://autobahn.ws, http://wamp.ws
@@ -793,16 +792,17 @@ exports.Domain = Domain;
 ///////////////////////////////////////////////////////////////////////////////
 
 
-// var debug = function () {};
+var debug = function () {};
 
-// if ('RIFFLE_DEBUG' in global && RIFFLE_DEBUG && 'console' in global) {
+if ('RIFFLE_DEBUG' in global && RIFFLE_DEBUG && 'console' in global) {
    debug = function () {
       console.log.apply(console, arguments);
    }
-// }
+}
 
 exports.debug = debug;
 
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],7:[function(require,module,exports){
 require('./polyfill/object');
 require('./polyfill/array');
@@ -2849,7 +2849,8 @@ FABRIC_URL = "node.exis.io";
 
 // TODO: fabric url doesn't set without calling this method 
 
-exports.setDevFabric = function() {
+exports.setDevFabric = function(url) {
+  
     FABRIC_URL = 'ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws';
 
     // Turn on debug logging, too
@@ -2858,7 +2859,6 @@ exports.setDevFabric = function() {
     // };
 };
 
-exports.biddle = "Nesting is cool";
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"../package.json":81,"./auth/cra.js":2,"./auth/persona.js":3,"./configure.js":4,"./connection.js":5,"./log.js":6,"./polyfill.js":7,"./session.js":16,"./util.js":20,"when":79,"when/monitor/console":77}],16:[function(require,module,exports){
 (function (global){
