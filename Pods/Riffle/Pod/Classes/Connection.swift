@@ -10,7 +10,7 @@ import Foundation
 
 // Base connection for all agents connecting to a fabric
 class RiffleConnection: NSObject, MDWampClientDelegate {
-    var agents: [RiffleAgent] = []
+    var agents: [RiffleDomain] = []
     
     var open = false
     var opening = false
@@ -33,7 +33,7 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
         opening = false
     }
     
-    func addAgent(agent: RiffleAgent) {
+    func addAgent(agent: RiffleDomain) {
         
         if !agents.contains(agent) {
             agents.append(agent)
@@ -44,7 +44,7 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
         }
     }
     
-    func connect(agent: RiffleAgent, token: String?) {
+    func connect(agent: RiffleDomain, token: String?) {
         
         if !open && !opening {
             socket = MDWampTransportWebSocket(server:NSURL(string: NODE), protocolVersions:[kMDWampProtocolWamp2msgpack, kMDWampProtocolWamp2json])
@@ -95,7 +95,7 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
         // Return the token for node auth
     }
     
-    func removeAgent(agent: RiffleAgent) {
+    func removeAgent(agent: RiffleDomain) {
         if !agents.contains(agent) {
             print("Agent \(agent.domain) is not connected.")
             return

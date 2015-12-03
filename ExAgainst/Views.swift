@@ -11,6 +11,7 @@ import Foundation
 import Riffle
 import RMSwipeTableViewCell
 import M13ProgressSuite
+import Spring
 
 
 class CardTableDelegate: NSObject, UITableViewDelegate, UITableViewDataSource, RMSwipeTableViewCellDelegate {
@@ -88,6 +89,7 @@ class CardTableDelegate: NSObject, UITableViewDelegate, UITableViewDataSource, R
     }
 }
 
+
 class PlayerCollectionDelegate: NSObject, UICollectionViewDataSource, UICollectionViewDelegate  {
     var players: [Player] = []
     var collection: UICollectionView
@@ -109,17 +111,23 @@ class PlayerCollectionDelegate: NSObject, UICollectionViewDataSource, UICollecti
         var index = 0
         
         for i in 0...players.count {
-            if players[i] == target {
+            if players[i].domain == target.domain {
                 index = i
                 break
             }
         }
         
         let cell = collection.cellForItemAtIndexPath(NSIndexPath(forRow: index, inSection: 0))
-        UIView.animateWithDuration(0.15, animations: { () -> Void in
-            cell?.backgroundColor = UIColor.whiteColor()
+        
+        if let playerCell = cell as? PlayerCell {
+            print(cell)
+            print("TARGET: \(target), cell: \(cell)")
+            
+            UIView.animateWithDuration(0.15, animations: { () -> Void in
+                playerCell.viewBackground.backgroundColor = UIColor.whiteColor()
             }) { (_ :Bool) -> Void in
-                cell?.backgroundColor = UIColor.blackColor()
+                playerCell.viewBackground.backgroundColor = UIColor.blackColor()
+            }
         }
     }
     
@@ -130,7 +138,7 @@ class PlayerCollectionDelegate: NSObject, UICollectionViewDataSource, UICollecti
     
     func setCzar(target: Player) {
         if activeCell != nil {
-            activeCell!.backgroundColor = UIColor.clearColor()
+            activeCell!.viewBackground.backgroundColor = UIColor.clearColor()
         }
         
         var index = 0
@@ -141,8 +149,14 @@ class PlayerCollectionDelegate: NSObject, UICollectionViewDataSource, UICollecti
             }
         }
         
-        activeCell = collection.cellForItemAtIndexPath(NSIndexPath(forRow: index, inSection: 0)) as! PlayerCell
-        activeCell!.backgroundColor = UIColor.grayColor()
+        let c = collection.cellForItemAtIndexPath(NSIndexPath(forRow: index, inSection: 0))
+        
+        if c != nil {
+            if let cell = c as? PlayerCell {
+                activeCell = cell
+                activeCell!.viewBackground.backgroundColor = UIColor.grayColor()
+            }
+        }
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -151,6 +165,7 @@ class PlayerCollectionDelegate: NSObject, UICollectionViewDataSource, UICollecti
         
         cell.labelName.text = player.domain.stringByReplacingOccurrencesOfString(appName + ".", withString: "")
         cell.labelScore.text = "\(player.score)"
+        cell.viewBackground.layer.borderColor = UIColor.whiteColor().CGColor
         
         return cell
     }
@@ -172,23 +187,25 @@ class CardCell: RMSwipeTableViewCell {
     func resetContentView() {
         UIView.animateWithDuration(0.15, animations: { () -> Void in
             self.contentView.frame = CGRectOffset(self.contentView.bounds, 0.0, 0.0)
-            }) { (b: Bool) -> Void in
-                self.shouldAnimateCellReset = true
-                self.cleanupBackView()
-                self.interruptPanGestureHandler = false
-                self.panner.enabled = true
+        }) { (b: Bool) -> Void in
+            self.shouldAnimateCellReset = true
+            self.cleanupBackView()
+            self.interruptPanGestureHandler = false
+            self.panner.enabled = true
         }
     }
 }
 
+
 class PlayerCell: UICollectionViewCell {
     @IBOutlet weak var labelName: UILabel!
+    @IBOutlet weak var viewBackground: UIView!
     @IBOutlet weak var labelScore: UILabel!
 }
 
 
+// A simple subclass of the progress views that ticks down over time
 class TickingView: M13ProgressViewBar {
-    // A simple subclass that ticks down when given a time
     var timer: NSTimer?
     var current: Double = 1.0
     var increment: Double = 0.1
@@ -229,9 +246,31 @@ func presentControllerTranslucent(source: UIViewController, target: UIViewContro
     let effect = UIVisualEffectView(effect: UIBlurEffect(style: .Dark))
     effect.frame = target.view.frame
     target.view.insertSubview(effect, atIndex:0)
+    
     target.modalPresentationStyle = .OverFullScreen
     source.modalPresentationStyle = .CurrentContext
-    
     source.presentViewController(target, animated: true, completion: nil)
 }
+
+func blur(target: UIView) {
+    let effect = UIVisualEffectView(effect: UIBlurEffect(style: .Dark))
+    effect.frame = target.bounds
+    effect.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+    target.insertSubview(effect, atIndex:0)
+
+}
+
+func flashView(view: SpringView, label: UILabel, text: String) {
+    label.text = text
+    view.animation = "fadeIn"
+    view.animate()
+    
+    view.animateNext {
+        view.animation = "fadeOut"
+        view.animate()
+    }
+}
+
+
+
 

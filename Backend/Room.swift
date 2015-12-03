@@ -9,65 +9,78 @@
 import Foundation
 import Riffle
 
-class Room: NSObject {
-    var timer: NSTimer?
+class Room: RiffleDomain {
+    var parent: Container!
+    var timer: DelayedCaller!
     
+    var dynamicRoleId: String!
     var state: String = "Empty"
+    
     var players: [Player] = []
     var czar: Player?
-    var questions = loadCards("q13")
-    var answers = loadCards("a13")
+    var questions: [String]!
+    var answers: [String]!
     
     
     override func onJoin() {
-        print("Container joined")
+        timer = DelayedCaller(target: self)
         
-        register("leave", playerLeft)
-        register("play", addPlayer)
         register("pick", pick)
-        
-        // Called automatically when a domain leaves the fabric
-        app.subscribe("sessionLeft", playerLeft)
+        register("leave", removePlayer)
     }
     
+    func removePlayer(domain: String) {
+        if let player = getPlayer(players, domain: domain) {
+            player.zombie = true
+            player.demo = true
+        } else {
+            print("WARN-- asked to remove player \(domain), not found in players!")
+            let a = czar!
+        }
+    }
     
     func addPlayer(domain: String) -> AnyObject {
         // Add the new player and draw them a hand. Let everyone else in the room know theres a new player
-        
         print("Adding Player \(domain)")
+        
+        // When the player leaves they're marked as a zombie. All zombies are cleared out at the end of a round, 
+        // but if a player leaves and then rejoins before their zombie was cleared out then we'll have two players with the same name
+        // If the player's name already exists in the app, unzombiefy them instead of creating a new player
+        if let existingPlayer = getPlayer(players, domain: domain) {
+            existingPlayer.zombie = false
+            existingPlayer.demo = false
+            
+            return [existingPlayer.hand, players, state, self.name!]
+        }
         
         let newPlayer = Player()
         newPlayer.domain = domain
+        newPlayer.demo = false
         newPlayer.hand = answers.randomElements(4, remove: true)
         
         players.append(newPlayer)
+        publish("joined", newPlayer)
+        
+        print("role: \(self.dynamicRoleId) parent.domain: \(parent.domain), domain: \(domain)")
+        // Add dynamic role
+        app.call("xs.demo.Bouncer/assignDynamicRole", self.dynamicRoleId, "player", parent.domain, [domain], handler: nil)
         
         // Add Demo players
-        for i in 0...2 {
-            let player = Player()
-            player.domain = app.domain + ".demo\(i)"
-            player.hand = answers.randomElements(10, remove: true)
-            player.demo = true
-            players.append(player)
+        if players.count < 3 {
+            for i in 0...2 {
+                let player = Player()
+                player.domain = app.domain + ".demo\(i)"
+                player.hand = answers.randomElements(10, remove: true)
+                player.demo = true
+                players.append(player)
+            }
         }
         
-        startTimer(EMPTY_TIME, selector: "startAnswering")
-        
-        return [newPlayer.hand, players, state]
-    }
-    
-    func playerLeft(player: Player) {
-        // The player left the game. Remove the given player, reshuffle their cards, and notify the other players
-        questions = loadCards("q13")
-        answers = loadCards("a13")
-        players = []
-        state = "Scoring"
-        czar = nil
-        
-        if let t = timer {
-            t.invalidate()
-            timer = nil
+        if state == "Empty" {
+            timer.startTimer(EMPTY_TIME, selector: "startAnswering")
         }
+        
+        return [newPlayer.hand, players, state, self.name!]
     }
     
     func pick(player: Player, card: String) {
@@ -75,39 +88,39 @@ class Room: NSObject {
         
         let player = players.filter { $0.domain == player.domain }[0]
         
-        if state == "Answering" && player.pick == nil {
+        if state == "Answering" && player.pick == nil && !player.czar {
             player.pick = card
             player.hand.removeObject(card)
+            print("Player: \(player.domain) answered: \(card)")
             
-        } else if state == "Choosing" && player.czar {
+        } else if state == "Picking" && player.czar {
             print("Ending Choosing early")
             let winner = players.filter { $0.pick == card }[0]
-            startTimer(0.0, selector: "startScoring:", info: winner.domain)
+            timer.startTimer(0.0, selector: "startScoring:", info: winner.domain)
             
         } else {
             print("Player pick in wrong round!")
         }
-        
-        print("Player: \(player.domain) answered \(card)")
     }
     
+    
+    // MARK: Round Transitions
     func startAnswering() {
-        print("STATE: Answering")
+        print("    Answering -- ")
         state = "Answering"
         
-        let question = questions.randomElements(1, remove: false)
+        removeZombies()
         setNextCzar()
-        
         publish("answering", czar!, questions.randomElements(1, remove: false)[0], PICK_TIME)
         
-        startTimer(PICK_TIME, selector: "startPicking")
+        timer.startTimer(PICK_TIME, selector: "startPicking")
     }
     
     func startPicking() {
-        print("STATE: Picking")
+        print("    Picking -- ")
         state = "Picking"
         
-        var pickers = players.filter { !$0.czar }
+        let pickers = players.filter { !$0.czar }
         
         // Autopick for players that didnt pick
         for player in pickers {
@@ -118,17 +131,17 @@ class Room: NSObject {
         
         publish("picking", pickers.map({ $0.pick! }), PICK_TIME)
         
-        startTimer(PICK_TIME, selector: "startScoring:")
+        timer.startTimer(PICK_TIME, selector: "startScoring:")
     }
     
-    func startScoring(timer: NSTimer) {
-        print("STATE: scoring")
+    func startScoring(t: NSTimer) {
+        print("    Scoring -- ")
         state = "Scoring"
         
         var pickers = players.filter { !$0.czar }
         var winner: Player?
         
-        if let domain = timer.userInfo as? String {
+        if let domain = t.userInfo as? String {
             winner = players.filter { $0.domain == domain }[0]
         } else {
             print("No players picked cards! Choosing one at random")
@@ -136,8 +149,9 @@ class Room: NSObject {
         }
         
         winner!.score += 1
+        publish("scoring", winner!, winner!.pick!, SCORE_TIME)
         
-        // draw cards for all players
+        // draw cards for all players, nil their picks
         for p in pickers {
             if let c = p.pick {
                 answers.append(c)
@@ -147,19 +161,25 @@ class Room: NSObject {
             let newAnswer = answers.randomElements(1, remove: true)
             p.hand += newAnswer
             p.pick = nil
+            
+            // If this isn't a demo player deal them a new card
+            if !p.demo {
+                call(p.domain + "/draw", newAnswer, handler: nil)
+            }
         }
         
-        publish("scoring", winner!, SCORE_TIME)
-        startTimer(SCORE_TIME, selector: "startAnswering")
+        timer.startTimer(SCORE_TIME, selector: "startAnswering")
     }
     
+    
+    // MARK: Utils
     func setNextCzar() {
         if czar == nil {
             czar = players[0]
             czar!.czar = true
         } else {
             let i = players.indexOf(czar!)!
-            let newCzar = players[(i + 1) % (players.count - 1)]
+            let newCzar = players[(i + 1) % (players.count)]
             czar!.czar = false
             newCzar.czar = true
             czar = newCzar
@@ -168,16 +188,36 @@ class Room: NSObject {
         print("New Czar: \(czar!.domain)")
     }
     
-    
-    // MARK: Utilities
-    func startTimer(time: NSTimeInterval, selector: String, info: AnyObject? = nil) {
-        // Calls the given function after (time) seconds. Used to count down the seconds on the current round
+    func removeZombies() {
+        // Players that left in the middle of a round of play are only removed once, at the start of a new round
+        // in order to avoid round restarts or interrupted play
         
-        if timer != nil {
-            timer!.invalidate()
-            timer = nil
+        for player in players {
+            if !player.zombie { continue }
+            
+            print("Removing player: \(player.domain)")
+            answers.appendContentsOf(player.hand)
+            
+            if let p = player.pick {
+                answers.append(p)
+            }
+            
+            players.removeObject(player)
+            publish("left", player)
+            
+            if player.czar {
+                czar = nil
+            }
+            
+            // remove the role from the player that left, ensuring they can't call our endpoints anymore
+            app.call("xs.demo.Bouncer/revokeDynamicRole", self.dynamicRoleId, "player", parent.domain, [player.domain], handler: nil)
+            
+            // Close the room if there are only demo players left-- this is deferred until promises get in
+            if players.reduce(0, combine: { $0 + ($1.demo ? 0 : 1) }) == 0 {
+                parent.closeRoom(self)
+                parent = nil
+                timer.cancel()
+            }
         }
-        
-        timer = NSTimer.scheduledTimerWithTimeInterval(time, target: self, selector: Selector(selector), userInfo: info, repeats: false)
     }
 }

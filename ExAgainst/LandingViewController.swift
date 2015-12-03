@@ -6,10 +6,17 @@
 //  Copyright © 2015 paradrop. All rights reserved.
 //
 
+//  First controller to be presented, implements login and game selection.
+//
+//  Connections to the fabric are established in the login method. Once a login has occured
+//  users can touch play, triggering the startPlaying method. Since a room of play can only include a
+//  handful of players and the app should be playable by anyone
+
 import UIKit
 import Riffle
 import Spring
 import IHKeyboardAvoiding
+import LTMorphingLabel
 
 
 class LandingViewController: UIViewController, RiffleDelegate {
@@ -18,61 +25,55 @@ class LandingViewController: UIViewController, RiffleDelegate {
     @IBOutlet weak var viewButtons: SpringView!
     @IBOutlet weak var viewLogin: SpringView!
     @IBOutlet weak var textfieldUsername: UITextField!
+    @IBOutlet weak var labelTips: LTMorphingLabel!
     
-    // The agent connection classes
-    var app: RiffleAgent!
-    var me: RiffleAgent!
-    var container: RiffleAgent!
+    var app: RiffleDomain!
+    var me: RiffleDomain!
+    var container: RiffleDomain!
     
+    
+    let tips = [
+        "Swipe right to pick a card",
+        "Each round a new player picks the winner",
+        "Check out exis.io",
+        "Creative Commons BY-NC-SA 2.0 license."
+    ]
     
     override func viewWillAppear(animated: Bool) {
-        Riffle.setDevFabric()
-        //Riffle.setDebug()
-        
-        // View setup and styling
-        IHKeyboardAvoiding.setAvoidingView(viewLogin)
-        
         textfieldUsername.layer.borderColor = UIColor.whiteColor().CGColor
         textfieldUsername.attributedPlaceholder = NSAttributedString(string: "Username", attributes: [NSForegroundColorAttributeName: UIColor.whiteColor()])
         
+        IHKeyboardAvoiding.setAvoidingView(viewLogin)
         viewLogo.animate()
         viewLogin.animate()
-    }
-    
-    
-    @IBAction func login(sender: AnyObject) {
-        textfieldUsername.resignFirstResponder()
-        let name = textfieldUsername.text!
         
-        app = RiffleAgent(domain: "xs.demo.damouse.cardsagainst")
-        container = RiffleAgent(name: "container", superdomain: app)
-        me = RiffleAgent(name: name, superdomain: app)
-        
-        me.delegate = self
-        me.join()
+        labelTips.morphingEffect = .Scale
+        labelTips.text = tips[0]
+        NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: Selector("rotateText"), userInfo: nil, repeats: true)
     }
     
-    @IBAction func play(sender: AnyObject) {
-        container.call("play", me.domain, handler: startPlaying)
-    }
     
-    func startPlaying(cards: [String], players: [Player]) {
-        // Result of the call to the Room when a player starts playing
+    func startPlaying(cards: [String], players: [Player], state: String, room: String) {
         let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("game") as! GameViewController
         
         controller.currentPlayer = players.filter { $0.domain == self.me.domain }[0]
         controller.currentPlayer.hand = cards
         controller.players = players
         
+        controller.state = state
         controller.me = self.me
         controller.app = self.app
-        controller.container = self.container
+        controller.room = RiffleDomain(name: room, superdomain: container)
+        
+        // Gives the dealer permission to call "/draw" on us as needed
+        self.app.call("xs.demo.Bouncer/setPerm", self.container.domain, self.me.domain + "/draw", handler: nil)
         
         presentControllerTranslucent(self, target: controller)
     }
     
+    
     func onJoin() {
-        print("Agent joined")
+        print("Domain joined")
         
         viewLogin.animation = "zoomOut"
         viewLogin.animate()
@@ -81,6 +82,26 @@ class LandingViewController: UIViewController, RiffleDelegate {
     }
     
     func onLeave() {
-        print("Agent left")
+        print("Domain left")
+    }
+    
+    @IBAction func login(sender: AnyObject) {
+        textfieldUsername.resignFirstResponder()
+        let name = textfieldUsername.text!
+        
+        app = RiffleDomain(domain: "xs.demo.exis.cards")
+        container = RiffleDomain(name: "Osxcontainer.gamelogic", superdomain: app)
+        
+        me = RiffleDomain(name: name, superdomain: app)
+        me.delegate = self
+        me.join()
+    }
+    
+    @IBAction func play(sender: AnyObject) {
+        container.call("play", me.domain, handler: startPlaying)
+    }
+    
+    func rotateText() {
+        labelTips.text = tips[(tips.indexOf(labelTips.text)! + 1) % (tips.count)]
     }
 }

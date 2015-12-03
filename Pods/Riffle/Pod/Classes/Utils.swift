@@ -17,3 +17,12 @@ extension RangeReplaceableCollectionType where Generator.Element : Equatable {
         }
     }
 }
+
+func env(key: String, _ normal: String) -> String {
+    if let result = NSProcessInfo.processInfo().environment[key] {
+        return result
+    } else {
+        Riffle.debug("Unable to extract environment variable \(key). Using \(normal) instead")
+        return normal
+    }
+}

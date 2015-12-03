@@ -22,7 +22,7 @@ func register(domain: String, requesting: String, success: () -> (), fail: () ->
         Riffle.debug("Success")
         success()
     }) { (op: AFHTTPRequestOperation, err: NSError) -> Void in
-        Riffle.warn("Failed: \(err)")
+        Riffle.debug("Failed: \(err)")
         fail()
     }
 }

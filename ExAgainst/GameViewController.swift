@@ -12,7 +12,7 @@ import UIKit
 import Riffle
 import RMSwipeTableViewCell
 import M13ProgressSuite
-
+import Spring
 
 class GameViewController: UIViewController {
     
@@ -21,16 +21,19 @@ class GameViewController: UIViewController {
     @IBOutlet weak var tableCard: UITableView!
     @IBOutlet weak var collectionPlayers: UICollectionView!
     @IBOutlet weak var buttonBack: UIButton!
+    @IBOutlet weak var viewRound: SpringView!
+    @IBOutlet weak var labelRound: UILabel!
     
     var tableDelegate: CardTableDelegate!
     var collectionDelegate: PlayerCollectionDelegate!
     
     var players: [Player] = []
     var currentPlayer: Player!
+    var state: String!
     
-    var app: RiffleAgent!
-    var container: RiffleAgent!
-    var me: RiffleAgent!
+    var app: RiffleDomain!
+    var room: RiffleDomain!
+    var me: RiffleDomain!
     
     
     override func viewDidLoad() {
@@ -42,15 +45,20 @@ class GameViewController: UIViewController {
         collectionDelegate.refreshPlayers(players)
         tableDelegate.refreshCards(currentPlayer.hand)
         
-        container.subscribe("answering", answering)
-        container.subscribe("choosing", picking)
-        container.subscribe("scoring", scoring)
+        room.subscribe("answering", answering)
+        room.subscribe("picking", picking)
+        room.subscribe("scoring", scoring)
+        
         me.register("draw", draw)
+        
+        blur(viewRound)
     }
     
     override func viewWillDisappear(animated: Bool) {
-        container.call("leave", currentPlayer, handler: nil)
-        container.leave()
+        room.call("leave", currentPlayer.domain, handler: nil)
+        
+        room.leave()
+        me.leave()
     }
     
     @IBAction func leave(sender: AnyObject) {
@@ -60,30 +68,42 @@ class GameViewController: UIViewController {
     
     // MARK: Game Logics
     func answering(newCzar: Player, question: String, time: Double) {
-        print("Answering. New czar: \(newCzar.domain)")
-        
         labelActiveCard.text = question
         _ = players.map { $0.czar = $0 == newCzar }
         collectionDelegate.setCzar(newCzar)
-        tableDelegate.refreshCards(newCzar == me ? [] : currentPlayer.hand)
+        tableDelegate.refreshCards(newCzar.domain == me.domain ? [] : currentPlayer.hand)
         viewProgress.countdown(time)
+        
+        flashView(viewRound, label: labelRound, text: currentPlayer.czar ? "You're the czar" : "Choose a card")
+        state = "Answering"
     }
     
     func picking(answers: [String], time: Double) {
-        print("Picking")
+        flashView(viewRound, label: labelRound, text: currentPlayer.czar ? "Choose a winner" : "Czar picking a winner")
+        state = "Picking"
+        
+        var found = false
         
         for answer in answers {
             if currentPlayer.hand.contains(answer) {
+                print("Removed card: \(answer)")
+                found = true
                 currentPlayer.hand.removeObject(answer)
             }
+        }
+        
+        if !found && !currentPlayer.czar {
+            print("WARN-- no card removed! Hand: \(currentPlayer.hand), answers: \(answers)")
         }
         
         tableDelegate.refreshCards(answers)
         viewProgress.countdown(time)
     }
     
-    func scoring(player: Player, time: Double) {
-        print("Scoring. Player: \(player.domain) won")
+    func scoring(player: Player, card: String, time: Double) {
+        let prettyName = player.domain.stringByReplacingOccurrencesOfString(app.domain + ".", withString: "")
+        flashView(viewRound, label: labelRound, text: "\(prettyName) won!")
+        state = "Scoring"
         
         for p in players {
             if p == player {
@@ -93,15 +113,23 @@ class GameViewController: UIViewController {
         
         collectionDelegate.refreshPlayers(players)
         collectionDelegate.flashCell(player)
+        tableDelegate.refreshCards([card])
+        
         viewProgress.countdown(time)
     }
     
     func playerSwiped(card: String) {
         // Called when a player swipes a cell with the card that cell represents
-        container.call("pick", currentPlayer, card, handler: nil)
+        
+        if tableDelegate.cards.count != 1 && (state == "Answering" || state == "Picking" && currentPlayer.czar) {
+            tableDelegate.removeCellsExcept([card])
+        }
+        
+        room.call("pick", currentPlayer, card, handler: nil)
     }
     
     func draw(cards: [String]) {
         currentPlayer.hand += cards
+        // update the table if we're currently displaying the hand
     }
 }

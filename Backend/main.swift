@@ -9,190 +9,86 @@
 import Foundation
 import Riffle
 
+// Do not buffer output
+setbuf(__stdoutp, nil);
+
+// This is used for testing the container locally.
+let token = "9Hh0hq5Mbvha0iB8z---JXjVHP1SMitlYtSPH2uQHfY3G8bl9hBc3htGJbcC1ijI6OM1Dz2wdMwInTH1YI.DpgU1aozD7eicDyWVtvMkeVh0r3PwP6EvCS5dMaXy1JlfdHwBs4SrvE3gBGW481l0YOT.jbgyecpsvkanRtyRy3g_"
 
 // How long each round takes, in seconds
-let ANSWER_TIME = 5.0
-let PICK_TIME = 5.0
-let SCORE_TIME = 3.0
+let ANSWER_TIME = 10.0
+let PICK_TIME = 8.0
+let SCORE_TIME = 5.0
 let EMPTY_TIME = 1.0
 
-Riffle.setDevFabric()
-let app = RiffleAgent(domain: "xs.demo.damouse.cardsagainst")
+// The app domain
+let app = RiffleDomain(domain: "xs.demo.exis.cards")
 
-
-class Container: RiffleAgent {
-    var timer: NSTimer?
-    
-    var state: String = "Empty"
-    var players: [Player] = []
-    var czar: Player?
+class Container: RiffleDomain {
+    var rooms: [Room] = []
     var questions = loadCards("q13")
     var answers = loadCards("a13")
     
     
     override func onJoin() {
         print("Container joined")
-        
-        register("leave", playerLeft)
-        register("play", addPlayer)
-        register("pick", pick)
-
-        // Called automatically when a domain leaves the fabric
         app.subscribe("sessionLeft", playerLeft)
+        register("play", play)
+        
+        // Set up a dynamic role for this container
+        let permissions = [
+            ["target": self.domain + "/$/pick", "verb":"c"],
+            ["target": self.domain + "/$/leave", "verb":"c"],
+            ["target": self.domain + "/$/answering", "verb":"s"],
+            ["target": self.domain + "/$/picking", "verb":"s"],
+            ["target": self.domain + "/$/scoring", "verb":"s"],
+            ["target": self.domain + "/$/left", "verb":"s"],
+            ["target": self.domain + "/$/joined", "verb":"s"]
+        ]
+        
+        app.call("xs.demo.Bouncer/addDynamicRole", "player", self.domain, permissions, handler: nil)
+        
+        // Create one room
+        app.call("xs.demo.Bouncer/newDynamicRole", "player", self.domain, handler: { (res: String) in
+            let room = Room(name: "/" + res, superdomain: self)
+            room.parent = self
+            room.dynamicRoleId = res
+            room.questions = self.questions
+            room.answers = self.answers
+            self.rooms.append(room)
+        })
     }
     
     
-    func addPlayer(domain: String) -> AnyObject {
-        // Add the new player and draw them a hand. Let everyone else in the room know theres a new player
+    func play(player: String) -> AnyObject {
+        var emptyRooms = rooms.filter { $0.players.count < 6 }
+        var room: Room
         
-        print("Adding Player \(domain)")
-        
-        let newPlayer = Player()
-        newPlayer.domain = domain
-        newPlayer.hand = answers.randomElements(4, remove: true)
-        
-        players.append(newPlayer)
-        
-        // Add Demo players
-        for i in 0...2 {
-            let player = Player()
-            player.domain = app.domain + ".demo\(i)"
-            player.hand = answers.randomElements(10, remove: true)
-            player.demo = true
-            players.append(player)
-        }
-        
-        startTimer(EMPTY_TIME, selector: "startAnswering")
-        
-        return [newPlayer.hand, players, state]
-    }
-    
-    func playerLeft(player: Player) {
-        // The player left the game. Remove the given player, reshuffle their cards, and notify the other players
-        questions = loadCards("q13")
-        answers = loadCards("a13")
-        players = []
-        state = "Scoring"
-        czar = nil
-        
-        if let t = timer {
-            t.invalidate()
-            timer = nil
-        }
-    }
-    
-    func pick(player: Player, card: String) {
-        // Player picked a card. This action depends on the current state of play
-        
-        let player = players.filter { $0.domain == player.domain }[0]
-        
-        if state == "Answering" && player.pick == nil {
-            player.pick = card
-            player.hand.removeObject(card)
-            
-        } else if state == "Choosing" && player.czar {
-            print("Ending Choosing early")
-            let winner = players.filter { $0.pick == card }[0]
-            startTimer(0.0, selector: "startScoring:", info: winner.domain)
-            
+        if emptyRooms.count == 0 {
+            print("WARN: no empty rooms found. Unable to allocate space for player!")
+            room = emptyRooms.randomElements(1)[0]
         } else {
-            print("Player pick in wrong round!")
+            room = emptyRooms.randomElements(1)[0]
         }
         
-        print("Player: \(player.domain) answered \(card)")
+        return room.addPlayer(player as String)
     }
     
-    func startAnswering() {
-        print("STATE: Answering")
-        state = "Answering"
-        
-        let question = questions.randomElements(1, remove: false)
-        setNextCzar()
-        
-        publish("answering", czar!, questions.randomElements(1, remove: false)[0], PICK_TIME)
-        
-        startTimer(PICK_TIME, selector: "startPicking")
+    func closeRoom(room: Room) {
+        //print("Closing room.")
+        //rooms.removeObject(room)
     }
     
-    func startPicking() {
-        print("STATE: Picking")
-        state = "Picking"
-        
-        var pickers = players.filter { !$0.czar }
-        
-        // Autopick for players that didnt pick
-        for player in pickers {
-            if player.pick == nil {
-                player.pick = player.hand.randomElements(1, remove: true)[0]
+    func playerLeft(domain: String) {
+        for room in rooms {
+            if let _ = getPlayer(room.players, domain: domain) {
+                room.removePlayer(domain)
+                return
             }
         }
-        
-        publish("picking", pickers.map({ $0.pick! }), PICK_TIME)
-        
-        startTimer(PICK_TIME, selector: "startScoring:")
-    }
-    
-    func startScoring(timer: NSTimer) {
-        print("STATE: scoring")
-        state = "Scoring"
-        
-        var pickers = players.filter { !$0.czar }
-        var winner: Player?
-        
-        if let domain = timer.userInfo as? String {
-            winner = players.filter { $0.domain == domain }[0]
-        } else {
-            print("No players picked cards! Choosing one at random")
-            winner = pickers.randomElements(1, remove: false)[0]
-        }
-        
-        winner!.score += 1
-        
-        // draw cards for all players
-        for p in pickers {
-            if let c = p.pick {
-                answers.append(c)
-                p.hand.removeObject(c)
-            }
-            
-            let newAnswer = answers.randomElements(1, remove: true)
-            p.hand += newAnswer
-            p.pick = nil
-        }
-        
-        publish("scoring", winner!, SCORE_TIME)
-        startTimer(SCORE_TIME, selector: "startAnswering")
-    }
-    
-    func setNextCzar() {
-        if czar == nil {
-            czar = players[0]
-            czar!.czar = true
-        } else {
-            let i = players.indexOf(czar!)!
-            let newCzar = players[(i + 1) % (players.count - 1)]
-            czar!.czar = false
-            newCzar.czar = true
-            czar = newCzar
-        }
-        
-        print("New Czar: \(czar!.domain)")
-    }
-
-    
-    // MARK: Utilities
-    func startTimer(time: NSTimeInterval, selector: String, info: AnyObject? = nil) {
-        // Calls the given function after (time) seconds. Used to count down the seconds on the current round
-        
-        if timer != nil {
-            timer!.invalidate()
-            timer = nil
-        }
-        
-        timer = NSTimer.scheduledTimerWithTimeInterval(time, target: self, selector: Selector(selector), userInfo: info, repeats: false)
     }
 }
 
-Container(name: "container", superdomain: app).join()
+Container(name: "Osxcontainer.gamelogic", superdomain: app).join(token)
 NSRunLoop.currentRunLoop().run()
 
