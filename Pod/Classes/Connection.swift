@@ -56,7 +56,12 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
                 return
             }
             
-            if let t = token {
+            let envToken = env("EXIS_TOKEN", "")
+            
+            if envToken != "" {
+                self.session!.token = envToken
+                self.session!.connect()
+            } else if let t = token {
                 self.session!.token = t
                 self.session!.connect()
             } else {
