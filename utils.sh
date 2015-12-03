@@ -46,24 +46,26 @@ ios() {
     echo "Updating ios to version $1"
 
     git tag -a $1 -m $2
+    git add --all
+    git commit -m $2
 
     git push swiftRiffle `git subtree split --prefix ios/swiftRiffle master`:master --force
     git push swiftRiffle --tags
 
-    pod trunk push ios/swiftRiffle/Riffle.podspec --allow-warnings
+    pod trunk push ios/swiftRiffle/Riffle.podspec --allow-warnings --verbose
 
     # update the seed projects and push them 
-    cd ios/appSeed
-    pod update
+    # cd ios/appSeed
+    # pod update
 
-    cd ../appBackendSeed
-    pod update
+    # cd ../appBackendSeed
+    # pod update
 
-    git add --all
-    git commit -m 'base project update'
+    # git add --all
+    # git commit -m 'base project update'
 
-    git push iosAppSeed master
-    git push iosAppBackendSeed master
+    # git push iosAppSeed master
+    # git push iosAppBackendSeed master
 }
 
 
