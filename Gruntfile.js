@@ -134,21 +134,21 @@ module.exports = function (grunt) {
     grunt.registerTask('update', ['shell:npm_install', 'shell:bower_install']);
 
     // Single run tests
-    grunt.registerTask('test', ['test:unit', 'test:e2e']);
-    grunt.registerTask('test:unit', ['karma:singlerun']);
-    grunt.registerTask('test:e2e', ['connect:testserver', 'protractor:singlerun']);
-    grunt.registerTask('test:manual', ['karma:manual']);
+    // grunt.registerTask('test', ['test:unit', 'test:e2e']);
+    // grunt.registerTask('test:unit', ['karma:singlerun']);
+    // grunt.registerTask('test:e2e', ['connect:testserver', 'protractor:singlerun']);
+    // grunt.registerTask('test:manual', ['karma:manual']);
 
     // Travis CI testing
-    grunt.registerTask('test:travis', ['build', 'test:unit']);
+    // grunt.registerTask('test:travis', ['build', 'test:unit']);
 
     // Sauce tasks
-    grunt.registerTask('sauce:unit', ['karma:saucelabs']);
-    grunt.registerTask('sauce:e2e', ['connect:testserver', 'protractor:saucelabs']);
+    // grunt.registerTask('sauce:unit', ['karma:saucelabs']);
+    // grunt.registerTask('sauce:e2e', ['connect:testserver', 'protractor:saucelabs']);
 
     // Watch tests
-    grunt.registerTask('test:watch', ['karma:watch']);
-    grunt.registerTask('test:watch:unit', ['karma:watch']);
+    // grunt.registerTask('test:watch', ['karma:watch']);
+    // grunt.registerTask('test:watch:unit', ['karma:watch']);
 
     // Build tasks
     grunt.registerTask('build', ['concat', 'ngAnnotate', 'uglify']);
