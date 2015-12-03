@@ -1,0 +1,39 @@
+{
+  "name": "ngRiffle",
+  "description": "Angular library for jsRiffle",
+  "version": "0.1.10",
+  "author": "Damouse <damouse007@gmail.com>",
+  "homepage": "https://github.com/exis-io/ngRiffle",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/exis-io/ngRiffle.git"
+  },
+  "licenses": [
+    {
+      "type": "MIT"
+    }
+  ],
+  "keywords": [
+    "Riffle",
+    "websockets"
+  ],
+  "main": "release/ngRiffle.min.js",
+  "files": [
+    "release/**",
+    "LICENSE",
+    "README.md",
+    "package.json"
+  ],
+  "dependencies": {
+    "angular": "^1.2.0",
+    "jsriffle": "0.1.1"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-concat": "^0.5.1",
+    "grunt-contrib-uglify": "^0.9.1",
+    "grunt-ng-annotate": "^1.0.1",
+    "load-grunt-tasks": "^3.2.0"
+  }
+}
