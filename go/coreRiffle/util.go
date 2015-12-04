@@ -11,6 +11,26 @@ const (
 	timeout time.Duration = 5 * time.Second
 )
 
+type Connection interface {
+	Send(message) error
+
+	// Closes the peer connection and any channel returned from Receive().
+	// Multiple calls to Close() will have no effect.
+	Close() error
+
+	// Receive returns a channel of messages coming from the peer.
+	// NOTE: I think this should be reactive
+	Receive() <-chan message
+
+	BlockMessage() (message, error)
+}
+
+type Persistence interface {
+	Load(string) []byte
+
+	Save(string, []byte)
+}
+
 func init() {
 	rand.Seed(time.Now().UnixNano())
 }
@@ -70,8 +90,8 @@ func (e InvalidURIError) Error() string {
 
 const (
 	// ErrInvalidUri = "wamp.error.invalid_uri"
-	// ErrNoSuchDomain = "wamp.error.no_such_procedure"
-	// ErrDomainAlreadyExists = "wamp.error.procedure_already_exists"
+	// ErrNoSuchdomain = "wamp.error.no_such_procedure"
+	// ErrdomainAlreadyExists = "wamp.error.procedure_already_exists"
 	// ErrNoSuchRegistration = "Registration"
 	// ErrNoSuchSubscription = "Subscription does not exist"
 
