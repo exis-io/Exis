@@ -169,10 +169,8 @@ core() {
     echo "Building gojs"
     gopherjs build -m core/sandbox/jsRiffle.go
 
-    rm js/jsRiffle.js js/jsRiffle.js.map
-
-    mv jsRiffle.js js/jsRiffle.js
-    mv jsRiffle.js.map js/jsRiffle.js.map
+    mv jsRiffle.js js/jsRiffle/src/go.js
+    mv jsRiffle.js js/jsRiffle/src/go.js.map
 }
 
 case "$1" in
