@@ -39,7 +39,7 @@ push() {
     git subtree push --prefix js/ngRiffle ngRiffle master
     git subtree push --prefix js/angularSeed ngSeed master
 
-    git push origin
+    git push origin master
 }
 
 pull() {
