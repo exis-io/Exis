@@ -1,0 +1,6 @@
+framework module MPMessagePack {
+  umbrella header "Pods-ExAgainst-MPMessagePack-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,70 @@
+PODS:
+  - AFNetworking (2.6.1):
+    - AFNetworking/NSURLConnection (= 2.6.1)
+    - AFNetworking/NSURLSession (= 2.6.1)
+    - AFNetworking/Reachability (= 2.6.1)
+    - AFNetworking/Security (= 2.6.1)
+    - AFNetworking/Serialization (= 2.6.1)
+    - AFNetworking/UIKit (= 2.6.1)
+  - AFNetworking/NSURLConnection (2.6.1):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/NSURLSession (2.6.1):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (2.6.1)
+  - AFNetworking/Security (2.6.1)
+  - AFNetworking/Serialization (2.6.1)
+  - AFNetworking/UIKit (2.6.1):
+    - AFNetworking/NSURLConnection
+    - AFNetworking/NSURLSession
+  - CocoaAsyncSocket (7.4.1)
+  - GHODictionary (1.0.9)
+  - IHKeyboardAvoiding (2.5)
+  - LTMorphingLabel (0.0.9)
+  - M13ProgressSuite (1.2.7)
+  - MPMessagePack (1.3.2):
+    - GHODictionary
+  - Riffle (0.1.63):
+    - AFNetworking (= 2.6.1)
+    - CocoaAsyncSocket (= 7.4.1)
+    - MPMessagePack (= 1.3.2)
+    - SocketRocket (= 0.4.1)
+  - RMSwipeTableViewCell (0.6)
+  - SocketRocket (0.4.1)
+  - Spring (1.0.3)
+
+DEPENDENCIES:
+  - IHKeyboardAvoiding
+  - LTMorphingLabel (~> 0.0.9)
+  - M13ProgressSuite
+  - Riffle
+  - RMSwipeTableViewCell
+  - Spring (from `https://github.com/MengTo/Spring.git`, branch `swift2`)
+
+EXTERNAL SOURCES:
+  Spring:
+    :branch: swift2
+    :git: https://github.com/MengTo/Spring.git
+
+CHECKOUT OPTIONS:
+  Spring:
+    :commit: 18d5c7b74489de8044e34767f856d1e574f0820e
+    :git: https://github.com/MengTo/Spring.git
+
+SPEC CHECKSUMS:
+  AFNetworking: 8e4e60500beb8bec644cf575beee72990a76d399
+  CocoaAsyncSocket: 7cbf214b27f8e7f7574db6a3fd96352ffaed433d
+  GHODictionary: 1f7873492445e0f33ac19575a358c3c91926b564
+  IHKeyboardAvoiding: 8f14fed93405dd2c44ce070a26f780d9e477538c
+  LTMorphingLabel: 4235a403f99f0e0e503389da660e0fec324549d9
+  M13ProgressSuite: 03d194af6359da440641ba758aed5a18b0386a86
+  MPMessagePack: 23bbb933ef1046edcf104e3556ab4a6b4b0a69d4
+  Riffle: e9b71d04dade3dea77002e3cf43162d42da692bc
+  RMSwipeTableViewCell: ef3a5fc804cf0d5fb70fe1195c088cc40b3fde3c
+  SocketRocket: ee0b5c34182d37bb4f1f8d628bbe737718126daa
+  Spring: 3f02b5dc3308572ef177b3cad0fa7bbc4b0706f7
+
+COCOAPODS: 0.39.0
