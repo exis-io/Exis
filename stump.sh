@@ -74,6 +74,10 @@ pull() {
     git subtree pull --prefix go/goRiffle goRiffle master -m 'Update to stump'
     git subtree pull --prefix go/coreRiffle coreRiffle master -m 'Update to stump'
 
+    # Link them forward so this version can be edited
+    ln -s go/goRiffle $GOPATH/src/github.com/exis-io/goRiffle
+    ln -s go/coreRiffle $GOPATH/src/github.com/exis-io/coreRiffle
+
     git subtree pull --prefix python/pyRiffle pyRiffle master -m 'Update to stump'
 }
 
