@@ -34,7 +34,7 @@ init() {
     git remote add ngSeed git@github.com:exis-io/ngSeed.git 
 
     git remote add goRiffle git@github.com:exis-io/goRiffle.git 
-    git remote add coreRiffle git@github.com:damouse/coreRiffle.git 
+    git remote add coreRiffle git@github.com:exis-io/coreRiffle.git 
 
     git remote add pyRiffle git@github.com:exis-io/pyRiffle.git
 }
