@@ -31,7 +31,7 @@ push() {
     echo "Pushing subtrees"
 
     git subtree push --prefix ios/swiftRiffle swiftRiffle master
-    git subtree push --prefix ios/appBackendSeede iosAppBackendSeed master
+    git subtree push --prefix ios/appBackendSeed iosAppBackendSeed master
     git subtree push --prefix ios/appSeed iosAppSeed master
 
     git subtree push --prefix js/jsRiffle jsRiffle master
