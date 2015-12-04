@@ -28,17 +28,18 @@ init() {
     git remote add swiftRiffle git@github.com:exis-io/swiftRiffle.git
     git remote add iosAppBackendSeed git@github.com:exis-io/iosAppBackendSeed.git
     git remote add iosAppSeed git@github.com:exis-io/iosAppSeed.git
-    git remote add iosCAH git@github.com:exis-io/CardsAgainst.git
 
     git remote add jsRiffle git@github.com:exis-io/jsRiffle.git
     git remote add ngRiffle git@github.com:exis-io/ngRiffle.git 
     git remote add ngSeed git@github.com:exis-io/ngSeed.git 
-    git remote add ngCAH git@github.com:exis-io/ionicCardsAgainstEXIStence.git
 
     git remote add goRiffle git@github.com:exis-io/goRiffle.git 
     git remote add coreRiffle git@github.com:exis-io/coreRiffle.git 
 
     git remote add pyRiffle git@github.com:exis-io/pyRiffle.git
+
+    git remote add ngCAH git@github.com:exis-io/ionicCardsAgainstEXIStence.git
+    git remote add iosCAH git@github.com:exis-io/CardsAgainst.git
 }
 
 push() {
@@ -56,6 +57,9 @@ push() {
     git subtree push --prefix go/coreRiffle coreRiffle master
 
     git subtree push --prefix python/pyRiffle pyRiffle master
+
+    git subtree push --prefix CardsAgainstHumanityDemo/swiftCardsAgainst iosCAH master
+    git subtree push --prefix CardsAgainstHumanityDemo/ngCardsAgainst ngCAH master
 
     git push origin master
 }
