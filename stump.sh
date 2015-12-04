@@ -170,7 +170,7 @@ core() {
     gopherjs build -m core/sandbox/jsRiffle.go
 
     mv jsRiffle.js js/jsRiffle/src/go.js
-    mv jsRiffle.js js/jsRiffle/src/go.js.map
+    mv jsRiffle.js.map js/jsRiffle/src/go.js.map
 }
 
 case "$1" in

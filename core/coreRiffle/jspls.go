@@ -27,7 +27,7 @@ func onMessage(a *js.Object) {
 
 		fmt.Println("Contents of blob: ", ret)
 
-		s := new(messagePackSerializer)
+		s := new(jSONSerializer)
 		if msg, err := s.deserialize(ret); err == nil {
 			fmt.Println("Done: ", msg)
 		} else {
@@ -43,7 +43,7 @@ func onMessage(a *js.Object) {
 func onOpen(a *js.Object) {
 	fmt.Println("Opened: ", a)
 
-	s := new(messagePackSerializer)
+	s := new(jSONSerializer)
 	h := &hello{Realm: "xs.damouse", Details: map[string]interface{}{}}
 
 	if b, err := s.serialize(h); err == nil {
