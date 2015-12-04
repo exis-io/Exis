@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"time"
 )
 
 type Domain struct {
 	Connection
+	Delegate
 	name       string
 	listeners  map[uint]chan message
 	events     map[uint]*boundEndpoint
@@ -23,7 +25,6 @@ func NewDomain(name string) *Domain {
 	// The commented out line is js specific
 
 	return &Domain{
-		connection: Connection,
 		name:       name,
 		listeners:  make(map[uint]chan message),
 		events:     make(map[uint]*boundEndpoint),
@@ -33,7 +34,6 @@ func NewDomain(name string) *Domain {
 
 func (s *Domain) Subdomain(name string) *Domain {
 	return &Domain{
-		connection: Connection,
 		name:       s.name + "." + name,
 		listeners:  make(map[uint]chan message),
 		events:     make(map[uint]*boundEndpoint),
@@ -41,52 +41,25 @@ func (s *Domain) Subdomain(name string) *Domain {
 	}
 }
 
-func (c *Domain) Join(connection Connection) (*Domain, error) {
-	// dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
-	// conn, _, err := dialer.Dial(url, nil)
+// Accepts a connection that has just been opened
+func (c *Domain) Join(conn Connection) error {
+	c.Connection = conn
 
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	//    connection := &websocketConnection{
-	//        conn:        conn,
-	//        messages:    make(chan message, 10),
-	//        serializer:  new(jSONSerializer),
-	//        payloadType: websocket.TextMessage,
-	//    }
-
-	//    if err != nil {
-	//        return nil, err
-	//    }
-
-	//    go connection.run()
-
-	c.Connection = connection
-
-	dom := &Domain{
-		connection: connection,
-		listeners:  make(map[uint]chan message),
-		events:     make(map[uint]*boundEndpoint),
-		procedures: make(map[uint]*boundEndpoint),
-	}
-
-	if err := c.Send(&hello{Realm: realm, Details: map[string]interface{}{}}); err != nil {
-		c.connection.Close()
+	if err := c.Send(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {
+		conn.Close()
 		return err
 	}
 
-	if msg, err := getMessageTimeout(c.connection, timeout); err != nil {
-		c.connection.Close()
+	if msg, err := conn.BlockMessage(); err != nil {
+		conn.Close()
 		return err
 	} else if _, ok := msg.(*welcome); !ok {
-		c.Send(abortUnexpectedMsg)
-		c.connection.Close()
+		conn.Send(abortUnexpectedMsg)
+		conn.Close()
 		return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME))
 	} else {
 		return nil
 	}
-
 }
 
 func (c *Domain) Leave() error {
@@ -94,7 +67,7 @@ func (c *Domain) Leave() error {
 		return fmt.Errorf("error leaving realm: %v", err)
 	}
 
-	if err := c.connection.Close(); err != nil {
+	if err := c.Connection.Close(); err != nil {
 		return fmt.Errorf("error closing client connection: %v", err)
 	}
 
@@ -108,7 +81,7 @@ func (c *Domain) Leave() error {
 // Receive handles messages from the server until this client disconnects.
 // This function blocks and is most commonly run in a goroutine.
 func (c *Domain) Receive() {
-	for msg := range c.connection.Receive() {
+	for msg := range c.Connection.Receive() {
 		c.Handle(msg)
 	}
 }
@@ -391,3 +364,33 @@ func bindingForEndpoint(bindings map[uint]*boundEndpoint, endpoint string) (uint
 
 	return 0, nil, false
 }
+
+func (c *Domain) registerListener(id uint) {
+	//log.Println("register listener:", id)
+	wait := make(chan message, 1)
+	c.listeners[id] = wait
+}
+
+func (c *Domain) waitOnListener(id uint) (message, error) {
+	if wait, ok := c.listeners[id]; !ok {
+		return nil, fmt.Errorf("unknown listener uint: %v", id)
+	} else {
+		select {
+		case msg := <-wait:
+			return msg, nil
+		case <-time.After(timeout):
+			return nil, fmt.Errorf("timeout while waiting for message")
+		}
+	}
+}
+
+func (c *Domain) notifyListener(msg message, requestId uint) {
+	// pass in the request uint so we don't have to do any type assertion
+	if l, ok := c.listeners[requestId]; ok {
+		l <- msg
+	} else {
+		log.Println("no listener for message", msg.messageType(), requestId)
+	}
+}
+
+// Convenience function to get a single message from a peer
