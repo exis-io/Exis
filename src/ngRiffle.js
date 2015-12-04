@@ -1,6 +1,5 @@
 /* commonjs package manager support */
 if (typeof module !== "undefined" && typeof exports !== "undefined" && module.exports === exports){
-    var autobahn = require('autobahn');
     var jsriffle = require('jsriffle');
     module.exports = 'ngRiffle';
 }
@@ -8,7 +7,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 (function () {
     'use strict';
 
-    jsriffle.setDevFabric();
+    jsRiffle.setDevFabric();
 
     var ngRiffleModule = angular.module('ngRiffle', []).provider('$riffle', $RiffleProvider);
 
@@ -60,7 +59,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
             // options = angular.extend({onchallenge: digestWrapper(onchallenge), use_deferred: $q.defer}, options);
 
-            connection = new jsriffle.Domain(options);
+            connection = new jsRiffle.Domain(options);
 
             connection.onJoin = digestWrapper(function () {
                 $rootScope.$broadcast("$riffle.open");
@@ -231,7 +230,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         return registration.unregister();
                     });
                 },
-                call: function (procedure, args, kwargs, options) {
+                call: function () {
                     var a = arguments
 
                     return interceptorWrapper('call', arguments, function () {
