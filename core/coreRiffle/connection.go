@@ -1,4 +1,4 @@
-package goriffle
+package coreRiffle
 
 import (
 	"fmt"
@@ -16,21 +16,6 @@ type websocketConnection struct {
 	messages    chan message
 	payloadType int
 	closed      bool
-}
-
-type sender interface {
-	Send(message) error
-}
-
-type connection interface {
-	sender
-
-	// Closes the peer connection and any channel returned from Receive().
-	// Multiple calls to Close() will have no effect.
-	Close() error
-
-	// Receive returns a channel of messages coming from the peer.
-	Receive() <-chan message
 }
 
 // TODO: make this just add the message to a channel so we don't block

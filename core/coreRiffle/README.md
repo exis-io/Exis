@@ -10,3 +10,22 @@ Unfortunatly it also has to deal with the vagaries of each individual platform, 
 4. **JS**: seamless connections between the languages using **gopherjs**, but Javascript is the only language that can't use the same websocket implementation as the rest of the lot. 
 
 
+## Interfaces
+
+The top level package implements abstract features as well as messaging. Because the interfaces between the core and the individual languages are so different, each wrapper ends up being a little different. 
+
+The core implements:
+
+* Messaging logic
+* Abstract connection management
+* Domain object
+* Cumin (automatic type validation)
+* Serialization
+
+Wrappers have to either expose or invoke the following, depending on the structure of control of the platform: 
+
+**Connection**: Send, Receive
+**Invoker**: Invoke handler methods, pass appropriate arguments to Domains
+**Persistence**: Save, Load security information
+
+These interfaces are defined in `wrapperinterfaces.go`. Note that the wrappers are all also written in Go and are themselves wrapped by the final target language. Each wrapper has a subpackage within the core directory.

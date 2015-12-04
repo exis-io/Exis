@@ -4,23 +4,23 @@ package main
 import (
 	"fmt"
 
-	"github.com/damouse/goriffle"
+	"github.com/damouse/coreRiffle"
 	"github.com/gopherjs/gopherjs/js"
 )
 
-var dommy *goriffle.Domain
+var dommy *coreRiffle.Domain
 
 // Required main method
 func main() {
 	js.Global.Set("core", map[string]interface{}{
 		"Receiver": ExternalReceive,
-		// "Domain":   goriffle.NewDomain,
+		// "Domain":   coreRiffle.NewDomain,
 		"Domain": Connector,
 	})
 }
 
-func Connector(name string) *goriffle.Domain {
-	dommy = goriffle.NewDomain(name)
+func Connector(name string) *coreRiffle.Domain {
+	dommy = coreRiffle.NewDomain(name)
 	fmt.Println("Creating a new domain: ", dommy)
 	return dommy
 }

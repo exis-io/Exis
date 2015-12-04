@@ -1,15 +1,14 @@
-package goriffle
+package coreRiffle
 
 import (
 	"encoding/json"
 	"fmt"
 	"log"
-
-	"github.com/gorilla/websocket"
 )
 
 type Domain struct {
-	connection
+	Connection
+	name       string
 	listeners  map[uint]chan message
 	events     map[uint]*boundEndpoint
 	procedures map[uint]*boundEndpoint
@@ -21,39 +20,49 @@ type boundEndpoint struct {
 }
 
 func NewDomain(name string) *Domain {
+	// The commented out line is js specific
+
 	return &Domain{
-		// connection: connection,
+		connection: Connection,
+		name:       name,
 		listeners:  make(map[uint]chan message),
 		events:     make(map[uint]*boundEndpoint),
 		procedures: make(map[uint]*boundEndpoint),
 	}
 }
 
-func (s *Domain) Subdomain() *Domain {
-	return nil
+func (s *Domain) Subdomain(name string) *Domain {
+	return &Domain{
+		connection: Connection,
+		name:       s.name + "." + name,
+		listeners:  make(map[uint]chan message),
+		events:     make(map[uint]*boundEndpoint),
+		procedures: make(map[uint]*boundEndpoint),
+	}
 }
 
-// Connect to the node with the given URL
-func Start(url string, name string) (*Domain, error) {
-	dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
-	conn, _, err := dialer.Dial(url, nil)
+func (c *Domain) Join(connection Connection) (*Domain, error) {
+	// dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
+	// conn, _, err := dialer.Dial(url, nil)
 
-	if err != nil {
-		return nil, err
-	}
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	connection := &websocketConnection{
-		conn:        conn,
-		messages:    make(chan message, 10),
-		serializer:  new(jSONSerializer),
-		payloadType: websocket.TextMessage,
-	}
+	//    connection := &websocketConnection{
+	//        conn:        conn,
+	//        messages:    make(chan message, 10),
+	//        serializer:  new(jSONSerializer),
+	//        payloadType: websocket.TextMessage,
+	//    }
 
-	if err != nil {
-		return nil, err
-	}
+	//    if err != nil {
+	//        return nil, err
+	//    }
 
-	go connection.run()
+	//    go connection.run()
+
+	c.Connection = connection
 
 	dom := &Domain{
 		connection: connection,
@@ -62,14 +71,7 @@ func Start(url string, name string) (*Domain, error) {
 		procedures: make(map[uint]*boundEndpoint),
 	}
 
-	dom.Join(name)
-	return dom, nil
-}
-
-func (c *Domain) Join(realm string) error {
-	details := map[string]interface{}{}
-
-	if err := c.Send(&hello{Realm: realm, Details: details}); err != nil {
+	if err := c.Send(&hello{Realm: realm, Details: map[string]interface{}{}}); err != nil {
 		c.connection.Close()
 		return err
 	}

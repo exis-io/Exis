@@ -1,4 +1,4 @@
-package goriffle
+package coreRiffle
 
 // Message is a generic container for a WAMP message.
 type message interface {

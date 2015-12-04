@@ -1,4 +1,4 @@
-package goriffle
+package coreRiffle
 
 import (
 	"fmt"
