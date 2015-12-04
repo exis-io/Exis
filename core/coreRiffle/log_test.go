@@ -1,4 +1,4 @@
-package riffle
+package goriffle
 
 import (
 	_ "github.com/smartystreets/goconvey/convey"

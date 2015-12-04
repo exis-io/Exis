@@ -1,4 +1,4 @@
-package riffle
+package goriffle
 
 import (
 	"fmt"
@@ -6,82 +6,42 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gorilla/websocket"
+	"github.com/exis-io/browrilla"
 )
 
 type websocketConnection struct {
-	conn        *websocket.Conn
+	conn *websocket.Conn
+	// jsws        *jssock.WebSocket
 	connLock    sync.Mutex
-	serializer  Serializer
-	messages    chan Message
+	serializer  serializer
+	messages    chan message
 	payloadType int
 	closed      bool
 }
 
-type Sender interface {
-	Send(Message) error
+type sender interface {
+	Send(message) error
 }
 
-type Connection interface {
-	Sender
+type connection interface {
+	sender
 
 	// Closes the peer connection and any channel returned from Receive().
 	// Multiple calls to Close() will have no effect.
 	Close() error
 
 	// Receive returns a channel of messages coming from the peer.
-	Receive() <-chan Message
-}
-
-type AuthFunc func(map[string]interface{}, map[string]interface{}) (string, map[string]interface{}, error)
-
-func (c *Session) handleInvocation(msg *Invocation) {
-	if proc, ok := c.procedures[msg.Registration]; ok {
-		go func() {
-			result, err := Cumin(proc.handler, msg.Arguments)
-			var tosend Message
-
-			tosend = &Yield{
-				Request:   msg.Request,
-				Options:   make(map[string]interface{}),
-				Arguments: result,
-			}
-
-			if err != nil {
-				tosend = &Error{
-					Type:      INVOCATION,
-					Request:   msg.Request,
-					Details:   make(map[string]interface{}),
-					Arguments: result,
-					Error:     err.Error(),
-				}
-			}
-
-			if err := c.Send(tosend); err != nil {
-				log.Println("error sending message:", err)
-			}
-		}()
-	} else {
-		//log.Println("no handler registered for registration:", msg.Registration)
-
-		if err := c.Send(&Error{
-			Type:    INVOCATION,
-			Request: msg.Request,
-			Details: make(map[string]interface{}),
-			Error:   fmt.Sprintf("no handler for registration: %v", msg.Registration),
-		}); err != nil {
-			log.Println("error sending message:", err)
-		}
-	}
+	Receive() <-chan message
 }
 
 // Convenience function to get a single message from a peer
-func GetMessageTimeout(p Connection, t time.Duration) (Message, error) {
+func getMessageTimeout(p connection, t time.Duration) (message, error) {
 	select {
 	case msg, open := <-p.Receive():
 		if !open {
 			return nil, fmt.Errorf("receive channel closed")
 		}
+
 		return msg, nil
 	case <-time.After(t):
 		return nil, fmt.Errorf("timeout waiting for message")
@@ -89,43 +49,53 @@ func GetMessageTimeout(p Connection, t time.Duration) (Message, error) {
 }
 
 // TODO: make this just add the message to a channel so we don't block
-func (ep *websocketConnection) Send(msg Message) error {
-	b, err := ep.serializer.Serialize(msg)
+func (ep *websocketConnection) Send(msg message) error {
+
+	b, err := ep.serializer.serialize(msg)
+
+	fmt.Println("Serializing message, output: ", b)
+	// done, err := ep.serializer.deserialize(b)
+	// fmt.Println("Deserialized: ", done, err)
 
 	if err != nil {
 		return err
 	}
 
 	ep.connLock.Lock()
-	err = ep.conn.WriteMessage(ep.payloadType, b)
+	// err = ep.conn.WriteMessage(ep.payloadType, b)
+	_, err = ep.conn.UnderlyingConn().Write(b)
+	// err = ep.jsws.Send(b)
 	ep.connLock.Unlock()
 
 	return err
 }
 
-func (ep *websocketConnection) Receive() <-chan Message {
+func (ep *websocketConnection) Receive() <-chan message {
 	return ep.messages
 }
 
 func (ep *websocketConnection) Close() error {
-	closeMsg := websocket.FormatCloseMessage(websocket.CloseNormalClosure, "goodbye")
-	err := ep.conn.WriteControl(websocket.CloseMessage, closeMsg, time.Now().Add(5*time.Second))
+	fmt.Println("WARN-- cant close!")
 
-	if err != nil {
-		log.Println("error sending close message:", err)
-	}
+	// panic("Why are you closing?")
+	// closeMsg := websocket.FormatCloseMessage(websocket.CloseNormalClosure, "goodbye")
+	// err := ep.conn.WriteControl(websocket.CloseMessage, closeMsg, time.Now().Add(5*time.Second))
 
-	ep.closed = true
-	return ep.conn.Close()
+	// if err != nil {
+	// 	log.Println("error sending close message:", err)
+	// }
+
+	// ep.closed = true
+	// return ep.conn.Close()
+
+	return nil
 }
 
 func (ep *websocketConnection) run() {
 	for {
-		// TODO: use conn.NextMessage() and stream
-		// TODO: do something different based on binary/text frames
 		if msgType, b, err := ep.conn.ReadMessage(); err != nil {
 			if ep.closed {
-				// log.Println("peer connection closed")
+				log.Println("peer connection closed")
 			} else {
 				log.Println("error reading from peer:", err)
 				ep.conn.Close()
@@ -133,28 +103,31 @@ func (ep *websocketConnection) run() {
 			close(ep.messages)
 			break
 		} else if msgType == websocket.CloseMessage {
+			fmt.Println("Close message recieved")
 			ep.conn.Close()
 			close(ep.messages)
 			break
 		} else {
-			msg, err := ep.serializer.Deserialize(b)
+			msg, err := ep.serializer.deserialize(b)
 			if err != nil {
 				log.Println("error deserializing peer message:", err)
+				log.Println(b)
 				// TODO: handle error
 			} else {
+				fmt.Println("Message received!")
 				ep.messages <- msg
 			}
 		}
 	}
 }
 
-func (c *Session) registerListener(id uint) {
+func (c *session) registerListener(id uint) {
 	//log.Println("register listener:", id)
-	wait := make(chan Message, 1)
+	wait := make(chan message, 1)
 	c.listeners[id] = wait
 }
 
-func (c *Session) waitOnListener(id uint) (Message, error) {
+func (c *session) waitOnListener(id uint) (message, error) {
 	if wait, ok := c.listeners[id]; !ok {
 		return nil, fmt.Errorf("unknown listener uint: %v", id)
 	} else {
@@ -167,35 +140,11 @@ func (c *Session) waitOnListener(id uint) (Message, error) {
 	}
 }
 
-func (c *Session) notifyListener(msg Message, requestId uint) {
+func (c *session) notifyListener(msg message, requestId uint) {
 	// pass in the request uint so we don't have to do any type assertion
 	if l, ok := c.listeners[requestId]; ok {
 		l <- msg
 	} else {
-		log.Println("no listener for message", msg.MessageType(), requestId)
+		log.Println("no listener for message", msg.messageType(), requestId)
 	}
-}
-
-func formatUnexpectedMessage(msg Message, expected MessageType) string {
-	s := fmt.Sprintf("received unexpected %s message while waiting for %s", msg.MessageType(), expected)
-	switch m := msg.(type) {
-	case *Abort:
-		s += ": " + string(m.Reason)
-		s += formatUnknownMap(m.Details)
-		return s
-	case *Goodbye:
-		s += ": " + string(m.Reason)
-		s += formatUnknownMap(m.Details)
-		return s
-	}
-	return s
-}
-
-func formatUnknownMap(m map[string]interface{}) string {
-	s := ""
-	for k, v := range m {
-		// TODO: reflection to recursively check map
-		s += fmt.Sprintf(" %s=%v", k, v)
-	}
-	return s
 }

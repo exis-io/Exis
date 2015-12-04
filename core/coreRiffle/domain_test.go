@@ -1,4 +1,4 @@
-package riffle
+package goriffle
 
 import (
 	"testing"
