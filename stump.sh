@@ -9,9 +9,10 @@ then
 
     echo "Usage:"
     echo -e "  init\t\t set up remotes for development"
-    echo -e "  ios\t\t update swiftRiffle. Pass version number and commit message"
     echo -e "  push\t\t push updates on master"
     echo -e "  pull\t\t pull updates on master"
+    echo -e "  ios\t\t update swiftRiffle. Pass version number and commit message"
+    echo -e "  js\t\t update jsRiffle and ngRiffle. Pass version number and commit message"
     exit
 fi
 
