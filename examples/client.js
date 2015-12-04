@@ -7,7 +7,7 @@ var server = app.subdomain("server");
 
 
 me.onJoin = function() {
-    console.log("Domain " + this.domain + " joined with name ");
+    console.log("Domain " + this.domain + " joined");
 
     server.publish('sub', 'Hello,', 'You scallywag!');
 
