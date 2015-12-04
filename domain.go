@@ -7,7 +7,21 @@ import (
 	"time"
 )
 
-type Domain struct {
+type domaine interface {
+	Subscribe(string, []interface{}) (uint, error)
+	Register(string, []interface{}) (uint, error)
+
+	Publish(string, []interface{}) error
+	Call(string, []interface{}, []interface{}) (uint, error)
+
+	Unsubscribe(string) error
+	Unregister(string) error
+
+	Join(Connection)
+	Leave()
+}
+
+type domain struct {
 	Connection
 	Delegate
 	name       string
@@ -21,10 +35,10 @@ type boundEndpoint struct {
 	handler  interface{}
 }
 
-func NewDomain(name string) *Domain {
+func Newdomain(name string) *domain {
 	// The commented out line is js specific
 
-	return &Domain{
+	return &domain{
 		name:       name,
 		listeners:  make(map[uint]chan message),
 		events:     make(map[uint]*boundEndpoint),
@@ -32,8 +46,8 @@ func NewDomain(name string) *Domain {
 	}
 }
 
-func (s *Domain) Subdomain(name string) *Domain {
-	return &Domain{
+func (s *domain) Subdomain(name string) *domain {
+	return &domain{
 		name:       s.name + "." + name,
 		listeners:  make(map[uint]chan message),
 		events:     make(map[uint]*boundEndpoint),
@@ -42,7 +56,7 @@ func (s *Domain) Subdomain(name string) *Domain {
 }
 
 // Accepts a connection that has just been opened
-func (c *Domain) Join(conn Connection) error {
+func (c *domain) Join(conn Connection) error {
 	c.Connection = conn
 
 	if err := c.Send(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {
@@ -62,7 +76,7 @@ func (c *Domain) Join(conn Connection) error {
 	}
 }
 
-func (c *Domain) Leave() error {
+func (c *domain) Leave() error {
 	if err := c.Send(goodbyeSession); err != nil {
 		return fmt.Errorf("error leaving realm: %v", err)
 	}
@@ -80,14 +94,14 @@ func (c *Domain) Leave() error {
 
 // Receive handles messages from the server until this client disconnects.
 // This function blocks and is most commonly run in a goroutine.
-func (c *Domain) Receive() {
+func (c *domain) Receive() {
 	for msg := range c.Connection.Receive() {
 		c.Handle(msg)
 	}
 }
 
 // Does not spin, does not block-- is called with updates
-func (c *Domain) ReceiveExternal(msg string) {
+func (c *domain) ReceiveExternal(msg string) {
 	byt := []byte(msg)
 	var dat []interface{}
 
@@ -109,7 +123,7 @@ func (c *Domain) ReceiveExternal(msg string) {
 	}
 }
 
-func (c *Domain) Handle(msg message) {
+func (c *domain) Handle(msg message) {
 	switch msg := msg.(type) {
 
 	case *event:
@@ -149,14 +163,14 @@ func (c *Domain) Handle(msg message) {
 /////////////////////////////////////////////
 
 // Subscribe registers the EventHandler to be called for every message in the provided topic.
-func (c *Domain) Subscribe(topic string, fn interface{}) error {
+func (c *domain) Subscribe(topic string, fn interface{}) error {
 	id := newID()
 	c.registerListener(id)
 
 	sub := &subscribe{
 		Request: id,
 		Options: make(map[string]interface{}),
-		Domain:  topic,
+		domain:  topic,
 	}
 
 	if err := c.Send(sub); err != nil {
@@ -179,11 +193,11 @@ func (c *Domain) Subscribe(topic string, fn interface{}) error {
 }
 
 // Unsubscribe removes the registered EventHandler from the topic.
-func (c *Domain) Unsubscribe(topic string) error {
+func (c *domain) Unsubscribe(topic string) error {
 	subscriptionID, _, ok := bindingForEndpoint(c.events, topic)
 
 	if !ok {
-		return fmt.Errorf("Domain %s is not registered with this client.", topic)
+		return fmt.Errorf("domain %s is not registered with this client.", topic)
 	}
 
 	id := newID()
@@ -212,14 +226,14 @@ func (c *Domain) Unsubscribe(topic string) error {
 	return nil
 }
 
-func (c *Domain) Register(procedure string, fn interface{}, options map[string]interface{}) error {
+func (c *domain) Register(procedure string, fn interface{}, options map[string]interface{}) error {
 	id := newID()
 	c.registerListener(id)
 
 	register := &register{
 		Request: id,
 		Options: options,
-		Domain:  procedure,
+		domain:  procedure,
 	}
 
 	if err := c.Send(register); err != nil {
@@ -242,11 +256,11 @@ func (c *Domain) Register(procedure string, fn interface{}, options map[string]i
 }
 
 // Unregister removes a procedure with the Node
-func (c *Domain) Unregister(procedure string) error {
+func (c *domain) Unregister(procedure string) error {
 	procedureID, _, ok := bindingForEndpoint(c.procedures, procedure)
 
 	if !ok {
-		return fmt.Errorf("Domain %s is not registered with this client.", procedure)
+		return fmt.Errorf("domain %s is not registered with this client.", procedure)
 	}
 
 	id := newID()
@@ -277,23 +291,23 @@ func (c *Domain) Unregister(procedure string) error {
 }
 
 // Publish publishes an eVENT to all subscribed peers.
-func (c *Domain) Publish(endpoint string, args ...interface{}) error {
+func (c *domain) Publish(endpoint string, args ...interface{}) error {
 	return c.Send(&publish{
 		Request:   newID(),
 		Options:   make(map[string]interface{}),
-		Domain:    endpoint,
+		domain:    endpoint,
 		Arguments: args,
 	})
 }
 
 // Call calls a procedure given a URI.
-func (c *Domain) Call(procedure string, args ...interface{}) ([]interface{}, error) {
+func (c *domain) Call(procedure string, args ...interface{}) ([]interface{}, error) {
 	id := newID()
 	c.registerListener(id)
 
 	call := &call{
 		Request:   id,
-		Domain:    procedure,
+		domain:    procedure,
 		Options:   make(map[string]interface{}),
 		Arguments: args,
 	}
@@ -315,7 +329,7 @@ func (c *Domain) Call(procedure string, args ...interface{}) ([]interface{}, err
 	}
 }
 
-func (c *Domain) handleInvocation(msg *invocation) {
+func (c *domain) handleInvocation(msg *invocation) {
 	if proc, ok := c.procedures[msg.Registration]; ok {
 		go func() {
 			result, err := cumin(proc.handler, msg.Arguments)
@@ -365,13 +379,13 @@ func bindingForEndpoint(bindings map[uint]*boundEndpoint, endpoint string) (uint
 	return 0, nil, false
 }
 
-func (c *Domain) registerListener(id uint) {
+func (c *domain) registerListener(id uint) {
 	//log.Println("register listener:", id)
 	wait := make(chan message, 1)
 	c.listeners[id] = wait
 }
 
-func (c *Domain) waitOnListener(id uint) (message, error) {
+func (c *domain) waitOnListener(id uint) (message, error) {
 	if wait, ok := c.listeners[id]; !ok {
 		return nil, fmt.Errorf("unknown listener uint: %v", id)
 	} else {
@@ -384,7 +398,7 @@ func (c *Domain) waitOnListener(id uint) (message, error) {
 	}
 }
 
-func (c *Domain) notifyListener(msg message, requestId uint) {
+func (c *domain) notifyListener(msg message, requestId uint) {
 	// pass in the request uint so we don't have to do any type assertion
 	if l, ok := c.listeners[requestId]; ok {
 		l <- msg
