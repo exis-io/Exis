@@ -15,8 +15,8 @@ type Connection interface {
 	Send(message) error
 
 	// Closes the peer connection and any channel returned from Receive().
-	// Multiple calls to Close() will have no effect.
-	Close() error
+	// Calls with a reason for the close
+	Close(string)
 
 	// Receive returns a channel of messages coming from the peer.
 	// NOTE: I think this should be reactive
@@ -65,24 +65,6 @@ func formatUnknownMap(m map[string]interface{}) string {
 	return s
 }
 
-// type RealmExistsError string
-
-// func (e RealmExistsError) Error() string {
-//  return "realm exists: " + string(e)
-// }
-
-// type NoSuchRealmError string
-
-// func (e NoSuchRealmError) Error() string {
-//  return "no such realm: " + string(e)
-// }
-
-// type AuthenticationError string
-
-// func (e AuthenticationError) Error() string {
-//  return "authentication error: " + string(e)
-// }
-
 type InvalidURIError string
 
 func (e InvalidURIError) Error() string {
@@ -90,18 +72,12 @@ func (e InvalidURIError) Error() string {
 }
 
 const (
-	// ErrInvalidUri = "wamp.error.invalid_uri"
-	// ErrNoSuchdomain = "wamp.error.no_such_procedure"
-	// ErrdomainAlreadyExists = "wamp.error.procedure_already_exists"
-	// ErrNoSuchRegistration = "Registration"
-	// ErrNoSuchSubscription = "Subscription does not exist"
-
-	ErrInvalidArgument     = "Invalid Arguments"
-	ErrSystemShutdown      = "Connection collapsed"
-	ErrCloseRealm          = "Im leaving"
-	ErrGoodbyeAndOut       = "Goodbye and go away"
-	ErrNotAuthorized       = "Not Authorized"
-	ErrAuthorizationFailed = "Unable to Authorize"
+	ErrInvalidArgument     = "ERR-- Invalid Arguments, check your receiver!"
+	ErrSystemShutdown      = "ERR-- Connection collapsed. It wasn't pretty."
+	ErrCloseRealm          = "ERR-- Im leaving and taking the dog."
+	ErrGoodbyeAndOut       = "ERR-- Goodbye and go away."
+	ErrNotAuthorized       = "ERR-- Not Authorized. Ask nicely."
+	ErrAuthorizationFailed = "ERR-- Unable to Authorize. Try harder."
 )
 
 func bindingForEndpoint(bindings map[uint]*boundEndpoint, endpoint string) (uint, *boundEndpoint, bool) {
@@ -112,4 +88,14 @@ func bindingForEndpoint(bindings map[uint]*boundEndpoint, endpoint string) (uint
 	}
 
 	return 0, nil, false
+}
+
+func removeDomain(domains []*domain, target *domain) ([]*domain, bool) {
+	for i, e := range domains {
+		if e == target {
+			return append(domains[:i], domains[i+1:]...), true
+		}
+	}
+
+	return nil, false
 }

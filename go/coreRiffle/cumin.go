@@ -45,3 +45,10 @@ func cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 
 	return ret, nil
 }
+
+// Checks the types of the provided arguments and the receiver. Does not attempt to convert the types,
+// thats on the client library (although its possible it could try that....)
+// How do we handle model objects?
+func softCumin(types []interface{}, args []interface{}) error {
+	return nil
+}

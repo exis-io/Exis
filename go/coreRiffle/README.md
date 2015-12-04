@@ -22,10 +22,29 @@ The core implements:
 * Cumin (automatic type validation)
 * Serialization
 
-Wrappers have to either expose or invoke the following, depending on the structure of control of the platform: 
+On top of the core sit the `wrappers`, which glue the foreign languages to the core. The wrappers are also written in Go, but may each have very different interfaces based on the languages their glueing. Wrappers have to either expose or invoke the following, depending on the structure of control of the platform:
 
-**Connection**: Send, Receive
-**Invoker**: Invoke handler methods, pass appropriate arguments to Domains
-**Persistence**: Save, Load security information
+**Connection**: implement and manage the websocket connection
 
-These interfaces are defined in `wrapperinterfaces.go`. Note that the wrappers are all also written in Go and are themselves wrapped by the final target language. Each wrapper has a subpackage within the core directory.
+- Send: send binary data
+- Receive: block on a message channel
+- BlockMessage: wait for a message to arrive for a set amount of time, then time out
+- Close: terminate the connection
+
+**Delegate**: called when domains change states. Each domain has a delegate.
+
+- Invoke: call up through the wrapper to a native code function; trigger a callback
+- OnJoin: the domain joined the fabric. Doesn't always mean the connection has just opened
+- OnLeave: the domain has left the fabric. Doesn't mean the connection has closed
+
+**Persistence**: expose access to platform specific storage, most likely to save cryptographic keys
+
+Each wrapper has a subpackage within the core directory.
+
+**Honcho**: top dog of riffle. Manages all domains and actively receives messages from Connection.
+
+- HandleString
+- HandleBytes
+- HandleMessage
+
+Each wrapper has a subpackage within the core directory.

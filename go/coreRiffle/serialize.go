@@ -14,6 +14,7 @@ import (
 type serializer interface {
 	serialize(message) ([]byte, error)
 	deserialize([]byte) (message, error)
+	deserializeString([]interface{}) (message, error)
 }
 
 type Serialization int
@@ -168,6 +169,11 @@ func (s *messagePackSerializer) deserialize(data []byte) (message, error) {
 	}
 
 	return apply(msgType, arr)
+}
+
+// Deserialize decodes a msgpack payload into a Message.
+func (s *messagePackSerializer) deserializeString(data []interface{}) (message, error) {
+	return nil, fmt.Errorf("Not implemented")
 }
 
 // Serialize marshals the payload into a message.
