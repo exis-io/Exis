@@ -25,7 +25,7 @@ angular.module('myApp.view1', ['ngRoute'])
       
 
    $scope.$on("$riffle.open", function (event, session) {
-        console.log('We are connected to the fabric!'); 
+        console.log('Connected to the fabric!'); 
     });
 
     $scope.$on("$riffle.close", function (event, data) {

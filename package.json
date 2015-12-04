@@ -1,9 +1,9 @@
 {
-  "name": "angular-seed",
+  "name": "angular-riffle",
   "private": true,
   "version": "0.0.0",
-  "description": "A starter project for AngularJS",
-  "repository": "https://github.com/angular/angular-seed",
+  "description": "A starter project for Angular development with Riffle",
+  "repository": "https://github.com/exis-io/ngSeed",
   "license": "MIT",
   "devDependencies": {
     "bower": "^1.3.1",
