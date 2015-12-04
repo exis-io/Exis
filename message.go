@@ -270,13 +270,13 @@ func (msg *errorMessage) messageType() messageType {
 	return eRROR
 }
 
-// [pUBLISH, Request|id, Options|dict, domain|uri]
-// [pUBLISH, Request|id, Options|dict, domain|uri, Arguments|list]
-// [pUBLISH, Request|id, Options|dict, domain|uri, Arguments|list, ArgumentsKw|dict]
+// [pUBLISH, Request|id, Options|dict, name|uri]
+// [pUBLISH, Request|id, Options|dict, name|uri, Arguments|list]
+// [pUBLISH, Request|id, Options|dict, name|uri, Arguments|list, ArgumentsKw|dict]
 type publish struct {
 	Request     uint
 	Options     map[string]interface{}
-	domain      string
+	Name        string
 	Arguments   []interface{}          `wamp:"omitempty"`
 	ArgumentsKw map[string]interface{} `wamp:"omitempty"`
 }
@@ -295,11 +295,11 @@ func (msg *published) messageType() messageType {
 	return pUBLISHED
 }
 
-// [sUBSCRIBE, Request|id, Options|dict, domain|uri]
+// [sUBSCRIBE, Request|id, Options|dict, name|uri]
 type subscribe struct {
 	Request uint
 	Options map[string]interface{}
-	domain  string
+	Name    string
 }
 
 func (msg *subscribe) messageType() messageType {
@@ -358,13 +358,13 @@ type callResult struct {
 	Err    string
 }
 
-// [cALL, Request|id, Options|dict, domain|uri]
-// [cALL, Request|id, Options|dict, domain|uri, Arguments|list]
-// [cALL, Request|id, Options|dict, domain|uri, Arguments|list, ArgumentsKw|dict]
+// [cALL, Request|id, Options|dict, name|uri]
+// [cALL, Request|id, Options|dict, name|uri, Arguments|list]
+// [cALL, Request|id, Options|dict, name|uri, Arguments|list, ArgumentsKw|dict]
 type call struct {
 	Request     uint
 	Options     map[string]interface{}
-	domain      string
+	Name        string
 	Arguments   []interface{}          `wamp:"omitempty"`
 	ArgumentsKw map[string]interface{} `wamp:"omitempty"`
 }
@@ -387,11 +387,11 @@ func (msg *result) messageType() messageType {
 	return rESULT
 }
 
-// [rEGISTER, Request|id, Options|dict, domain|uri]
+// [rEGISTER, Request|id, Options|dict, name|uri]
 type register struct {
 	Request uint
 	Options map[string]interface{}
-	domain  string
+	Name    string
 }
 
 func (msg *register) messageType() messageType {
@@ -501,15 +501,15 @@ func destination(m *message) (string, error) {
 	switch msg := msg.(type) {
 
 	case *publish:
-		return msg.domain, nil
+		return msg.Name, nil
 	case *subscribe:
-		return msg.domain, nil
+		return msg.Name, nil
 
 	// Dealer messages
 	case *register:
-		return msg.domain, nil
+		return msg.Name, nil
 	case *call:
-		return msg.domain, nil
+		return msg.Name, nil
 
 	default:
 		//log.Println("Unhandled message:", msg.messageType())

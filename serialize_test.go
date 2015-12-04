@@ -44,7 +44,7 @@ func TestApplySlice(t *testing.T) {
 
 	pubArgs := []string{"hello", "world"}
 	Convey("Deserializing into a message with a slice", t, func() {
-		args := []interface{}{msgType, 123, make(map[string]interface{}), "some.valid.topic", pubArgs}
+		args := []interface{}{msgType, 123, make(map[string]interface{}), "xs.valid.topic", pubArgs}
 		msg, err := apply(msgType, args)
 		Convey("Should not error", func() {
 			So(err, ShouldBeNil)

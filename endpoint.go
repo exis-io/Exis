@@ -5,9 +5,6 @@ import (
 	"strings"
 )
 
-const ACTION_SEPARATOR string = "/"
-const DOMAIN_SEPARATOR string = "."
-
 // Check out the golang tester for more info:
 // https://regex-golang.appspot.com/assets/html/index.html
 func validEndpoint(s string) bool {
@@ -52,7 +49,7 @@ func extractDomain(s string) (string, error) {
 // Extract the top level from a domain.
 // Example: xs.a.b -> xs
 func topLevelDomain(subdomain string) string {
-	parts := strings.Split(subdomain, DOMAIN_SEPARATOR)
+	parts := strings.Split(subdomain, ".")
 	return parts[0]
 }
 
@@ -97,8 +94,8 @@ func subdomain(agent, target string) bool {
 		targetDomain = target
 	}
 
-	agentParts := strings.Split(agent, DOMAIN_SEPARATOR)
-	targetParts := strings.Split(targetDomain, DOMAIN_SEPARATOR)
+	agentParts := strings.Split(agent, ".")
+	targetParts := strings.Split(targetDomain, ".")
 
 	// Target cannot be a subdomain of agent if it is shorter.
 	if len(targetParts) < len(agentParts) {
