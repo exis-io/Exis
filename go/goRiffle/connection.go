@@ -116,3 +116,11 @@ func getMessageTimeout(p connection, t time.Duration) (message, error) {
 		return nil, fmt.Errorf("timeout waiting for message")
 	}
 }
+
+// Receive handles messages from the server until this client disconnects.
+// This function blocks and is most commonly run in a goroutine.
+// func (c *domain) Receive() {
+// 	for msg := range c.Connection.Receive() {
+// 		c.Handle(msg)
+// 	}
+// }

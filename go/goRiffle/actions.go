@@ -1,103 +1,10 @@
-package coreRiffle
-
+/////////////////////////////////////////////
 import (
 	"fmt"
 	"log"
+	"time"
 )
 
-// The reeceiving end
-type Delegate interface {
-
-	// Called by core when something needs doing
-	Invoke(string, uint, []interface{}, map[string]interface{})
-
-	OnJoin(string)
-	OnLeave(string)
-}
-
-type Domain interface {
-	Subscribe(string, []interface{}) (uint, error)
-	Register(string, []interface{}) (uint, error)
-
-	Publish(string, []interface{}) error
-	Call(string, []interface{}, []interface{}) (uint, error)
-
-	Unsubscribe(string) error
-	Unregister(string) error
-
-	Join(Connection)
-	Leave()
-}
-
-type domain struct {
-	Connection
-	Delegate
-	name          string
-	subscriptions map[uint]*boundEndpoint
-	registrations map[uint]*boundEndpoint
-	joined        bool
-}
-
-type boundEndpoint struct {
-	endpoint      string
-	expectedTypes []string
-}
-
-func (s *domain) Subdomain(name string) *domain {
-	return &domain{
-		Connection:    s.Connection,
-		Delegate:      s.Delegate,
-		name:          s.name + "." + name,
-		subscriptions: make(map[uint]*boundEndpoint),
-		registrations: make(map[uint]*boundEndpoint),
-		joined:        s.joined,
-	}
-}
-
-// Accepts a connection that has just been opened
-func (c *domain) Join(conn Connection) error {
-	if c.joined {
-		return fmt.Errorf("Domain %s is already joined", c.name)
-	}
-
-	c.Connection = conn
-
-	if err := c.Send(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {
-		conn.Close()
-		return err
-	}
-
-	if msg, err := conn.BlockMessage(); err != nil {
-		conn.Close()
-		return err
-	} else if _, ok := msg.(*welcome); !ok {
-		conn.Send(&abort{
-			Details: map[string]interface{}{},
-			Reason:  "Error- unexpected_message_type",
-		})
-		conn.Close()
-		return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME))
-	} else {
-		return nil
-	}
-}
-
-func (c *domain) Leave() error {
-	if err := c.Send(&goodbye{
-		Details: map[string]interface{}{},
-		Reason:  ErrCloseRealm,
-	}); err != nil {
-		return fmt.Errorf("error leaving realm: %v", err)
-	}
-
-	if err := c.Connection.Close(); err != nil {
-		return fmt.Errorf("error closing client connection: %v", err)
-	}
-
-	return nil
-}
-
-/////////////////////////////////////////////
 // Message Patterns
 /////////////////////////////////////////////
 
@@ -294,6 +201,8 @@ func (c *domain) handleInvocation(msg *invocation) {
 			}
 		}()
 	} else {
+		//log.Println("no handler registered for registration:", msg.Registration)
+
 		if err := c.Send(&errorMessage{
 			Type:    iNVOCATION,
 			Request: msg.Request,
@@ -302,14 +211,6 @@ func (c *domain) handleInvocation(msg *invocation) {
 		}); err != nil {
 			log.Println("error sending message:", err)
 		}
-	}
-}
-
-func (c *domain) handlePublish(msg *event) {
-	if event, ok := c.events[msg.Subscription]; ok {
-		go cumin(event.handler, msg.Arguments)
-	} else {
-		log.Println("no handler registered for subscription:", msg.Subscription)
 	}
 }
 
@@ -323,22 +224,32 @@ func bindingForEndpoint(bindings map[uint]*boundEndpoint, endpoint string) (uint
 	return 0, nil, false
 }
 
-func domainForInvocation(domains []*Domain, msg *invocation) (*Domain, bool) {
-	for d := range domains {
-		if found, ok := d.registrations[msg.Registration]; ok {
-			return d, true
-		}
-	}
-
-	return nil, false
+func (c *domain) registerListener(id uint) {
+	//log.Println("register listener:", id)
+	wait := make(chan message, 1)
+	c.listeners[id] = wait
 }
 
-func domainForPublish(domains []*Domain, msg *event) *Domain {
-	for d := range domains {
-		if found, ok := d.subscriptions[msg.Subscription]; ok {
-			return d, true
+func (c *domain) waitOnListener(id uint) (message, error) {
+	if wait, ok := c.listeners[id]; !ok {
+		return nil, fmt.Errorf("unknown listener uint: %v", id)
+	} else {
+		select {
+		case msg := <-wait:
+			return msg, nil
+		case <-time.After(timeout):
+			return nil, fmt.Errorf("timeout while waiting for message")
 		}
 	}
-
-	return nil, false
 }
+
+func (c *domain) notifyListener(msg message, requestId uint) {
+	// pass in the request uint so we don't have to do any type assertion
+	if l, ok := c.listeners[requestId]; ok {
+		l <- msg
+	} else {
+		log.Println("no listener for message", msg.messageType(), requestId)
+	}
+}
+
+// Convenience function to get a single message from a peer

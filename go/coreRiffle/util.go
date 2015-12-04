@@ -22,6 +22,7 @@ type Connection interface {
 	// NOTE: I think this should be reactive
 	Receive() <-chan message
 
+	// Wait for a message for a timeout amount of time
 	BlockMessage() (message, error)
 }
 
@@ -102,3 +103,13 @@ const (
 	ErrNotAuthorized       = "Not Authorized"
 	ErrAuthorizationFailed = "Unable to Authorize"
 )
+
+func bindingForEndpoint(bindings map[uint]*boundEndpoint, endpoint string) (uint, *boundEndpoint, bool) {
+	for id, p := range bindings {
+		if p.endpoint == endpoint {
+			return id, p, true
+		}
+	}
+
+	return 0, nil, false
+}
