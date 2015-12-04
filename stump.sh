@@ -78,7 +78,7 @@ ios() {
     cd ../..
 
     git add --all
-    git commit -m 'swRiffle upgrade to v $1'
+    git commit -m "swRiffle upgrade to v $1"
 
     git subtree push --prefix ios/appBackendSeed iosAppBackendSeed master
     git subtree push --prefix ios/appSeed iosAppSeed master
@@ -105,7 +105,7 @@ js() {
     cd ../..
 
     git add --all
-    git commit -m 'jsRiffle upgrade to v $1'
+    git commit -m "jsRiffle upgrade to v $1"
 
     git push origin master
     git subtree push --prefix js/jsRiffle jsRiffle master
@@ -113,14 +113,14 @@ js() {
 
     git clone git@github.com:exis-io/jsRiffle.git
     cd jsRiffle
-    git tag -a $1 -m 'Upgrade to v $1'
+    git tag -a $1 -m "Upgrade to v $1"
     git push --tags
     cd ..
     rm -rf jsRiffle
 
     git clone git@github.com:exis-io/ngRiffle.git 
     cd ngRiffle
-    git tag -a $1 -m 'Upgrade to v $1'
+    git tag -a $1 -m "Upgrade to v $1"
     git push --tags
     cd ..
     rm -rf ngRiffle
