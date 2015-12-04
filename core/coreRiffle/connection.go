@@ -75,18 +75,15 @@ func (ep *websocketConnection) Receive() <-chan message {
 }
 
 func (ep *websocketConnection) Close() error {
-	fmt.Println("WARN-- cant close!")
+	closeMsg := websocket.FormatCloseMessage(websocket.CloseNormalClosure, "goodbye")
+	err := ep.conn.WriteControl(websocket.CloseMessage, closeMsg, time.Now().Add(5*time.Second))
 
-	// panic("Why are you closing?")
-	// closeMsg := websocket.FormatCloseMessage(websocket.CloseNormalClosure, "goodbye")
-	// err := ep.conn.WriteControl(websocket.CloseMessage, closeMsg, time.Now().Add(5*time.Second))
+	if err != nil {
+		log.Println("error sending close message:", err)
+	}
 
-	// if err != nil {
-	// 	log.Println("error sending close message:", err)
-	// }
-
-	// ep.closed = true
-	// return ep.conn.Close()
+	ep.closed = true
+	return ep.conn.Close()
 
 	return nil
 }

@@ -3,8 +3,8 @@ package main
 
 import (
 	"C"
-
-	"github.com/exis-io/riffle"
+	"fmt"
+	"github.com/damouse/goriffle"
 )
 
 // Required main method
@@ -12,31 +12,42 @@ func main() {}
 
 //export Connector
 func Connector(url *C.char, domain *C.char) *C.char {
-	ret := riffle.PConnector(C.GoString(url), C.GoString(domain))
+	ret := goriffle.PConnector(C.GoString(url), C.GoString(domain))
 	return C.CString(ret)
 }
 
 //export Subscribe
 func Subscribe(domain *C.char) []byte {
-	return riffle.PSubscribe(C.GoString(domain))
+	return goriffle.PSubscribe(C.GoString(domain))
 }
 
 //export Recieve
 func Recieve() []byte {
-	return riffle.PRecieve()
+	return goriffle.PRecieve()
 }
 
 //export Yield
 func Yield(args []byte) {
-	riffle.PYield(args)
+	goriffle.PYield(args)
 }
 
 //export Register
 func Register(domain *C.char) []byte {
-	return riffle.PRegister(C.GoString(domain))
+	return goriffle.PRegister(C.GoString(domain))
 }
 
 //export Test
 func Test() int {
+	fmt.Println("Entering test")
+	go spin()
 	return 1
+}
+
+func spin() {
+	fmt.Println("Starting")
+	sum := 1
+	for sum < 1000 {
+		sum += sum
+		fmt.Println(sum)
+	}
 }
