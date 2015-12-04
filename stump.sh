@@ -33,8 +33,8 @@ init() {
     git remote add ngRiffle git@github.com:exis-io/ngRiffle.git 
     git remote add ngSeed git@github.com:exis-io/ngSeed.git 
 
-    git remote add goRiffle git@github.com:exis-io/riffle.git 
-    git remote add coreRiffle git@github.com:damouse/goriffle.git 
+    git remote add goRiffle git@github.com:exis-io/goRiffle.git 
+    git remote add coreRiffle git@github.com:damouse/coreRiffle.git 
 
     git remote add pyRiffle git@github.com:exis-io/pyRiffle.git
 }
@@ -51,7 +51,7 @@ push() {
     git subtree push --prefix js/angularSeed ngSeed master
 
     git subtree push --prefix go/goRiffle goRiffle master
-    git subtree push --prefix core/coreRiffle coreRiffle master
+    git subtree push --prefix go/coreRiffle coreRiffle master
 
     git subtree push --prefix python/pyRiffle pyRiffle master
 
@@ -72,7 +72,7 @@ pull() {
     git subtree pull --prefix js/angularSeed ngSeed master -m 'Update to stump'
 
     git subtree pull --prefix go/goRiffle goRiffle master -m 'Update to stump'
-    git subtree pull --prefix core/coreRiffle coreRiffle master -m 'Update to stump'
+    git subtree pull --prefix go/coreRiffle coreRiffle master -m 'Update to stump'
 
     git subtree pull --prefix python/pyRiffle pyRiffle master -m 'Update to stump'
 }
@@ -177,11 +177,11 @@ core() {
 
 
     # echo "Building Python"
-    # go build -buildmode=c-shared -o python/pyRiffle/riffle/libriff.so core/coreRiffle/wrappers/osx.go
+    # go build -buildmode=c-shared -o python/pyRiffle/riffle/libriff.so go/coreRiffle/wrappers/osx.go
 
 
     echo "Building gojs"
-    gopherjs build -m core/coreRiffle/wrappers/jsRiffle.go
+    gopherjs build -m go/coreRiffle/wrappers/jsRiffle.go
 
     mv jsRiffle.js js/jsRiffle/src/go.js
     mv jsRiffle.js.map js/jsRiffle/src/go.js.map
