@@ -7,47 +7,23 @@ import (
 	"strconv"
 )
 
-var sess *session
+var dom *domain
 
 var mem chan message
 var kill chan uint
-
-// Create a global session
-func PConnector(url string, domain string) string {
-	s, err := Start(url, domain)
-	sess = s
-
-	if err != nil {
-		fmt.Println(err)
-		return "NO"
-	}
-
-	go internalReceive()
-
-	mem = make(chan message)
-	kill = make(chan uint)
-
-	return "YES"
-}
-
-// func Test() map[string]interface{} {
-// 	return map[string]interface{}{
-// 		"id": true,
-// 	}
-// }
 
 // Might not have to use PSubscribe at all, actually.
 // Make the regular methods return their ids and toggle on
 // the custom receiver loop
 func PSubscribe(s string) []byte {
 	// Ooh, this is tricky. Can't really have this here
-	e := sess.Subscribe(s, nil)
+	e := dom.Subscribe(s, nil)
 
 	if e != nil {
 		fmt.Println("GR: error subscribing: ", e)
 	}
 
-	if i, _, ok := bindingForEndpoint(sess.events, s); ok {
+	if i, _, ok := bindingForEndpoint(dom.events, s); ok {
 		fmt.Println("Subscribed for endpoint: ", int(i))
 		return marshall(i)
 	} else {
@@ -57,9 +33,9 @@ func PSubscribe(s string) []byte {
 }
 
 func PRegister(s string) []byte {
-	sess.Register(s, nil, map[string]interface{}{})
+	dom.Register(s, nil, map[string]interface{}{})
 
-	if i, _, ok := bindingForEndpoint(sess.procedures, s); ok {
+	if i, _, ok := bindingForEndpoint(dom.procedures, s); ok {
 		fmt.Println("Registered for endpoint: ", int(i))
 		return marshall(i)
 	} else {
@@ -134,7 +110,7 @@ func PYield(args []byte) {
 		}
 	}
 
-	if err := sess.Send(tosend); err != nil {
+	if err := dom.Send(tosend); err != nil {
 		log.Println("error sending message:", err)
 	}
 }
@@ -151,7 +127,7 @@ func marshall(data interface{}) []byte {
 func internalReceive() {
 	fmt.Println("Internal receive")
 
-	c := sess
+	c := dom
 	for msg := range c.connection.Receive() {
 
 		fmt.Println("GR: Internal MSG: ", msg)

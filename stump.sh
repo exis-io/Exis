@@ -176,15 +176,16 @@ core() {
     # GOARM=7 CGO_ENABLED=1 GOARCH=arm go build -buildmode=c-archive -o products/ios.a goriffle/runner/osx.go
 
 
-    echo "Building Python"
-    go build -buildmode=c-shared -o python/pyRiffle/riffle/libriff.so core/sandbox/osx.go
+    # echo "Building Python"
+    # go build -buildmode=c-shared -o python/pyRiffle/riffle/libriff.so core/coreRiffle/wrappers/osx.go
 
 
-    # echo "Building gojs"
-    # gopherjs build -m core/sandbox/jsRiffle.go
+    echo "Building gojs"
+    gopherjs build -m core/coreRiffle/wrappers/jsRiffle.go
 
-    # mv jsRiffle.js js/jsRiffle/src/go.js
-    # mv jsRiffle.js.map js/jsRiffle/src/go.js.map
+    mv jsRiffle.js js/jsRiffle/src/go.js
+    mv jsRiffle.js.map js/jsRiffle/src/go.js.map
+
     exit
 }
 

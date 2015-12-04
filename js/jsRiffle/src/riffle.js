@@ -62,7 +62,8 @@ exports.when = when;
 exports.util = util;
 exports.log = log;
 
-// var go = require('./go.js');
+var go = require('./go.js');
+// global.core.Receiver("Hello from js!");
 // global.core.Pure('ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws', 'xs.damouse.awwyea');
 
 // "Network access is not supported by gopherjs"

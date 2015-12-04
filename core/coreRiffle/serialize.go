@@ -25,6 +25,12 @@ const (
 	mSGPACK
 )
 
+type messagePackSerializer struct {
+}
+
+type jSONSerializer struct {
+}
+
 // applies a list of values from a WAMP message to a message type
 func apply(msgType messageType, arr []interface{}) (message, error) {
 	msg := msgType.New()
@@ -139,11 +145,6 @@ func toList(msg message) []interface{} {
 	return ret
 }
 
-// MessagePack is an implementation of Serializer that handles serializing
-// and deserializing msgpack encoded payloads.
-type messagePackSerializer struct {
-}
-
 // Serialize encodes a Message into a msgpack payload.
 func (s *messagePackSerializer) serialize(msg message) ([]byte, error) {
 	var b []byte
@@ -169,11 +170,6 @@ func (s *messagePackSerializer) deserialize(data []byte) (message, error) {
 	return apply(msgType, arr)
 }
 
-// jSONSerializer is an implementation of Serializer that handles serializing
-// and deserializing jSON encoded payloads.
-type jSONSerializer struct {
-}
-
 // Serialize marshals the payload into a message.
 //
 // This method does not handle binary data according to WAMP specifications automatically,
@@ -193,6 +189,20 @@ func (s *jSONSerializer) deserialize(data []byte) (message, error) {
 	if err := json.Unmarshal(data, &arr); err != nil {
 		return nil, err
 	} else if len(arr) == 0 {
+		return nil, fmt.Errorf("Invalid message")
+	}
+
+	var msgType messageType
+	if typ, ok := arr[0].(float64); ok {
+		msgType = messageType(typ)
+	} else {
+		return nil, fmt.Errorf("Unsupported message format")
+	}
+	return apply(msgType, arr)
+}
+
+func (s *jSONSerializer) deserializeString(arr []interface{}) (message, error) {
+	if len(arr) == 0 {
 		return nil, fmt.Errorf("Invalid message")
 	}
 

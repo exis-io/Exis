@@ -1,132 +1,377 @@
 package goriffle
 
 import (
-	"regexp"
-	"strings"
+	"fmt"
+	"log"
+	"time"
+
+	"github.com/gorilla/websocket"
 )
 
-const ACTION_SEPARATOR string = "/"
-const DOMAIN_SEPARATOR string = "."
+type authFunc func(map[string]interface{}, map[string]interface{}) (string, map[string]interface{}, error)
 
-// Check out the golang tester for more info:
-// https://regex-golang.appspot.com/assets/html/index.html
-func validEndpoint(s string) bool {
-	r, _ := regexp.Compile("(^([a-z]+)(.[a-z]+)*$)")
-	return r.MatchString(s)
+type domain struct {
+	connection
+	ReceiveTimeout time.Duration
+	Auth           map[string]authFunc
+	ReceiveDone    chan bool
+	listeners      map[uint]chan message
+	events         map[uint]*boundEndpoint
+	procedures     map[uint]*boundEndpoint
+	requestCount   uint
+	pdid           string
 }
 
-func validDomain(s string) bool {
-	return true
+type boundEndpoint struct {
+	endpoint string
+	handler  interface{}
 }
 
-func validAction(s string) bool {
-	return true
+func New(domain string) *domain {
+	return nil
 }
 
-// Extract action from endpoint. Endpoint without a closing slash
-// indicating an action is considered an error.
-func extractActions(s string) (string, error) {
-	i := strings.Index(s, "/")
-
-	// No slash found, error
-	if i == -1 {
-		return "", InvalidURIError(s)
-	}
-
-	i += 1
-	return s[i:], nil
+func (s *domain) Subdomain() *domain {
+	return nil
 }
 
-// Extract domain from endpoint, returning an error
-func extractDomain(s string) (string, error) {
-	i := strings.Index(s, "/")
-	// out.Critical("Index of string: %s", i)
+// Connect to the node with the given URL
+func Start(url string, name string) (*domain, error) {
+	dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
 
-	if i == -1 {
-		return "", InvalidURIError(s)
-	}
+	conn, _, err := dialer.Dial(url, nil)
 
-	return s[:i], nil
-}
-
-// Extract the top level from a domain.
-// Example: xs.a.b -> xs
-func topLevelDomain(subdomain string) string {
-	parts := strings.Split(subdomain, DOMAIN_SEPARATOR)
-	return parts[0]
-}
-
-// Generate list of ancestors up to the top level.
-// If add is not "", it will be appended to each result.
-// A result is not returned if it is equal to the argument domain.
-//
-// Example:
-// ancestorDomains("xs.X.Y", "") -> ["xs.X", "xs"]
-// ancestorDomains("xs.X.Y.Z", "auth") -> ["xs.X.Y.auth", "xs.X.auth", "xs.auth"]
-// ancestorDomains("xs.X.Y.auth", "auth") -> ["xs.X.auth", "xs.auth"]
-func ancestorDomains(domain string, add string) []string {
-	var results []string
-
-	parts := strings.Split(domain, ".")
-	for len(parts) > 1 {
-		// Pop the last part of the domain.
-		parts = parts[:len(parts)-1]
-
-		newResult := strings.Join(parts, ".")
-		if add != "" {
-			newResult = newResult + "." + add
-		}
-
-		if newResult != domain {
-			results = append(results, newResult)
-		}
-	}
-
-	return results
-}
-
-// Checks if the target domain is "down" from the given domain.
-// That is-- it is either a subdomain or the same domain.
-// Assumes the passed domains are well constructed.
-// Agent should be purely a domain string, target may be a domain or an
-// endpoint.
-func subdomain(agent, target string) bool {
-	targetDomain, err := extractDomain(target)
 	if err != nil {
-		// Error means the target was already a domain (no action string).
-		targetDomain = target
+		return nil, err
 	}
 
-	agentParts := strings.Split(agent, DOMAIN_SEPARATOR)
-	targetParts := strings.Split(targetDomain, DOMAIN_SEPARATOR)
-
-	// Target cannot be a subdomain of agent if it is shorter.
-	if len(targetParts) < len(agentParts) {
-		return false
+	connection := &websocketConnection{
+		conn:        conn,
+		messages:    make(chan message, 10),
+		serializer:  new(jSONSerializer),
+		payloadType: websocket.TextMessage,
 	}
 
-	for i := 0; i < len(agentParts) && i < len(targetParts); i++ {
-		if targetParts[i] != agentParts[i] {
-			return false
+	if err != nil {
+		return nil, err
+	}
+
+	go connection.run()
+
+	client := &domain{
+		connection:     connection,
+		ReceiveTimeout: 1 * time.Second,
+		listeners:      make(map[uint]chan message),
+		events:         make(map[uint]*boundEndpoint),
+		procedures:     make(map[uint]*boundEndpoint),
+		requestCount:   0,
+	}
+
+	client.Join(name)
+	return client, nil
+}
+
+// Receive handles messages from the server until this client disconnects.
+// This function blocks and is most commonly run in a goroutine.
+func (c *domain) Receive() {
+	for msg := range c.connection.Receive() {
+		c.Handle(msg)
+	}
+
+	if c.ReceiveDone != nil {
+		c.ReceiveDone <- true
+	}
+}
+
+func (c *domain) Handle(msg message) {
+	switch msg := msg.(type) {
+
+	case *event:
+		if event, ok := c.events[msg.Subscription]; ok {
+			go cumin(event.handler, msg.Arguments)
+		} else {
+			log.Println("no handler registered for subscription:", msg.Subscription)
+		}
+
+	case *invocation:
+		c.handleInvocation(msg)
+
+	case *registered:
+		c.notifyListener(msg, msg.Request)
+	case *subscribed:
+		c.notifyListener(msg, msg.Request)
+	case *unsubscribed:
+		c.notifyListener(msg, msg.Request)
+	case *unregistered:
+		c.notifyListener(msg, msg.Request)
+	case *result:
+		c.notifyListener(msg, msg.Request)
+	case *errorMessage:
+		c.notifyListener(msg, msg.Request)
+
+	case *goodbye:
+		break
+
+	default:
+		log.Println("unhandled message:", msg.messageType(), msg)
+		panic("Unhandled message!")
+	}
+}
+
+func (c *domain) Join(realm string) error {
+	details := map[string]interface{}{}
+
+	// if c.Auth != nil && len(c.Auth) > 0 {
+	// 	return c.joinRealmCRA(realm, details)
+	// }
+
+	if err := c.Send(&hello{Realm: realm, Details: details}); err != nil {
+		c.connection.Close()
+		return err
+	}
+
+	if msg, err := getMessageTimeout(c.connection, c.ReceiveTimeout); err != nil {
+		c.connection.Close()
+		return err
+	} else if _, ok := msg.(*welcome); !ok {
+		c.Send(abortUnexpectedMsg)
+		c.connection.Close()
+		return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME))
+	} else {
+		return nil
+	}
+
+}
+
+func (c *domain) Leave() error {
+	if err := c.Send(goodbyeSession); err != nil {
+		return fmt.Errorf("error leaving realm: %v", err)
+	}
+
+	if err := c.connection.Close(); err != nil {
+		return fmt.Errorf("error closing client connection: %v", err)
+	}
+
+	return nil
+}
+
+/////////////////////////////////////////////
+// Handler methods
+/////////////////////////////////////////////
+
+// Subscribe registers the EventHandler to be called for every message in the provided topic.
+func (c *domain) Subscribe(topic string, fn interface{}) error {
+	id := newID()
+	c.registerListener(id)
+
+	sub := &subscribe{
+		Request: id,
+		Options: make(map[string]interface{}),
+		Domain:  topic,
+	}
+
+	if err := c.Send(sub); err != nil {
+		return err
+	}
+
+	// wait to receive sUBSCRIBED message
+	msg, err := c.waitOnListener(id)
+	if err != nil {
+		return err
+	} else if e, ok := msg.(*errorMessage); ok {
+		return fmt.Errorf("error subscribing to topic '%v': %v", topic, e.Error)
+	} else if subscribed, ok := msg.(*subscribed); !ok {
+		return fmt.Errorf(formatUnexpectedMessage(msg, sUBSCRIBED))
+	} else {
+		// register the event handler with this subscription
+		c.events[subscribed.Subscription] = &boundEndpoint{topic, fn}
+	}
+	return nil
+}
+
+// Unsubscribe removes the registered EventHandler from the topic.
+func (c *domain) Unsubscribe(topic string) error {
+	subscriptionID, _, ok := bindingForEndpoint(c.events, topic)
+
+	if !ok {
+		return fmt.Errorf("Domain %s is not registered with this client.", topic)
+	}
+
+	id := newID()
+	c.registerListener(id)
+
+	sub := &unsubscribe{
+		Request:      id,
+		Subscription: subscriptionID,
+	}
+
+	if err := c.Send(sub); err != nil {
+		return err
+	}
+
+	// wait to receive uNSUBSCRIBED message
+	msg, err := c.waitOnListener(id)
+	if err != nil {
+		return err
+	} else if e, ok := msg.(*errorMessage); ok {
+		return fmt.Errorf("error unsubscribing to topic '%v': %v", topic, e.Error)
+	} else if _, ok := msg.(*unsubscribed); !ok {
+		return fmt.Errorf(formatUnexpectedMessage(msg, uNSUBSCRIBED))
+	}
+
+	delete(c.events, subscriptionID)
+	return nil
+}
+
+func (c *domain) Register(procedure string, fn interface{}, options map[string]interface{}) error {
+	id := newID()
+	c.registerListener(id)
+
+	register := &register{
+		Request: id,
+		Options: options,
+		Domain:  procedure,
+	}
+
+	if err := c.Send(register); err != nil {
+		return err
+	}
+
+	// wait to receive rEGISTERED message
+	msg, err := c.waitOnListener(id)
+	if err != nil {
+		return err
+	} else if e, ok := msg.(*errorMessage); ok {
+		return fmt.Errorf("error registering procedure '%v': %v", procedure, e.Error)
+	} else if registered, ok := msg.(*registered); !ok {
+		return fmt.Errorf(formatUnexpectedMessage(msg, rEGISTERED))
+	} else {
+		// register the event handler with this registration
+		c.procedures[registered.Registration] = &boundEndpoint{procedure, fn}
+	}
+	return nil
+}
+
+// Unregister removes a procedure with the Node
+func (c *domain) Unregister(procedure string) error {
+	procedureID, _, ok := bindingForEndpoint(c.procedures, procedure)
+
+	if !ok {
+		return fmt.Errorf("Domain %s is not registered with this client.", procedure)
+	}
+
+	id := newID()
+	c.registerListener(id)
+
+	unregister := &unregister{
+		Request:      id,
+		Registration: procedureID,
+	}
+
+	if err := c.Send(unregister); err != nil {
+		return err
+	}
+
+	// wait to receive uNREGISTERED message
+	msg, err := c.waitOnListener(id)
+	if err != nil {
+		return err
+	} else if e, ok := msg.(*errorMessage); ok {
+		return fmt.Errorf("error unregister to procedure '%v': %v", procedure, e.Error)
+	} else if _, ok := msg.(*unregistered); !ok {
+		return fmt.Errorf(formatUnexpectedMessage(msg, uNREGISTERED))
+	}
+
+	// register the event handler with this unregistration
+	delete(c.procedures, procedureID)
+	return nil
+}
+
+// Publish publishes an eVENT to all subscribed peers.
+func (c *domain) Publish(endpoint string, args ...interface{}) error {
+	return c.Send(&publish{
+		Request:   newID(),
+		Options:   make(map[string]interface{}),
+		Domain:    endpoint,
+		Arguments: args,
+	})
+}
+
+// Call calls a procedure given a URI.
+func (c *domain) Call(procedure string, args ...interface{}) ([]interface{}, error) {
+	id := newID()
+	c.registerListener(id)
+
+	call := &call{
+		Request:   id,
+		Domain:    procedure,
+		Options:   make(map[string]interface{}),
+		Arguments: args,
+	}
+
+	if err := c.Send(call); err != nil {
+		return nil, err
+	}
+
+	// wait to receive rESULT message
+	msg, err := c.waitOnListener(id)
+	if err != nil {
+		return nil, err
+	} else if e, ok := msg.(*errorMessage); ok {
+		return nil, fmt.Errorf("error calling procedure '%v': %v", procedure, e.Error)
+	} else if result, ok := msg.(*result); !ok {
+		return nil, fmt.Errorf(formatUnexpectedMessage(msg, rESULT))
+	} else {
+		return result.Arguments, nil
+	}
+}
+
+func (c *domain) handleInvocation(msg *invocation) {
+	if proc, ok := c.procedures[msg.Registration]; ok {
+		go func() {
+			result, err := cumin(proc.handler, msg.Arguments)
+			var tosend message
+
+			tosend = &yield{
+				Request:   msg.Request,
+				Options:   make(map[string]interface{}),
+				Arguments: result,
+			}
+
+			if err != nil {
+				tosend = &errorMessage{
+					Type:      iNVOCATION,
+					Request:   msg.Request,
+					Details:   make(map[string]interface{}),
+					Arguments: result,
+					Error:     err.Error(),
+				}
+			}
+
+			if err := c.Send(tosend); err != nil {
+				log.Println("error sending message:", err)
+			}
+		}()
+	} else {
+		//log.Println("no handler registered for registration:", msg.Registration)
+
+		if err := c.Send(&errorMessage{
+			Type:    iNVOCATION,
+			Request: msg.Request,
+			Details: make(map[string]interface{}),
+			Error:   fmt.Sprintf("no handler for registration: %v", msg.Registration),
+		}); err != nil {
+			log.Println("error sending message:", err)
+		}
+	}
+}
+
+func bindingForEndpoint(bindings map[uint]*boundEndpoint, endpoint string) (uint, *boundEndpoint, bool) {
+	for id, p := range bindings {
+		if p.endpoint == endpoint {
+			return id, p, true
 		}
 	}
 
-	return true
-}
-
-// breaks down an endpoint into domain and action, or returns an error
-func breakdownEndpoint(s string) (string, string, error) {
-	d, errDomain := extractDomain(s)
-
-	if errDomain != nil {
-		return "", "", InvalidURIError(s)
-	}
-
-	a, errAction := extractActions(s)
-
-	if errAction != nil {
-		return "", "", InvalidURIError(s)
-	}
-
-	return d, a, nil
+	return 0, nil, false
 }

@@ -10,8 +10,7 @@ import (
 )
 
 type websocketConnection struct {
-	conn *websocket.Conn
-	// jsws        *jssock.WebSocket
+	conn        *websocket.Conn
 	connLock    sync.Mutex
 	serializer  serializer
 	messages    chan message
@@ -53,18 +52,12 @@ func (ep *websocketConnection) Send(msg message) error {
 
 	b, err := ep.serializer.serialize(msg)
 
-	fmt.Println("Serializing message, output: ", b)
-	// done, err := ep.serializer.deserialize(b)
-	// fmt.Println("Deserialized: ", done, err)
-
 	if err != nil {
 		return err
 	}
 
 	ep.connLock.Lock()
 	err = ep.conn.WriteMessage(ep.payloadType, b)
-	// _, err = ep.conn.UnderlyingConn().Write(b)
-	// err = ep.jsws.Send(b)
 	ep.connLock.Unlock()
 
 	return err
@@ -118,13 +111,13 @@ func (ep *websocketConnection) run() {
 	}
 }
 
-func (c *session) registerListener(id uint) {
+func (c *domain) registerListener(id uint) {
 	//log.Println("register listener:", id)
 	wait := make(chan message, 1)
 	c.listeners[id] = wait
 }
 
-func (c *session) waitOnListener(id uint) (message, error) {
+func (c *domain) waitOnListener(id uint) (message, error) {
 	if wait, ok := c.listeners[id]; !ok {
 		return nil, fmt.Errorf("unknown listener uint: %v", id)
 	} else {
@@ -137,7 +130,7 @@ func (c *session) waitOnListener(id uint) (message, error) {
 	}
 }
 
-func (c *session) notifyListener(msg message, requestId uint) {
+func (c *domain) notifyListener(msg message, requestId uint) {
 	// pass in the request uint so we don't have to do any type assertion
 	if l, ok := c.listeners[requestId]; ok {
 		l <- msg

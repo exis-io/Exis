@@ -19,14 +19,6 @@ func newID() uint {
 	return uint(rand.Int63n(maxId))
 }
 
-// func PprintMap(m interface{}) {
-// 	if b, err := jSON.MarshalIndent(m, "", "  "); err != nil {
-// 		fmt.Println("error:", err)
-// 	} else {
-// 		//log.Printf("%s", string(m))
-// 	}
-// }
-
 func formatUnexpectedMessage(msg message, expected messageType) string {
 	s := fmt.Sprintf("received unexpected %s message while waiting for %s", msg.messageType(), expected)
 	switch m := msg.(type) {
