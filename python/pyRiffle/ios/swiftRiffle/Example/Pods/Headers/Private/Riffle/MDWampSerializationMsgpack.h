@@ -1,0 +1,1 @@
+../../../../../Pod/Classes/src/MDWampSerializations/MDWampSerializationMsgpack.h

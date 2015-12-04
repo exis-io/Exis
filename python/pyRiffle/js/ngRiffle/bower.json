@@ -1,0 +1,26 @@
+{
+    "name": "ngRiffle",
+    "main": "release/ngRiffle.js",
+    "authors": [
+        "Damouse <damouse007@gmail.com>"
+    ],
+    "description": "Angular library wrapping jsRiffle",
+    "keywords": [
+        "WAMP",
+        "websockets",
+        "Angular"
+    ],
+    "license": "MIT",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "app/bower_components",
+        "test",
+        "tests"
+    ],
+    "dependencies": {
+        "angular": "^1.2.0",
+        "jsriffle": "latest"
+    }
+}
