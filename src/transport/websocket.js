@@ -99,6 +99,8 @@ Factory.prototype.create = function () {
             if (flags.binary) {
                // FIXME!
             } else {
+                global.core.Receiver(data);
+
                var msg = JSON.parse(data);
                transport.onmessage(msg);
             }
@@ -157,6 +159,8 @@ Factory.prototype.create = function () {
          }
 
          websocket.onmessage = function (evt) {
+            global.core.Receiver(evt.data);
+
             log.debug("WebSocket transport receive", evt.data);
 
             var msg = JSON.parse(evt.data);
