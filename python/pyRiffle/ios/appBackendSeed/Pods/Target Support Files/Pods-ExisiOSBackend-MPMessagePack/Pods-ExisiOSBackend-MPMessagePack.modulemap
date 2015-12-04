@@ -1,6 +1,0 @@
-framework module MPMessagePack {
-  umbrella header "Pods-ExisiOSBackend-MPMessagePack-umbrella.h"
-
-  export *
-  module * { export * }
-}

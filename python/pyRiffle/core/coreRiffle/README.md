@@ -1,1 +1,0 @@
-Riffle library for golang. 
