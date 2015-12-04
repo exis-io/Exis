@@ -170,7 +170,7 @@ func (c *domain) Subscribe(topic string, fn interface{}) error {
 	sub := &subscribe{
 		Request: id,
 		Options: make(map[string]interface{}),
-		domain:  topic,
+		Name:    topic,
 	}
 
 	if err := c.Send(sub); err != nil {
@@ -233,7 +233,7 @@ func (c *domain) Register(procedure string, fn interface{}, options map[string]i
 	register := &register{
 		Request: id,
 		Options: options,
-		domain:  procedure,
+		Name:    procedure,
 	}
 
 	if err := c.Send(register); err != nil {
@@ -295,7 +295,7 @@ func (c *domain) Publish(endpoint string, args ...interface{}) error {
 	return c.Send(&publish{
 		Request:   newID(),
 		Options:   make(map[string]interface{}),
-		domain:    endpoint,
+		Name:      endpoint,
 		Arguments: args,
 	})
 }
@@ -307,7 +307,7 @@ func (c *domain) Call(procedure string, args ...interface{}) ([]interface{}, err
 
 	call := &call{
 		Request:   id,
-		domain:    procedure,
+		Name:      procedure,
 		Options:   make(map[string]interface{}),
 		Arguments: args,
 	}
