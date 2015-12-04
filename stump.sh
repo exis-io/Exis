@@ -26,7 +26,6 @@ init() {
     git remote add jsRiffle git@github.com:exis-io/jsRiffle.git
     git remote add ngRiffle git@github.com:exis-io/ngRiffle.git 
     git remote add ngSeed git@github.com:exis-io/ngSeed.git 
-
 }
 
 push() {
@@ -38,6 +37,7 @@ push() {
 
     git subtree push --prefix js/jsRiffle jsRiffle master
     git subtree push --prefix js/ngRiffle ngRiffle master
+    git subtree push --prefix js/angularSeed ngSeed master
 
     git push origin
 }
@@ -53,8 +53,8 @@ pull() {
 
     git subtree pull --prefix js/jsRiffle jsRiffle master -m 'Update to stump'
     git subtree pull --prefix js/ngRiffle ngRiffle master -m 'Update to stump'
+    git subtree pull --prefix js/angularSeed ngSeed master -m 'Update to stump'
 }
-git@github.com:exis-io/ngSeed.git
 
 ios() {
     echo "Updating ios to version $1"
@@ -127,6 +127,8 @@ js() {
     git push --tags
     cd ..
     rm -rf ngRiffle
+
+    # Do anything with the seed app?
 }
 
 case "$1" in
