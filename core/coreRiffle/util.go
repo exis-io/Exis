@@ -7,7 +7,8 @@ import (
 )
 
 const (
-	maxId int64 = 1 << 53
+	maxId   int64         = 1 << 53
+	timeout time.Duration = 5 * time.Second
 )
 
 func init() {

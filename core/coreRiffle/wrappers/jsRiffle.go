@@ -2,32 +2,36 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/damouse/goriffle"
 	"github.com/gopherjs/gopherjs/js"
 )
 
-/*
-Works-- call with
-	riffle.go.Receiver("Publish")
-	var go = require('./go.js');
-	exports.go = global.core;
-*/
+var dommy *goriffle.Domain
 
 // Required main method
 func main() {
 	js.Global.Set("core", map[string]interface{}{
-		"Receiver": goriffle.ExternalReceive,
-		"Native":   Connector,
+		"Receiver": ExternalReceive,
+		// "Domain":   goriffle.NewDomain,
+		"Domain": Connector,
 	})
 }
 
-// //export Connector
-func Connector(url string, domain string) string {
+func Connector(name string) *goriffle.Domain {
+	dommy = goriffle.NewDomain(name)
+	fmt.Println("Creating a new domain: ", dommy)
+	return dommy
+}
 
-	go func() {
-		goriffle.PConnector(url, domain)
-		// goriffle.PSubscribe("xs.damouse.hello")
-		// fmt.Println("Done")
-	}()
-	return "Thanks"
+func ExternalReceive(msg string) {
+	fmt.Println("Domain exists: ", dommy)
+
+	if dommy == nil {
+		fmt.Println("WARN: no domain exists to handle the message!")
+		return
+	}
+
+	dommy.ReceiveExternal(msg)
 }

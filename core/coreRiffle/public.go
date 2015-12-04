@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-var dom *domain
+var dom *Domain
 
 var mem chan message
 var kill chan uint

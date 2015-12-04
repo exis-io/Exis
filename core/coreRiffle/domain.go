@@ -1,25 +1,18 @@
 package goriffle
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/gorilla/websocket"
 )
 
-type authFunc func(map[string]interface{}, map[string]interface{}) (string, map[string]interface{}, error)
-
-type domain struct {
+type Domain struct {
 	connection
-	ReceiveTimeout time.Duration
-	Auth           map[string]authFunc
-	ReceiveDone    chan bool
-	listeners      map[uint]chan message
-	events         map[uint]*boundEndpoint
-	procedures     map[uint]*boundEndpoint
-	requestCount   uint
-	pdid           string
+	listeners  map[uint]chan message
+	events     map[uint]*boundEndpoint
+	procedures map[uint]*boundEndpoint
 }
 
 type boundEndpoint struct {
@@ -27,18 +20,22 @@ type boundEndpoint struct {
 	handler  interface{}
 }
 
-func New(domain string) *domain {
-	return nil
+func NewDomain(name string) *Domain {
+	return &Domain{
+		// connection: connection,
+		listeners:  make(map[uint]chan message),
+		events:     make(map[uint]*boundEndpoint),
+		procedures: make(map[uint]*boundEndpoint),
+	}
 }
 
-func (s *domain) Subdomain() *domain {
+func (s *Domain) Subdomain() *Domain {
 	return nil
 }
 
 // Connect to the node with the given URL
-func Start(url string, name string) (*domain, error) {
+func Start(url string, name string) (*Domain, error) {
 	dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
-
 	conn, _, err := dialer.Dial(url, nil)
 
 	if err != nil {
@@ -58,32 +55,86 @@ func Start(url string, name string) (*domain, error) {
 
 	go connection.run()
 
-	client := &domain{
-		connection:     connection,
-		ReceiveTimeout: 1 * time.Second,
-		listeners:      make(map[uint]chan message),
-		events:         make(map[uint]*boundEndpoint),
-		procedures:     make(map[uint]*boundEndpoint),
-		requestCount:   0,
+	dom := &Domain{
+		connection: connection,
+		listeners:  make(map[uint]chan message),
+		events:     make(map[uint]*boundEndpoint),
+		procedures: make(map[uint]*boundEndpoint),
 	}
 
-	client.Join(name)
-	return client, nil
+	dom.Join(name)
+	return dom, nil
 }
+
+func (c *Domain) Join(realm string) error {
+	details := map[string]interface{}{}
+
+	if err := c.Send(&hello{Realm: realm, Details: details}); err != nil {
+		c.connection.Close()
+		return err
+	}
+
+	if msg, err := getMessageTimeout(c.connection, timeout); err != nil {
+		c.connection.Close()
+		return err
+	} else if _, ok := msg.(*welcome); !ok {
+		c.Send(abortUnexpectedMsg)
+		c.connection.Close()
+		return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME))
+	} else {
+		return nil
+	}
+
+}
+
+func (c *Domain) Leave() error {
+	if err := c.Send(goodbyeSession); err != nil {
+		return fmt.Errorf("error leaving realm: %v", err)
+	}
+
+	if err := c.connection.Close(); err != nil {
+		return fmt.Errorf("error closing client connection: %v", err)
+	}
+
+	return nil
+}
+
+/////////////////////////////////////////////
+// Handler methods
+/////////////////////////////////////////////
 
 // Receive handles messages from the server until this client disconnects.
 // This function blocks and is most commonly run in a goroutine.
-func (c *domain) Receive() {
+func (c *Domain) Receive() {
 	for msg := range c.connection.Receive() {
 		c.Handle(msg)
 	}
+}
 
-	if c.ReceiveDone != nil {
-		c.ReceiveDone <- true
+// Does not spin, does not block-- is called with updates
+func (c *Domain) ReceiveExternal(msg string) {
+	byt := []byte(msg)
+	var dat []interface{}
+
+	if err := json.Unmarshal(byt, &dat); err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	seer := new(jSONSerializer)
+	fmt.Println("Received a message: ", msg)
+
+	m, err := seer.deserializeString(dat)
+	if err != nil {
+		log.Println("error deserializing message:", err)
+		log.Println(msg)
+	} else {
+		fmt.Println("Message received!")
+		c.Handle(m)
 	}
 }
 
-func (c *domain) Handle(msg message) {
+func (c *Domain) Handle(msg message) {
 	switch msg := msg.(type) {
 
 	case *event:
@@ -114,53 +165,16 @@ func (c *domain) Handle(msg message) {
 
 	default:
 		log.Println("unhandled message:", msg.messageType(), msg)
-		panic("Unhandled message!")
+		// panic("Unhandled message!")
 	}
-}
-
-func (c *domain) Join(realm string) error {
-	details := map[string]interface{}{}
-
-	// if c.Auth != nil && len(c.Auth) > 0 {
-	// 	return c.joinRealmCRA(realm, details)
-	// }
-
-	if err := c.Send(&hello{Realm: realm, Details: details}); err != nil {
-		c.connection.Close()
-		return err
-	}
-
-	if msg, err := getMessageTimeout(c.connection, c.ReceiveTimeout); err != nil {
-		c.connection.Close()
-		return err
-	} else if _, ok := msg.(*welcome); !ok {
-		c.Send(abortUnexpectedMsg)
-		c.connection.Close()
-		return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME))
-	} else {
-		return nil
-	}
-
-}
-
-func (c *domain) Leave() error {
-	if err := c.Send(goodbyeSession); err != nil {
-		return fmt.Errorf("error leaving realm: %v", err)
-	}
-
-	if err := c.connection.Close(); err != nil {
-		return fmt.Errorf("error closing client connection: %v", err)
-	}
-
-	return nil
 }
 
 /////////////////////////////////////////////
-// Handler methods
+// Message Patterns
 /////////////////////////////////////////////
 
 // Subscribe registers the EventHandler to be called for every message in the provided topic.
-func (c *domain) Subscribe(topic string, fn interface{}) error {
+func (c *Domain) Subscribe(topic string, fn interface{}) error {
 	id := newID()
 	c.registerListener(id)
 
@@ -190,7 +204,7 @@ func (c *domain) Subscribe(topic string, fn interface{}) error {
 }
 
 // Unsubscribe removes the registered EventHandler from the topic.
-func (c *domain) Unsubscribe(topic string) error {
+func (c *Domain) Unsubscribe(topic string) error {
 	subscriptionID, _, ok := bindingForEndpoint(c.events, topic)
 
 	if !ok {
@@ -223,7 +237,7 @@ func (c *domain) Unsubscribe(topic string) error {
 	return nil
 }
 
-func (c *domain) Register(procedure string, fn interface{}, options map[string]interface{}) error {
+func (c *Domain) Register(procedure string, fn interface{}, options map[string]interface{}) error {
 	id := newID()
 	c.registerListener(id)
 
@@ -253,7 +267,7 @@ func (c *domain) Register(procedure string, fn interface{}, options map[string]i
 }
 
 // Unregister removes a procedure with the Node
-func (c *domain) Unregister(procedure string) error {
+func (c *Domain) Unregister(procedure string) error {
 	procedureID, _, ok := bindingForEndpoint(c.procedures, procedure)
 
 	if !ok {
@@ -288,7 +302,7 @@ func (c *domain) Unregister(procedure string) error {
 }
 
 // Publish publishes an eVENT to all subscribed peers.
-func (c *domain) Publish(endpoint string, args ...interface{}) error {
+func (c *Domain) Publish(endpoint string, args ...interface{}) error {
 	return c.Send(&publish{
 		Request:   newID(),
 		Options:   make(map[string]interface{}),
@@ -298,7 +312,7 @@ func (c *domain) Publish(endpoint string, args ...interface{}) error {
 }
 
 // Call calls a procedure given a URI.
-func (c *domain) Call(procedure string, args ...interface{}) ([]interface{}, error) {
+func (c *Domain) Call(procedure string, args ...interface{}) ([]interface{}, error) {
 	id := newID()
 	c.registerListener(id)
 
@@ -326,7 +340,7 @@ func (c *domain) Call(procedure string, args ...interface{}) ([]interface{}, err
 	}
 }
 
-func (c *domain) handleInvocation(msg *invocation) {
+func (c *Domain) handleInvocation(msg *invocation) {
 	if proc, ok := c.procedures[msg.Registration]; ok {
 		go func() {
 			result, err := cumin(proc.handler, msg.Arguments)

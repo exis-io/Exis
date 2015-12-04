@@ -63,6 +63,9 @@ exports.util = util;
 exports.log = log;
 
 var go = require('./go.js');
+
+exports.domain = global.core.Domain("xs.damouse")
+
 // global.core.Receiver("Hello from js!");
 // global.core.Pure('ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws', 'xs.damouse.awwyea');
 

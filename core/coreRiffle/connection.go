@@ -111,26 +111,26 @@ func (ep *websocketConnection) run() {
 	}
 }
 
-func (c *domain) registerListener(id uint) {
+func (c *Domain) registerListener(id uint) {
 	//log.Println("register listener:", id)
 	wait := make(chan message, 1)
 	c.listeners[id] = wait
 }
 
-func (c *domain) waitOnListener(id uint) (message, error) {
+func (c *Domain) waitOnListener(id uint) (message, error) {
 	if wait, ok := c.listeners[id]; !ok {
 		return nil, fmt.Errorf("unknown listener uint: %v", id)
 	} else {
 		select {
 		case msg := <-wait:
 			return msg, nil
-		case <-time.After(c.ReceiveTimeout):
+		case <-time.After(timeout):
 			return nil, fmt.Errorf("timeout while waiting for message")
 		}
 	}
 }
 
-func (c *domain) notifyListener(msg message, requestId uint) {
+func (c *Domain) notifyListener(msg message, requestId uint) {
 	// pass in the request uint so we don't have to do any type assertion
 	if l, ok := c.listeners[requestId]; ok {
 		l <- msg
