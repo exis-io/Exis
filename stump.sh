@@ -28,6 +28,7 @@ init() {
     git remote add ngSeed git@github.com:exis-io/ngSeed.git 
 
     git remote add goRiffle git@github.com:exis-io/riffle.git 
+    git remote add coreRiffle git@github.com:damouse/goriffle.git 
 }
 
 push() {
@@ -40,6 +41,8 @@ push() {
     git subtree push --prefix js/jsRiffle jsRiffle master
     git subtree push --prefix js/ngRiffle ngRiffle master
     git subtree push --prefix js/angularSeed ngSeed master
+
+    git subtree push --prefix go/goRiffle goRiffle master
 
     git push origin master
 }
@@ -56,6 +59,8 @@ pull() {
     git subtree pull --prefix js/jsRiffle jsRiffle master -m 'Update to stump'
     git subtree pull --prefix js/ngRiffle ngRiffle master -m 'Update to stump'
     git subtree pull --prefix js/angularSeed ngSeed master -m 'Update to stump'
+
+    git subtree pull --prefix go/goRiffle goRiffle master -m 'Update to stump'
 }
 
 ios() {
@@ -133,12 +138,17 @@ js() {
     # Do anything with the seed app?
 }
 
+go() {
+
+}
+
 case "$1" in
     "init") init;;
     "push") push;;
     "pull") pull;;
     "ios") ios $2 $3;;
     "js") js $2 $3;;
+    "go") go;;
     *) echo "Unknown input $1"
    ;;
 esac
