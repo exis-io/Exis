@@ -12,13 +12,14 @@ me.onJoin = function() {
     this.subscribe('sub', function (args) {
         console.log("Publish received:", args[0], args[1]);
 
-        //ng.publish('sub', "Server pubs, ", "Bye");
+        ng.publish('sub', "Server pubs, ", "Bye");
+
     });
 
     this.register('register', function(args) {
         console.log("Call received: ",  args[0], args[1]);
 
-        //ng.call('register', "Server says, ", "hi");
+        ng.call('register', "Server says, ", "hi");
 
         return "Pong"
     });
