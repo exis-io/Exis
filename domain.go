@@ -1,13 +1,21 @@
 package coreRiffle
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
-	"time"
 )
 
-type domaine interface {
+// The reeceiving end
+type Delegate interface {
+
+	// Called by core when something needs doing
+	Invoke(string, uint, []interface{}, map[string]interface{})
+
+	OnJoin(string)
+	OnLeave(string)
+}
+
+type Domain interface {
 	Subscribe(string, []interface{}) (uint, error)
 	Register(string, []interface{}) (uint, error)
 
@@ -24,39 +32,34 @@ type domaine interface {
 type domain struct {
 	Connection
 	Delegate
-	name       string
-	listeners  map[uint]chan message
-	events     map[uint]*boundEndpoint
-	procedures map[uint]*boundEndpoint
+	name          string
+	subscriptions map[uint]*boundEndpoint
+	registrations map[uint]*boundEndpoint
+	joined        bool
 }
 
 type boundEndpoint struct {
-	endpoint string
-	handler  interface{}
-}
-
-func Newdomain(name string) *domain {
-	// The commented out line is js specific
-
-	return &domain{
-		name:       name,
-		listeners:  make(map[uint]chan message),
-		events:     make(map[uint]*boundEndpoint),
-		procedures: make(map[uint]*boundEndpoint),
-	}
+	endpoint      string
+	expectedTypes []string
 }
 
 func (s *domain) Subdomain(name string) *domain {
 	return &domain{
-		name:       s.name + "." + name,
-		listeners:  make(map[uint]chan message),
-		events:     make(map[uint]*boundEndpoint),
-		procedures: make(map[uint]*boundEndpoint),
+		Connection:    s.Connection,
+		Delegate:      s.Delegate,
+		name:          s.name + "." + name,
+		subscriptions: make(map[uint]*boundEndpoint),
+		registrations: make(map[uint]*boundEndpoint),
+		joined:        s.joined,
 	}
 }
 
 // Accepts a connection that has just been opened
 func (c *domain) Join(conn Connection) error {
+	if c.joined {
+		return fmt.Errorf("Domain %s is already joined", c.name)
+	}
+
 	c.Connection = conn
 
 	if err := c.Send(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {
@@ -68,7 +71,10 @@ func (c *domain) Join(conn Connection) error {
 		conn.Close()
 		return err
 	} else if _, ok := msg.(*welcome); !ok {
-		conn.Send(abortUnexpectedMsg)
+		conn.Send(&abort{
+			Details: map[string]interface{}{},
+			Reason:  "Error- unexpected_message_type",
+		})
 		conn.Close()
 		return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME))
 	} else {
@@ -77,7 +83,10 @@ func (c *domain) Join(conn Connection) error {
 }
 
 func (c *domain) Leave() error {
-	if err := c.Send(goodbyeSession); err != nil {
+	if err := c.Send(&goodbye{
+		Details: map[string]interface{}{},
+		Reason:  ErrCloseRealm,
+	}); err != nil {
 		return fmt.Errorf("error leaving realm: %v", err)
 	}
 
@@ -86,76 +95,6 @@ func (c *domain) Leave() error {
 	}
 
 	return nil
-}
-
-/////////////////////////////////////////////
-// Handler methods
-/////////////////////////////////////////////
-
-// Receive handles messages from the server until this client disconnects.
-// This function blocks and is most commonly run in a goroutine.
-func (c *domain) Receive() {
-	for msg := range c.Connection.Receive() {
-		c.Handle(msg)
-	}
-}
-
-// Does not spin, does not block-- is called with updates
-func (c *domain) ReceiveExternal(msg string) {
-	byt := []byte(msg)
-	var dat []interface{}
-
-	if err := json.Unmarshal(byt, &dat); err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	seer := new(jSONSerializer)
-	fmt.Println("Received a message: ", msg)
-
-	m, err := seer.deserializeString(dat)
-	if err != nil {
-		log.Println("error deserializing message:", err)
-		log.Println(msg)
-	} else {
-		fmt.Println("Message received!")
-		c.Handle(m)
-	}
-}
-
-func (c *domain) Handle(msg message) {
-	switch msg := msg.(type) {
-
-	case *event:
-		if event, ok := c.events[msg.Subscription]; ok {
-			go cumin(event.handler, msg.Arguments)
-		} else {
-			log.Println("no handler registered for subscription:", msg.Subscription)
-		}
-
-	case *invocation:
-		c.handleInvocation(msg)
-
-	case *registered:
-		c.notifyListener(msg, msg.Request)
-	case *subscribed:
-		c.notifyListener(msg, msg.Request)
-	case *unsubscribed:
-		c.notifyListener(msg, msg.Request)
-	case *unregistered:
-		c.notifyListener(msg, msg.Request)
-	case *result:
-		c.notifyListener(msg, msg.Request)
-	case *errorMessage:
-		c.notifyListener(msg, msg.Request)
-
-	case *goodbye:
-		break
-
-	default:
-		log.Println("unhandled message:", msg.messageType(), msg)
-		// panic("Unhandled message!")
-	}
 }
 
 /////////////////////////////////////////////
@@ -186,7 +125,6 @@ func (c *domain) Subscribe(topic string, fn interface{}) error {
 	} else if subscribed, ok := msg.(*subscribed); !ok {
 		return fmt.Errorf(formatUnexpectedMessage(msg, sUBSCRIBED))
 	} else {
-		// register the event handler with this subscription
 		c.events[subscribed.Subscription] = &boundEndpoint{topic, fn}
 	}
 	return nil
@@ -356,8 +294,6 @@ func (c *domain) handleInvocation(msg *invocation) {
 			}
 		}()
 	} else {
-		//log.Println("no handler registered for registration:", msg.Registration)
-
 		if err := c.Send(&errorMessage{
 			Type:    iNVOCATION,
 			Request: msg.Request,
@@ -366,6 +302,14 @@ func (c *domain) handleInvocation(msg *invocation) {
 		}); err != nil {
 			log.Println("error sending message:", err)
 		}
+	}
+}
+
+func (c *domain) handlePublish(msg *event) {
+	if event, ok := c.events[msg.Subscription]; ok {
+		go cumin(event.handler, msg.Arguments)
+	} else {
+		log.Println("no handler registered for subscription:", msg.Subscription)
 	}
 }
 
@@ -379,32 +323,22 @@ func bindingForEndpoint(bindings map[uint]*boundEndpoint, endpoint string) (uint
 	return 0, nil, false
 }
 
-func (c *domain) registerListener(id uint) {
-	//log.Println("register listener:", id)
-	wait := make(chan message, 1)
-	c.listeners[id] = wait
-}
-
-func (c *domain) waitOnListener(id uint) (message, error) {
-	if wait, ok := c.listeners[id]; !ok {
-		return nil, fmt.Errorf("unknown listener uint: %v", id)
-	} else {
-		select {
-		case msg := <-wait:
-			return msg, nil
-		case <-time.After(timeout):
-			return nil, fmt.Errorf("timeout while waiting for message")
+func domainForInvocation(domains []*Domain, msg *invocation) (*Domain, bool) {
+	for d := range domains {
+		if found, ok := d.registrations[msg.Registration]; ok {
+			return d, true
 		}
 	}
+
+	return nil, false
 }
 
-func (c *domain) notifyListener(msg message, requestId uint) {
-	// pass in the request uint so we don't have to do any type assertion
-	if l, ok := c.listeners[requestId]; ok {
-		l <- msg
-	} else {
-		log.Println("no listener for message", msg.messageType(), requestId)
+func domainForPublish(domains []*Domain, msg *event) *Domain {
+	for d := range domains {
+		if found, ok := d.subscriptions[msg.Subscription]; ok {
+			return d, true
+		}
 	}
-}
 
-// Convenience function to get a single message from a peer
+	return nil, false
+}

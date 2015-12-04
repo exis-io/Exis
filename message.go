@@ -5,25 +5,6 @@ type message interface {
 	messageType() messageType
 }
 
-// var (
-// 	abortUnexpectedMsg = &abort{
-// 		Details: map[string]interface{}{},
-// 		Reason:  "Error- unexpected_message_type",
-// 	}
-// 	abortNoAuthHandler = &abort{
-// 		Details: map[string]interface{}{},
-// 		Reason:  "Error- no_handler_for_authmethod",
-// 	}
-// 	abortAuthFailure = &abort{
-// 		Details: map[string]interface{}{},
-// 		Reason:  "Error- authentication_failure",
-// 	}
-// 	goodbyeSession = &goodbye{
-// 		Details: map[string]interface{}{},
-// 		Reason:  ErrCloseRealm,
-// 	}
-// )
-
 type messageType int
 
 func (mt messageType) New() message {
