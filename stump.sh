@@ -43,6 +43,7 @@ push() {
     git subtree push --prefix js/angularSeed ngSeed master
 
     git subtree push --prefix go/goRiffle goRiffle master
+    git subtree push --prefix core/coreRiffle coreRiffle master
 
     git push origin master
 }
@@ -61,6 +62,7 @@ pull() {
     git subtree pull --prefix js/angularSeed ngSeed master -m 'Update to stump'
 
     git subtree pull --prefix go/goRiffle goRiffle master -m 'Update to stump'
+    git subtree pull --prefix core/coreRiffle coreRiffle master -m 'Update to stump'
 }
 
 ios() {
