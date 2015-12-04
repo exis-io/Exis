@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/exis-io/browrilla"
+	"github.com/gorilla/websocket"
 )
 
 type authFunc func(map[string]interface{}, map[string]interface{}) (string, map[string]interface{}, error)
@@ -31,13 +31,13 @@ type boundEndpoint struct {
 func Start(url string, domain string) (*session, error) {
 
 	// Part 1: could sub in directly here with "Dial" replacement
-	dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.msgPack"}}
-	conn, _, err := dialer.Dial(url, nil)
+	// dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.msgPack"}}
+	// conn, _, err := dialer.Dial(url, nil)
 
-	if err != nil {
-		fmt.Println("Unable to dial connection!")
-		return nil, err
-	}
+	// if err != nil {
+	// 	fmt.Println("Unable to dial connection!")
+	// 	return nil, err
+	// }
 
 	// ws, err := jssock.New(url)
 
@@ -47,6 +47,14 @@ func Start(url string, domain string) (*session, error) {
 
 	// ws.AddEventListener("message", false, jsHandle)
 	// ws.AddEventListener("open", false, jsOpen)
+
+	dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
+
+	conn, _, err := dialer.Dial(url, nil)
+
+	if err != nil {
+		return nil, err
+	}
 
 	connection := &websocketConnection{
 		conn: conn,

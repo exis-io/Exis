@@ -34,15 +34,15 @@ init() {
 push() {
     echo "Pushing subtrees"
 
-    git subtree push --prefix ios/swiftRiffle swiftRiffle master
-    git subtree push --prefix ios/appBackendSeed iosAppBackendSeed master
-    git subtree push --prefix ios/appSeed iosAppSeed master
+    # git subtree push --prefix ios/swiftRiffle swiftRiffle master
+    # git subtree push --prefix ios/appBackendSeed iosAppBackendSeed master
+    # git subtree push --prefix ios/appSeed iosAppSeed master
 
-    git subtree push --prefix js/jsRiffle jsRiffle master
-    git subtree push --prefix js/ngRiffle ngRiffle master
-    git subtree push --prefix js/angularSeed ngSeed master
+    # git subtree push --prefix js/jsRiffle jsRiffle master
+    # git subtree push --prefix js/ngRiffle ngRiffle master
+    # git subtree push --prefix js/angularSeed ngSeed master
 
-    git subtree push --prefix go/goRiffle goRiffle master
+    # git subtree push --prefix go/goRiffle goRiffle master
     git subtree push --prefix core/coreRiffle coreRiffle master
 
     git push origin master
@@ -167,7 +167,7 @@ core() {
     # GOOS=darwin GOARCH=amd64 go build -buildmode=c-shared -o python/libriff.so goriffle/runner/osx.go
 
     echo "Building gojs"
-    gopherjs build -m goriffle/runner/jsRiffle.go
+    gopherjs build -m core/sandbox/jsRiffle.go
 
     rm js/jsRiffle.js js/jsRiffle.js.map
 

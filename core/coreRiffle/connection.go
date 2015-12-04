@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/exis-io/browrilla"
+	"github.com/gorilla/websocket"
 )
 
 type websocketConnection struct {
@@ -62,8 +62,8 @@ func (ep *websocketConnection) Send(msg message) error {
 	}
 
 	ep.connLock.Lock()
-	// err = ep.conn.WriteMessage(ep.payloadType, b)
-	_, err = ep.conn.UnderlyingConn().Write(b)
+	err = ep.conn.WriteMessage(ep.payloadType, b)
+	// _, err = ep.conn.UnderlyingConn().Write(b)
 	// err = ep.jsws.Send(b)
 	ep.connLock.Unlock()
 

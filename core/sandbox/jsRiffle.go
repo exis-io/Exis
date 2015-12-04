@@ -2,17 +2,20 @@
 package main
 
 import (
-	"github.com/exis-io/goriffle"
+	"fmt"
+	"github.com/damouse/goriffle"
 	"github.com/gopherjs/gopherjs/js"
 )
 
 // Required main method
 func main() {
-	js.Global.Set("pet", map[string]interface{}{
-		"Test":      Test,
-		"Connector": Connector,
-		"Pure":      Pure,
+	js.Global.Set("core", map[string]interface{}{
+		"Receiver":      Receiver,
 	})
+}
+
+func Receiver(notification string) {
+	fmt.Println("Received a message")
 }
 
 //export Connector
