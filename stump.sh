@@ -11,8 +11,14 @@ then
     echo -e "  init\t\t set up remotes for development"
     echo -e "  push\t\t push updates on master"
     echo -e "  pull\t\t pull updates on master"
-    echo -e "  ios\t\t update swiftRiffle. Pass version number and commit message"
-    echo -e "  js\t\t update jsRiffle and ngRiffle. Pass version number and commit message"
+
+    echo -e "\nBuild client libraries:"
+    echo -e "  [js, core, go]"
+
+
+    echo -e "\nUpdate and deploy libraries. Pass a version number"
+    echo -e "  [js, ios, go]\n"
+
     exit
 fi
 
@@ -29,6 +35,8 @@ init() {
 
     git remote add goRiffle git@github.com:exis-io/riffle.git 
     git remote add coreRiffle git@github.com:damouse/goriffle.git 
+
+    git remote add pyRiffle git@github.com:exis-io/pyRiffle.git
 }
 
 push() {
@@ -44,6 +52,8 @@ push() {
 
     git subtree push --prefix go/goRiffle goRiffle master
     git subtree push --prefix core/coreRiffle coreRiffle master
+
+    git subtree push --prefix python/pyRiffle pyRiffle master
 
     git push origin master
 }
@@ -63,17 +73,19 @@ pull() {
 
     git subtree pull --prefix go/goRiffle goRiffle master -m 'Update to stump'
     git subtree pull --prefix core/coreRiffle coreRiffle master -m 'Update to stump'
+
+    git subtree pull --prefix python/pyRiffle pyRiffle master -m 'Update to stump'
 }
 
 ios() {
-    echo "Updating ios to version $1"
+    echo "Updating riffle, seeds, and cards to version $1"
 
     git subtree push --prefix ios/swiftRiffle swiftRiffle master
 
     git clone git@github.com:exis-io/swiftRiffle.git
     cd swiftRiffle
     
-    git tag -a $1 -m $2
+    git tag $1 
     git push --tags
 
     pod trunk push --allow-warnings --verbose
@@ -125,14 +137,14 @@ js() {
 
     git clone git@github.com:exis-io/jsRiffle.git
     cd jsRiffle
-    git tag -a $1 -m "Upgrade to v $1"
+    git tag $1 
     git push --tags
     cd ..
     rm -rf jsRiffle
 
     git clone git@github.com:exis-io/ngRiffle.git 
     cd ngRiffle
-    git tag -a $1 -m "Upgrade to v $1"
+    git tag $1 
     git push --tags
     cd ..
     rm -rf ngRiffle
@@ -167,11 +179,17 @@ core() {
     echo "Building Python"
     go build -buildmode=c-shared -o python/pyRiffle/riffle/libriff.so core/sandbox/osx.go
 
+
     # echo "Building gojs"
     # gopherjs build -m core/sandbox/jsRiffle.go
 
     # mv jsRiffle.js js/jsRiffle/src/go.js
     # mv jsRiffle.js.map js/jsRiffle/src/go.js.map
+    exit
+}
+
+python() {
+    echo "Updating python"
     exit
 }
 
@@ -183,6 +201,7 @@ case "$1" in
     "js") js $2 $3;;
     "go") go;;
     "core") core;;
+    "python") python;;
     *) echo "Unknown input $1"
    ;;
 esac
