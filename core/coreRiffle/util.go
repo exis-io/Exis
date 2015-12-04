@@ -43,3 +43,42 @@ func formatUnknownMap(m map[string]interface{}) string {
 	}
 	return s
 }
+
+// type RealmExistsError string
+
+// func (e RealmExistsError) Error() string {
+//  return "realm exists: " + string(e)
+// }
+
+// type NoSuchRealmError string
+
+// func (e NoSuchRealmError) Error() string {
+//  return "no such realm: " + string(e)
+// }
+
+// type AuthenticationError string
+
+// func (e AuthenticationError) Error() string {
+//  return "authentication error: " + string(e)
+// }
+
+type InvalidURIError string
+
+func (e InvalidURIError) Error() string {
+	return "invalid URI: " + string(e)
+}
+
+const (
+	// ErrInvalidUri = "wamp.error.invalid_uri"
+	// ErrNoSuchDomain = "wamp.error.no_such_procedure"
+	// ErrDomainAlreadyExists = "wamp.error.procedure_already_exists"
+	// ErrNoSuchRegistration = "Registration"
+	// ErrNoSuchSubscription = "Subscription does not exist"
+
+	ErrInvalidArgument     = "Invalid Arguments"
+	ErrSystemShutdown      = "Connection collapsed"
+	ErrCloseRealm          = "Im leaving"
+	ErrGoodbyeAndOut       = "Goodbye and go away"
+	ErrNotAuthorized       = "Not Authorized"
+	ErrAuthorizationFailed = "Unable to Authorize"
+)

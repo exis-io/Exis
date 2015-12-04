@@ -33,20 +33,6 @@ type connection interface {
 	Receive() <-chan message
 }
 
-// Convenience function to get a single message from a peer
-func getMessageTimeout(p connection, t time.Duration) (message, error) {
-	select {
-	case msg, open := <-p.Receive():
-		if !open {
-			return nil, fmt.Errorf("receive channel closed")
-		}
-
-		return msg, nil
-	case <-time.After(t):
-		return nil, fmt.Errorf("timeout waiting for message")
-	}
-}
-
 // TODO: make this just add the message to a channel so we don't block
 func (ep *websocketConnection) Send(msg message) error {
 
@@ -136,5 +122,19 @@ func (c *Domain) notifyListener(msg message, requestId uint) {
 		l <- msg
 	} else {
 		log.Println("no listener for message", msg.messageType(), requestId)
+	}
+}
+
+// Convenience function to get a single message from a peer
+func getMessageTimeout(p connection, t time.Duration) (message, error) {
+	select {
+	case msg, open := <-p.Receive():
+		if !open {
+			return nil, fmt.Errorf("receive channel closed")
+		}
+
+		return msg, nil
+	case <-time.After(t):
+		return nil, fmt.Errorf("timeout waiting for message")
 	}
 }

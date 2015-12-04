@@ -1,6 +1,6 @@
 package goriffle
 
-type authFunc func(map[string]interface{}, map[string]interface{}) (string, map[string]interface{}, error)
+// type authFunc func(map[string]interface{}, map[string]interface{}) (string, map[string]interface{}, error)
 
 // joinRealmCRA joins a WAMP realm and handles challenge/response authentication.
 // func (c *domain) joinRealmCRA(realm string, details map[string]interface{}) (map[string]interface{}, error) {
