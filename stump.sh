@@ -141,7 +141,7 @@ js() {
 }
 
 go() {
-
+    echo "Building go"
 }
 
 core() {
