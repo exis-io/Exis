@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '36AAEA7D6ACF662964DC82B9'
-               BlueprintName = 'Pods-ExAgainst-MPMessagePack'
+               BlueprintIdentifier = '42AA99ED233829168DAF6B6E'
+               BlueprintName = 'Pods-ExAgainst-Riffle'
                ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'MPMessagePack.framework'>
+               BuildableName = 'Riffle.framework'>
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

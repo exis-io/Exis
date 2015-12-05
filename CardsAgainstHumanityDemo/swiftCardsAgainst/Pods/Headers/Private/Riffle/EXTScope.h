@@ -1,1 +1,1 @@
-../../../../../../ios/swiftRiffle/Pod/Classes/extobjc/EXTScope.h
+../../../Riffle/Pod/Classes/extobjc/EXTScope.h

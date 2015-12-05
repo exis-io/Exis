@@ -1,1 +1,1 @@
-../../../../../../ios/swiftRiffle/Pod/Classes/NSError+MTLModelException.h
+../../../Riffle/Pod/Classes/NSError+MTLModelException.h

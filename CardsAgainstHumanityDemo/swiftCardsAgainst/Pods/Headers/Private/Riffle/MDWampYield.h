@@ -1,1 +1,1 @@
-../../../../../../ios/swiftRiffle/Pod/Classes/src/MDWampMessages/MDWampYield.h
+../../../Riffle/Pod/Classes/src/MDWampMessages/MDWampYield.h

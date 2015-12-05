@@ -1,1 +1,1 @@
-../../../../../../ios/swiftRiffle/Pod/Classes/NSArray+MTLManipulationAdditions.h
+../../../Riffle/Pod/Classes/NSArray+MTLManipulationAdditions.h

@@ -26,7 +26,7 @@ public class Riffle {
     public static func setFabric(url: String) {
         NODE = url
     }
-
+    
     public static func setDebug() {
         DEBUG = true
     }
