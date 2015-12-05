@@ -18,8 +18,6 @@ public class Deferred {
     var fired = false
     
     public func callback() {
-        print("Starting Callback")
-        
         if fired {
             print("Defereds can only fire once!")
             return
@@ -37,8 +35,6 @@ public class Deferred {
     }
     
     public func errback() {
-        print("Starting Errback")
-        
         if fired {
             print("Defereds can only fire once!")
             return
