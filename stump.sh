@@ -45,21 +45,21 @@ init() {
 push() {
     echo "Pushing subtrees"
 
-    git subtree push --prefix ios/swiftRiffle swiftRiffle master
-    git subtree push --prefix ios/appBackendSeed iosAppBackendSeed master
+    git subtree push --prefix ios/swiftRiffle swiftRiffle master 
+    git subtree push --prefix ios/appBackendSeed iosAppBackendSeed master 
     git subtree push --prefix ios/appSeed iosAppSeed master
 
-    git subtree push --prefix js/jsRiffle jsRiffle master
-    git subtree push --prefix js/ngRiffle ngRiffle master
-    git subtree push --prefix js/angularSeed ngSeed master
+    git subtree push --prefix js/jsRiffle jsRiffle master 
+    git subtree push --prefix js/ngRiffle ngRiffle master 
+    git subtree push --prefix js/angularSeed ngSeed master 
 
-    git subtree push --prefix go/goRiffle goRiffle master
-    git subtree push --prefix go/coreRiffle coreRiffle master
+    git subtree push --prefix go/goRiffle goRiffle master 
+    git subtree push --prefix go/coreRiffle coreRiffle master 
 
-    git subtree push --prefix python/pyRiffle pyRiffle master
+    git subtree push --prefix python/pyRiffle pyRiffle master 
 
-    git subtree push --prefix CardsAgainstHumanityDemo/swiftCardsAgainst iosCAH master
-    git subtree push --prefix CardsAgainstHumanityDemo/ngCardsAgainst ngCAH master
+    git subtree push --prefix CardsAgainstHumanityDemo/swiftCardsAgainst iosCAH master 
+    git subtree push --prefix CardsAgainstHumanityDemo/ngCardsAgainst ngCAH master 
 
     git push origin master
 }
@@ -69,22 +69,22 @@ pull() {
 
     git pull origin master
 
-    git subtree pull --prefix ios/swiftRiffle swiftRiffle master -m 'Update to stump'
-    git subtree pull --prefix ios/appBackendSeed iosAppBackendSeed master -m 'Update to stump'
-    git subtree pull --prefix ios/appSeed iosAppSeed  master -m 'Update to stump'
+    git subtree pull --prefix ios/swiftRiffle swiftRiffle master -m 'Update to stump' --squash
+    git subtree pull --prefix ios/appBackendSeed iosAppBackendSeed master -m 'Update to stump' --squash
+    git subtree pull --prefix ios/appSeed iosAppSeed  master -m 'Update to stump' --squash
 
-    git subtree pull --prefix js/jsRiffle jsRiffle master -m 'Update to stump'
-    git subtree pull --prefix js/ngRiffle ngRiffle master -m 'Update to stump'
-    git subtree pull --prefix js/angularSeed ngSeed master -m 'Update to stump'
+    git subtree pull --prefix js/jsRiffle jsRiffle master -m 'Update to stump' --squash
+    git subtree pull --prefix js/ngRiffle ngRiffle master -m 'Update to stump' --squash
+    git subtree pull --prefix js/angularSeed ngSeed master -m 'Update to stump' --squash
 
-    git subtree pull --prefix go/goRiffle goRiffle master -m 'Update to stump'
-    git subtree pull --prefix go/coreRiffle coreRiffle master -m 'Update to stump'
+    git subtree pull --prefix go/goRiffle goRiffle master -m 'Update to stump' --squash
+    git subtree pull --prefix go/coreRiffle coreRiffle master -m 'Update to stump' --squash
 
     # Link them forward so this version can be edited
     # ln -s go/goRiffle $GOPATH/src/github.com/exis-io/goRiffle
     # ln -s go/coreRiffle $GOPATH/src/github.com/exis-io/coreRiffle
 
-    git subtree pull --prefix python/pyRiffle pyRiffle master -m 'Update to stump'
+    git subtree pull --prefix python/pyRiffle pyRiffle master -m 'Update to stump' --squash
 }
 
 ios() {

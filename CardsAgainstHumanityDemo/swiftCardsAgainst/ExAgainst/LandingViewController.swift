@@ -20,11 +20,11 @@ import LTMorphingLabel
 
 
 class LandingViewController: UIViewController, RiffleDelegate {
+    @IBOutlet weak var textfieldUsername: UITextField!
     @IBOutlet weak var buttonLogin: UIButton!
     @IBOutlet weak var viewLogo: SpringView!
     @IBOutlet weak var viewButtons: SpringView!
     @IBOutlet weak var viewLogin: SpringView!
-    @IBOutlet weak var textfieldUsername: UITextField!
     @IBOutlet weak var labelTips: LTMorphingLabel!
     
     var app: RiffleDomain!
