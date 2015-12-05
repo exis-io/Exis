@@ -5,25 +5,6 @@ type message interface {
 	messageType() messageType
 }
 
-var (
-	abortUnexpectedMsg = &abort{
-		Details: map[string]interface{}{},
-		Reason:  "Error- unexpected_message_type",
-	}
-	abortNoAuthHandler = &abort{
-		Details: map[string]interface{}{},
-		Reason:  "Error- no_handler_for_authmethod",
-	}
-	abortAuthFailure = &abort{
-		Details: map[string]interface{}{},
-		Reason:  "Error- authentication_failure",
-	}
-	goodbyeSession = &goodbye{
-		Details: map[string]interface{}{},
-		Reason:  ErrCloseRealm,
-	}
-)
-
 type messageType int
 
 func (mt messageType) New() message {
@@ -270,13 +251,13 @@ func (msg *errorMessage) messageType() messageType {
 	return eRROR
 }
 
-// [pUBLISH, Request|id, Options|dict, Domain|uri]
-// [pUBLISH, Request|id, Options|dict, Domain|uri, Arguments|list]
-// [pUBLISH, Request|id, Options|dict, Domain|uri, Arguments|list, ArgumentsKw|dict]
+// [pUBLISH, Request|id, Options|dict, name|uri]
+// [pUBLISH, Request|id, Options|dict, name|uri, Arguments|list]
+// [pUBLISH, Request|id, Options|dict, name|uri, Arguments|list, ArgumentsKw|dict]
 type publish struct {
 	Request     uint
 	Options     map[string]interface{}
-	Domain      string
+	Name        string
 	Arguments   []interface{}          `wamp:"omitempty"`
 	ArgumentsKw map[string]interface{} `wamp:"omitempty"`
 }
@@ -295,11 +276,11 @@ func (msg *published) messageType() messageType {
 	return pUBLISHED
 }
 
-// [sUBSCRIBE, Request|id, Options|dict, Domain|uri]
+// [sUBSCRIBE, Request|id, Options|dict, name|uri]
 type subscribe struct {
 	Request uint
 	Options map[string]interface{}
-	Domain  string
+	Name    string
 }
 
 func (msg *subscribe) messageType() messageType {
@@ -358,13 +339,13 @@ type callResult struct {
 	Err    string
 }
 
-// [cALL, Request|id, Options|dict, Domain|uri]
-// [cALL, Request|id, Options|dict, Domain|uri, Arguments|list]
-// [cALL, Request|id, Options|dict, Domain|uri, Arguments|list, ArgumentsKw|dict]
+// [cALL, Request|id, Options|dict, name|uri]
+// [cALL, Request|id, Options|dict, name|uri, Arguments|list]
+// [cALL, Request|id, Options|dict, name|uri, Arguments|list, ArgumentsKw|dict]
 type call struct {
 	Request     uint
 	Options     map[string]interface{}
-	Domain      string
+	Name        string
 	Arguments   []interface{}          `wamp:"omitempty"`
 	ArgumentsKw map[string]interface{} `wamp:"omitempty"`
 }
@@ -387,11 +368,11 @@ func (msg *result) messageType() messageType {
 	return rESULT
 }
 
-// [rEGISTER, Request|id, Options|dict, Domain|uri]
+// [rEGISTER, Request|id, Options|dict, name|uri]
 type register struct {
 	Request uint
 	Options map[string]interface{}
-	Domain  string
+	Name    string
 }
 
 func (msg *register) messageType() messageType {
@@ -476,18 +457,6 @@ func (msg *interrupt) messageType() messageType {
 	return iNTERRUPT
 }
 
-////////////////////////////////////////
-/*
- Begin a whole mess of code we really don't want to get into
- and which pretty much guarantees we'll have to make substantial changes to
- Riffle code: the messages don't have a standardized way of returning their
- TO identity!
-
- Really, really need this, Short of modifying and standardizing the WAMP changes
- this is unlikely to happen without node monkey-patching. So here we go.
-*/
-////////////////////////////////////////
-
 type NoDestinationError string
 
 func (e NoDestinationError) Error() string {
@@ -501,15 +470,15 @@ func destination(m *message) (string, error) {
 	switch msg := msg.(type) {
 
 	case *publish:
-		return msg.Domain, nil
+		return msg.Name, nil
 	case *subscribe:
-		return msg.Domain, nil
+		return msg.Name, nil
 
 	// Dealer messages
 	case *register:
-		return msg.Domain, nil
+		return msg.Name, nil
 	case *call:
-		return msg.Domain, nil
+		return msg.Name, nil
 
 	default:
 		//log.Println("Unhandled message:", msg.messageType())
@@ -520,13 +489,17 @@ func destination(m *message) (string, error) {
 // Given a message, return the request uint
 func requestID(m *message) uint {
 	switch msg := (*m).(type) {
-	case *publish:
+	case *registered:
 		return msg.Request
-	case *subscribe:
+	case *subscribed:
 		return msg.Request
-	case *register:
+	case *unsubscribed:
 		return msg.Request
-	case *call:
+	case *unregistered:
+		return msg.Request
+	case *result:
+		return msg.Request
+	case *errorMessage:
 		return msg.Request
 	}
 

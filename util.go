@@ -9,11 +9,18 @@ import (
 const (
 	maxId   int64         = 1 << 53
 	timeout time.Duration = 5 * time.Second
-)
 
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
+	devFabric        string = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
+	sandboxFabric    string = "ws://sandbox.exis.io/ws"
+	proudctionFabric string = "ws://node.exis.io/ws"
+
+	ErrInvalidArgument     = "ERR-- Invalid Arguments, check your receiver!"
+	ErrSystemShutdown      = "ERR-- Connection collapsed. It wasn't pretty."
+	ErrCloseRealm          = "ERR-- Im leaving and taking the dog."
+	ErrGoodbyeAndOut       = "ERR-- Goodbye and go away."
+	ErrNotAuthorized       = "ERR-- Not Authorized. Ask nicely."
+	ErrAuthorizationFailed = "ERR-- Unable to Authorize. Try harder."
+)
 
 // NewID generates a random WAMP uint.
 func newID() uint {
@@ -44,41 +51,24 @@ func formatUnknownMap(m map[string]interface{}) string {
 	return s
 }
 
-// type RealmExistsError string
+// Some data structure utility methods
 
-// func (e RealmExistsError) Error() string {
-//  return "realm exists: " + string(e)
-// }
+func bindingForEndpoint(bindings map[uint]*boundEndpoint, endpoint string) (uint, *boundEndpoint, bool) {
+	for id, p := range bindings {
+		if p.endpoint == endpoint {
+			return id, p, true
+		}
+	}
 
-// type NoSuchRealmError string
-
-// func (e NoSuchRealmError) Error() string {
-//  return "no such realm: " + string(e)
-// }
-
-// type AuthenticationError string
-
-// func (e AuthenticationError) Error() string {
-//  return "authentication error: " + string(e)
-// }
-
-type InvalidURIError string
-
-func (e InvalidURIError) Error() string {
-	return "invalid URI: " + string(e)
+	return 0, nil, false
 }
 
-const (
-	// ErrInvalidUri = "wamp.error.invalid_uri"
-	// ErrNoSuchDomain = "wamp.error.no_such_procedure"
-	// ErrDomainAlreadyExists = "wamp.error.procedure_already_exists"
-	// ErrNoSuchRegistration = "Registration"
-	// ErrNoSuchSubscription = "Subscription does not exist"
+func removeDomain(domains []*domain, target *domain) ([]*domain, bool) {
+	for i, e := range domains {
+		if e == target {
+			return append(domains[:i], domains[i+1:]...), true
+		}
+	}
 
-	ErrInvalidArgument     = "Invalid Arguments"
-	ErrSystemShutdown      = "Connection collapsed"
-	ErrCloseRealm          = "Im leaving"
-	ErrGoodbyeAndOut       = "Goodbye and go away"
-	ErrNotAuthorized       = "Not Authorized"
-	ErrAuthorizationFailed = "Unable to Authorize"
-)
+	return nil, false
+}

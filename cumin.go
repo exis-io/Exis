@@ -10,7 +10,6 @@ func cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 	reciever := reflect.TypeOf(fn)
 	var ret []interface{}
 
-	// Check to make sure the pointer is actually a function
 	if reciever.Kind() != reflect.Func {
 		return ret, fmt.Errorf("Handler is not a function!")
 	}
@@ -36,7 +35,6 @@ func cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 
 	// Perform the call
 	result := reflect.ValueOf(fn).Call(values)
-
 	for _, x := range result {
 		ret = append(ret, x.Interface())
 	}
@@ -44,4 +42,11 @@ func cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 	// Catch any exceptions this produces and pass them to the function that sent them, or some kind of handler
 
 	return ret, nil
+}
+
+// Checks the types of the provided arguments and the receiver. Does not attempt to convert the types,
+// thats on the client library (although its possible it could try that....)
+// How do we handle model objects?
+func softCumin(types []interface{}, args []interface{}) error {
+	return nil
 }
