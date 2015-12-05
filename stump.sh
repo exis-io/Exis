@@ -90,10 +90,6 @@ pull() {
 ios() {
     echo "Updating riffle, seeds, and cards to version $1"
 
-
-    echo $2
-    exit
-    
     git subtree push --prefix ios/swiftRiffle swiftRiffle master
 
     git clone git@github.com:exis-io/swiftRiffle.git

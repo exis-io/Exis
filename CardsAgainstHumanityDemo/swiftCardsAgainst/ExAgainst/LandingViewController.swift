@@ -47,8 +47,9 @@ class LandingViewController: UIViewController, RiffleDelegate {
     
     
     func startPlaying(cards: [String], players: [Player], state: String, room: String) {
+        
         let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("game") as! GameViewController
-        controller.currentPlayer = players.filter { $0.domain == self.me.domain }[0]
+        controller.currentPlayer = getPlayer(players, domain: self.me.domain)
         controller.currentPlayer.hand = cards
         controller.players = players
         
@@ -64,7 +65,6 @@ class LandingViewController: UIViewController, RiffleDelegate {
     
     
     func onJoin() {
-        print("Domain joined")
         viewLogin.animation = "zoomOut"
         viewLogin.animate()
         viewButtons.animation = "zoomIn"
@@ -77,14 +77,14 @@ class LandingViewController: UIViewController, RiffleDelegate {
     
     @IBAction func login(sender: AnyObject) {
         textfieldUsername.resignFirstResponder()
-        let name = textfieldUsername.text!
 
         app = RiffleDomain(domain: "xs.demo.damouse.test")
         container = RiffleDomain(name: "Osxcontainer.gamelogic", superdomain: app)
         
-        me = RiffleDomain(name: name, superdomain: app)
+        me = RiffleDomain(name: textfieldUsername.text!, superdomain: app)
         me.delegate = self
         me.join()
+
     }
     
     @IBAction func play(sender: AnyObject) {

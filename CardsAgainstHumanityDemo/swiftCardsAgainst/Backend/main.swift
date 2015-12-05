@@ -24,7 +24,7 @@ class Container: RiffleDomain {
     
     
     override func onJoin() {
-        print("Container joined")
+        print("Container joined as \(domain)")
         app.subscribe("sessionLeft", playerLeft)
         register("play#details", play)
         
