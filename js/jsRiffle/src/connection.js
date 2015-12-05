@@ -160,6 +160,8 @@ Connection.prototype._create_transport = function () {
 
 
 Connection.prototype._init_transport_factories = function () {
+    // WAMP transport
+    //
     var transports, transport_options, transport_factory, transport_factory_klass;
 
     util.assert(this._options.transports, "No transport.factory specified");

@@ -1,0 +1,69 @@
+<ion-view ng-controller="RoomCtrl">
+  <div class="bar bar-header bar-dark">
+    <h1 ng-show="state === 'Scoring'" class="title">
+      {{winner}} Won!
+    </h1>
+    <h1 ng-show="state === 'Answering'" class="title">
+      <span ng-show="!amCzar()">Submit a Card!</span>
+      <span ng-show="amCzar()">Dear Czar, wait for subjects.</span>
+    </h1>
+    <h1 ng-show="state === 'Picking'" class="title">
+      <span ng-show="amCzar()">Pick a Winner!</span>
+      <span ng-show="!amCzar()">{{getCzar()}} is Picking a Winner!</span>
+    </h1>
+  </div>
+  <ion-content>
+    <br/>
+    <br/>
+    <div ng-show="state === 'Answering'">
+      <div class="card">
+        <div class="item item-text-wrap positive">
+          Q: {{question}}
+        </div>
+        <div ng-show="!amCzar()" ng-click="pick(card)" class="item item-text-wrap" ng-class="{assertive: card === selected}" ng-repeat="card in cards">
+          {{card}}
+        </div>
+        <div ng-show="amCzar()" class="item item-text-wrap">
+          <b>Awaiting Submissions from your loyal subjects...</b>
+        </div>
+      </div>
+    </div>
+
+    <div ng-show="state === 'Picking'">
+      <div class="card">
+        <div class="item item-text-wrap positive">
+          Q: {{question}}
+        </div>
+        <div ng-click="pick(card)" class="item item-text-wrap" ng-class="{assertive: card === selected}" ng-repeat="card in pickedCards">
+          {{card}}
+        </div>
+      </div>
+    </div>
+
+    <div ng-show="state === 'Scoring'">
+      <div class="card">
+        <div class="item item-text-wrap positive">
+          Q: {{question}}
+        </div>
+        <div class="item item-text-wrap assertive">
+          {{chosenCard}}
+        </div>
+        <div class="item item-text-wrap">
+          <b>Congrats to {{winner}}! A truer statement has never been uttered.</b>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scores should alway show -->
+    <div class="list card">
+      <div class="item item-icon-left" ng-repeat="player in players" ng-class="{assertive: player.czar}">
+        <i class="icon ion-person"></i>
+        {{getName(player.domain)}}
+        <b>Score:</b> {{player.score}}
+      </div>
+    </div>
+    <button ng-click="leave()" class="button button-block button-assertive">
+      Leave Room
+    </button>
+  </ion-content>
+</ion-view>

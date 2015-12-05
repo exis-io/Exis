@@ -37,7 +37,6 @@ var configure = require('./configure.js');
 var persona = require('./auth/persona.js');
 var cra = require('./auth/cra.js');
 
-
 exports.version = pjson.version;
 
 exports.transports = configure.transports;
@@ -62,15 +61,6 @@ exports.when = when;
 exports.util = util;
 exports.log = log;
 
-var go = require('./go.js');
-
-exports.domain = global.core.Domain("xs.damouse")
-
-// global.core.Receiver("Hello from js!");
-// global.core.Pure('ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws', 'xs.damouse.awwyea');
-
-// "Network access is not supported by gopherjs"
-// global.core.Native('ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws', 'xs.damouse.awwyeah');
 
 // Global configuration
 FABRIC_URL = "node.exis.io";

@@ -5,7 +5,7 @@
 
 if [ $# -lt 1 ]
 then
-    echo -e "Updating and deployment of riffle libraries\n"
+    echo -e "Updating and deployment of riffle libraries.\n"
 
     echo "Usage:"
     echo -e "  init\t\t set up remotes for development"
@@ -37,6 +37,9 @@ init() {
     git remote add coreRiffle git@github.com:exis-io/coreRiffle.git 
 
     git remote add pyRiffle git@github.com:exis-io/pyRiffle.git
+
+    git remote add ngCAH git@github.com:exis-io/ionicCardsAgainstEXIStence.git
+    git remote add iosCAH git@github.com:exis-io/CardsAgainst.git
 }
 
 push() {
@@ -54,6 +57,9 @@ push() {
     git subtree push --prefix go/coreRiffle coreRiffle master
 
     git subtree push --prefix python/pyRiffle pyRiffle master
+
+    git subtree push --prefix CardsAgainstHumanityDemo/swiftCardsAgainst iosCAH master
+    git subtree push --prefix CardsAgainstHumanityDemo/ngCardsAgainst ngCAH master
 
     git push origin master
 }
@@ -153,7 +159,7 @@ js() {
     cd ..
     rm -rf ngRiffle
 
-    # Do anything with the seed app?
+    # Do something with the seed app!
 }
 
 go() {
@@ -184,11 +190,11 @@ core() {
     # go build -buildmode=c-shared -o python/pyRiffle/riffle/libriff.so go/coreRiffle/wrappers/osx.go
 
 
-    echo "Building gojs"
-    gopherjs build -m go/coreRiffle/wrappers/jsRiffle.go
+    # echo "Building gojs"
+    # gopherjs build -m go/coreRiffle/wrappers/jsRiffle.go
 
-    mv jsRiffle.js js/jsRiffle/src/go.js
-    mv jsRiffle.js.map js/jsRiffle/src/go.js.map
+    # mv jsRiffle.js js/jsRiffle/src/go.js
+    # mv jsRiffle.js.map js/jsRiffle/src/go.js.map
 
     exit
 }

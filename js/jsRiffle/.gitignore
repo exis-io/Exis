@@ -4,3 +4,4 @@ node_modules
 .DS_Store
 go.js
 go.js.map
+.DS_Store

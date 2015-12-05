@@ -1,0 +1,6 @@
+framework module RMSwipeTableViewCell {
+  umbrella header "RMSwipeTableViewCell-umbrella.h"
+
+  export *
+  module * { export * }
+}

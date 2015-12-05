@@ -2,428 +2,428 @@
 import Foundation
 
 public extension RiffleDomain {
-	public func register(pdid: String, _ fn: () -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register(pdid: String, _ fn: () -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN>(pdid: String, _ fn: (A) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN>(pdid: String, _ fn: (A) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CN>(pdid: String, _ fn: (A, B) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CN>(pdid: String, _ fn: (A, B) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CN, C: CN>(pdid: String, _ fn: (A, B, C) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CN, C: CN>(pdid: String, _ fn: (A, B, C) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CN, C: CN, D: CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CN, C: CN, D: CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CN, C: CN, D: CN, E: CN>(pdid: String, _ fn: (A, B, C, D, E) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CN, C: CN, D: CN, E: CN>(pdid: String, _ fn: (A, B, C, D, E) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CN, C: CN, D: CN, E: CN, F: CN>(pdid: String, _ fn: (A, B, C, D, E, F) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CN, C: CN, D: CN, E: CN, F: CN>(pdid: String, _ fn: (A, B, C, D, E, F) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<R>(pdid: String, _ fn: () -> (R)) {
-		_register(pdid, fn: cumin(fn))
+	public func register<R>(pdid: String, _ fn: () -> (R)) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, R>(pdid: String, _ fn: (A) -> (R)) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, R>(pdid: String, _ fn: (A) -> (R)) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CN, R>(pdid: String, _ fn: (A, B) -> (R)) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CN, R>(pdid: String, _ fn: (A, B) -> (R)) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CN, C: CN, R>(pdid: String, _ fn: (A, B, C) -> (R)) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CN, C: CN, R>(pdid: String, _ fn: (A, B, C) -> (R)) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CN, C: CN, D: CN, R>(pdid: String, _ fn: (A, B, C, D) -> (R)) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CN, C: CN, D: CN, R>(pdid: String, _ fn: (A, B, C, D) -> (R)) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CN, C: CN, D: CN, E: CN, R>(pdid: String, _ fn: (A, B, C, D, E) -> (R)) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CN, C: CN, D: CN, E: CN, R>(pdid: String, _ fn: (A, B, C, D, E) -> (R)) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CN, C: CN, D: CN, E: CN, F: CN, R>(pdid: String, _ fn: (A, B, C, D, E, F) -> (R)) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CN, C: CN, D: CN, E: CN, F: CN, R>(pdid: String, _ fn: (A, B, C, D, E, F) -> (R)) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CL where A.Generator.Element : CN>(pdid: String, _ fn: (A) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CL where A.Generator.Element : CN>(pdid: String, _ fn: (A) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CL where B.Generator.Element : CN>(pdid: String, _ fn: (A, B) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CL where B.Generator.Element : CN>(pdid: String, _ fn: (A, B) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CL, B: CN where A.Generator.Element : CN>(pdid: String, _ fn: (A, B) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CL, B: CN where A.Generator.Element : CN>(pdid: String, _ fn: (A, B) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CL, B: CL where A.Generator.Element : CN, B.Generator.Element : CN>(pdid: String, _ fn: (A, B) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CL, B: CL where A.Generator.Element : CN, B.Generator.Element : CN>(pdid: String, _ fn: (A, B) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CN, C: CL where C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CN, C: CL where C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CL, C: CN where B.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CL, C: CN where B.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CL, C: CL where B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CL, C: CL where B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CL, B: CN, C: CN where A.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CL, B: CN, C: CN where A.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CL, B: CN, C: CL where A.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CL, B: CN, C: CL where A.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CL, B: CL, C: CN where A.Generator.Element : CN, B.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CL, B: CL, C: CN where A.Generator.Element : CN, B.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CL, B: CL, C: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CL, B: CL, C: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CN, C: CN, D: CL where D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CN, C: CN, D: CL where D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CN, C: CL, D: CN where C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CN, C: CL, D: CN where C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CN, C: CL, D: CL where C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CN, C: CL, D: CL where C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CL, C: CN, D: CN where B.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CL, C: CN, D: CN where B.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CL, C: CN, D: CL where B.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CL, C: CN, D: CL where B.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CL, C: CL, D: CN where B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CL, C: CL, D: CN where B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CN, B: CL, C: CL, D: CL where B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CN, B: CL, C: CL, D: CL where B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CL, B: CN, C: CN, D: CN where A.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CL, B: CN, C: CN, D: CN where A.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CL, B: CN, C: CN, D: CL where A.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CL, B: CN, C: CN, D: CL where A.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CL, B: CN, C: CL, D: CN where A.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CL, B: CN, C: CL, D: CN where A.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CL, B: CN, C: CL, D: CL where A.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CL, B: CN, C: CL, D: CL where A.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CL, B: CL, C: CN, D: CN where A.Generator.Element : CN, B.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CL, B: CL, C: CN, D: CN where A.Generator.Element : CN, B.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CL, B: CL, C: CN, D: CL where A.Generator.Element : CN, B.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CL, B: CL, C: CN, D: CL where A.Generator.Element : CN, B.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CL, B: CL, C: CL, D: CN where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CL, B: CL, C: CL, D: CN where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func register<A: CL, B: CL, C: CL, D: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_register(pdid, fn: cumin(fn))
+	public func register<A: CL, B: CL, C: CL, D: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _register(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe(pdid: String, _ fn: () -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe(pdid: String, _ fn: () -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CN>(pdid: String, _ fn: (A) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CN>(pdid: String, _ fn: (A) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CN, B: CN>(pdid: String, _ fn: (A, B) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CN, B: CN>(pdid: String, _ fn: (A, B) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CN, B: CN, C: CN>(pdid: String, _ fn: (A, B, C) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CN, B: CN, C: CN>(pdid: String, _ fn: (A, B, C) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CN, B: CN, C: CN, D: CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CN, B: CN, C: CN, D: CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CN, B: CN, C: CN, D: CN, E: CN>(pdid: String, _ fn: (A, B, C, D, E) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CN, B: CN, C: CN, D: CN, E: CN>(pdid: String, _ fn: (A, B, C, D, E) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CN, B: CN, C: CN, D: CN, E: CN, F: CN>(pdid: String, _ fn: (A, B, C, D, E, F) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CN, B: CN, C: CN, D: CN, E: CN, F: CN>(pdid: String, _ fn: (A, B, C, D, E, F) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CL where A.Generator.Element : CN>(pdid: String, _ fn: (A) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CL where A.Generator.Element : CN>(pdid: String, _ fn: (A) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CN, B: CL where B.Generator.Element : CN>(pdid: String, _ fn: (A, B) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CN, B: CL where B.Generator.Element : CN>(pdid: String, _ fn: (A, B) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CL, B: CN where A.Generator.Element : CN>(pdid: String, _ fn: (A, B) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CL, B: CN where A.Generator.Element : CN>(pdid: String, _ fn: (A, B) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CL, B: CL where A.Generator.Element : CN, B.Generator.Element : CN>(pdid: String, _ fn: (A, B) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CL, B: CL where A.Generator.Element : CN, B.Generator.Element : CN>(pdid: String, _ fn: (A, B) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CN, B: CN, C: CL where C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CN, B: CN, C: CL where C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CN, B: CL, C: CN where B.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CN, B: CL, C: CN where B.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CN, B: CL, C: CL where B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CN, B: CL, C: CL where B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CL, B: CN, C: CN where A.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CL, B: CN, C: CN where A.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CL, B: CN, C: CL where A.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CL, B: CN, C: CL where A.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CL, B: CL, C: CN where A.Generator.Element : CN, B.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CL, B: CL, C: CN where A.Generator.Element : CN, B.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CL, B: CL, C: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CL, B: CL, C: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CN, B: CN, C: CN, D: CL where D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CN, B: CN, C: CN, D: CL where D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CN, B: CN, C: CL, D: CN where C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CN, B: CN, C: CL, D: CN where C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CN, B: CN, C: CL, D: CL where C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CN, B: CN, C: CL, D: CL where C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CN, B: CL, C: CN, D: CN where B.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CN, B: CL, C: CN, D: CN where B.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CN, B: CL, C: CN, D: CL where B.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CN, B: CL, C: CN, D: CL where B.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CN, B: CL, C: CL, D: CN where B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CN, B: CL, C: CL, D: CN where B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CN, B: CL, C: CL, D: CL where B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CN, B: CL, C: CL, D: CL where B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CL, B: CN, C: CN, D: CN where A.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CL, B: CN, C: CN, D: CN where A.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CL, B: CN, C: CN, D: CL where A.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CL, B: CN, C: CN, D: CL where A.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CL, B: CN, C: CL, D: CN where A.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CL, B: CN, C: CL, D: CN where A.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CL, B: CN, C: CL, D: CL where A.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CL, B: CN, C: CL, D: CL where A.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CL, B: CL, C: CN, D: CN where A.Generator.Element : CN, B.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CL, B: CL, C: CN, D: CN where A.Generator.Element : CN, B.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CL, B: CL, C: CN, D: CL where A.Generator.Element : CN, B.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CL, B: CL, C: CN, D: CL where A.Generator.Element : CN, B.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CL, B: CL, C: CL, D: CN where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CL, B: CL, C: CL, D: CN where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CL, B: CL, C: CL, D: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CL, B: CL, C: CL, D: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CL, B: CL, C: CL, D: CL, E: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN, E.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D, E) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CL, B: CL, C: CL, D: CL, E: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN, E.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D, E) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe<A: CL, B: CL, C: CL, D: CL, E: CL, F: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN, E.Generator.Element : CN, F.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D, E, F) -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe<A: CL, B: CL, C: CL, D: CL, E: CL, F: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN, E.Generator.Element : CN, F.Generator.Element : CN>(pdid: String, _ fn: (A, B, C, D, E, F) -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
-	public func call(pdid: String, _ args: AnyObject..., handler fn: (() -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call(pdid: String, _ args: AnyObject..., handler fn: (() -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CN>(pdid: String, _ args: AnyObject..., handler fn: ((A) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CN>(pdid: String, _ args: AnyObject..., handler fn: ((A) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CN, B: CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CN, B: CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CN, B: CN, C: CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CN, B: CN, C: CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CN, B: CN, C: CN, D: CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CN, B: CN, C: CN, D: CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CL where A.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CL where A.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CN, B: CL where B.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CN, B: CL where B.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CL, B: CN where A.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CL, B: CN where A.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CL, B: CL where A.Generator.Element : CN, B.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CL, B: CL where A.Generator.Element : CN, B.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CN, B: CN, C: CL where C.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CN, B: CN, C: CL where C.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CN, B: CL, C: CN where B.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CN, B: CL, C: CN where B.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CN, B: CL, C: CL where B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CN, B: CL, C: CL where B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CL, B: CN, C: CN where A.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CL, B: CN, C: CN where A.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CL, B: CN, C: CL where A.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CL, B: CN, C: CL where A.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CL, B: CL, C: CN where A.Generator.Element : CN, B.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CL, B: CL, C: CN where A.Generator.Element : CN, B.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CL, B: CL, C: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CL, B: CL, C: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CN, B: CN, C: CN, D: CL where D.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CN, B: CN, C: CN, D: CL where D.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CN, B: CN, C: CL, D: CN where C.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CN, B: CN, C: CL, D: CN where C.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CN, B: CN, C: CL, D: CL where C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CN, B: CN, C: CL, D: CL where C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CN, B: CL, C: CN, D: CN where B.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CN, B: CL, C: CN, D: CN where B.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CN, B: CL, C: CN, D: CL where B.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CN, B: CL, C: CN, D: CL where B.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CN, B: CL, C: CL, D: CN where B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CN, B: CL, C: CL, D: CN where B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CN, B: CL, C: CL, D: CL where B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CN, B: CL, C: CL, D: CL where B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CL, B: CN, C: CN, D: CN where A.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CL, B: CN, C: CN, D: CN where A.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CL, B: CN, C: CN, D: CL where A.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CL, B: CN, C: CN, D: CL where A.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CL, B: CN, C: CL, D: CN where A.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CL, B: CN, C: CL, D: CN where A.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CL, B: CN, C: CL, D: CL where A.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CL, B: CN, C: CL, D: CL where A.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CL, B: CL, C: CN, D: CN where A.Generator.Element : CN, B.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CL, B: CL, C: CN, D: CN where A.Generator.Element : CN, B.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CL, B: CL, C: CN, D: CL where A.Generator.Element : CN, B.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CL, B: CL, C: CN, D: CL where A.Generator.Element : CN, B.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CL, B: CL, C: CL, D: CN where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CL, B: CL, C: CL, D: CN where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
-	public func call<A: CL, B: CL, C: CL, D: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) {
-		_call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
+	public func call<A: CL, B: CL, C: CL, D: CL where A.Generator.Element : CN, B.Generator.Element : CN, C.Generator.Element : CN, D.Generator.Element : CN>(pdid: String, _ args: AnyObject..., handler fn: ((A, B, C, D) -> ())?) -> Deferred {
+		return _call(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))
 	}
 
 }

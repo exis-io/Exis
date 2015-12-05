@@ -14,10 +14,10 @@ DEV = 'cumin.txt'
 generics = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
 returns = ['R', 'S', 'T', 'U', 'V', 'X', 'Y', 'Z']
 
-outputTemplate = "// Straight Boilerplate-- make the compiler happy\nimport Foundation\n\npublic extension RiffleSession {\n"
+outputTemplate = "// Straight Boilerplate-- make the compiler happy\nimport Foundation\n\npublic extension RiffleDomain {\n"
 
-callerTemplate = '\tpublic func %s<%s>(pdid: String, _ fn: (%s) -> (%s)) {\n\t\t_%s(pdid, fn: cumin(fn))\n\t}'
-callTemplate = '\tpublic func %s<%s>(pdid: String, _ args: AnyObject..., handler fn: ((%s) -> (%s))?) {\n\t\t_%s(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))\n\t}'
+callerTemplate = '\tpublic func %s<%s>(pdid: String, _ fn: (%s) -> (%s)) -> Deferred {\n\t\treturn _%s(pdid, fn: cumin(fn))\n\t}'
+callTemplate = '\tpublic func %s<%s>(pdid: String, _ args: AnyObject..., handler fn: ((%s) -> (%s))?) -> Deferred {\n\t\treturn _%s(pdid, args: args, fn: fn == nil ? nil: cumin(fn!))\n\t}'
 
 # The firstis used for modeling collections of cuminicable items. Second is for arbitrary cuminicables
 cuminCollectionTemplate = 'public func cumin<%s>(fn: (%s) -> (%s)) -> ([AnyObject]) throws -> (%s) {\n\treturn { (a: [AnyObject]) in fn(%s) }\n}'

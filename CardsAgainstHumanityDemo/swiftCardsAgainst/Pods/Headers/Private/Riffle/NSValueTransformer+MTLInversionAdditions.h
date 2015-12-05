@@ -1,0 +1,1 @@
+../../../../../../ios/swiftRiffle/Pod/Classes/NSValueTransformer+MTLInversionAdditions.h

@@ -6,16 +6,6 @@
 //  Copyright (c) 2015 Mickey Barboi. All rights reserved.
 //
 
-/*
-// This DOES NOT WORK: all return types have to be AnyObject or nothing!
-func returnCollections() -> (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool])  {
-return ([1, 2], [1.0, 2.0], [3.0, 4.0], ["Hey!", "There!"], [true, false])
-}
-
-
-*/
- 
-
 import UIKit
 import Riffle 
 import AFNetworking
@@ -106,7 +96,7 @@ class ViewController: UIViewController {
     // Tests
     func startTests() {
         
-//        // Publish/Subscribe
+        // Publish/Subscribe
 //        testPSTypes(1)
 //        testPSTypeCollections(2)
 //        
@@ -119,17 +109,20 @@ class ViewController: UIViewController {
 //        // RiffleObect Collections
 //        roColletions(5)
 //        roColletionsNoArg(6)
+//        
+//        // Meta calls
+//        testDiscloseRegister(7)
+//        testDiscloseSubscribe(8)
         
-        // Meta calls
-        testDiscloseRegister(7)
-        testDiscloseSubscribe(8)
+        // Deferreds
+        testDeferred(9);
     }
     
     
     // MARK: Publish/Subscribe
     func testPSTypes(t: Int) {
         // What kinds of types can be returned
-        alpha.subscribe("\(t)") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
+        alpha.subscribe("\(t)", { (a: Int, b: Float, c: Double, d: String, e: Bool) in
             //print("1 : Sub receiving single types:", a, b, c, d, e)
             
             assert(a == 1)
@@ -137,7 +130,13 @@ class ViewController: UIViewController {
             assert(c == 3.3)
             assert(d == "4")
             assert(e == true)
-        }
+        }).addCallback( { (a: AnyObject?) -> AnyObject? in
+            print("Subscription completed")
+            return nil
+        }).addErrback( { (a: AnyObject?) -> AnyObject?in
+            print("Subscription failed")
+            return nil
+        })
 
         beta.publish("xs.tester.alpha/\(t)", 1, 2.2, 3.3, "4", true)
     }
@@ -161,7 +160,6 @@ class ViewController: UIViewController {
     
     // MARK: Single Types
     func rcTypes(t: Int) {
-        
         // Test both sending and receiving types
         // Test receiving collections in invocation
         alpha.register("\(t)") { (a: Int, b: Float, c: Double, d: String, e: Bool) -> AnyObject in
@@ -177,7 +175,6 @@ class ViewController: UIViewController {
         }
         
         // WARNING: cant receive 5 elements in return
-        
         beta.call("xs.tester.alpha/\(t)", 1, 2.2, 3.3, "4", true, handler: { (a: Int, b: Float, c: Double, d: String) in
             assert(a == 1)
             assert(b == 2.2)
@@ -288,4 +285,28 @@ class ViewController: UIViewController {
 //        
 //        beta.publish("xs.tester.alpha/\(t)", 1)
     }
+    
+    
+    // MARK: Meta calls
+    func testDeferred(t: Int) {
+        // Make sure we can return deferreds from registered functions
+        
+        beta.register("\(t)1") { () in
+            print("\(t) : Second call received. Issuing third call")
+        }
+        
+        alpha.register("\(t)2") { () -> AnyObject in
+            print("\(t) : First call received. Issuing second call")
+            return self.alpha.call("xs.tester.beta/\(t)1", handler: nil).addCallback({ (a: AnyObject?) -> (AnyObject?) in
+                print("\(t) : Third call received. Issuing last call")
+                return "Last"
+            })
+        }
+        
+        print("\(t) : Issuing first call")
+        beta.call("xs.tester.alpha/\(t)2") { (a: String) in
+            print("\(t) : Last call received:", a)
+        }
+    }
 }
+
