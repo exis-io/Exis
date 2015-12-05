@@ -9,7 +9,7 @@
 import Foundation
 import Riffle
 
-// Local testing
+let app = RiffleDomain(domain: "xs.demo.damouse.test")
 let token = "HWDBNNyy54IZAY67eU8N.-rzEF2qitlxmM-JolSfdk.tTPR6CDlSgRR8K.9d6iii-VXf7xbHj1ebSotySI5a-7DfiKcsLcMUpiwO9Bq.EA4-Uu-lw9aAzpDy2ellXzLNkdQl6TTulLVsvR-WJ9RHbirpIkF2SAmiEZmey8vCtXo_"
 
 // How long each round takes, in seconds
@@ -17,8 +17,6 @@ let ANSWER_TIME = 10.0
 let PICK_TIME = 8.0
 let SCORE_TIME = 5.0
 let EMPTY_TIME = 1.0
-
-let app = RiffleDomain(domain: "xs.demo.damouse.test")
 
 
 class Container: RiffleDomain {
@@ -62,11 +60,6 @@ class Container: RiffleDomain {
         }
     }
     
-    func closeRoom(room: Room) {
-        print("Closing room.")
-        rooms.removeObject(room)
-    }
-    
     func playerLeft(domain: String) {
         for room in rooms {
             if let _ = getPlayer(room.players, domain: domain) {
@@ -77,6 +70,7 @@ class Container: RiffleDomain {
     }
 }
 
-let container = Container(name: "Osxcontainer.gamelogic", superdomain: app).join(token)
+let container = Container(name: "Osxcontainer.gamelogic", superdomain: app)
+container.join(token)
 NSRunLoop.currentRunLoop().run()
 

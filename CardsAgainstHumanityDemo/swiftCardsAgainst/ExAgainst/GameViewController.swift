@@ -53,7 +53,6 @@ class GameViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         room.call("leave", handler: nil)
-        
         room.leave()
         me.leave()
     }
@@ -65,14 +64,14 @@ class GameViewController: UIViewController {
     
     // MARK: Game Logics
     func answering(newCzar: Player, question: String, time: Double) {
+        state = "Answering"
         labelActiveCard.text = question
         _ = players.map { $0.czar = $0 == newCzar }
+        
         collectionDelegate.setCzar(newCzar)
         tableDelegate.refreshCards(newCzar.domain == me.domain ? [] : currentPlayer.hand)
         viewProgress.countdown(time)
-        
         flashView(viewRound, label: labelRound, text: currentPlayer.czar ? "You're the czar" : "Choose a card")
-        state = "Answering"
     }
     
     func picking(answers: [String], time: Double) {
@@ -123,6 +122,11 @@ class GameViewController: UIViewController {
         }
         
         room.call("pick", card, handler: nil)
+    }
+    
+    func playerJoined(player: Player) {
+        players.append(player)
+        collectionDelegate.refreshPlayers(players)
     }
     
     func draw(cards: [String]) {

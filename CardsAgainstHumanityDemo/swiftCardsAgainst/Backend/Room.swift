@@ -48,10 +48,8 @@ class Room: RiffleDomain {
         // but if a player leaves and then rejoins before their zombie was cleared out then we'll have two players with the same name
         // If the player's name already exists in the app, unzombiefy them instead of creating a new player
         if let existingPlayer = getPlayer(players, domain: domain) {
-            print("Reinstantiating zombie: \(domain)")
             existingPlayer.zombie = false
             existingPlayer.demo = false
-            
             return [existingPlayer.hand, players, state, self.name!]
         }
         
@@ -66,50 +64,42 @@ class Room: RiffleDomain {
         // Add dynamic role
         app.call("xs.demo.Bouncer/assignDynamicRole", self.dynamicRoleId, "player", container.domain, [domain], handler: nil)
         
-        // Add Demo players
-        if players.count < 3 {
-            for i in 0...2 {
-                let player = Player()
-                player.domain = app.domain + ".demo\(i)"
-                player.hand = answers.randomElements(10, remove: true)
-                player.demo = true
-                players.append(player)
-            }
-        }
-        
         if state == "Empty" {
             timer.startTimer(EMPTY_TIME, selector: "startAnswering")
+            roomMaintenance()
         }
         
         return [newPlayer.hand, players, state, self.name!]
     }
     
     func pick(domain: String, card: String) {
-        let player = players.filter { $0.domain == domain }[0]
+        guard let player = getPlayer(players, domain: domain) else { return }
         
         if state == "Answering" && player.pick == nil && !player.czar {
-            player.pick = card
-            player.hand.removeObject(card)
+            guard let pick = player.hand.removeObject(card) else { return }
+            player.pick = pick
             print("Player: \(player.domain) answered: \(card)")
             
         } else if state == "Picking" && player.czar {
-            print("Ending Choosing early")
             let winner = players.filter { $0.pick == card }[0]
             timer.startTimer(0.0, selector: "startScoring:", info: winner.domain)
-            
-        } else {
-            print("Player \(domain) pick in wrong round!")
         }
     }
     
     
     // MARK: Round Transitions
     func startAnswering() {
+        // Close the room if there are only demo players left
+        if players.reduce(0, combine: { $0 + ($1.demo ? 0 : 1) }) == 0 {
+            container.rooms.removeObject(self)
+            players = []
+            timer.cancel()
+            return
+        }
+        
         print("    Answering -- ")
         state = "Answering"
-        
-        removeZombies()
-        setNextCzar()
+        roomMaintenance()
 
         publish("answering", czar!, questions.randomElements(1, remove: false)[0], PICK_TIME)
         timer.startTimer(PICK_TIME, selector: "startPicking")
@@ -135,18 +125,18 @@ class Room: RiffleDomain {
         print("    Scoring -- ")
         state = "Scoring"
         
+        // Choose a winner at random if the czar didn't choose one
         var pickers = players.filter { !$0.czar }
-        var winner: Player?
+        var winner = pickers.randomElements(1, remove: false)[0]
         
         if let domain = t.userInfo as? String {
-            winner = players.filter { $0.domain == domain }[0]
-        } else {
-            print("No players picked cards! Choosing one at random")
-            winner = pickers.randomElements(1, remove: false)[0]
+            if let p = getPlayer(players, domain: domain) {
+                winner = p
+            }
         }
         
-        winner!.score += 1
-        publish("scoring", winner!, winner!.pick!, SCORE_TIME)
+        winner.score += 1
+        publish("scoring", winner, winner.pick!, SCORE_TIME)
         
         // draw cards for all players, nil their picks
         for p in pickers {
@@ -169,10 +159,42 @@ class Room: RiffleDomain {
     }
     
     
-    // MARK: Utils
-    func setNextCzar() {
+    // MARK: Player Utils
+    func roomMaintenance() {
+        // Players that left in the middle of a round of play are only removed once, at the start of a new round
+        // in order to avoid round restarts or interrupted play
+        for player in players.filter({ $0.zombie }) {
+            print("Removing zombies: \(player.domain)")
+            answers.appendContentsOf(player.hand)
+            
+            if let p = player.pick {
+                answers.append(p)
+            }
+            
+            players.removeObject(player)
+            publish("left", player)
+            czar = player.czar ? nil : czar
+            
+            // remove the role from the player that left, ensuring they can't call our endpoints anymore
+            app.call("xs.demo.Bouncer/revokeDynamicRole", self.dynamicRoleId, "player", container.domain, [player.domain], handler: nil)
+        }
+        
+        // If there aren't enough players to play a full
+        while players.count < 3 {
+            let player = Player()
+            player.domain = app.domain + ".demo\(randomStringWithLength(4))"
+            player.hand = answers.randomElements(10, remove: true)
+            player.demo = true
+            players.append(player)
+            
+            if state != "Empty" {
+                publish("joined", player)
+            }
+        }
+        
+        // Set the next czar round-robin, or randomly if no player is currently the czar
         if czar == nil {
-            czar = players[0]
+            czar = players.randomElements(1)[0]
             czar!.czar = true
         } else {
             let i = players.indexOf(czar!)!
@@ -183,38 +205,5 @@ class Room: RiffleDomain {
         }
         
         print("New Czar: \(czar!.domain)")
-    }
-    
-    func removeZombies() {
-        // Players that left in the middle of a round of play are only removed once, at the start of a new round
-        // in order to avoid round restarts or interrupted play
-        
-        for player in players {
-            if !player.zombie { continue }
-            
-            print("Removing zombies: \(player.domain)")
-            answers.appendContentsOf(player.hand)
-            
-            if let p = player.pick {
-                answers.append(p)
-            }
-            
-            players.removeObject(player)
-            publish("left", player)
-            
-            if player.czar {
-                czar = nil
-            }
-            
-            // remove the role from the player that left, ensuring they can't call our endpoints anymore
-            app.call("xs.demo.Bouncer/revokeDynamicRole", self.dynamicRoleId, "player", container.domain, [player.domain], handler: nil)
-            
-            // Close the room if there are only demo players left-- this is deferred until promises get in
-            if players.reduce(0, combine: { $0 + ($1.demo ? 0 : 1) }) == 0 {
-                parent.closeRoom(self)
-                parent = nil
-                timer.cancel()
-            }
-        }
     }
 }

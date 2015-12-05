@@ -12,22 +12,24 @@ import Foundation
 
 // Remove element by value. Returns true if the object was removed, else false
 extension RangeReplaceableCollectionType where Generator.Element : Equatable {
-    mutating func removeObject(object : Generator.Element) -> Bool {
+    mutating func removeObject(object : Generator.Element) -> Generator.Element? {
         var remove: Self.Index? = nil
+        var ret: Generator.Element? = nil
         
         for element in self {
             if element == object {
                 remove = self.indexOf(element)
+                ret = element
                 break
             }
         }
         
         if let r = remove {
             self.removeAtIndex(r)
-            return true
+            return ret
         }
         
-        return false
+        return ret
     }
 }
 

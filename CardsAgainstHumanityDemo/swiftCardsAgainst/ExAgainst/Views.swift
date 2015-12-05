@@ -14,6 +14,14 @@ import M13ProgressSuite
 import Spring
 
 
+let tips = [
+    "Swipe right to pick a card",
+    "Each round a new player picks the winner",
+    "Check out exis.io",
+    "Each round has 3 phases",
+    "Creative Commons BY-NC-SA 2.0 license."
+]
+
 class CardTableDelegate: NSObject, UITableViewDelegate, UITableViewDataSource, RMSwipeTableViewCellDelegate {
     var cards: [String] = []
     var table: UITableView

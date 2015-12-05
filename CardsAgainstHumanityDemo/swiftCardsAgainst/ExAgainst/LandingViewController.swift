@@ -32,13 +32,6 @@ class LandingViewController: UIViewController, RiffleDelegate {
     var container: RiffleDomain!
     
     
-    let tips = [
-        "Swipe right to pick a card",
-        "Each round a new player picks the winner",
-        "Check out exis.io",
-        "Creative Commons BY-NC-SA 2.0 license."
-    ]
-    
     override func viewWillAppear(animated: Bool) {
         NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: Selector("rotateText"), userInfo: nil, repeats: true)
         textfieldUsername.layer.borderColor = UIColor.whiteColor().CGColor
