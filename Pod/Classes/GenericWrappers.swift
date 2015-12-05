@@ -162,8 +162,8 @@ public extension RiffleDomain {
 		_register(pdid, fn: cumin(fn))
 	}
 
-	public func subscribe(pdid: String, _ fn: () -> ()) {
-		_subscribe(pdid, fn: cumin(fn))
+	public func subscribe(pdid: String, _ fn: () -> ()) -> Deferred {
+		return _subscribe(pdid, fn: cumin(fn))
 	}
 
 	public func subscribe<A: CN>(pdid: String, _ fn: (A) -> ()) {
