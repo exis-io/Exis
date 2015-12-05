@@ -59,12 +59,15 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
             let envToken = env("EXIS_TOKEN", "")
             
             if envToken != "" {
+                Riffle.debug("Found variable from environment: \(envToken)")
                 self.session!.token = envToken
                 self.session!.connect()
             } else if let t = token {
+                Riffle.debug("Using local token: \(t)")
                 self.session!.token = t
                 self.session!.connect()
             } else {
+                Riffle.debug("No token found. Attempting Auth-0")
                 attemptAuth(agent.name!, superdomain: agent.superdomain!.domain, completed: { (t) -> () in
                     self.session!.token = t
                     self.session!.connect()

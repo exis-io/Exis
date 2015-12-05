@@ -13,7 +13,6 @@
 		070058532C319A764F9A63027A599866 /* CocoaAsyncSocket-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 25A4DC0007233FFFE83A7D69B58B4BBC /* CocoaAsyncSocket-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		081A50535FCDF50D0118223459790167 /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 79CC0E04A899F81BCDC40EFA28F5CD3D /* UIImageView+AFNetworking.m */; };
 		0AEEFF678A18174A1DA5B424AF0EAB23 /* MDWampConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A93D61DB307D50FAAFDD07A038504B7 /* MDWampConstants.m */; };
-		0B91AD18D28DB195ACD23DB6F9E90C82 /* Hello.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2526797F5D485E37612CFB2A127E3552 /* Hello.swift */; };
 		0D0B57F69812C049F87698136D49DD9D /* MDWampTransportWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 16E6573AAF0CEFC77693C4304D2DC2E5 /* MDWampTransportWebSocket.m */; };
 		0DB9A48C90607AA45B77261C2A2512CA /* MDWampAbort.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7CB14C0090A9ABCBA888B5800B246D /* MDWampAbort.m */; };
 		0E6E39F22C316784D59444E41AA1DD81 /* MDWampPublished.h in Headers */ = {isa = PBXBuildFile; fileRef = 2564072B688C95BA6E06A82E49D901B3 /* MDWampPublished.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -71,6 +70,7 @@
 		4F093F6FBA6E6B060CF66145CF214E14 /* AFNetworkReachabilityManager.h in Headers */ = {isa = PBXBuildFile; fileRef = EBCFAEF2A4C628119EB58FE8A746205D /* AFNetworkReachabilityManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F0C0C470EA4518A27FACB39CCFB3F09 /* MDWampInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B360012DFFC9FE3F196AA4F525F27D9 /* MDWampInvocation.m */; };
 		501D2F7A1C0FDBEF00340E40 /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501D2F791C0FDBEF00340E40 /* Domain.swift */; };
+		501D2F7D1C12601800340E40 /* Deferred.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501D2F7C1C12601800340E40 /* Deferred.swift */; };
 		502D5F205E2BF44AB8F0054AAF57E112 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E32266B8C4A0D9780D5A3C7D75B11EA /* Foundation.framework */; };
 		50F70D7B1BF037A6006E7384 /* Mantle.h in Headers */ = {isa = PBXBuildFile; fileRef = 50F70D5E1BF037A6006E7384 /* Mantle.h */; };
 		50F70D7C1BF037A6006E7384 /* MTLJSONAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50F70D5F1BF037A6006E7384 /* MTLJSONAdapter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -393,7 +393,6 @@
 		20BEF3C64058B3DF910C9E5F1951A45E /* MDWampUnregister.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MDWampUnregister.m; sourceTree = "<group>"; };
 		222C20C59FBA893C2271E533FFE24C27 /* MDWampRegistered.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MDWampRegistered.m; sourceTree = "<group>"; };
 		23C68779506F9478CB6615FC48207A8E /* Pods-Riffle_Tests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Riffle_Tests-frameworks.sh"; sourceTree = "<group>"; };
-		2526797F5D485E37612CFB2A127E3552 /* Hello.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Hello.swift; sourceTree = "<group>"; };
 		2564072B688C95BA6E06A82E49D901B3 /* MDWampPublished.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MDWampPublished.h; sourceTree = "<group>"; };
 		25A4DC0007233FFFE83A7D69B58B4BBC /* CocoaAsyncSocket-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CocoaAsyncSocket-umbrella.h"; sourceTree = "<group>"; };
 		25B42C1F9E74D1992E0E72E5E2C61D7A /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -445,6 +444,7 @@
 		4F6D7162C5C525C56BAB3316DE6BEBE1 /* Riffle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Riffle.swift; sourceTree = "<group>"; };
 		4FE54542F3D96920A1B520F84B5DEBBB /* MPMessagePackReader.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPMessagePackReader.h; path = MPMessagePack/MPMessagePackReader.h; sourceTree = "<group>"; };
 		501D2F791C0FDBEF00340E40 /* Domain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Domain.swift; sourceTree = "<group>"; };
+		501D2F7C1C12601800340E40 /* Deferred.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Deferred.swift; sourceTree = "<group>"; };
 		50F70D5E1BF037A6006E7384 /* Mantle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mantle.h; sourceTree = "<group>"; };
 		50F70D5F1BF037A6006E7384 /* MTLJSONAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTLJSONAdapter.h; sourceTree = "<group>"; };
 		50F70D601BF037A6006E7384 /* MTLJSONAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTLJSONAdapter.m; sourceTree = "<group>"; };
@@ -725,12 +725,12 @@
 			children = (
 				501D2F791C0FDBEF00340E40 /* Domain.swift */,
 				720F9E1DDE4E9CBBA006904934E7BFA8 /* Auth.swift */,
+				501D2F7C1C12601800340E40 /* Deferred.swift */,
 				C680941C16AB52DCEAB5BFF40B0D811E /* BaseModel.swift */,
 				B2F25F48B35A506CC50CCAA5DF1DD6FA /* Connection.swift */,
 				C9F64A747B8CEA9D0248A744EB814889 /* ConverterExtensions.swift */,
 				AA8827A9FCC596A381228DB13E70C8A9 /* Cumin.swift */,
 				3290BBB2C4495EF20432999FEED159A6 /* GenericWrappers.swift */,
-				2526797F5D485E37612CFB2A127E3552 /* Hello.swift */,
 				6B522112A019BBEF3A5FF6376C421107 /* Riffle.h */,
 				4F6D7162C5C525C56BAB3316DE6BEBE1 /* Riffle.swift */,
 				BA8FDBD3BF6D07A0886A4A78852D79BF /* Utils.swift */,
@@ -1658,7 +1658,6 @@
 				CBBFAE6278B963A01116C610582EDB75 /* ConverterExtensions.swift in Sources */,
 				38697E54919472F62A1D669B42181121 /* Cumin.swift in Sources */,
 				10BEC3709453BDFFE8EC516EF040087B /* GenericWrappers.swift in Sources */,
-				0B91AD18D28DB195ACD23DB6F9E90C82 /* Hello.swift in Sources */,
 				75B77AED760B2B746004FF9EC1E7922A /* MDWamp.m in Sources */,
 				0DB9A48C90607AA45B77261C2A2512CA /* MDWampAbort.m in Sources */,
 				12D44858418D10B7625A49B7C8C9DF53 /* MDWampAuthenticate.m in Sources */,
@@ -1678,6 +1677,7 @@
 				4F0C0C470EA4518A27FACB39CCFB3F09 /* MDWampInvocation.m in Sources */,
 				91D9A8C93EF8C4E7908E326F591B1F29 /* MDWampMessageFactory.m in Sources */,
 				50F70D931BF037A6006E7384 /* NSObject+MTLComparisonAdditions.m in Sources */,
+				501D2F7D1C12601800340E40 /* Deferred.swift in Sources */,
 				8639555DFC494ED8164734453206BC6D /* MDWampPublish.m in Sources */,
 				02C1FDDF1C7FF68D584E667DAF1BC3A4 /* MDWampPublished.m in Sources */,
 				C4046C25557ED606E6E3FF0F547DABD0 /* MDWampRegister.m in Sources */,
