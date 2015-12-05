@@ -7,10 +7,12 @@
 //
 
 import Foundation
+import Darwin
 
 var NODE = "wss://node.exis.io:8000/wss"
 var SOFTNODE = false
 var DEBUG = false
+var STDERR = false
 
 
 public class Riffle {
@@ -24,23 +26,31 @@ public class Riffle {
     public static func setFabric(url: String) {
         NODE = url
     }
-
+    
     public static func setDebug() {
         DEBUG = true
     }
     
     static func debug(s: String) {
         if DEBUG {
-            print(s)
+            out("DEBUG: \(s)")
         }
     }
     
     static func warn(s: String) {
-        print("WARN: \(s)")
+        out("WARN: \(s)")
     }
     
     static func panic(s: String) {
-        print("PANIC: \(s)")
+        out("PANIC: \(s)")
+    }
+    
+    static func out(s: String) {
+        if STDERR {
+            fputs("\(s)\n", __stderrp)
+        } else {
+            print(s)
+        }
     }
 }
 

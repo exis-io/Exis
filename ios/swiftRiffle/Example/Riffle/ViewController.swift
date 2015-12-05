@@ -6,16 +6,6 @@
 //  Copyright (c) 2015 Mickey Barboi. All rights reserved.
 //
 
-/*
-// This DOES NOT WORK: all return types have to be AnyObject or nothing!
-func returnCollections() -> (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool])  {
-return ([1, 2], [1.0, 2.0], [3.0, 4.0], ["Hey!", "There!"], [true, false])
-}
-
-
-*/
- 
-
 import UIKit
 import Riffle 
 import AFNetworking
@@ -106,19 +96,19 @@ class ViewController: UIViewController {
     // Tests
     func startTests() {
         
-//        // Publish/Subscribe
-//        testPSTypes(1)
-//        testPSTypeCollections(2)
-//        
-//        // Primitive Types
-//        rcTypes(3)
-//        
-//        // Riffle Objects
-//        roObjects(4)
-//        
-//        // RiffleObect Collections
-//        roColletions(5)
-//        roColletionsNoArg(6)
+        // Publish/Subscribe
+        testPSTypes(1)
+        testPSTypeCollections(2)
+        
+        // Primitive Types
+        rcTypes(3)
+        
+        // Riffle Objects
+        roObjects(4)
+        
+        // RiffleObect Collections
+        roColletions(5)
+        roColletionsNoArg(6)
         
         // Meta calls
         testDiscloseRegister(7)
@@ -289,3 +279,4 @@ class ViewController: UIViewController {
 //        beta.publish("xs.tester.alpha/\(t)", 1)
     }
 }
+

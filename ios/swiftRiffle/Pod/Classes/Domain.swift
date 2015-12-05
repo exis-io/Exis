@@ -6,6 +6,9 @@
 //
 //
 
+// Recorded from the box: xs.demo.exis.biddle.Osxcontainer.gamelogic
+// From live:             xs.demo.exis.biddle.Osxcontainer.gamelogic
+
 import Foundation
 
 public class RiffleDomain: NSObject, RiffleDelegate {
@@ -25,7 +28,15 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         // Initialize this agent as the Application domain, or the root domain
         // for this instance of the application
         
+        // Returns a domain name provided as an environment variable. If the environment variable cannot
+        // be found returns the second parameter by default
         domain = env("DOMAIN", d)
+        
+        // If the two parameters do *not* match then we are in a container and must infer the app name
+        if domain != d {
+            domain = inferAppName(domain)
+        }
+        
         connection = RiffleConnection()
         name = domain
         
@@ -63,6 +74,9 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         // Connect this agent and any agents connected to this one
         // superdomains and subdomains
         
+        // Set this domain manually
+        self.domain = env("DOMAIN", self.domain)
+        
         connection.addAgent(self)
         
         if superdomain != nil && superdomain!.connection.open {
@@ -97,7 +111,7 @@ public class RiffleDomain: NSObject, RiffleDelegate {
             })
             { (err: NSError!) -> Void in
                 if let e = err {
-                    print("An error occured: ", e)
+                    print("Error subscribing to endpoint \(endpoint): ", e.localizedDescription)
                 } else {
                     self.subscriptions.append(endpoint)
                 }
@@ -157,11 +171,11 @@ public class RiffleDomain: NSObject, RiffleDelegate {
                 Riffle.panic(" Unknown exception!")
             }
             
-//            if let autoArray = result as? [AnyObject] {
-//                wamp.resultForInvocation(invocation, arguments: serialize(autoArray), argumentsKw: [:])
-//            } else {
-//                wamp.resultForInvocation(invocation, arguments: serialize([result as! AnyObject]), argumentsKw: [:])
-//            }
+            //            if let autoArray = result as? [AnyObject] {
+            //                wamp.resultForInvocation(invocation, arguments: serialize(autoArray), argumentsKw: [:])
+            //            } else {
+            //                wamp.resultForInvocation(invocation, arguments: serialize([result as! AnyObject]), argumentsKw: [:])
+            //            }
             
             }, cancelHandler: { () -> Void in
                 print("Register Cancelled!")
@@ -273,4 +287,18 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         
         return domain + "/" + action
     }
+}
+
+
+// Called in the case where we are *certainly* running in a container-- have to infer the app
+// name as well as the container name
+func inferAppName(domain: String) -> String {
+    var ret = ""
+    let b = domain.componentsSeparatedByString(".")
+    
+    for s in b[0..<(b.count - 2)] {
+        ret += "\(s)."
+    }
+    
+    return ret.substringToIndex(ret.endIndex.predecessor())
 }
