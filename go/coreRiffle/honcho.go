@@ -7,6 +7,27 @@ import (
 	"time"
 )
 
+type Connection interface {
+	Send(message) error
+
+	// Closes the peer connection and any channel returned from Receive().
+	// Calls with a reason for the close
+	Close(string)
+
+	// Receive returns a channel of messages coming from the peer.
+	// NOTE: I think this should be reactive
+	Receive() <-chan message
+
+	// Wait for a message for a timeout amount of time
+	BlockMessage() (message, error)
+}
+
+type Persistence interface {
+	Load(string []byte)
+
+	Save(string, []byte)
+}
+
 // Keeps track of all the domains and handles message passing between them
 // You do not get another connection for every domain, but you can
 // with another honcho

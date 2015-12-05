@@ -79,7 +79,7 @@ FABRIC_URL = "node.exis.io";
 
 exports.setDevFabric = function(url) {
   
-    FABRIC_URL = 'ws://ubuntu@ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws';
+    FABRIC_URL = 'ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws';
 
     // Turn on debug logging, too
     // exports.debug = function () {

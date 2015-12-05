@@ -9,32 +9,18 @@ import (
 const (
 	maxId   int64         = 1 << 53
 	timeout time.Duration = 5 * time.Second
+
+	devFabric        string = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
+	sandboxFabric    string = "ws://sandbox.exis.io/ws"
+	proudctionFabric string = "ws://node.exis.io/ws"
+
+	ErrInvalidArgument     = "ERR-- Invalid Arguments, check your receiver!"
+	ErrSystemShutdown      = "ERR-- Connection collapsed. It wasn't pretty."
+	ErrCloseRealm          = "ERR-- Im leaving and taking the dog."
+	ErrGoodbyeAndOut       = "ERR-- Goodbye and go away."
+	ErrNotAuthorized       = "ERR-- Not Authorized. Ask nicely."
+	ErrAuthorizationFailed = "ERR-- Unable to Authorize. Try harder."
 )
-
-type Connection interface {
-	Send(message) error
-
-	// Closes the peer connection and any channel returned from Receive().
-	// Calls with a reason for the close
-	Close(string)
-
-	// Receive returns a channel of messages coming from the peer.
-	// NOTE: I think this should be reactive
-	Receive() <-chan message
-
-	// Wait for a message for a timeout amount of time
-	BlockMessage() (message, error)
-}
-
-type Persistence interface {
-	Load(string) []byte
-
-	Save(string, []byte)
-}
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
 
 // NewID generates a random WAMP uint.
 func newID() uint {
@@ -65,20 +51,7 @@ func formatUnknownMap(m map[string]interface{}) string {
 	return s
 }
 
-type InvalidURIError string
-
-func (e InvalidURIError) Error() string {
-	return "invalid URI: " + string(e)
-}
-
-const (
-	ErrInvalidArgument     = "ERR-- Invalid Arguments, check your receiver!"
-	ErrSystemShutdown      = "ERR-- Connection collapsed. It wasn't pretty."
-	ErrCloseRealm          = "ERR-- Im leaving and taking the dog."
-	ErrGoodbyeAndOut       = "ERR-- Goodbye and go away."
-	ErrNotAuthorized       = "ERR-- Not Authorized. Ask nicely."
-	ErrAuthorizationFailed = "ERR-- Unable to Authorize. Try harder."
-)
+// Some data structure utility methods
 
 func bindingForEndpoint(bindings map[uint]*boundEndpoint, endpoint string) (uint, *boundEndpoint, bool) {
 	for id, p := range bindings {

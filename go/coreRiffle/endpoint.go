@@ -5,6 +5,12 @@ import (
 	"strings"
 )
 
+type InvalidURIError string
+
+func (e InvalidURIError) Error() string {
+	return "Invalid Domain: " + string(e)
+}
+
 // Check out the golang tester for more info:
 // https://regex-golang.appspot.com/assets/html/index.html
 func validEndpoint(s string) bool {

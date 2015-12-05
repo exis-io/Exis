@@ -61,7 +61,7 @@ func (c *domain) Join(conn Connection) error {
 		return fmt.Errorf("Domain %s is already joined", c.name)
 	}
 
-	// Should we hard close on conn.Close()? The Head Honcho may be interested in that...
+	// Should we hard close on conn.Close()? The Head Honcho may be interested in knowing about the close
 	if err := conn.Send(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {
 		conn.Close("ERR: could not send a hello message")
 		return err
@@ -191,7 +191,6 @@ func (c *domain) Unregister(procedure string) error {
 		return err
 	}
 
-	// wait to receive uNREGISTERED message
 	msg, err := c.honcho.waitOnListener(id, "unregistering")
 	if err != nil {
 		return err
@@ -201,7 +200,6 @@ func (c *domain) Unregister(procedure string) error {
 		return fmt.Errorf(formatUnexpectedMessage(msg, uNREGISTERED))
 	}
 
-	// register the event handler with this unregistration
 	delete(c.registrations, procedureID)
 	return nil
 }

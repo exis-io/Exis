@@ -10,7 +10,6 @@ func cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 	reciever := reflect.TypeOf(fn)
 	var ret []interface{}
 
-	// Check to make sure the pointer is actually a function
 	if reciever.Kind() != reflect.Func {
 		return ret, fmt.Errorf("Handler is not a function!")
 	}
@@ -36,7 +35,6 @@ func cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 
 	// Perform the call
 	result := reflect.ValueOf(fn).Call(values)
-
 	for _, x := range result {
 		ret = append(ret, x.Interface())
 	}

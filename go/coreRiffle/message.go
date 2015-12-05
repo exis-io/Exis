@@ -457,18 +457,6 @@ func (msg *interrupt) messageType() messageType {
 	return iNTERRUPT
 }
 
-////////////////////////////////////////
-/*
- Begin a whole mess of code we really don't want to get into
- and which pretty much guarantees we'll have to make substantial changes to
- Riffle code: the messages don't have a standardized way of returning their
- TO identity!
-
- Really, really need this, Short of modifying and standardizing the WAMP changes
- this is unlikely to happen without node monkey-patching. So here we go.
-*/
-////////////////////////////////////////
-
 type NoDestinationError string
 
 func (e NoDestinationError) Error() string {
@@ -501,13 +489,17 @@ func destination(m *message) (string, error) {
 // Given a message, return the request uint
 func requestID(m *message) uint {
 	switch msg := (*m).(type) {
-	case *publish:
+	case *registered:
 		return msg.Request
-	case *subscribe:
+	case *subscribed:
 		return msg.Request
-	case *register:
+	case *unsubscribed:
 		return msg.Request
-	case *call:
+	case *unregistered:
+		return msg.Request
+	case *result:
+		return msg.Request
+	case *errorMessage:
 		return msg.Request
 	}
 
