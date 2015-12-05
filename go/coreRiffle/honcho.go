@@ -24,7 +24,6 @@ type Connection interface {
 
 type Persistence interface {
 	Load(string []byte)
-
 	Save(string, []byte)
 }
 
@@ -33,9 +32,11 @@ type Persistence interface {
 // with another honcho
 
 type Honcho interface {
-	HandleBytes([]byte) error
-	HandleString(string) error
-	HandleMessage(message) error
+	NewDomain(string, Delegate) Domain
+
+	HandleBytes([]byte)
+	HandleString(string)
+	HandleMessage(message)
 }
 
 type honcho struct {
@@ -46,25 +47,25 @@ type honcho struct {
 }
 
 // Initialize the core
-func Initialize() *honcho {
-	return &honcho{
+func Initialize() Honcho {
+	return honcho{
 		serializer: new(jSONSerializer),
 		domains:    make([]*domain, 0),
 		listeners:  make(map[uint]chan message),
 	}
 }
 
-func (c *honcho) NewDomain(name string, del Delegate) *domain {
-	d := &domain{
+func (c honcho) NewDomain(name string, del Delegate) Domain {
+	d := domain{
+		honcho:        &c,
 		Delegate:      del,
-		honcho:        *c,
 		name:          name,
 		joined:        false,
 		subscriptions: make(map[uint]*boundEndpoint),
 		registrations: make(map[uint]*boundEndpoint),
 	}
 
-	c.domains = append(c.domains, d)
+	c.domains = append(c.domains, &d)
 	return d
 }
 
@@ -91,7 +92,7 @@ func (c *honcho) domainLeft(d *domain) error {
 	return nil
 }
 
-func (c *honcho) domainJoined(d domain) {
+func (c *honcho) domainJoined(d *domain) {
 	// Join domains that are not joined already
 	for _, x := range c.domains {
 		if !x.joined {
@@ -102,7 +103,7 @@ func (c *honcho) domainJoined(d domain) {
 }
 
 // All incoming messages end up here one way or another
-func (c *honcho) HandleMessage(msg message) {
+func (c honcho) HandleMessage(msg message) {
 	switch msg := msg.(type) {
 
 	case *event:
@@ -132,12 +133,12 @@ func (c *honcho) HandleMessage(msg message) {
 }
 
 // Do we really want to throw errors back into the connection here?
-func (c *honcho) HandleString(msg string) {
+func (c honcho) HandleString(msg string) {
 	c.HandleBytes([]byte(msg))
 }
 
 // Theres a method on the serializer that does this exact thing. Is this specific to JS?
-func (c *honcho) HandleBytes(byt []byte) {
+func (c honcho) HandleBytes(byt []byte) {
 	var dat []interface{}
 
 	if err := json.Unmarshal(byt, &dat); err != nil {
@@ -169,39 +170,5 @@ func (c *honcho) requestListen(outgoing message) (message, error) {
 		return msg, nil
 	case <-time.After(timeout):
 		return nil, fmt.Errorf("timeout while waiting for message")
-	}
-}
-
-func (c *honcho) registerListener() uint {
-	id := newID()
-	wait := make(chan message, 1)
-	c.listeners[id] = wait
-	return id
-}
-
-// Waits for a particular message to return
-// Accepts parameters for the id of the message, what you expect to receive, and a string describing errors
-func (c *honcho) waitOnListener(id uint, action string) (message, error) {
-	if wait, ok := c.listeners[id]; !ok {
-		return nil, fmt.Errorf("unknown listener uint: %v", id)
-	} else {
-		select {
-		case msg := <-wait:
-			if e, ok := msg.(*errorMessage); ok {
-				return nil, fmt.Errorf("Error '%v': %v", action, e.Error)
-			}
-
-			return msg, nil
-		case <-time.After(timeout):
-			return nil, fmt.Errorf("timeout while waiting for message")
-		}
-	}
-}
-
-func (c *honcho) notifyListener(msg message, requestId uint) {
-	if l, ok := c.listeners[requestId]; ok {
-		l <- msg
-	} else {
-		log.Println("no listener for message", msg.messageType(), requestId)
 	}
 }

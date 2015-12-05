@@ -1,255 +1,257 @@
-/////////////////////////////////////////////
-import (
-	"fmt"
-	"log"
-	"time"
-)
+package goRiffle
 
-// Message Patterns
-/////////////////////////////////////////////
+// /////////////////////////////////////////////
+// import (
+// 	"fmt"
+// 	"log"
+// 	"time"
+// )
 
-// Subscribe registers the EventHandler to be called for every message in the provided topic.
-func (c *domain) Subscribe(topic string, fn interface{}) error {
-	id := newID()
-	c.registerListener(id)
+// // Message Patterns
+// /////////////////////////////////////////////
 
-	sub := &subscribe{
-		Request: id,
-		Options: make(map[string]interface{}),
-		Name:    topic,
-	}
+// // Subscribe registers the EventHandler to be called for every message in the provided topic.
+// func (c *domain) Subscribe(topic string, fn interface{}) error {
+// 	id := newID()
+// 	c.registerListener(id)
 
-	if err := c.Send(sub); err != nil {
-		return err
-	}
+// 	sub := &subscribe{
+// 		Request: id,
+// 		Options: make(map[string]interface{}),
+// 		Name:    topic,
+// 	}
 
-	// wait to receive sUBSCRIBED message
-	msg, err := c.waitOnListener(id)
-	if err != nil {
-		return err
-	} else if e, ok := msg.(*errorMessage); ok {
-		return fmt.Errorf("error subscribing to topic '%v': %v", topic, e.Error)
-	} else if subscribed, ok := msg.(*subscribed); !ok {
-		return fmt.Errorf(formatUnexpectedMessage(msg, sUBSCRIBED))
-	} else {
-		c.events[subscribed.Subscription] = &boundEndpoint{topic, fn}
-	}
-	return nil
-}
+// 	if err := c.Send(sub); err != nil {
+// 		return err
+// 	}
 
-// Unsubscribe removes the registered EventHandler from the topic.
-func (c *domain) Unsubscribe(topic string) error {
-	subscriptionID, _, ok := bindingForEndpoint(c.events, topic)
+// 	// wait to receive sUBSCRIBED message
+// 	msg, err := c.waitOnListener(id)
+// 	if err != nil {
+// 		return err
+// 	} else if e, ok := msg.(*errorMessage); ok {
+// 		return fmt.Errorf("error subscribing to topic '%v': %v", topic, e.Error)
+// 	} else if subscribed, ok := msg.(*subscribed); !ok {
+// 		return fmt.Errorf(formatUnexpectedMessage(msg, sUBSCRIBED))
+// 	} else {
+// 		c.events[subscribed.Subscription] = &boundEndpoint{topic, fn}
+// 	}
+// 	return nil
+// }
 
-	if !ok {
-		return fmt.Errorf("domain %s is not registered with this client.", topic)
-	}
+// // Unsubscribe removes the registered EventHandler from the topic.
+// func (c *domain) Unsubscribe(topic string) error {
+// 	subscriptionID, _, ok := bindingForEndpoint(c.events, topic)
 
-	id := newID()
-	c.registerListener(id)
+// 	if !ok {
+// 		return fmt.Errorf("domain %s is not registered with this client.", topic)
+// 	}
 
-	sub := &unsubscribe{
-		Request:      id,
-		Subscription: subscriptionID,
-	}
+// 	id := newID()
+// 	c.registerListener(id)
 
-	if err := c.Send(sub); err != nil {
-		return err
-	}
+// 	sub := &unsubscribe{
+// 		Request:      id,
+// 		Subscription: subscriptionID,
+// 	}
 
-	// wait to receive uNSUBSCRIBED message
-	msg, err := c.waitOnListener(id)
-	if err != nil {
-		return err
-	} else if e, ok := msg.(*errorMessage); ok {
-		return fmt.Errorf("error unsubscribing to topic '%v': %v", topic, e.Error)
-	} else if _, ok := msg.(*unsubscribed); !ok {
-		return fmt.Errorf(formatUnexpectedMessage(msg, uNSUBSCRIBED))
-	}
+// 	if err := c.Send(sub); err != nil {
+// 		return err
+// 	}
 
-	delete(c.events, subscriptionID)
-	return nil
-}
+// 	// wait to receive uNSUBSCRIBED message
+// 	msg, err := c.waitOnListener(id)
+// 	if err != nil {
+// 		return err
+// 	} else if e, ok := msg.(*errorMessage); ok {
+// 		return fmt.Errorf("error unsubscribing to topic '%v': %v", topic, e.Error)
+// 	} else if _, ok := msg.(*unsubscribed); !ok {
+// 		return fmt.Errorf(formatUnexpectedMessage(msg, uNSUBSCRIBED))
+// 	}
 
-func (c *domain) Register(procedure string, fn interface{}, options map[string]interface{}) error {
-	id := newID()
-	c.registerListener(id)
+// 	delete(c.events, subscriptionID)
+// 	return nil
+// }
 
-	register := &register{
-		Request: id,
-		Options: options,
-		Name:    procedure,
-	}
+// func (c *domain) Register(procedure string, fn interface{}, options map[string]interface{}) error {
+// 	id := newID()
+// 	c.registerListener(id)
 
-	if err := c.Send(register); err != nil {
-		return err
-	}
+// 	register := &register{
+// 		Request: id,
+// 		Options: options,
+// 		Name:    procedure,
+// 	}
 
-	// wait to receive rEGISTERED message
-	msg, err := c.waitOnListener(id)
-	if err != nil {
-		return err
-	} else if e, ok := msg.(*errorMessage); ok {
-		return fmt.Errorf("error registering procedure '%v': %v", procedure, e.Error)
-	} else if registered, ok := msg.(*registered); !ok {
-		return fmt.Errorf(formatUnexpectedMessage(msg, rEGISTERED))
-	} else {
-		// register the event handler with this registration
-		c.procedures[registered.Registration] = &boundEndpoint{procedure, fn}
-	}
-	return nil
-}
+// 	if err := c.Send(register); err != nil {
+// 		return err
+// 	}
 
-// Unregister removes a procedure with the Node
-func (c *domain) Unregister(procedure string) error {
-	procedureID, _, ok := bindingForEndpoint(c.procedures, procedure)
+// 	// wait to receive rEGISTERED message
+// 	msg, err := c.waitOnListener(id)
+// 	if err != nil {
+// 		return err
+// 	} else if e, ok := msg.(*errorMessage); ok {
+// 		return fmt.Errorf("error registering procedure '%v': %v", procedure, e.Error)
+// 	} else if registered, ok := msg.(*registered); !ok {
+// 		return fmt.Errorf(formatUnexpectedMessage(msg, rEGISTERED))
+// 	} else {
+// 		// register the event handler with this registration
+// 		c.procedures[registered.Registration] = &boundEndpoint{procedure, fn}
+// 	}
+// 	return nil
+// }
 
-	if !ok {
-		return fmt.Errorf("domain %s is not registered with this client.", procedure)
-	}
+// // Unregister removes a procedure with the Node
+// func (c *domain) Unregister(procedure string) error {
+// 	procedureID, _, ok := bindingForEndpoint(c.procedures, procedure)
 
-	id := newID()
-	c.registerListener(id)
+// 	if !ok {
+// 		return fmt.Errorf("domain %s is not registered with this client.", procedure)
+// 	}
 
-	unregister := &unregister{
-		Request:      id,
-		Registration: procedureID,
-	}
+// 	id := newID()
+// 	c.registerListener(id)
 
-	if err := c.Send(unregister); err != nil {
-		return err
-	}
+// 	unregister := &unregister{
+// 		Request:      id,
+// 		Registration: procedureID,
+// 	}
 
-	// wait to receive uNREGISTERED message
-	msg, err := c.waitOnListener(id)
-	if err != nil {
-		return err
-	} else if e, ok := msg.(*errorMessage); ok {
-		return fmt.Errorf("error unregister to procedure '%v': %v", procedure, e.Error)
-	} else if _, ok := msg.(*unregistered); !ok {
-		return fmt.Errorf(formatUnexpectedMessage(msg, uNREGISTERED))
-	}
+// 	if err := c.Send(unregister); err != nil {
+// 		return err
+// 	}
 
-	// register the event handler with this unregistration
-	delete(c.procedures, procedureID)
-	return nil
-}
+// 	// wait to receive uNREGISTERED message
+// 	msg, err := c.waitOnListener(id)
+// 	if err != nil {
+// 		return err
+// 	} else if e, ok := msg.(*errorMessage); ok {
+// 		return fmt.Errorf("error unregister to procedure '%v': %v", procedure, e.Error)
+// 	} else if _, ok := msg.(*unregistered); !ok {
+// 		return fmt.Errorf(formatUnexpectedMessage(msg, uNREGISTERED))
+// 	}
 
-// Publish publishes an eVENT to all subscribed peers.
-func (c *domain) Publish(endpoint string, args ...interface{}) error {
-	return c.Send(&publish{
-		Request:   newID(),
-		Options:   make(map[string]interface{}),
-		Name:      endpoint,
-		Arguments: args,
-	})
-}
+// 	// register the event handler with this unregistration
+// 	delete(c.procedures, procedureID)
+// 	return nil
+// }
 
-// Call calls a procedure given a URI.
-func (c *domain) Call(procedure string, args ...interface{}) ([]interface{}, error) {
-	id := newID()
-	c.registerListener(id)
+// // Publish publishes an eVENT to all subscribed peers.
+// func (c *domain) Publish(endpoint string, args ...interface{}) error {
+// 	return c.Send(&publish{
+// 		Request:   newID(),
+// 		Options:   make(map[string]interface{}),
+// 		Name:      endpoint,
+// 		Arguments: args,
+// 	})
+// }
 
-	call := &call{
-		Request:   id,
-		Name:      procedure,
-		Options:   make(map[string]interface{}),
-		Arguments: args,
-	}
+// // Call calls a procedure given a URI.
+// func (c *domain) Call(procedure string, args ...interface{}) ([]interface{}, error) {
+// 	id := newID()
+// 	c.registerListener(id)
 
-	if err := c.Send(call); err != nil {
-		return nil, err
-	}
+// 	call := &call{
+// 		Request:   id,
+// 		Name:      procedure,
+// 		Options:   make(map[string]interface{}),
+// 		Arguments: args,
+// 	}
 
-	// wait to receive rESULT message
-	msg, err := c.waitOnListener(id)
-	if err != nil {
-		return nil, err
-	} else if e, ok := msg.(*errorMessage); ok {
-		return nil, fmt.Errorf("error calling procedure '%v': %v", procedure, e.Error)
-	} else if result, ok := msg.(*result); !ok {
-		return nil, fmt.Errorf(formatUnexpectedMessage(msg, rESULT))
-	} else {
-		return result.Arguments, nil
-	}
-}
+// 	if err := c.Send(call); err != nil {
+// 		return nil, err
+// 	}
 
-func (c *domain) handleInvocation(msg *invocation) {
-	if proc, ok := c.procedures[msg.Registration]; ok {
-		go func() {
-			result, err := cumin(proc.handler, msg.Arguments)
-			var tosend message
+// 	// wait to receive rESULT message
+// 	msg, err := c.waitOnListener(id)
+// 	if err != nil {
+// 		return nil, err
+// 	} else if e, ok := msg.(*errorMessage); ok {
+// 		return nil, fmt.Errorf("error calling procedure '%v': %v", procedure, e.Error)
+// 	} else if result, ok := msg.(*result); !ok {
+// 		return nil, fmt.Errorf(formatUnexpectedMessage(msg, rESULT))
+// 	} else {
+// 		return result.Arguments, nil
+// 	}
+// }
 
-			tosend = &yield{
-				Request:   msg.Request,
-				Options:   make(map[string]interface{}),
-				Arguments: result,
-			}
+// func (c *domain) handleInvocation(msg *invocation) {
+// 	if proc, ok := c.procedures[msg.Registration]; ok {
+// 		go func() {
+// 			result, err := cumin(proc.handler, msg.Arguments)
+// 			var tosend message
 
-			if err != nil {
-				tosend = &errorMessage{
-					Type:      iNVOCATION,
-					Request:   msg.Request,
-					Details:   make(map[string]interface{}),
-					Arguments: result,
-					Error:     err.Error(),
-				}
-			}
+// 			tosend = &yield{
+// 				Request:   msg.Request,
+// 				Options:   make(map[string]interface{}),
+// 				Arguments: result,
+// 			}
 
-			if err := c.Send(tosend); err != nil {
-				log.Println("error sending message:", err)
-			}
-		}()
-	} else {
-		//log.Println("no handler registered for registration:", msg.Registration)
+// 			if err != nil {
+// 				tosend = &errorMessage{
+// 					Type:      iNVOCATION,
+// 					Request:   msg.Request,
+// 					Details:   make(map[string]interface{}),
+// 					Arguments: result,
+// 					Error:     err.Error(),
+// 				}
+// 			}
 
-		if err := c.Send(&errorMessage{
-			Type:    iNVOCATION,
-			Request: msg.Request,
-			Details: make(map[string]interface{}),
-			Error:   fmt.Sprintf("no handler for registration: %v", msg.Registration),
-		}); err != nil {
-			log.Println("error sending message:", err)
-		}
-	}
-}
+// 			if err := c.Send(tosend); err != nil {
+// 				log.Println("error sending message:", err)
+// 			}
+// 		}()
+// 	} else {
+// 		//log.Println("no handler registered for registration:", msg.Registration)
 
-func bindingForEndpoint(bindings map[uint]*boundEndpoint, endpoint string) (uint, *boundEndpoint, bool) {
-	for id, p := range bindings {
-		if p.endpoint == endpoint {
-			return id, p, true
-		}
-	}
+// 		if err := c.Send(&errorMessage{
+// 			Type:    iNVOCATION,
+// 			Request: msg.Request,
+// 			Details: make(map[string]interface{}),
+// 			Error:   fmt.Sprintf("no handler for registration: %v", msg.Registration),
+// 		}); err != nil {
+// 			log.Println("error sending message:", err)
+// 		}
+// 	}
+// }
 
-	return 0, nil, false
-}
+// func bindingForEndpoint(bindings map[uint]*boundEndpoint, endpoint string) (uint, *boundEndpoint, bool) {
+// 	for id, p := range bindings {
+// 		if p.endpoint == endpoint {
+// 			return id, p, true
+// 		}
+// 	}
 
-func (c *domain) registerListener(id uint) {
-	//log.Println("register listener:", id)
-	wait := make(chan message, 1)
-	c.listeners[id] = wait
-}
+// 	return 0, nil, false
+// }
 
-func (c *domain) waitOnListener(id uint) (message, error) {
-	if wait, ok := c.listeners[id]; !ok {
-		return nil, fmt.Errorf("unknown listener uint: %v", id)
-	} else {
-		select {
-		case msg := <-wait:
-			return msg, nil
-		case <-time.After(timeout):
-			return nil, fmt.Errorf("timeout while waiting for message")
-		}
-	}
-}
+// func (c *domain) registerListener(id uint) {
+// 	//log.Println("register listener:", id)
+// 	wait := make(chan message, 1)
+// 	c.listeners[id] = wait
+// }
 
-func (c *domain) notifyListener(msg message, requestId uint) {
-	// pass in the request uint so we don't have to do any type assertion
-	if l, ok := c.listeners[requestId]; ok {
-		l <- msg
-	} else {
-		log.Println("no listener for message", msg.messageType(), requestId)
-	}
-}
+// func (c *domain) waitOnListener(id uint) (message, error) {
+// 	if wait, ok := c.listeners[id]; !ok {
+// 		return nil, fmt.Errorf("unknown listener uint: %v", id)
+// 	} else {
+// 		select {
+// 		case msg := <-wait:
+// 			return msg, nil
+// 		case <-time.After(timeout):
+// 			return nil, fmt.Errorf("timeout while waiting for message")
+// 		}
+// 	}
+// }
 
-// Convenience function to get a single message from a peer
+// func (c *domain) notifyListener(msg message, requestId uint) {
+// 	// pass in the request uint so we don't have to do any type assertion
+// 	if l, ok := c.listeners[requestId]; ok {
+// 		l <- msg
+// 	} else {
+// 		log.Println("no listener for message", msg.messageType(), requestId)
+// 	}
+// }
+
+// // Convenience function to get a single message from a peer

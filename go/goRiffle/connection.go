@@ -12,45 +12,34 @@ import (
 type websocketConnection struct {
 	conn        *websocket.Conn
 	connLock    sync.Mutex
-	serializer  serializer
 	messages    chan message
 	payloadType int
 	closed      bool
 }
 
-func Open() {
+func Open(url string) error {
 	dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
 	conn, _, err := dialer.Dial(url, nil)
-
-	if err != nil {
-		return nil, err
-	}
-
-	connection := &websocketConnection{
-		conn:        conn,
-		messages:    make(chan message, 10),
-		serializer:  new(jSONSerializer),
-		payloadType: websocket.TextMessage,
-	}
-
-	if err != nil {
-		return nil, err
-	}
-
-	go connection.run()
-}
-
-// TODO: make this just add the message to a channel so we don't block
-func (ep *websocketConnection) Send(msg message) error {
-
-	b, err := ep.serializer.serialize(msg)
 
 	if err != nil {
 		return err
 	}
 
+	connection := &websocketConnection{
+		conn:        conn,
+		messages:    make(chan message, 10),
+		payloadType: websocket.TextMessage,
+	}
+
+	go connection.run()
+
+	return nil
+}
+
+func (ep *websocketConnection) Send(data []byte) error {
+
 	ep.connLock.Lock()
-	err = ep.conn.WriteMessage(ep.payloadType, b)
+	err := ep.conn.WriteMessage(ep.payloadType, data)
 	ep.connLock.Unlock()
 
 	return err
@@ -76,7 +65,8 @@ func (ep *websocketConnection) Close() error {
 
 func (ep *websocketConnection) run() {
 	for {
-		if msgType, b, err := ep.conn.ReadMessage(); err != nil {
+		// the blank assignment is 'b'
+		if msgType, _, err := ep.conn.ReadMessage(); err != nil {
 			if ep.closed {
 				log.Println("peer connection closed")
 			} else {
@@ -91,20 +81,20 @@ func (ep *websocketConnection) run() {
 			close(ep.messages)
 			break
 		} else {
-			msg, err := ep.serializer.deserialize(b)
-			if err != nil {
-				log.Println("error deserializing peer message:", err)
-				log.Println(b)
-				// TODO: handle error
-			} else {
-				fmt.Println("Message received!")
-				ep.messages <- msg
-			}
+			// msg, err := ep.serializer.deserialize(b)
+			// if err != nil {
+			// 	log.Println("error deserializing peer message:", err)
+			// 	log.Println(b)
+			// 	// TODO: handle error
+			// } else {
+			// 	fmt.Println("Message received!")
+			// 	ep.messages <- msg
+			// }
 		}
 	}
 }
 
-func getMessageTimeout(p connection, t time.Duration) (message, error) {
+func getMessageTimeout(p websocketConnection, t time.Duration) (message, error) {
 	select {
 	case msg, open := <-p.Receive():
 		if !open {

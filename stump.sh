@@ -1,8 +1,12 @@
 #!/bin/bash 
-
+#
 # git subtree add --prefix js/ngRiffle ngRiffle master
 # 
-
+#
+# Its nice to have the go code in this directory and not go/src, symlink something like this
+#   ln -s ~/code/merged/riffle/go/goRiffle/ ~/code/go/src/github.com/exis-io/goRiffle
+#   ln -s ~/code/merged/riffle/go/coreRiffle $GOPATH/src/github.com/exis-io/coreRiffle
+#
 if [ $# -lt 1 ]
 then
     echo -e "Updating and deployment of riffle libraries.\n"
@@ -79,10 +83,6 @@ pull() {
 
     git subtree pull --prefix go/goRiffle goRiffle master -m 'Update to stump'
     git subtree pull --prefix go/coreRiffle coreRiffle master -m 'Update to stump'
-
-    # Link them forward so this version can be edited
-    # ln -s go/goRiffle $GOPATH/src/github.com/exis-io/goRiffle
-    # ln -s go/coreRiffle $GOPATH/src/github.com/exis-io/coreRiffle
 
     git subtree pull --prefix python/pyRiffle pyRiffle master -m 'Update to stump'
 }

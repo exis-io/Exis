@@ -9,7 +9,7 @@ import (
 type Delegate interface {
 
 	// Called by core when something needs doing
-	Invoke(string, uint, []interface{}, map[string]interface{})
+	Invoke(string, uint, []interface{}) ([]interface{}, error)
 
 	OnJoin(string)
 	OnLeave(string)
@@ -17,10 +17,10 @@ type Delegate interface {
 
 type Domain interface {
 	Subscribe(string, []interface{}) (uint, error)
-	Register(string, []interface{}, map[string]interface{}) (uint, error)
+	Register(string, []interface{}) (uint, error)
 
-	Publish(string, ...interface{}) error
-	Call(string, ...interface{}) ([]interface{}, error)
+	Publish(string, []interface{}) error
+	Call(string, []interface{}) ([]interface{}, error)
 
 	Unsubscribe(string) error
 	Unregister(string) error
@@ -31,7 +31,7 @@ type Domain interface {
 
 type domain struct {
 	Delegate
-	honcho
+	honcho        *honcho
 	name          string
 	joined        bool
 	subscriptions map[uint]*boundEndpoint
@@ -56,7 +56,7 @@ func (s *domain) Subdomain(name string) *domain {
 
 // Accepts a connection that has just been opened. This method should only
 // be called once, to initialize the fabric
-func (c *domain) Join(conn Connection) error {
+func (c domain) Join(conn Connection) error {
 	if c.joined {
 		return fmt.Errorf("Domain %s is already joined", c.name)
 	}
@@ -80,13 +80,13 @@ func (c *domain) Join(conn Connection) error {
 	} else {
 
 		c.honcho.Connection = conn
-		c.honcho.domainJoined(*c)
+		c.honcho.domainJoined(&c)
 		return nil
 	}
 }
 
-func (c *domain) Leave() error {
-	return c.honcho.domainLeft(c)
+func (c domain) Leave() error {
+	return c.honcho.domainLeft(&c)
 }
 
 /////////////////////////////////////////////
@@ -94,7 +94,7 @@ func (c *domain) Leave() error {
 /////////////////////////////////////////////
 
 // Subscribe registers the EventHandler to be called for every message in the provided endpoint.
-func (c *domain) Subscribe(endpoint string, types []interface{}) (uint, error) {
+func (c domain) Subscribe(endpoint string, types []interface{}) (uint, error) {
 	sub := &subscribe{
 		Request: newID(),
 		Options: make(map[string]interface{}),
@@ -111,8 +111,53 @@ func (c *domain) Subscribe(endpoint string, types []interface{}) (uint, error) {
 	}
 }
 
+func (c domain) Register(procedure string, types []interface{}) (uint, error) {
+	register := &register{
+		Request: newID(),
+		Options: make(map[string]interface{}),
+		Name:    procedure,
+	}
+
+	if msg, err := c.honcho.requestListen(register); err != nil {
+		return 0, err
+	} else if reg, ok := msg.(*registered); !ok {
+		return 0, fmt.Errorf(formatUnexpectedMessage(msg, rEGISTERED))
+	} else {
+		c.registrations[reg.Registration] = &boundEndpoint{procedure, types}
+		return reg.Registration, nil
+	}
+}
+
+// Publish publishes an eVENT to all subscribed peers.
+func (c domain) Publish(endpoint string, args []interface{}) error {
+	return c.honcho.Send(&publish{
+		Request:   newID(),
+		Options:   make(map[string]interface{}),
+		Name:      endpoint,
+		Arguments: args,
+	})
+}
+
+// Call calls a procedure given a URI.
+func (c domain) Call(procedure string, args []interface{}) ([]interface{}, error) {
+	call := &call{
+		Request:   newID(),
+		Name:      procedure,
+		Options:   make(map[string]interface{}),
+		Arguments: args,
+	}
+
+	if msg, err := c.honcho.requestListen(call); err != nil {
+		return nil, err
+	} else if result, ok := msg.(*result); !ok {
+		return nil, fmt.Errorf(formatUnexpectedMessage(msg, rESULT))
+	} else {
+		return result.Arguments, nil
+	}
+}
+
 // Unsubscribe removes the registered EventHandler from the endpoint.
-func (c *domain) Unsubscribe(endpoint string) error {
+func (c domain) Unsubscribe(endpoint string) error {
 	subscriptionID, _, ok := bindingForEndpoint(c.subscriptions, endpoint)
 
 	if !ok {
@@ -134,25 +179,8 @@ func (c *domain) Unsubscribe(endpoint string) error {
 	return nil
 }
 
-func (c *domain) Register(procedure string, types []interface{}, options map[string]interface{}) (uint, error) {
-	register := &register{
-		Request: newID(),
-		Options: options,
-		Name:    procedure,
-	}
-
-	if msg, err := c.honcho.requestListen(register); err != nil {
-		return 0, err
-	} else if reg, ok := msg.(*registered); !ok {
-		return 0, fmt.Errorf(formatUnexpectedMessage(msg, rEGISTERED))
-	} else {
-		c.registrations[reg.Registration] = &boundEndpoint{procedure, types}
-		return reg.Registration, nil
-	}
-}
-
 // Unregister removes a procedure with the Node
-func (c *domain) Unregister(procedure string) error {
+func (c domain) Unregister(procedure string) error {
 	if procedureID, _, ok := bindingForEndpoint(c.registrations, procedure); !ok {
 		return fmt.Errorf("domain %s is not registered with this domain.", procedure)
 	} else {
@@ -172,40 +200,14 @@ func (c *domain) Unregister(procedure string) error {
 	}
 }
 
-// Publish publishes an eVENT to all subscribed peers.
-func (c *domain) Publish(endpoint string, args ...interface{}) error {
-	return c.honcho.Send(&publish{
-		Request:   newID(),
-		Options:   make(map[string]interface{}),
-		Name:      endpoint,
-		Arguments: args,
-	})
-}
-
-// Call calls a procedure given a URI.
-func (c *domain) Call(procedure string, args ...interface{}) ([]interface{}, error) {
-	call := &call{
-		Request:   newID(),
-		Name:      procedure,
-		Options:   make(map[string]interface{}),
-		Arguments: args,
-	}
-
-	if msg, err := c.honcho.requestListen(call); err != nil {
-		return nil, err
-	} else if result, ok := msg.(*result); !ok {
-		return nil, fmt.Errorf(formatUnexpectedMessage(msg, rESULT))
-	} else {
-		return result.Arguments, nil
-	}
-}
-
-func (c *domain) handleInvocation(msg *invocation) {
+func (c domain) handleInvocation(msg *invocation) {
 	if binding, ok := c.registrations[msg.Registration]; ok {
 		go func() {
 			// Check the return types
 			if err := softCumin(binding.expectedTypes, msg.Arguments); err == nil {
-				c.Delegate.Invoke(c.name, msg.Registration, msg.Arguments, msg.ArgumentsKw)
+
+				// Catch the error-- that has the cuminication information
+				c.Delegate.Invoke(c.name, msg.Registration, msg.Arguments)
 			} else {
 				tosend := &errorMessage{
 					Type:      iNVOCATION,
@@ -258,7 +260,7 @@ func (c *domain) handleInvocation(msg *invocation) {
 func (c *domain) handlePublish(msg *event) {
 	if binding, ok := c.subscriptions[msg.Subscription]; ok {
 		if e := softCumin(binding.expectedTypes, msg.Arguments); e == nil {
-			c.Delegate.Invoke(c.name, msg.Subscription, msg.Arguments, msg.ArgumentsKw)
+			c.Delegate.Invoke(c.name, msg.Subscription, msg.Arguments)
 		} else {
 
 			tosend := &errorMessage{
