@@ -274,3 +274,27 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         return domain + "/" + action
     }
 }
+
+
+func extractDetails(endpoint: String, args: [AnyObject]) -> [AnyObject] {
+    if !endpoint.containsString("#details") {
+        return args
+    }
+    
+    var ret = args
+    
+    if args.count > 0 {
+        if let dict = args[0] as? [String: AnyObject] {
+            if let element = dict["caller"] as? String {
+                ret[0] = element
+            }
+        }
+    }
+    
+    return ret
+}
+
+
+
+
+
