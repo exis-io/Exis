@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/exis-io/coreRiffle"
 	"github.com/gorilla/websocket"
 )
 
@@ -95,7 +96,7 @@ func (ep *websocketConnection) run() {
 }
 
 func (c websocketConnection) BlockMessage() (message, error) {
-	return getMessageTimeout(*c, t)
+	return getMessageTimeout(c, coreRiffle.MessageTimeout)
 }
 
 func getMessageTimeout(p websocketConnection, t time.Duration) (message, error) {

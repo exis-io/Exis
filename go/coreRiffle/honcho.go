@@ -8,6 +8,7 @@ import (
 )
 
 type Connection interface {
+	// Send a message
 	Send(message) error
 
 	// Closes the peer connection and any channel returned from Receive().
