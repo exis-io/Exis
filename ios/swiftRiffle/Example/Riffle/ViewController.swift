@@ -54,7 +54,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         // Turn on debug logging and connect to the dev fabric
-//        Riffle.setDebug()
+        Riffle.setDebug()
         Riffle.setDevFabric()
         
         // Instantiate two sessions to bounce messages off each other. End to end tests are better for this, but 

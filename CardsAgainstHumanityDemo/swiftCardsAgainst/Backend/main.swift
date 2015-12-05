@@ -9,8 +9,7 @@
 import Foundation
 import Riffle
 
-let app = RiffleDomain(domain: "xs.demo.damouse.test")
-let token = "HWDBNNyy54IZAY67eU8N.-rzEF2qitlxmM-JolSfdk.tTPR6CDlSgRR8K.9d6iii-VXf7xbHj1ebSotySI5a-7DfiKcsLcMUpiwO9Bq.EA4-Uu-lw9aAzpDy2ellXzLNkdQl6TTulLVsvR-WJ9RHbirpIkF2SAmiEZmey8vCtXo_"
+let app = RiffleDomain(domain: "xs.demo.exis.cardsagainst")
 
 // How long each round takes, in seconds
 let ANSWER_TIME = 10.0
@@ -71,6 +70,6 @@ class Container: RiffleDomain {
 }
 
 let container = Container(name: "Osxcontainer.gamelogic", superdomain: app)
-container.join(token)
+container.join()
 NSRunLoop.currentRunLoop().run()
 

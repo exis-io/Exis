@@ -78,7 +78,7 @@ class LandingViewController: UIViewController, RiffleDelegate {
     @IBAction func login(sender: AnyObject) {
         textfieldUsername.resignFirstResponder()
 
-        app = RiffleDomain(domain: "xs.demo.damouse.test")
+        app = RiffleDomain(domain: "xs.demo.exis.cardsagainst")
         container = RiffleDomain(name: "Osxcontainer.gamelogic", superdomain: app)
         
         me = RiffleDomain(name: textfieldUsername.text!, superdomain: app)
