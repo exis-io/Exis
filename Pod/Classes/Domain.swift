@@ -132,7 +132,7 @@ public class RiffleDomain: NSObject, RiffleDelegate {
             Riffle.debug("INVOCATION: \(endpoint)")
             
             do {
-                try fn(invocation.arguments)
+                try fn(extractDetails(endpoint, invocation.arguments))
             } catch CuminError.InvalidTypes(let expected, let recieved) {
                 Riffle.warn(": cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) registered at endpoint \(endpoint)")
             } catch {
@@ -167,7 +167,7 @@ public class RiffleDomain: NSObject, RiffleDelegate {
             Riffle.debug("INVOCATION: \(endpoint)")
             
             do {
-                result = try fn(invocation.arguments)
+                result = try fn(extractDetails(endpoint, invocation.arguments))
                 
                 // Wait for deferreds to resolve before moving forward
                 if let wait = result as? Deferred {
@@ -176,11 +176,11 @@ public class RiffleDomain: NSObject, RiffleDelegate {
                         wamp.resultForInvocation(invocation, arguments: serialized, argumentsKw: [:])
                         return nil
                     })
-                }
-                
-                if let r = result as? AnyObject {
-                    let serialized = try serialize(r)
-                    wamp.resultForInvocation(invocation, arguments: serialized, argumentsKw: [:])
+                } else {
+                    if let r = result as? AnyObject {
+                        let serialized = try serialize(r)
+                        wamp.resultForInvocation(invocation, arguments: serialized, argumentsKw: [:])
+                    }
                 }
             } catch CuminError.InvalidTypes(let expected, let recieved) {
                 Riffle.warn(": cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) registered at endpoint \(endpoint)")
@@ -330,6 +330,7 @@ public class RiffleDomain: NSObject, RiffleDelegate {
 }
 
 
+
 // Called in the case where we are *certainly* running in a container-- have to infer the app
 // name as well as the container name
 func inferAppName(domain: String) -> String {
@@ -342,3 +343,22 @@ func inferAppName(domain: String) -> String {
     
     return ret.substringToIndex(ret.endIndex.predecessor())
 }
+
+func extractDetails(endpoint: String, _ args: [AnyObject]) -> [AnyObject] {
+    if !endpoint.containsString("#details") {
+        return args
+    }
+    
+    var ret = args
+    
+    if args.count > 0 {
+        if let dict = args[0] as? [String: AnyObject] {
+            if let element = dict["caller"] as? String {
+                ret[0] = element
+            }
+        }
+    }
+    
+    return ret
+}
+

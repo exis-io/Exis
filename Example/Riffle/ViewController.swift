@@ -54,7 +54,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         // Turn on debug logging and connect to the dev fabric
-        Riffle.setDebug()
+//        Riffle.setDebug()
         Riffle.setDevFabric()
         
         // Instantiate two sessions to bounce messages off each other. End to end tests are better for this, but 
@@ -288,16 +288,25 @@ class ViewController: UIViewController {
     
     
     // MARK: Meta calls
-    func testDiscloseSubscribe(t: Int) {
-        // What kinds of types can be returned
-        alpha.register("\(t)#details") { (caller: String, a: Int) in
-            print("\(t) : Call receiving single call from caller:", caller, a)
-            
-            assert(caller == "xs.tester.beta")
-            assert(a == 1)
+    func testDeferred(t: Int) {
+        // Make sure we can return deferreds from registered functions
+        
+        beta.register("\(t)1") { () in
+            print("\(t) : Second call received. Issuing third call")
         }
         
-        beta.call("xs.tester.alpha/\(t)", 1, handler: nil)
+        alpha.register("\(t)2") { () -> AnyObject in
+            print("\(t) : First call received. Issuing second call")
+            return self.alpha.call("xs.tester.beta/\(t)1", handler: nil).addCallback({ (a: AnyObject?) -> (AnyObject?) in
+                print("\(t) : Third call received. Issuing last call")
+                return "Last"
+            })
+        }
+        
+        print("\(t) : Issuing first call")
+        beta.call("xs.tester.alpha/\(t)2") { (a: String) in
+            print("\(t) : Last call received:", a)
+        }
     }
 }
 
