@@ -102,7 +102,7 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         Riffle.debug("\(domain) SUB: \(endpoint)")
         
         connection.session!.subscribe(endpoint, onEvent: { (event: MDWampEvent!) -> Void in
-            d.succeed()
+            d.callback()
             
             do {
                 try fn(event.arguments)
@@ -115,7 +115,7 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         { (err: NSError!) -> Void in
             if let e = err {
                 print("Error subscribing to endpoint \(endpoint): ", e.localizedDescription)
-                d.fail()
+                d.errback()
             } else {
                 self.subscriptions.append(endpoint)
             }
@@ -140,7 +140,7 @@ public class RiffleDomain: NSObject, RiffleDelegate {
                 Riffle.panic(" Unknown exception!")
             }
             
-            d.succeed()
+            d.callback()
             wamp.resultForInvocation(invocation, arguments: [], argumentsKw: [:])
             
             }, cancelHandler: { () -> Void in
@@ -149,7 +149,7 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         { (err: NSError!) -> Void in
             if err != nil {
                 print("Error registering endoint: \(endpoint), \(err)")
-                d.fail()
+                d.errback()
             } else {
                 self.registrations.append(endpoint)
             }
@@ -170,6 +170,15 @@ public class RiffleDomain: NSObject, RiffleDelegate {
             do {
                 result = try fn(invocation.arguments)
                 
+                // Wait for deferreds to resolve before moving forward
+                if let wait = result as? Deferred {
+                    wait.addCallback({ (a: AnyObject?) in
+                        let serialized = try! serialize(a!)
+                        wamp.resultForInvocation(invocation, arguments: serialized, argumentsKw: [:])
+                        return nil
+                    })
+                }
+                
                 if let r = result as? AnyObject {
                     let serialized = try serialize(r)
                     wamp.resultForInvocation(invocation, arguments: serialized, argumentsKw: [:])
@@ -181,7 +190,7 @@ public class RiffleDomain: NSObject, RiffleDelegate {
                 Riffle.panic(" Unknown exception!")
             }
             
-            d.succeed()
+            d.callback()
 
             }, cancelHandler: { () -> Void in
                 print("Register Cancelled!")
@@ -189,7 +198,7 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         { (err: NSError!) -> Void in
             if err != nil {
                 print("Error registering endoing: \(endpoint), \(err)")
-                 d.fail()
+                 d.errback()
             } else {
                 self.registrations.append(endpoint)
             }
@@ -214,7 +223,7 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         connection.session!.call(endpoint, payload: serialized) { (result: MDWampResult!, err: NSError!) -> Void in
             if err != nil {
                 Riffle.warn("Call Error for endpoint \(endpoint): [\(err.localizedDescription)]")
-                d.fail()
+                d.errback()
             }
             else {
                 if let h = fn {
@@ -229,7 +238,7 @@ public class RiffleDomain: NSObject, RiffleDelegate {
                     
                 }
                 
-                d.succeed()
+                d.callback()
             }
         }
         
@@ -254,11 +263,11 @@ public class RiffleDomain: NSObject, RiffleDelegate {
             if let e = err {
                 print("Error: ", e)
                 print("Publish Error for endpoint \"\(endpoint)\": \(e)")
-                d.fail()
+                d.errback()
                 return
             }
             
-            d.succeed()
+            d.callback()
         }
         
         return d
@@ -272,10 +281,10 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         connection.session!.unregisterRPC(endpoint) { (err: NSError!) -> Void in
             if err != nil {
                 print("Error unregistering endoint: \(endpoint), \(err)")
-                d.fail()
+                d.errback()
             } else {
                 self.registrations.removeObject(endpoint)
-                d.succeed()
+                d.callback()
             }
         }
         
@@ -290,10 +299,10 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         connection.session!.unsubscribe(endpoint) { (err: NSError!) -> Void in
             if err != nil {
                 print("Error unsubscribing endoint: \(endpoint), \(err)")
-                d.fail()
+                d.errback()
             } else {
                 self.subscriptions.removeObject(endpoint)
-                d.succeed()
+                d.callback()
             }
         }
         
