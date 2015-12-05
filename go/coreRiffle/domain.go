@@ -95,19 +95,13 @@ func (c *domain) Leave() error {
 
 // Subscribe registers the EventHandler to be called for every message in the provided endpoint.
 func (c *domain) Subscribe(endpoint string, types []interface{}) (uint, error) {
-	id := c.honcho.registerListener()
-
 	sub := &subscribe{
-		Request: id,
+		Request: newID(),
 		Options: make(map[string]interface{}),
 		Name:    endpoint,
 	}
 
-	if err := c.honcho.Send(sub); err != nil {
-		return 0, err
-	}
-
-	if msg, err := c.honcho.waitOnListener(id, "subscribing to endpoint"); err != nil {
+	if msg, err := c.honcho.requestListen(sub); err != nil {
 		return 0, err
 	} else if subbed, ok := msg.(*subscribed); !ok {
 		return 0, fmt.Errorf(formatUnexpectedMessage(msg, sUBSCRIBED))
@@ -125,18 +119,12 @@ func (c *domain) Unsubscribe(endpoint string) error {
 		return fmt.Errorf("domain %s is not registered with this client.", endpoint)
 	}
 
-	id := c.honcho.registerListener()
-
 	sub := &unsubscribe{
-		Request:      id,
+		Request:      newID(),
 		Subscription: subscriptionID,
 	}
 
-	if err := c.honcho.Send(sub); err != nil {
-		return err
-	}
-
-	if msg, err := c.honcho.waitOnListener(id, "unsubscribing from endpint "+endpoint); err != nil {
+	if msg, err := c.honcho.requestListen(sub); err != nil {
 		return err
 	} else if _, ok := msg.(*unsubscribed); !ok {
 		return fmt.Errorf(formatUnexpectedMessage(msg, uNSUBSCRIBED))
@@ -147,22 +135,13 @@ func (c *domain) Unsubscribe(endpoint string) error {
 }
 
 func (c *domain) Register(procedure string, types []interface{}, options map[string]interface{}) (uint, error) {
-	id := c.honcho.registerListener()
-
 	register := &register{
-		Request: id,
+		Request: newID(),
 		Options: options,
 		Name:    procedure,
 	}
 
-	if err := c.honcho.Send(register); err != nil {
-		return 0, err
-	}
-
-	// TODO: emit an event for defereds!
-
-	msg, err := c.honcho.waitOnListener(id, "registering endpoint")
-	if err != nil {
+	if msg, err := c.honcho.requestListen(register); err != nil {
 		return 0, err
 	} else if reg, ok := msg.(*registered); !ok {
 		return 0, fmt.Errorf(formatUnexpectedMessage(msg, rEGISTERED))
@@ -174,34 +153,23 @@ func (c *domain) Register(procedure string, types []interface{}, options map[str
 
 // Unregister removes a procedure with the Node
 func (c *domain) Unregister(procedure string) error {
-	procedureID, _, ok := bindingForEndpoint(c.registrations, procedure)
+	if procedureID, _, ok := bindingForEndpoint(c.registrations, procedure); !ok {
+		return fmt.Errorf("domain %s is not registered with this domain.", procedure)
+	} else {
+		unregister := &unregister{
+			Request:      newID(),
+			Registration: procedureID,
+		}
 
-	if !ok {
-		return fmt.Errorf("domain %s is not registered with this client.", procedure)
+		if msg, err := c.honcho.requestListen(unregister); err != nil {
+			return err
+		} else if _, ok := msg.(*unregistered); !ok {
+			return fmt.Errorf(formatUnexpectedMessage(msg, uNREGISTERED))
+		} else {
+			delete(c.registrations, procedureID)
+			return nil
+		}
 	}
-
-	id := c.honcho.registerListener()
-
-	unregister := &unregister{
-		Request:      id,
-		Registration: procedureID,
-	}
-
-	if err := c.honcho.Send(unregister); err != nil {
-		return err
-	}
-
-	msg, err := c.honcho.waitOnListener(id, "unregistering")
-	if err != nil {
-		return err
-	} else if e, ok := msg.(*errorMessage); ok {
-		return fmt.Errorf("error unregister to procedure '%v': %v", procedure, e.Error)
-	} else if _, ok := msg.(*unregistered); !ok {
-		return fmt.Errorf(formatUnexpectedMessage(msg, uNREGISTERED))
-	}
-
-	delete(c.registrations, procedureID)
-	return nil
 }
 
 // Publish publishes an eVENT to all subscribed peers.
@@ -216,20 +184,14 @@ func (c *domain) Publish(endpoint string, args ...interface{}) error {
 
 // Call calls a procedure given a URI.
 func (c *domain) Call(procedure string, args ...interface{}) ([]interface{}, error) {
-	id := c.honcho.registerListener()
-
 	call := &call{
-		Request:   id,
+		Request:   newID(),
 		Name:      procedure,
 		Options:   make(map[string]interface{}),
 		Arguments: args,
 	}
 
-	if err := c.honcho.Send(call); err != nil {
-		return nil, err
-	}
-
-	if msg, err := c.honcho.waitOnListener(id, "calling procedure"); err != nil {
+	if msg, err := c.honcho.requestListen(call); err != nil {
 		return nil, err
 	} else if result, ok := msg.(*result); !ok {
 		return nil, fmt.Errorf(formatUnexpectedMessage(msg, rESULT))

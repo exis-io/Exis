@@ -119,26 +119,15 @@ func (c *honcho) HandleMessage(msg message) {
 			}
 		}
 
-	case *registered:
-		c.notifyListener(msg, msg.Request)
-	case *subscribed:
-		c.notifyListener(msg, msg.Request)
-	case *unsubscribed:
-		c.notifyListener(msg, msg.Request)
-	case *unregistered:
-		c.notifyListener(msg, msg.Request)
-	case *result:
-		c.notifyListener(msg, msg.Request)
-	case *errorMessage:
-		c.notifyListener(msg, msg.Request)
-
 	case *goodbye:
 		c.Connection.Close("Fabric said goodbye. Closing connection")
-
 	default:
-		log.Println("unhandled message:", msg.messageType(), msg)
-		panic("Unhandled message!")
-
+		if l, ok := c.listeners[requestID(msg)]; ok {
+			l <- msg
+		} else {
+			log.Println("no listener for message", msg)
+			panic("Unhandled message!")
+		}
 	}
 }
 
@@ -160,6 +149,26 @@ func (c *honcho) HandleBytes(byt []byte) {
 		c.HandleMessage(m)
 	} else {
 		fmt.Println("Unable to unmarshal json string! Message: ", m)
+	}
+}
+
+// Send a message and wait for the response
+func (c *honcho) requestListen(outgoing message) (message, error) {
+	if err := c.Send(outgoing); err != nil {
+		return nil, err
+	}
+
+	wait := make(chan message, 1)
+
+	select {
+	case msg := <-wait:
+		if e, ok := msg.(*errorMessage); ok {
+			return nil, fmt.Errorf(e.Error)
+		}
+
+		return msg, nil
+	case <-time.After(timeout):
+		return nil, fmt.Errorf("timeout while waiting for message")
 	}
 }
 

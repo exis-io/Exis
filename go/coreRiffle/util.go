@@ -22,7 +22,6 @@ const (
 	ErrAuthorizationFailed = "ERR-- Unable to Authorize. Try harder."
 )
 
-// NewID generates a random WAMP uint.
 func newID() uint {
 	return uint(rand.Int63n(maxId))
 }
@@ -45,14 +44,12 @@ func formatUnexpectedMessage(msg message, expected messageType) string {
 func formatUnknownMap(m map[string]interface{}) string {
 	s := ""
 	for k, v := range m {
-		// TODO: reflection to recursively check map
 		s += fmt.Sprintf(" %s=%v", k, v)
 	}
 	return s
 }
 
 // Some data structure utility methods
-
 func bindingForEndpoint(bindings map[uint]*boundEndpoint, endpoint string) (uint, *boundEndpoint, bool) {
 	for id, p := range bindings {
 		if p.endpoint == endpoint {

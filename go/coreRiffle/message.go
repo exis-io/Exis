@@ -1,5 +1,7 @@
 package coreRiffle
 
+import "log"
+
 // Message is a generic container for a WAMP message.
 type message interface {
 	messageType() messageType
@@ -487,8 +489,8 @@ func destination(m *message) (string, error) {
 }
 
 // Given a message, return the request uint
-func requestID(m *message) uint {
-	switch msg := (*m).(type) {
+func requestID(m message) uint {
+	switch msg := (m).(type) {
 	case *registered:
 		return msg.Request
 	case *subscribed:
@@ -501,6 +503,9 @@ func requestID(m *message) uint {
 		return msg.Request
 	case *errorMessage:
 		return msg.Request
+	default:
+		log.Println("Cant get requestID for message: ", m)
+		panic("Unhandled message request id!")
 	}
 
 	return uint(0)
