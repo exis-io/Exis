@@ -1,1 +1,1 @@
-../../../Riffle/Pod/Classes/NSDictionary+MTLJSONKeyPath.h
+../../../../../../ios/swiftRiffle/Pod/Classes/NSDictionary+MTLJSONKeyPath.h

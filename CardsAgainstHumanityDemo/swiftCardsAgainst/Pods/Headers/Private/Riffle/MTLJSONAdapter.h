@@ -1,1 +1,1 @@
-../../../Riffle/Pod/Classes/MTLJSONAdapter.h
+../../../../../../ios/swiftRiffle/Pod/Classes/MTLJSONAdapter.h

@@ -1,1 +1,1 @@
-../../../Riffle/Pod/Classes/src/Categories/NSMutableArray+MDStack.h
+../../../../../../ios/swiftRiffle/Pod/Classes/src/Categories/NSMutableArray+MDStack.h

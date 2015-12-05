@@ -1,1 +1,1 @@
-../../../Riffle/Pod/Classes/src/MDWampTransports/MDWampTransportRawSocket.h
+../../../../../../ios/swiftRiffle/Pod/Classes/src/MDWampTransports/MDWampTransportRawSocket.h

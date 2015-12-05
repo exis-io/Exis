@@ -1,1 +1,1 @@
-../../../Riffle/Pod/Classes/src/MDWampSerializations/MDWampSerializationMsgpack.h
+../../../../../../ios/swiftRiffle/Pod/Classes/src/MDWampSerializations/MDWampSerializationMsgpack.h

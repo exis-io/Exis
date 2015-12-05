@@ -1,1 +1,1 @@
-../../../Riffle/Pod/Classes/NSValueTransformer+MTLInversionAdditions.h
+../../../../../../ios/swiftRiffle/Pod/Classes/NSValueTransformer+MTLInversionAdditions.h

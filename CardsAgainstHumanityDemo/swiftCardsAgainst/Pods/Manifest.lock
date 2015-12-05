@@ -27,7 +27,7 @@ PODS:
   - M13ProgressSuite (1.2.7)
   - MPMessagePack (1.3.2):
     - GHODictionary
-  - Riffle (0.1.63):
+  - Riffle (0.1.69):
     - AFNetworking (= 2.6.1)
     - CocoaAsyncSocket (= 7.4.1)
     - MPMessagePack (= 1.3.2)
@@ -40,11 +40,13 @@ DEPENDENCIES:
   - IHKeyboardAvoiding
   - LTMorphingLabel (~> 0.0.9)
   - M13ProgressSuite
-  - Riffle
+  - Riffle (from `../../ios/swiftRiffle`)
   - RMSwipeTableViewCell
   - Spring (from `https://github.com/MengTo/Spring.git`, branch `swift2`)
 
 EXTERNAL SOURCES:
+  Riffle:
+    :path: ../../ios/swiftRiffle
   Spring:
     :branch: swift2
     :git: https://github.com/MengTo/Spring.git
@@ -62,7 +64,7 @@ SPEC CHECKSUMS:
   LTMorphingLabel: 4235a403f99f0e0e503389da660e0fec324549d9
   M13ProgressSuite: 03d194af6359da440641ba758aed5a18b0386a86
   MPMessagePack: 23bbb933ef1046edcf104e3556ab4a6b4b0a69d4
-  Riffle: e9b71d04dade3dea77002e3cf43162d42da692bc
+  Riffle: f425d9ca2ebf55f4df52dc76be24ccb6da55a6ca
   RMSwipeTableViewCell: ef3a5fc804cf0d5fb70fe1195c088cc40b3fde3c
   SocketRocket: ee0b5c34182d37bb4f1f8d628bbe737718126daa
   Spring: 3f02b5dc3308572ef177b3cad0fa7bbc4b0706f7

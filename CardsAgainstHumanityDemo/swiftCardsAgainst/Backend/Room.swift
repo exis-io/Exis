@@ -9,24 +9,25 @@
 import Foundation
 import Riffle
 
+var baseQuestions = loadCards("q13")
+var baseAnswers = loadCards("a13")
+
+
 class Room: RiffleDomain {
-    var parent: Container!
     var timer: DelayedCaller!
-    
     var dynamicRoleId: String!
     var state: String = "Empty"
     
     var players: [Player] = []
     var czar: Player?
-    var questions: [String]!
-    var answers: [String]!
+    var questions = baseQuestions
+    var answers = baseAnswers
     
     
     override func onJoin() {
         timer = DelayedCaller(target: self)
-        
-        register("pick", pick)
-        register("leave", removePlayer)
+        register("pick#details", pick)
+        register("leave#details", removePlayer)
     }
     
     func removePlayer(domain: String) {
@@ -36,7 +37,6 @@ class Room: RiffleDomain {
             player.demo = true
         } else {
             print("WARN-- asked to remove player \(domain), not found in players!")
-            let a = czar!
         }
     }
     
@@ -61,14 +61,10 @@ class Room: RiffleDomain {
         newPlayer.hand = answers.randomElements(4, remove: true)
         
         players.append(newPlayer)
-        
-        
         publish("joined", newPlayer)
-        
-        print("Role: \(dynamicRoleId) parent: \(parent) domain: \(domain)")
-        
+
         // Add dynamic role
-        app.call("xs.demo.Bouncer/assignDynamicRole", self.dynamicRoleId, "player", parent.domain, [domain], handler: nil)
+        app.call("xs.demo.Bouncer/assignDynamicRole", self.dynamicRoleId, "player", container.domain, [domain], handler: nil)
         
         // Add Demo players
         if players.count < 3 {
@@ -88,10 +84,8 @@ class Room: RiffleDomain {
         return [newPlayer.hand, players, state, self.name!]
     }
     
-    func pick(player: Player, card: String) {
-        // Player picked a card. This action depends on the current state of play
-        
-        let player = players.filter { $0.domain == player.domain }[0]
+    func pick(domain: String, card: String) {
+        let player = players.filter { $0.domain == domain }[0]
         
         if state == "Answering" && player.pick == nil && !player.czar {
             player.pick = card
@@ -104,7 +98,7 @@ class Room: RiffleDomain {
             timer.startTimer(0.0, selector: "startScoring:", info: winner.domain)
             
         } else {
-            print("Player pick in wrong round!")
+            print("Player \(domain) pick in wrong round!")
         }
     }
     
@@ -116,16 +110,14 @@ class Room: RiffleDomain {
         
         removeZombies()
         setNextCzar()
-        
+
         publish("answering", czar!, questions.randomElements(1, remove: false)[0], PICK_TIME)
-        
         timer.startTimer(PICK_TIME, selector: "startPicking")
     }
     
     func startPicking() {
         print("    Picking -- ")
         state = "Picking"
-        
         let pickers = players.filter { !$0.czar }
         
         // Autopick for players that didnt pick
@@ -136,7 +128,6 @@ class Room: RiffleDomain {
         }
         
         publish("picking", pickers.map({ $0.pick! }), PICK_TIME)
-        
         timer.startTimer(PICK_TIME, selector: "startScoring:")
     }
     
@@ -216,14 +207,14 @@ class Room: RiffleDomain {
             }
             
             // remove the role from the player that left, ensuring they can't call our endpoints anymore
-            app.call("xs.demo.Bouncer/revokeDynamicRole", self.dynamicRoleId, "player", parent.domain, [player.domain], handler: nil)
+            app.call("xs.demo.Bouncer/revokeDynamicRole", self.dynamicRoleId, "player", container.domain, [player.domain], handler: nil)
             
             // Close the room if there are only demo players left-- this is deferred until promises get in
-//            if players.reduce(0, combine: { $0 + ($1.demo ? 0 : 1) }) == 0 {
-//                parent.closeRoom(self)
-//                parent = nil
-//                timer.cancel()
-//            }
+            if players.reduce(0, combine: { $0 + ($1.demo ? 0 : 1) }) == 0 {
+                parent.closeRoom(self)
+                parent = nil
+                timer.cancel()
+            }
         }
     }
 }

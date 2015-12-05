@@ -7,7 +7,6 @@
 //
 
 
-
 import UIKit
 import Riffle
 import RMSwipeTableViewCell
@@ -41,6 +40,7 @@ class GameViewController: UIViewController {
         collectionDelegate = PlayerCollectionDelegate(collectionview: collectionPlayers, parent: self, baseAppName: app.domain)
         
         buttonBack.imageView?.contentMode = .ScaleAspectFit
+        blur(viewRound)
         
         collectionDelegate.refreshPlayers(players)
         tableDelegate.refreshCards(currentPlayer.hand)
@@ -48,14 +48,11 @@ class GameViewController: UIViewController {
         room.subscribe("answering", answering)
         room.subscribe("picking", picking)
         room.subscribe("scoring", scoring)
-        
         me.register("draw", draw)
-        
-        blur(viewRound)
     }
     
     override func viewWillDisappear(animated: Bool) {
-        room.call("leave", currentPlayer.domain, handler: nil)
+        room.call("leave", handler: nil)
         
         room.leave()
         me.leave()
@@ -125,7 +122,7 @@ class GameViewController: UIViewController {
             tableDelegate.removeCellsExcept([card])
         }
         
-        room.call("pick", currentPlayer, card, handler: nil)
+        room.call("pick", card, handler: nil)
     }
     
     func draw(cards: [String]) {

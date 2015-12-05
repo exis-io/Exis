@@ -1,1 +1,1 @@
-../../../Riffle/Pod/Classes/src/MDWampMessages/MDWampUnregistered.h
+../../../../../../ios/swiftRiffle/Pod/Classes/src/MDWampMessages/MDWampUnregistered.h

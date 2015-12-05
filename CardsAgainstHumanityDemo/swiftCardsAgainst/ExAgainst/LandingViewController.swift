@@ -40,6 +40,7 @@ class LandingViewController: UIViewController, RiffleDelegate {
     ]
     
     override func viewWillAppear(animated: Bool) {
+        NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: Selector("rotateText"), userInfo: nil, repeats: true)
         textfieldUsername.layer.borderColor = UIColor.whiteColor().CGColor
         textfieldUsername.attributedPlaceholder = NSAttributedString(string: "Username", attributes: [NSForegroundColorAttributeName: UIColor.whiteColor()])
         
@@ -49,13 +50,11 @@ class LandingViewController: UIViewController, RiffleDelegate {
         
         labelTips.morphingEffect = .Scale
         labelTips.text = tips[0]
-        NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: Selector("rotateText"), userInfo: nil, repeats: true)
     }
     
     
     func startPlaying(cards: [String], players: [Player], state: String, room: String) {
         let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("game") as! GameViewController
-        
         controller.currentPlayer = players.filter { $0.domain == self.me.domain }[0]
         controller.currentPlayer.hand = cards
         controller.players = players
@@ -67,14 +66,12 @@ class LandingViewController: UIViewController, RiffleDelegate {
         
         // Gives the dealer permission to call "/draw" on us as needed
         self.app.call("xs.demo.Bouncer/setPerm", self.container.domain, self.me.domain + "/draw", handler: nil)
-        
         presentControllerTranslucent(self, target: controller)
     }
     
     
     func onJoin() {
         print("Domain joined")
-        
         viewLogin.animation = "zoomOut"
         viewLogin.animate()
         viewButtons.animation = "zoomIn"
@@ -88,8 +85,8 @@ class LandingViewController: UIViewController, RiffleDelegate {
     @IBAction func login(sender: AnyObject) {
         textfieldUsername.resignFirstResponder()
         let name = textfieldUsername.text!
-        
-        app = RiffleDomain(domain: "xs.demo.exis.cardsagainst")
+
+        app = RiffleDomain(domain: "xs.demo.damouse.test")
         container = RiffleDomain(name: "Osxcontainer.gamelogic", superdomain: app)
         
         me = RiffleDomain(name: name, superdomain: app)
@@ -98,7 +95,7 @@ class LandingViewController: UIViewController, RiffleDelegate {
     }
     
     @IBAction func play(sender: AnyObject) {
-        container.call("play", me.domain, handler: startPlaying)
+        container.call("play", handler: startPlaying)
     }
     
     func rotateText() {

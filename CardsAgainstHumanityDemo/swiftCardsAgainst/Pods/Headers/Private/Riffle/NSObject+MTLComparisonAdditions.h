@@ -1,1 +1,1 @@
-../../../Riffle/Pod/Classes/NSObject+MTLComparisonAdditions.h
+../../../../../../ios/swiftRiffle/Pod/Classes/NSObject+MTLComparisonAdditions.h
