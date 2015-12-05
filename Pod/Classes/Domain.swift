@@ -102,8 +102,6 @@ public class RiffleDomain: NSObject, RiffleDelegate {
         Riffle.debug("\(domain) SUB: \(endpoint)")
         
         connection.session!.subscribe(endpoint, onEvent: { (event: MDWampEvent!) -> Void in
-            d.callback()
-            
             do {
                 try fn(event.arguments)
             } catch CuminError.InvalidTypes(let expected, let recieved) {
@@ -118,6 +116,7 @@ public class RiffleDomain: NSObject, RiffleDelegate {
                 d.errback()
             } else {
                 self.subscriptions.append(endpoint)
+                d.callback()
             }
         }
         
