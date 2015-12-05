@@ -18,9 +18,6 @@ type Connection interface {
 	// Receive returns a channel of messages coming from the peer.
 	// NOTE: I think this should be reactive
 	Receive() <-chan message
-
-	// Wait for a message for a timeout amount of time
-	BlockMessage() (message, error)
 }
 
 type Persistence interface {
@@ -35,9 +32,9 @@ type Persistence interface {
 type Honcho interface {
 	NewDomain(string, Delegate) Domain
 
-	HandleBytes([]byte)
-	HandleString(string)
-	HandleMessage(message)
+	ReceiveBytes([]byte)
+	ReceiveString(string)
+	ReceiveMessage(message)
 }
 
 type honcho struct {
@@ -103,8 +100,7 @@ func (c *honcho) domainJoined(d *domain) {
 	}
 }
 
-// All incoming messages end up here one way or another
-func (c honcho) HandleMessage(msg message) {
+func Handle(c honcho) {
 	switch msg := msg.(type) {
 
 	case *event:
@@ -123,6 +119,7 @@ func (c honcho) HandleMessage(msg message) {
 
 	case *goodbye:
 		c.Connection.Close("Fabric said goodbye. Closing connection")
+
 	default:
 		if l, ok := c.listeners[requestID(msg)]; ok {
 			l <- msg
@@ -133,13 +130,18 @@ func (c honcho) HandleMessage(msg message) {
 	}
 }
 
+// All incoming messages end up here one way or another
+func (c honcho) ReceiveMessage(msg message) {
+
+}
+
 // Do we really want to throw errors back into the connection here?
-func (c honcho) HandleString(msg string) {
+func (c honcho) ReceiveString(msg string) {
 	c.HandleBytes([]byte(msg))
 }
 
 // Theres a method on the serializer that does this exact thing. Is this specific to JS?
-func (c honcho) HandleBytes(byt []byte) {
+func (c honcho) ReceiveBytes(byt []byte) {
 	var dat []interface{}
 
 	if err := json.Unmarshal(byt, &dat); err != nil {
@@ -171,5 +173,23 @@ func (c *honcho) requestListen(outgoing message) (message, error) {
 		return msg, nil
 	case <-time.After(MessageTimeout):
 		return nil, fmt.Errorf("timeout while waiting for message")
+	}
+}
+
+// Conn work
+func (c websocketConnection) BlockMessage() (message, error) {
+	return getMessageTimeout(c, coreRiffle.MessageTimeout)
+}
+
+func getMessageTimeout(p websocketConnection, t time.Duration) (message, error) {
+	select {
+	case msg, open := <-p.Receive():
+		if !open {
+			return nil, fmt.Errorf("receive channel closed")
+		}
+
+		return msg, nil
+	case <-time.After(t):
+		return nil, fmt.Errorf("timeout waiting for message")
 	}
 }
