@@ -95,11 +95,15 @@ public class RiffleDomain: NSObject, RiffleDelegate {
     
     
     // MARK: Real Calls
-    func _subscribe(action: String, fn: ([AnyObject]) throws -> ()) {
+    func _subscribe(action: String, fn: ([AnyObject]) throws -> ()) -> Deferred {
+        let d = Deferred()
+        
         let endpoint = makeEndpoint(action)
         Riffle.debug("\(domain) SUB: \(endpoint)")
         
         connection.session!.subscribe(endpoint, onEvent: { (event: MDWampEvent!) -> Void in
+            d.succeed()
+            
             do {
                 try fn(event.arguments)
             } catch CuminError.InvalidTypes(let expected, let recieved) {
@@ -107,23 +111,25 @@ public class RiffleDomain: NSObject, RiffleDelegate {
             } catch {
                 Riffle.panic(" Unknown exception!")
             }
-            
-            })
-            { (err: NSError!) -> Void in
-                if let e = err {
-                    print("Error subscribing to endpoint \(endpoint): ", e.localizedDescription)
-                } else {
-                    self.subscriptions.append(endpoint)
-                }
+        })
+        { (err: NSError!) -> Void in
+            if let e = err {
+                print("Error subscribing to endpoint \(endpoint): ", e.localizedDescription)
+                d.fail()
+            } else {
+                self.subscriptions.append(endpoint)
+            }
         }
+        
+        return d
     }
     
-    func _register(action: String, fn: ([AnyObject]) throws -> ()) {
+    func _register(action: String, fn: ([AnyObject]) throws -> ()) -> Deferred {
         let endpoint = makeEndpoint(action)
         Riffle.debug("\(domain) REG: \(endpoint)")
+        let d = Deferred()
         
         connection.session!.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
-            
             Riffle.debug("INVOCATION: \(endpoint)")
             
             do {
@@ -134,27 +140,31 @@ public class RiffleDomain: NSObject, RiffleDelegate {
                 Riffle.panic(" Unknown exception!")
             }
             
+            d.succeed()
             wamp.resultForInvocation(invocation, arguments: [], argumentsKw: [:])
             
             }, cancelHandler: { () -> Void in
                 print("Register Cancelled!")
             })
-            { (err: NSError!) -> Void in
-                if err != nil {
-                    print("Error registering endoint: \(endpoint), \(err)")
-                } else {
-                    self.registrations.append(endpoint)
-                }
+        { (err: NSError!) -> Void in
+            if err != nil {
+                print("Error registering endoint: \(endpoint), \(err)")
+                d.fail()
+            } else {
+                self.registrations.append(endpoint)
+            }
         }
+        
+        return d
     }
     
-    func _register<R>(action: String, fn: ([AnyObject]) throws -> (R)) {
+    func _register<R>(action: String, fn: ([AnyObject]) throws -> (R)) -> Deferred {
+        let d = Deferred()
         let endpoint = makeEndpoint(action)
         Riffle.debug("\(domain) REG: \(endpoint)")
         
         connection.session!.registerRPC(endpoint, procedure: { (wamp: MDWamp!, invocation: MDWampInvocation!) -> Void in
             var result: R?
-            
             Riffle.debug("INVOCATION: \(endpoint)")
             
             do {
@@ -171,25 +181,25 @@ public class RiffleDomain: NSObject, RiffleDelegate {
                 Riffle.panic(" Unknown exception!")
             }
             
-            //            if let autoArray = result as? [AnyObject] {
-            //                wamp.resultForInvocation(invocation, arguments: serialize(autoArray), argumentsKw: [:])
-            //            } else {
-            //                wamp.resultForInvocation(invocation, arguments: serialize([result as! AnyObject]), argumentsKw: [:])
-            //            }
-            
+            d.succeed()
+
             }, cancelHandler: { () -> Void in
                 print("Register Cancelled!")
             })
-            { (err: NSError!) -> Void in
-                if err != nil {
-                    print("Error registering endoing: \(endpoint), \(err)")
-                } else {
-                    self.registrations.append(endpoint)
-                }
+        { (err: NSError!) -> Void in
+            if err != nil {
+                print("Error registering endoing: \(endpoint), \(err)")
+                 d.fail()
+            } else {
+                self.registrations.append(endpoint)
+            }
         }
+        
+        return d
     }
     
-    func _call(action: String, args: [AnyObject], fn: (([AnyObject]) throws -> ())?) {
+    func _call(action: String, args: [AnyObject], fn: (([AnyObject]) throws -> ())?) -> Deferred {
+        let d = Deferred()
         let endpoint = makeEndpoint(action)
         Riffle.debug("\(domain) CALL: \(endpoint)")
         var serialized: [AnyObject]?
@@ -198,12 +208,13 @@ public class RiffleDomain: NSObject, RiffleDelegate {
             serialized = try serialize(args)
         } catch {
             Riffle.panic("Unable to serialize arguments!")
-            return
+            return d
         }
         
         connection.session!.call(endpoint, payload: serialized) { (result: MDWampResult!, err: NSError!) -> Void in
             if err != nil {
                 Riffle.warn("Call Error for endpoint \(endpoint): [\(err.localizedDescription)]")
+                d.fail()
             }
             else {
                 if let h = fn {
@@ -217,11 +228,16 @@ public class RiffleDomain: NSObject, RiffleDelegate {
                     }
                     
                 }
+                
+                d.succeed()
             }
         }
+        
+        return d
     }
     
-    public func publish(action: String, _ args: AnyObject...) {
+    public func publish(action: String, _ args: AnyObject...) -> Deferred {
+        let d = Deferred()
         let endpoint = makeEndpoint(action)
         var serialized: [AnyObject]?
         
@@ -231,41 +247,57 @@ public class RiffleDomain: NSObject, RiffleDelegate {
             serialized = try serialize(args)
         } catch {
             Riffle.panic("Unable to serialize arguments!")
-            return
+            return d
         }
         
         connection.session!.publishTo(endpoint, args: serialized, kw: [:], options: [:]) { (err: NSError!) -> Void in
             if let e = err {
                 print("Error: ", e)
                 print("Publish Error for endpoint \"\(endpoint)\": \(e)")
+                d.fail()
+                return
             }
+            
+            d.succeed()
         }
+        
+        return d
     }
     
-    public func unregister(action: String) {
+    public func unregister(action: String) -> Deferred {
+        let d = Deferred()
         let endpoint = makeEndpoint(action)
         Riffle.debug("\(domain) UNREG: \(endpoint)")
         
         connection.session!.unregisterRPC(endpoint) { (err: NSError!) -> Void in
             if err != nil {
                 print("Error unregistering endoint: \(endpoint), \(err)")
+                d.fail()
             } else {
                 self.registrations.removeObject(endpoint)
+                d.succeed()
             }
         }
+        
+        return d
     }
     
-    public func unsubscribe(action: String) {
+    public func unsubscribe(action: String) -> Deferred {
+        let d = Deferred()
         let endpoint = makeEndpoint(action)
         Riffle.debug("\(domain) UNSUB: \(endpoint)")
         
         connection.session!.unsubscribe(endpoint) { (err: NSError!) -> Void in
             if err != nil {
                 print("Error unsubscribing endoint: \(endpoint), \(err)")
+                d.fail()
             } else {
                 self.subscriptions.removeObject(endpoint)
+                d.succeed()
             }
         }
+        
+        return d
     }
     
     
