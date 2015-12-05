@@ -4,3 +4,5 @@ ios/appSeed/.DS_Store
 core/sandbox/jsRiffle.js
 core/sandbox/jsRiffle.js.map
 CardsAgainstHumanityDemo/swiftCardsAgainst/.DS_Store
+*.xcuserstate
+CardsAgainstHumanityDemo/swiftCardsAgainst/ExAgainst.xcworkspace/xcuserdata/Damouse.xcuserdatad/UserInterfaceState.xcuserstate
