@@ -18,6 +18,28 @@ type websocketConnection struct {
 	closed      bool
 }
 
+func Open() {
+	dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
+	conn, _, err := dialer.Dial(url, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	connection := &websocketConnection{
+		conn:        conn,
+		messages:    make(chan message, 10),
+		serializer:  new(jSONSerializer),
+		payloadType: websocket.TextMessage,
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	go connection.run()
+}
+
 // TODO: make this just add the message to a channel so we don't block
 func (ep *websocketConnection) Send(msg message) error {
 
@@ -82,35 +104,6 @@ func (ep *websocketConnection) run() {
 	}
 }
 
-func (c *Domain) registerListener(id uint) {
-	//log.Println("register listener:", id)
-	wait := make(chan message, 1)
-	c.listeners[id] = wait
-}
-
-func (c *Domain) waitOnListener(id uint) (message, error) {
-	if wait, ok := c.listeners[id]; !ok {
-		return nil, fmt.Errorf("unknown listener uint: %v", id)
-	} else {
-		select {
-		case msg := <-wait:
-			return msg, nil
-		case <-time.After(timeout):
-			return nil, fmt.Errorf("timeout while waiting for message")
-		}
-	}
-}
-
-func (c *Domain) notifyListener(msg message, requestId uint) {
-	// pass in the request uint so we don't have to do any type assertion
-	if l, ok := c.listeners[requestId]; ok {
-		l <- msg
-	} else {
-		log.Println("no listener for message", msg.messageType(), requestId)
-	}
-}
-
-// Convenience function to get a single message from a peer
 func getMessageTimeout(p connection, t time.Duration) (message, error) {
 	select {
 	case msg, open := <-p.Receive():
@@ -123,3 +116,11 @@ func getMessageTimeout(p connection, t time.Duration) (message, error) {
 		return nil, fmt.Errorf("timeout waiting for message")
 	}
 }
+
+// Receive handles messages from the server until this client disconnects.
+// This function blocks and is most commonly run in a goroutine.
+// func (c *domain) Receive() {
+// 	for msg := range c.Connection.Receive() {
+// 		c.Handle(msg)
+// 	}
+// }
