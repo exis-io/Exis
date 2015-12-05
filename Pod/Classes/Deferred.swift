@@ -17,14 +17,16 @@ public class Deferred {
     
     var fired = false
     
-    public func callback() {
+    public init() {}
+    
+    public func callback(args: AnyObject? = nil) {
         if fired {
-            print("Defereds can only fire once!")
+            //print("Defereds can only fire once!")
             return
         }
         
         fired = true
-        var result: AnyObject?
+        var result = args
         
         while _callback.count > 0 {
             let cb = _callback.removeFirst()
@@ -34,14 +36,14 @@ public class Deferred {
         _errback = []
     }
     
-    public func errback() {
+    public func errback(args: AnyObject? = nil) {
         if fired {
-            print("Defereds can only fire once!")
+            //print("Defereds can only fire once!")
             return
         }
         
         fired = true
-        var result: AnyObject?
+        var result = args
         
         while _errback.count > 0 {
             let cb = _errback.removeFirst()

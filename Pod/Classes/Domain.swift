@@ -234,7 +234,6 @@ public class RiffleDomain: NSObject, RiffleDelegate {
                     } catch {
                         Riffle.panic(" Unknown exception!")
                     }
-                    
                 }
                 
                 d.callback()
