@@ -97,29 +97,32 @@ class ViewController: UIViewController {
     func startTests() {
         
         // Publish/Subscribe
-        testPSTypes(1)
-        testPSTypeCollections(2)
+//        testPSTypes(1)
+//        testPSTypeCollections(2)
+//        
+//        // Primitive Types
+//        rcTypes(3)
+//        
+//        // Riffle Objects
+//        roObjects(4)
+//        
+//        // RiffleObect Collections
+//        roColletions(5)
+//        roColletionsNoArg(6)
+//        
+//        // Meta calls
+//        testDiscloseRegister(7)
+//        testDiscloseSubscribe(8)
         
-        // Primitive Types
-        rcTypes(3)
-        
-        // Riffle Objects
-        roObjects(4)
-        
-        // RiffleObect Collections
-        roColletions(5)
-        roColletionsNoArg(6)
-        
-        // Meta calls
-        testDiscloseRegister(7)
-        testDiscloseSubscribe(8)
+        // Deferreds
+        testDeferred(9);
     }
     
     
     // MARK: Publish/Subscribe
     func testPSTypes(t: Int) {
         // What kinds of types can be returned
-        alpha.subscribe("\(t)") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
+        alpha.subscribe("\(t)", { (a: Int, b: Float, c: Double, d: String, e: Bool) in
             //print("1 : Sub receiving single types:", a, b, c, d, e)
             
             assert(a == 1)
@@ -127,7 +130,13 @@ class ViewController: UIViewController {
             assert(c == 3.3)
             assert(d == "4")
             assert(e == true)
-        }
+        }).addCallback( { (a: AnyObject?) -> AnyObject? in
+            print("Subscription completed")
+            return nil
+        }).addErrback( { (a: AnyObject?) -> AnyObject?in
+            print("Subscription failed")
+            return nil
+        })
 
         beta.publish("xs.tester.alpha/\(t)", 1, 2.2, 3.3, "4", true)
     }
@@ -151,7 +160,6 @@ class ViewController: UIViewController {
     
     // MARK: Single Types
     func rcTypes(t: Int) {
-        
         // Test both sending and receiving types
         // Test receiving collections in invocation
         alpha.register("\(t)") { (a: Int, b: Float, c: Double, d: String, e: Bool) -> AnyObject in
@@ -167,7 +175,6 @@ class ViewController: UIViewController {
         }
         
         // WARNING: cant receive 5 elements in return
-        
         beta.call("xs.tester.alpha/\(t)", 1, 2.2, 3.3, "4", true, handler: { (a: Int, b: Float, c: Double, d: String) in
             assert(a == 1)
             assert(b == 2.2)
@@ -277,6 +284,20 @@ class ViewController: UIViewController {
 //        }
 //        
 //        beta.publish("xs.tester.alpha/\(t)", 1)
+    }
+    
+    
+    // MARK: Meta calls
+    func testDiscloseSubscribe(t: Int) {
+        // What kinds of types can be returned
+        alpha.register("\(t)#details") { (caller: String, a: Int) in
+            print("\(t) : Call receiving single call from caller:", caller, a)
+            
+            assert(caller == "xs.tester.beta")
+            assert(a == 1)
+        }
+        
+        beta.call("xs.tester.alpha/\(t)", 1, handler: nil)
     }
 }
 

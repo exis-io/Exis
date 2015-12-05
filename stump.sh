@@ -5,7 +5,7 @@
 
 if [ $# -lt 1 ]
 then
-    echo -e "Updating and deployment of riffle libraries\n"
+    echo -e "Updating and deployment of riffle libraries.\n"
 
     echo "Usage:"
     echo -e "  init\t\t set up remotes for development"

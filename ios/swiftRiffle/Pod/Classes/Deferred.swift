@@ -17,7 +17,9 @@ public class Deferred {
     
     var fired = false
     
-    func callback() {
+    public func callback() {
+        print("Starting Callback")
+        
         if fired {
             print("Defereds can only fire once!")
             return
@@ -34,7 +36,9 @@ public class Deferred {
         _errback = []
     }
     
-    func errback() {
+    public func errback() {
+        print("Starting Errback")
+        
         if fired {
             print("Defereds can only fire once!")
             return
@@ -52,12 +56,12 @@ public class Deferred {
     }
     
     
-    func addCallback(cb: (AnyObject?) -> AnyObject?) -> Deferred {
+    public func addCallback(cb: (AnyObject?) -> (AnyObject?)) -> Deferred {
         _callback.append(cb)
         return self
     }
     
-    func addErrback(cb: (AnyObject?) -> AnyObject?) -> Deferred {
+    public func addErrback(cb: (AnyObject?) -> (AnyObject?)) -> Deferred {
         _errback.append(cb)
         return self
     }
