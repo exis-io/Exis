@@ -113,7 +113,7 @@ public class RiffleDomain: NSObject, RiffleDelegate {
             Riffle.debug("INVOCATION: \(endpoint)")
             
             do {
-                try fn(invocation.arguments)
+                try fn(extractDetails(endpoint, invocation.arguments))
             } catch CuminError.InvalidTypes(let expected, let recieved) {
                 Riffle.warn(": cumin unable to convert: expected \(expected) but received \"\(recieved)\"[\(recieved.dynamicType)] for function \(fn) registered at endpoint \(endpoint)")
             } catch {
@@ -144,7 +144,7 @@ public class RiffleDomain: NSObject, RiffleDelegate {
             Riffle.debug("INVOCATION: \(endpoint)")
             
             do {
-                result = try fn(invocation.arguments)
+                result = try fn(extractDetails(endpoint, invocation.arguments))
                 
                 if let r = result as? AnyObject {
                     let serialized = try serialize(r)
@@ -276,7 +276,7 @@ public class RiffleDomain: NSObject, RiffleDelegate {
 }
 
 
-func extractDetails(endpoint: String, args: [AnyObject]) -> [AnyObject] {
+func extractDetails(endpoint: String, _ args: [AnyObject]) -> [AnyObject] {
     if !endpoint.containsString("#details") {
         return args
     }
