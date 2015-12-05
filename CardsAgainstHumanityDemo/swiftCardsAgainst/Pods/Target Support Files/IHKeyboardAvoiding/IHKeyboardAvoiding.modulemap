@@ -1,0 +1,6 @@
+framework module IHKeyboardAvoiding {
+  umbrella header "IHKeyboardAvoiding-umbrella.h"
+
+  export *
+  module * { export * }
+}

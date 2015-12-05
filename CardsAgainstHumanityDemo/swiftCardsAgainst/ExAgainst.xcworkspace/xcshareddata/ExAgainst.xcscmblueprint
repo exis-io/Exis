@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "80F45E51F1323D0469D4567D983BEF245B517483",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "86BCC9360356B37E984ABD2E91CB5332F4B7EEDD" : 0,
+    "80F45E51F1323D0469D4567D983BEF245B517483" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "54DEF903-94E5-4E69-B95F-52FF2E91246A",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "86BCC9360356B37E984ABD2E91CB5332F4B7EEDD" : "..\/swiftRiffle",
+    "80F45E51F1323D0469D4567D983BEF245B517483" : "cards\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "ExAgainst",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "ExAgainst.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:exis-io\/CardsAgainstPart1.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "80F45E51F1323D0469D4567D983BEF245B517483"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:exis-io\/swiftRiffle.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "86BCC9360356B37E984ABD2E91CB5332F4B7EEDD"
+    }
+  ]
+}
