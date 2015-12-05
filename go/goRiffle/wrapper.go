@@ -1,12 +1,10 @@
 package goRiffle
 
 import (
+	"fmt"
+
 	"github.com/exis-io/coreRiffle"
 )
-
-type core struct {
-	honcho coreRiffle.Honcho
-}
 
 type Domain interface {
 	Subscribe(string, []interface{}) error
@@ -18,47 +16,39 @@ type Domain interface {
 	Unsubscribe(string) error
 	Unregister(string) error
 
-	// Join(Connection) error
+	Join() error
 	Leave() error
 }
 
+type wrapper struct {
+	honcho coreRiffle.Honcho
+	conn   *websocketConnection
+}
+
 type domain struct {
-	core     *core
+	wrapper  *wrapper
 	mirror   coreRiffle.Domain
 	handlers map[uint]interface{}
 }
 
-var wrapper *core
+var wrap *wrapper
 
 func NewDomain(name string) Domain {
-	if wrapper == nil {
+	if wrap == nil {
 		h := coreRiffle.Initialize()
 
-		wrapper = &core{
+		wrap = &wrapper{
 			honcho: h,
 		}
 	}
 
 	d := domain{
-		core:     wrapper,
+		wrapper:  wrap,
 		handlers: make(map[uint]interface{}),
 	}
 
-	d.mirror = wrapper.honcho.NewDomain(name, d)
-
+	d.mirror = wrap.honcho.NewDomain(name, d)
 	return d
-
-	// d := &domain{
-	// 	Delegate:      del,
-	// 	honcho:        *c,
-	// 	name:          name,
-	// 	joined:        false,
-	// 	subscriptions: make(map[uint]*boundEndpoint),
-	// 	registrations: make(map[uint]*boundEndpoint),
-	// }
-
-	// c.domains = append(c.domains, d)
-	// return d
 }
 
 func (d domain) Subscribe(endpoint string, handler []interface{}) error {
@@ -99,10 +89,20 @@ func (d domain) Unregister(endpoint string) error {
 	return err
 }
 
-// func (d domain) Join(endpoint Connection) error {
-// 	r := d.mirror.Join()
-// 	return r
-// }
+func (d domain) Join() error {
+	// Open a new connection if we don't have one yet
+	if d.wrapper.conn == nil {
+		c, err := Open(coreRiffle.SandboxFabric)
+
+		if err != nil {
+			fmt.Println("Unable to open connection!")
+			return err
+		}
+
+		d.wrapper.conn = c
+		return d.mirror.Join(c)
+	}
+}
 
 func (d domain) Leave() error {
 	err := d.mirror.Leave()

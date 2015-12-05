@@ -7,12 +7,12 @@ import (
 )
 
 const (
-	maxId   int64         = 1 << 53
-	timeout time.Duration = 5 * time.Second
+	maxId          int64         = 1 << 53
+	MessageTimeout time.Duration = 5 * time.Second
 
-	devFabric        string = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
-	sandboxFabric    string = "ws://sandbox.exis.io/ws"
-	proudctionFabric string = "ws://node.exis.io/ws"
+	DevFabric        string = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
+	SandboxFabric    string = "ws://sandbox.exis.io/ws"
+	ProudctionFabric string = "ws://node.exis.io/ws"
 
 	ErrInvalidArgument     = "ERR-- Invalid Arguments, check your receiver!"
 	ErrSystemShutdown      = "ERR-- Connection collapsed. It wasn't pretty."

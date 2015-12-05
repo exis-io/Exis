@@ -168,7 +168,7 @@ func (c *honcho) requestListen(outgoing message) (message, error) {
 		}
 
 		return msg, nil
-	case <-time.After(timeout):
+	case <-time.After(MessageTimeout):
 		return nil, fmt.Errorf("timeout while waiting for message")
 	}
 }

@@ -17,12 +17,12 @@ type websocketConnection struct {
 	closed      bool
 }
 
-func Open(url string) error {
+func Open(url string) (*websocketConnection, error) {
 	dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
 	conn, _, err := dialer.Dial(url, nil)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	connection := &websocketConnection{
@@ -33,7 +33,7 @@ func Open(url string) error {
 
 	go connection.run()
 
-	return nil
+	return connection, nil
 }
 
 func (ep *websocketConnection) Send(data []byte) error {
@@ -92,6 +92,10 @@ func (ep *websocketConnection) run() {
 			// }
 		}
 	}
+}
+
+func (c websocketConnection) BlockMessage() (message, error) {
+	return getMessageTimeout(*c, t)
 }
 
 func getMessageTimeout(p websocketConnection, t time.Duration) (message, error) {
