@@ -101,25 +101,28 @@ func (d domain) Join() error {
 
 		d.wrapper.conn = c
 		return d.mirror.Join()
-	} else {
-		// unimplemented
-		return nil
 	}
+
+	return nil
 }
 
 func (d domain) Leave() error {
 	err := d.mirror.Leave()
+
+	// for each subscription
+	// for each registration
+
 	return err
 }
 
 func (d domain) Invoke(endpoint string, id uint, args []interface{}) ([]interface{}, error) {
-	return cumin(d.handlers[id], args)
+	return coreRiffle.Cumin(d.handlers[id], args)
 }
 
 func (d domain) OnJoin(string) {
-
+	fmt.Println("Delegate joined!")
 }
 
 func (d domain) OnLeave(string) {
-
+	fmt.Println("Delegate left!!")
 }
