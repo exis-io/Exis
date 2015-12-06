@@ -25,6 +25,7 @@ func Open(url string) (*websocketConnection, error) {
 		return nil, err
 	} else {
 		coreRiffle.Debug("Connection dialed")
+
 		connection := &websocketConnection{
 			conn:        conn,
 			payloadType: websocket.TextMessage,
@@ -39,6 +40,7 @@ func (ep *websocketConnection) Send(data []byte) {
 	// coreRiffle.Debug("Writing data")
 	// Does the lock block? The locks should be faster than working off the channel,
 	// but the comments in the other code imply that the lock blocks on the send?
+
 	if err := ep.conn.WriteMessage(ep.payloadType, data); err != nil {
 		panic("No one is dealing with my errors! Cant write to socket")
 	}

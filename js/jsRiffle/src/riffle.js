@@ -42,7 +42,7 @@ exports.version = pjson.version;
 exports.transports = configure.transports;
 
 exports.Connection = connection.Connection;
-exports.Domain = connection.Domain;
+
 
 exports.Session = session.Session;
 exports.Invocation = session.Invocation;
@@ -61,18 +61,34 @@ exports.when = when;
 exports.util = util;
 exports.log = log;
 
-
 // Global configuration
-FABRIC_URL = "node.exis.io";
+FABRIC_URL = "ws://localhost:8000/ws";
 
 // TODO: fabric url doesn't set without calling this method 
-
 exports.setDevFabric = function(url) {
-  
     FABRIC_URL = 'ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws';
-
-    // Turn on debug logging, too
-    // exports.debug = function () {
-    //     console.log.apply(console, arguments);
-    // };
 };
+
+//
+// Begin GOJS implementation
+//
+
+var go = require('./go.js');
+
+var pet = global.pet.New("Fido");
+console.log("Pet: ", pet);
+
+
+exports.Domain = connection.Domain;
+// exports.Conn = connection.CoreConn;
+
+// global.wrapper.HelloWorld("JS: This function is called from riffle.js")
+exports.HelloWorld = global.wrapper.HelloWorld;
+
+
+console.log("Opening a connection");
+var conn = new connection.CoreConn();
+
+// var domain = new global.wrapper.NewDomain("xs.damouse.js.alpha")
+var domain = global.Dom.NewDomain("xs.damouse.js.alpha")
+console.log("Created domain: ", domain);

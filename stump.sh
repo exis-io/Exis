@@ -190,11 +190,11 @@ core() {
     # go build -buildmode=c-shared -o python/pyRiffle/riffle/libriff.so go/coreRiffle/wrappers/osx.go
 
 
-    # echo "Building gojs"
-    # gopherjs build -m go/coreRiffle/wrappers/jsRiffle.go
+    echo "Building gojs"
+    gopherjs build -m go/coreRiffle/wrappers/jsRiffle.go
 
-    # mv jsRiffle.js js/jsRiffle/src/go.js
-    # mv jsRiffle.js.map js/jsRiffle/src/go.js.map
+    mv jsRiffle.js js/jsRiffle/src/go.js
+    mv jsRiffle.js.map js/jsRiffle/src/go.js.map
 
     exit
 }

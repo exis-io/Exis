@@ -16,6 +16,7 @@ var when = require('when');
 var session = require('./session.js');
 var util = require('./util.js');
 var log = require('./log.js');
+
 var riffle = require('./riffle.js');
 
 
@@ -600,4 +601,41 @@ Domain.prototype.unregister = function(action) {
 
 };
 
+
 exports.Domain = Domain;
+
+var CoreConn = function () {
+    // console.log("Connection created")
+    var connection = new riffle.Connection("Dont need a domain");
+    
+    // console.log(connection._transport_factories)
+    this.conn = connection._create_transport()
+
+    // Theres also a transport.send(msg)
+
+    this.conn.onmessage = function(message) {
+        console.log("Message received: ", message);
+    };
+
+    this.conn.onopen = function() {
+        console.log("Transport opened");
+    };
+
+    this.conn.onclose = function() {
+        console.log("Transport closed");
+    };
+}; 
+
+
+CoreConn.prototype.Send = function(message) {
+    console.log("Sending message: ", message)
+};
+
+CoreConn.prototype.Close = function(reason) {
+    console.log("Closing connection with reason: ", reason)
+};
+
+exports.CoreConn = CoreConn;
+
+
+
