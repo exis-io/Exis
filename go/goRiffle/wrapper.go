@@ -36,6 +36,7 @@ type domain struct {
 var wrap *wrapper
 
 func NewDomain(name string) Domain {
+
 	if wrap == nil {
 		h := coreRiffle.NewHoncho()
 

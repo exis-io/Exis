@@ -503,8 +503,16 @@ func requestID(m message) uint {
 		return msg.Request
 	case *errorMessage:
 		return msg.Request
+	case *publish:
+		return msg.Request
+	case *subscribe:
+		return msg.Request
+	case *register:
+		return msg.Request
+	case *call:
+		return msg.Request
 	default:
-		log.Println("Cant get requestID for message: ", m)
+		log.Println("Cant get requestID for message: ", m, msg.messageType())
 		panic("Unhandled message request id!")
 	}
 
