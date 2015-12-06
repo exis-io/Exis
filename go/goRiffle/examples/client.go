@@ -1,7 +1,15 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/exis-io/goRiffle"
+)
 
 func main() {
-	fmt.Println("Hello world from the client!")
+	fmt.Println("Client starting")
+
+	a := goRiffle.NewDomain("xs.damouse.beta")
+
+	a.Run()
 }

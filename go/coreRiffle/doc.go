@@ -2,7 +2,7 @@
 //
 // See the official WAMP documentation at exis.io for
 // more details on the protocol.
-// package coreRiffle
+package coreRiffle
 
 // This is an  list of the tests clients should implement
 

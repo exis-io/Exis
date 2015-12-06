@@ -7,8 +7,8 @@ import (
 )
 
 type Domain interface {
-	Subscribe(string, []interface{}) error
-	Register(string, []interface{}) error
+	Subscribe(string, interface{}) error
+	Register(string, interface{}) error
 
 	Publish(string, ...interface{}) error
 	Call(string, ...interface{}) ([]interface{}, error)
@@ -18,6 +18,7 @@ type Domain interface {
 
 	Join() error
 	Leave() error
+	Run()
 }
 
 type wrapper struct {
@@ -29,13 +30,14 @@ type domain struct {
 	wrapper  *wrapper
 	mirror   coreRiffle.Domain
 	handlers map[uint]interface{}
+	kill     chan bool
 }
 
 var wrap *wrapper
 
 func NewDomain(name string) Domain {
 	if wrap == nil {
-		h := coreRiffle.Initialize()
+		h := coreRiffle.NewHoncho()
 
 		wrap = &wrapper{
 			honcho: h,
@@ -45,13 +47,14 @@ func NewDomain(name string) Domain {
 	d := domain{
 		wrapper:  wrap,
 		handlers: make(map[uint]interface{}),
+		kill:     make(chan bool),
 	}
 
 	d.mirror = wrap.honcho.NewDomain(name, d)
 	return d
 }
 
-func (d domain) Subscribe(endpoint string, handler []interface{}) error {
+func (d domain) Subscribe(endpoint string, handler interface{}) error {
 	if i, err := d.mirror.Subscribe(endpoint, []interface{}{}); err != nil {
 		return err
 	} else {
@@ -60,7 +63,7 @@ func (d domain) Subscribe(endpoint string, handler []interface{}) error {
 	}
 }
 
-func (d domain) Register(endpoint string, handler []interface{}) error {
+func (d domain) Register(endpoint string, handler interface{}) error {
 	if i, err := d.mirror.Register(endpoint, []interface{}{}); err != nil {
 		return err
 	} else {
@@ -92,7 +95,7 @@ func (d domain) Unregister(endpoint string) error {
 func (d domain) Join() error {
 	// Open a new connection if we don't have one yet
 	if d.wrapper.conn == nil {
-		c, err := Open(coreRiffle.SandboxFabric)
+		c, err := Open(coreRiffle.LocalFabric)
 
 		if err != nil {
 			fmt.Println("Unable to open connection!")
@@ -100,6 +103,7 @@ func (d domain) Join() error {
 		}
 
 		d.wrapper.conn = c
+		wrap.conn = c
 		return d.mirror.Join()
 	}
 
@@ -125,4 +129,10 @@ func (d domain) OnJoin(string) {
 
 func (d domain) OnLeave(string) {
 	fmt.Println("Delegate left!!")
+	d.kill <- true
+}
+
+// Spin and run while the domain is still connected
+func (d domain) Run() {
+	<-d.kill
 }

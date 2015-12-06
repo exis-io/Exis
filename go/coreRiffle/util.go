@@ -8,11 +8,12 @@ import (
 
 const (
 	maxId          int64         = 1 << 53
-	MessageTimeout time.Duration = 5 * time.Second
+	MessageTimeout time.Duration = 3 * time.Second
 
+	LocalFabric      string = "ws://localhost:8000/ws"
 	DevFabric        string = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
 	SandboxFabric    string = "ws://sandbox.exis.io/ws"
-	ProudctionFabric string = "ws://node.exis.io/ws"
+	ProudctionFabric string = "wss://node.exis.io/wss"
 
 	ErrInvalidArgument     = "ERR-- Invalid Arguments, check your receiver!"
 	ErrSystemShutdown      = "ERR-- Connection collapsed. It wasn't pretty."

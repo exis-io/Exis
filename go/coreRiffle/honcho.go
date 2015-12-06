@@ -43,7 +43,7 @@ type honcho struct {
 }
 
 // Initialize the core
-func Initialize() Honcho {
+func NewHoncho() Honcho {
 	return honcho{
 		domains:    make([]*domain, 0),
 		serializer: new(jSONSerializer),
@@ -99,10 +99,6 @@ func (c *honcho) domainJoined(d *domain) {
 		}
 	}
 }
-
-//
-// Connection Interfacing
-//
 
 func (c honcho) Send(m message) error {
 	if b, err := c.serializer.serialize(m); err != nil {
@@ -171,6 +167,7 @@ func (c honcho) Handle(msg message) {
 			l <- msg
 		} else {
 			log.Println("no listener for message", msg)
+			fmt.Println("Listeners: ", c.listeners)
 			panic("Unhandled message!")
 		}
 	}
@@ -224,8 +221,8 @@ func (c *honcho) requestListen(outgoing message) (message, error) {
 	}
 }
 
-// Dont really need this, can put an interceptor at the top of the receive loop
-// Do need something, though
+// Blocks on a message from the connection. Don't use this while the run loop is
+// active
 func (c honcho) getMessageTimeout() (message, error) {
 	select {
 	case msg, open := <-c.in:
