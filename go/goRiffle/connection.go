@@ -60,9 +60,9 @@ func (ep *websocketConnection) run() {
 		// the blank assignment is 'b'
 		if msgType, bytes, err := ep.conn.ReadMessage(); err != nil {
 			if ep.closed {
-				log.Println("peer connection closed")
+				coreRiffle.Info("peer connection closed")
 			} else {
-				log.Println("error reading from peer:", err)
+				coreRiffle.Info("error reading from peer:", err)
 				ep.conn.Close()
 			}
 

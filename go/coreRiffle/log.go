@@ -18,6 +18,14 @@ func Debug(format string, a ...interface{}) {
 	out(fmt.Sprintf(format, a...), color.Blue)
 }
 
+func Info(format string, a ...interface{}) {
+	out(fmt.Sprintf(format, a...), color.Green)
+}
+
+func Warn(format string, a ...interface{}) {
+	out(fmt.Sprintf(format, a...), color.Yellow)
+}
+
 func out(mess string, printer func(string, ...interface{})) {
 	printer("[%s] %s", trace(), mess)
 }
