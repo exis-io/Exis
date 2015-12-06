@@ -100,6 +100,10 @@ func (c *honcho) domainJoined(d *domain) {
 	}
 }
 
+//
+// Connection Interfacing
+//
+
 func (c honcho) Send(m message) error {
 	if b, err := c.serializer.serialize(m); err != nil {
 		c.out <- b
@@ -109,10 +113,17 @@ func (c honcho) Send(m message) error {
 	}
 }
 
-func (c honcho) run() error {
-	// run in a goroutine
-	//catch the channel close
+func (c honcho) Close(reason string) {
+	fmt.Println("Asked to close! Reason: ", reason)
 
+	close(c.in)
+	close(c.out)
+
+	// Theres some missing logic here when it comes to closing the external connection,
+	// especially when either end could call and trigger a close
+}
+
+func (c honcho) run() error {
 	for {
 		select {
 		case msg, open := <-c.in:
@@ -198,8 +209,8 @@ func (c *honcho) requestListen(outgoing message) (message, error) {
 	}
 
 	wait := make(chan message, 1)
-
-	// add the channel to the listeners field!!
+	c.listeners[requestID(outgoing)] = wait
+	// delete the listener on receive
 
 	select {
 	case msg := <-wait:
@@ -212,11 +223,6 @@ func (c *honcho) requestListen(outgoing message) (message, error) {
 		return nil, fmt.Errorf("timeout while waiting for message")
 	}
 }
-
-// Conn work
-// func (c websocketConnection) BlockMessage() (message, error) {
-// 	return getMessageTimeout(c, coreRiffle.MessageTimeout)
-// }
 
 // Dont really need this, can put an interceptor at the top of the receive loop
 // Do need something, though

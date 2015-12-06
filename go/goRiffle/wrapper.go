@@ -100,7 +100,10 @@ func (d domain) Join() error {
 		}
 
 		d.wrapper.conn = c
-		return d.mirror.Join(*c)
+		return d.mirror.Join()
+	} else {
+		// unimplemented
+		return nil
 	}
 }
 
