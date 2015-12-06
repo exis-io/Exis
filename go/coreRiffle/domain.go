@@ -25,7 +25,7 @@ type Domain interface {
 	Unsubscribe(string) error
 	Unregister(string) error
 
-	Join() error
+	Join(Connection) error
 	Leave() error
 }
 
@@ -56,10 +56,13 @@ func (s *domain) Subdomain(name string) *domain {
 
 // Accepts a connection that has just been opened. This method should only
 // be called once, to initialize the fabric
-func (c domain) Join() error {
+func (c domain) Join(conn Connection) error {
 	if c.joined {
 		return fmt.Errorf("Domain %s is already joined", c.name)
 	}
+
+	// check to make sure the connection is not already set
+	c.honcho.Connection = conn
 
 	// Should we hard close on conn.Close()? The Head Honcho may be interested in knowing about the close
 	if err := c.honcho.Send(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {

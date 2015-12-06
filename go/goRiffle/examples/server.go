@@ -1,24 +1,20 @@
 package main
 
-import (
-	"fmt"
-
-	"github.com/exis-io/goRiffle"
-)
+import "github.com/exis-io/goRiffle"
 
 func main() {
-	fmt.Println("Server starting")
+	goRiffle.Info("Server starting")
 
 	a := goRiffle.NewDomain("xs.damouse.alpha")
 
 	a.Join()
 
 	e := a.Subscribe("reg", func() {
-		fmt.Println("Call received!")
+		goRiffle.Info("Call received!")
 	})
 
 	if e != nil {
-		fmt.Println("Unable to subscribe: ", e.Error())
+		goRiffle.Info("Unable to subscribe: ", e.Error())
 	}
 
 	a.Run()

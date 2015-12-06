@@ -103,9 +103,8 @@ func (d domain) Join() error {
 			return err
 		}
 
-		d.wrapper.conn = c
 		wrap.conn = c
-		return d.mirror.Join()
+		return d.mirror.Join(c)
 	}
 
 	return nil
@@ -136,4 +135,16 @@ func (d domain) OnLeave(string) {
 // Spin and run while the domain is still connected
 func (d domain) Run() {
 	<-d.kill
+}
+
+func Debug(format string, a ...interface{}) {
+	coreRiffle.Debug(format, a...)
+}
+
+func Info(format string, a ...interface{}) {
+	coreRiffle.Info(format, a...)
+}
+
+func Warn(format string, a ...interface{}) {
+	coreRiffle.Warn(format, a...)
 }

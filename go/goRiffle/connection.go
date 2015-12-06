@@ -1,7 +1,6 @@
 package goRiffle
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -17,11 +16,14 @@ type websocketConnection struct {
 }
 
 func Open(url string) (*websocketConnection, error) {
+	coreRiffle.Debug("Opening ws connection to %s", url)
 	dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
 
 	if conn, _, err := dialer.Dial(url, nil); err != nil {
+		coreRiffle.Debug("Cant dial connection: %e", err)
 		return nil, err
 	} else {
+		coreRiffle.Debug("Connection dialed")
 		connection := &websocketConnection{
 			conn:        conn,
 			payloadType: websocket.TextMessage,
@@ -33,6 +35,7 @@ func Open(url string) (*websocketConnection, error) {
 }
 
 func (ep *websocketConnection) Send(data []byte) {
+	coreRiffle.Debug("Writing data")
 	if err := ep.conn.WriteMessage(ep.payloadType, data); err != nil {
 		panic("No one is dealing with my errors! Cant write to socket")
 	}
@@ -40,7 +43,8 @@ func (ep *websocketConnection) Send(data []byte) {
 
 // Who the hell do we call close first on? Honcho or connection?
 // Either way one or the other may have to check on the other, which is no good
-func (ep *websocketConnection) Close() error {
+func (ep *websocketConnection) Close(reason string) error {
+	coreRiffle.Info("Closing connection with reason: %s", reason)
 	closeMsg := websocket.FormatCloseMessage(websocket.CloseNormalClosure, "goodbye")
 	err := ep.conn.WriteControl(websocket.CloseMessage, closeMsg, time.Now().Add(5*time.Second))
 
@@ -69,12 +73,13 @@ func (ep *websocketConnection) run() {
 			// ep.Honcho.Close()
 			break
 		} else if msgType == websocket.CloseMessage {
-			fmt.Println("Close message recieved")
+			coreRiffle.Info("Close message recieved")
 			ep.conn.Close()
 
 			// ep.Honcho.Close()
 			break
 		} else {
+			coreRiffle.Debug("Socket received data: %b", bytes)
 			ep.Honcho.ReceiveBytes(bytes)
 		}
 	}

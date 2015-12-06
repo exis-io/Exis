@@ -37,10 +37,13 @@ func trace() string {
 	file, line := f.FileLine(pc[1])
 
 	parts := strings.Split(file, "/")
-	last := parts[len(parts)-2:]
-	joined := strings.Join(last, ".")
 
-	return fmt.Sprintf("%s:%d", strings.TrimSuffix(joined, ".go"), line)
+	if len(parts) > 3 {
+		last := parts[len(parts)-2:]
+		file = strings.Join(last, ".")
+	}
+
+	return fmt.Sprintf("%s:%d", strings.TrimSuffix(file, ".go"), line)
 }
 
 // var format = logging.MustStringFormatter(

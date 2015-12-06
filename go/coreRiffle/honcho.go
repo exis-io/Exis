@@ -15,11 +15,11 @@ type Persistence interface {
 // Interface to external connection implementations
 type Connection interface {
 	// Send a message
-	Send([]byte) error
+	Send([]byte)
 
 	// Closes the peer connection and any channel returned from Receive().
 	// Calls with a reason for the close
-	Close(string)
+	Close(string) error
 }
 
 // Manages a set of domains, receives messages from the wrapper's connections
@@ -101,6 +101,7 @@ func (c *honcho) domainJoined(d *domain) {
 }
 
 func (c honcho) Send(m message) error {
+	Debug("Sending: %s: %s", m.messageType(), m)
 	if b, err := c.serializer.serialize(m); err != nil {
 		c.out <- b
 		return err
@@ -110,7 +111,7 @@ func (c honcho) Send(m message) error {
 }
 
 func (c honcho) Close(reason string) {
-	fmt.Println("Asked to close! Reason: ", reason)
+	Info("Asked to close! Reason: ", reason)
 
 	close(c.in)
 	close(c.out)
@@ -127,14 +128,14 @@ func (c honcho) run() error {
 				return fmt.Errorf("receive channel closed")
 			}
 
-			fmt.Println("Received message", msg)
+			Info("Received message", msg)
 
 		case b, open := <-c.out:
 			if !open {
 				return fmt.Errorf("receive channel closed")
 			}
 
-			fmt.Println("Sending message", b)
+			Info("Sending message", b)
 			c.Connection.Send(b)
 		}
 	}
@@ -167,7 +168,7 @@ func (c honcho) Handle(msg message) {
 			l <- msg
 		} else {
 			log.Println("no listener for message", msg)
-			fmt.Println("Listeners: ", c.listeners)
+			Info("Listeners: ", c.listeners)
 			panic("Unhandled message!")
 		}
 	}
@@ -188,14 +189,14 @@ func (c honcho) ReceiveBytes(byt []byte) {
 	var dat []interface{}
 
 	if err := json.Unmarshal(byt, &dat); err != nil {
-		fmt.Println("Unable to unmarshal json! Message: ", dat)
+		Info("Unable to unmarshal json! Message: ", dat)
 		return
 	}
 
 	if m, err := c.serializer.deserializeString(dat); err == nil {
 		c.Handle(m)
 	} else {
-		fmt.Println("Unable to unmarshal json string! Message: ", m)
+		Info("Unable to unmarshal json string! Message: ", m)
 	}
 }
 
