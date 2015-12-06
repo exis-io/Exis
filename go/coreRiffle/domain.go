@@ -75,7 +75,7 @@ func (c domain) Join(conn Connection) error {
 	} else if _, ok := msg.(*welcome); !ok {
 		c.honcho.SendNow(&abort{Details: map[string]interface{}{}, Reason: "Error- unexpected_message_type"})
 		c.honcho.Close("Error- unexpected_message_type")
-		return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME))
+		return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME.String()))
 	}
 
 	go c.honcho.receiveLoop()
@@ -103,7 +103,7 @@ func (c domain) Subscribe(endpoint string, types []interface{}) (uint, error) {
 	if msg, err := c.honcho.requestListen(sub); err != nil {
 		return 0, err
 	} else if subbed, ok := msg.(*subscribed); !ok {
-		return 0, fmt.Errorf(formatUnexpectedMessage(msg, sUBSCRIBED))
+		return 0, fmt.Errorf(formatUnexpectedMessage(msg, sUBSCRIBED.String()))
 	} else {
 		Info("Subscribed: %s", endpoint)
 		c.subscriptions[subbed.Subscription] = &boundEndpoint{endpoint, types}
@@ -119,7 +119,7 @@ func (c domain) Register(endpoint string, types []interface{}) (uint, error) {
 	if msg, err := c.honcho.requestListen(register); err != nil {
 		return 0, err
 	} else if reg, ok := msg.(*registered); !ok {
-		return 0, fmt.Errorf(formatUnexpectedMessage(msg, rEGISTERED))
+		return 0, fmt.Errorf(formatUnexpectedMessage(msg, rEGISTERED.String()))
 	} else {
 		Info("Registered: %s", endpoint)
 		c.registrations[reg.Registration] = &boundEndpoint{endpoint, types}
@@ -142,20 +142,19 @@ func (c domain) Publish(endpoint string, args []interface{}) error {
 // Call calls a procedure given a URI.
 func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error) {
 	endpoint = makeEndpoint(c.name, endpoint)
-
 	call := &call{Request: newID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
 
+	// Testing out a shorter way of checking the return types of the messages-- be careful with this, untested
 	if msg, err := c.honcho.requestListenType(call, "*coreRiffle.result"); err != nil {
 		return nil, err
 	} else {
-		return result.Arguments, nil
+		return msg.(*result).Arguments, nil
 	}
 }
 
 // Unsubscribe removes the registered EventHandler from the endpoint.
 func (c domain) Unsubscribe(endpoint string) error {
 	endpoint = makeEndpoint(c.name, endpoint)
-
 	subscriptionID, _, ok := bindingForEndpoint(c.subscriptions, endpoint)
 
 	if !ok {
@@ -164,8 +163,8 @@ func (c domain) Unsubscribe(endpoint string) error {
 
 	sub := &unsubscribe{Request: newID(), Subscription: subscriptionID}
 
-	if msg, err := c.honcho.requestListenType(sub, "*coreRiffle.unsubscribed"); err != nil {
-		return nil, err
+	if _, err := c.honcho.requestListenType(sub, "*coreRiffle.unsubscribed"); err != nil {
+		return err
 	} else {
 		Info("Unsubscribed: %s", endpoint)
 		delete(c.subscriptions, subscriptionID)
@@ -185,7 +184,7 @@ func (c domain) Unregister(endpoint string) error {
 		if msg, err := c.honcho.requestListen(unregister); err != nil {
 			return err
 		} else if _, ok := msg.(*unregistered); !ok {
-			return fmt.Errorf(formatUnexpectedMessage(msg, uNREGISTERED))
+			return fmt.Errorf(formatUnexpectedMessage(msg, uNREGISTERED.String()))
 		} else {
 			Info("Unregistered: %s", endpoint)
 			delete(c.registrations, procedureID)
