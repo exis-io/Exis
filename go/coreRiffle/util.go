@@ -27,7 +27,7 @@ func newID() uint {
 	return uint(rand.Int63n(maxId))
 }
 
-func formatUnexpectedMessage(msg message, expected messageType) string {
+func formatUnexpectedMessage(msg message, expected string) string {
 	s := fmt.Sprintf("received unexpected %s message while waiting for %s", msg.messageType(), expected)
 	switch m := msg.(type) {
 	case *abort:

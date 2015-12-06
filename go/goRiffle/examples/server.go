@@ -25,5 +25,6 @@ func main() {
 		goRiffle.Info("Unable to subscribe: ", e.Error())
 	}
 
+	// Run the client until Leave is called
 	a.Run()
 }

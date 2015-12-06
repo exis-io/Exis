@@ -23,13 +23,13 @@ func Debug(format string, a ...interface{}) {
 }
 
 func Info(format string, a ...interface{}) {
-	if logLevel >= levelDebug {
+	if logLevel >= levelInfo {
 		out(fmt.Sprintf(format, a...), color.Green)
 	}
 }
 
 func Warn(format string, a ...interface{}) {
-	if logLevel >= levelDebug {
+	if logLevel >= levelWarn {
 		out(fmt.Sprintf(format, a...), color.Yellow)
 	}
 }

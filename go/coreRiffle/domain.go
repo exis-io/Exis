@@ -7,7 +7,6 @@ import (
 
 // The reeceiving end
 type Delegate interface {
-
 	// Called by core when something needs doing
 	Invoke(string, uint, []interface{}) ([]interface{}, error)
 
@@ -146,10 +145,8 @@ func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error)
 
 	call := &call{Request: newID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
 
-	if msg, err := c.honcho.requestListen(call); err != nil {
+	if msg, err := c.honcho.requestListenType(call, "*coreRiffle.result"); err != nil {
 		return nil, err
-	} else if result, ok := msg.(*result); !ok {
-		return nil, fmt.Errorf(formatUnexpectedMessage(msg, rESULT))
 	} else {
 		return result.Arguments, nil
 	}
@@ -167,15 +164,13 @@ func (c domain) Unsubscribe(endpoint string) error {
 
 	sub := &unsubscribe{Request: newID(), Subscription: subscriptionID}
 
-	if msg, err := c.honcho.requestListen(sub); err != nil {
-		return err
-	} else if _, ok := msg.(*unsubscribed); !ok {
-		return fmt.Errorf(formatUnexpectedMessage(msg, uNSUBSCRIBED))
+	if msg, err := c.honcho.requestListenType(sub, "*coreRiffle.unsubscribed"); err != nil {
+		return nil, err
+	} else {
+		Info("Unsubscribed: %s", endpoint)
+		delete(c.subscriptions, subscriptionID)
+		return nil
 	}
-
-	Info("Unsubscribed: %s", endpoint)
-	delete(c.subscriptions, subscriptionID)
-	return nil
 }
 
 // Unregister removes a procedure with the Node
@@ -221,7 +216,7 @@ func (c domain) handleInvocation(msg *invocation) {
 				}
 			}
 
-			// Careful-- we can't yield in some languages
+			// Careful-- we can't yield in some languages. Have to implement the yield as a seperate function
 			// var tosend message
 
 			// tosend = &yield{

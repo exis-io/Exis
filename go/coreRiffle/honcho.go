@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"reflect"
 	"time"
 )
 
@@ -213,7 +214,7 @@ func (c honcho) ReceiveBytes(byt []byte) {
 	}
 }
 
-// Send a message and wait for the response
+// Send a message and blocks until a response
 func (c *honcho) requestListen(outgoing message) (message, error) {
 	if err := c.Send(outgoing); err != nil {
 		return nil, err
@@ -230,6 +231,32 @@ func (c *honcho) requestListen(outgoing message) (message, error) {
 		}
 
 		return msg, nil
+	case <-time.After(MessageTimeout):
+		return nil, fmt.Errorf("timeout while waiting for message")
+	}
+}
+
+// Send a message and blocks until the expected type of message is returned
+func (c *honcho) requestListenType(outgoing message, expecting string) (message, error) {
+	if err := c.Send(outgoing); err != nil {
+		return nil, err
+	}
+
+	wait := make(chan message, 1)
+	c.listeners[requestID(outgoing)] = wait
+	// delete the listener on receive
+
+	select {
+	case msg := <-wait:
+		Debug("incoming: %s, expecting: %s", reflect.TypeOf(msg), expecting)
+
+		if e, ok := msg.(*errorMessage); ok {
+			return nil, fmt.Errorf(e.Error)
+		} else if reflect.TypeOf(msg).String() != expecting {
+			return nil, fmt.Errorf(formatUnexpectedMessage(msg, expecting))
+		} else {
+			return msg, nil
+		}
 	case <-time.After(MessageTimeout):
 		return nil, fmt.Errorf("timeout while waiting for message")
 	}
