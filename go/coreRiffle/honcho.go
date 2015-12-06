@@ -103,9 +103,19 @@ func (c *honcho) domainJoined(d *domain) {
 func (c honcho) Send(m message) error {
 	Debug("Sending: %s: %s", m.messageType(), m)
 	if b, err := c.serializer.serialize(m); err != nil {
-		c.out <- b
 		return err
 	} else {
+		c.out <- b
+		return nil
+	}
+}
+
+func (c honcho) SendNow(m message) error {
+	Debug("Sending: %s: %s", m.messageType(), m)
+	if b, err := c.serializer.serialize(m); err != nil {
+		return err
+	} else {
+		c.Connection.Send(b)
 		return nil
 	}
 }
@@ -120,30 +130,34 @@ func (c honcho) Close(reason string) {
 	// especially when either end could call and trigger a close
 }
 
-func (c honcho) run() error {
+func (c honcho) receiveLoop() {
+	Debug("Receive loop opened")
+
 	for {
-		select {
-		case msg, open := <-c.in:
-			if !open {
-				return fmt.Errorf("receive channel closed")
-			}
-
+		if msg, open := <-c.in; !open {
+			Warn("Receive loop close")
+			break
+		} else {
 			Info("Received message", msg)
+			c.handle(msg)
+		}
+	}
+}
 
-		case b, open := <-c.out:
-			if !open {
-				return fmt.Errorf("receive channel closed")
-			}
+func (c honcho) sendLoop() {
+	Debug("Send loop opened")
 
-			Info("Sending message", b)
+	for {
+		if b, open := <-c.out; !open {
+			Info("Send loop closed")
+			break
+		} else {
 			c.Connection.Send(b)
 		}
 	}
-
-	return nil
 }
 
-func (c honcho) Handle(msg message) {
+func (c honcho) handle(msg message) {
 	switch msg := msg.(type) {
 
 	case *event:
@@ -176,7 +190,8 @@ func (c honcho) Handle(msg message) {
 
 // All incoming messages end up here one way or another
 func (c honcho) ReceiveMessage(msg message) {
-	c.Handle(msg)
+	// c.Handle(msg)
+	c.in <- msg
 }
 
 // Do we really want to throw errors back into the connection here?
@@ -186,6 +201,8 @@ func (c honcho) ReceiveString(msg string) {
 
 // Theres a method on the serializer that does this exact thing. Is this specific to JS?
 func (c honcho) ReceiveBytes(byt []byte) {
+	Debug("Received bytes")
+
 	var dat []interface{}
 
 	if err := json.Unmarshal(byt, &dat); err != nil {
@@ -194,7 +211,8 @@ func (c honcho) ReceiveBytes(byt []byte) {
 	}
 
 	if m, err := c.serializer.deserializeString(dat); err == nil {
-		c.Handle(m)
+		// c.Handle(m)
+		c.in <- m
 	} else {
 		Info("Unable to unmarshal json string! Message: ", m)
 	}

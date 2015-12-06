@@ -103,6 +103,7 @@ func (d domain) Join() error {
 			return err
 		}
 
+		c.Honcho = wrap.honcho
 		wrap.conn = c
 		return d.mirror.Join(c)
 	}

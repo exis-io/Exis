@@ -65,7 +65,7 @@ func (c domain) Join(conn Connection) error {
 	c.honcho.Connection = conn
 
 	// Should we hard close on conn.Close()? The Head Honcho may be interested in knowing about the close
-	if err := c.honcho.Send(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {
+	if err := c.honcho.SendNow(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {
 		c.honcho.Close("ERR: could not send a hello message")
 		return err
 	}
@@ -74,10 +74,13 @@ func (c domain) Join(conn Connection) error {
 		c.honcho.Close(err.Error())
 		return err
 	} else if _, ok := msg.(*welcome); !ok {
-		c.honcho.Send(&abort{Details: map[string]interface{}{}, Reason: "Error- unexpected_message_type"})
+		c.honcho.SendNow(&abort{Details: map[string]interface{}{}, Reason: "Error- unexpected_message_type"})
 		c.honcho.Close("Error- unexpected_message_type")
 		return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME))
 	}
+
+	go c.honcho.receiveLoop()
+	go c.honcho.sendLoop()
 
 	c.honcho.domainJoined(&c)
 	return nil
