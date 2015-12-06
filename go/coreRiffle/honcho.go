@@ -7,48 +7,48 @@ import (
 	"time"
 )
 
+type Persistence interface {
+	Load(string, []byte)
+	Save(string, []byte)
+}
+
+// Interface to external connection implementations
 type Connection interface {
 	// Send a message
-	Send(message) error
+	Send([]byte) error
 
 	// Closes the peer connection and any channel returned from Receive().
 	// Calls with a reason for the close
 	Close(string)
-
-	// Receive returns a channel of messages coming from the peer.
-	// NOTE: I think this should be reactive
-	Receive() <-chan message
 }
 
-type Persistence interface {
-	Load(string []byte)
-	Save(string, []byte)
-}
-
-// Keeps track of all the domains and handles message passing between them
-// You do not get another connection for every domain, but you can
-// with another honcho
-
+// Manages a set of domains, receives messages from the wrapper's connections
 type Honcho interface {
 	NewDomain(string, Delegate) Domain
 
 	ReceiveBytes([]byte)
 	ReceiveString(string)
 	ReceiveMessage(message)
+
+	Close(string)
 }
 
 type honcho struct {
-	Connection
 	domains []*domain
+	Connection
 	serializer
+	in        chan message
+	out       chan []byte
 	listeners map[uint]chan message
 }
 
 // Initialize the core
 func Initialize() Honcho {
 	return honcho{
-		serializer: new(jSONSerializer),
 		domains:    make([]*domain, 0),
+		serializer: new(jSONSerializer),
+		in:         make(chan message, 10),
+		out:        make(chan []byte, 10),
 		listeners:  make(map[uint]chan message),
 	}
 }
@@ -75,7 +75,7 @@ func (c *honcho) domainLeft(d *domain) error {
 		c.domains = dems
 	}
 
-	if err := c.Connection.Send(&goodbye{
+	if err := c.Send(&goodbye{
 		Details: map[string]interface{}{},
 		Reason:  ErrCloseRealm,
 	}); err != nil {
@@ -84,7 +84,7 @@ func (c *honcho) domainLeft(d *domain) error {
 
 	// if no domains remain, terminate the connection
 	if len(c.domains) == 0 {
-		c.Connection.Close("Closing: no domains connected")
+		c.Close("Closing: no domains connected")
 	}
 
 	return nil
@@ -100,7 +100,42 @@ func (c *honcho) domainJoined(d *domain) {
 	}
 }
 
-func Handle(c honcho) {
+func (c honcho) Send(m message) error {
+	if b, err := c.serializer.serialize(m); err != nil {
+		c.out <- b
+		return err
+	} else {
+		return nil
+	}
+}
+
+func (c honcho) run() error {
+	// run in a goroutine
+	//catch the channel close
+
+	for {
+		select {
+		case msg, open := <-c.in:
+			if !open {
+				return fmt.Errorf("receive channel closed")
+			}
+
+			fmt.Println("Received message", msg)
+
+		case b, open := <-c.out:
+			if !open {
+				return fmt.Errorf("receive channel closed")
+			}
+
+			fmt.Println("Sending message", b)
+			c.Connection.Send(b)
+		}
+	}
+
+	return nil
+}
+
+func (c honcho) Handle(msg message) {
 	switch msg := msg.(type) {
 
 	case *event:
@@ -118,7 +153,7 @@ func Handle(c honcho) {
 		}
 
 	case *goodbye:
-		c.Connection.Close("Fabric said goodbye. Closing connection")
+		c.Close("Fabric said goodbye. Closing connection")
 
 	default:
 		if l, ok := c.listeners[requestID(msg)]; ok {
@@ -132,12 +167,12 @@ func Handle(c honcho) {
 
 // All incoming messages end up here one way or another
 func (c honcho) ReceiveMessage(msg message) {
-
+	c.Handle(msg)
 }
 
 // Do we really want to throw errors back into the connection here?
 func (c honcho) ReceiveString(msg string) {
-	c.HandleBytes([]byte(msg))
+	c.ReceiveBytes([]byte(msg))
 }
 
 // Theres a method on the serializer that does this exact thing. Is this specific to JS?
@@ -150,7 +185,7 @@ func (c honcho) ReceiveBytes(byt []byte) {
 	}
 
 	if m, err := c.serializer.deserializeString(dat); err == nil {
-		c.HandleMessage(m)
+		c.Handle(m)
 	} else {
 		fmt.Println("Unable to unmarshal json string! Message: ", m)
 	}
@@ -163,6 +198,8 @@ func (c *honcho) requestListen(outgoing message) (message, error) {
 	}
 
 	wait := make(chan message, 1)
+
+	// add the channel to the listeners field!!
 
 	select {
 	case msg := <-wait:
@@ -177,19 +214,21 @@ func (c *honcho) requestListen(outgoing message) (message, error) {
 }
 
 // Conn work
-func (c websocketConnection) BlockMessage() (message, error) {
-	return getMessageTimeout(c, coreRiffle.MessageTimeout)
-}
+// func (c websocketConnection) BlockMessage() (message, error) {
+// 	return getMessageTimeout(c, coreRiffle.MessageTimeout)
+// }
 
-func getMessageTimeout(p websocketConnection, t time.Duration) (message, error) {
+// Dont really need this, can put an interceptor at the top of the receive loop
+// Do need something, though
+func (c honcho) getMessageTimeout() (message, error) {
 	select {
-	case msg, open := <-p.Receive():
+	case msg, open := <-c.in:
 		if !open {
 			return nil, fmt.Errorf("receive channel closed")
 		}
 
 		return msg, nil
-	case <-time.After(t):
+	case <-time.After(MessageTimeout):
 		return nil, fmt.Errorf("timeout waiting for message")
 	}
 }

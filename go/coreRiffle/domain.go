@@ -25,7 +25,7 @@ type Domain interface {
 	Unsubscribe(string) error
 	Unregister(string) error
 
-	Join(Connection) error
+	Join() error
 	Leave() error
 }
 
@@ -56,33 +56,34 @@ func (s *domain) Subdomain(name string) *domain {
 
 // Accepts a connection that has just been opened. This method should only
 // be called once, to initialize the fabric
-func (c domain) Join(conn Connection) error {
-	if c.joined {
-		return fmt.Errorf("Domain %s is already joined", c.name)
-	}
+func (c domain) Join() error {
+	// if c.joined {
+	// 	return fmt.Errorf("Domain %s is already joined", c.name)
+	// }
 
-	// Should we hard close on conn.Close()? The Head Honcho may be interested in knowing about the close
-	if err := conn.Send(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {
-		conn.Close("ERR: could not send a hello message")
-		return err
-	}
+	// // Should we hard close on conn.Close()? The Head Honcho may be interested in knowing about the close
+	// if err := conn.Send(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {
+	// 	conn.Close("ERR: could not send a hello message")
+	// 	return err
+	// }
 
-	if msg, err := conn.BlockMessage(); err != nil {
-		conn.Close(err.Error())
-		return err
-	} else if _, ok := msg.(*welcome); !ok {
-		conn.Send(&abort{
-			Details: map[string]interface{}{},
-			Reason:  "Error- unexpected_message_type",
-		})
-		conn.Close("Error- unexpected_message_type")
-		return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME))
-	} else {
+	// if msg, err := conn.BlockMessage(); err != nil {
+	// 	conn.Close(err.Error())
+	// 	return err
+	// } else if _, ok := msg.(*welcome); !ok {
+	// 	conn.Send(&abort{
+	// 		Details: map[string]interface{}{},
+	// 		Reason:  "Error- unexpected_message_type",
+	// 	})
+	// 	conn.Close("Error- unexpected_message_type")
+	// 	return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME))
+	// } else {
 
-		c.honcho.Connection = conn
-		c.honcho.domainJoined(&c)
-		return nil
-	}
+	// 	c.honcho.domainJoined(&c)
+	// 	return nil
+	// }
+
+	return nil
 }
 
 func (c domain) Leave() error {

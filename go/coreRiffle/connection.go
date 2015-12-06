@@ -17,7 +17,7 @@ package coreRiffle
 
 // 	// Receive returns a channel of messages coming from the peer.
 // 	// NOTE: I think this should be reactive
-// 	Receive() <-chan message
+// 	// Receive() <-chan message
 // }
 
 // type internalConnection struct {
