@@ -131,7 +131,7 @@ func (c honcho) Close(reason string) {
 }
 
 func (c honcho) receiveLoop() {
-	Debug("Receive loop opened")
+	// Debug("Receive loop opened")
 
 	for {
 		if msg, open := <-c.in; !open {
@@ -145,7 +145,7 @@ func (c honcho) receiveLoop() {
 }
 
 func (c honcho) sendLoop() {
-	Debug("Send loop opened")
+	// Debug("Send loop opened")
 
 	for {
 		if b, open := <-c.out; !open {

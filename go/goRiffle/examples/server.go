@@ -9,8 +9,8 @@ func main() {
 
 	a.Join()
 
-	e := a.Subscribe("reg", func() {
-		goRiffle.Info("Call received!")
+	e := a.Subscribe("sub", func() {
+		goRiffle.Info("Pub received!")
 	})
 
 	if e != nil {

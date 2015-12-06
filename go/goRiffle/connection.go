@@ -35,7 +35,7 @@ func Open(url string) (*websocketConnection, error) {
 }
 
 func (ep *websocketConnection) Send(data []byte) {
-	coreRiffle.Debug("Writing data")
+	// coreRiffle.Debug("Writing data")
 
 	if err := ep.conn.WriteMessage(ep.payloadType, data); err != nil {
 		panic("No one is dealing with my errors! Cant write to socket")
@@ -82,7 +82,7 @@ func (ep *websocketConnection) run() {
 			// ep.Honcho.Close()
 			break
 		} else {
-			coreRiffle.Debug("Socket received data")
+			// coreRiffle.Debug("Socket received data")
 			ep.Honcho.ReceiveBytes(bytes)
 		}
 	}

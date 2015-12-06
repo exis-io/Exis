@@ -96,6 +96,8 @@ func (c domain) Leave() error {
 
 // Subscribe registers the EventHandler to be called for every message in the provided endpoint.
 func (c domain) Subscribe(endpoint string, types []interface{}) (uint, error) {
+	endpoint = makeEndpoint(c.name, endpoint)
+
 	sub := &subscribe{Request: newID(), Options: make(map[string]interface{}), Name: endpoint}
 
 	if msg, err := c.honcho.requestListen(sub); err != nil {
