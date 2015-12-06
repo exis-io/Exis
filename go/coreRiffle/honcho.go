@@ -102,6 +102,7 @@ func (c *honcho) domainJoined(d *domain) {
 
 func (c honcho) Send(m message) error {
 	Debug("Sending: %s: %s", m.messageType(), m)
+
 	if b, err := c.serializer.serialize(m); err != nil {
 		return err
 	} else {
@@ -131,22 +132,18 @@ func (c honcho) Close(reason string) {
 }
 
 func (c honcho) receiveLoop() {
-	// Debug("Receive loop opened")
-
 	for {
 		if msg, open := <-c.in; !open {
 			Warn("Receive loop close")
 			break
 		} else {
-			Info("Received message", msg)
+			Debug("Received message", msg)
 			c.handle(msg)
 		}
 	}
 }
 
 func (c honcho) sendLoop() {
-	// Debug("Send loop opened")
-
 	for {
 		if b, open := <-c.out; !open {
 			Info("Send loop closed")
@@ -201,8 +198,6 @@ func (c honcho) ReceiveString(msg string) {
 
 // Theres a method on the serializer that does this exact thing. Is this specific to JS?
 func (c honcho) ReceiveBytes(byt []byte) {
-	Debug("Received bytes")
-
 	var dat []interface{}
 
 	if err := json.Unmarshal(byt, &dat); err != nil {

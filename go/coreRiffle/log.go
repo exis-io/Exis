@@ -8,22 +8,34 @@ import (
 	"github.com/fatih/color"
 )
 
-// const (
-// 	levelDebug int = 5
-// )
+const (
+	levelWarn  int = 1
+	levelInfo  int = 2
+	levelDebug int = 3
+)
 
-// var logLevel int = 0
+var logLevel int = 0
 
 func Debug(format string, a ...interface{}) {
-	out(fmt.Sprintf(format, a...), color.Blue)
+	if logLevel >= levelDebug {
+		out(fmt.Sprintf(format, a...), color.Blue)
+	}
 }
 
 func Info(format string, a ...interface{}) {
-	out(fmt.Sprintf(format, a...), color.Green)
+	if logLevel >= levelDebug {
+		out(fmt.Sprintf(format, a...), color.Green)
+	}
 }
 
 func Warn(format string, a ...interface{}) {
-	out(fmt.Sprintf(format, a...), color.Yellow)
+	if logLevel >= levelDebug {
+		out(fmt.Sprintf(format, a...), color.Yellow)
+	}
+}
+
+func SetLogging(level int) {
+	logLevel = level
 }
 
 func out(mess string, printer func(string, ...interface{})) {

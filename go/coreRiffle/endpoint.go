@@ -27,7 +27,11 @@ func validAction(s string) bool {
 }
 
 func makeEndpoint(d string, a string) string {
-	return d + "/" + a
+	if strings.Contains(a, "xs.") {
+		return a
+	} else {
+		return d + "/" + a
+	}
 }
 
 // Extract action from endpoint. Endpoint without a closing slash

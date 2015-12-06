@@ -83,6 +83,7 @@ func (c domain) Join(conn Connection) error {
 	go c.honcho.sendLoop()
 
 	c.honcho.domainJoined(&c)
+	Info("Domain joined")
 	return nil
 }
 
@@ -105,26 +106,32 @@ func (c domain) Subscribe(endpoint string, types []interface{}) (uint, error) {
 	} else if subbed, ok := msg.(*subscribed); !ok {
 		return 0, fmt.Errorf(formatUnexpectedMessage(msg, sUBSCRIBED))
 	} else {
+		Info("Subscribed: %s", endpoint)
 		c.subscriptions[subbed.Subscription] = &boundEndpoint{endpoint, types}
 		return subbed.Subscription, nil
 	}
 }
 
-func (c domain) Register(procedure string, types []interface{}) (uint, error) {
-	register := &register{Request: newID(), Options: make(map[string]interface{}), Name: procedure}
+func (c domain) Register(endpoint string, types []interface{}) (uint, error) {
+	endpoint = makeEndpoint(c.name, endpoint)
+
+	register := &register{Request: newID(), Options: make(map[string]interface{}), Name: endpoint}
 
 	if msg, err := c.honcho.requestListen(register); err != nil {
 		return 0, err
 	} else if reg, ok := msg.(*registered); !ok {
 		return 0, fmt.Errorf(formatUnexpectedMessage(msg, rEGISTERED))
 	} else {
-		c.registrations[reg.Registration] = &boundEndpoint{procedure, types}
+		Info("Registered: %s", endpoint)
+		c.registrations[reg.Registration] = &boundEndpoint{endpoint, types}
 		return reg.Registration, nil
 	}
 }
 
 // Publish publishes an eVENT to all subscribed peers.
 func (c domain) Publish(endpoint string, args []interface{}) error {
+	endpoint = makeEndpoint(c.name, endpoint)
+
 	return c.honcho.Send(&publish{
 		Request:   newID(),
 		Options:   make(map[string]interface{}),
@@ -134,8 +141,10 @@ func (c domain) Publish(endpoint string, args []interface{}) error {
 }
 
 // Call calls a procedure given a URI.
-func (c domain) Call(procedure string, args []interface{}) ([]interface{}, error) {
-	call := &call{Request: newID(), Name: procedure, Options: make(map[string]interface{}), Arguments: args}
+func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error) {
+	endpoint = makeEndpoint(c.name, endpoint)
+
+	call := &call{Request: newID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
 
 	if msg, err := c.honcho.requestListen(call); err != nil {
 		return nil, err
@@ -148,6 +157,8 @@ func (c domain) Call(procedure string, args []interface{}) ([]interface{}, error
 
 // Unsubscribe removes the registered EventHandler from the endpoint.
 func (c domain) Unsubscribe(endpoint string) error {
+	endpoint = makeEndpoint(c.name, endpoint)
+
 	subscriptionID, _, ok := bindingForEndpoint(c.subscriptions, endpoint)
 
 	if !ok {
@@ -162,14 +173,17 @@ func (c domain) Unsubscribe(endpoint string) error {
 		return fmt.Errorf(formatUnexpectedMessage(msg, uNSUBSCRIBED))
 	}
 
+	Info("Unsubscribed: %s", endpoint)
 	delete(c.subscriptions, subscriptionID)
 	return nil
 }
 
 // Unregister removes a procedure with the Node
-func (c domain) Unregister(procedure string) error {
-	if procedureID, _, ok := bindingForEndpoint(c.registrations, procedure); !ok {
-		return fmt.Errorf("domain %s is not registered with this domain.", procedure)
+func (c domain) Unregister(endpoint string) error {
+	endpoint = makeEndpoint(c.name, endpoint)
+
+	if procedureID, _, ok := bindingForEndpoint(c.registrations, endpoint); !ok {
+		return fmt.Errorf("domain %s is not registered with this domain.", endpoint)
 	} else {
 		unregister := &unregister{Request: newID(), Registration: procedureID}
 
@@ -178,6 +192,7 @@ func (c domain) Unregister(procedure string) error {
 		} else if _, ok := msg.(*unregistered); !ok {
 			return fmt.Errorf(formatUnexpectedMessage(msg, uNREGISTERED))
 		} else {
+			Info("Unregistered: %s", endpoint)
 			delete(c.registrations, procedureID)
 			return nil
 		}

@@ -149,3 +149,13 @@ func Info(format string, a ...interface{}) {
 func Warn(format string, a ...interface{}) {
 	coreRiffle.Warn(format, a...)
 }
+
+const (
+	LOGWARN  int = 1
+	LOGINFO  int = 2
+	LOGDEBUG int = 3
+)
+
+func SetLogging(level int) {
+	coreRiffle.SetLogging(level)
+}
