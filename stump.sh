@@ -175,6 +175,9 @@ core() {
     # mv products/osx.h osx/RiffleTest/osx.h 
     # mv products/osx.a osx/RiffleTest/osx.a
 
+    echo "Building Swift Container"
+    go build -buildmode=c-shared -o ios/container/libriff.so go/coreRiffle/wrappers/swiftlinux.go
+
 
     # echo "Building iOS"
     # GOGCCFLAGS="--Wl,-no_pie" gomobile bind -ldflags="-extldflags=-pie" -target=ios -work github.com/exis-io/goriffle
@@ -190,14 +193,20 @@ core() {
     # go build -buildmode=c-shared -o python/pyRiffle/riffle/libriff.so go/coreRiffle/wrappers/osx.go
 
 
-    echo "Building gojs"
-    gopherjs build -m go/coreRiffle/wrappers/jsRiffle.go
+    # echo "Building gojs"
+    # gopherjs build -m go/coreRiffle/wrappers/jsRiffle.go
 
-    mv jsRiffle.js js/jsRiffle/src/go.js
-    mv jsRiffle.js.map js/jsRiffle/src/go.js.map
+    # mv jsRiffle.js js/jsRiffle/src/go.js
+    # mv jsRiffle.js.map js/jsRiffle/src/go.js.map
 
     exit
 }
+
+# run() {
+#     # Run
+#     LD_LIBRARY_PATH=./ios/container:$LD_LIBRARY_PATH ./ios/container/biddly
+#     exit 
+# }
 
 python() {
     echo "Updating python"
@@ -213,6 +222,7 @@ case "$1" in
     "go") go;;
     "core") core;;
     "python") python;;
+    "run") run;;
     *) echo "Unknown input $1"
    ;;
 esac

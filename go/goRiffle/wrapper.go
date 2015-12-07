@@ -150,12 +150,24 @@ func Warn(format string, a ...interface{}) {
 	coreRiffle.Warn(format, a...)
 }
 
-const (
-	LOGWARN  int = 1
-	LOGINFO  int = 2
-	LOGDEBUG int = 3
-)
+// const (
+// 	LOGWARN  int = 1
+// 	LOGINFO  int = 2
+// 	LOGDEBUG int = 3
+// )
 
-func SetLogging(level int) {
-	coreRiffle.SetLogging(level)
+// func SetLogging(level int) {
+// 	coreRiffle.SetLogging(level)
+// }
+
+func SetLoggingDebug() {
+	coreRiffle.SetLoggingDebug()
+}
+
+func SetLoggingInfo() {
+	coreRiffle.SetLoggingInfo()
+}
+
+func SetLoggingWarn() {
+	coreRiffle.SetLoggingWarn()
 }

@@ -44,8 +44,8 @@ var wrap *wrapper
 func main() {
 	js.Global.Set("Core", map[string]interface{}{
 		"SetLoggingDebug": coreRiffle.SetLoggingDebug,
-		"SetLoggingDebug": coreRiffle.SetLoggingInfo,
-		"SetLoggingDebug": coreRiffle.SetLoggingWarn,
+		"SetLoggingInfo":  coreRiffle.SetLoggingInfo,
+		"SetLoggingWarn":  coreRiffle.SetLoggingWarn,
 	})
 
 	// Change Wrapper to Pool

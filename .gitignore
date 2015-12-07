@@ -11,3 +11,8 @@ CardsAgainstHumanityDemo/swiftCardsAgainst/ExAgainst.xcworkspace/xcuserdata/Damo
 *.swiftmodule
 biddly
 *.o
+*.so
+
+libriff.h
+libriff.so
+

@@ -31,9 +31,11 @@ func Error(format string, a ...interface{}) {
 }
 
 func out(mess string) {
-	if writer != nil {
-		writer.Write(fmt.Sprintf("[%s] %s", trace(), mess))
-	}
+	// if writer != nil {
+	// 	writer.Write(fmt.Sprintf("[%s] %s", trace(), mess))
+	// }
+
+	fmt.Println(fmt.Sprintf("[%s] %s", trace(), mess))
 }
 
 // This might not make any sense for non-go languages...
