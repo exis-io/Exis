@@ -4,8 +4,8 @@
 # 
 #
 # Its nice to have the go code in this directory and not go/src, symlink something like this
-#   ln -s ~/code/merged/riffle/go/goRiffle/ ~/code/go/src/github.com/exis-io/goRiffle
-#   ln -s ~/code/merged/riffle/go/coreRiffle $GOPATH/src/github.com/exis-io/coreRiffle
+  ln -s /home/damouse/Documents/merged/riffle/go/goRiffle/ /home/damouse/Documents/go/src/github.com/exis-io/goRiffle
+  ln -s /home/damouse/Documents/merged/riffle/go/coreRiffle /home/damouse/Documents/go/src/github.com/exis-io/coreRiffle
 #
 
 if [ $# -lt 1 ]
