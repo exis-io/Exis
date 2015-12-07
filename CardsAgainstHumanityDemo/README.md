@@ -29,7 +29,7 @@ Returns:    [string] cards, [Player] players, string state, string roomName
 
 To isolate the rooms from one another they expose their functionality using dynamically constructed endpoints. The name of the room, as returned in the function above, replaces the `$` in the calls below. For example, with an endpoint `/$/ping` a room called `first` exposes: `/first/ping`.
 
-Tell the room the user picked a card:
+Tell the room the user picked a card. This is a `#details` registration: room also receives the name of the caller.
 
 ```
 Endpoint:   gamelogic/$/pick
