@@ -4,8 +4,8 @@
 # 
 #
 # Its nice to have the go code in this directory and not go/src, symlink something like this
-  ln -s /home/damouse/Documents/merged/riffle/go/goRiffle/ /home/damouse/Documents/go/src/github.com/exis-io/goRiffle
-  ln -s /home/damouse/Documents/merged/riffle/go/coreRiffle /home/damouse/Documents/go/src/github.com/exis-io/coreRiffle
+  # ln -s /home/damouse/Documents/merged/riffle/go/goRiffle/ /home/damouse/Documents/go/src/github.com/exis-io/goRiffle
+  # ln -s /home/damouse/Documents/merged/riffle/go/coreRiffle /home/damouse/Documents/go/src/github.com/exis-io/coreRiffle
 #
 
 if [ $# -lt 1 ]
@@ -84,11 +84,6 @@ pull() {
 
     git subtree pull --prefix go/goRiffle goRiffle master -m 'Update to stump' --squash
     git subtree pull --prefix go/coreRiffle coreRiffle master -m 'Update to stump' --squash
-
-    # Link them forward so this version can be edited
-    # ln -s go/goRiffle $GOPATH/src/github.com/exis-io/goRiffle
-    # ln -s go/coreRiffle $GOPATH/src/github.com/exis-io/coreRiffle
-
 }
 
 ios() {
@@ -166,21 +161,16 @@ js() {
     # Do something with the seed app!
 }
 
-go() {
-    echo "Building go"
-    exit
-}
-
 core() {
     # echo "Building OSX"
-    # GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o products/osx.a goriffle/runner/osx.go
+    # GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o products/osx.a goriffle/runner/c.go
 
     # # rm osx/RiffleTest/osx.h osx/RiffleTest/osx.a
     # mv products/osx.h osx/RiffleTest/osx.h 
     # mv products/osx.a osx/RiffleTest/osx.a
 
-    echo "Building Swift Container"
-    go build -buildmode=c-shared -o swift/container/libriff.so go/coreRiffle/wrappers/swiftlinux.go
+    echo "Building Swift Crust"
+    go build -buildmode=c-shared -o swift/container/libriffle.so go/coreRiffle/wrappers/swift.go
 
 
     # echo "Building iOS"
@@ -190,11 +180,11 @@ core() {
 
 
     # iOS naively like above. Doesn't work. 
-    # GOARM=7 CGO_ENABLED=1 GOARCH=arm go build -buildmode=c-archive -o products/ios.a goriffle/runner/osx.go
+    # GOARM=7 CGO_ENABLED=1 GOARCH=arm go build -buildmode=c-archive -o products/ios.a goriffle/runner/c.go
 
 
     # echo "Building Python"
-    # go build -buildmode=c-shared -o python/pyRiffle/riffle/libriff.so go/coreRiffle/wrappers/osx.go
+    # go build -buildmode=c-shared -o python/pyRiffle/riffle/libriff.so go/coreRiffle/wrappers/c.go
 
 
     # echo "Building gojs"
