@@ -1,5 +1,5 @@
 var riffle = require('jsriffle');
-riffle.setDevFabric();
+// riffle.setDevFabric();
 
 // var app = new riffle.Domain("xs.demo");
 // var ng = app.subdomain("angular");
@@ -23,4 +23,4 @@ riffle.setDevFabric();
 
 // me.join();
 
-riffle.HelloWorld("JS CLIENT: This function is called from the client library")
+// riffle.HelloWorld("JS CLIENT: This function is called from the client library")

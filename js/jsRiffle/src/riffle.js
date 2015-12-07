@@ -62,33 +62,106 @@ exports.util = util;
 exports.log = log;
 
 // Global configuration
-FABRIC_URL = "ws://localhost:8000/ws";
-
-// TODO: fabric url doesn't set without calling this method 
-exports.setDevFabric = function(url) {
-    FABRIC_URL = 'ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws';
-};
 
 //
 // Begin GOJS implementation
 //
 
 var go = require('./go.js');
+var ws = require('./transport/websocket.js');
 
-var pet = global.pet.New("Fido");
-console.log("Pet: ", pet);
+FABRIC_URL = "ws://localhost:8000/ws";
+
+var Ws = function () {
+    self = this;
+
+    // console.log("Connection created")
+    // var connection = new riffle.Connection("Dont need a domain");
+    
+    // console.log(connection._transport_factories)
+    // this.conn = connection._create_transport()
+
+    // Theres also a transport.send(msg)
+    this.onmessage = function(message) {
+        consloe.log("DEFAULT message handler");
+    };
 
 
-exports.Domain = connection.Domain;
-// exports.Conn = connection.CoreConn;
+    this.open = function() {
+        // console.log(transport);
+        // protocol: undefined,
+        // send: [Function],
+        // close: [Function],
+        // onmessage: [Function],
+        // onopen: [Function],
+        // onclose: [Function],
+        // info: { type: 'websocket', url: null, protocol: 'wamp.2.json' } }
 
-// global.wrapper.HelloWorld("JS: This function is called from riffle.js")
-exports.HelloWorld = global.wrapper.HelloWorld;
+        var factory = new ws.Factory({'type': 'websocket', 'url': FABRIC_URL});
+        self.conn = factory.create();
+
+        // console.log(self.conn);
+
+        this.conn.onmessage = function(message) {
+            console.log("DEFAULT Message received: ", message);
+
+            if (self.onmessage) {
+                self.onmessage(message)
+            }
+        };
+
+        this.conn.onopen = function() {
+            // console.log("DEFAULT Transport opened");
+            global.Wrapper.ConnectionOpened();
+        };
+
+        this.conn.onclose = function() {
+            console.log("DEFAULT Transport closed");
+        };
+
+        // self.transport = self.conn.create();
+    }
+}; 
 
 
-console.log("Opening a connection");
-var conn = new connection.CoreConn();
+Ws.prototype.send = function(message) {
+    console.log("Sending message: ", message)
+    this.conn.send(message);
+};
+
+Ws.prototype.close = function(code, reason) {
+    console.log("Closing connection with reason: ", reason)
+    this.conn.close(code, reason)
+};
+
+
+
+global.Wrapper.New();
+console.log("Created wrapper");
+
+// 
+// This is the best way to get the socket to open, but not sure how to let it happen
+// 
+
+var conn = new Ws();
+conn.open()
+
+global.Wrapper.SetConnection(conn);
+// console.log("Opened a connection");
 
 // var domain = new global.wrapper.NewDomain("xs.damouse.js.alpha")
-var domain = global.Dom.NewDomain("xs.damouse.js.alpha")
-console.log("Created domain: ", domain);
+var domain = global.Domain.New("xs.damouse.js.alpha")
+console.log("Created domain");
+
+
+domain.Join()
+
+// domain.Subscribe("sub", function() {
+//     console.log("Received a publish!")
+// })
+
+// domain.Register("ret", function() {
+//     console.log("Received a call!")
+// })
+
+// domain.Run()

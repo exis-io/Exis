@@ -13,7 +13,8 @@ import (
 
 type wrapper struct {
 	honcho coreRiffle.Honcho
-	// conn   *websocketConnection
+	conn   *js.Object
+	opened chan bool
 }
 
 type domain struct {
@@ -42,53 +43,88 @@ var wrap *wrapper
 
 // Required main method
 func main() {
-	js.Global.Set("wrapper", map[string]interface{}{
-		"HelloWorld": HelloWorld,
-		"SetLogging": SetLogging,
+	// Change Riffle to Wrapper
+	// js.Global.Set("Riffle", map[string]interface{}{
+	// 	"SetLogging": SetLogging,
+	// })
+
+	// Change Wrapper to Pool
+	js.Global.Set("Wrapper", map[string]interface{}{
+		"New":              NewWrapper,
+		"SetConnection":    SetConnection,
+		"ConnectionOpened": ConnectionOpened,
 	})
 
-	js.Global.Set("Dom", map[string]interface{}{
-		"NewDomain": NewDomain,
+	js.Global.Set("Domain", map[string]interface{}{
+		"New": NewDomain,
 	})
 
-	js.Global.Set("pet", map[string]interface{}{
-		"New": New,
-	})
 }
 
-func HelloWorld(a string) {
-	fmt.Println("GO: Hello, world called")
-	// return "Hi, " + a
-}
+/////////////////////////////////////////////
+// Connection Wrapper
+/////////////////////////////////////////////
 
-// Pet Testing
-type Pet struct {
-	name string
-}
-
-func (p *Pet) Name() string {
-	return p.name
-}
-
-func (p *Pet) SetName(newName string) {
-	p.name = newName
-}
-
-func New(name string) *js.Object {
-	return js.MakeWrapper(&Pet{name})
-}
-
-// End pet testing
-
-func NewDomain(name string) *js.Object {
-	fmt.Println("Created a new domain")
-
+func NewWrapper() {
 	if wrap == nil {
 		h := coreRiffle.NewHoncho()
 
 		wrap = &wrapper{
 			honcho: h,
+			opened: make(chan bool),
 		}
+	}
+}
+
+func (w *wrapper) Send(data []byte) {
+	// fmt.Println("WARN: Cannot send binary data!")
+
+	// var dat []interface{}
+
+	// if err := json.Unmarshal(data, &dat); err != nil {
+	// 	fmt.Println("unmarshal json! Message: ", dat)
+	// } else {
+	// 	fmt.Println("Unable to unmarshal message")
+	// }
+
+	// if str, ok := data.(*string); ok {
+	// 	fmt.Println("message received: ", str)
+	// } else {
+	// 	fmt.Println("Unable to convert bytes to string!")
+	// }
+
+	w.conn.Call("send", string(data))
+}
+
+func (w *wrapper) SendString(json string) {
+	w.conn.Call("send", json)
+}
+
+func (w *wrapper) Close(reason string) error {
+	w.conn.Call("close", 1000, reason)
+	return nil
+}
+
+// Call SetConnection, then Join
+func SetConnection(c *js.Object) {
+	fmt.Println("Connection set: ", c)
+	wrap.conn = c
+	c.Set("onmessage", wrap.honcho.ReceiveString)
+}
+
+func ConnectionOpened() {
+	wrap.opened <- true
+}
+
+/////////////////////////////////////////////
+// Domain Functions
+/////////////////////////////////////////////
+
+func NewDomain(name string) *js.Object {
+	fmt.Println("Created a new domain")
+
+	if wrap == nil {
+		fmt.Println("WARN: wrapper hasn't been created yet!")
 	}
 
 	d := domain{
@@ -98,9 +134,7 @@ func NewDomain(name string) *js.Object {
 	}
 
 	d.mirror = wrap.honcho.NewDomain(name, d)
-
 	// fmt.Println("Created domain: ", d)
-
 	return js.MakeWrapper(&d)
 	// return d
 }
@@ -144,19 +178,29 @@ func (d *domain) Unregister(endpoint string) error {
 }
 
 func (d *domain) Join() error {
-	// Open a new connection if we don't have one yet
-	// if d.wrapper.conn == nil {
-	// 	c, err := Open(coreRiffle.LocalFabric)
 
-	// 	if err != nil {
-	// 		fmt.Println("Unable to open connection!")
-	// 		return err
-	// 	}
+	go func() {
+		// wait for onopen from the connection
+		<-d.wrapper.opened
 
-	// 	c.Honcho = wrap.honcho
-	// 	wrap.conn = c
-	// 	return d.mirror.Join(c)
-	// }
+		//Open a new connection if we don't have one yet
+		// Ideally this should be created on the spot on demand
+
+		// if d.wrapper.conn == nil {
+		// 	c, err := Open(coreRiffle.LocalFabric)
+
+		// 	if err != nil {
+		// 		fmt.Println("Unable to open connection!")
+		// 		return err
+		// 	}
+
+		// 	c.Honcho = wrap.honcho
+		// 	wrap.conn = c
+		// 	return d.mirror.Join(c)
+		// }
+
+		d.mirror.Join(d.wrapper)
+	}()
 
 	return nil
 }
@@ -172,6 +216,7 @@ func (d *domain) Leave() error {
 
 func (d domain) Invoke(endpoint string, id uint, args []interface{}) ([]interface{}, error) {
 	// return coreRiffle.Cumin(d.handlers[id], args)
+	fmt.Println("Invocation received!")
 	return nil, nil
 }
 
@@ -189,30 +234,9 @@ func (d *domain) Run() {
 	<-d.kill
 }
 
-// Debugging functions
-func Debug(format string, a ...interface{}) {
-	coreRiffle.Debug(format, a...)
-}
-
-func Info(format string, a ...interface{}) {
-	coreRiffle.Info(format, a...)
-}
-
-func Warn(format string, a ...interface{}) {
-	coreRiffle.Warn(format, a...)
-}
-
-const (
-	LOGWARN  int = 1
-	LOGINFO  int = 2
-	LOGDEBUG int = 3
-)
-
-func SetLogging(level int) {
-	coreRiffle.SetLogging(level)
-}
-
 // JS Specific, get the connection inside somehow
-func Open() {
+// func Open() {
 
-}
+// }
+
+// Pass in a connection object, set up handlers on it, and store it in the wrapper

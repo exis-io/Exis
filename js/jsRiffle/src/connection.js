@@ -139,9 +139,12 @@ var Connection = function (domain) {
 
 
 Connection.prototype._create_transport = function () {
+    //console.log("Transport factories: ", this._transport_factories);
+
    for (var i = 0; i < this._transport_factories.length; ++i) {
       var transport_factory = this._transport_factories[i];
       log.debug("trying to create WAMP transport of type: " + transport_factory.type);
+
       try {
          var transport = transport_factory.create();
          if (transport) {
@@ -533,109 +536,74 @@ Domain.prototype.subdomain = function(name) {
 
 
 // Joins and leaves
-Domain.prototype.join = function() {
-   var self = this;
-   self.connection = new riffle.Connection(self.domain);
+// Domain.prototype.join = function() {
+//    var self = this;
+//    self.connection = new riffle.Connection(self.domain);
 
-    self.connection.onJoin = function (session) {
-        self.session = session;
+//     self.connection.onJoin = function (session) {
+//         self.session = session;
 
-        for (var i = 0; i < self.pool.length; i++)  {
-            self.pool[i].session = session; 
-            self.pool[i].connection = this.connection;
-        }
+//         for (var i = 0; i < self.pool.length; i++)  {
+//             self.pool[i].session = session; 
+//             self.pool[i].connection = this.connection;
+//         }
 
-        for (var i = 0; i < self.pool.length; i++)  {
-            if (!self.pool[i].joined) {
-                self.pool[i].joined = true;
-                self.pool[i].onJoin();
-            }
-        }
-   };
+//         for (var i = 0; i < self.pool.length; i++)  {
+//             if (!self.pool[i].joined) {
+//                 self.pool[i].joined = true;
+//                 self.pool[i].onJoin();
+//             }
+//         }
+//    };
 
-   self.connection.join();
-};
+//    self.connection.join();
+// };
 
-Domain.prototype.leave = function() {
-    // Not done!
-    // this.session.close();
-};
+// Domain.prototype.leave = function() {
+//     // Not done!
+//     // this.session.close();
+// };
 
-Domain.prototype.onJoin = function() {
-    log.debug("Domain " + this.domain + " default join");
-};
+// Domain.prototype.onJoin = function() {
+//     log.debug("Domain " + this.domain + " default join");
+// };
 
-Domain.prototype.onLeave = function() {
-    log.debug("Domain " + this.domain + " default leave");
-};
+// Domain.prototype.onLeave = function() {
+//     log.debug("Domain " + this.domain + " default leave");
+// };
 
 
-// Message patterns
-Domain.prototype.subscribe = function(action, handler) {
-    return this.session.subscribe(prependDomain(this.domain, action), handler);
-};
+// // Message patterns
+// Domain.prototype.subscribe = function(action, handler) {
+//     return this.session.subscribe(prependDomain(this.domain, action), handler);
+// };
 
-Domain.prototype.register = function(action, handler) {
-    return this.session.register(prependDomain(this.domain, action), handler);
-};
+// Domain.prototype.register = function(action, handler) {
+//     return this.session.register(prependDomain(this.domain, action), handler);
+// };
 
-Domain.prototype.call = function() {
-    var args = flattenHash(arguments);
-    var action = args.shift();
+// Domain.prototype.call = function() {
+//     var args = flattenHash(arguments);
+//     var action = args.shift();
     
-    return this.session.call(prependDomain(this.domain, action), args);
-};
+//     return this.session.call(prependDomain(this.domain, action), args);
+// };
 
-Domain.prototype.publish = function() {
-    var args = flattenHash(arguments);
-    var action = args.shift();
+// Domain.prototype.publish = function() {
+//     var args = flattenHash(arguments);
+//     var action = args.shift();
 
-    return this.session.publish(prependDomain(this.domain, action), args);
-};
+//     return this.session.publish(prependDomain(this.domain, action), args);
+// };
 
-Domain.prototype.unsubscribe = function(action) {
+// Domain.prototype.unsubscribe = function(action) {
    
-};
+// };
 
-Domain.prototype.unregister = function(action) {
+// Domain.prototype.unregister = function(action) {
 
-};
-
-
-exports.Domain = Domain;
-
-var CoreConn = function () {
-    // console.log("Connection created")
-    var connection = new riffle.Connection("Dont need a domain");
-    
-    // console.log(connection._transport_factories)
-    this.conn = connection._create_transport()
-
-    // Theres also a transport.send(msg)
-
-    this.conn.onmessage = function(message) {
-        console.log("Message received: ", message);
-    };
-
-    this.conn.onopen = function() {
-        console.log("Transport opened");
-    };
-
-    this.conn.onclose = function() {
-        console.log("Transport closed");
-    };
-}; 
+// };
 
 
-CoreConn.prototype.Send = function(message) {
-    console.log("Sending message: ", message)
-};
-
-CoreConn.prototype.Close = function(reason) {
-    console.log("Closing connection with reason: ", reason)
-};
-
-exports.CoreConn = CoreConn;
-
-
+// exports.Domain = Domain;
 
