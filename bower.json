@@ -1,5 +1,5 @@
 {
-  "name": "jsriffle",
+  "name": "jsRiffle",
   "description": "Riffle allows applications to connect over a fabric",
   "main": "index.js",
   "authors": [

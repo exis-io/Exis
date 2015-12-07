@@ -1,8 +1,7 @@
-build
 node_modules
 *.log
-*.pyc
 *.pid
-Makefile
 .DS_Store
-deploy.py
+go.js
+go.js.map
+.DS_Store

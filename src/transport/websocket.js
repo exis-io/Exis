@@ -83,8 +83,7 @@ Factory.prototype.create = function () {
          }
 
          transport.send = function (msg) {
-            var payload = JSON.stringify(msg);
-            websocket.send(payload, {binary: false});
+            websocket.send(msg, {binary: false});
          };
 
          transport.close = function (code, reason) {
@@ -99,8 +98,9 @@ Factory.prototype.create = function () {
             if (flags.binary) {
                // FIXME!
             } else {
-               var msg = JSON.parse(data);
-               transport.onmessage(msg);
+                // console.log("Node WS receive: ", data)
+               // var msg = JSON.parse(data);
+               transport.onmessage(data);
             }
          });
 
@@ -183,9 +183,9 @@ Factory.prototype.create = function () {
          //websocket.onerror = websocket.onclose;
 
          transport.send = function (msg) {
-            var payload = JSON.stringify(msg);
+            // var payload = JSON.stringify(msg);
             log.debug("WebSocket transport send", payload);
-            websocket.send(payload);
+            websocket.send(msg);
          }
 
          transport.close = function (code, reason) {

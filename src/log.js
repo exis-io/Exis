@@ -12,12 +12,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
-var debug = function () {};
+// var debug = function () {};
 
-if ('RIFFLE_DEBUG' in global && RIFFLE_DEBUG && 'console' in global) {
+// if ('RIFFLE_DEBUG' in global && RIFFLE_DEBUG && 'console' in global) {
    debug = function () {
       console.log.apply(console, arguments);
    }
-}
+// }
 
 exports.debug = debug;
