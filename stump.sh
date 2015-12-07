@@ -49,23 +49,23 @@ init() {
 push() {
     echo "Pushing subtrees"
 
-    git subtree push --prefix ios/swiftRiffle swiftRiffle master
-    git subtree push --prefix ios/appBackendSeed iosAppBackendSeed master
-    git subtree push --prefix ios/appSeed iosAppSeed master
+    git subtree push --prefix ios/swiftRiffle swiftRiffle danger
+    git subtree push --prefix ios/appBackendSeed iosAppBackendSeed danger
+    git subtree push --prefix ios/appSeed iosAppSeed danger
 
-    git subtree push --prefix js/jsRiffle jsRiffle master
-    git subtree push --prefix js/ngRiffle ngRiffle master
-    git subtree push --prefix js/angularSeed ngSeed master
+    git subtree push --prefix js/jsRiffle jsRiffle danger
+    git subtree push --prefix js/ngRiffle ngRiffle danger
+    git subtree push --prefix js/angularSeed ngSeed danger
 
-    git subtree push --prefix go/goRiffle goRiffle master
-    git subtree push --prefix go/coreRiffle coreRiffle master
+    git subtree push --prefix go/goRiffle goRiffle danger
+    git subtree push --prefix go/coreRiffle coreRiffle danger
 
-    git subtree push --prefix python/pyRiffle pyRiffle master
+    git subtree push --prefix python/pyRiffle pyRiffle danger
 
-    git subtree push --prefix CardsAgainstHumanityDemo/swiftCardsAgainst iosCAH master
-    git subtree push --prefix CardsAgainstHumanityDemo/ngCardsAgainst ngCAH master
+    git subtree push --prefix CardsAgainstHumanityDemo/swiftCardsAgainst iosCAH danger
+    git subtree push --prefix CardsAgainstHumanityDemo/ngCardsAgainst ngCAH danger
 
-    git push origin master
+    git push origin danger
 }
 
 pull() {

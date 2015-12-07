@@ -6,3 +6,7 @@ core/sandbox/jsRiffle.js.map
 CardsAgainstHumanityDemo/swiftCardsAgainst/.DS_Store
 *.xcuserstate
 CardsAgainstHumanityDemo/swiftCardsAgainst/ExAgainst.xcworkspace/xcuserdata/Damouse.xcuserdatad/UserInterfaceState.xcuserstate
+
+*.swiftdoc
+*.swiftmodule
+biddly
