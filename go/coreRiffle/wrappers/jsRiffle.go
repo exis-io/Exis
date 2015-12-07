@@ -114,7 +114,7 @@ func SetConnection(c *js.Object) {
 }
 
 func NewMessage(c *js.Object) {
-	// fmt.Println("Message Receive: ", c.String())
+	fmt.Println("Message Receive: ", c.String())
 	wrap.honcho.ReceiveString(c.String())
 }
 
@@ -146,12 +146,17 @@ func NewDomain(name string) *js.Object {
 }
 
 func (d *domain) Subscribe(endpoint string, handler interface{}) error {
-	if i, err := d.mirror.Subscribe(endpoint, []interface{}{}); err != nil {
-		return err
-	} else {
-		d.handlers[i] = handler
-		return nil
-	}
+	go func() {
+		if i, err := d.mirror.Subscribe(endpoint, []interface{}{}); err != nil {
+			// return err
+			fmt.Println("Unable to subscribe: ", err.Error())
+		} else {
+			d.handlers[i] = handler
+			// return nil
+		}
+	}()
+
+	return nil
 }
 
 func (d *domain) Register(endpoint string, handler interface{}) error {

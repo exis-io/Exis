@@ -100,14 +100,8 @@ var Ws = function () {
         var factory = new ws.Factory({'type': 'websocket', 'url': FABRIC_URL});
         self.conn = factory.create();
 
-        // console.log(self.conn);
-
         this.conn.onmessage = global.Wrapper.NewMessage;
-
-        this.conn.onopen = function() {
-            // console.log("DEFAULT Transport opened");
-            global.Wrapper.ConnectionOpened();
-        };
+        this.conn.onopen = global.Wrapper.ConnectionOpened;
 
         this.conn.onclose = function() {
             console.log("DEFAULT Transport closed");
@@ -128,8 +122,6 @@ Ws.prototype.close = function(code, reason) {
     this.conn.close(code, reason)
 };
 
-
-
 global.Wrapper.New();
 console.log("Created wrapper");
 
@@ -147,12 +139,11 @@ global.Wrapper.SetConnection(conn);
 var domain = global.Domain.New("xs.damouse.js.alpha")
 console.log("Created domain");
 
-
 domain.Join()
 
-// domain.Subscribe("sub", function() {
-//     console.log("Received a publish!")
-// })
+domain.Subscribe("sub", function() {
+    console.log("Received a publish!")
+})
 
 // domain.Register("ret", function() {
 //     console.log("Received a call!")
