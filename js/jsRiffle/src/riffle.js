@@ -82,9 +82,9 @@ var Ws = function () {
     // this.conn = connection._create_transport()
 
     // Theres also a transport.send(msg)
-    this.onmessage = function(message) {
-        consloe.log("DEFAULT message handler");
-    };
+    // this.onmessage = function(message) {
+    //     consloe.log("DEFAULT message handler");
+    // };
 
 
     this.open = function() {
@@ -102,13 +102,7 @@ var Ws = function () {
 
         // console.log(self.conn);
 
-        this.conn.onmessage = function(message) {
-            console.log("DEFAULT Message received: ", message);
-
-            if (self.onmessage) {
-                self.onmessage(message)
-            }
-        };
+        this.conn.onmessage = global.Wrapper.NewMessage;
 
         this.conn.onopen = function() {
             // console.log("DEFAULT Transport opened");

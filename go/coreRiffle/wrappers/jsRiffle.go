@@ -53,6 +53,7 @@ func main() {
 		"New":              NewWrapper,
 		"SetConnection":    SetConnection,
 		"ConnectionOpened": ConnectionOpened,
+		"NewMessage":       NewMessage,
 	})
 
 	js.Global.Set("Domain", map[string]interface{}{
@@ -109,7 +110,12 @@ func (w *wrapper) Close(reason string) error {
 func SetConnection(c *js.Object) {
 	fmt.Println("Connection set: ", c)
 	wrap.conn = c
-	c.Set("onmessage", wrap.honcho.ReceiveString)
+	// c.Set("onmessage", wrap.honcho.ReceiveString)
+}
+
+func NewMessage(c *js.Object) {
+	// fmt.Println("Message Receive: ", c.String())
+	wrap.honcho.ReceiveString(c.String())
 }
 
 func ConnectionOpened() {
