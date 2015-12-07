@@ -71,20 +71,20 @@ push() {
 pull() {
     echo "Pulling subtrees"
 
-    git pull origin master
+    git pull origin danger
 
-    git subtree pull --prefix ios/swiftRiffle swiftRiffle master -m 'Update to stump'
-    git subtree pull --prefix ios/appBackendSeed iosAppBackendSeed master -m 'Update to stump'
-    git subtree pull --prefix ios/appSeed iosAppSeed  master -m 'Update to stump'
+    git subtree pull --prefix ios/swiftRiffle swiftRiffle danger -m 'Update to stump'  --squash
+    git subtree pull --prefix ios/appBackendSeed iosAppBackendSeed danger -m 'Update to stump'  --squash
+    git subtree pull --prefix ios/appSeed iosAppSeed  danger -m 'Update to stump'  --squash
 
-    git subtree pull --prefix js/jsRiffle jsRiffle master -m 'Update to stump'
-    git subtree pull --prefix js/ngRiffle ngRiffle master -m 'Update to stump'
-    git subtree pull --prefix js/angularSeed ngSeed master -m 'Update to stump'
+    git subtree pull --prefix js/jsRiffle jsRiffle danger -m 'Update to stump'  --squash
+    git subtree pull --prefix js/ngRiffle ngRiffle danger -m 'Update to stump'  --squash
+    git subtree pull --prefix js/angularSeed ngSeed danger -m 'Update to stump'  --squash
 
-    git subtree pull --prefix go/goRiffle goRiffle master -m 'Update to stump'
-    git subtree pull --prefix go/coreRiffle coreRiffle master -m 'Update to stump'
+    git subtree pull --prefix go/goRiffle goRiffle danger -m 'Update to stump'  --squash
+    git subtree pull --prefix go/coreRiffle coreRiffle danger -m 'Update to stump'  --squash
 
-    git subtree pull --prefix python/pyRiffle pyRiffle master -m 'Update to stump'
+    git subtree pull --prefix python/pyRiffle pyRiffle danger -m 'Update to stump'  --squash
 }
 
 ios() {

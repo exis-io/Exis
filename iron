@@ -1,0 +1,25 @@
+#!/usr/bin/python
+"""
+usage: iron [push | pull | checkout] [all the repos....]
+        
+options:
+   -h, --help
+   --version
+   -v, --verbose    Show verbose internal output   
+   -m, --mode=MODE  production, development, test, or local [default: production]
+   
+commands:
+    push     Push  
+"""
+
+import docopt
+
+
+def main():
+    # present documentation, extract arguments
+    args = docopt.docopt(__doc__, options_first=True, help=True)
+
+    print args
+
+if __name__ == '__main__':
+    main()
