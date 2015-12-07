@@ -11,7 +11,7 @@ import (
 type websocketConnection struct {
 	conn *websocket.Conn
 	// connLock sync.Mutex
-	coreRiffle.Honcho
+	coreRiffle.App
 	payloadType int
 	closed      bool
 }
@@ -46,7 +46,7 @@ func (ep *websocketConnection) Send(data []byte) {
 	}
 }
 
-// Who the hell do we call close first on? Honcho or connection?
+// Who the hell do we call close first on? App or connection?
 // Either way one or the other may have to check on the other, which is no good
 func (ep *websocketConnection) Close(reason string) error {
 	coreRiffle.Info("Closing connection with reason: %s", reason)
@@ -77,17 +77,17 @@ func (ep *websocketConnection) run() {
 				ep.conn.Close()
 			}
 
-			// ep.Honcho.Close()
+			// ep.App.Close()
 			break
 		} else if msgType == websocket.CloseMessage {
 			coreRiffle.Info("Close message recieved")
 			ep.conn.Close()
 
-			// ep.Honcho.Close()
+			// ep.App.Close()
 			break
 		} else {
 			// coreRiffle.Debug("Socket received data")
-			ep.Honcho.ReceiveBytes(bytes)
+			ep.App.ReceiveBytes(bytes)
 		}
 	}
 }

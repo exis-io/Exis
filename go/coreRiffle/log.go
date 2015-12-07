@@ -4,44 +4,39 @@ import (
 	"fmt"
 	"runtime"
 	"strings"
-
-	"github.com/fatih/color"
 )
-
-const (
-	levelWarn  int = 1
-	levelInfo  int = 2
-	levelDebug int = 3
-)
-
-var logLevel int = 0
 
 func Debug(format string, a ...interface{}) {
 	if logLevel >= levelDebug {
-		out(fmt.Sprintf(format, a...), color.Blue)
+		out(fmt.Sprintf("core-debug: %s", fmt.Sprintf(format, a...)))
 	}
 }
 
 func Info(format string, a ...interface{}) {
 	if logLevel >= levelInfo {
-		out(fmt.Sprintf(format, a...), color.Green)
+		out(fmt.Sprintf("core-info: %s", fmt.Sprintf(format, a...)))
 	}
 }
 
 func Warn(format string, a ...interface{}) {
 	if logLevel >= levelWarn {
-		out(fmt.Sprintf(format, a...), color.Yellow)
+		out(fmt.Sprintf("core-warn: %s", fmt.Sprintf(format, a...)))
 	}
 }
 
-func SetLogging(level int) {
-	logLevel = level
+func Error(format string, a ...interface{}) {
+	if logLevel >= levelErr {
+		out(fmt.Sprintf("core-error: %s", fmt.Sprintf(format, a...)))
+	}
 }
 
-func out(mess string, printer func(string, ...interface{})) {
-	printer("[%s] %s", trace(), mess)
+func out(mess string) {
+	if writer != nil {
+		writer.Write(fmt.Sprintf("[%s] %s", trace(), mess))
+	}
 }
 
+// This might not make any sense for non-go languages...
 func trace() string {
 	pc := make([]uintptr, 10) // at least 1 entry needed
 	runtime.Callers(4, pc)
@@ -57,43 +52,3 @@ func trace() string {
 
 	return fmt.Sprintf("%s:%d", strings.TrimSuffix(file, ".go"), line)
 }
-
-// var format = logging.MustStringFormatter(
-// 	// "%{color}[%{time:2006-01-02 15:04:05.000} %{longfunc}] %{message}%{color:reset}",
-// 	"[%{color}%{longfunc}]  %{message}",
-// )
-
-// func InitLogger() {
-// 	// For demo purposes, create two backend for os.Stderr.
-// 	backend1 := logging.NewLogBackend(os.Stderr, "", 0)
-// 	formatter := logging.NewBackendFormatter(backend1, format)
-// 	backend1Leveled := logging.AddModuleLevel(backend1)
-
-// 	if os.Getenv("DEBUG") != "" {
-// 		backend1Leveled.SetLevel(logging.DEBUG, "")
-// 	} else {
-// 		backend1Leveled.SetLevel(logging.CRITICAL, "")
-// 	}
-
-// 	logging.SetBackend(backend1Leveled, formatter)
-
-// 	// out.Debug("debug")
-// 	// out.Info("info")
-// 	// out.Notice("notice")
-// 	// out.Warning("warning")
-// 	// out.Error("err")
-// 	// out.Critical("crit")
-// 	Log.Debug("Logger initialized")
-
-// 	trace()
-// }
-
-// func logErr(err error) error {
-// 	if err == nil {
-// 		return nil
-// 	}
-
-// 	return err
-// }
-
-// var Log = logging.MustGetLogger("example")

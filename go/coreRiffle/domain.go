@@ -5,32 +5,9 @@ import (
 	"log"
 )
 
-// The reeceiving end
-type Delegate interface {
-	// Called by core when something needs doing
-	Invoke(string, uint, []interface{}) ([]interface{}, error)
-
-	OnJoin(string)
-	OnLeave(string)
-}
-
-type Domain interface {
-	Subscribe(string, []interface{}) (uint, error)
-	Register(string, []interface{}) (uint, error)
-
-	Publish(string, []interface{}) error
-	Call(string, []interface{}) ([]interface{}, error)
-
-	Unsubscribe(string) error
-	Unregister(string) error
-
-	Join(Connection) error
-	Leave() error
-}
-
 type domain struct {
 	Delegate
-	honcho        *honcho
+	app           *app
 	name          string
 	joined        bool
 	subscriptions map[uint]*boundEndpoint
@@ -45,7 +22,7 @@ type boundEndpoint struct {
 func (s *domain) Subdomain(name string) *domain {
 	return &domain{
 		Delegate:      s.Delegate,
-		honcho:        s.honcho,
+		app:           s.app,
 		name:          s.name + "." + name,
 		joined:        s.joined,
 		subscriptions: make(map[uint]*boundEndpoint),
@@ -61,33 +38,33 @@ func (c domain) Join(conn Connection) error {
 	}
 
 	// check to make sure the connection is not already set
-	c.honcho.Connection = conn
+	c.app.Connection = conn
 
-	// Should we hard close on conn.Close()? The Head Honcho may be interested in knowing about the close
-	if err := c.honcho.SendNow(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {
-		c.honcho.Close("ERR: could not send a hello message")
+	// Should we hard close on conn.Close()? The Head App may be interested in knowing about the close
+	if err := c.app.SendNow(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {
+		c.app.Close("ERR: could not send a hello message")
 		return err
 	}
 
-	if msg, err := c.honcho.getMessageTimeout(); err != nil {
-		c.honcho.Close(err.Error())
+	if msg, err := c.app.getMessageTimeout(); err != nil {
+		c.app.Close(err.Error())
 		return err
 	} else if _, ok := msg.(*welcome); !ok {
-		c.honcho.SendNow(&abort{Details: map[string]interface{}{}, Reason: "Error- unexpected_message_type"})
-		c.honcho.Close("Error- unexpected_message_type")
+		c.app.SendNow(&abort{Details: map[string]interface{}{}, Reason: "Error- unexpected_message_type"})
+		c.app.Close("Error- unexpected_message_type")
 		return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME.String()))
 	}
 
-	go c.honcho.receiveLoop()
-	go c.honcho.sendLoop()
+	go c.app.receiveLoop()
+	go c.app.sendLoop()
 
-	c.honcho.domainJoined(&c)
+	c.app.domainJoined(&c)
 	Info("Domain joined")
 	return nil
 }
 
 func (c domain) Leave() error {
-	return c.honcho.domainLeft(&c)
+	return c.app.domainLeft(&c)
 }
 
 /////////////////////////////////////////////
@@ -100,7 +77,7 @@ func (c domain) Subscribe(endpoint string, types []interface{}) (uint, error) {
 
 	sub := &subscribe{Request: newID(), Options: make(map[string]interface{}), Name: endpoint}
 
-	if msg, err := c.honcho.requestListen(sub); err != nil {
+	if msg, err := c.app.requestListen(sub); err != nil {
 		return 0, err
 	} else if subbed, ok := msg.(*subscribed); !ok {
 		return 0, fmt.Errorf(formatUnexpectedMessage(msg, sUBSCRIBED.String()))
@@ -116,7 +93,7 @@ func (c domain) Register(endpoint string, types []interface{}) (uint, error) {
 
 	register := &register{Request: newID(), Options: make(map[string]interface{}), Name: endpoint}
 
-	if msg, err := c.honcho.requestListen(register); err != nil {
+	if msg, err := c.app.requestListen(register); err != nil {
 		return 0, err
 	} else if reg, ok := msg.(*registered); !ok {
 		return 0, fmt.Errorf(formatUnexpectedMessage(msg, rEGISTERED.String()))
@@ -131,7 +108,7 @@ func (c domain) Register(endpoint string, types []interface{}) (uint, error) {
 func (c domain) Publish(endpoint string, args []interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 
-	return c.honcho.Send(&publish{
+	return c.app.Send(&publish{
 		Request:   newID(),
 		Options:   make(map[string]interface{}),
 		Name:      endpoint,
@@ -145,7 +122,7 @@ func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error)
 	call := &call{Request: newID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
 
 	// Testing out a shorter way of checking the return types of the messages-- be careful with this, untested
-	if msg, err := c.honcho.requestListenType(call, "*coreRiffle.result"); err != nil {
+	if msg, err := c.app.requestListenType(call, "*coreRiffle.result"); err != nil {
 		return nil, err
 	} else {
 		return msg.(*result).Arguments, nil
@@ -163,7 +140,7 @@ func (c domain) Unsubscribe(endpoint string) error {
 
 	sub := &unsubscribe{Request: newID(), Subscription: subscriptionID}
 
-	if _, err := c.honcho.requestListenType(sub, "*coreRiffle.unsubscribed"); err != nil {
+	if _, err := c.app.requestListenType(sub, "*coreRiffle.unsubscribed"); err != nil {
 		return err
 	} else {
 		Info("Unsubscribed: %s", endpoint)
@@ -181,7 +158,7 @@ func (c domain) Unregister(endpoint string) error {
 	} else {
 		unregister := &unregister{Request: newID(), Registration: procedureID}
 
-		if msg, err := c.honcho.requestListen(unregister); err != nil {
+		if msg, err := c.app.requestListen(unregister); err != nil {
 			return err
 		} else if _, ok := msg.(*unregistered); !ok {
 			return fmt.Errorf(formatUnexpectedMessage(msg, uNREGISTERED.String()))
@@ -210,7 +187,7 @@ func (c domain) handleInvocation(msg *invocation) {
 					Error:     err.Error(),
 				}
 
-				if err := c.honcho.Send(tosend); err != nil {
+				if err := c.app.Send(tosend); err != nil {
 					log.Println("error sending message:", err)
 				}
 			}
@@ -234,14 +211,14 @@ func (c domain) handleInvocation(msg *invocation) {
 			// 	}
 			// }
 
-			// if err := c.honcho.Send(tosend); err != nil {
+			// if err := c.app.Send(tosend); err != nil {
 			// 	log.Println("error sending message:", err)
 			// }
 		}()
 	} else {
 		s := fmt.Sprintf("no handler for registration: %v", msg.Registration)
 		m := &errorMessage{Type: iNVOCATION, Request: msg.Request, Details: make(map[string]interface{}), Error: s}
-		if err := c.honcho.Send(m); err != nil {
+		if err := c.app.Send(m); err != nil {
 			log.Println("error sending message:", err)
 		}
 	}
@@ -255,7 +232,7 @@ func (c *domain) handlePublish(msg *event) {
 
 			tosend := &errorMessage{Type: pUBLISH, Request: msg.Subscription, Details: make(map[string]interface{}), Arguments: make([]interface{}, 0), Error: e.Error()}
 
-			if err := c.honcho.Send(tosend); err != nil {
+			if err := c.app.Send(tosend); err != nil {
 				log.Println("error sending message:", err)
 			}
 		}

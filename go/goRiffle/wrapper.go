@@ -22,7 +22,7 @@ type Domain interface {
 }
 
 type wrapper struct {
-	honcho coreRiffle.Honcho
+	honcho coreRiffle.App
 	conn   *websocketConnection
 }
 
@@ -38,7 +38,7 @@ var wrap *wrapper
 func NewDomain(name string) Domain {
 
 	if wrap == nil {
-		h := coreRiffle.NewHoncho()
+		h := coreRiffle.NewApp()
 
 		wrap = &wrapper{
 			honcho: h,
@@ -103,7 +103,7 @@ func (d domain) Join() error {
 			return err
 		}
 
-		c.Honcho = wrap.honcho
+		c.App = wrap.honcho
 		wrap.conn = c
 		return d.mirror.Join(c)
 	}

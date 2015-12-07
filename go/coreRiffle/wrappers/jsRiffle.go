@@ -12,7 +12,7 @@ import (
 // http://legacytotheedge.blogspot.de/2014/03/gopherjs-go-to-javascript-transpiler.html
 
 type wrapper struct {
-	honcho coreRiffle.Honcho
+	app    coreRiffle.App
 	conn   *js.Object
 	opened chan bool
 }
@@ -42,10 +42,11 @@ var wrap *wrapper
 
 // Required main method
 func main() {
-	// Change Riffle to Wrapper
-	// js.Global.Set("Riffle", map[string]interface{}{
-	// 	"SetLogging": SetLogging,
-	// })
+	js.Global.Set("Core", map[string]interface{}{
+		"SetLoggingDebug": coreRiffle.SetLoggingDebug,
+		"SetLoggingDebug": coreRiffle.SetLoggingInfo,
+		"SetLoggingDebug": coreRiffle.SetLoggingWarn,
+	})
 
 	// Change Wrapper to Pool
 	js.Global.Set("Wrapper", map[string]interface{}{
@@ -59,6 +60,7 @@ func main() {
 		"New": NewDomain,
 	})
 
+	// coreRiffle.SetLogWriter()
 }
 
 /////////////////////////////////////////////
@@ -67,10 +69,10 @@ func main() {
 
 func NewWrapper() {
 	if wrap == nil {
-		h := coreRiffle.NewHoncho()
+		h := coreRiffle.NewApp()
 
 		wrap = &wrapper{
-			honcho: h,
+			app:    h,
 			opened: make(chan bool),
 		}
 	}
@@ -89,12 +91,12 @@ func (w *wrapper) Close(reason string) error {
 func SetConnection(c *js.Object) {
 	fmt.Println("Connection set: ", c)
 	wrap.conn = c
-	// c.Set("onmessage", wrap.honcho.ReceiveString)
+	// c.Set("onmessage", wrap.app.ReceiveString)
 }
 
 func NewMessage(c *js.Object) {
 	fmt.Println("Message Receive: ", c.String())
-	wrap.honcho.ReceiveString(c.String())
+	wrap.app.ReceiveString(c.String())
 }
 
 func ConnectionOpened() {
@@ -118,7 +120,7 @@ func NewDomain(name string) *js.Object {
 		kill:     make(chan bool),
 	}
 
-	d.mirror = wrap.honcho.NewDomain(name, d)
+	d.mirror = wrap.app.NewDomain(name, d)
 	return js.MakeWrapper(&d)
 }
 
