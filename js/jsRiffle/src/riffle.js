@@ -41,17 +41,17 @@ exports.version = pjson.version;
 
 exports.transports = configure.transports;
 
-// exports.Connection = connection.Connection;
+exports.Connection = connection.Connection;
 
 
-// exports.Session = session.Session;
-// exports.Invocation = session.Invocation;
-// exports.Event = session.Event;
-// exports.Result = session.Result;
-// exports.Error = session.Error;
-// exports.Subscription = session.Subscription;
-// exports.Registration = session.Registration;
-// exports.Publication = session.Publication;
+exports.Session = session.Session;
+exports.Invocation = session.Invocation;
+exports.Event = session.Event;
+exports.Result = session.Result;
+exports.Error = session.Error;
+exports.Subscription = session.Subscription;
+exports.Registration = session.Registration;
+exports.Publication = session.Publication;
 
 exports.auth_persona = persona.auth;
 exports.auth_cra = cra;
