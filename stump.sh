@@ -7,6 +7,7 @@
 #   ln -s ~/code/merged/riffle/go/goRiffle/ ~/code/go/src/github.com/exis-io/goRiffle
 #   ln -s ~/code/merged/riffle/go/coreRiffle $GOPATH/src/github.com/exis-io/coreRiffle
 #
+
 if [ $# -lt 1 ]
 then
     echo -e "Updating and deployment of riffle libraries.\n"
@@ -49,9 +50,9 @@ init() {
 push() {
     echo "Pushing subtrees"
 
-    git subtree push --prefix ios/swiftRiffle swiftRiffle danger
-    git subtree push --prefix ios/appBackendSeed iosAppBackendSeed danger
-    git subtree push --prefix ios/appSeed iosAppSeed danger
+    git subtree push --prefix swift/swiftRiffle swiftRiffle danger
+    git subtree push --prefix swift/appBackendSeed iosAppBackendSeed danger
+    git subtree push --prefix swift/appSeed iosAppSeed danger
 
     git subtree push --prefix js/jsRiffle jsRiffle danger
     git subtree push --prefix js/ngRiffle ngRiffle danger
@@ -73,9 +74,9 @@ pull() {
 
     git pull origin danger
 
-    git subtree pull --prefix ios/swiftRiffle swiftRiffle danger -m 'Update to stump'  --squash
-    git subtree pull --prefix ios/appBackendSeed iosAppBackendSeed danger -m 'Update to stump'  --squash
-    git subtree pull --prefix ios/appSeed iosAppSeed  danger -m 'Update to stump'  --squash
+    git subtree pull --prefix swift/swiftRiffle swiftRiffle danger -m 'Update to stump'  --squash
+    git subtree pull --prefix swift/appBackendSeed iosAppBackendSeed danger -m 'Update to stump'  --squash
+    git subtree pull --prefix swift/appSeed iosAppSeed  danger -m 'Update to stump'  --squash
 
     git subtree pull --prefix js/jsRiffle jsRiffle danger -m 'Update to stump'  --squash
     git subtree pull --prefix js/ngRiffle ngRiffle danger -m 'Update to stump'  --squash
@@ -90,7 +91,7 @@ pull() {
 ios() {
     echo "Updating riffle, seeds, and cards to version $1"
 
-    git subtree push --prefix ios/swiftRiffle swiftRiffle master
+    git subtree push --prefix swift/swiftRiffle swiftRiffle master
 
     git clone git@github.com:exis-io/swiftRiffle.git
     cd swiftRiffle
@@ -104,7 +105,7 @@ ios() {
     rm -rf swiftRiffle
 
     # update the seed projects and push them 
-    cd ios/appSeed
+    cd swift/appSeed
     pod update
 
     cd ../appBackendSeed
@@ -114,8 +115,8 @@ ios() {
     git add --all
     git commit -m "swRiffle upgrade to v $1"
 
-    git subtree push --prefix ios/appBackendSeed iosAppBackendSeed master
-    git subtree push --prefix ios/appSeed iosAppSeed master
+    git subtree push --prefix swift/appBackendSeed iosAppBackendSeed master
+    git subtree push --prefix swift/appSeed iosAppSeed master
     git push origin master
 }
 
@@ -176,13 +177,13 @@ core() {
     # mv products/osx.a osx/RiffleTest/osx.a
 
     echo "Building Swift Container"
-    go build -buildmode=c-shared -o ios/container/libriff.so go/coreRiffle/wrappers/swiftlinux.go
+    go build -buildmode=c-shared -o swift/container/libriff.so go/coreRiffle/wrappers/swiftlinux.go
 
 
     # echo "Building iOS"
     # GOGCCFLAGS="--Wl,-no_pie" gomobile bind -ldflags="-extldflags=-pie" -target=ios -work github.com/exis-io/goriffle
-    # rm -rf ios/Goriffle.framework
-    # mv Goriffle.framework ios/Goriffle.framework
+    # rm -rf swift/Goriffle.framework
+    # mv Goriffle.framework swift/Goriffle.framework
 
 
     # iOS naively like above. Doesn't work. 
@@ -204,7 +205,7 @@ core() {
 
 # run() {
 #     # Run
-#     LD_LIBRARY_PATH=./ios/container:$LD_LIBRARY_PATH ./ios/container/biddly
+#     LD_LIBRARY_PATH=./swift/container:$LD_LIBRARY_PATH ./swift/container/biddly
 #     exit 
 # }
 
