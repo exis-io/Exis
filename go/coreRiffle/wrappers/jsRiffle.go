@@ -20,7 +20,7 @@ type wrapper struct {
 type domain struct {
 	wrapper  *wrapper
 	mirror   coreRiffle.Domain
-	handlers map[uint]interface{}
+	handlers map[uint]*js.Object
 	kill     chan bool
 }
 
@@ -36,7 +36,6 @@ type Domain interface {
 
 	Join() error
 	Leave() error
-	Run()
 }
 
 var wrap *wrapper
@@ -78,27 +77,7 @@ func NewWrapper() {
 }
 
 func (w *wrapper) Send(data []byte) {
-	// fmt.Println("WARN: Cannot send binary data!")
-
-	// var dat []interface{}
-
-	// if err := json.Unmarshal(data, &dat); err != nil {
-	// 	fmt.Println("unmarshal json! Message: ", dat)
-	// } else {
-	// 	fmt.Println("Unable to unmarshal message")
-	// }
-
-	// if str, ok := data.(*string); ok {
-	// 	fmt.Println("message received: ", str)
-	// } else {
-	// 	fmt.Println("Unable to convert bytes to string!")
-	// }
-
 	w.conn.Call("send", string(data))
-}
-
-func (w *wrapper) SendString(json string) {
-	w.conn.Call("send", json)
 }
 
 func (w *wrapper) Close(reason string) error {
@@ -114,7 +93,7 @@ func SetConnection(c *js.Object) {
 }
 
 func NewMessage(c *js.Object) {
-	// fmt.Println("Message Receive: ", c.String())
+	fmt.Println("Message Receive: ", c.String())
 	wrap.honcho.ReceiveString(c.String())
 }
 
@@ -135,22 +114,22 @@ func NewDomain(name string) *js.Object {
 
 	d := domain{
 		wrapper:  wrap,
-		handlers: make(map[uint]interface{}),
+		handlers: make(map[uint]*js.Object),
 		kill:     make(chan bool),
 	}
 
 	d.mirror = wrap.honcho.NewDomain(name, d)
-	// fmt.Println("Created domain: ", d)
 	return js.MakeWrapper(&d)
-	// return d
 }
 
-func (d *domain) Subscribe(endpoint string, handler interface{}) error {
+func (d *domain) Subscribe(endpoint string, handler *js.Object) error {
+	// Cute, but not the best idea long term. Deferreds are going to be easiest (?)
 	go func() {
 		if i, err := d.mirror.Subscribe(endpoint, []interface{}{}); err != nil {
 			// return err
 			fmt.Println("Unable to subscribe: ", err.Error())
 		} else {
+			// fmt.Println("Subscribedd with id, handler: ", i, handler)
 			d.handlers[i] = handler
 			// return nil
 		}
@@ -159,7 +138,7 @@ func (d *domain) Subscribe(endpoint string, handler interface{}) error {
 	return nil
 }
 
-func (d *domain) Register(endpoint string, handler interface{}) error {
+func (d *domain) Register(endpoint string, handler *js.Object) error {
 	if i, err := d.mirror.Register(endpoint, []interface{}{}); err != nil {
 		return err
 	} else {
@@ -189,27 +168,12 @@ func (d *domain) Unregister(endpoint string) error {
 }
 
 func (d *domain) Join() error {
+	// If this domain doesnt have a pool, create one now and obtain a connection
+	// If we can't call out because of the platform, the wrapper must push us a connection when a domain calls join
 
 	go func() {
 		// wait for onopen from the connection
 		<-d.wrapper.opened
-
-		//Open a new connection if we don't have one yet
-		// Ideally this should be created on the spot on demand
-
-		// if d.wrapper.conn == nil {
-		// 	c, err := Open(coreRiffle.LocalFabric)
-
-		// 	if err != nil {
-		// 		fmt.Println("Unable to open connection!")
-		// 		return err
-		// 	}
-
-		// 	c.Honcho = wrap.honcho
-		// 	wrap.conn = c
-		// 	return d.mirror.Join(c)
-		// }
-
 		d.mirror.Join(d.wrapper)
 	}()
 
@@ -227,7 +191,7 @@ func (d *domain) Leave() error {
 
 func (d domain) Invoke(endpoint string, id uint, args []interface{}) ([]interface{}, error) {
 	// return coreRiffle.Cumin(d.handlers[id], args)
-	fmt.Println("Invocation received!")
+	d.handlers[id].Invoke(args)
 	return nil, nil
 }
 
@@ -239,15 +203,3 @@ func (d domain) OnLeave(string) {
 	fmt.Println("Delegate left!!")
 	d.kill <- true
 }
-
-// Spin and run while the domain is still connected
-func (d *domain) Run() {
-	<-d.kill
-}
-
-// JS Specific, get the connection inside somehow
-// func Open() {
-
-// }
-
-// Pass in a connection object, set up handlers on it, and store it in the wrapper

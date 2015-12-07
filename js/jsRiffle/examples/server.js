@@ -24,8 +24,6 @@ var riffle = require('jsriffle');
 
 // me.join();
 
-// riffle.HelloWorld("JS CLIENT: This function is called from the client library")
-
 
 var domain = riffle.Domain("xs.damouse.js.alpha")
 
