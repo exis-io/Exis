@@ -1,4 +1,5 @@
 var riffle = require('jsriffle');
+
 // riffle.setDevFabric();
 
 // var app = new riffle.Domain("xs.demo");
@@ -24,3 +25,12 @@ var riffle = require('jsriffle');
 // me.join();
 
 // riffle.HelloWorld("JS CLIENT: This function is called from the client library")
+
+
+var domain = riffle.Domain("xs.damouse.js.alpha")
+
+domain.Join()
+
+domain.Subscribe("sub", function() {
+    console.log("Received a publish!")
+})

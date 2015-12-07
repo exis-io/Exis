@@ -114,7 +114,7 @@ func SetConnection(c *js.Object) {
 }
 
 func NewMessage(c *js.Object) {
-	fmt.Println("Message Receive: ", c.String())
+	// fmt.Println("Message Receive: ", c.String())
 	wrap.honcho.ReceiveString(c.String())
 }
 
