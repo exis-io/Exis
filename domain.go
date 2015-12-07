@@ -1,393 +1,242 @@
 package coreRiffle
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 )
 
-type Domain struct {
-	Connection
-	name       string
-	listeners  map[uint]chan message
-	events     map[uint]*boundEndpoint
-	procedures map[uint]*boundEndpoint
+type domain struct {
+	Delegate
+	app           *app
+	name          string
+	joined        bool
+	subscriptions map[uint]*boundEndpoint
+	registrations map[uint]*boundEndpoint
 }
 
 type boundEndpoint struct {
-	endpoint string
-	handler  interface{}
+	endpoint      string
+	expectedTypes []interface{}
 }
 
-func NewDomain(name string) *Domain {
-	// The commented out line is js specific
-
-	return &Domain{
-		connection: Connection,
-		name:       name,
-		listeners:  make(map[uint]chan message),
-		events:     make(map[uint]*boundEndpoint),
-		procedures: make(map[uint]*boundEndpoint),
+func (s *domain) Subdomain(name string) *domain {
+	return &domain{
+		Delegate:      s.Delegate,
+		app:           s.app,
+		name:          s.name + "." + name,
+		joined:        s.joined,
+		subscriptions: make(map[uint]*boundEndpoint),
+		registrations: make(map[uint]*boundEndpoint),
 	}
 }
 
-func (s *Domain) Subdomain(name string) *Domain {
-	return &Domain{
-		connection: Connection,
-		name:       s.name + "." + name,
-		listeners:  make(map[uint]chan message),
-		events:     make(map[uint]*boundEndpoint),
-		procedures: make(map[uint]*boundEndpoint),
-	}
-}
-
-func (c *Domain) Join(connection Connection) (*Domain, error) {
-	// dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
-	// conn, _, err := dialer.Dial(url, nil)
-
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	//    connection := &websocketConnection{
-	//        conn:        conn,
-	//        messages:    make(chan message, 10),
-	//        serializer:  new(jSONSerializer),
-	//        payloadType: websocket.TextMessage,
-	//    }
-
-	//    if err != nil {
-	//        return nil, err
-	//    }
-
-	//    go connection.run()
-
-	c.Connection = connection
-
-	dom := &Domain{
-		connection: connection,
-		listeners:  make(map[uint]chan message),
-		events:     make(map[uint]*boundEndpoint),
-		procedures: make(map[uint]*boundEndpoint),
+// Accepts a connection that has just been opened. This method should only
+// be called once, to initialize the fabric
+func (c domain) Join(conn Connection) error {
+	if c.joined {
+		return fmt.Errorf("Domain %s is already joined", c.name)
 	}
 
-	if err := c.Send(&hello{Realm: realm, Details: map[string]interface{}{}}); err != nil {
-		c.connection.Close()
+	// check to make sure the connection is not already set
+	c.app.Connection = conn
+
+	// Should we hard close on conn.Close()? The Head App may be interested in knowing about the close
+	if err := c.app.SendNow(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {
+		c.app.Close("ERR: could not send a hello message")
 		return err
 	}
 
-	if msg, err := getMessageTimeout(c.connection, timeout); err != nil {
-		c.connection.Close()
+	if msg, err := c.app.getMessageTimeout(); err != nil {
+		c.app.Close(err.Error())
 		return err
 	} else if _, ok := msg.(*welcome); !ok {
-		c.Send(abortUnexpectedMsg)
-		c.connection.Close()
-		return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME))
-	} else {
-		return nil
+		c.app.SendNow(&abort{Details: map[string]interface{}{}, Reason: "Error- unexpected_message_type"})
+		c.app.Close("Error- unexpected_message_type")
+		return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME.String()))
 	}
 
-}
+	go c.app.receiveLoop()
+	go c.app.sendLoop()
 
-func (c *Domain) Leave() error {
-	if err := c.Send(goodbyeSession); err != nil {
-		return fmt.Errorf("error leaving realm: %v", err)
-	}
-
-	if err := c.connection.Close(); err != nil {
-		return fmt.Errorf("error closing client connection: %v", err)
-	}
-
+	c.app.domainJoined(&c)
+	Info("Domain joined")
 	return nil
 }
 
-/////////////////////////////////////////////
-// Handler methods
-/////////////////////////////////////////////
-
-// Receive handles messages from the server until this client disconnects.
-// This function blocks and is most commonly run in a goroutine.
-func (c *Domain) Receive() {
-	for msg := range c.connection.Receive() {
-		c.Handle(msg)
-	}
-}
-
-// Does not spin, does not block-- is called with updates
-func (c *Domain) ReceiveExternal(msg string) {
-	byt := []byte(msg)
-	var dat []interface{}
-
-	if err := json.Unmarshal(byt, &dat); err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	seer := new(jSONSerializer)
-	fmt.Println("Received a message: ", msg)
-
-	m, err := seer.deserializeString(dat)
-	if err != nil {
-		log.Println("error deserializing message:", err)
-		log.Println(msg)
-	} else {
-		fmt.Println("Message received!")
-		c.Handle(m)
-	}
-}
-
-func (c *Domain) Handle(msg message) {
-	switch msg := msg.(type) {
-
-	case *event:
-		if event, ok := c.events[msg.Subscription]; ok {
-			go cumin(event.handler, msg.Arguments)
-		} else {
-			log.Println("no handler registered for subscription:", msg.Subscription)
-		}
-
-	case *invocation:
-		c.handleInvocation(msg)
-
-	case *registered:
-		c.notifyListener(msg, msg.Request)
-	case *subscribed:
-		c.notifyListener(msg, msg.Request)
-	case *unsubscribed:
-		c.notifyListener(msg, msg.Request)
-	case *unregistered:
-		c.notifyListener(msg, msg.Request)
-	case *result:
-		c.notifyListener(msg, msg.Request)
-	case *errorMessage:
-		c.notifyListener(msg, msg.Request)
-
-	case *goodbye:
-		break
-
-	default:
-		log.Println("unhandled message:", msg.messageType(), msg)
-		// panic("Unhandled message!")
-	}
+func (c domain) Leave() error {
+	return c.app.domainLeft(&c)
 }
 
 /////////////////////////////////////////////
 // Message Patterns
 /////////////////////////////////////////////
 
-// Subscribe registers the EventHandler to be called for every message in the provided topic.
-func (c *Domain) Subscribe(topic string, fn interface{}) error {
-	id := newID()
-	c.registerListener(id)
+// Subscribe registers the EventHandler to be called for every message in the provided endpoint.
+func (c domain) Subscribe(endpoint string, types []interface{}) (uint, error) {
+	endpoint = makeEndpoint(c.name, endpoint)
 
-	sub := &subscribe{
-		Request: id,
-		Options: make(map[string]interface{}),
-		Domain:  topic,
-	}
+	sub := &subscribe{Request: newID(), Options: make(map[string]interface{}), Name: endpoint}
 
-	if err := c.Send(sub); err != nil {
-		return err
-	}
-
-	// wait to receive sUBSCRIBED message
-	msg, err := c.waitOnListener(id)
-	if err != nil {
-		return err
-	} else if e, ok := msg.(*errorMessage); ok {
-		return fmt.Errorf("error subscribing to topic '%v': %v", topic, e.Error)
-	} else if subscribed, ok := msg.(*subscribed); !ok {
-		return fmt.Errorf(formatUnexpectedMessage(msg, sUBSCRIBED))
+	if msg, err := c.app.requestListen(sub); err != nil {
+		return 0, err
+	} else if subbed, ok := msg.(*subscribed); !ok {
+		return 0, fmt.Errorf(formatUnexpectedMessage(msg, sUBSCRIBED.String()))
 	} else {
-		// register the event handler with this subscription
-		c.events[subscribed.Subscription] = &boundEndpoint{topic, fn}
+		Info("Subscribed: %s", endpoint)
+		c.subscriptions[subbed.Subscription] = &boundEndpoint{endpoint, types}
+		return subbed.Subscription, nil
 	}
-	return nil
 }
 
-// Unsubscribe removes the registered EventHandler from the topic.
-func (c *Domain) Unsubscribe(topic string) error {
-	subscriptionID, _, ok := bindingForEndpoint(c.events, topic)
+func (c domain) Register(endpoint string, types []interface{}) (uint, error) {
+	endpoint = makeEndpoint(c.name, endpoint)
 
-	if !ok {
-		return fmt.Errorf("Domain %s is not registered with this client.", topic)
-	}
+	register := &register{Request: newID(), Options: make(map[string]interface{}), Name: endpoint}
 
-	id := newID()
-	c.registerListener(id)
-
-	sub := &unsubscribe{
-		Request:      id,
-		Subscription: subscriptionID,
-	}
-
-	if err := c.Send(sub); err != nil {
-		return err
-	}
-
-	// wait to receive uNSUBSCRIBED message
-	msg, err := c.waitOnListener(id)
-	if err != nil {
-		return err
-	} else if e, ok := msg.(*errorMessage); ok {
-		return fmt.Errorf("error unsubscribing to topic '%v': %v", topic, e.Error)
-	} else if _, ok := msg.(*unsubscribed); !ok {
-		return fmt.Errorf(formatUnexpectedMessage(msg, uNSUBSCRIBED))
-	}
-
-	delete(c.events, subscriptionID)
-	return nil
-}
-
-func (c *Domain) Register(procedure string, fn interface{}, options map[string]interface{}) error {
-	id := newID()
-	c.registerListener(id)
-
-	register := &register{
-		Request: id,
-		Options: options,
-		Domain:  procedure,
-	}
-
-	if err := c.Send(register); err != nil {
-		return err
-	}
-
-	// wait to receive rEGISTERED message
-	msg, err := c.waitOnListener(id)
-	if err != nil {
-		return err
-	} else if e, ok := msg.(*errorMessage); ok {
-		return fmt.Errorf("error registering procedure '%v': %v", procedure, e.Error)
-	} else if registered, ok := msg.(*registered); !ok {
-		return fmt.Errorf(formatUnexpectedMessage(msg, rEGISTERED))
+	if msg, err := c.app.requestListen(register); err != nil {
+		return 0, err
+	} else if reg, ok := msg.(*registered); !ok {
+		return 0, fmt.Errorf(formatUnexpectedMessage(msg, rEGISTERED.String()))
 	} else {
-		// register the event handler with this registration
-		c.procedures[registered.Registration] = &boundEndpoint{procedure, fn}
+		Info("Registered: %s", endpoint)
+		c.registrations[reg.Registration] = &boundEndpoint{endpoint, types}
+		return reg.Registration, nil
 	}
-	return nil
-}
-
-// Unregister removes a procedure with the Node
-func (c *Domain) Unregister(procedure string) error {
-	procedureID, _, ok := bindingForEndpoint(c.procedures, procedure)
-
-	if !ok {
-		return fmt.Errorf("Domain %s is not registered with this client.", procedure)
-	}
-
-	id := newID()
-	c.registerListener(id)
-
-	unregister := &unregister{
-		Request:      id,
-		Registration: procedureID,
-	}
-
-	if err := c.Send(unregister); err != nil {
-		return err
-	}
-
-	// wait to receive uNREGISTERED message
-	msg, err := c.waitOnListener(id)
-	if err != nil {
-		return err
-	} else if e, ok := msg.(*errorMessage); ok {
-		return fmt.Errorf("error unregister to procedure '%v': %v", procedure, e.Error)
-	} else if _, ok := msg.(*unregistered); !ok {
-		return fmt.Errorf(formatUnexpectedMessage(msg, uNREGISTERED))
-	}
-
-	// register the event handler with this unregistration
-	delete(c.procedures, procedureID)
-	return nil
 }
 
 // Publish publishes an eVENT to all subscribed peers.
-func (c *Domain) Publish(endpoint string, args ...interface{}) error {
-	return c.Send(&publish{
+func (c domain) Publish(endpoint string, args []interface{}) error {
+	endpoint = makeEndpoint(c.name, endpoint)
+
+	return c.app.Send(&publish{
 		Request:   newID(),
 		Options:   make(map[string]interface{}),
-		Domain:    endpoint,
+		Name:      endpoint,
 		Arguments: args,
 	})
 }
 
 // Call calls a procedure given a URI.
-func (c *Domain) Call(procedure string, args ...interface{}) ([]interface{}, error) {
-	id := newID()
-	c.registerListener(id)
+func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error) {
+	endpoint = makeEndpoint(c.name, endpoint)
+	call := &call{Request: newID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
 
-	call := &call{
-		Request:   id,
-		Domain:    procedure,
-		Options:   make(map[string]interface{}),
-		Arguments: args,
-	}
-
-	if err := c.Send(call); err != nil {
+	// Testing out a shorter way of checking the return types of the messages-- be careful with this, untested
+	if msg, err := c.app.requestListenType(call, "*coreRiffle.result"); err != nil {
 		return nil, err
-	}
-
-	// wait to receive rESULT message
-	msg, err := c.waitOnListener(id)
-	if err != nil {
-		return nil, err
-	} else if e, ok := msg.(*errorMessage); ok {
-		return nil, fmt.Errorf("error calling procedure '%v': %v", procedure, e.Error)
-	} else if result, ok := msg.(*result); !ok {
-		return nil, fmt.Errorf(formatUnexpectedMessage(msg, rESULT))
 	} else {
-		return result.Arguments, nil
+		return msg.(*result).Arguments, nil
 	}
 }
 
-func (c *Domain) handleInvocation(msg *invocation) {
-	if proc, ok := c.procedures[msg.Registration]; ok {
+// Unsubscribe removes the registered EventHandler from the endpoint.
+func (c domain) Unsubscribe(endpoint string) error {
+	endpoint = makeEndpoint(c.name, endpoint)
+	subscriptionID, _, ok := bindingForEndpoint(c.subscriptions, endpoint)
+
+	if !ok {
+		return fmt.Errorf("domain %s is not registered with this client.", endpoint)
+	}
+
+	sub := &unsubscribe{Request: newID(), Subscription: subscriptionID}
+
+	if _, err := c.app.requestListenType(sub, "*coreRiffle.unsubscribed"); err != nil {
+		return err
+	} else {
+		Info("Unsubscribed: %s", endpoint)
+		delete(c.subscriptions, subscriptionID)
+		return nil
+	}
+}
+
+// Unregister removes a procedure with the Node
+func (c domain) Unregister(endpoint string) error {
+	endpoint = makeEndpoint(c.name, endpoint)
+
+	if procedureID, _, ok := bindingForEndpoint(c.registrations, endpoint); !ok {
+		return fmt.Errorf("domain %s is not registered with this domain.", endpoint)
+	} else {
+		unregister := &unregister{Request: newID(), Registration: procedureID}
+
+		if msg, err := c.app.requestListen(unregister); err != nil {
+			return err
+		} else if _, ok := msg.(*unregistered); !ok {
+			return fmt.Errorf(formatUnexpectedMessage(msg, uNREGISTERED.String()))
+		} else {
+			Info("Unregistered: %s", endpoint)
+			delete(c.registrations, procedureID)
+			return nil
+		}
+	}
+}
+
+func (c domain) handleInvocation(msg *invocation) {
+	if binding, ok := c.registrations[msg.Registration]; ok {
 		go func() {
-			result, err := cumin(proc.handler, msg.Arguments)
-			var tosend message
+			// Check the return types
+			if err := softCumin(binding.expectedTypes, msg.Arguments); err == nil {
 
-			tosend = &yield{
-				Request:   msg.Request,
-				Options:   make(map[string]interface{}),
-				Arguments: result,
-			}
-
-			if err != nil {
-				tosend = &errorMessage{
+				// Catch the error-- that has the cuminication information
+				c.Delegate.Invoke(c.name, msg.Registration, msg.Arguments)
+			} else {
+				tosend := &errorMessage{
 					Type:      iNVOCATION,
 					Request:   msg.Request,
 					Details:   make(map[string]interface{}),
-					Arguments: result,
+					Arguments: msg.Arguments,
 					Error:     err.Error(),
+				}
+
+				if err := c.app.Send(tosend); err != nil {
+					log.Println("error sending message:", err)
 				}
 			}
 
-			if err := c.Send(tosend); err != nil {
-				log.Println("error sending message:", err)
-			}
+			// Careful-- we can't yield in some languages. Have to implement the yield as a seperate function
+			// var tosend message
+
+			// tosend = &yield{
+			// 	Request:   msg.Request,
+			// 	Options:   make(map[string]interface{}),
+			// 	Arguments: result,
+			// }
+
+			// if err != nil {
+			// 	tosend = &errorMessage{
+			// 		Type:      iNVOCATION,
+			// 		Request:   msg.Request,
+			// 		Details:   make(map[string]interface{}),
+			// 		Arguments: result,
+			// 		Error:     err.Error(),
+			// 	}
+			// }
+
+			// if err := c.app.Send(tosend); err != nil {
+			// 	log.Println("error sending message:", err)
+			// }
 		}()
 	} else {
-		//log.Println("no handler registered for registration:", msg.Registration)
-
-		if err := c.Send(&errorMessage{
-			Type:    iNVOCATION,
-			Request: msg.Request,
-			Details: make(map[string]interface{}),
-			Error:   fmt.Sprintf("no handler for registration: %v", msg.Registration),
-		}); err != nil {
+		s := fmt.Sprintf("no handler for registration: %v", msg.Registration)
+		m := &errorMessage{Type: iNVOCATION, Request: msg.Request, Details: make(map[string]interface{}), Error: s}
+		if err := c.app.Send(m); err != nil {
 			log.Println("error sending message:", err)
 		}
 	}
 }
 
-func bindingForEndpoint(bindings map[uint]*boundEndpoint, endpoint string) (uint, *boundEndpoint, bool) {
-	for id, p := range bindings {
-		if p.endpoint == endpoint {
-			return id, p, true
-		}
-	}
+func (c *domain) handlePublish(msg *event) {
+	if binding, ok := c.subscriptions[msg.Subscription]; ok {
+		if e := softCumin(binding.expectedTypes, msg.Arguments); e == nil {
+			c.Delegate.Invoke(c.name, msg.Subscription, msg.Arguments)
+		} else {
 
-	return 0, nil, false
+			tosend := &errorMessage{Type: pUBLISH, Request: msg.Subscription, Details: make(map[string]interface{}), Arguments: make([]interface{}, 0), Error: e.Error()}
+
+			if err := c.app.Send(tosend); err != nil {
+				log.Println("error sending message:", err)
+			}
+		}
+	} else {
+		log.Println("WARN: no handler registered for subscription:", msg.Subscription)
+	}
 }

@@ -5,8 +5,11 @@ import (
 	"strings"
 )
 
-const ACTION_SEPARATOR string = "/"
-const DOMAIN_SEPARATOR string = "."
+type InvalidURIError string
+
+func (e InvalidURIError) Error() string {
+	return "Invalid Domain: " + string(e)
+}
 
 // Check out the golang tester for more info:
 // https://regex-golang.appspot.com/assets/html/index.html
@@ -21,6 +24,14 @@ func validDomain(s string) bool {
 
 func validAction(s string) bool {
 	return true
+}
+
+func makeEndpoint(d string, a string) string {
+	if strings.Contains(a, "xs.") {
+		return a
+	} else {
+		return d + "/" + a
+	}
 }
 
 // Extract action from endpoint. Endpoint without a closing slash
@@ -52,7 +63,7 @@ func extractDomain(s string) (string, error) {
 // Extract the top level from a domain.
 // Example: xs.a.b -> xs
 func topLevelDomain(subdomain string) string {
-	parts := strings.Split(subdomain, DOMAIN_SEPARATOR)
+	parts := strings.Split(subdomain, ".")
 	return parts[0]
 }
 
@@ -97,8 +108,8 @@ func subdomain(agent, target string) bool {
 		targetDomain = target
 	}
 
-	agentParts := strings.Split(agent, DOMAIN_SEPARATOR)
-	targetParts := strings.Split(targetDomain, DOMAIN_SEPARATOR)
+	agentParts := strings.Split(agent, ".")
+	targetParts := strings.Split(targetDomain, ".")
 
 	// Target cannot be a subdomain of agent if it is shorter.
 	if len(targetParts) < len(agentParts) {
