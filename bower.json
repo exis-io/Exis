@@ -1,7 +1,6 @@
 {
     "name": "ngRiffle",
-    "version": "0.1.7",
-    "main": "./release/ngRiffle.js",
+    "main": "release/ngRiffle.js",
     "authors": [
         "Damouse <damouse007@gmail.com>"
     ],
@@ -22,6 +21,6 @@
     ],
     "dependencies": {
         "angular": "^1.2.0",
-        "autobahn": ">= 0.9.5"
+        "jsriffle": "latest"
     }
 }
