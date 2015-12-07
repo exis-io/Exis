@@ -9,12 +9,12 @@ import (
 func TestCuminXNone(t *testing.T) {
 	Convey("Functions that return nothing", t, func() {
 		Convey("Should accept no args", func() {
-			_, e := cumin(noneNone, []interface{}{})
+			_, e := Cumin(noneNone, []interface{}{})
 			So(e, ShouldBeNil)
 		})
 
 		Convey("Should accept one arg", func() {
-			_, e := cumin(oneNone, []interface{}{1})
+			_, e := Cumin(oneNone, []interface{}{1})
 
 			So(e, ShouldBeNil)
 			// So(r[0] ShouldEqual, 1)

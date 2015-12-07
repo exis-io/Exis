@@ -1,78 +1,189 @@
-///////////////////////////////////////////////////////////////////////////////
-//
-//  AutobahnJS - http://autobahn.ws, http://wamp.ws
-//
-//  A JavaScript library for WAMP ("The Web Application Messaging Protocol").
-//
-//  Copyright (C) 2011-2014 Tavendo GmbH, http://tavendo.com
-//
-//  Licensed under the MIT License.
-//  http://www.opensource.org/licenses/mit-license.php
-//
-///////////////////////////////////////////////////////////////////////////////
 
 
-// Polyfills for <= IE9
 require('./polyfill.js');
 
-var pjson = require('../package.json');
-
-var when = require('when');
-//var fn = require("when/function");
-
-if ('RIFFLE_DEBUG' in global && RIFFLE_DEBUG) {
-   // https://github.com/cujojs/when/blob/master/docs/api.md#whenmonitor
-   require('when/monitor/console');
-   if ('console' in global) {
-      console.log("Riffle debug enabled");
-   }
-}
-
-var util = require('./util.js');
 var log = require('./log.js');
-var session = require('./session.js');
-var connection = require('./connection.js');
+var pjson = require('../package.json');
+var when = require('when');
+var fn = require("when/function");
 var configure = require('./configure.js');
 
-var persona = require('./auth/persona.js');
-var cra = require('./auth/cra.js');
-
 exports.version = pjson.version;
-
 exports.transports = configure.transports;
-
-exports.Connection = connection.Connection;
-exports.Domain = connection.Domain;
-
-exports.Session = session.Session;
-exports.Invocation = session.Invocation;
-exports.Event = session.Event;
-exports.Result = session.Result;
-exports.Error = session.Error;
-exports.Subscription = session.Subscription;
-exports.Registration = session.Registration;
-exports.Publication = session.Publication;
-
-exports.auth_persona = persona.auth;
-exports.auth_cra = cra;
-
 exports.when = when;
-
-exports.util = util;
 exports.log = log;
 
 
-// Global configuration
-FABRIC_URL = "node.exis.io";
+//
+// Begin GOJS implementation
+//
 
-// TODO: fabric url doesn't set without calling this method 
+var go = require('./go.js');
+var ws = require('./transport/websocket.js');
 
-exports.setDevFabric = function(url) {
-  
-    FABRIC_URL = 'ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws';
+FABRIC_URL = "ws://localhost:8000/ws";
 
-    // Turn on debug logging, too
-    // exports.debug = function () {
-    //     console.log.apply(console, arguments);
-    // };
+var Ws = function () {
+    self = this;
+
+    this.open = function() {
+        // Methods available on the conn: console.log, protocol, send, close, onmessage, onopen, onclose, info
+
+        var factory = new ws.Factory({'type': 'websocket', 'url': FABRIC_URL});
+        self.conn = factory.create();
+
+        self.conn.onmessage = global.Wrapper.NewMessage;
+        self.conn.onopen = global.Wrapper.ConnectionOpened;
+
+        self.conn.onclose = function() {
+            console.log("DEFAULT Transport closed");
+
+            // Call closed on the core
+        };
+    }
+}; 
+
+Ws.prototype.send = function(message) {
+    console.log("Sending message: ", message)
+    this.conn.send(message);
+};
+
+Ws.prototype.close = function(code, reason) {
+    console.log("Closing connection with reason: ", reason)
+    this.conn.close(code, reason)
+};
+
+
+global.Wrapper.New();
+
+// Create and open the connection, let the wrapper have it 
+var conn = new Ws();
+conn.open()
+
+global.Wrapper.SetConnection(conn);
+
+//
+// Start client implementation
+//
+
+function prependDomain(domain, target) {
+    if (target.indexOf("xs.") > -1) {
+        return target
+    }
+
+    return domain + "/" + target;
+};
+
+function flattenHash(hash) {
+    var ret = [];
+
+    for (k in hash) {
+        ret.push(hash[k]);
+    }
+
+    return ret
+}
+
+
+exports.Domain = global.Domain.New;
+
+// Old domain implementation 
+
+
+// Introduction of domain object. Wraps one connection and offers multiple levels of 
+// indirection for interacting with remote domains
+var Domain = function (name) {
+    this.domain = name;
+    this.connection = null;
+    this.session = null;
+    this.pool = [this];
+    this.joined = false;
+}; 
+
+// Does not check the validity of the incoming or final name
+Domain.prototype.subdomain = function(name) {
+   var child = new Domain(this.domain + '.' + name)
+
+   // If already connected instantly trigger the domain's handler
+   if (this.joined) {
+        child.connection = this.connection;
+        child.session = this.session
+        child.joined = true;
+        child.onJoin();
+   }
+
+   this.pool.push(child);
+   child.pool = this.pool;
+
+   return child;
+};
+
+
+
+Domain.prototype.join = function() {
+   var self = this;
+   self.connection = new riffle.Connection(self.domain);
+
+    self.connection.onJoin = function (session) {
+        self.session = session;
+
+        for (var i = 0; i < self.pool.length; i++)  {
+            self.pool[i].session = session; 
+            self.pool[i].connection = this.connection;
+        }
+
+        for (var i = 0; i < self.pool.length; i++)  {
+            if (!self.pool[i].joined) {
+                self.pool[i].joined = true;
+                self.pool[i].onJoin();
+            }
+        }
+   };
+
+   self.connection.join();
+};
+
+Domain.prototype.leave = function() {
+    // Not done!
+    // this.session.close();
+};
+
+Domain.prototype.onJoin = function() {
+    log.debug("Domain " + this.domain + " default join");
+};
+
+Domain.prototype.onLeave = function() {
+    log.debug("Domain " + this.domain + " default leave");
+};
+
+
+// Message patterns
+Domain.prototype.subscribe = function(action, handler) {
+    return this.session.subscribe(prependDomain(this.domain, action), handler);
+};
+
+Domain.prototype.register = function(action, handler) {
+    return this.session.register(prependDomain(this.domain, action), handler);
+};
+
+Domain.prototype.call = function() {
+    var args = flattenHash(arguments);
+    var action = args.shift();
+    
+    return this.session.call(prependDomain(this.domain, action), args);
+};
+
+Domain.prototype.publish = function() {
+    var args = flattenHash(arguments);
+    var action = args.shift();
+
+    return this.session.publish(prependDomain(this.domain, action), args);
+};
+
+Domain.prototype.unsubscribe = function(action) {
+   
+};
+
+Domain.prototype.unregister = function(action) {
+
 };

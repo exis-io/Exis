@@ -26,6 +26,14 @@ func validAction(s string) bool {
 	return true
 }
 
+func makeEndpoint(d string, a string) string {
+	if strings.Contains(a, "xs.") {
+		return a
+	} else {
+		return d + "/" + a
+	}
+}
+
 // Extract action from endpoint. Endpoint without a closing slash
 // indicating an action is considered an error.
 func extractActions(s string) (string, error) {

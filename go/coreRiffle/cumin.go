@@ -6,7 +6,7 @@ import (
 )
 
 // Convert and apply args to arbitrary function fn
-func cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
+func Cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 	reciever := reflect.TypeOf(fn)
 	var ret []interface{}
 

@@ -1,7 +1,12 @@
 #!/bin/bash 
-
+#
 # git subtree add --prefix js/ngRiffle ngRiffle master
 # 
+#
+# Its nice to have the go code in this directory and not go/src, symlink something like this
+#   ln -s ~/code/merged/riffle/go/goRiffle/ ~/code/go/src/github.com/exis-io/goRiffle
+#   ln -s ~/code/merged/riffle/go/coreRiffle $GOPATH/src/github.com/exis-io/coreRiffle
+#
 
 if [ $# -lt 1 ]
 then
@@ -61,7 +66,7 @@ push() {
     git subtree push --prefix CardsAgainstHumanityDemo/swiftCardsAgainst iosCAH master 
     git subtree push --prefix CardsAgainstHumanityDemo/ngCardsAgainst ngCAH master 
 
-    git push origin master
+    git push origin danger
 }
 
 pull() {
@@ -84,13 +89,12 @@ pull() {
     # ln -s go/goRiffle $GOPATH/src/github.com/exis-io/goRiffle
     # ln -s go/coreRiffle $GOPATH/src/github.com/exis-io/coreRiffle
 
-    git subtree pull --prefix python/pyRiffle pyRiffle master -m 'Update to stump' --squash
 }
 
 ios() {
     echo "Updating riffle, seeds, and cards to version $1"
 
-    git subtree push --prefix ios/swiftRiffle swiftRiffle master
+    git subtree push --prefix swift/swiftRiffle swiftRiffle master
 
     git clone git@github.com:exis-io/swiftRiffle.git
     cd swiftRiffle
@@ -104,7 +108,7 @@ ios() {
     rm -rf swiftRiffle
 
     # update the seed projects and push them 
-    cd ios/appSeed
+    cd swift/appSeed
     pod update
 
     cd ../appBackendSeed
@@ -114,8 +118,8 @@ ios() {
     git add --all
     git commit -m "swRiffle upgrade to v $1"
 
-    git subtree push --prefix ios/appBackendSeed iosAppBackendSeed master
-    git subtree push --prefix ios/appSeed iosAppSeed master
+    git subtree push --prefix swift/appBackendSeed iosAppBackendSeed master
+    git subtree push --prefix swift/appSeed iosAppSeed master
     git push origin master
 }
 
@@ -175,11 +179,14 @@ core() {
     # mv products/osx.h osx/RiffleTest/osx.h 
     # mv products/osx.a osx/RiffleTest/osx.a
 
+    echo "Building Swift Container"
+    go build -buildmode=c-shared -o swift/container/libriff.so go/coreRiffle/wrappers/swiftlinux.go
+
 
     # echo "Building iOS"
     # GOGCCFLAGS="--Wl,-no_pie" gomobile bind -ldflags="-extldflags=-pie" -target=ios -work github.com/exis-io/goriffle
-    # rm -rf ios/Goriffle.framework
-    # mv Goriffle.framework ios/Goriffle.framework
+    # rm -rf swift/Goriffle.framework
+    # mv Goriffle.framework swift/Goriffle.framework
 
 
     # iOS naively like above. Doesn't work. 
@@ -199,6 +206,12 @@ core() {
     exit
 }
 
+# run() {
+#     # Run
+#     LD_LIBRARY_PATH=./swift/container:$LD_LIBRARY_PATH ./swift/container/biddly
+#     exit 
+# }
+
 python() {
     echo "Updating python"
     exit
@@ -213,6 +226,7 @@ case "$1" in
     "go") go;;
     "core") core;;
     "python") python;;
+    "run") run;;
     *) echo "Unknown input $1"
    ;;
 esac

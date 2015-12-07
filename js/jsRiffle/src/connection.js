@@ -16,6 +16,7 @@ var when = require('when');
 var session = require('./session.js');
 var util = require('./util.js');
 var log = require('./log.js');
+
 var riffle = require('./riffle.js');
 
 
@@ -138,9 +139,12 @@ var Connection = function (domain) {
 
 
 Connection.prototype._create_transport = function () {
+    //console.log("Transport factories: ", this._transport_factories);
+
    for (var i = 0; i < this._transport_factories.length; ++i) {
       var transport_factory = this._transport_factories[i];
       log.debug("trying to create WAMP transport of type: " + transport_factory.type);
+
       try {
          var transport = transport_factory.create();
          if (transport) {
@@ -484,120 +488,3 @@ Object.defineProperty(Connection.prototype, "isRetrying", {
 
 exports.Connection = Connection;
 
-function prependDomain(domain, target) {
-    if (target.indexOf("xs.") > -1) {
-        return target
-    }
-
-    return domain + "/" + target;
-};
-
-function flattenHash(hash) {
-    var ret = [];
-
-    for (k in hash) {
-        ret.push(hash[k]);
-    }
-
-    return ret
-}
-
-// Introduction of domain object. Wraps one connection and offers multiple levels of 
-// indirection for interacting with remote domains
-var Domain = function (name) {
-    this.domain = name;
-    this.connection = null;
-    this.session = null;
-    this.pool = [this];
-    this.joined = false;
-}; 
-
-// Does not check the validity of the incoming or final name
-Domain.prototype.subdomain = function(name) {
-   var child = new Domain(this.domain + '.' + name)
-
-   // If already connected instantly trigger the domain's handler
-   if (this.joined) {
-        child.connection = this.connection;
-        child.session = this.session
-        child.joined = true;
-        child.onJoin();
-   }
-
-   this.pool.push(child);
-   child.pool = this.pool;
-
-   return child;
-};
-
-
-// Joins and leaves
-Domain.prototype.join = function() {
-   var self = this;
-   self.connection = new riffle.Connection(self.domain);
-
-    self.connection.onJoin = function (session) {
-        self.session = session;
-
-        for (var i = 0; i < self.pool.length; i++)  {
-            self.pool[i].session = session; 
-            self.pool[i].connection = this.connection;
-        }
-
-        for (var i = 0; i < self.pool.length; i++)  {
-            if (!self.pool[i].joined) {
-                self.pool[i].joined = true;
-                self.pool[i].onJoin();
-            }
-        }
-   };
-
-   self.connection.join();
-};
-
-Domain.prototype.leave = function() {
-    // Not done!
-    // this.session.close();
-};
-
-Domain.prototype.onJoin = function() {
-    log.debug("Domain " + this.domain + " default join");
-};
-
-Domain.prototype.onLeave = function() {
-    log.debug("Domain " + this.domain + " default leave");
-};
-
-
-// Message patterns
-Domain.prototype.subscribe = function(action, handler) {
-    return this.session.subscribe(prependDomain(this.domain, action), handler);
-};
-
-Domain.prototype.register = function(action, handler) {
-    return this.session.register(prependDomain(this.domain, action), handler);
-};
-
-Domain.prototype.call = function() {
-    var args = flattenHash(arguments);
-    var action = args.shift();
-    
-    return this.session.call(prependDomain(this.domain, action), args);
-};
-
-Domain.prototype.publish = function() {
-    var args = flattenHash(arguments);
-    var action = args.shift();
-
-    return this.session.publish(prependDomain(this.domain, action), args);
-};
-
-Domain.prototype.unsubscribe = function(action) {
-   
-};
-
-Domain.prototype.unregister = function(action) {
-
-};
-
-exports.Domain = Domain;

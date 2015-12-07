@@ -7,12 +7,8 @@ import (
 )
 
 const (
-	maxId   int64         = 1 << 53
-	timeout time.Duration = 5 * time.Second
-
-	devFabric        string = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
-	sandboxFabric    string = "ws://sandbox.exis.io/ws"
-	proudctionFabric string = "ws://node.exis.io/ws"
+	maxId          int64         = 1 << 53
+	MessageTimeout time.Duration = 3 * time.Second
 
 	ErrInvalidArgument     = "ERR-- Invalid Arguments, check your receiver!"
 	ErrSystemShutdown      = "ERR-- Connection collapsed. It wasn't pretty."
@@ -22,12 +18,11 @@ const (
 	ErrAuthorizationFailed = "ERR-- Unable to Authorize. Try harder."
 )
 
-// NewID generates a random WAMP uint.
 func newID() uint {
 	return uint(rand.Int63n(maxId))
 }
 
-func formatUnexpectedMessage(msg message, expected messageType) string {
+func formatUnexpectedMessage(msg message, expected string) string {
 	s := fmt.Sprintf("received unexpected %s message while waiting for %s", msg.messageType(), expected)
 	switch m := msg.(type) {
 	case *abort:
@@ -45,14 +40,12 @@ func formatUnexpectedMessage(msg message, expected messageType) string {
 func formatUnknownMap(m map[string]interface{}) string {
 	s := ""
 	for k, v := range m {
-		// TODO: reflection to recursively check map
 		s += fmt.Sprintf(" %s=%v", k, v)
 	}
 	return s
 }
 
 // Some data structure utility methods
-
 func bindingForEndpoint(bindings map[uint]*boundEndpoint, endpoint string) (uint, *boundEndpoint, bool) {
 	for id, p := range bindings {
 		if p.endpoint == endpoint {
