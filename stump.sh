@@ -169,8 +169,8 @@ core() {
     # mv products/osx.h osx/RiffleTest/osx.h 
     # mv products/osx.a osx/RiffleTest/osx.a
 
-    echo "Building Swift Crust"
-    go build -buildmode=c-shared -o swift/container/libriffle.so go/coreRiffle/wrappers/swift.go
+    # echo "Building Swift Crust"
+    # go build -buildmode=c-shared -o swift/container/libriffle.so go/coreRiffle/wrappers/swift.go
 
 
     # echo "Building iOS"
