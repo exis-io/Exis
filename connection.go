@@ -1,44 +1,55 @@
 package goRiffle
 
 import (
-	"fmt"
 	"log"
-	"sync"
 	"time"
 
+	"github.com/exis-io/coreRiffle"
 	"github.com/gorilla/websocket"
 )
 
 type websocketConnection struct {
-	conn        *websocket.Conn
-	connLock    sync.Mutex
-	serializer  serializer
-	messages    chan message
+	conn *websocket.Conn
+	// connLock sync.Mutex
+	coreRiffle.App
 	payloadType int
 	closed      bool
 }
 
-// TODO: make this just add the message to a channel so we don't block
-func (ep *websocketConnection) Send(msg message) error {
+func Open(url string) (*websocketConnection, error) {
+	coreRiffle.Debug("Opening ws connection to %s", url)
+	dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
 
-	b, err := ep.serializer.serialize(msg)
+	if conn, _, err := dialer.Dial(url, nil); err != nil {
+		coreRiffle.Debug("Cant dial connection: %e", err)
+		return nil, err
+	} else {
+		coreRiffle.Debug("Connection dialed")
 
-	if err != nil {
-		return err
+		connection := &websocketConnection{
+			conn:        conn,
+			payloadType: websocket.TextMessage,
+		}
+
+		go connection.run()
+		return connection, nil
 	}
-
-	ep.connLock.Lock()
-	err = ep.conn.WriteMessage(ep.payloadType, b)
-	ep.connLock.Unlock()
-
-	return err
 }
 
-func (ep *websocketConnection) Receive() <-chan message {
-	return ep.messages
+func (ep *websocketConnection) Send(data []byte) {
+	// coreRiffle.Debug("Writing data")
+	// Does the lock block? The locks should be faster than working off the channel,
+	// but the comments in the other code imply that the lock blocks on the send?
+
+	if err := ep.conn.WriteMessage(ep.payloadType, data); err != nil {
+		panic("No one is dealing with my errors! Cant write to socket")
+	}
 }
 
-func (ep *websocketConnection) Close() error {
+// Who the hell do we call close first on? App or connection?
+// Either way one or the other may have to check on the other, which is no good
+func (ep *websocketConnection) Close(reason string) error {
+	coreRiffle.Info("Closing connection with reason: %s", reason)
 	closeMsg := websocket.FormatCloseMessage(websocket.CloseNormalClosure, "goodbye")
 	err := ep.conn.WriteControl(websocket.CloseMessage, closeMsg, time.Now().Add(5*time.Second))
 
@@ -46,80 +57,37 @@ func (ep *websocketConnection) Close() error {
 		log.Println("error sending close message:", err)
 	}
 
+	// Close the channel!
+
 	ep.closed = true
 	return ep.conn.Close()
-
-	return nil
 }
 
 func (ep *websocketConnection) run() {
+	// Theres some missing logic here when it comes to dealing with closes, including whats
+	// actually returned from those closes
+
 	for {
-		if msgType, b, err := ep.conn.ReadMessage(); err != nil {
+		// the blank assignment is 'b'
+		if msgType, bytes, err := ep.conn.ReadMessage(); err != nil {
 			if ep.closed {
-				log.Println("peer connection closed")
+				coreRiffle.Info("peer connection closed")
 			} else {
-				log.Println("error reading from peer:", err)
+				coreRiffle.Info("error reading from peer:", err)
 				ep.conn.Close()
 			}
-			close(ep.messages)
+
+			// ep.App.Close()
 			break
 		} else if msgType == websocket.CloseMessage {
-			fmt.Println("Close message recieved")
+			coreRiffle.Info("Close message recieved")
 			ep.conn.Close()
-			close(ep.messages)
+
+			// ep.App.Close()
 			break
 		} else {
-			msg, err := ep.serializer.deserialize(b)
-			if err != nil {
-				log.Println("error deserializing peer message:", err)
-				log.Println(b)
-				// TODO: handle error
-			} else {
-				fmt.Println("Message received!")
-				ep.messages <- msg
-			}
+			// coreRiffle.Debug("Socket received data")
+			ep.App.ReceiveBytes(bytes)
 		}
-	}
-}
-
-func (c *Domain) registerListener(id uint) {
-	//log.Println("register listener:", id)
-	wait := make(chan message, 1)
-	c.listeners[id] = wait
-}
-
-func (c *Domain) waitOnListener(id uint) (message, error) {
-	if wait, ok := c.listeners[id]; !ok {
-		return nil, fmt.Errorf("unknown listener uint: %v", id)
-	} else {
-		select {
-		case msg := <-wait:
-			return msg, nil
-		case <-time.After(timeout):
-			return nil, fmt.Errorf("timeout while waiting for message")
-		}
-	}
-}
-
-func (c *Domain) notifyListener(msg message, requestId uint) {
-	// pass in the request uint so we don't have to do any type assertion
-	if l, ok := c.listeners[requestId]; ok {
-		l <- msg
-	} else {
-		log.Println("no listener for message", msg.messageType(), requestId)
-	}
-}
-
-// Convenience function to get a single message from a peer
-func getMessageTimeout(p connection, t time.Duration) (message, error) {
-	select {
-	case msg, open := <-p.Receive():
-		if !open {
-			return nil, fmt.Errorf("receive channel closed")
-		}
-
-		return msg, nil
-	case <-time.After(t):
-		return nil, fmt.Errorf("timeout waiting for message")
 	}
 }
