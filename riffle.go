@@ -15,6 +15,7 @@ type Domain interface {
 
 	Publish(string, []interface{}) error
 	Call(string, []interface{}) ([]interface{}, error)
+    Yield(uint, []interface{})
 
 	Unsubscribe(string) error
 	Unregister(string) error
@@ -33,8 +34,7 @@ type Connection interface {
 	// Send a message
 	Send([]byte)
 
-	// Closes the peer connection and any channel returned from Receive().
-	// Calls with a reason for the close
+	// Called with a reason for the close
 	Close(string) error
 }
 
@@ -66,5 +66,6 @@ type LogWriter interface {
 	Write(string)
 }
 
+// The mantles set these
 var LogLevel int = 0
 var writer LogWriter

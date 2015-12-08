@@ -89,7 +89,7 @@ func (c *domain) Leave() error {
 // Message Patterns
 /////////////////////////////////////////////
 
-func (c domain) Subscribe(endpoint string, types []interface{}) (uint, error) {
+func (c domain) Subscribe(endpoint string, callback uint, errback uint, types []interface{}) (uint, error) {
 	endpoint = makeEndpoint(c.name, endpoint)
 	sub := &subscribe{Request: newID(), Options: make(map[string]interface{}), Name: endpoint}
 
@@ -103,7 +103,7 @@ func (c domain) Subscribe(endpoint string, types []interface{}) (uint, error) {
 	}
 }
 
-func (c domain) Register(endpoint string, types []interface{}) (uint, error) {
+func (c domain) Register(endpoint string, callback uint, errback uint, types []interface{}) (uint, error) {
 	endpoint = makeEndpoint(c.name, endpoint)
 	register := &register{Request: newID(), Options: make(map[string]interface{}), Name: endpoint}
 
@@ -117,7 +117,7 @@ func (c domain) Register(endpoint string, types []interface{}) (uint, error) {
 	}
 }
 
-func (c domain) Publish(endpoint string, args []interface{}) error {
+func (c domain) Publish(endpoint string, callback uint, errback uint, args []interface{}) error {
 	return c.app.Send(&publish{
 		Request:   newID(),
 		Options:   make(map[string]interface{}),
@@ -126,7 +126,7 @@ func (c domain) Publish(endpoint string, args []interface{}) error {
 	})
 }
 
-func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error) {
+func (c domain) Call(endpoint string, callback uint, errback uint, args []interface{}) ([]interface{}, error) {
 	endpoint = makeEndpoint(c.name, endpoint)
 	call := &call{Request: newID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
 
@@ -137,7 +137,31 @@ func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error)
 	}
 }
 
-func (c domain) Unsubscribe(endpoint string) error {
+func (c domain) Yield(request uint, callback uint, errback uint, args []interface{}) {
+    m = &yield{
+        Request:   request,
+        Options:   make(map[string]interface{}),
+        Arguments: args,
+    }
+
+    if err != nil {
+        m = &errorMessage{
+            Type:      iNVOCATION,
+            Request:   request,
+            Details:   make(map[string]interface{}),
+            Arguments: args,
+            Error:     "Not Implemented",
+        }
+    }
+
+    if err := c.app.Send(m); err != nil {
+        Warn("Could not send yield")
+    } else {
+        Info("Yield: %s", m)
+    }
+}
+
+func (c domain) Unsubscribe(endpoint string, callback uint, errback uint, ) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 
 	if id, _, ok := bindingForEndpoint(c.subscriptions, endpoint); !ok {
@@ -155,7 +179,7 @@ func (c domain) Unsubscribe(endpoint string) error {
 	}
 }
 
-func (c domain) Unregister(endpoint string) error {
+func (c domain) Unregister(endpoint string, callback uint, errback uint, ) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 
 	if id, _, ok := bindingForEndpoint(c.registrations, endpoint); !ok {
@@ -202,29 +226,4 @@ func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
 			Warn("error sending message:", err)
 		}
 	}
-
 }
-
-// We cant yield anymore!
-// Careful-- we can't yield in some languages. Have to implement the yield as a seperate function
-// var tosend message
-
-// tosend = &yield{
-//  Request:   msg.Request,
-//  Options:   make(map[string]interface{}),
-//  Arguments: result,
-// }
-
-// if err != nil {
-//  tosend = &errorMessage{
-//      Type:      iNVOCATION,
-//      Request:   msg.Request,
-//      Details:   make(map[string]interface{}),
-//      Arguments: result,
-//      Error:     err.Error(),
-//  }
-// }
-
-// if err := c.app.Send(tosend); err != nil {
-//  log.Println("error sending message:", err)
-// }
