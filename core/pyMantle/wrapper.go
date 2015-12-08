@@ -10,19 +10,19 @@ type Domain interface {
 	Subscribe(string) error
 	Register(string) error
 
-	// Publish(string, ...interface{}) error
-	// Call(string, ...interface{}) ([]interface{}, error)
+	Publish(string, ...interface{}) error
+	Call(string, ...interface{}) ([]interface{}, error)
 
-	// Unsubscribe(string) error
-	// Unregister(string) error
+	Unsubscribe(string) error
+	Unregister(string) error
 
-	// Join() error
-	// Leave() error
-	// Run()
+	Join() error
+	Leave() error
+	Run()
 }
 
 type wrapper struct {
-	honcho core.App
+	app core.App
 	// conn   *websocketConnection
 }
 

@@ -16,9 +16,9 @@
 // import Foundation
 
 import Foundation
+import CoreFoundation
 
 public func Hello() -> String {
-    print("Aww, piddles")
     return "Crust reporting in"
 }
 
@@ -104,10 +104,30 @@ public func Hello() -> String {
 
 // g.register("xs.damouse.go/sub") { (obj: AnyObject) -> AnyObject in
 //     print("Call received: \(obj)")
-//     return "Bootle"
+//     // return "Bootle"
 // }
 
 // Threading implementation-- this doesn't work on ubuntu
-// let thread = NSThread(target: g, selector: "receive", object: nil)
-// thread.start()
+
+public class Dummy {
+    var thread: NSThread!
+
+    public init() {
+        // Well that works...
+        
+        thread = NSThread(spin)
+        thread.start()
+        thread.main()
+    }
+
+    func spin() {
+        while true {
+            print("Spinning...")
+        }
+    }
+}
+
+// let d = Dummy()
+
+
 // NSRunLoop.currentRunLoop().run()

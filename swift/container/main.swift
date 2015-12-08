@@ -15,5 +15,6 @@
 import riffle
 
 print("Linux example starting")
-
 print(riffle.Hello())
+
+let d = riffle.Dummy()
