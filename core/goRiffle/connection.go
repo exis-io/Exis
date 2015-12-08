@@ -8,15 +8,14 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type websocketConnection struct {
+type WebsocketConnection struct {
 	conn *websocket.Conn
-	// connLock sync.Mutex
 	core.App
 	payloadType int
 	closed      bool
 }
 
-func Open(url string) (*websocketConnection, error) {
+func Open(url string) (*WebsocketConnection, error) {
 	core.Debug("Opening ws connection to %s", url)
 	dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
 
@@ -26,7 +25,7 @@ func Open(url string) (*websocketConnection, error) {
 	} else {
 		core.Debug("Connection dialed")
 
-		connection := &websocketConnection{
+		connection := &WebsocketConnection{
 			conn:        conn,
 			payloadType: websocket.TextMessage,
 		}
@@ -36,7 +35,7 @@ func Open(url string) (*websocketConnection, error) {
 	}
 }
 
-func (ep *websocketConnection) Send(data []byte) {
+func (ep *WebsocketConnection) Send(data []byte) {
 	// core.Debug("Writing data")
 	// Does the lock block? The locks should be faster than working off the channel,
 	// but the comments in the other code imply that the lock blocks on the send?
@@ -48,7 +47,7 @@ func (ep *websocketConnection) Send(data []byte) {
 
 // Who the hell do we call close first on? App or connection?
 // Either way one or the other may have to check on the other, which is no good
-func (ep *websocketConnection) Close(reason string) error {
+func (ep *WebsocketConnection) Close(reason string) error {
 	core.Info("Closing connection with reason: %s", reason)
 	closeMsg := websocket.FormatCloseMessage(websocket.CloseNormalClosure, "goodbye")
 	err := ep.conn.WriteControl(websocket.CloseMessage, closeMsg, time.Now().Add(5*time.Second))
@@ -63,7 +62,7 @@ func (ep *websocketConnection) Close(reason string) error {
 	return ep.conn.Close()
 }
 
-func (ep *websocketConnection) run() {
+func (ep *WebsocketConnection) run() {
 	// Theres some missing logic here when it comes to dealing with closes, including whats
 	// actually returned from those closes
 

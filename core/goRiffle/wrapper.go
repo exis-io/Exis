@@ -21,32 +21,32 @@ type Domain interface {
 	Run()
 }
 
-type wrapper struct {
+type mantle struct {
 	honcho core.App
-	conn   *websocketConnection
+	conn   *WebsocketConnection
 }
 
 type domain struct {
-	wrapper  *wrapper
+	mantle   *mantle
 	mirror   core.Domain
 	handlers map[uint]interface{}
 	kill     chan bool
 }
 
-var wrap *wrapper
+var wrap *mantle
 
 func NewDomain(name string) Domain {
 
 	if wrap == nil {
 		h := core.NewApp()
 
-		wrap = &wrapper{
+		wrap = &mantle{
 			honcho: h,
 		}
 	}
 
 	d := domain{
-		wrapper:  wrap,
+		mantle:   wrap,
 		handlers: make(map[uint]interface{}),
 		kill:     make(chan bool),
 	}
@@ -95,7 +95,7 @@ func (d domain) Unregister(endpoint string) error {
 
 func (d domain) Join() error {
 	// Open a new connection if we don't have one yet
-	if d.wrapper.conn == nil {
+	if d.mantle.conn == nil {
 		c, err := Open(core.LocalFabric)
 
 		if err != nil {
@@ -120,7 +120,7 @@ func (d domain) Leave() error {
 	return err
 }
 
-func (d domain) Invoke(endpoint string, id uint, args []interface{}) ([]interface{}, error) {
+func (d domain) Invoke(id uint, args []interface{}) ([]interface{}, error) {
 	return core.Cumin(d.handlers[id], args)
 }
 
@@ -150,24 +150,13 @@ func Warn(format string, a ...interface{}) {
 	core.Warn(format, a...)
 }
 
-// const (
-// 	LOGWARN  int = 1
-// 	LOGINFO  int = 2
-// 	LOGDEBUG int = 3
-// )
+const (
+	LogLevelErr   int = 0
+	LogLevelWarn  int = 1
+	LogLevelInfo  int = 2
+	LogLevelDebug int = 3
+)
 
-// func SetLogging(level int) {
-// 	core.SetLogging(level)
-// }
-
-func SetLoggingDebug() {
-	core.SetLoggingDebug()
-}
-
-func SetLoggingInfo() {
-	core.SetLoggingInfo()
-}
-
-func SetLoggingWarn() {
-	core.SetLoggingWarn()
+func SetLoggingLevel(l int) {
+	core.LogLevel = l
 }

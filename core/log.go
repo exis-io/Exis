@@ -7,25 +7,25 @@ import (
 )
 
 func Debug(format string, a ...interface{}) {
-	if logLevel >= levelDebug {
+	if LogLevel >= LogLevelDebug {
 		out(fmt.Sprintf("core-debug: %s", fmt.Sprintf(format, a...)))
 	}
 }
 
 func Info(format string, a ...interface{}) {
-	if logLevel >= levelInfo {
+	if LogLevel >= LogLevelInfo {
 		out(fmt.Sprintf("core-info: %s", fmt.Sprintf(format, a...)))
 	}
 }
 
 func Warn(format string, a ...interface{}) {
-	if logLevel >= levelWarn {
+	if LogLevel >= LogLevelWarn {
 		out(fmt.Sprintf("core-warn: %s", fmt.Sprintf(format, a...)))
 	}
 }
 
 func Error(format string, a ...interface{}) {
-	if logLevel >= levelErr {
+	if LogLevel >= LogLevelErr {
 		out(fmt.Sprintf("core-error: %s", fmt.Sprintf(format, a...)))
 	}
 }

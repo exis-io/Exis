@@ -1,53 +1,65 @@
 // package name: riffle
 package main
 
-// This is the lowest level core, it just exposes the C API
-// Used for python, swift-linux, and osx
-
 import (
 	"C"
 
 	"github.com/exis-io/core"
+	"github.com/exis-io/core/goRiffle"
 )
+
+/*
+This is the lowest level core, just exposes the C API. Used for python, swift-linux, and osx.
+
+You are responsible for cleaning up C references!
+
+
+Every function here is reactive: it returns two indicies to callbacks to be triggered later.
+*/
+
+import "C"
+import "fmt"
+
+type mantle struct {
+	app   core.App
+	connn *goRiffle.WebsocketConnection
+}
+
+var man = new(mantle)
 
 // Required main method
 func main() {}
 
-//export Test
-func Test() {
-	core.Info("Server starting")
-	// core.SetLoggingDebug()
+//export NewDomain
+func NewDomain(name *C.char) {
+	// Return the address of the domain (?)
 
-	// a := core.NewDomain("xs.damouse.alpha")
-	// a.Join()
+	if man.app == nil {
+		man.app = core.NewApp()
+	}
 
-	// e := a.Subscribe("sub", func() {
-	// 	core.Info("Pub received!")
-	// })
-
-	// if e != nil {
-	// 	core.Info("Unable to subscribe: ", e.Error())
-	// }
-
-	// e = a.Register("reg", func() {
-	// 	core.Info("Call received!")
-	// })
-
-	// if e != nil {
-	// 	core.Info("Unable to subscribe: ", e.Error())
-	// }
-
-	// // Run the client until Leave is called
-	// a.Run()
+	man.app.NewDomain(C.GoString(name), man)
 }
 
-// // Required main method
-// func main() {}
+func (m mantle) Invoke(id uint, args []interface{}) ([]interface{}, error) {
+	fmt.Println("Invoke called: ", id, args)
+	return make([]interface{}, 0), nil
+}
 
-// //export Connector
-// func Connector(url *C.char, domain *C.char) *C.char {
-// 	ret := core.PConnector(C.GoString(url), C.GoString(domain))
-// 	return C.CString(ret)
+func (m mantle) OnJoin(string) {
+	fmt.Println("Domain joined!")
+}
+
+func (m mantle) OnLeave(string) {
+	fmt.Println("Domain left!")
+}
+
+// we store it in a global variable so that the garbage collector
+// doesn't clean up the memory for any temporary variables created.
+// var MyCallbackFunc = MyCallback
+
+// func Example() {
+// 	C.CallMyFunction(unsafe.Pointer(&MyCallbackFunc))
 // }
 
 // //export Subscribe
@@ -84,4 +96,15 @@ func Test() {
 // 		sum += sum
 // 		fmt.Println(sum)
 // 	}
+// }
+
+// //export go_callback_int
+// func go_callback_int(pfoo unsafe.Pointer, p1 C.int) {
+//     // Testing returning go callbacks into the C bridge
+//     foo := *(*func(C.int))(pfoo)
+//     foo(p1)
+// }
+
+// func MyCallback(x C.int) {
+//     fmt.Println("callback with", x)
 // }
