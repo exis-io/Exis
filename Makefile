@@ -1,11 +1,10 @@
 
 all: swift osx ios python js
 
-.PHONY: all swift python js clean libriffmantle.so
+.PHONY: python js clean 
 
 
 swift: libriffmantle.so
-	# go build -buildmode=c-shared -o swift/container/libriffmantle.so go/coreRiffle/mantles/see.go
 	cp assets/libriffmantle.so swift/container/libriffmantle.so
 	cp assets/libriffmantle.h swift/container/libriffmantle.h
 
@@ -28,15 +27,10 @@ libriffmantle.so:
 
 
 clean: 
-	rm assets/libriffmantle.so
-	rm assets/libriffmantle.h
+	rm assets/libriffmantle.so assets/libriffmantle.h
+	# rm python/pyRiffle/riffle/libriffmantle.so python/pyRiffle/riffle/libriffmantle.h
 
 	$(MAKE) -C swift/container clean
-
-
-# This doesn't work-- need the arm bindings?
-# ios-native:
-# 	GOARM=7 CGO_ENABLED=1 GOARCH=arm go build -buildmode=c-archive -o products/ios.a goriffle/runner/osx.go
 
 
 # Orphaned code-- don't use yet
@@ -46,7 +40,6 @@ osx:
 	# mv products/see.h osx/RiffleTest/see.h 
 	# mv products/see.a osx/RiffleTest/see.a
 
-# Orphaned code-- don't use yet
 ios: 
 	GOGCCFLAGS="--Wl,-no_pie" gomobile bind -ldflags="-extldflags=-pie" -target=ios -work github.com/exis-io/goriffle
 	rm -rf swift/Goriffle.framework
