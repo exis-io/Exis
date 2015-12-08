@@ -4,27 +4,27 @@ import (
 	"log"
 	"time"
 
-	"github.com/exis-io/coreRiffle"
+	"github.com/exis-io/core"
 	"github.com/gorilla/websocket"
 )
 
 type websocketConnection struct {
 	conn *websocket.Conn
 	// connLock sync.Mutex
-	coreRiffle.App
+	core.App
 	payloadType int
 	closed      bool
 }
 
 func Open(url string) (*websocketConnection, error) {
-	coreRiffle.Debug("Opening ws connection to %s", url)
+	core.Debug("Opening ws connection to %s", url)
 	dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
 
 	if conn, _, err := dialer.Dial(url, nil); err != nil {
-		coreRiffle.Debug("Cant dial connection: %e", err)
+		core.Debug("Cant dial connection: %e", err)
 		return nil, err
 	} else {
-		coreRiffle.Debug("Connection dialed")
+		core.Debug("Connection dialed")
 
 		connection := &websocketConnection{
 			conn:        conn,
@@ -37,7 +37,7 @@ func Open(url string) (*websocketConnection, error) {
 }
 
 func (ep *websocketConnection) Send(data []byte) {
-	// coreRiffle.Debug("Writing data")
+	// core.Debug("Writing data")
 	// Does the lock block? The locks should be faster than working off the channel,
 	// but the comments in the other code imply that the lock blocks on the send?
 
@@ -49,7 +49,7 @@ func (ep *websocketConnection) Send(data []byte) {
 // Who the hell do we call close first on? App or connection?
 // Either way one or the other may have to check on the other, which is no good
 func (ep *websocketConnection) Close(reason string) error {
-	coreRiffle.Info("Closing connection with reason: %s", reason)
+	core.Info("Closing connection with reason: %s", reason)
 	closeMsg := websocket.FormatCloseMessage(websocket.CloseNormalClosure, "goodbye")
 	err := ep.conn.WriteControl(websocket.CloseMessage, closeMsg, time.Now().Add(5*time.Second))
 
@@ -71,22 +71,22 @@ func (ep *websocketConnection) run() {
 		// the blank assignment is 'b'
 		if msgType, bytes, err := ep.conn.ReadMessage(); err != nil {
 			if ep.closed {
-				coreRiffle.Info("peer connection closed")
+				core.Info("peer connection closed")
 			} else {
-				coreRiffle.Info("error reading from peer:", err)
+				core.Info("error reading from peer:", err)
 				ep.conn.Close()
 			}
 
 			// ep.App.Close()
 			break
 		} else if msgType == websocket.CloseMessage {
-			coreRiffle.Info("Close message recieved")
+			core.Info("Close message recieved")
 			ep.conn.Close()
 
 			// ep.App.Close()
 			break
 		} else {
-			// coreRiffle.Debug("Socket received data")
+			// core.Debug("Socket received data")
 			ep.App.ReceiveBytes(bytes)
 		}
 	}

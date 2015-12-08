@@ -3,7 +3,7 @@ package goRiffle
 import (
 	"fmt"
 
-	"github.com/exis-io/coreRiffle"
+	"github.com/exis-io/core"
 )
 
 type Domain interface {
@@ -22,13 +22,13 @@ type Domain interface {
 }
 
 type wrapper struct {
-	honcho coreRiffle.App
+	honcho core.App
 	conn   *websocketConnection
 }
 
 type domain struct {
 	wrapper  *wrapper
-	mirror   coreRiffle.Domain
+	mirror   core.Domain
 	handlers map[uint]interface{}
 	kill     chan bool
 }
@@ -38,7 +38,7 @@ var wrap *wrapper
 func NewDomain(name string) Domain {
 
 	if wrap == nil {
-		h := coreRiffle.NewApp()
+		h := core.NewApp()
 
 		wrap = &wrapper{
 			honcho: h,
@@ -96,7 +96,7 @@ func (d domain) Unregister(endpoint string) error {
 func (d domain) Join() error {
 	// Open a new connection if we don't have one yet
 	if d.wrapper.conn == nil {
-		c, err := Open(coreRiffle.LocalFabric)
+		c, err := Open(core.LocalFabric)
 
 		if err != nil {
 			fmt.Println("Unable to open connection!")
@@ -121,7 +121,7 @@ func (d domain) Leave() error {
 }
 
 func (d domain) Invoke(endpoint string, id uint, args []interface{}) ([]interface{}, error) {
-	return coreRiffle.Cumin(d.handlers[id], args)
+	return core.Cumin(d.handlers[id], args)
 }
 
 func (d domain) OnJoin(string) {
@@ -139,15 +139,15 @@ func (d domain) Run() {
 }
 
 func Debug(format string, a ...interface{}) {
-	coreRiffle.Debug(format, a...)
+	core.Debug(format, a...)
 }
 
 func Info(format string, a ...interface{}) {
-	coreRiffle.Info(format, a...)
+	core.Info(format, a...)
 }
 
 func Warn(format string, a ...interface{}) {
-	coreRiffle.Warn(format, a...)
+	core.Warn(format, a...)
 }
 
 // const (
@@ -157,17 +157,17 @@ func Warn(format string, a ...interface{}) {
 // )
 
 // func SetLogging(level int) {
-// 	coreRiffle.SetLogging(level)
+// 	core.SetLogging(level)
 // }
 
 func SetLoggingDebug() {
-	coreRiffle.SetLoggingDebug()
+	core.SetLoggingDebug()
 }
 
 func SetLoggingInfo() {
-	coreRiffle.SetLoggingInfo()
+	core.SetLoggingInfo()
 }
 
 func SetLoggingWarn() {
-	coreRiffle.SetLoggingWarn()
+	core.SetLoggingWarn()
 }
