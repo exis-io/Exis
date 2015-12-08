@@ -1,24 +1,22 @@
-package pyRiffle
+package riffle
 
 import (
-	_ "fmt"
-
 	"github.com/exis-io/core"
+	_ "github.com/exis-io/core/goRiffle"
 )
 
 type Domain interface {
-	Subscribe(string) error
-	Register(string) error
+	Subscribe(string) (uint, uint)
+	Register(string) (uint, uint)
 
-	Publish(string, ...interface{}) error
-	Call(string, ...interface{}) ([]interface{}, error)
+	Publish(string) (uint, uint)
+	Call(string) (uint, uint)
 
-	Unsubscribe(string) error
-	Unregister(string) error
+	Unsubscribe(string) (uint, uint)
+	Unregister(string) (uint, uint)
 
-	Join() error
-	Leave() error
-	Run()
+	Join() (uint, uint)
+	Leave() (uint, uint)
 }
 
 type wrapper struct {
@@ -31,6 +29,10 @@ type domain struct {
 	mirror   core.Domain
 	handlers map[uint]interface{}
 	kill     chan bool
+}
+
+func Hello(s string) string {
+	return "Hey, " + s
 }
 
 // var wrap *wrapper

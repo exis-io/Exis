@@ -11,9 +11,13 @@ swift: libriffmantle.so
 	$(MAKE) -C swift/container all
 
 
-python: libriffmantle.so
-	cp assets/libriffmantle.so python/pyRiffle/riffle/libriffmantle.so
-	cp assets/libriffmantle.h python/pyRiffle/riffle/libriffmantle.h
+# python: libriffmantle.so
+# 	cp assets/libriffmantle.so python/pyRiffle/riffle/libriffmantle.so
+# 	cp assets/libriffmantle.h python/pyRiffle/riffle/libriffmantle.h
+
+python: 
+	gopy bind github.com/exis-io/core/pyMantle
+	mv riffle.so python/pyRiffle/riffle/riffle.so
 
 
 js: 

@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+var apps []*app
+
 type app struct {
 	domains []*domain
 	Connection
