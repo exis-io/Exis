@@ -1,6 +1,0 @@
-framework module LTMorphingLabel {
-  umbrella header "LTMorphingLabel-umbrella.h"
-
-  export *
-  module * { export * }
-}

@@ -1,7 +1,0 @@
-node_modules
-*.log
-*.pid
-.DS_Store
-go.js
-go.js.map
-.DS_Store
