@@ -17,6 +17,7 @@ Options:
 import os
 import docopt
 from subprocess import call
+import shutil
 
 # Format: (prefix: remote, url)
 SUBTREES = [
@@ -44,6 +45,17 @@ if __name__ == '__main__':
 
         print "Linking go libraries"
 
+        gopath = os.getenv('GOPATH', None)
+
+        if gopath is None: 
+            print 'You dont have a $GOPATH set. Is go installed?'
+        else:
+            corePath = os.path.join(gopath, 'src/github.com/exis-io/core')
+
+            if os.path.exists(corePath):
+                shutil.rmtree(corePath)
+
+            os.symlink(os.path.abspath("core"), corePath)
 
     elif args['list']:
         for p, r, u in SUBTREES:
