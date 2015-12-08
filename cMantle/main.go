@@ -7,7 +7,7 @@ package main
 import (
 	"C"
 
-	"github.com/exis-io/goRiffle"
+	"github.com/exis-io/core"
 )
 
 // Required main method
@@ -15,30 +15,30 @@ func main() {}
 
 //export Test
 func Test() {
-	goRiffle.Info("Server starting")
-	goRiffle.SetLoggingDebug()
+	core.Info("Server starting")
+	// core.SetLoggingDebug()
 
-	a := goRiffle.NewDomain("xs.damouse.alpha")
-	a.Join()
+	// a := core.NewDomain("xs.damouse.alpha")
+	// a.Join()
 
-	e := a.Subscribe("sub", func() {
-		goRiffle.Info("Pub received!")
-	})
+	// e := a.Subscribe("sub", func() {
+	// 	core.Info("Pub received!")
+	// })
 
-	if e != nil {
-		goRiffle.Info("Unable to subscribe: ", e.Error())
-	}
+	// if e != nil {
+	// 	core.Info("Unable to subscribe: ", e.Error())
+	// }
 
-	e = a.Register("reg", func() {
-		goRiffle.Info("Call received!")
-	})
+	// e = a.Register("reg", func() {
+	// 	core.Info("Call received!")
+	// })
 
-	if e != nil {
-		goRiffle.Info("Unable to subscribe: ", e.Error())
-	}
+	// if e != nil {
+	// 	core.Info("Unable to subscribe: ", e.Error())
+	// }
 
-	// Run the client until Leave is called
-	a.Run()
+	// // Run the client until Leave is called
+	// a.Run()
 }
 
 // // Required main method
@@ -46,28 +46,28 @@ func Test() {
 
 // //export Connector
 // func Connector(url *C.char, domain *C.char) *C.char {
-// 	ret := goRiffle.PConnector(C.GoString(url), C.GoString(domain))
+// 	ret := core.PConnector(C.GoString(url), C.GoString(domain))
 // 	return C.CString(ret)
 // }
 
 // //export Subscribe
 // func Subscribe(domain *C.char) []byte {
-// 	return goRiffle.PSubscribe(C.GoString(domain))
+// 	return core.PSubscribe(C.GoString(domain))
 // }
 
 // //export Recieve
 // func Recieve() []byte {
-// 	return goRiffle.PRecieve()
+// 	return core.PRecieve()
 // }
 
 // //export Yield
 // func Yield(args []byte) {
-// 	goRiffle.PYield(args)
+// 	core.PYield(args)
 // }
 
 // //export Register
 // func Register(domain *C.char) []byte {
-// 	return goRiffle.PRegister(C.GoString(domain))
+// 	return core.PRegister(C.GoString(domain))
 // }
 
 // //export Test
