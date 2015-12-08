@@ -1,25 +1,79 @@
 #!/usr/bin/python
-"""
-usage: iron [push | pull | checkout] [all the repos....]
-        
-options:
-   -h, --help
-   --version
-   -v, --verbose    Show verbose internal output   
-   -m, --mode=MODE  production, development, test, or local [default: production]
-   
-commands:
-    push     Push  
+"""Riffle maintenance and management.
+
+Usage:
+  stump init
+  stump list
+  stump push (all | REPOS...)
+  stump pull (all | REPOS...)
+  stump add-subtree DIRECTORY NAME URL
+  stump test (all | REPOS...)           
+  stump deploy (all | REPOS...)         
+
+Options:
+  -h --help     Show this screen.
 """
 
+import os
 import docopt
+from subprocess import call
 
+# Format: (prefix: remote, url)
+SUBTREES = [
+    ("ios/swiftRiffle", "swiftRiffle", "git@github.com:exis-io/swiftRiffle.git"),
+    ("ios/appBackendSeed", "iosAppBackendSeed", "git@github.com:exis-io/iosAppBackendSeed.git"),
+    ("ios/appSeed", "iosAppSeed", "git@github.com:exis-io/iosAppSeed.git"),
+    ("js/jsRiffle", "jsRiffle", "git@github.com:exis-io/jsRiffle.git"),
+    ("js/ngRiffle", "ngRiffle", "git@github.com:exis-io/ngRiffle.git"),
+    ("js/angularSeed", "ngSeed", "git@github.com:exis-io/ngSeed.git"),
+    ("core", "core", "git@github.com:exis-io/core.git"),
+    ("python/pyRiffle", "pyRiffle", "git@github.com:exis-io/pyRiffle.git"),
+    ("CardsAgainstHumanityDemo/swiftCardsAgainst", "iosCAH", "git@github.com:exis-io/ionicCardsAgainstEXIStence.git"),
+    ("CardsAgainstHumanityDemo/ngCardsAgainst", "ngCAH", "git@github.com:exis-io/CardsAgainst.git")
+]
 
-def main():
-    # present documentation, extract arguments
-    args = docopt.docopt(__doc__, options_first=True, help=True)
-
-    print args
 
 if __name__ == '__main__':
-    main()
+    args = docopt.docopt(__doc__, options_first=True, help=True)
+
+    if args['init']:
+        print "Adding remotes..."
+
+        for p, r, u in SUBTREES:
+            call("git remote add %s %s" % (r, u,), shell=True)
+
+        print "Linking go libraries"
+
+
+    elif args['list']:
+        for p, r, u in SUBTREES:
+            print "Remote: ", r
+
+    elif args['push']:
+        repos = SUBTREES if 'all' in args['REPOS'] else args['REPOS']
+        b = 'master'
+
+        print "Pushing: ", repos
+
+        for p, r, u in repos:
+            call("git subtree push --prefix %s %s %s" % (p, r, b,), shell=True)
+
+    elif args['pull']:
+        repos = SUBTREES if 'all' in args['REPOS'] else args['REPOS']
+        b = 'master'
+
+        for p, r, u in repos:
+            call("git subtree pull --prefix %s %s %s -m 'Update to stump' --squash" % (p, r, b,), shell=True)
+
+    elif args['add-subtree']:
+        call("git subtree add --prefix %s %s master" % (args['DIRECTORY'], args['NAME'],), shell=True)
+        call("git remote add %s %s" % (args['NAME'], args['URL'],), shell=True)
+
+        print 'Subtree added. Please exit the SUBTREES field in this script: \n("%s", "%s", "%s")' % (args['DIRECTORY'], args['NAME'], args['URL'])
+
+    elif args['test']:
+        print "Not implemented"
+
+    elif args['deploy']:
+        print "Not implemented"
+
