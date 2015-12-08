@@ -31,18 +31,22 @@ extension String {
     }
 }
 
+let remoteDomain = NewDomain("Billy".cString())
+Hello(remoteDomain)
+
 // Interface object for interacting with goRiffle
+/*
 class Gopher: NSObject {
     var handlers: [Int64: (AnyObject) -> (AnyObject?)] = [:]
 
     
     func subscribe(domain: String, fn: (AnyObject) -> ()) {
         
-        #if os(OSX)
+        //#if os(OSX)
         let s = Subscribe(domain.cString())
         let d = NSData(bytes: s.data , length: NSNumber(longLong: s.len).integerValue)
         let data = try! NSJSONSerialization.JSONObjectWithData(d, options: .AllowFragments) as! NSDecimalNumber
-        #endif
+        //#endif
         
         handlers[data.longLongValue] = { (a: AnyObject) -> (AnyObject?) in
             fn(a)
@@ -52,11 +56,11 @@ class Gopher: NSObject {
     
     func register(domain: String, fn: (AnyObject) -> (AnyObject)) {
         
-        #if os(OSX)
+        //#if os(OSX)
         let s = Register(domain.cString())
         let d = NSData(bytes: s.data , length: NSNumber(longLong: s.len).integerValue)
         let data = try! NSJSONSerialization.JSONObjectWithData(d, options: .AllowFragments) as! NSDecimalNumber
-        #endif
+        //#endif
         
         // small trick to use homogenous handlers
         handlers[data.longLongValue] = { (a: AnyObject) -> (AnyObject?) in
@@ -106,4 +110,4 @@ g.register("xs.damouse.go/sub") { (obj: AnyObject) -> AnyObject in
 let thread = NSThread(target: g, selector: "receive", object: nil)
 thread.start()
 NSRunLoop.currentRunLoop().run()
-
+*/

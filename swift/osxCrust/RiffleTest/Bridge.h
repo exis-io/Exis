@@ -9,7 +9,7 @@
 #ifndef Bridge_h
 #define Bridge_h
 
-#import "osx.h"
-#import "SRWebSocket.h"
+#import "riffle.h"
+//#import "SRWebSocket.h"
 
 #endif /* Bridge_h */

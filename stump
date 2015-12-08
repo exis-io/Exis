@@ -97,6 +97,12 @@ if __name__ == '__main__':
 
 
 '''
+Start xcode with open source swift version: 
+    xcrun launch-with-toolchain /Library/Developer/Toolchains/swift-latest.xctoolchain
+
+Use open source swift on command line: 
+    export PATH=/Library/Developer/Toolchains/swift-latest.xctoolchain/usr/bin:"${PATH}"
+
 Deployment scripts from old stump
 
 ios() {

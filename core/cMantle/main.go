@@ -3,6 +3,8 @@ package main
 
 import (
 	"C"
+    "fmt"
+    "unsafe"
 
 	"github.com/exis-io/core"
 	"github.com/exis-io/core/goRiffle"
@@ -17,12 +19,10 @@ You are responsible for cleaning up C references!
 Every function here is reactive: it returns two indicies to callbacks to be triggered later.
 */
 
-import "C"
-import "fmt"
 
 type mantle struct {
 	app   core.App
-	connn *goRiffle.WebsocketConnection
+	conn *goRiffle.WebsocketConnection
 }
 
 var man = new(mantle)
@@ -31,80 +31,120 @@ var man = new(mantle)
 func main() {}
 
 //export NewDomain
-func NewDomain(name *C.char) {
+func NewDomain(name *C.char) unsafe.Pointer {
 	// Return the address of the domain (?)
 
 	if man.app == nil {
 		man.app = core.NewApp()
 	}
 
-	man.app.NewDomain(C.GoString(name), man)
+	d := man.app.NewDomain(C.GoString(name), man)
+
+    return unsafe.Pointer(&d)
 }
 
+
+//export Subscribe
+func Subscribe(pdomain unsafe.Pointer, domain *C.char)  {
+    d := *(*core.Domain)(pdomain)
+	d.Subscribe(C.GoString(domain))
+    // call function in a goroutine, immediately return the id of the call?
+    // Something like:
+    /* 
+    good, bad := makeIds
+
+    go func() {
+        if err = Subscribe(endpoint, good); err != nil {
+            Invoke(errback)
+        }
+    }()
+
+    return good, bad
+
+    */
+}
+
+//export Register
+func Register(pdomain unsafe.Pointer, domain *C.char)  {
+    d := *(*core.Domain)(pdomain)
+	d.Register(C.GoString(domain))
+}
+
+//export Yield
+func Yield(args []byte) {
+    core.Yield(C.GoString(e))
+}
+
+//export Publish
+func Publish(pdomain unsafe.Pointer, e *C.char) {
+    d := *(*core.Domain)(pdomain)
+    d.Publish(C.GoString(e))
+}
+
+//export Call
+func Call(pdomain unsafe.Pointer, e *C.char) {
+    d := *(*core.Domain)(pdomain)
+    d.Call(C.GoString(e))
+}
+
+//export Unsubscribe
+func Unsubscribe(pdomain unsafe.Pointer, e *C.char) {
+    d := *(*core.Domain)(pdomain)
+    d.Unsubscribe(C.GoString(e))
+}
+
+//export Unregister
+func Unregister(pdomain unsafe.Pointer, e *C.char) {
+    d := *(*core.Domain)(pdomain)
+    d.Unregister(C.GoString(e))
+}
+
+//export Join
+func Join(pdomain unsafe.Pointer) {
+    d := *(*core.Domain)(pdomain)
+    
+    if man.conn != nil {
+        fmt.Println("Connection is already open!")
+    }
+
+    if c, err := goRiffle.Open(core.SandboxFabric); err != nil {
+        core.Warn("Unable to open connection! Err: %s", err.Error())
+    } else {
+        man.conn = c
+        d.Join(c)
+    }
+}
+
+//export Leave
+func Leave(pdomain unsafe.Pointer, ) {
+    d := *(*core.Domain)(pdomain)
+    d.Leave()
+}
+
+
+// Unexported Functions
 func (m mantle) Invoke(id uint, args []interface{}) ([]interface{}, error) {
-	fmt.Println("Invoke called: ", id, args)
-	return make([]interface{}, 0), nil
+    fmt.Println("Invoke called: ", id, args)
+    return make([]interface{}, 0), nil
 }
 
 func (m mantle) OnJoin(string) {
-	fmt.Println("Domain joined!")
+    fmt.Println("Domain joined!")
 }
 
 func (m mantle) OnLeave(string) {
-	fmt.Println("Domain left!")
+    fmt.Println("Domain left!")
 }
 
-// we store it in a global variable so that the garbage collector
-// doesn't clean up the memory for any temporary variables created.
-// var MyCallbackFunc = MyCallback
-
-// func Example() {
-// 	C.CallMyFunction(unsafe.Pointer(&MyCallbackFunc))
-// }
-
-// //export Subscribe
-// func Subscribe(domain *C.char) []byte {
-// 	return core.PSubscribe(C.GoString(domain))
-// }
-
-// //export Recieve
-// func Recieve() []byte {
-// 	return core.PRecieve()
-// }
-
-// //export Yield
-// func Yield(args []byte) {
-// 	core.PYield(args)
-// }
-
-// //export Register
-// func Register(domain *C.char) []byte {
-// 	return core.PRegister(C.GoString(domain))
-// }
-
-// //export Test
-// func Test() int {
-// 	fmt.Println("Entering test")
-// 	go spin()
-// 	return 1
-// }
-
-// func spin() {
-// 	fmt.Println("Starting")
-// 	sum := 1
-// 	for sum < 1000 {
-// 		sum += sum
-// 		fmt.Println(sum)
-// 	}
-// }
-
-// //export go_callback_int
-// func go_callback_int(pfoo unsafe.Pointer, p1 C.int) {
+// export Hello
+// func Hello(pdomain unsafe.Pointer) {
 //     // Testing returning go callbacks into the C bridge
-//     foo := *(*func(C.int))(pfoo)
-//     foo(p1)
+//     d := *(*domain)(pdomain)
+//     d.hello()
 // }
 
-// func MyCallback(x C.int) {
-//     fmt.Println("callback with", x)
+// func (d *domain) hello() {
+//     fmt.Println(d.name + " called from swift!")
 // }
+
+

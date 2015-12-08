@@ -15,6 +15,12 @@ swift: libriffmantle.so
 # 	cp assets/libriffmantle.so python/pyRiffle/riffle/libriffmantle.so
 # 	cp assets/libriffmantle.h python/pyRiffle/riffle/libriffmantle.h
 
+osx: 
+	GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o swift/osxCrust/RiffleTest/riffle.a core/cMantle/main.go
+	# rm osx/RiffleTest/see.h osx/RiffleTest/see.a
+	# mv products/see.h osx/RiffleTest/see.h 
+	# mv products/see.a osx/RiffleTest/see.a
+
 python: 
 	gopy bind github.com/exis-io/core/pyMantle
 	mv riffle.so python/pyRiffle/riffle/riffle.so
@@ -32,18 +38,13 @@ libriffmantle.so:
 
 clean: 
 	rm assets/libriffmantle.so assets/libriffmantle.h
+	rm swift/osxCrust/RiffleTest/riffle.a  swift/osxCrust/RiffleTest/riffle.h
 	# rm python/pyRiffle/riffle/libriffmantle.so python/pyRiffle/riffle/libriffmantle.h
 
 	$(MAKE) -C swift/container clean
 
 
 # Orphaned-- don't use yet
-# osx: 
-# 	GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o swift/osxCrust/RiffleTest/see.a goriffle/runner/see.go
-# 	# rm osx/RiffleTest/see.h osx/RiffleTest/see.a
-# 	# mv products/see.h osx/RiffleTest/see.h 
-# 	# mv products/see.a osx/RiffleTest/see.a
-
 # ios: 
 # 	GOGCCFLAGS="--Wl,-no_pie" gomobile bind -ldflags="-extldflags=-pie" -target=ios -work github.com/exis-io/goriffle
 # 	rm -rf swift/Goriffle.framework
