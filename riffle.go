@@ -4,9 +4,7 @@ package core
 
 // The reeceiving end
 type Delegate interface {
-	// Called by core when something needs doing
-	Invoke(string, uint, []interface{}) ([]interface{}, error)
-
+	Invoke(uint, []interface{}) ([]interface{}, error)
 	OnJoin(string)
 	OnLeave(string)
 }
@@ -51,38 +49,22 @@ type App interface {
 	Close(string)
 }
 
-// Injectible writer
-type LogWriter interface {
-	Write(string)
-}
-
 const (
 	LocalFabric      string = "ws://localhost:8000/ws"
 	DevFabric        string = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
 	SandboxFabric    string = "ws://sandbox.exis.io/ws"
 	ProudctionFabric string = "wss://node.exis.io/wss"
 
-	levelErr   int = 0
-	levelWarn  int = 1
-	levelInfo  int = 2
-	levelDebug int = 3
+	LogLevelErr   int = 0
+	LogLevelWarn  int = 1
+	LogLevelInfo  int = 2
+	LogLevelDebug int = 3
 )
 
-var logLevel int = 0
+// Injectible writer
+type LogWriter interface {
+	Write(string)
+}
+
+var LogLevel int = 0
 var writer LogWriter
-
-func SetLoggingDebug() {
-	logLevel = levelDebug
-}
-
-func SetLoggingInfo() {
-	logLevel = levelInfo
-}
-
-func SetLoggingWarn() {
-	logLevel = levelWarn
-}
-
-func SetLogWriter(w LogWriter) {
-	writer = w
-}
