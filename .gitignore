@@ -17,4 +17,7 @@ biddly
 libriff.h
 libriff.so
 
+libriffmantle.h
+libriffmantle.so
+
 products/

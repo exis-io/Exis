@@ -1,20 +1,38 @@
 
 all: swift osx ios python js
 
-swift: 
-	go build -buildmode=c-shared -o swift/container/libriff.so go/coreRiffle/wrappers/see.go
+.PHONY: all swift python js clean libriffmantle.so
 
-python:
-	go build -buildmode=c-shared -o python/pyRiffle/riffle/libriff.so go/coreRiffle/wrappers/see.go
+
+swift: libriffmantle.so
+	# go build -buildmode=c-shared -o swift/container/libriffmantle.so go/coreRiffle/mantles/see.go
+	cp assets/libriffmantle.so swift/container/libriffmantle.so
+	cp assets/libriffmantle.h swift/container/libriffmantle.h
+
+	$(MAKE) -C swift/container all
+
+
+python: libriffmantle.so
+	cp assets/libriffmantle.so python/pyRiffle/riffle/libriffmantle.so
+	cp assets/libriffmantle.h python/pyRiffle/riffle/libriffmantle.h
+
 
 js: 
-	gopherjs build -mvw go/coreRiffle/wrappers/jsRiffle.go
+	gopherjs build -mvw go/coreRiffle/mantles/jsRiffle.go
 	mv jsRiffle.js js/jsRiffle/src/go.js
 	mv jsRiffle.js.map js/jsRiffle/src/go.js.map
 
+
+libriffmantle.so: 
+	go build -buildmode=c-shared -o assets/libriffmantle.so go/coreRiffle/mantles/see.go
+
+
 clean: 
-	rm swift/container/libriffle.so
-	rm swift/container/libriffle.h
+	rm assets/libriffmantle.so
+	rm assets/libriffmantle.h
+
+	$(MAKE) -C swift/container clean
+
 
 # This doesn't work-- need the arm bindings?
 # ios-native:

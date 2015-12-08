@@ -1,4 +1,6 @@
-APP=translate.exe
+APP=example
+
+## Note-- this does not build the mantle. Use the makefile in the top level directory for that
 
 all:	$(APP)
 
@@ -8,15 +10,15 @@ all:	$(APP)
 %.o:%.swift
 	swiftc -I. -c $< -import-objc-header bridgingHeader.h
 
-$(APP):	libtranslator.so translator.swiftmodule jsonparse.o main.o
-	swiftc -o $(APP) jsonparse.o main.o -L. -ltranslator -lcurl -ljson-c -lswiftGlibc -lFoundation
+$(APP):	libriffle.so riffle.swiftmodule main.o
+	swiftc -o $(APP) main.o -L. -lriffmantle -lriffle -lFoundation
 
-libtranslator.so:	translator.o
-	swiftc -emit-library translator.swift -module-name translator -import-objc-header bridgingHeader.h
-	clang -shared -o libtranslator.so translator.o
+libriffle.so:	riffle.o
+	swiftc -emit-library riffle.swift -module-name riffle -import-objc-header bridgingHeader.h
+	clang -shared -o libriffle.so riffle.o
 
-translator.swiftmodule:	libtranslator.so
-	swiftc -emit-module -module-name translator translator.swift -import-objc-header bridgingHeader.h
+riffle.swiftmodule:	libriffle.so
+	swiftc -emit-module -module-name riffle riffle.swift -import-objc-header bridgingHeader.h
 
 clean:
-	rm -rf *.o *.swiftmodule *.swiftdoc *.so $(APP)
+	rm -rf *.o *.swiftmodule *.swiftdoc *.so $(APP) libriffmantle.h

@@ -4,7 +4,11 @@ package main
 // This is the lowest level core, it just exposes the C API
 // Used for python, swift-linux, and osx
 
-import "C"
+import (
+	"C"
+
+	"github.com/exis-io/goRiffle"
+)
 
 // Required main method
 func main() {}
@@ -42,28 +46,28 @@ func Test() {
 
 // //export Connector
 // func Connector(url *C.char, domain *C.char) *C.char {
-// 	ret := coreRiffle.PConnector(C.GoString(url), C.GoString(domain))
+// 	ret := goRiffle.PConnector(C.GoString(url), C.GoString(domain))
 // 	return C.CString(ret)
 // }
 
 // //export Subscribe
 // func Subscribe(domain *C.char) []byte {
-// 	return coreRiffle.PSubscribe(C.GoString(domain))
+// 	return goRiffle.PSubscribe(C.GoString(domain))
 // }
 
 // //export Recieve
 // func Recieve() []byte {
-// 	return coreRiffle.PRecieve()
+// 	return goRiffle.PRecieve()
 // }
 
 // //export Yield
 // func Yield(args []byte) {
-// 	coreRiffle.PYield(args)
+// 	goRiffle.PYield(args)
 // }
 
 // //export Register
 // func Register(domain *C.char) []byte {
-// 	return coreRiffle.PRegister(C.GoString(domain))
+// 	return goRiffle.PRegister(C.GoString(domain))
 // }
 
 // //export Test

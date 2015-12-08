@@ -12,38 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import translator
+import riffle
 
-// import Foundation
-// import Glibc
+print("Linux example starting")
 
-// guard Process.arguments.count == 6 && 
-//       Process.arguments[2]    == "from" &&
-//       Process.arguments[4]    == "to" else {
-//   print("Usage:  translate STRING from LANG to LANG")
-//   exit(-1)
-// }
-
-// let string     = Process.arguments[1]
-// let fromLang   = Process.arguments[3]
-// let toLang     = Process.arguments[5]
-// let translator = Translator()
-
-// translator.translate(string, from:fromLang, to:toLang) {
-//   (translation:String?, error:NSError?) -> Void in
-//   guard error == nil && translation != nil else {
-//     print("Error:  No translation available")
-//     exit(-1)
-//   }
-
-//   if let translatedText = translation {
-//     print("Translation:  " + translatedText)
-//     exit(0)
-//   }
-// }
-
-// import riff
-
-print("Hello, Swift!")
-
-let t = translator.biddle()
+print(riffle.Hello())
