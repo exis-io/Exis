@@ -1,4 +1,4 @@
-package coreRiffle
+package core
 
 import (
 	"fmt"
@@ -122,7 +122,7 @@ func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error)
 	call := &call{Request: newID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
 
 	// Testing out a shorter way of checking the return types of the messages-- be careful with this, untested
-	if msg, err := c.app.requestListenType(call, "*coreRiffle.result"); err != nil {
+	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
 		return nil, err
 	} else {
 		return msg.(*result).Arguments, nil
@@ -140,7 +140,7 @@ func (c domain) Unsubscribe(endpoint string) error {
 
 	sub := &unsubscribe{Request: newID(), Subscription: subscriptionID}
 
-	if _, err := c.app.requestListenType(sub, "*coreRiffle.unsubscribed"); err != nil {
+	if _, err := c.app.requestListenType(sub, "*core.unsubscribed"); err != nil {
 		return err
 	} else {
 		Info("Unsubscribed: %s", endpoint)

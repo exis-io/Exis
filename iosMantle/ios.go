@@ -1,4 +1,4 @@
-package coreRiffle
+package iosMantle
 
 import (
 	"encoding/json"

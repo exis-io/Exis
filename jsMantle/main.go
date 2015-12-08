@@ -4,7 +4,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/exis-io/coreRiffle"
+	"github.com/exis-io/core"
 	"github.com/gopherjs/gopherjs/js"
 )
 
@@ -12,14 +12,14 @@ import (
 // http://legacytotheedge.blogspot.de/2014/03/gopherjs-go-to-javascript-transpiler.html
 
 type wrapper struct {
-	app    coreRiffle.App
+	app    core.App
 	conn   *js.Object
 	opened chan bool
 }
 
 type domain struct {
 	wrapper  *wrapper
-	mirror   coreRiffle.Domain
+	mirror   core.Domain
 	handlers map[uint]*js.Object
 	kill     chan bool
 }
@@ -43,9 +43,9 @@ var wrap *wrapper
 // Required main method
 func main() {
 	js.Global.Set("Core", map[string]interface{}{
-		"SetLoggingDebug": coreRiffle.SetLoggingDebug,
-		"SetLoggingInfo":  coreRiffle.SetLoggingInfo,
-		"SetLoggingWarn":  coreRiffle.SetLoggingWarn,
+		"SetLoggingDebug": core.SetLoggingDebug,
+		"SetLoggingInfo":  core.SetLoggingInfo,
+		"SetLoggingWarn":  core.SetLoggingWarn,
 	})
 
 	// Change Wrapper to Pool
@@ -60,7 +60,7 @@ func main() {
 		"New": NewDomain,
 	})
 
-	// coreRiffle.SetLogWriter()
+	// core.SetLogWriter()
 }
 
 /////////////////////////////////////////////
@@ -69,7 +69,7 @@ func main() {
 
 func NewWrapper() {
 	if wrap == nil {
-		h := coreRiffle.NewApp()
+		h := core.NewApp()
 
 		wrap = &wrapper{
 			app:    h,
@@ -192,7 +192,7 @@ func (d *domain) Leave() error {
 }
 
 func (d domain) Invoke(endpoint string, id uint, args []interface{}) ([]interface{}, error) {
-	// return coreRiffle.Cumin(d.handlers[id], args)
+	// return core.Cumin(d.handlers[id], args)
 	d.handlers[id].Invoke(args)
 	return nil, nil
 }

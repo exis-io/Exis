@@ -1,4 +1,4 @@
-package coreRiffle
+package core
 
 // Global interfaces and public configuration
 
