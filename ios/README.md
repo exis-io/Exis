@@ -1,6 +1,6 @@
 # swiftRiffle
 
-This directory contains the swiftRiffle client libraries and a set of preconfigured projects. 
+This directory contains the swiftRiffle client libraries and a set of preconfigured projects for development on iOS and OSX.
 
 Riffle requries at least iOS 8.0, OSX 10.10, and Swift 2.1. Please check out *Known Issues* below for troubleshooting. 
 
