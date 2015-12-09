@@ -10,8 +10,8 @@ type Delegate interface {
 }
 
 type Domain interface {
-	Subscribe(string, []interface{}) (uint, error)
-	Register(string, []interface{}) (uint, error)
+	Subscribe(string, []interface{}) error
+	Register(string, []interface{}) error
 
 	Publish(string, []interface{}) error
 	Call(string, []interface{}) ([]interface{}, error)

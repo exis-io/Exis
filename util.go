@@ -18,7 +18,7 @@ const (
 	ErrAuthorizationFailed = "ERR-- Unable to Authorize. Try harder."
 )
 
-func newID() uint {
+func NewID() uint {
 	return uint(rand.Int63n(maxId))
 }
 

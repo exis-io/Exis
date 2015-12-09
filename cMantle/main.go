@@ -48,6 +48,7 @@ func NewDomain(name *C.char) unsafe.Pointer {
 func Subscribe(pdomain unsafe.Pointer, domain *C.char)  {
     d := *(*core.Domain)(pdomain)
 	d.Subscribe(C.GoString(domain))
+    
     // call function in a goroutine, immediately return the id of the call?
     // Something like:
     /* 
