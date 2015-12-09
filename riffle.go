@@ -4,7 +4,7 @@ package core
 
 // The reeceiving end
 type Delegate interface {
-	Invoke(uint, []interface{}) ([]interface{}, error)
+	Invoke(uint, []interface{})
 	OnJoin(string)
 	OnLeave(string)
 }
