@@ -89,9 +89,9 @@ func (c *domain) Leave() error {
 // Message Patterns
 /////////////////////////////////////////////
 
-func (c domain) Subscribe(endpoint string, callback uint, errback uint, types []interface{}) (uint, error) {
+func (c domain) Subscribe(endpoint string, requestId uint, types []interface{}) (uint, error) {
 	endpoint = makeEndpoint(c.name, endpoint)
-	sub := &subscribe{Request: newID(), Options: make(map[string]interface{}), Name: endpoint}
+	sub := &subscribe{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
 
 	if msg, err := c.app.requestListenType(sub, "*core.subscribed"); err != nil {
 		return 0, err
@@ -103,9 +103,9 @@ func (c domain) Subscribe(endpoint string, callback uint, errback uint, types []
 	}
 }
 
-func (c domain) Register(endpoint string, callback uint, errback uint, types []interface{}) (uint, error) {
+func (c domain) Register(endpoint string, requestId uint, types []interface{}) (uint, error) {
 	endpoint = makeEndpoint(c.name, endpoint)
-	register := &register{Request: newID(), Options: make(map[string]interface{}), Name: endpoint}
+	register := &register{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
 
 	if msg, err := c.app.requestListenType(register, "*core.registered"); err != nil {
 		return 0, err
@@ -117,18 +117,18 @@ func (c domain) Register(endpoint string, callback uint, errback uint, types []i
 	}
 }
 
-func (c domain) Publish(endpoint string, callback uint, errback uint, args []interface{}) error {
+func (c domain) Publish(endpoint string, requestId uint, args []interface{}) error {
 	return c.app.Send(&publish{
-		Request:   newID(),
+		Request:   requestId,
 		Options:   make(map[string]interface{}),
 		Name:      makeEndpoint(c.name, endpoint),
 		Arguments: args,
 	})
 }
 
-func (c domain) Call(endpoint string, callback uint, errback uint, args []interface{}) ([]interface{}, error) {
+func (c domain) Call(endpoint string, requestId uint, args []interface{}) ([]interface{}, error) {
 	endpoint = makeEndpoint(c.name, endpoint)
-	call := &call{Request: newID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
+	call := &call{Request: requestId, Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
 
 	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
 		return nil, err
@@ -137,7 +137,7 @@ func (c domain) Call(endpoint string, callback uint, errback uint, args []interf
 	}
 }
 
-func (c domain) Yield(request uint, callback uint, errback uint, args []interface{}) {
+func (c domain) Yield(request uint, args []interface{}) {
     m = &yield{
         Request:   request,
         Options:   make(map[string]interface{}),
@@ -161,7 +161,8 @@ func (c domain) Yield(request uint, callback uint, errback uint, args []interfac
     }
 }
 
-func (c domain) Unsubscribe(endpoint string, callback uint, errback uint, ) error {
+// This isn't going to work on the callback chain... no request id passed in 
+func (c domain) Unsubscribe(endpoint string, requestId uint) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 
 	if id, _, ok := bindingForEndpoint(c.subscriptions, endpoint); !ok {
@@ -179,7 +180,8 @@ func (c domain) Unsubscribe(endpoint string, callback uint, errback uint, ) erro
 	}
 }
 
-func (c domain) Unregister(endpoint string, callback uint, errback uint, ) error {
+// Same as above -- won't work on the callbacks
+func (c domain) Unregister(endpoint string, requestId uint) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 
 	if id, _, ok := bindingForEndpoint(c.registrations, endpoint); !ok {
@@ -197,6 +199,7 @@ func (c domain) Unregister(endpoint string, callback uint, errback uint, ) error
 	}
 }
 
+// This blocks on the invoke. Does the goroutine block waiting for the response? 
 func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 	if err := softCumin(binding.expectedTypes, msg.Arguments); err == nil {
 		c.Delegate.Invoke(msg.Registration, msg.Arguments)
