@@ -31,46 +31,49 @@ extension String {
     }
 }
 
-let remoteDomain = NewDomain("Billy".cString())
-Hello(remoteDomain)
 
 // Interface object for interacting with goRiffle
-/*
-class Gopher: NSObject {
+class Domain: NSObject {
+    var mantleDomain: UnsafeMutablePointer<Void>
     var handlers: [Int64: (AnyObject) -> (AnyObject?)] = [:]
 
+    init(name: String) {
+        mantleDomain = NewDomain(name.cString())
+    }
     
     func subscribe(domain: String, fn: (AnyObject) -> ()) {
         
         //#if os(OSX)
-        let s = Subscribe(domain.cString())
+        let s = Subscribe(mantleDomain, domain.cString())
         let d = NSData(bytes: s.data , length: NSNumber(longLong: s.len).integerValue)
-        let data = try! NSJSONSerialization.JSONObjectWithData(d, options: .AllowFragments) as! NSDecimalNumber
+        let data = try! NSJSONSerialization.JSONObjectWithData(d, options: .AllowFragments)
+        print(data)
         //#endif
         
-        handlers[data.longLongValue] = { (a: AnyObject) -> (AnyObject?) in
-            fn(a)
-            return nil
-        }
+//        handlers[data.longLongValue] = { (a: AnyObject) -> (AnyObject?) in
+//            fn(a)
+//            return nil
+//        }
     }
     
-    func register(domain: String, fn: (AnyObject) -> (AnyObject)) {
-        
-        //#if os(OSX)
-        let s = Register(domain.cString())
-        let d = NSData(bytes: s.data , length: NSNumber(longLong: s.len).integerValue)
-        let data = try! NSJSONSerialization.JSONObjectWithData(d, options: .AllowFragments) as! NSDecimalNumber
-        //#endif
-        
-        // small trick to use homogenous handlers
-        handlers[data.longLongValue] = { (a: AnyObject) -> (AnyObject?) in
-            return [fn(a)]
-        }
-    }
-    
+//    func register(domain: String, fn: (AnyObject) -> (AnyObject)) {
+//        
+//        //#if os(OSX)
+//        Register(remoteDomain, domain.cString())
+//        //let d = NSData(bytes: s.data , length: NSNumber(longLong: s.len).integerValue)
+//        //let data = try! NSJSONSerialization.JSONObjectWithData(d, options: .AllowFragments) as! NSDecimalNumber
+//        //#endif
+//        
+//        // small trick to use homogenous handlers
+//        handlers[data.longLongValue] = { (a: AnyObject) -> (AnyObject?) in
+//            return [fn(a)]
+//        }
+//    }
+//    
     func receive() {
         while true {
             let s = Recieve()
+            
             let d = NSData(bytes: s.data , length: NSNumber(longLong: s.len).integerValue)
             let data = try! NSJSONSerialization.JSONObjectWithData(d, options: .AllowFragments) as! [String: AnyObject]
             
@@ -96,18 +99,15 @@ class Gopher: NSObject {
 }
 
 
-let ret = Connector(url.cString(), domain.cString());
+let g = Domain(name: "xs.damouse")
 
-
-let g = Gopher()
-
-g.register("xs.damouse.go/sub") { (obj: AnyObject) -> AnyObject in
-    print("Call received: \(obj)")
-    return "Bootle"
+g.subscribe("sub") { (obj: AnyObject)  in
+    print("Sub received: \(obj)")
 }
+
 
 // Threading implementation
 let thread = NSThread(target: g, selector: "receive", object: nil)
 thread.start()
 NSRunLoop.currentRunLoop().run()
-*/
+

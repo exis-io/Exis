@@ -5,6 +5,7 @@ import (
 	"C"
     "fmt"
     "unsafe"
+    "encoding/json"
 
 	"github.com/exis-io/core"
 	"github.com/exis-io/core/goRiffle"
@@ -23,6 +24,7 @@ Every function here is reactive: it returns two indicies to callbacks to be trig
 type mantle struct {
 	app   core.App
 	conn *goRiffle.WebsocketConnection
+    recv chan []byte
 }
 
 var man = new(mantle)
@@ -32,8 +34,6 @@ func main() {}
 
 //export NewDomain
 func NewDomain(name *C.char) unsafe.Pointer {
-	// Return the address of the domain (?)
-
 	if man.app == nil {
 		man.app = core.NewApp()
 	}
@@ -45,14 +45,15 @@ func NewDomain(name *C.char) unsafe.Pointer {
 
 
 //export Subscribe
-func Subscribe(pdomain unsafe.Pointer, endpoint *C.char)  {
+func Subscribe(pdomain unsafe.Pointer, endpoint *C.char) []byte {
     d := *(*core.Domain)(pdomain)
-    cb, _ := core.NewID(), core.NewID()
+    cb, eb := core.NewID(), core.NewID()
 
     go func() {
         d.Subscribe(C.GoString(endpoint), cb, make([]interface{}, 0))
     }()
-    // return good, bad
+
+    return marshall([]uint{cb, eb})
 }
 
 //export Register
@@ -124,11 +125,33 @@ func Leave(pdomain unsafe.Pointer, ) {
     d.Leave()
 }
 
+//export Recieve
+func Recieve() []byte {
+    data := <- man.recv
+    return data
+}
+
+func marshall(data interface{}) []byte {
+    if r, e := json.Marshal(data); e == nil {
+        return r
+    } else {
+        fmt.Println("Unable to marshall data!")
+        return nil 
+    }
+}
+
+func unmarshall() {
+
+}
 
 // Unexported Functions
-func (m mantle) Invoke(id uint, args []interface{}) ([]interface{}, error) {
+func (m mantle) Invoke(id uint, args []interface{}){
     fmt.Println("Invoke called: ", id, args)
-    return make([]interface{}, 0), nil
+
+    man.recv <- marshall(map[string]interface{}{
+        "id": id, 
+        "args": args,
+    })
 }
 
 func (m mantle) OnJoin(string) {
