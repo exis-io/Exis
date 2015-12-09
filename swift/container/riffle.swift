@@ -115,9 +115,9 @@ public class Dummy {
     public init() {
         // Well that works...
         
-        thread = NSThread(spin)
-        thread.start()
-        thread.main()
+        // thread = NSThread(spin)
+        // thread.start()
+        // thread.main()
     }
 
     func spin() {

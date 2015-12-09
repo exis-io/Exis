@@ -86,7 +86,7 @@ class Domain: NSObject {
                     "result": results
                 ]
 
-                let out = try! NSJSONSerialization.dataWithJSONObject(json, options: .PrettyPrinted)
+                let out = try! NSJSONSerialization.dataWithJSONObject(json, options: . PrettyPrinted)
 
                 let slice = GoSlice(data: UnsafeMutablePointer<Void>(out.bytes), len: NSNumber(integer: out.length).longLongValue, cap: NSNumber(integer: out.length).longLongValue)
                 Yield(slice)
