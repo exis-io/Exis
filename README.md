@@ -24,11 +24,11 @@ No more needing to worry about learning several languages to create the backend 
 
 ### Getting Started
 Feel free to check out the examples directory where you can find Xcode projects that will show you how to get started using Exis.
+* [Hello, World! Swift Backend Example](https://github.com/exis-io/Exis/tree/master/swift/example)
+  * A very basic example Xcode example to show you how to write your backend in Swift
 * [Cards Against Humanity Example](https://github.com/exis-io/CardsAgainst)
 	* Cards Against step-by-step [Tutorial](http://docs.exis.io/#/pages/samples/SwiftCardsTutorial.md)
 	* Here is a simple project that we created to show how powerful Exis is
-* [Hello, World! Swift Backend Example](https://github.com/exis-io/Exis/tree/master/swift/example)
-  * A very basic example Xcode example to show you how to write your backend in Swift
 
 ### More Information
 For more information on the how to incorporate Exis with your projects , please visit [exis.io](http://exis.io) or visit our [documentation page](http://docs.exis.io/#/pages/general/Home.md) to see more in depth tutorials.
