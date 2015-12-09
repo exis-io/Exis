@@ -1,5 +1,5 @@
 <div align="center">
-  <img src ="assets/exis-logo-swift.png" height="200" width="150" /> <br>
+  <img src ="assets/exis-logo-swift.png" height="200" width="200" /> <br>
   <h3>Stop writing network code. Seriously.</h3>
 
 </div>
