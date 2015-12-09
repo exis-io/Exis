@@ -1,3 +1,13 @@
+<div align="center">
+  <img src ="assets/exis-logo-swift.png" height="200" width="150" /> <br>
+  <h3>Stop writing network code. Seriously.</h3>
+
+</div>
+<div align="center">
+  <img src="https://img.shields.io/badge/OS-iOS%209-brightgreen.svg">
+  <img src="https://img.shields.io/badge/language-Swift%202-brightgreen.svg">
+</div>
+
 ## Getting started writing Swift in the backend
 
 In order to run our Hello World example you will need to head to [my.exis.io](https://my.exis.io) and create an account.<br>
