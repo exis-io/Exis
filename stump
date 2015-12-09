@@ -83,8 +83,8 @@ if __name__ == '__main__':
             call("git subtree pull --prefix %s %s %s -m 'Update to stump' --squash" % (p, r, b,), shell=True)
 
     elif args['add-subtree']:
-        call("git subtree add --prefix %s %s master" % (args['DIRECTORY'], args['NAME'],), shell=True)
         call("git remote add %s %s" % (args['NAME'], args['URL'],), shell=True)
+        call("git subtree add --prefix %s %s master" % (args['DIRECTORY'], args['NAME'],), shell=True)
 
         print 'Subtree added. Please exit the SUBTREES field in this script: \n("%s", "%s", "%s")' % (args['DIRECTORY'], args['NAME'], args['URL'])
 
