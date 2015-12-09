@@ -1,5 +1,4 @@
-#!/usr/bin/python
-"""Riffle maintenance and management.
+'''Riffle maintenance and management.
 
 Usage:
   stump init
@@ -12,7 +11,7 @@ Usage:
 
 Options:
   -h --help     Show this screen.
-"""
+'''
 
 import os
 import docopt
