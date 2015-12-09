@@ -10,11 +10,12 @@ type Delegate interface {
 }
 
 type Domain interface {
-	Subscribe(string, []interface{}) error
-	Register(string, []interface{}) error
+	Subscribe(string, uint, []interface{}) error
+	Register(string, uint, []interface{}) error
 
-	Publish(string, []interface{}) error
-	Call(string, []interface{}) ([]interface{}, error)
+	Publish(string, uint, []interface{}) error
+	Call(string, uint, []interface{}) ([]interface{}, error)
+
     Yield(uint, []interface{})
 
 	Unsubscribe(string) error

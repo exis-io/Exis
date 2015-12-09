@@ -45,47 +45,49 @@ func NewDomain(name *C.char) unsafe.Pointer {
 
 
 //export Subscribe
-func Subscribe(pdomain unsafe.Pointer, domain *C.char)  {
+func Subscribe(pdomain unsafe.Pointer, endpoint *C.char)  {
     d := *(*core.Domain)(pdomain)
-	d.Subscribe(C.GoString(domain))
-    
-    // call function in a goroutine, immediately return the id of the call?
-    // Something like:
-    /* 
-    good, bad := makeIds
+    cb, _ := core.NewID(), core.NewID()
 
     go func() {
-        if err = Subscribe(endpoint, good); err != nil {
-            Invoke(errback)
-        }
+        d.Subscribe(C.GoString(endpoint), cb, make([]interface{}, 0))
     }()
-
-    return good, bad
-
-    */
+    // return good, bad
 }
 
 //export Register
-func Register(pdomain unsafe.Pointer, domain *C.char)  {
+func Register(pdomain unsafe.Pointer, endpoint *C.char)  {
     d := *(*core.Domain)(pdomain)
-	d.Register(C.GoString(domain))
+    cb, _ := core.NewID(), core.NewID()
+
+    go func() {
+        d.Register(C.GoString(endpoint), cb, make([]interface{}, 0))
+    }()
 }
 
 //export Yield
 func Yield(args []byte) {
-    core.Yield(C.GoString(e))
+    // core.Yield(C.GoString(e))
 }
 
 //export Publish
-func Publish(pdomain unsafe.Pointer, e *C.char) {
+func Publish(pdomain unsafe.Pointer, endpoint *C.char) {
     d := *(*core.Domain)(pdomain)
-    d.Publish(C.GoString(e))
+    cb, _ := core.NewID(), core.NewID()
+
+    go func() {
+        d.Publish(C.GoString(endpoint), cb, make([]interface{}, 0))
+    }()
 }
 
 //export Call
-func Call(pdomain unsafe.Pointer, e *C.char) {
+func Call(pdomain unsafe.Pointer, endpoint *C.char) {
     d := *(*core.Domain)(pdomain)
-    d.Call(C.GoString(e))
+    cb, _ := core.NewID(), core.NewID()
+
+    go func() {
+        d.Call(C.GoString(endpoint), cb, make([]interface{}, 0))
+    }()
 }
 
 //export Unsubscribe

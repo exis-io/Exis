@@ -89,31 +89,31 @@ func (c *domain) Leave() error {
 // Message Patterns
 /////////////////////////////////////////////
 
-func (c domain) Subscribe(endpoint string, requestId uint, types []interface{}) (uint, error) {
+func (c domain) Subscribe(endpoint string, requestId uint, types []interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 	sub := &subscribe{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
 
 	if msg, err := c.app.requestListenType(sub, "*core.subscribed"); err != nil {
-		return 0, err
+		return err
 	} else {
 		Info("Subscribed: %s", endpoint)
 		subbed := msg.(*subscribed)
 		c.subscriptions[subbed.Subscription] = &boundEndpoint{endpoint, types}
-		return subbed.Subscription, nil
+		return nil
 	}
 }
 
-func (c domain) Register(endpoint string, requestId uint, types []interface{}) (uint, error) {
+func (c domain) Register(endpoint string, requestId uint, types []interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 	register := &register{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
 
 	if msg, err := c.app.requestListenType(register, "*core.registered"); err != nil {
-		return 0, err
+		return err
 	} else {
 		Info("Registered: %s", endpoint)
 		reg := msg.(*registered)
 		c.registrations[reg.Registration] = &boundEndpoint{endpoint, types}
-		return reg.Registration, nil
+		return nil
 	}
 }
 
@@ -130,29 +130,31 @@ func (c domain) Call(endpoint string, requestId uint, args []interface{}) ([]int
 	endpoint = makeEndpoint(c.name, endpoint)
 	call := &call{Request: requestId, Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
 
-	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
+	if _, err := c.app.requestListenType(call, "*core.result"); err != nil {
 		return nil, err
 	} else {
-		return msg.(*result).Arguments, nil
+		// return msg.(*result).Arguments, nil
+		return nil, nil 
 	}
 }
 
 func (c domain) Yield(request uint, args []interface{}) {
-    m = &yield{
+	// Big todo here
+    m := &yield{
         Request:   request,
         Options:   make(map[string]interface{}),
         Arguments: args,
     }
 
-    if err != nil {
-        m = &errorMessage{
-            Type:      iNVOCATION,
-            Request:   request,
-            Details:   make(map[string]interface{}),
-            Arguments: args,
-            Error:     "Not Implemented",
-        }
-    }
+    // if err != nil {
+    //     m = &errorMessage{
+    //         Type:      iNVOCATION,
+    //         Request:   request,
+    //         Details:   make(map[string]interface{}),
+    //         Arguments: args,
+    //         Error:     "Not Implemented",
+    //     }
+    // }
 
     if err := c.app.Send(m); err != nil {
         Warn("Could not send yield")
@@ -162,13 +164,13 @@ func (c domain) Yield(request uint, args []interface{}) {
 }
 
 // This isn't going to work on the callback chain... no request id passed in 
-func (c domain) Unsubscribe(endpoint string, requestId uint) error {
+func (c domain) Unsubscribe(endpoint string) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 
 	if id, _, ok := bindingForEndpoint(c.subscriptions, endpoint); !ok {
 		return fmt.Errorf("domain %s is not registered with this client.", endpoint)
 	} else {
-		sub := &unsubscribe{Request: newID(), Subscription: id}
+		sub := &unsubscribe{Request: NewID(), Subscription: id}
 
 		if _, err := c.app.requestListenType(sub, "*core.unsubscribed"); err != nil {
 			return err
@@ -181,13 +183,13 @@ func (c domain) Unsubscribe(endpoint string, requestId uint) error {
 }
 
 // Same as above -- won't work on the callbacks
-func (c domain) Unregister(endpoint string, requestId uint) error {
+func (c domain) Unregister(endpoint string) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 
 	if id, _, ok := bindingForEndpoint(c.registrations, endpoint); !ok {
 		return fmt.Errorf("domain %s is not registered with this domain.", endpoint)
 	} else {
-		unregister := &unregister{Request: newID(), Registration: id}
+		unregister := &unregister{Request: NewID(), Registration: id}
 
 		if _, err := c.app.requestListenType(unregister, "*core.unregistered"); err != nil {
 			return err
