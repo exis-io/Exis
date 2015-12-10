@@ -1,36 +1,10 @@
-//
-//  main.swift
-//  RiffleTest
-//
-//  Created by Mickey Barboi on 11/22/15.
-//  Copyright © 2015 exis. All rights reserved.
-//
-
-/*
-TODO:
-    Integrate with main swiftRiffle lib for testing
-    Make conditional compilers for ios and osx
-    Cleanup and integrate new changes with goRiffle
-    Implement Domain class in goRiffle
-    Implment Call, Unreg, Unsub
-*/
+// Testing
 
 import Foundation
 
-// Helper methods
-//(str as NSString).UTF8String
+SetLoggingLevel(3)
 
-let url = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
-let domain = "xs.damouse"
-
-
-extension String {
-    func cString() -> UnsafeMutablePointer<Int8> {
-        let cs = (self as NSString).UTF8String
-        return UnsafeMutablePointer(cs)
-    }
-}
-
+<<<<<<< HEAD
 
 // Interface object for interacting with goRiffle
 class Domain: NSObject {
@@ -111,3 +85,29 @@ let thread = NSThread(target: g, selector: "receive", object: nil)
 thread.start()
 NSRunLoop.currentRunLoop().run()
 
+=======
+//let url = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
+//let domain = "xs.damouse"
+
+class TestingDomain: Domain {
+    
+    override func onJoin() {
+        print("Subclass joined!")
+        
+        register("reg") { (args: Any) -> Any? in
+            print("Received call! Args: \(args)")
+            return nil
+        }
+        
+        subscribe("sub") { (args: Any) in
+            print("Received publish! \(args)")
+        }
+    }
+    
+    override func onLeave() {
+        print("Subclass left!")
+    }
+}
+
+TestingDomain(name: "xs.damouse").join()
+>>>>>>> master

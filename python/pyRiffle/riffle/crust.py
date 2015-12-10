@@ -1,3 +1,4 @@
+from greenlet import greenlet
 import ctypes
 import os
 
@@ -5,38 +6,48 @@ import os
 # _DIRNAME = os.path.dirname(__file__)
 # go = ctypes.cdll.LoadLibrary(os.path.join(_DIRNAME, 'libriffmantle.so'))
 
-# When running locally
-# core = ctypes.cdll.LoadLibrary('./pyRiffle.so')
+# When running locally-- no gopy
+# mantle = ctypes.cdll.LoadLibrary('./libriffmantle.so')
 
+# When running with gopy
 import riffle
 
-print riffle.Hello("Boy")
+# mantle.SetLoggingLevel(3)
 
-# from greenlet import greenlet
 
-# def test1():
-#     print 12
-#     gr2.switch()
-#     print 34
+class App(object):
 
-# def test2():
-#     print 56
-#     gr1.switch()
-#     print 78
+    def __init__(self):
+        self._app = riffle.App()
 
-# # if __name__ == '__main__':
-# #     gr1 = greenlet(test1)
-# #     gr2 = greenlet(test2)
-# #     gr1.switch()
+    def recv(self):
+        print "Starting receive"
 
-# def main():
+        while True:
+            invocation = riffle.Recieve()
+            print "Received invocation: ", invocation
 
-#     print "Starting"
+app = App()
 
-#     print core.Test()
-#     print core.Connector('ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws', 'xs.damouse')
-    
-#     print "Stopped"
 
-# if __name__ == '__main__':
-#     main()
+class Domain(object):
+
+    def __init__(self, name):
+        self._domain = riffle.NewDomain(name)
+        self.name = name
+
+    def join(self):
+        # riffle.Join(self._p_domain)
+        app.recv()
+
+
+def main():
+    print "Starting"
+
+    d = app._app.NewDomain("xs.damouse")
+    # d.join()
+
+    print "Stopped"
+
+if __name__ == '__main__':
+    main()

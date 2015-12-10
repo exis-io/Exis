@@ -5,15 +5,16 @@ all: swift osx ios python js
 
 
 swift: libriffmantle.so
-	cp assets/libriffmantle.so swift/container/libriffmantle.so
-	cp assets/libriffmantle.h swift/container/libriffmantle.h
+	cp assets/libriffmantle.so swift/swiftRiffle/libriffmantle.so
+	cp assets/libriffmantle.h swift/swiftRiffle/libriffmantle.h
 
-	$(MAKE) -C swift/container all
+	$(MAKE) -C swift/swiftRiffle all
 
+	# cp assets/libriffmantle.so swift/swiftRiffle/libriffmantle.so
+	# cp assets/libriffmantle.h swift/swiftRiffle/libriffmantle.h
+	# $(MAKE) -C swift/swiftRiffle all
 
-# python: libriffmantle.so
-# 	cp assets/libriffmantle.so python/pyRiffle/riffle/libriffmantle.so
-# 	cp assets/libriffmantle.h python/pyRiffle/riffle/libriffmantle.h
+	$(MAKE) -C swift/example all
 
 osx: 
 	GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o swift/osxCrust/RiffleTest/riffle.a core/cMantle/main.go
@@ -24,7 +25,10 @@ osx:
 python: 
 	gopy bind github.com/exis-io/core/pyMantle
 	mv riffle.so python/pyRiffle/riffle/riffle.so
-
+	
+# python: libriffmantle.so
+# 	cp assets/libriffmantle.so python/pyRiffle/riffle/libriffmantle.so
+# 	cp assets/libriffmantle.h python/pyRiffle/riffle/libriffmantle.h
 
 js: 
 	gopherjs build -mvw core/jsMantle/main.go

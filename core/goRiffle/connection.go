@@ -23,8 +23,6 @@ func Open(url string) (*WebsocketConnection, error) {
 		core.Debug("Cant dial connection: %e", err)
 		return nil, err
 	} else {
-		core.Debug("Connection dialed")
-
 		connection := &WebsocketConnection{
 			conn:        conn,
 			payloadType: websocket.TextMessage,
@@ -41,7 +39,8 @@ func (ep *WebsocketConnection) Send(data []byte) {
 	// but the comments in the other code imply that the lock blocks on the send?
 
 	if err := ep.conn.WriteMessage(ep.payloadType, data); err != nil {
-		panic("No one is dealing with my errors! Cant write to socket")
+		Warn("No one is dealing with my errors! Cant write to socket. Eror: %s", err)
+        panic("Unrecoverable error")
 	}
 }
 
