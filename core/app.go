@@ -30,6 +30,7 @@ func NewApp() App {
 // Create a new domain. If no superdomain is provided, creates an app as well
 // If the app exists, has a connection, and is connected then immediately call onJoin on that domain
 func (a *app) NewDomain(name string, delegate Delegate) Domain {
+	Debug("Creating domain %s", name)
 	d := &domain{
 		app:           a,
 		Delegate:      delegate,
@@ -82,7 +83,7 @@ func (c app) receiveLoop() {
 			Warn("Receive loop close")
 			break
 		} else {
-			Debug("Received message", msg)
+			Debug("Received message: ", msg)
 			c.handle(msg)
 		}
 	}
@@ -192,7 +193,7 @@ func (c *app) requestListenType(outgoing message, expecting string) (message, er
 
 	select {
 	case msg := <-wait:
-		Debug("incoming: %s, expecting: %s", reflect.TypeOf(msg), expecting)
+		// Debug("incoming: %s, expecting: %s", reflect.TypeOf(msg), expecting)
 
 		if e, ok := msg.(*errorMessage); ok {
 			return nil, fmt.Errorf(e.Error)
