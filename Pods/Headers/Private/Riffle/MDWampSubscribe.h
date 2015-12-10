@@ -1,0 +1,1 @@
+../../../Riffle/Pod/Classes/src/MDWampMessages/MDWampSubscribe.h
