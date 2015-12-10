@@ -9,7 +9,9 @@
 </div>
 
 <br>
-[Exis + Swift](http://exis.io/swift) is currently the best solution to allow Swift developers to run their code in the cloud. We have created a platform and a messaging service that allows developers to write native Swift code, test it locally in Xcode, and launch it in the cloud.
+[Exis + Swift](http://exis.io/swift) is currently the best solution to allow Swift developers to run their code in the cloud. Exis allows developers to write native Swift code, test it locally in Xcode, and launch it in the cloud.
+
+Feel free to checkout [other programming languages](https://github.com/exis-io/Exis) that Exis supports.
 
 ### Example
 
@@ -28,28 +30,32 @@ class Backend: RiffleDomain {
 }
 ```
 
-Client-side (phone) code:
+Client-side (local) code:
 ```
 //Send your request to your Swift backend!
-    @IBAction func sendRequest(sender: AnyObject) {
-        container.call("hello", nameField.text!) { (response: String)  in
-            print("There is someone out there!\nResponse: \(response)")
-            self.helloLabel.text = response
-        }
+@IBAction func sendRequest(sender: AnyObject) {
+
+    container.call("hello", nameField.text!) { (response: String)  in
+        print("There is someone out there!\nResponse: \(response)")
     }
+
+}
 ```
 
 ## Getting started writing Swift in the backend
 
-In order to run our Hello World example you will need to head to [my.exis.io](https://my.exis.io) and create an account.<br>
++ First, download or clone this repo to get your hands on our example project:<br>
+`git clone https://github.com/exis-io/iOSExample.git`
+
++ In order to run our Hello World example you will need to head to [my.exis.io](https://my.exis.io) and create an account.<br>
 After signing up you will follow these easy few steps to see the power of writing your backend in Swift using Exis!
-+ Create an app from template 'helloWorldSwift' in your dashboard
++ Create an app from template 'helloWorldSwift' in your dashboard and leave the `Name(Optional)` blank
 
     <div style="text-align:center">
       <img src="assets/helloworldswifttemplate.png">
     </div>
 
-+ Navigate to your .xcworkspace in the helloWorldSwift example that you cloned or downloaded
++ Navigate to and open your `.xcworkspace` in the iOSExample project that you cloned or downloaded
   + You will find all the front end code in ```ViewController.swift``` and all your **Swift** written backend code in ```Backend/main.swift``` <br><br>
     <div style="text-align:center">
       <img src="assets/frontendbackend.png" height="200" width="300">
@@ -65,14 +71,25 @@ After signing up you will follow these easy few steps to see the power of writin
     <img src="assets/keys.png">
   </div><br>
 + Now, go ahead and run your backend code by setting your current active scheme to *backend* and clicking run<br>
+
   <div style="text-align:center">
     <img src="assets/runbackend.png" height="40" width="400">
-  </div>
-+ After you have launched your backend running Swift, go ahead and run your main scheme and witness the communication between the two in your output log as well as in your View in the simulator.
+  </div><br>
+
++ After you have launched your backend running Swift, go ahead and run your main scheme and witness the communication between the two in your output log as well as in your View in the simulator.<br>
+
   <div style="text-align:center">
     <img src="assets/runfrontend.png" height="40" width="400">
-  </div>
-+ You may switch between your backend output log and your front end to see the communication between the two!
+  </div><br>
+
++ You may switch between your backend output log and your front end to see the communication between the two!<br>
+
   <div style="text-align:center">
     <img src="assets/outputlog.png" height="60" width="350">
   </div>
+
+## What now?
+
+Now you have Swift backend code running locally for testing purposes.  Want to push to production? Next step is to push your Swift backend code to our cloud and we will host it for you and any of your clients to reach.
+
+If you want to see how to launch your Swift backend code in the cloud, check out our more advanced tutorial, [Cards Against Humanity](https://github.com/exis-io/CardsAgainst) and its step-by-step [tutorial page](http://docs.exis.io/#/pages/samples/SwiftCardsTutorial.md) which will show you just how easy it is.
