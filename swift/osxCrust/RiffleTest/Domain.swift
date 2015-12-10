@@ -33,8 +33,7 @@ class Domain: NSObject, RiffleDelegate {
     
     func subscribe(domain: String, fn: (AnyObject) -> ()) {
         let (cb, _) = invocation(Subscribe(mantleDomain, domain.cString()))
-        
-        print("Subscribing to \(cb)")
+    
         handlers[cb] = { (a: AnyObject) -> (AnyObject?) in
             fn(a)
             return nil
