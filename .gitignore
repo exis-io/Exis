@@ -17,6 +17,9 @@ biddly
 libriff.h
 libriff.so
 
+riffle.h
+riffle.a
+
 libriffmantle.h
 libriffmantle.so
 

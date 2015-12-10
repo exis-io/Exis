@@ -489,32 +489,30 @@ func destination(m *message) (string, error) {
 }
 
 // Given a message, return the request uint
-func requestID(m message) uint {
+func requestID(m message) (uint, bool) {
 	switch msg := (m).(type) {
 	case *registered:
-		return msg.Request
+		return msg.Request, true
 	case *subscribed:
-		return msg.Request
+		return msg.Request, true
 	case *unsubscribed:
-		return msg.Request
+		return msg.Request, true
 	case *unregistered:
-		return msg.Request
+		return msg.Request, true
 	case *result:
-		return msg.Request
+		return msg.Request, true
 	case *errorMessage:
-		return msg.Request
+		return msg.Request, true
 	case *publish:
-		return msg.Request
+		return msg.Request, true
 	case *subscribe:
-		return msg.Request
+		return msg.Request, true
 	case *register:
-		return msg.Request
+		return msg.Request, true
 	case *call:
-		return msg.Request
+		return msg.Request, true
 	default:
 		log.Println("Cant get requestID for message: ", m, msg.messageType())
-		panic("Unhandled message request id!")
+		return 0, false
 	}
-
-	return uint(0)
 }

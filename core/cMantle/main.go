@@ -1,87 +1,186 @@
 // package name: riffle
 package main
 
-// This is the lowest level core, it just exposes the C API
-// Used for python, swift-linux, and osx
-
 import (
 	"C"
+    "fmt"
+    "unsafe"
+    "encoding/json"
 
 	"github.com/exis-io/core"
+	"github.com/exis-io/core/goRiffle"
 )
+
+/*
+This is the lowest level core, just exposes the C API. Used for python, swift-linux, and osx.
+
+You are responsible for cleaning up C references!
+
+
+Every function here is reactive: it returns two indicies to callbacks to be triggered later.
+
+Reg, Sub, Pub, Call all return indicies to callbacks they will later call. 
+*/
+
+
+type mantle struct {
+	app   core.App
+	conn *goRiffle.WebsocketConnection
+    recv chan []byte
+}
+
+var man = new(mantle)
 
 // Required main method
 func main() {}
 
-//export Test
-func Test() {
-	core.Info("Server starting")
-	// core.SetLoggingDebug()
+//export NewDomain
+func NewDomain(name *C.char) unsafe.Pointer {
+	if man.app == nil {
+		man.app = core.NewApp()
+	}
 
-	// a := core.NewDomain("xs.damouse.alpha")
-	// a.Join()
-
-	// e := a.Subscribe("sub", func() {
-	// 	core.Info("Pub received!")
-	// })
-
-	// if e != nil {
-	// 	core.Info("Unable to subscribe: ", e.Error())
-	// }
-
-	// e = a.Register("reg", func() {
-	// 	core.Info("Call received!")
-	// })
-
-	// if e != nil {
-	// 	core.Info("Unable to subscribe: ", e.Error())
-	// }
-
-	// // Run the client until Leave is called
-	// a.Run()
+	d := man.app.NewDomain(C.GoString(name), man)
+    return unsafe.Pointer(&d)
 }
 
-// // Required main method
-// func main() {}
 
-// //export Connector
-// func Connector(url *C.char, domain *C.char) *C.char {
-// 	ret := core.PConnector(C.GoString(url), C.GoString(domain))
-// 	return C.CString(ret)
-// }
+//export Subscribe
+func Subscribe(pdomain unsafe.Pointer, endpoint *C.char) []byte {
+    d := *(*core.Domain)(pdomain)
+    cb, eb := core.NewID(), core.NewID()
 
-// //export Subscribe
-// func Subscribe(domain *C.char) []byte {
-// 	return core.PSubscribe(C.GoString(domain))
-// }
+    go func() {
+        d.Subscribe(C.GoString(endpoint), cb, make([]interface{}, 0))
+    }()
 
-// //export Recieve
-// func Recieve() []byte {
-// 	return core.PRecieve()
-// }
+    return marshall([]uint{cb, eb})
+}
 
-// //export Yield
-// func Yield(args []byte) {
-// 	core.PYield(args)
-// }
+//export Register
+func Register(pdomain unsafe.Pointer, endpoint *C.char)  {
+    d := *(*core.Domain)(pdomain)
+    cb, _ := core.NewID(), core.NewID()
 
-// //export Register
-// func Register(domain *C.char) []byte {
-// 	return core.PRegister(C.GoString(domain))
-// }
+    go func() {
+        d.Register(C.GoString(endpoint), cb, make([]interface{}, 0))
+    }()
+}
 
-// //export Test
-// func Test() int {
-// 	fmt.Println("Entering test")
-// 	go spin()
-// 	return 1
-// }
+//export Yield
+func Yield(args []byte) {
+    // This needs work 
+    // core.Yield(C.GoString(e))
+}
 
-// func spin() {
-// 	fmt.Println("Starting")
-// 	sum := 1
-// 	for sum < 1000 {
-// 		sum += sum
-// 		fmt.Println(sum)
-// 	}
-// }
+//export Publish
+func Publish(pdomain unsafe.Pointer, endpoint *C.char) {
+    d := *(*core.Domain)(pdomain)
+    cb, _ := core.NewID(), core.NewID()
+
+    go func() {
+        d.Publish(C.GoString(endpoint), cb, make([]interface{}, 0))
+    }()
+}
+
+//export Call
+func Call(pdomain unsafe.Pointer, endpoint *C.char) {
+    d := *(*core.Domain)(pdomain)
+    cb, _ := core.NewID(), core.NewID()
+
+    go func() {
+        d.Call(C.GoString(endpoint), cb, make([]interface{}, 0))
+    }()
+}
+
+//export Unsubscribe
+func Unsubscribe(pdomain unsafe.Pointer, e *C.char) {
+    d := *(*core.Domain)(pdomain)
+    d.Unsubscribe(C.GoString(e))
+}
+
+//export Unregister
+func Unregister(pdomain unsafe.Pointer, e *C.char) {
+    d := *(*core.Domain)(pdomain)
+    d.Unregister(C.GoString(e))
+}
+
+//export Join
+func Join(pdomain unsafe.Pointer) []byte {
+    d := *(*core.Domain)(pdomain)
+    cb, eb := core.NewID(), core.NewID()
+
+    go func() {
+        if man.conn != nil {
+            man.InvokeError(eb, "Connection is already open!")
+        }
+
+        if c, err := goRiffle.Open(core.LocalFabric); err != nil {
+            man.InvokeError(eb, err.Error())
+        } else {
+            core.Debug("Opened connection")
+            man.conn = c
+
+            if err := d.Join(c); err != nil {
+                core.Warn("Unable to join! %s", err)
+                // man.InvokeError(eb, err.Error())
+            } else {
+                core.Info("Joined!")
+                // man.Invoke(cb, nil)
+            }
+        }
+    }()
+
+    return marshall([]uint{cb, eb})
+}
+
+//export Leave
+func Leave(pdomain unsafe.Pointer, ) {
+    d := *(*core.Domain)(pdomain)
+    d.Leave()
+}
+
+//export Recieve
+func Recieve() []byte {
+    data := <- man.recv
+    return data
+}
+
+func marshall(data interface{}) []byte {
+    if r, e := json.Marshal(data); e == nil {
+        return r
+    } else {
+        fmt.Println("Unable to marshall data!")
+        return nil 
+    }
+}
+
+func unmarshall() {
+
+}
+
+// Unexported Functions
+func (m mantle) Invoke(id uint, args []interface{}){
+    core.Debug("Invoke called: ", id, args)
+    man.recv <- marshall([]interface{}{id, args})
+}
+
+func (m mantle) InvokeError(id uint, e string){
+    core.Debug("Invoking error: ", id, e)
+    s := fmt.Sprintf("Err: %s", e)
+    man.recv <- marshall([]interface{}{id, s})
+}
+
+func (m mantle) OnJoin(string) {
+    fmt.Println("Domain joined!")
+}
+
+func (m mantle) OnLeave(string) {
+    fmt.Println("Domain left!")
+}
+
+//export SetLoggingLevel
+func SetLoggingLevel(l int) {
+    core.LogLevel = l
+}
+

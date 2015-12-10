@@ -1,5 +1,4 @@
-#!/usr/bin/python
-"""Riffle maintenance and management.
+'''Riffle maintenance and management.
 
 Usage:
   stump init
@@ -12,7 +11,7 @@ Usage:
 
 Options:
   -h --help     Show this screen.
-"""
+'''
 
 import os
 import docopt
@@ -29,8 +28,8 @@ SUBTREES = [
     ("js/angularSeed", "ngSeed", "git@github.com:exis-io/ngSeed.git"),
     ("core", "core", "git@github.com:exis-io/core.git"),
     ("python/pyRiffle", "pyRiffle", "git@github.com:exis-io/pyRiffle.git"),
-    ("CardsAgainstHumanityDemo/swiftCardsAgainst", "iosCAH", "git@github.com:exis-io/ionicCardsAgainstEXIStence.git"),
-    ("CardsAgainstHumanityDemo/ngCardsAgainst", "ngCAH", "git@github.com:exis-io/CardsAgainst.git")
+    ("CardsAgainstHumanityDemo/swiftCardsAgainst", "iosCAH", "git@github.com:exis-io/CardsAgainst.git"),
+    ("CardsAgainstHumanityDemo/ngCardsAgainst", "ngCAH", "git@github.com:exis-io/ionicCardsAgainstEXIStence.git")
 ]
 
 
@@ -47,7 +46,7 @@ if __name__ == '__main__':
 
         gopath = os.getenv('GOPATH', None)
 
-        if gopath is None: 
+        if gopath is None:
             print 'You dont have a $GOPATH set. Is go installed?'
         else:
             corePath = os.path.join(gopath, 'src/github.com/exis-io/core')
@@ -66,7 +65,7 @@ if __name__ == '__main__':
             repos = SUBTREES
         else:
             repos = [x for x in SUBTREES if x[1] in args['REPOS']]
-        
+
         b = 'master'
 
         print "Pushing: ", repos
@@ -83,10 +82,10 @@ if __name__ == '__main__':
             call("git subtree pull --prefix %s %s %s -m 'Update to stump' --squash" % (p, r, b,), shell=True)
 
     elif args['add-subtree']:
-        call("git subtree add --prefix %s %s master" % (args['DIRECTORY'], args['NAME'],), shell=True)
         call("git remote add %s %s" % (args['NAME'], args['URL'],), shell=True)
+        call("git subtree add --prefix %s %s master" % (args['DIRECTORY'], args['NAME'],), shell=True)
 
-        print 'Subtree added. Please exit the SUBTREES field in this script: \n("%s", "%s", "%s")' % (args['DIRECTORY'], args['NAME'], args['URL'])
+        print 'Subtree added. Please edit the SUBTREES field in this script: \n("%s", "%s", "%s")' % (args['DIRECTORY'], args['NAME'], args['URL'])
 
     elif args['test']:
         print "Not implemented"
@@ -95,8 +94,13 @@ if __name__ == '__main__':
         print "Not implemented"
 
 
-
 '''
+Start xcode with open source swift version: 
+    xcrun launch-with-toolchain /Library/Developer/Toolchains/swift-latest.xctoolchain
+
+Use open source swift on command line: 
+    export PATH=/Library/Developer/Toolchains/swift-latest.xctoolchain/usr/bin:"${PATH}"
+
 Deployment scripts from old stump
 
 ios() {

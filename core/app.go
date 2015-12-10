@@ -17,9 +17,8 @@ type app struct {
 	listeners map[uint]chan message
 }
 
-// Initialize the core
 func NewApp() App {
-	return app{
+	return &app{
 		domains:    make([]*domain, 0),
 		serializer: new(jSONSerializer),
 		in:         make(chan message, 10),
@@ -28,51 +27,23 @@ func NewApp() App {
 	}
 }
 
-func (c app) NewDomain(name string, del Delegate) Domain {
-	d := domain{
-		app:           &c,
-		Delegate:      del,
+// Create a new domain. If no superdomain is provided, creates an app as well
+// If the app exists, has a connection, and is connected then immediately call onJoin on that domain
+func (a *app) NewDomain(name string, delegate Delegate) Domain {
+    Debug("Creating domain %s", name)
+	d := &domain{
+		app:           a,
+		Delegate:      delegate,
 		name:          name,
 		joined:        false,
 		subscriptions: make(map[uint]*boundEndpoint),
 		registrations: make(map[uint]*boundEndpoint),
 	}
 
-	c.domains = append(c.domains, &d)
+	// TODO: trigger onJoin if the superdomain has joined
+
+	a.domains = append(a.domains, d)
 	return d
-}
-
-// One of our local domains left the fabric by choice
-func (c *app) domainLeft(d *domain) error {
-	if dems, ok := removeDomain(c.domains, d); !ok {
-		return fmt.Errorf("WARN: couldn't find %s to remove!", d)
-	} else {
-		c.domains = dems
-	}
-
-	if err := c.Send(&goodbye{
-		Details: map[string]interface{}{},
-		Reason:  ErrCloseRealm,
-	}); err != nil {
-		return fmt.Errorf("Error leaving fabric: %v", err)
-	}
-
-	// if no domains remain, terminate the connection
-	if len(c.domains) == 0 {
-		c.Close("Closing: no domains connected")
-	}
-
-	return nil
-}
-
-func (c *app) domainJoined(d *domain) {
-	// Join domains that are not joined already
-	for _, x := range c.domains {
-		if !x.joined {
-			x.joined = true
-			x.Delegate.OnJoin(d.name)
-		}
-	}
 }
 
 func (c app) Send(m message) error {
@@ -118,6 +89,7 @@ func (c app) receiveLoop() {
 	}
 }
 
+// This guy doesn't need to be here
 func (c app) sendLoop() {
 	for {
 		if b, open := <-c.out; !open {
@@ -129,40 +101,60 @@ func (c app) sendLoop() {
 	}
 }
 
+// Handles an incoming message appropriately
 func (c app) handle(msg message) {
 	switch msg := msg.(type) {
 
 	case *event:
 		for _, x := range c.domains {
-			if _, ok := x.subscriptions[msg.Subscription]; ok {
-				go x.handlePublish(msg)
+			if binding, ok := x.subscriptions[msg.Subscription]; ok {
+				go x.handlePublish(msg, binding)
+				return
 			}
 		}
 
+		Warn("No handler registered for subscription:", msg.Subscription)
+
 	case *invocation:
 		for _, x := range c.domains {
-			if _, ok := x.registrations[msg.Registration]; ok {
-				go x.handleInvocation(msg)
+			if binding, ok := x.registrations[msg.Registration]; ok {
+				go x.handleInvocation(msg, binding)
+				return
 			}
+		}
+
+		Warn("No handler registered for registration:", msg.Registration)
+		s := fmt.Sprintf("no handler for registration: %v", msg.Registration)
+		m := &errorMessage{Type: iNVOCATION, Request: msg.Request, Details: make(map[string]interface{}), Error: s}
+
+		if err := c.Send(m); err != nil {
+			Warn("error sending message:", err)
 		}
 
 	case *goodbye:
 		c.Close("Fabric said goodbye. Closing connection")
 
 	default:
-		if l, ok := c.listeners[requestID(msg)]; ok {
-			l <- msg
+		id, ok := requestID(msg)
+
+		// Catch control messages here and replace getMessageTimeout
+
+		if ok {
+			if l, found := c.listeners[id]; found {
+				l <- msg
+			} else {
+				log.Println("no listener for message", msg)
+				Info("Listeners: ", c.listeners)
+				panic("Unhandled message!")
+			}
 		} else {
-			log.Println("no listener for message", msg)
-			Info("Listeners: ", c.listeners)
-			panic("Unhandled message!")
+			panic("Bad handler picking up requestID!")
 		}
 	}
 }
 
 // All incoming messages end up here one way or another
 func (c app) ReceiveMessage(msg message) {
-	// c.Handle(msg)
 	c.in <- msg
 }
 
@@ -177,48 +169,27 @@ func (c app) ReceiveBytes(byt []byte) {
 
 	if err := json.Unmarshal(byt, &dat); err != nil {
 		Info("Unable to unmarshal json! Message: ", dat)
-		return
-	}
-
-	if m, err := c.serializer.deserializeString(dat); err == nil {
-		// c.Handle(m)
-		c.in <- m
 	} else {
-		Info("Unable to unmarshal json string! Message: ", m)
-	}
-}
-
-// Send a message and blocks until a response
-func (c *app) requestListen(outgoing message) (message, error) {
-	if err := c.Send(outgoing); err != nil {
-		return nil, err
-	}
-
-	wait := make(chan message, 1)
-	c.listeners[requestID(outgoing)] = wait
-	// delete the listener on receive
-
-	select {
-	case msg := <-wait:
-		if e, ok := msg.(*errorMessage); ok {
-			return nil, fmt.Errorf(e.Error)
+		if m, err := c.serializer.deserializeString(dat); err == nil {
+			c.in <- m
+		} else {
+			Info("Unable to unmarshal json string! Message: ", m)
 		}
-
-		return msg, nil
-	case <-time.After(MessageTimeout):
-		return nil, fmt.Errorf("timeout while waiting for message")
 	}
 }
 
 // Send a message and blocks until the expected type of message is returned
+// String check on the type... pretty bad. Come back to this and figure out how to reflect the interface
 func (c *app) requestListenType(outgoing message, expecting string) (message, error) {
 	if err := c.Send(outgoing); err != nil {
 		return nil, err
 	}
 
 	wait := make(chan message, 1)
-	c.listeners[requestID(outgoing)] = wait
-	// delete the listener on receive
+	id, _ := requestID(outgoing)
+
+	c.listeners[id] = wait
+	defer delete(c.listeners, id)
 
 	select {
 	case msg := <-wait:
@@ -236,8 +207,7 @@ func (c *app) requestListenType(outgoing message, expecting string) (message, er
 	}
 }
 
-// Blocks on a message from the connection. Don't use this while the run loop is
-// active
+// Blocks on a message from the connection. Don't use this while the run loop is active
 func (c app) getMessageTimeout() (message, error) {
 	select {
 	case msg, open := <-c.in:
