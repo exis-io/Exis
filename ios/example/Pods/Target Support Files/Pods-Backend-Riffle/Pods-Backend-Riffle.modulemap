@@ -1,6 +1,0 @@
-framework module Riffle {
-  umbrella header "Pods-Backend-Riffle-umbrella.h"
-
-  export *
-  module * { export * }
-}
