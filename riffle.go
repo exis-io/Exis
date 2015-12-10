@@ -16,7 +16,7 @@ type Domain interface {
 	Publish(string, uint, []interface{}) error
 	Call(string, uint, []interface{}) ([]interface{}, error)
 
-    Yield(uint, []interface{})
+	Yield(uint, []interface{})
 
 	Unsubscribe(string) error
 	Unregister(string) error
@@ -67,6 +67,6 @@ type LogWriter interface {
 	Write(string)
 }
 
-// The mantles set these
+// The mantles set these (maybe?)
 var LogLevel int = 0
 var writer LogWriter
