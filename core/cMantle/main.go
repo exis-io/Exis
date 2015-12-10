@@ -131,7 +131,7 @@ func Join(pdomain unsafe.Pointer) []byte {
 			man.InvokeError(eb, "Connection is already open!")
 		}
 
-		if c, err := goRiffle.Open(core.LocalFabric); err != nil {
+		if c, err := goRiffle.Open(man.fabric); err != nil {
 			man.InvokeError(eb, err.Error())
 		} else {
 			man.conn = c
@@ -233,6 +233,11 @@ func SetSandboxFabric() {
 
 //export SetProductionFabric
 func SetProductionFabric() {
+    man.fabric = core.ProudctionFabric
+}
+
+//export SetLocalFabric
+func SetLocalFabric() {
     man.fabric = core.ProudctionFabric
 }
 
