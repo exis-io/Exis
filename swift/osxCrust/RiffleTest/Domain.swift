@@ -34,6 +34,7 @@ class Domain: NSObject, RiffleDelegate {
     func subscribe(domain: String, fn: (AnyObject) -> ()) {
         let (cb, _) = invocation(Subscribe(mantleDomain, domain.cString()))
         
+        print("Subscribing to \(cb)")
         handlers[cb] = { (a: AnyObject) -> (AnyObject?) in
             fn(a)
             return nil
@@ -51,6 +52,7 @@ class Domain: NSObject, RiffleDelegate {
     func receive() {
         while true {
             let s = Recieve()
+            //print("Received: \(s)")
             let d = NSData(bytes: s.data , length: NSNumber(longLong: s.len).integerValue)
             let data = try! NSJSONSerialization.JSONObjectWithData(d, options: .AllowFragments) as! [AnyObject]
             
@@ -58,6 +60,9 @@ class Domain: NSObject, RiffleDelegate {
                 // Cuminicate here
                 let args = data[1]
                 handler(args)
+            } else {
+                print("No handler found for subscription \(data[0])")
+                print(handlers)
             }
             
             /*
