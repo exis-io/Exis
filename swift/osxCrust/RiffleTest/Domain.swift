@@ -51,6 +51,7 @@ public class Domain: RiffleDelegate {
             
             if let handler = handlers[Int64(i)] {
                 if let a = args as? Any {
+                    
                     //Cuminicate here
                     handler(a)
                 } else {
@@ -109,9 +110,10 @@ public class Domain: RiffleDelegate {
         }
         
         // Kick off the receive thread
-        let thread = NSThread(target: self, selector: "receive", object: nil)
-        thread.start()
-        NSRunLoop.currentRunLoop().run()
+//        let thread = NSThread(target: self, selector: "receive", object: nil)
+//        thread.start()
+//        NSRunLoop.currentRunLoop().run()
+        receive()
     }
     
     

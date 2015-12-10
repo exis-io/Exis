@@ -40,12 +40,12 @@ extension String {
 }
 
 // Decode arbitrary returns from the mantle
-func decode(p: GoSlice) -> (Int64, [Any]) {
+func decode(p: GoSlice) -> (Int64, [AnyObject]) {
     // v2.1
     let d = NSData(bytes: p.data , length: NSNumber(longLong: p.len).integerValue)
-    var data = try! NSJSONSerialization.JSONObjectWithData(d, options: .AllowFragments) as! [Any]
-    data.removeAtIndex(0)
-    return (Int64(data[0] as! Int), data)
+    var data = try! NSJSONSerialization.JSONObjectWithData(d, options: .AllowFragments) as! [AnyObject]
+    let i = data.removeAtIndex(0) as! Int
+    return (Int64(i), data)
     
     // v2.2
 //    let int8Ptr = unsafeBitCast(p.data, UnsafePointer<Int8>.self)
