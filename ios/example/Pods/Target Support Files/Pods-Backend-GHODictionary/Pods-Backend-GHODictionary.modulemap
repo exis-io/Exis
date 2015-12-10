@@ -1,0 +1,6 @@
+framework module GHODictionary {
+  umbrella header "Pods-Backend-GHODictionary-umbrella.h"
+
+  export *
+  module * { export * }
+}

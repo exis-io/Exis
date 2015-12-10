@@ -1,10 +1,10 @@
 package main
 
-import "github.com/exis-io/goRiffle"
+import "github.com/exis-io/core/goRiffle"
 
 func main() {
 	goRiffle.Info("Server starting")
-	goRiffle.SetLogging(goRiffle.LOGDEBUG)
+	goRiffle.SetLoggingLevel(3)
 
 	a := goRiffle.NewDomain("xs.damouse.alpha")
 	a.Join()
