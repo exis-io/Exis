@@ -8,6 +8,36 @@
   <img src="https://img.shields.io/badge/language-Swift%202-brightgreen.svg">
 </div>
 
+[Exis + Swift](http://exis.io/swift) is currently the best solution to allow Swift developers to run their code in the cloud. We have created a platform and a messaging service that allows developers to write native Swift code, test it locally in Xcode, and launch it in the cloud.
+
+### Example
+
+Server-side (cloud) code:
+```
+class Backend: RiffleDomain {
+    override func onJoin() {
+        register("hello", sayHi)
+    }
+
+    //Called by user frontend code
+    func sayHi(name: String) -> AnyObject {
+        print("\(name) says hello! Lets let him know Exis is here to help!")
+        return "Hi, \(name)! Exis can hear you loud and clear!"
+    }
+}
+```
+
+Client-side (phone) code:
+```
+//Send your request to your Swift backend!
+    @IBAction func sendRequest(sender: AnyObject) {
+        container.call("hello", nameField.text!) { (response: String)  in
+            print("There is someone out there!\nResponse: \(response)")
+            self.helloLabel.text = response
+        }
+    }
+```
+
 ## Getting started writing Swift in the backend
 
 In order to run our Hello World example you will need to head to [my.exis.io](https://my.exis.io) and create an account.<br>
