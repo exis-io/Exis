@@ -29,7 +29,9 @@ type mantle struct {
     recv chan []byte
 }
 
-var man = new(mantle)
+var man = &mantle{
+    recv: make(chan []byte),
+}
 
 // Required main method
 func main() {}
@@ -58,13 +60,15 @@ func Subscribe(pdomain unsafe.Pointer, endpoint *C.char) []byte {
 }
 
 //export Register
-func Register(pdomain unsafe.Pointer, endpoint *C.char)  {
+func Register(pdomain unsafe.Pointer, endpoint *C.char) []byte {
     d := *(*core.Domain)(pdomain)
-    cb, _ := core.NewID(), core.NewID()
+    cb, eb := core.NewID(), core.NewID()
 
     go func() {
         d.Register(C.GoString(endpoint), cb, make([]interface{}, 0))
     }()
+
+    return marshall([]uint{cb, eb})
 }
 
 //export Yield
@@ -118,15 +122,15 @@ func Join(pdomain unsafe.Pointer) []byte {
         if c, err := goRiffle.Open(core.LocalFabric); err != nil {
             man.InvokeError(eb, err.Error())
         } else {
-            core.Debug("Opened connection")
             man.conn = c
+            c.App = man.app
 
             if err := d.Join(c); err != nil {
                 core.Warn("Unable to join! %s", err)
-                // man.InvokeError(eb, err.Error())
+                man.InvokeError(eb, err.Error())
             } else {
                 core.Info("Joined!")
-                // man.Invoke(cb, nil)
+                man.Invoke(cb, nil)
             }
         }
     }()
@@ -161,7 +165,7 @@ func unmarshall() {
 
 // Unexported Functions
 func (m mantle) Invoke(id uint, args []interface{}){
-    core.Debug("Invoke called: ", id, args)
+    // core.Debug("Invoke called: ", id, args)
     man.recv <- marshall([]interface{}{id, args})
 }
 

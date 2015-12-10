@@ -11,6 +11,7 @@
 		50533C251C02A44B00E046D0 /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 50533C241C02A44B00E046D0 /* SRWebSocket.m */; };
 		50AAF0811C177D67009978FB /* riffle.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50AAF07F1C177D67009978FB /* riffle.a */; };
 		50AAF0831C19114A009978FB /* Deferred.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AAF0821C19114A009978FB /* Deferred.swift */; };
+		50AAF0851C192125009978FB /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AAF0841C192125009978FB /* Domain.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -34,6 +35,7 @@
 		50AAF07F1C177D67009978FB /* riffle.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = riffle.a; sourceTree = "<group>"; };
 		50AAF0801C177D67009978FB /* riffle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = riffle.h; sourceTree = "<group>"; };
 		50AAF0821C19114A009978FB /* Deferred.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Deferred.swift; sourceTree = "<group>"; };
+		50AAF0841C192125009978FB /* Domain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Domain.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +75,7 @@
 				50533C231C02A44B00E046D0 /* SRWebSocket.h */,
 				50533C241C02A44B00E046D0 /* SRWebSocket.m */,
 				50533C181C029E2700E046D0 /* main.swift */,
+				50AAF0841C192125009978FB /* Domain.swift */,
 				50533C221C029E6A00E046D0 /* Bridge.h */,
 			);
 			path = RiffleTest;
@@ -138,6 +141,7 @@
 				50533C251C02A44B00E046D0 /* SRWebSocket.m in Sources */,
 				50AAF0831C19114A009978FB /* Deferred.swift in Sources */,
 				50533C191C029E2700E046D0 /* main.swift in Sources */,
+				50AAF0851C192125009978FB /* Domain.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
