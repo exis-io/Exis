@@ -4,18 +4,19 @@ package core
 
 // The reeceiving end
 type Delegate interface {
-	Invoke(uint, []interface{}) ([]interface{}, error)
+	Invoke(uint, []interface{})
 	OnJoin(string)
 	OnLeave(string)
 }
 
 type Domain interface {
-	Subscribe(string, []interface{}) (uint, error)
-	Register(string, []interface{}) (uint, error)
+	Subscribe(string, uint, []interface{}) error
+	Register(string, uint, []interface{}) error
 
-	Publish(string, []interface{}) error
-	Call(string, []interface{}) ([]interface{}, error)
-    Yield(uint, []interface{})
+	Publish(string, uint, []interface{}) error
+	Call(string, uint, []interface{}) ([]interface{}, error)
+
+	Yield(uint, []interface{})
 
 	Unsubscribe(string) error
 	Unregister(string) error
@@ -66,6 +67,6 @@ type LogWriter interface {
 	Write(string)
 }
 
-// The mantles set these
+// The mantles set these (maybe?)
 var LogLevel int = 0
 var writer LogWriter
