@@ -1,162 +1,170 @@
 package goRiffle
 
-// import (
-// 	"fmt"
+import (
+	"fmt"
 
-// 	"github.com/exis-io/core"
-// )
+	"github.com/exis-io/core"
+)
 
-// type Domain interface {
-// 	Subscribe(string, interface{}) error
-// 	Register(string, interface{}) error
+type Domain interface {
+	Subscribe(string, interface{}) error
+	Register(string, interface{}) error
 
-// 	Publish(string, ...interface{}) error
-// 	Call(string, ...interface{}) ([]interface{}, error)
+	Publish(string, ...interface{}) error
+	Call(string, ...interface{}) ([]interface{}, error)
 
-// 	Unsubscribe(string) error
-// 	Unregister(string) error
+	Unsubscribe(string) error
+	Unregister(string) error
 
-// 	Join() error
-// 	Leave() error
-// 	Run()
-// }
+	Join() error
+	Leave() error
+	Run()
+}
 
-// type mantle struct {
-// 	honcho core.App
-// 	conn   *WebsocketConnection
-// }
+type mantle struct {
+	honcho core.App
+	conn   *WebsocketConnection
+}
 
-// type domain struct {
-// 	mantle   *mantle
-// 	mirror   core.Domain
-// 	handlers map[uint]interface{}
-// 	kill     chan bool
-// }
+type domain struct {
+	mantle   *mantle
+	mirror   core.Domain
+	handlers map[uint]interface{}
+	kill     chan bool
+}
 
-// var wrap *mantle
+var wrap *mantle
 
-// func NewDomain(name string) Domain {
+func NewDomain(name string) Domain {
 
-// 	if wrap == nil {
-// 		h := core.NewApp()
+	if wrap == nil {
+		h := core.NewApp()
 
-// 		wrap = &mantle{
-// 			honcho: h,
-// 		}
-// 	}
+		wrap = &mantle{
+			honcho: h,
+		}
+	}
 
-// 	d := domain{
-// 		mantle:   wrap,
-// 		handlers: make(map[uint]interface{}),
-// 		kill:     make(chan bool),
-// 	}
+	d := domain{
+		mantle:   wrap,
+		handlers: make(map[uint]interface{}),
+		kill:     make(chan bool),
+	}
 
-// 	d.mirror = wrap.honcho.NewDomain(name, d)
-// 	return d
-// }
+	d.mirror = wrap.honcho.NewDomain(name, d)
+	return d
+}
 
-// func (d domain) Subscribe(endpoint string, handler interface{}) error {
-// 	if i, err := d.mirror.Subscribe(endpoint, []interface{}{}); err != nil {
-// 		return err
-// 	} else {
-// 		d.handlers[i] = handler
-// 		return nil
-// 	}
-// }
+func (d domain) Subscribe(endpoint string, handler interface{}) error {
+	id := core.NewID()
+	if err := d.mirror.Subscribe(endpoint, id, []interface{}{}); err != nil {
+		return err
+	} else {
+		d.handlers[id] = handler
+		return nil
+	}
+}
 
-// func (d domain) Register(endpoint string, handler interface{}) error {
-// 	if i, err := d.mirror.Register(endpoint, []interface{}{}); err != nil {
-// 		return err
-// 	} else {
-// 		d.handlers[i] = handler
-// 		return nil
-// 	}
-// }
+func (d domain) Register(endpoint string, handler interface{}) error {
+	id := core.NewID()
+	if err := d.mirror.Register(endpoint, id, []interface{}{}); err != nil {
+		return err
+	} else {
+		d.handlers[id] = handler
+		return nil
+	}
+}
 
-// func (d domain) Publish(endpoint string, args ...interface{}) error {
-// 	err := d.mirror.Publish(endpoint, args)
-// 	return err
-// }
+func (d domain) Publish(endpoint string, args ...interface{}) error {
+	id := core.NewID()
+	err := d.mirror.Publish(endpoint, id, args)
+	return err
+}
 
-// func (d domain) Call(endpoint string, args ...interface{}) ([]interface{}, error) {
-// 	args, err := d.mirror.Call(endpoint, args)
-// 	return args, err
-// }
+func (d domain) Call(endpoint string, args ...interface{}) ([]interface{}, error) {
+	id := core.NewID()
+	args, err := d.mirror.Call(endpoint, id, args)
+	return args, err
+}
 
-// func (d domain) Unsubscribe(endpoint string) error {
-// 	err := d.mirror.Unsubscribe(endpoint)
-// 	return err
-// }
+func (d domain) Unsubscribe(endpoint string) error {
+	err := d.mirror.Unsubscribe(endpoint)
+	return err
+}
 
-// func (d domain) Unregister(endpoint string) error {
-// 	err := d.mirror.Unregister(endpoint)
-// 	return err
-// }
+func (d domain) Unregister(endpoint string) error {
+	err := d.mirror.Unregister(endpoint)
+	return err
+}
 
-// func (d domain) Join() error {
-// 	// Open a new connection if we don't have one yet
-// 	if d.mantle.conn == nil {
-// 		c, err := Open(core.LocalFabric)
+func (d domain) Join() error {
+	// Open a new connection if we don't have one yet
+	if d.mantle.conn == nil {
+		c, err := Open(core.LocalFabric)
 
-// 		if err != nil {
-// 			fmt.Println("Unable to open connection!")
-// 			return err
-// 		}
+		if err != nil {
+			fmt.Println("Unable to open connection!")
+			return err
+		}
 
-// 		c.App = wrap.honcho
-// 		wrap.conn = c
-// 		return d.mirror.Join(c)
-// 	}
+		c.App = wrap.honcho
+		wrap.conn = c
+		return d.mirror.Join(c)
+	}
 
-// 	return nil
-// }
+	return nil
+}
 
-// func (d domain) Leave() error {
-// 	err := d.mirror.Leave()
+func (d domain) Leave() error {
+	err := d.mirror.Leave()
 
-// 	// for each subscription
-// 	// for each registration
+	// for each subscription
+	// for each registration
 
-// 	return err
-// }
+	return err
+}
 
-// func (d domain) Invoke(id uint, args []interface{}) ([]interface{}, error) {
-// 	return core.Cumin(d.handlers[id], args)
-// }
+func (d domain) Invoke(id uint, args []interface{}) {
+	Debug("Called with %s", args)
 
-// func (d domain) OnJoin(string) {
-// 	fmt.Println("Delegate joined!")
-// }
+	if handler, ok := d.handlers[id]; ok {
+		core.Cumin(handler, args)
+	}
+}
 
-// func (d domain) OnLeave(string) {
-// 	fmt.Println("Delegate left!!")
-// 	d.kill <- true
-// }
+func (d domain) OnJoin(string) {
+	fmt.Println("Delegate joined!")
+}
 
-// // Spin and run while the domain is still connected
-// func (d domain) Run() {
-// 	<-d.kill
-// }
+func (d domain) OnLeave(string) {
+	fmt.Println("Delegate left!!")
+	d.kill <- true
+}
 
-// func Debug(format string, a ...interface{}) {
-// 	core.Debug(format, a...)
-// }
+// Spin and run while the domain is still connected
+func (d domain) Run() {
+	<-d.kill
+}
 
-// func Info(format string, a ...interface{}) {
-// 	core.Info(format, a...)
-// }
+func Debug(format string, a ...interface{}) {
+	core.Debug(format, a...)
+}
 
-// func Warn(format string, a ...interface{}) {
-// 	core.Warn(format, a...)
-// }
+func Info(format string, a ...interface{}) {
+	core.Info(format, a...)
+}
 
-// const (
-// 	LogLevelErr   int = 0
-// 	LogLevelWarn  int = 1
-// 	LogLevelInfo  int = 2
-// 	LogLevelDebug int = 3
-// )
+func Warn(format string, a ...interface{}) {
+	core.Warn(format, a...)
+}
 
-// func SetLoggingLevel(l int) {
-// 	core.LogLevel = l
-// }
+const (
+	LogLevelErr   int = 0
+	LogLevelWarn  int = 1
+	LogLevelInfo  int = 2
+	LogLevelDebug int = 3
+)
+
+func SetLoggingLevel(l int) {
+	core.LogLevel = l
+}
