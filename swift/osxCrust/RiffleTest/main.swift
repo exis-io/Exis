@@ -23,6 +23,7 @@ import Foundation
 let url = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
 let domain = "xs.damouse"
 
+SetLoggingLevel(3)
 
 extension String {
     func cString() -> UnsafeMutablePointer<Int8> {
@@ -30,7 +31,6 @@ extension String {
         return UnsafeMutablePointer(cs)
     }
 }
-
 
 // Interface object for interacting with goRiffle
 class Domain: NSObject {
@@ -41,19 +41,21 @@ class Domain: NSObject {
         mantleDomain = NewDomain(name.cString())
     }
     
+    func onJoin() {
+        print("Domain left!")
+    }
+    
+    func onLeave() {
+        print("Domain joined!")
+    }
+    
     func subscribe(domain: String, fn: (AnyObject) -> ()) {
+        let (cb, _) = invocation(Subscribe(mantleDomain, domain.cString()))
         
-        //#if os(OSX)
-        let s = Subscribe(mantleDomain, domain.cString())
-        let d = NSData(bytes: s.data , length: NSNumber(longLong: s.len).integerValue)
-        let data = try! NSJSONSerialization.JSONObjectWithData(d, options: .AllowFragments)
-        print(data)
-        //#endif
-        
-//        handlers[data.longLongValue] = { (a: AnyObject) -> (AnyObject?) in
-//            fn(a)
-//            return nil
-//        }
+        handlers[cb] = { (a: AnyObject) -> (AnyObject?) in
+            fn(a)
+            return nil
+        }
     }
     
 //    func register(domain: String, fn: (AnyObject) -> (AnyObject)) {
@@ -96,15 +98,27 @@ class Domain: NSObject {
             // todo: call
         }
     }
+    
+    func join() {
+        let (cb, eb) = invocation(Join(mantleDomain))
+        
+        handlers[cb] = { (a: AnyObject) -> (AnyObject?) in
+            self.onJoin()
+            return nil
+        }
+        
+        handlers[eb] = { (a: AnyObject) -> (AnyObject?) in
+            print("Unable to join!")
+            return nil
+        }
+    }
 }
 
 
 let g = Domain(name: "xs.damouse")
 
-g.subscribe("sub") { (obj: AnyObject)  in
-    print("Sub received: \(obj)")
-}
-
+// Should throw errors if the domain hasn't joined yet
+g.join()
 
 // Threading implementation
 let thread = NSThread(target: g, selector: "receive", object: nil)
