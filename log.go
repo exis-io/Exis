@@ -8,25 +8,25 @@ import (
 
 func Debug(format string, a ...interface{}) {
 	if LogLevel >= LogLevelDebug {
-		out(fmt.Sprintf("debug: %s", fmt.Sprintf(format, a...)))
+		out(fmt.Sprintf("%s", fmt.Sprintf(format, a...)))
 	}
 }
 
 func Info(format string, a ...interface{}) {
 	if LogLevel >= LogLevelInfo {
-		out(fmt.Sprintf("info: %s", fmt.Sprintf(format, a...)))
+		out(fmt.Sprintf("%s", fmt.Sprintf(format, a...)))
 	}
 }
 
 func Warn(format string, a ...interface{}) {
 	if LogLevel >= LogLevelWarn {
-		out(fmt.Sprintf("warn: %s", fmt.Sprintf(format, a...)))
+		out(fmt.Sprintf("%s", fmt.Sprintf(format, a...)))
 	}
 }
 
 func Error(format string, a ...interface{}) {
 	if LogLevel >= LogLevelErr {
-		out(fmt.Sprintf("error: %s", fmt.Sprintf(format, a...)))
+		out(fmt.Sprintf("%s", fmt.Sprintf(format, a...)))
 	}
 }
 

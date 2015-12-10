@@ -12,6 +12,7 @@ type domain struct {
 }
 
 type boundEndpoint struct {
+    callback      uint
 	endpoint      string
 	expectedTypes []interface{}
 }
@@ -92,15 +93,18 @@ func (c *domain) Leave() error {
 /////////////////////////////////////////////
 
 func (c domain) Subscribe(endpoint string, requestId uint, types []interface{}) error {
+    Debug("Domain subscribing to :%d", requestId)
 	endpoint = makeEndpoint(c.name, endpoint)
 	sub := &subscribe{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
 
 	if msg, err := c.app.requestListenType(sub, "*core.subscribed"); err != nil {
 		return err
 	} else {
-		Info("Subscribed: %s", endpoint)
 		subbed := msg.(*subscribed)
-		c.subscriptions[subbed.Subscription] = &boundEndpoint{endpoint, types}
+        Info("Subscribed: %s, returned id: %s", endpoint, requestId)
+        // WARNING-- the returned is NOT THE SAME as the one that goes out as a request! 
+        // The mappings in c.subscriptions has nothing to do with msg.Subscription!
+		c.subscriptions[subbed.Subscription] = &boundEndpoint{requestId, endpoint, types}
 		return nil
 	}
 }
@@ -114,7 +118,7 @@ func (c domain) Register(endpoint string, requestId uint, types []interface{}) e
 	} else {
 		Info("Registered: %s", endpoint)
 		reg := msg.(*registered)
-		c.registrations[reg.Registration] = &boundEndpoint{endpoint, types}
+		c.registrations[reg.Registration] = &boundEndpoint{requestId, endpoint, types}
 		return nil
 	}
 }
@@ -208,8 +212,11 @@ func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
     Debug("Processing invocation: %s", msg)
 
 	if err := softCumin(binding.expectedTypes, msg.Arguments); err == nil {
-		c.Delegate.Invoke(msg.Registration, msg.Arguments)
+        Debug("Cuminciation succeeded.")
+		c.Delegate.Invoke(binding.callback, msg.Arguments)
 	} else {
+        Debug("Cuminication failed.")
+
 		tosend := &errorMessage{
 			Type:      iNVOCATION,
 			Request:   msg.Request,
@@ -228,9 +235,10 @@ func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
     Debug("Processing publish: %s", msg)
 
 	if e := softCumin(binding.expectedTypes, msg.Arguments); e == nil {
-		c.Delegate.Invoke(msg.Subscription, msg.Arguments)
+        Debug("Cuminciation succeeded.")
+		c.Delegate.Invoke(binding.callback, msg.Arguments)
 	} else {
-
+        Debug("Cuminication failed.")
 		tosend := &errorMessage{Type: pUBLISH, Request: msg.Subscription, Details: make(map[string]interface{}), Arguments: make([]interface{}, 0), Error: e.Error()}
 
 		if err := c.app.Send(tosend); err != nil {
