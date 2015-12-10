@@ -83,7 +83,7 @@ func (c app) receiveLoop() {
 			Warn("Receive loop close")
 			break
 		} else {
-			Debug("Received message", msg)
+			Debug("Received message: ", msg)
 			c.handle(msg)
 		}
 	}

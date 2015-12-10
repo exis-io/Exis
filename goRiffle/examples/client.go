@@ -12,8 +12,8 @@ func main() {
 	a := goRiffle.NewDomain("xs.damouse.beta")
 	a.Join()
 
-	// a.Call("xs.damouse/reg")
-	a.Publish("xs.damouse/sub")
+	a.Call("xs.damouse/reg", true, "Hello!")
+	a.Publish("xs.damouse/sub", 3)
 
 	a.Run()
 }

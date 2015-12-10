@@ -165,12 +165,12 @@ func unmarshall() {
 
 // Unexported Functions
 func (m mantle) Invoke(id uint, args []interface{}){
-    core.Debug("Invoke called: ", id, args)
+    // core.Debug("Invoke called: ", id, args)
     man.recv <- marshall([]interface{}{id, args})
 }
 
 func (m mantle) InvokeError(id uint, e string){
-    core.Debug("Invoking error: ", id, e)
+    // core.Debug("Invoking error: ", id, e)
     s := fmt.Sprintf("Err: %s", e)
     man.recv <- marshall([]interface{}{id, s})
 }

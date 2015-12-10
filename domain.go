@@ -93,7 +93,6 @@ func (c *domain) Leave() error {
 /////////////////////////////////////////////
 
 func (c domain) Subscribe(endpoint string, requestId uint, types []interface{}) error {
-    Debug("Domain subscribing to :%d", requestId)
 	endpoint = makeEndpoint(c.name, endpoint)
 	sub := &subscribe{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
 
@@ -101,7 +100,7 @@ func (c domain) Subscribe(endpoint string, requestId uint, types []interface{}) 
 		return err
 	} else {
 		subbed := msg.(*subscribed)
-        Info("Subscribed: %s, returned id: %s", endpoint, requestId)
+        Info("Subscribed: %s", endpoint)
         // WARNING-- the returned is NOT THE SAME as the one that goes out as a request! 
         // The mappings in c.subscriptions has nothing to do with msg.Subscription!
 		c.subscriptions[subbed.Subscription] = &boundEndpoint{requestId, endpoint, types}
@@ -212,10 +211,10 @@ func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
     Debug("Processing invocation: %s", msg)
 
 	if err := softCumin(binding.expectedTypes, msg.Arguments); err == nil {
-        Debug("Cuminciation succeeded.")
+        // Debug("Cuminciation succeeded.")
 		c.Delegate.Invoke(binding.callback, msg.Arguments)
 	} else {
-        Debug("Cuminication failed.")
+        // Debug("Cuminication failed.")
 
 		tosend := &errorMessage{
 			Type:      iNVOCATION,
@@ -235,10 +234,10 @@ func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
     Debug("Processing publish: %s", msg)
 
 	if e := softCumin(binding.expectedTypes, msg.Arguments); e == nil {
-        Debug("Cuminciation succeeded.")
+        // Debug("Cuminciation succeeded.")
 		c.Delegate.Invoke(binding.callback, msg.Arguments)
 	} else {
-        Debug("Cuminication failed.")
+        // Debug("Cuminication failed.")
 		tosend := &errorMessage{Type: pUBLISH, Request: msg.Subscription, Details: make(map[string]interface{}), Arguments: make([]interface{}, 0), Error: e.Error()}
 
 		if err := c.app.Send(tosend); err != nil {
