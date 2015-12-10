@@ -18,6 +18,8 @@ You are responsible for cleaning up C references!
 
 
 Every function here is reactive: it returns two indicies to callbacks to be triggered later.
+
+Reg, Sub, Pub, Call all return indicies to callbacks they will later call. 
 */
 
 
@@ -39,7 +41,6 @@ func NewDomain(name *C.char) unsafe.Pointer {
 	}
 
 	d := man.app.NewDomain(C.GoString(name), man)
-
     return unsafe.Pointer(&d)
 }
 
@@ -68,6 +69,7 @@ func Register(pdomain unsafe.Pointer, endpoint *C.char)  {
 
 //export Yield
 func Yield(args []byte) {
+    // This needs work 
     // core.Yield(C.GoString(e))
 }
 
@@ -104,19 +106,32 @@ func Unregister(pdomain unsafe.Pointer, e *C.char) {
 }
 
 //export Join
-func Join(pdomain unsafe.Pointer) {
+func Join(pdomain unsafe.Pointer) []byte {
     d := *(*core.Domain)(pdomain)
-    
-    if man.conn != nil {
-        fmt.Println("Connection is already open!")
-    }
+    cb, eb := core.NewID(), core.NewID()
 
-    if c, err := goRiffle.Open(core.SandboxFabric); err != nil {
-        core.Warn("Unable to open connection! Err: %s", err.Error())
-    } else {
-        man.conn = c
-        d.Join(c)
-    }
+    go func() {
+        if man.conn != nil {
+            man.InvokeError(eb, "Connection is already open!")
+        }
+
+        if c, err := goRiffle.Open(core.LocalFabric); err != nil {
+            man.InvokeError(eb, err.Error())
+        } else {
+            core.Debug("Opened connection")
+            man.conn = c
+
+            if err := d.Join(c); err != nil {
+                core.Warn("Unable to join! %s", err)
+                // man.InvokeError(eb, err.Error())
+            } else {
+                core.Info("Joined!")
+                // man.Invoke(cb, nil)
+            }
+        }
+    }()
+
+    return marshall([]uint{cb, eb})
 }
 
 //export Leave
@@ -146,12 +161,14 @@ func unmarshall() {
 
 // Unexported Functions
 func (m mantle) Invoke(id uint, args []interface{}){
-    fmt.Println("Invoke called: ", id, args)
+    core.Debug("Invoke called: ", id, args)
+    man.recv <- marshall([]interface{}{id, args})
+}
 
-    man.recv <- marshall(map[string]interface{}{
-        "id": id, 
-        "args": args,
-    })
+func (m mantle) InvokeError(id uint, e string){
+    core.Debug("Invoking error: ", id, e)
+    s := fmt.Sprintf("Err: %s", e)
+    man.recv <- marshall([]interface{}{id, s})
 }
 
 func (m mantle) OnJoin(string) {
@@ -162,15 +179,8 @@ func (m mantle) OnLeave(string) {
     fmt.Println("Domain left!")
 }
 
-// export Hello
-// func Hello(pdomain unsafe.Pointer) {
-//     // Testing returning go callbacks into the C bridge
-//     d := *(*domain)(pdomain)
-//     d.hello()
-// }
-
-// func (d *domain) hello() {
-//     fmt.Println(d.name + " called from swift!")
-// }
-
+//export SetLoggingLevel
+func SetLoggingLevel(l int) {
+    core.LogLevel = l
+}
 

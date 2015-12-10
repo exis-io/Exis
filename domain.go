@@ -30,32 +30,34 @@ func (c domain) Join(conn Connection) error {
 	// check to make sure the connection is not already set?
 	c.app.Connection = conn
 
+    // Note: the send doesn't go through
+
 	// Should we hard close on conn.Close()? The App may be interested in knowing about the close
 	if err := c.app.SendNow(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {
 		c.app.Close("ERR: could not send a hello message")
 		return err
 	}
 
-	if msg, err := c.app.getMessageTimeout(); err != nil {
-		c.app.Close(err.Error())
-		return err
-	} else if _, ok := msg.(*welcome); !ok {
-		c.app.SendNow(&abort{Details: map[string]interface{}{}, Reason: "Error- unexpected_message_type"})
-		c.app.Close("Error- unexpected_message_type")
-		return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME.String()))
-	}
+	// if msg, err := c.app.getMessageTimeout(); err != nil {
+	// 	c.app.Close(err.Error())
+	// 	return err
+	// } else if _, ok := msg.(*welcome); !ok {
+	// 	c.app.SendNow(&abort{Details: map[string]interface{}{}, Reason: "Error- unexpected_message_type"})
+	// 	c.app.Close("Error- unexpected_message_type")
+	// 	return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME.String()))
+	// }
 
-	// This is super dumb, and the reason its in here was fixed. Please revert
-	go c.app.receiveLoop()
-	go c.app.sendLoop()
+	// // This is super dumb, and the reason its in here was fixed. Please revert
+	// go c.app.receiveLoop()
+	// go c.app.sendLoop()
 
-	// old contents of app.join
-	for _, x := range c.app.domains {
-		if !x.joined {
-			x.joined = true
-			x.Delegate.OnJoin(x.name)
-		}
-	}
+	// // old contents of app.join
+	// for _, x := range c.app.domains {
+	// 	if !x.joined {
+	// 		x.joined = true
+	// 		x.Delegate.OnJoin(x.name)
+	// 	}
+	// }
 
 	Info("Domain joined")
 	return nil
