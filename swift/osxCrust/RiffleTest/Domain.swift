@@ -8,30 +8,15 @@
 
 /*
 TODO:
-Integrate with main swiftRiffle lib for testing
-Make conditional compilers for ios and osx
-Cleanup and integrate new changes with goRiffle
-Implement Domain class in goRiffle
-Implment Call, Unreg, Unsub
+    Integrate with main swiftRiffle lib for testing
+    Make conditional compilers for ios and osx
+    Cleanup and integrate new changes with goRiffle
+    Implement Domain class in goRiffle
+    Implment Call, Unreg, Unsub
 */
 
 import Foundation
 
-
-// Sets itself as the delegate if none provided
-@objc public protocol RiffleDelegate {
-    func onJoin()
-    func onLeave()
-}
-
-extension String {
-    func cString() -> UnsafeMutablePointer<Int8> {
-        let cs = (self as NSString).UTF8String
-        return UnsafeMutablePointer(cs)
-    }
-}
-
-// Interface object for interacting with goRiffle
 class Domain: NSObject, RiffleDelegate {
     var mantleDomain: UnsafeMutablePointer<Void>
     var handlers: [Int64: (AnyObject) -> (AnyObject?)] = [:]
@@ -44,14 +29,6 @@ class Domain: NSObject, RiffleDelegate {
         
         super.init()
         delegate = self
-    }
-    
-    func onJoin() {
-        print("Domain joined!")
-    }
-    
-    func onLeave() {
-        print("Domain left!!")
     }
     
     func subscribe(domain: String, fn: (AnyObject) -> ()) {
@@ -74,28 +51,29 @@ class Domain: NSObject, RiffleDelegate {
     func receive() {
         while true {
             let s = Recieve()
-            
             let d = NSData(bytes: s.data , length: NSNumber(longLong: s.len).integerValue)
             let data = try! NSJSONSerialization.JSONObjectWithData(d, options: .AllowFragments) as! [AnyObject]
-            print(data)
             
-            // All these need to be dispatched to background
-            
-            if let results = handlers[data[0].longLongValue]!(data[1]) {
-//                let json: [String: AnyObject] = [
-//                    "id": String(Int64(data["request"] as! Double)),
-//                    "ok": "",
-//                    "result": results
-//                ]
-
-//                let out = try! NSJSONSerialization.dataWithJSONObject(json, options: . PrettyPrinted)
-//
-//                let slice = GoSlice(data: UnsafeMutablePointer<Void>(out.bytes), len: NSNumber(integer: out.length).longLongValue, cap: NSNumber(integer: out.length).longLongValue)
-//                Yield(slice)
-
+            if let handler = handlers[data[0].longLongValue] {
+                // Cuminicate here
+                let args = data[1]
+                handler(args)
             }
             
-            // todo: call
+            /*
+            if let results = handlers[data[0].longLongValue]!(args) {
+                let json: [String: AnyObject] = [
+                    "id": String(Int64(data["request"] as! Double)),
+                    "ok": "",
+                    "result": results
+                ]
+
+                let out = try! NSJSONSerialization.dataWithJSONObject(json, options: . PrettyPrinted)
+
+                let slice = GoSlice(data: UnsafeMutablePointer<Void>(out.bytes), len: NSNumber(integer: out.length).longLongValue, cap: NSNumber(integer: out.length).longLongValue)
+                Yield(slice)
+            }
+            */
         }
     }
     
@@ -116,6 +94,16 @@ class Domain: NSObject, RiffleDelegate {
         thread.start()
         NSRunLoop.currentRunLoop().run()
     }
+    
+    
+    // MARK: Delegate methods
+    func onJoin() { }
+    
+    func onLeave() { }
 }
 
-
+// Sets itself as the delegate if none provided
+@objc public protocol RiffleDelegate {
+    func onJoin()
+    func onLeave()
+}

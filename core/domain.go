@@ -205,6 +205,8 @@ func (c domain) Unregister(endpoint string) error {
 
 // This blocks on the invoke. Does the goroutine block waiting for the response?
 func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
+    Debug("Processing invocation: %s", msg)
+
 	if err := softCumin(binding.expectedTypes, msg.Arguments); err == nil {
 		c.Delegate.Invoke(msg.Registration, msg.Arguments)
 	} else {
@@ -223,6 +225,8 @@ func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 }
 
 func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
+    Debug("Processing publish: %s", msg)
+
 	if e := softCumin(binding.expectedTypes, msg.Arguments); e == nil {
 		c.Delegate.Invoke(msg.Subscription, msg.Arguments)
 	} else {
