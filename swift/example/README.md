@@ -13,11 +13,16 @@
 In order to run our Hello World example you will need to head to [my.exis.io](https://my.exis.io) and create an account.<br>
 After signing up you will follow these easy few steps to see the power of writing your backend in Swift using Exis!
 + Create an app from template 'helloWorldSwift' in your dashboard
+
+    <div style="text-align:center">
+      <img src="assets/helloworldswifttemplate.png">
+    </div>
+
 + Navigate to your .xcworkspace in the helloWorldSwift example that you cloned or downloaded
-  + You will find all the front end code in ```ViewController.swift``` and all your **Swift** written backend code in ```Backend/main.swift``` <br>
+  + You will find all the front end code in ```ViewController.swift``` and all your **Swift** written backend code in ```Backend/main.swift``` <br><br>
     <div style="text-align:center">
       <img src="assets/frontendbackend.png" height="200" width="300">
-    </div>
+    </div><br>
   + There should be 2 lines of code in both your frontend and backend code that you are required to replace the ```X's``` with your keys and ```USERNAME``` with your username that you used during signup process.  Follow the inline comments on how to obtains those from your dashboard on [my.exis.io](https://my.exis.io)<br>
   <table align="center" border="0">
     <tr>
@@ -25,13 +30,16 @@ After signing up you will follow these easy few steps to see the power of writin
       <td>*Backend Keys* <img src="assets/backendkeys.png"></td>
     </tr>
   </table>
+  <div style="text-align:center">
+    <img src="assets/keys.png">
+  </div><br>
 + Now, go ahead and run your backend code by setting your current active scheme to *backend* and clicking run<br>
   <div style="text-align:center">
-    <img src="assets/runbackend.png" height="50" width="300">
+    <img src="assets/runbackend.png" height="40" width="400">
   </div>
 + After you have launched your backend running Swift, go ahead and run your main scheme and witness the communication between the two in your output log as well as in your View in the simulator.
   <div style="text-align:center">
-    <img src="assets/runfrontend.png" height="45" width="350">
+    <img src="assets/runfrontend.png" height="40" width="400">
   </div>
 + You may switch between your backend output log and your front end to see the communication between the two!
   <div style="text-align:center">
