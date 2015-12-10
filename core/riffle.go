@@ -16,7 +16,7 @@ type Domain interface {
 	Publish(string, uint, []interface{}) error
 	Call(string, uint, []interface{}) ([]interface{}, error)
 
-    Yield(uint, []interface{})
+	Yield(uint, []interface{})
 
 	Unsubscribe(string) error
 	Unregister(string) error

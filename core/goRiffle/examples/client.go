@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/exis-io/goRiffle"
+	"github.com/exis-io/core/goRiffle"
 )
 
 func main() {
