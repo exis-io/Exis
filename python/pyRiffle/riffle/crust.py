@@ -30,17 +30,25 @@ class App(object):
         self._app = riffle.App()
         self._app.Init()
 
-        # Dictionary of uints to callbacks (?)
-        self.callbacks = {}
+        self.registrations, self.subscriptions, self.meta = {}, {}, {}
 
     def recv(self):
         while True:
-            callbackId, args = json.loads(self._app.Receive())
+            i, args = json.loads(self._app.Receive())
+            args = args if args is not None else []
+            # How do we check return values on the return?
 
-            if callbackId in self.callbacks:
-                self.callbacks[callbackId](*args if args is not None else [])
-            else:
-                print "No handler available for ", callbackId
+            if i in self.meta:
+                self.meta[i](*args)
+
+            elif i in self.subscriptions:
+                self.subscriptions[i](*args)
+
+            elif i in self.registrations:
+                self.registrations[i](*args)
+
+            else: 
+                print "No handler available for ", i
 
 
 # Internalize this reference into the domain object. For now, its ok global
@@ -56,7 +64,7 @@ class Domain(object):
     def join(self):
         cb, eb = cbid(), cbid()
 
-        app.callbacks[cb] = self.onJoin
+        app.meta[cb] = self.onJoin
 
         self.mantleDomain.Join(cb, eb)
         app.recv()
@@ -67,27 +75,18 @@ class Domain(object):
     def subscribe(self, endpoint, handler):
         fn = cbid()
         self.mantleDomain.Subscribe(fn, endpoint)
-        app.callbacks[fn] = handler
+        app.subscriptions[fn] = handler
 
     def register(self, endpoint, handler):
         fn = cbid()
         self.mantleDomain.Register(fn, endpoint)
-        app.callbacks[fn] = handler
+        app.registrations[fn] = handler
 
     def publish(self, endpoint, *args):
-        fn = cbid()
-        self.mantleDomain.Publish(fn, endpoint, json.dumps(args))
-        # app.callbacks[fn] = handler
+        self.mantleDomain.Publish(cbid(), endpoint, json.dumps(args))
 
     def call(self, endpoint, *args):
         fn = cbid()
         self.mantleDomain.Call(fn, endpoint, json.dumps(args))
         # app.callbacks[fn] = handler
-
-def main():
-    d = Domain("xs.damouse")
-    d.join()
-
-if __name__ == '__main__':
-    main()
 
