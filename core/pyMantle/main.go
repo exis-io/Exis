@@ -5,43 +5,36 @@ import (
 	"github.com/exis-io/core/goRiffle"
 )
 
-var fabric string = core.ProudctionFabric
-
-type App struct {
-	coreApp core.App
-}
+var fabric string = core.FabricProduction
 
 type Domain struct {
-	app        *App
 	coreDomain core.Domain
 }
 
-func (a *App) Init() {
-	a.coreApp = core.NewApp()
-}
-
-func (a *App) NewDomain(name string) Domain {
+func NewDomain(name string) Domain {
 	return Domain{
-		app:        a,
-		coreDomain: a.coreApp.NewDomain(name),
+		coreDomain: core.NewDomain(name, nil),
 	}
 }
 
-// Blocks on callbacks from the core. TODO: trigger a close meta callback when connection is lost
-func (a *App) Receive() string {
-	return core.MantleMarshall(a.coreApp.CallbackListen())
+func (d *Domain) Subdomain(name string) Domain {
+	return d.Subdomain(name)
+}
+
+// Blocks on callbacks from the core.
+// TODO: trigger a close meta callback when connection is lost
+func (d *Domain) Receive() string {
+	return core.MantleMarshall(d.coreDomain.GetApp().CallbackListen())
 }
 
 func (d *Domain) Join(cb uint, eb uint) {
 	if c, err := goRiffle.Open(fabric); err != nil {
-		d.app.coreApp.CallbackSend(eb, err.Error())
+		d.coreDomain.GetApp().CallbackSend(eb, err.Error())
 	} else {
-		c.App = d.app.coreApp
-
 		if err := d.coreDomain.Join(c); err != nil {
-			d.app.coreApp.CallbackSend(eb, err.Error())
+			d.coreDomain.GetApp().CallbackSend(eb, err.Error())
 		} else {
-			d.app.coreApp.CallbackSend(cb)
+			d.coreDomain.GetApp().CallbackSend(cb)
 		}
 	}
 }
@@ -71,9 +64,9 @@ func (d Domain) Call(cb uint, endpoint string, args string) {
 	}()
 }
 
-func (a *App) Yield(request uint, args string) {
+func (d Domain) Yield(request uint, args string) {
 	go func() {
-		a.coreApp.Yield(request, core.MantleUnmarshal(args))
+		d.coreDomain.GetApp().Yield(request, core.MantleUnmarshal(args))
 	}()
 }
 
@@ -102,10 +95,10 @@ func SetLogLevelWarn()  { core.LogLevel = core.LogLevelWarn }
 func SetLogLevelInfo()  { core.LogLevel = core.LogLevelInfo }
 func SetLogLevelDebug() { core.LogLevel = core.LogLevelDebug }
 
-func SetFabricDev()        { fabric = core.DevFabric }
-func SetFabricSandbox()    { fabric = core.SandboxFabric }
-func SetFabricProduction() { fabric = core.ProudctionFabric }
-func SetFabricLocal()      { fabric = core.LocalFabric }
+func SetFabricDev()        { fabric = core.FabricDev }
+func SetFabricSandbox()    { fabric = core.FabricSandbox }
+func SetFabricProduction() { fabric = core.FabricProduction }
+func SetFabricLocal()      { fabric = core.FabricLocal }
 func SetFabric(url string) { fabric = url }
 
 func Application(s string) { core.Application("%s", s) }

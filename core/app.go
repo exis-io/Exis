@@ -8,8 +8,6 @@ import (
 )
 
 type App interface {
-	NewDomain(string) Domain
-
 	ReceiveBytes([]byte)
 	ReceiveString(string)
 	ReceiveMessage(message)
@@ -26,7 +24,6 @@ type app struct {
 	Connection
 	serializer
 	in        chan message
-	out       chan []byte
 	up        chan Callback
 	listeners map[uint]chan message
 }
@@ -37,59 +34,18 @@ type Callback struct {
 	Args []interface{}
 }
 
-func NewApp() App {
-	return &app{
-		domains:    make([]*domain, 0),
-		serializer: new(jSONSerializer),
-		in:         make(chan message, 10),
-		out:        make(chan []byte, 10),
-		up:         make(chan Callback, 10),
-		listeners:  make(map[uint]chan message),
-	}
-}
-
 func (a *app) CallbackListen() Callback {
 	m := <-a.up
 	return m
 }
 
 func (a *app) CallbackSend(id uint, args ...interface{}) {
-	// Debug("Sending: %s", args)
 	a.up <- Callback{id, args}
-}
-
-// Create a new domain. If no superdomain is provided, creates an app as well
-// If the app exists, has a connection, and is connected then immediately call onJoin on that domain
-func (a *app) NewDomain(name string) Domain {
-	Debug("Creating domain %s", name)
-
-	d := &domain{
-		app:           a,
-		name:          name,
-		joined:        false,
-		subscriptions: make(map[uint]*boundEndpoint),
-		registrations: make(map[uint]*boundEndpoint),
-	}
-
-	// TODO: trigger onJoin if the superdomain has joined
-
-	a.domains = append(a.domains, d)
-	return d
 }
 
 func (c app) Send(m message) error {
 	Debug("Sending %s: %v", m.messageType(), m)
 
-	if b, err := c.serializer.serialize(m); err != nil {
-		return err
-	} else {
-		c.out <- b
-		return nil
-	}
-}
-
-func (c app) SendNow(m message) error {
-	Debug("Sending %s: %v", m.messageType(), m)
 	if b, err := c.serializer.serialize(m); err != nil {
 		return err
 	} else {
@@ -102,11 +58,11 @@ func (c app) Close(reason string) {
 	Info("Asked to close! Reason: ", reason)
 
 	close(c.in)
-	close(c.out)
 	close(c.up)
 
 	// Theres some missing logic here when it comes to closing the external connection,
 	// especially when either end could call and trigger a close
+	c.Connection.Close(reason)
 }
 
 func (a app) Yield(request uint, args []interface{}) {
@@ -116,6 +72,7 @@ func (a app) Yield(request uint, args []interface{}) {
 		Arguments: args,
 	}
 
+	// How do we deal with errors on the return?
 	// if err != nil {
 	//     m = &errorMessage{
 	//         Type:      iNVOCATION,
@@ -141,18 +98,6 @@ func (c app) receiveLoop() {
 		} else {
 			Debug("Received %s: %v", msg.messageType(), msg)
 			c.handle(msg)
-		}
-	}
-}
-
-// This guy doesn't need to be here
-func (c app) sendLoop() {
-	for {
-		if b, open := <-c.out; !open {
-			Info("Send loop closed")
-			break
-		} else {
-			c.Connection.Send(b)
 		}
 	}
 }

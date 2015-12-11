@@ -14,14 +14,11 @@ def cbid():
 class App(object):
 
     def __init__(self):
-        self._app = riffle.App()
-        self._app.Init()
-
         self.registrations, self.subscriptions, self.results, self.meta = {}, {}, {}, {}
 
-    def recv(self):
+    def recv(self, domain):
         while True:
-            i, args = json.loads(self._app.Receive())
+            i, args = json.loads(domain.Receive())
             args = args if args is not None else []
 
             # Wrap it all in a try-catch, return publish and call errors
@@ -47,7 +44,7 @@ class App(object):
                     ret = [ret]
 
                 print 'Returning: ', ret
-                self._app.Yield(returnId, json.dumps(ret))
+                domain.Yield(returnId, json.dumps(ret))
 
             else: 
                 riffle.Warn("No handler available for " + str(i))
@@ -60,7 +57,7 @@ app = App()
 class Domain(object):
 
     def __init__(self, name):
-        self.mantleDomain = app._app.NewDomain(name)
+        self.mantleDomain = riffle.NewDomain(name)
         self.name = name
 
     def join(self):
@@ -69,7 +66,7 @@ class Domain(object):
         self.mantleDomain.Join(cb, eb)
 
         # Make this explicit by putting it in its own method
-        app.recv()
+        app.recv(self.mantleDomain)
 
     def onJoin(self):
         riffle.Info("Default onJoin")
@@ -95,4 +92,6 @@ class Domain(object):
         fn = cbid()
         self.mantleDomain.Call(fn, endpoint, json.dumps(args))
         app.results[fn] = handler
+
+    # def subdomain()
 
