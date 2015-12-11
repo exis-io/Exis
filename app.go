@@ -8,6 +8,18 @@ import (
 	"time"
 )
 
+type App interface {
+	NewDomain(string) Domain
+
+	ReceiveBytes([]byte)
+	ReceiveString(string)
+	ReceiveMessage(message)
+
+	Close(string)
+	CallbackListen() Callback
+	CallbackSend(uint, ...interface{})
+}
+
 type app struct {
 	domains []*domain
 	Connection

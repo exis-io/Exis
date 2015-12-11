@@ -2,6 +2,21 @@ package core
 
 import "fmt"
 
+type Domain interface {
+	Subscribe(string, uint, []interface{}) error
+	Register(string, uint, []interface{}) error
+	Publish(string, uint, []interface{}) error
+	Call(string, uint, []interface{}) error
+
+	Yield(uint, []interface{})
+
+	Unsubscribe(string) error
+	Unregister(string) error
+
+	Join(Connection) error
+	Leave() error
+}
+
 type domain struct {
 	app           *app
 	name          string

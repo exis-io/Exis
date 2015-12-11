@@ -69,6 +69,7 @@ func (d Domain) Subscribe(cb uint, endpoint string) {
 }
 
 func (d Domain) Register(cb uint, endpoint string) {
+
 	go func() {
 		d.coreDomain.Register(endpoint, cb, make([]interface{}, 0))
 	}()
@@ -204,6 +205,7 @@ func marshall(d core.Callback) string {
 	}
 }
 
+func SetLogLevelApp()       { core.LogLevel = core.LogLevelApp }
 func SetLogLevelErr()       { core.LogLevel = core.LogLevelErr }
 func SetLogLevelWarn()      { core.LogLevel = core.LogLevelWarn }
 func SetLogLevelInfo()      { core.LogLevel = core.LogLevelInfo }
@@ -215,3 +217,9 @@ func SetSandboxFabric()          { fabric = core.SandboxFabric }
 func SetProductionFabric()       { fabric = core.ProudctionFabric }
 func SetLocalFabric()            { fabric = core.LocalFabric }
 func SetCustomFabric(url string) { fabric = url }
+
+func Application(s string) { core.Application("%s", s) }
+func Debug(s string)       { core.Debug("%s", s) }
+func Info(s string)        { core.Info("%s", s) }
+func Warn(s string)        { core.Warn("%s", s) }
+func Error(s string)       { core.Error("%s", s) }
