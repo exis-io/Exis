@@ -1,6 +1,8 @@
 package riffle
 
 import (
+	"encoding/json"
+
 	"github.com/exis-io/core"
 	"github.com/exis-io/core/goRiffle"
 )
@@ -30,7 +32,9 @@ type AppIface interface {
 }
 
 type DomainIface interface {
-	Join()
+	Join(uint, uint)
+
+	Subscribe(uint, string)
 }
 
 type App struct {
@@ -56,13 +60,16 @@ func (a *App) NewDomain(name string) Domain {
 }
 
 func (a *App) Receive() string {
-	a.coreApp.CallbackListen()
-	return "Message!"
+	m := a.coreApp.CallbackListen()
+	z := marshall(m)
+	return z
 }
 
-func (d *Domain) Join() {
+func (d *Domain) Join(cb uint, eb uint) {
 	if c, err := goRiffle.Open(core.LocalFabric); err != nil {
 		// man.InvokeError(eb, err.Error())
+		d.app.coreApp.CallbackSend(eb, []interface{}{"Error!"})
+
 		core.Warn("Unable to open connection: %s", err.Error())
 	} else {
 		c.App = d.app.coreApp
@@ -70,16 +77,20 @@ func (d *Domain) Join() {
 		if err := d.coreDomain.Join(c); err != nil {
 			core.Warn("Unable to join! %s", err)
 			// man.InvokeError(eb, err.Error())
+			d.app.coreApp.CallbackSend(eb, []interface{}{"Error!"})
 		} else {
 			core.Info("Joined!")
 			// man.Invoke(cb, nil)
+			d.app.coreApp.CallbackSend(cb, []interface{}{})
 		}
 	}
 }
 
-// func (d Domain) Subscribe(endpoint string) (int, int) {
-// 	return 0, 0
-// }
+func (d Domain) Subscribe(cb uint, endpoint string) {
+	go func() {
+		d.coreDomain.Subscribe(endpoint, cb, make([]interface{}, 0))
+	}()
+}
 
 // Applys a set of parameters to the core domain using the passed function
 // func domainCall(operation func(), endpoint string, args []interface{}) (uint, uint) {
@@ -178,6 +189,15 @@ func unmarshall() {
 // s := fmt.Sprintf("Err: %s", e)
 // m.recv <- marshall([]interface{}{id, s})
 // }
+
+func marshall(d core.Callback) string {
+	if r, e := json.Marshal([]interface{}{d.Id, d.Args}); e == nil {
+		return string(r)
+	} else {
+		core.Warn("Unable to marshall data: %s", e)
+		return ""
+	}
+}
 
 func SetLoggingLevel(l int) {
 	core.LogLevel = l

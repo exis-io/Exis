@@ -20,8 +20,8 @@ type app struct {
 
 // Sent up to the mantle and then the crust as callbacks are triggered
 type Callback struct {
-	id   uint
-	args []interface{}
+	Id   uint
+	Args []interface{}
 }
 
 func NewApp() App {
@@ -41,6 +41,7 @@ func (a *app) CallbackListen() Callback {
 }
 
 func (a *app) CallbackSend(id uint, args []interface{}) {
+	Debug("Sending: %s", args)
 	a.up <- Callback{id, args}
 }
 
