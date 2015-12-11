@@ -78,29 +78,35 @@ func (a *App) Yield(request uint, args string) {
 }
 
 func (d Domain) Unsubscribe(endpoint string) {
-
+	go func() {
+		d.coreDomain.Unsubscribe(endpoint)
+	}()
 }
 
 func (d Domain) Unregister(endpoint string) {
-
+	go func() {
+		d.coreDomain.Unregister(endpoint)
+	}()
 }
 
 func (d Domain) Leave() {
-
+	go func() {
+		d.coreDomain.Leave()
+	}()
 }
 
-func SetLogLevelApp()       { core.LogLevel = core.LogLevelApp }
-func SetLogLevelErr()       { core.LogLevel = core.LogLevelErr }
-func SetLogLevelWarn()      { core.LogLevel = core.LogLevelWarn }
-func SetLogLevelInfo()      { core.LogLevel = core.LogLevelInfo }
-func SetLogLevelDebug()     { core.LogLevel = core.LogLevelDebug }
-func SetLoggingLevel(l int) { core.LogLevel = l }
+func SetLogLevelOff()   { core.LogLevel = core.LogLevelOff }
+func SetLogLevelApp()   { core.LogLevel = core.LogLevelApp }
+func SetLogLevelErr()   { core.LogLevel = core.LogLevelErr }
+func SetLogLevelWarn()  { core.LogLevel = core.LogLevelWarn }
+func SetLogLevelInfo()  { core.LogLevel = core.LogLevelInfo }
+func SetLogLevelDebug() { core.LogLevel = core.LogLevelDebug }
 
-func SetDevFabric()              { fabric = core.DevFabric }
-func SetSandboxFabric()          { fabric = core.SandboxFabric }
-func SetProductionFabric()       { fabric = core.ProudctionFabric }
-func SetLocalFabric()            { fabric = core.LocalFabric }
-func SetCustomFabric(url string) { fabric = url }
+func SetFabricDev()        { fabric = core.DevFabric }
+func SetFabricSandbox()    { fabric = core.SandboxFabric }
+func SetFabricProduction() { fabric = core.ProudctionFabric }
+func SetFabricLocal()      { fabric = core.LocalFabric }
+func SetFabric(url string) { fabric = url }
 
 func Application(s string) { core.Application("%s", s) }
 func Debug(s string)       { core.Debug("%s", s) }
