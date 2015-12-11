@@ -25,6 +25,8 @@ func main() {}
 // 	// Leave() error
 // }
 
+var fabric string = core.ProudctionFabric
+
 type AppIface interface {
 	Init()
 	NewDomain(string) Domain
@@ -66,22 +68,18 @@ func (a *App) Receive() string {
 }
 
 func (d *Domain) Join(cb uint, eb uint) {
-	if c, err := goRiffle.Open(core.LocalFabric); err != nil {
-		// man.InvokeError(eb, err.Error())
-		d.app.coreApp.CallbackSend(eb, []interface{}{"Error!"})
-
-		core.Warn("Unable to open connection: %s", err.Error())
+	if c, err := goRiffle.Open(fabric); err != nil {
+		d.app.coreApp.CallbackSend(eb, err.Error())
+		// core.Warn("Unable to open connection: %s", err.Error())
 	} else {
 		c.App = d.app.coreApp
 
 		if err := d.coreDomain.Join(c); err != nil {
-			core.Warn("Unable to join! %s", err)
-			// man.InvokeError(eb, err.Error())
-			d.app.coreApp.CallbackSend(eb, []interface{}{"Error!"})
+			// core.Warn("Unable to join! %s", err)
+			d.app.coreApp.CallbackSend(eb, err.Error())
 		} else {
-			core.Info("Joined!")
-			// man.Invoke(cb, nil)
-			d.app.coreApp.CallbackSend(cb, []interface{}{})
+			// core.Info("Joined!")
+			d.app.coreApp.CallbackSend(cb)
 		}
 	}
 }
@@ -89,6 +87,12 @@ func (d *Domain) Join(cb uint, eb uint) {
 func (d Domain) Subscribe(cb uint, endpoint string) {
 	go func() {
 		d.coreDomain.Subscribe(endpoint, cb, make([]interface{}, 0))
+	}()
+}
+
+func (d Domain) Register(cb uint, endpoint string) {
+	go func() {
+		d.coreDomain.Register(endpoint, cb, make([]interface{}, 0))
 	}()
 }
 
@@ -199,6 +203,14 @@ func marshall(d core.Callback) string {
 	}
 }
 
-func SetLoggingLevel(l int) {
-	core.LogLevel = l
-}
+func SetLogLevelErr()       { core.LogLevel = core.LogLevelErr }
+func SetLogLevelWarn()      { core.LogLevel = core.LogLevelWarn }
+func SetLogLevelInfo()      { core.LogLevel = core.LogLevelInfo }
+func SetLogLevelDebug()     { core.LogLevel = core.LogLevelDebug }
+func SetLoggingLevel(l int) { core.LogLevel = l }
+
+func SetDevFabric()              { fabric = core.DevFabric }
+func SetSandboxFabric()          { fabric = core.SandboxFabric }
+func SetProductionFabric()       { fabric = core.ProudctionFabric }
+func SetLocalFabric()            { fabric = core.LocalFabric }
+func SetCustomFabric(url string) { fabric = url }

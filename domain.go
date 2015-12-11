@@ -89,7 +89,7 @@ func (c *domain) Leave() error {
 
 func (c domain) Subscribe(endpoint string, requestId uint, types []interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
-	sub := &subscribe{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
+	sub := &subscribe{Request: NewID(), Options: make(map[string]interface{}), Name: endpoint}
 
 	if msg, err := c.app.requestListenType(sub, "*core.subscribed"); err != nil {
 		return err
@@ -103,7 +103,7 @@ func (c domain) Subscribe(endpoint string, requestId uint, types []interface{}) 
 
 func (c domain) Register(endpoint string, requestId uint, types []interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
-	register := &register{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
+	register := &register{Request: NewID(), Options: make(map[string]interface{}), Name: endpoint}
 
 	if msg, err := c.app.requestListenType(register, "*core.registered"); err != nil {
 		return err
@@ -117,7 +117,7 @@ func (c domain) Register(endpoint string, requestId uint, types []interface{}) e
 
 func (c domain) Publish(endpoint string, requestId uint, args []interface{}) error {
 	return c.app.Send(&publish{
-		Request:   requestId,
+		Request:   NewID(),
 		Options:   make(map[string]interface{}),
 		Name:      makeEndpoint(c.name, endpoint),
 		Arguments: args,
@@ -126,13 +126,14 @@ func (c domain) Publish(endpoint string, requestId uint, args []interface{}) err
 
 func (c domain) Call(endpoint string, requestId uint, args []interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
-	call := &call{Request: requestId, Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
+	call := &call{Request: NewID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
 
 	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
 		return err
 	} else {
 		// c.Delegate.Invoke(requestId, msg.(*result).Arguments)
-		c.app.up <- Callback{requestId, msg.(*result).Arguments}
+		// c.app.up <- Callback{requestId, msg.(*result).Arguments}
+		c.app.CallbackSend(requestId, msg.(*result).Arguments...)
 		return nil
 	}
 }
@@ -207,7 +208,8 @@ func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 	if err := softCumin(binding.expectedTypes, msg.Arguments); err == nil {
 		// Debug("Cuminciation succeeded.")
 		// c.Delegate.Invoke(binding.callback, msg.Arguments)
-		c.app.up <- Callback{binding.callback, msg.Arguments}
+		c.app.CallbackSend(binding.callback, msg.Arguments...)
+		// c.app.up <- Callback{binding.callback, msg.Arguments}
 	} else {
 		// Debug("Cuminication failed.")
 
@@ -231,7 +233,8 @@ func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
 	if e := softCumin(binding.expectedTypes, msg.Arguments); e == nil {
 		// Debug("Cuminciation succeeded.")
 		// c.Delegate.Invoke(binding.callback, msg.Arguments)
-		c.app.up <- Callback{binding.callback, msg.Arguments}
+		// c.app.up <- Callback{binding.callback, msg.Arguments}
+		c.app.CallbackSend(binding.callback, msg.Arguments...)
 	} else {
 		// Debug("Cuminication failed.")
 		tosend := &errorMessage{Type: pUBLISH, Request: msg.Subscription, Details: make(map[string]interface{}), Arguments: make([]interface{}, 0), Error: e.Error()}
