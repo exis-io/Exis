@@ -17,7 +17,9 @@ swift: libriffmantle.so
 	$(MAKE) -C swift/example all
 
 osx: 
-	GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o swift/osxCrust/RiffleTest/riffle.a core/cMantle/main.go
+	# GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o swift/osxCrust/RiffleTest/riffle.a core/cMantle/main.go
+	go build -buildmode=c-archive -o swift/osxCrust/RiffleTest/riffle.a core/cMantle/main.go
+
 	# rm osx/RiffleTest/see.h osx/RiffleTest/see.a
 	# mv products/see.h osx/RiffleTest/see.h 
 	# mv products/see.a osx/RiffleTest/see.a
