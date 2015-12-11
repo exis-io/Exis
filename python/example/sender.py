@@ -1,7 +1,7 @@
 
 import riffle
 
-riffle.SetLocalFabric()
+riffle.SetFabricLocal()
 riffle.SetLogLevelDebug()
 
 class Sender(riffle.Domain):
@@ -9,7 +9,7 @@ class Sender(riffle.Domain):
     def onJoin(self):
         print "Sender Joined" 
 
-        # self.publish("xs.damouse.b/sub", "John")
+        self.publish("xs.damouse.b/sub", "John")
 
         self.call("xs.damouse.b/reg", 1, 2)
 

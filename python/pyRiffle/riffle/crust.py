@@ -42,12 +42,12 @@ class App(object):
 
                 if not isinstance(ret, (list, tuple)):
                     ret = [ret]
-                    
+
                 print 'Returning: ', ret
                 self._app.Yield(returnId, json.dumps(ret))
 
             else: 
-                print "No handler available for ", i
+                riffle.Warn("No handler available for " + str(i))
 
 
 # Internalize this reference into the domain object. For now, its ok global

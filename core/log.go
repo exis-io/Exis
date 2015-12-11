@@ -7,11 +7,12 @@ import (
 )
 
 const (
-	LogLevelApp   int = 0
-	LogLevelErr   int = 1
-	LogLevelWarn  int = 2
-	LogLevelInfo  int = 3
-	LogLevelDebug int = 4
+	LogLevelOff   int = 0
+	LogLevelApp   int = 1
+	LogLevelErr   int = 2
+	LogLevelWarn  int = 3
+	LogLevelInfo  int = 4
+	LogLevelDebug int = 5
 )
 
 var LogLevel int = 1
@@ -30,13 +31,13 @@ func Info(format string, a ...interface{}) {
 
 func Warn(format string, a ...interface{}) {
 	if LogLevel >= LogLevelWarn {
-		out(fmt.Sprintf("%s", fmt.Sprintf(format, a...)))
+		out(fmt.Sprintf("WARN: %s", fmt.Sprintf(format, a...)))
 	}
 }
 
 func Error(format string, a ...interface{}) {
 	if LogLevel >= LogLevelErr {
-		out(fmt.Sprintf("%s", fmt.Sprintf(format, a...)))
+		out(fmt.Sprintf("ERROR: %s", fmt.Sprintf(format, a...)))
 	}
 }
 

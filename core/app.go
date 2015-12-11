@@ -3,7 +3,6 @@ package core
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"reflect"
 	"time"
 )
@@ -79,7 +78,7 @@ func (a *app) NewDomain(name string) Domain {
 }
 
 func (c app) Send(m message) error {
-	Debug("Sending: %s: %s", m.messageType(), m)
+	Debug("Sending %s: %v", m.messageType(), m)
 
 	if b, err := c.serializer.serialize(m); err != nil {
 		return err
@@ -90,7 +89,7 @@ func (c app) Send(m message) error {
 }
 
 func (c app) SendNow(m message) error {
-	Debug("Sending: %s: %s", m.messageType(), m)
+	Debug("Sending %s: %v", m.messageType(), m)
 	if b, err := c.serializer.serialize(m); err != nil {
 		return err
 	} else {
@@ -140,7 +139,7 @@ func (c app) receiveLoop() {
 			Warn("Receive loop close")
 			break
 		} else {
-			Debug("Received message: ", msg)
+			Debug("Received %s: %v", msg.messageType(), msg)
 			c.handle(msg)
 		}
 	}
@@ -180,8 +179,9 @@ func (c app) handle(msg message) {
 			}
 		}
 
-		Warn("No handler registered for registration:", msg.Registration)
 		s := fmt.Sprintf("no handler for registration: %v", msg.Registration)
+		Warn(s)
+
 		m := &errorMessage{Type: iNVOCATION, Request: msg.Request, Details: make(map[string]interface{}), Error: s}
 
 		if err := c.Send(m); err != nil {
@@ -200,8 +200,7 @@ func (c app) handle(msg message) {
 			if l, found := c.listeners[id]; found {
 				l <- msg
 			} else {
-				log.Println("no listener for message", msg)
-				Info("Listeners: ", c.listeners)
+				Warn("no listener for message %v", msg)
 				// panic("Unhandled message!")
 			}
 		} else {
