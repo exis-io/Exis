@@ -104,7 +104,7 @@ func (c *domain) Leave() error {
 
 func (c domain) Subscribe(endpoint string, requestId uint, types []interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
-	sub := &subscribe{Request: NewID(), Options: make(map[string]interface{}), Name: endpoint}
+	sub := &subscribe{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
 
 	if msg, err := c.app.requestListenType(sub, "*core.subscribed"); err != nil {
 		return err

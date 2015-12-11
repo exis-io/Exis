@@ -63,6 +63,7 @@ func (d *Domain) Join(cb uint, eb uint) {
 }
 
 func (d Domain) Subscribe(cb uint, endpoint string) {
+	core.Info("Subscribing with id %s", cb)
 	go func() {
 		d.coreDomain.Subscribe(endpoint, cb, make([]interface{}, 0))
 	}()
