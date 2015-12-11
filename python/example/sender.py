@@ -11,6 +11,9 @@ class Sender(riffle.Domain):
 
         self.publish("xs.damouse.b/sub", "John")
 
-        self.call("xs.damouse.b/reg", 1, 2)
+        self.call("xs.damouse.b/reg", self.result, 1, 2)
+
+    def result(self, ret):
+        print 'Call returned with result: ', ret
 
 Sender("xs.damouse.a").join()

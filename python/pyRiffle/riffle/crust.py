@@ -17,7 +17,7 @@ class App(object):
         self._app = riffle.App()
         self._app.Init()
 
-        self.registrations, self.subscriptions, self.meta = {}, {}, {}
+        self.registrations, self.subscriptions, self.results, self.meta = {}, {}, {}, {}
 
     def recv(self):
         while True:
@@ -33,6 +33,9 @@ class App(object):
 
             elif i in self.subscriptions:
                 self.subscriptions[i](*args)
+
+            elif i in self.results:
+                self.results[i](*args)
 
             elif i in self.registrations:
                 returnId = args.pop(0)
@@ -88,8 +91,8 @@ class Domain(object):
     def publish(self, endpoint, *args):
         self.mantleDomain.Publish(cbid(), endpoint, json.dumps(args))
 
-    def call(self, endpoint, *args):
+    def call(self, endpoint, handler, *args):
         fn = cbid()
         self.mantleDomain.Call(fn, endpoint, json.dumps(args))
-        # app.callbacks[fn] = handler
+        app.results[fn] = handler
 
