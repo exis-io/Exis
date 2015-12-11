@@ -52,17 +52,17 @@ func main() {}
 // }
 
 // Exmaple
-// Iface has a single F() method
+// Defines productivity for python programs
 type AppIface interface {
-	NewDomain()
+	NewDomain() Domain
 }
 
 type DomainIface interface {
 	Join()
 }
 
-// T implements Iface
 type App struct{}
+
 type Domain struct{}
 
 func (t *App) NewDomain() Domain {
