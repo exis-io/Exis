@@ -15,7 +15,9 @@ type App interface {
 	ReceiveString(string)
 	ReceiveMessage(message)
 
+	Yield(uint, []interface{})
 	Close(string)
+
 	CallbackListen() Callback
 	CallbackSend(uint, ...interface{})
 }
@@ -106,6 +108,30 @@ func (c app) Close(reason string) {
 
 	// Theres some missing logic here when it comes to closing the external connection,
 	// especially when either end could call and trigger a close
+}
+
+func (a app) Yield(request uint, args []interface{}) {
+	m := &yield{
+		Request:   request,
+		Options:   make(map[string]interface{}),
+		Arguments: args,
+	}
+
+	// if err != nil {
+	//     m = &errorMessage{
+	//         Type:      iNVOCATION,
+	//         Request:   request,
+	//         Details:   make(map[string]interface{}),
+	//         Arguments: args,
+	//         Error:     "Not Implemented",
+	//     }
+	// }
+
+	if err := a.Send(m); err != nil {
+		Warn("Could not send yield")
+	} else {
+		Info("Yield: %s", m)
+	}
 }
 
 func (c app) receiveLoop() {

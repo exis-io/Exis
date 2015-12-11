@@ -9,18 +9,6 @@ import (
 
 var fabric string = core.ProudctionFabric
 
-type AppIface interface {
-	Init()
-	NewDomain(string) Domain
-	Receive() string
-}
-
-type DomainIface interface {
-	Join(uint, uint)
-
-	Subscribe(uint, string)
-}
-
 type App struct {
 	coreApp core.App
 }
@@ -35,18 +23,15 @@ func (a *App) Init() {
 }
 
 func (a *App) NewDomain(name string) Domain {
-	d := Domain{
+	return Domain{
 		app:        a,
 		coreDomain: a.coreApp.NewDomain(name),
 	}
-
-	return d
 }
 
+// Blocks on callbacks from the core. TODO: trigger a close meta callback when connection is lost
 func (a *App) Receive() string {
-	m := a.coreApp.CallbackListen()
-	z := marshall(m)
-	return z
+	return marshall(a.coreApp.CallbackListen())
 }
 
 func (d *Domain) Join(cb uint, eb uint) {
@@ -63,14 +48,12 @@ func (d *Domain) Join(cb uint, eb uint) {
 }
 
 func (d Domain) Subscribe(cb uint, endpoint string) {
-	core.Info("Subscribing with id %s", cb)
 	go func() {
 		d.coreDomain.Subscribe(endpoint, cb, make([]interface{}, 0))
 	}()
 }
 
 func (d Domain) Register(cb uint, endpoint string) {
-
 	go func() {
 		d.coreDomain.Register(endpoint, cb, make([]interface{}, 0))
 	}()
@@ -89,103 +72,24 @@ func (d Domain) Call(cb uint, endpoint string, args string) {
 	}()
 }
 
-// Applys a set of parameters to the core domain using the passed function
-// func domainCall(operation func(), endpoint string, args []interface{}) (uint, uint) {
-// 	d := *(*core.Domain)(pdomain)
-// 	cb, eb := core.NewID(), core.NewID()
-
-// 	go func() {
-// 		d.Subscribe(endpoint), cb, make([]interface{}, 0))
-// 	}()
-
-// 	return marshall([]uint{cb, eb})
-// }
-
-/*
-//export Register
-func Register(endpoint string) []byte {
-	d := *(*core.Domain)(pdomain)
-	cb, eb := core.NewID(), core.NewID()
-
+func (a *App) Yield(request uint, args string) {
 	go func() {
-		d.Register(endpoint), cb, make([]interface{}, 0))
-	}()
-
-	return marshall([]uint{cb, eb})
-}
-
-func Yield(args []byte) {
-	// This needs work
-	// core.Yield(e))
-}
-
-func Publish(endpoint string) {
-	d := *(*core.Domain)(pdomain)
-	cb, _ := core.NewID(), core.NewID()
-
-	go func() {
-		d.Publish(endpoint), cb, make([]interface{}, 0))
+		a.coreApp.Yield(request, unmarshal(args))
 	}()
 }
 
-func Call(endpoint string) {
-	d := *(*core.Domain)(pdomain)
-	cb, _ := core.NewID(), core.NewID()
+func (d Domain) Unsubscribe(endpoint string) {
 
-	go func() {
-		d.Call(endpoint), cb, make([]interface{}, 0))
-	}()
 }
 
-func Unsubscribe(pdomain unsafe.Pointer, e string) {
-	d := *(*core.Domain)(pdomain)
-	d.Unsubscribe(e))
-}
+func (d Domain) Unregister(endpoint string) {
 
-func Unregister(pdomain unsafe.Pointer, e string) {
-	d := *(*core.Domain)(pdomain)
-	d.Unregister(e))
 }
-
 
 //export Leave
-func Leave(pdomain unsafe.Pointer) {
-	d := *(*core.Domain)(pdomain)
-	d.Leave()
-}
-
-//export Recieve
-func Recieve() []byte {
-	data := <-man.recv
-	return data
-}
-
-func marshall(data interface{}) []byte {
-	if r, e := json.Marshal(data); e == nil {
-		return r
-	} else {
-		fmt.Println("Unable to marshall data!")
-		return nil
-	}
-}
-
-func unmarshall() {
+func (d Domain) Leave() {
 
 }
-*/
-
-// Unexported Functions
-// func (m *App) invoke(id uint, args []interface{}) {
-// core.Debug("Invoke called: ", id, args)
-// man.recv <- marshall(map[string]interface{}{"0": id, "1": args})
-// m.recv <- marshall([]interface{}{id, args})
-// }
-
-// func (m *App) InvokeError(id uint, e string) {
-// core.Debug("Invoking error: ", id, e)
-// s := fmt.Sprintf("Err: %s", e)
-// m.recv <- marshall([]interface{}{id, s})
-// }
 
 func unmarshal(a string) []interface{} {
 	var d []interface{}

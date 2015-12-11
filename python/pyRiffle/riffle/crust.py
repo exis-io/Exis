@@ -1,26 +1,13 @@
 
-from greenlet import greenlet
-import ctypes
 import random
 import os
 import json
 
-# When runnin as a package
-# _DIRNAME = os.path.dirname(__file__)
-# go = ctypes.cdll.LoadLibrary(os.path.join(_DIRNAME, 'libriffmantle.so'))
+from greenlet import greenlet
 
-# When running locally-- no gopy
-# mantle = ctypes.cdll.LoadLibrary('./libriffmantle.so')
-
-# When running with gopy
 import riffle
 
-class Deferred(object):
-
-    def __init__(self):
-        self._callback, self._errback = None, None
-        self._callbackId, self._errbackId = -1, -1
-
+# Create a new random callback id
 def cbid():
     return random.getrandbits(53)
 
@@ -49,8 +36,11 @@ class App(object):
 
             elif i in self.registrations:
                 returnId = args.pop(0)
-                ret = self.registrations[i](*args)
 
+                ret = self.registrations[i](*args)
+                ret = [] if ret is None else ret
+
+                self._app.Yield(returnId, json.dumps(ret))
 
             else: 
                 print "No handler available for ", i

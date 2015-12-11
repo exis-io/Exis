@@ -11,6 +11,6 @@ class Sender(riffle.Domain):
 
         # self.publish("xs.damouse.b/sub", "John")
 
-        self.call("xs.damouse.b/reg", True)
+        self.call("xs.damouse.b/reg", 1, 2)
 
 Sender("xs.damouse.a").join()
