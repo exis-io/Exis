@@ -1,5 +1,5 @@
 // package name: riffle
-package riffle
+package main
 
 import (
 	"C"
@@ -9,8 +9,8 @@ import (
 	"github.com/exis-io/core/goRiffle"
 )
 
-//export main
-// func main() {}
+// Required main method
+func main() {}
 
 // By default always connect to the production fabric at node.exis.io
 var fabric string = core.FabricProduction

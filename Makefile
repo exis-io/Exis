@@ -1,7 +1,7 @@
 
 all: swift osx ios python js
 
-.PHONY: python js clean 
+.PHONY: python js clean osx
 
 
 swift: libriffmantle.so
