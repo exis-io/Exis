@@ -12,8 +12,8 @@ class Receiver(riffle.Domain):
         self.register("reg", self.registration)
         # self.subscribe("sub", self.subscription)
 
-    def registration(self, bol):
-        print "Received a call. Args: ", bol
+    def registration(self, a, b):
+        print "Received a call. Args: ", a, b
 
     def subscription(self, name):
         print "Received a publish from", name
