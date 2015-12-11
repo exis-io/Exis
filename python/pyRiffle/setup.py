@@ -6,7 +6,7 @@ setup(
     author="Damouse",
     description="Riffle client libraries for interacting over a fabric",
     packages=['riffle'],
-    package_data={'riffle': ['libriffmantle.so']}, 
+    package_data={'riffle': ['riffle.so']}, 
     runtime_library_dirs=['riffle'],
     library_dirs=['riffle'],
     include_package_data=True,

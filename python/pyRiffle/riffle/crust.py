@@ -1,3 +1,4 @@
+
 from greenlet import greenlet
 import ctypes
 import random
@@ -14,14 +15,14 @@ import json
 # When running with gopy
 import riffle
 
-riffle.SetLoggingLevel(3)
-
 class Deferred(object):
 
     def __init__(self):
         self._callback, self._errback = None, None
         self._callbackId, self._errbackId = -1, -1
 
+def cbid():
+    return int(random.getrandbits(64))
 
 class App(object):
 
@@ -37,8 +38,7 @@ class App(object):
             callbackId, args = json.loads(self._app.Receive())
 
             if callbackId in self.callbacks:
-                print "Calling with ", args
-                self.callbacks[callbackId](*args)
+                self.callbacks[callbackId](*args if args is not None else [])
             else:
                 print "No handler available for ", callbackId
 
@@ -50,24 +50,29 @@ app = App()
 class Domain(object):
 
     def __init__(self, name):
-        self._domain = app._app.NewDomain(name)
+        self.mantleDomain = app._app.NewDomain(name)
         self.name = name
 
     def join(self):
-        cb, eb = int(random.getrandbits(64)), int(random.getrandbits(64))
+        cb, eb = cbid(), cbid()
 
         app.callbacks[cb] = self.onJoin
 
-        self._domain.Join(cb, eb)
+        self.mantleDomain.Join(cb, eb)
         app.recv()
 
     def onJoin(self):
         print "Domain %s joined!" % self.name
 
     def subscribe(self, endpoint, handler):
-        cb = int(random.getrandbits(64))
-        self._domain.Subscribe(endpoint)
-        app.callbacks[cb] = handler
+        fn = cbid()
+        self.mantleDomain.Subscribe(fn, endpoint)
+        app.callbacks[fn] = handler
+
+    def register(self, endpoint, handler):
+        fn = cbid()
+        self.mantleDomain.Register(fn, endpoint)
+        app.callbacks[fn] = handler
 
 def main():
     d = Domain("xs.damouse")

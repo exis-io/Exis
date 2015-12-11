@@ -12,7 +12,7 @@ type App interface {
 
 	Close(string)
 	CallbackListen() Callback
-	CallbackSend(uint, []interface{})
+	CallbackSend(uint, ...interface{})
 }
 
 type Domain interface {
