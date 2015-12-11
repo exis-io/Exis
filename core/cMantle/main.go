@@ -22,6 +22,9 @@ Every function here is reactive: it returns two indicies to callbacks to be trig
 Reg, Sub, Pub, Call all return indicies to callbacks they will later call.
 */
 
+// Required main method
+func main() {}
+
 type mantle struct {
 	app  core.App
 	conn *goRiffle.WebsocketConnection
@@ -34,9 +37,6 @@ var man = &mantle{
     fabric: core.ProudctionFabric,
 }
 
-// Required main method
-func main() {}
-
 //export NewDomain
 func NewDomain(name *C.char) unsafe.Pointer {
 	if man.app == nil {
@@ -48,63 +48,44 @@ func NewDomain(name *C.char) unsafe.Pointer {
 }
 
 //export Subscribe
-func Subscribe(pdomain unsafe.Pointer, endpoint *C.char) []byte {
+func Subscribe(pdomain unsafe.Pointer, endpoint *C.char, data []bytes) []byte {
 	d := *(*core.Domain)(pdomain)
-	cb, eb := core.NewID(), core.NewID()
-
-	go func() {
-		d.Subscribe(C.GoString(endpoint), cb, make([]interface{}, 0))
-	}()
-
-	return marshall([]uint{cb, eb})
+    return coreInvoke(d.Subscribe, endpoint, unmarshall(data))
 }
 
 //export Register
-func Register(pdomain unsafe.Pointer, endpoint *C.char) []byte {
+func Register(pdomain unsafe.Pointer, endpoint *C.char, data []byte) []byte {
 	d := *(*core.Domain)(pdomain)
-	cb, eb := core.NewID(), core.NewID()
-
-	go func() {
-		// Catch errors and erback here
-		d.Register(C.GoString(endpoint), cb, make([]interface{}, 0))
-	}()
-
-	return marshall([]uint{cb, eb})
+    return coreInvoke(d.Register, endpoint, unmarshall(data))
 }
 
 //export Publish
-func Publish(pdomain unsafe.Pointer, endpoint *C.char) {
-	d := *(*core.Domain)(pdomain)
-	cb, _ := core.NewID(), core.NewID()
-
-	go func() {
-		d.Publish(C.GoString(endpoint), cb, make([]interface{}, 0))
-	}()
+func Publish(pdomain unsafe.Pointer, endpoint *C.char, data []byte) []byte{
+    d := *(*core.Domain)(pdomain)
+    return coreInvoke(d.Publish, endpoint, unmarshall(data))
 }
 
 //export Call
-func Call(pdomain unsafe.Pointer, endpoint *C.char) {
-	d := *(*core.Domain)(pdomain)
-	cb, _ := core.NewID(), core.NewID()
-
-	go func() {
-		d.Call(C.GoString(endpoint), cb, make([]interface{}, 0))
-	}()
+func Call(pdomain unsafe.Pointer, endpoint *C.char, data []byte) []byte {
+    d := *(*core.Domain)(pdomain)
+    return coreInvoke(d.Call, endpoint, unmarshall(data))
 }
 
-// func coreInvoke(operation func(string, uint, []interface{}), endpoint *C.char) []byte {
-// 	cb, eb := core.NewID(), core.NewID()
-
-// 	go func() {
-// 		// Catch errors and erback here
-// 		operation(C.GoString(endpoint), cb, make([]interface{}, 0))
-// 	}()
-
-// 	return marshall([]uint{cb, eb})
-// }
+// Accepts a domain operator function, a list of any arguments, and an endpoint. Performs the operation on the given domain. 
+func coreInvoke(operation func(string, uint, []interface{})error, endpoint *C.char, args []interface{}) []byte {
+	cb, eb := core.NewID(), core.NewID()
+	go func() {
+		if err := operation(C.GoString(endpoint), cb, args); err != nil {
+            man.InvokeError(eb, err.Error())
+        }
+	}()
+	return marshall([]uint{cb, eb})
+}
 
 //export Yield
 func Yield(args []byte) {
+    // What to pass in as the id?
+    
 	// This needs work
 	// core.Yield(C.GoString(e))
 }
@@ -171,8 +152,15 @@ func marshall(data interface{}) []byte {
 	}
 }
 
-func unmarshall() {
-
+func unmarshall(data []byte) []interface{} {
+    var ret []interface{}
+    if err := json.Unmarshal(data, &ret); err != nil {
+        // Handle this error a little more gracefully, eh?
+        core.Warn("Unable to unmarshall call from crust! %s", data)
+        return nil 
+    } else {
+        return ret
+    }
 }
 
 // Unexported Functions

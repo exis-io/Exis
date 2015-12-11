@@ -14,7 +14,7 @@ type Domain interface {
 	Register(string, uint, []interface{}) error
 
 	Publish(string, uint, []interface{}) error
-	Call(string, uint, []interface{}) ([]interface{}, error)
+	Call(string, uint, []interface{}) error
 
 	Yield(uint, []interface{})
 
