@@ -2,7 +2,7 @@
 import riffle
 
 riffle.SetFabricLocal()
-riffle.SetLogLevelDebug()
+riffle.SetLogLevelInfo()
 
 app = riffle.Domain("xs.damouse")
 beta = riffle.Domain("beta", superdomain=app)
@@ -17,5 +17,6 @@ class Sender(riffle.Domain):
 
     def result(self, ret):
         print 'Call returned with result: ', ret
+        beta.call("kill", None)
 
 Sender("alpha", superdomain=app).join()

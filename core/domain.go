@@ -81,6 +81,9 @@ func (c domain) Join(conn Connection) error {
 	c.app.Connection = conn
 	conn.SetApp(c.app)
 
+	// Set the agent string, or who WE are. When this domain leaves, termintate the connection
+	c.app.agent = c.name
+
 	// Should we hard close on conn.Close()? The App may be interested in knowing about the close
 	if err := c.app.Send(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {
 		c.app.Close("ERR: could not send a hello message")
@@ -113,22 +116,23 @@ func (c domain) Join(conn Connection) error {
 }
 
 func (c *domain) Leave() error {
+	for _, v := range c.registrations {
+		c.Unregister(v.endpoint)
+	}
+
+	for _, v := range c.subscriptions {
+		c.Unsubscribe(v.endpoint)
+	}
+
 	if dems, ok := removeDomain(c.app.domains, c); !ok {
 		return fmt.Errorf("WARN: couldn't find %s to remove!", c)
 	} else {
 		c.app.domains = dems
 	}
 
-	if err := c.app.Send(&goodbye{
-		Details: map[string]interface{}{},
-		Reason:  ErrCloseRealm,
-	}); err != nil {
-		return fmt.Errorf("Error leaving fabric: %v", err)
-	}
-
 	// if no domains remain, terminate the connection
-	if len(c.app.domains) == 0 {
-		c.app.Close("Closing: no domains connected")
+	if len(c.app.domains) == 0 || c.app.agent == c.name {
+		c.app.Close("No domains connected")
 	}
 
 	// Trigger closing callbacks
