@@ -15,53 +15,41 @@ import riffle
 riffle.SetLoggingLevel(3)
 
 
-# class App(object):
+class App(object):
 
-#     def __init__(self):
-#         self._app = riffle.App()
+    def __init__(self):
+        self._app = riffle.App()
+        self._app.Init()
 
-#     def recv(self):
-#         print "Starting receive"
+    def recv(self):
+        print "Starting receive"
 
-#         while True:
-#             invocation = riffle.Recieve()
-#             print "Received invocation: ", invocation
+        while True:
+            invocation = self._app.Receive()
+            print "Received invocation: ", invocation
 
-# app = App()
-
-
-# class Domain(object):
-
-#     def __init__(self, name):
-#         self._domain = riffle.NewDomain(name)
-#         self.name = name
-
-#     def join(self):
-#         self._domain.Join()
-#         app.recv()
+app = App()
 
 
-# def main():
-#     print "Starting"
+class Domain(object):
 
-#     d = app._app.NewDomain("xs.damouse")
-#     d.join()
+    def __init__(self, name):
+        self._domain = app._app.NewDomain(name)
+        self.name = name
 
-#     print "Stopped"
-
-# if __name__ == '__main__':
-#     main()
-
-
-####################################33
-# Sandboxing
-######################################
+    def join(self):
+        self._domain.Join()
+        app.recv()
 
 
-print("t = iface.T()")
-app = riffle.App()
+def main():
+    print "Starting"
 
-print("t.F()")
-d = app.NewDomain()
-d.Join()
-print d
+    d = Domain("xs.damouse")
+    d.join()
+
+    print "Stopped"
+
+if __name__ == '__main__':
+    main()
+
