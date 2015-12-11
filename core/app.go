@@ -40,6 +40,10 @@ func (a *app) CallbackListen() Callback {
 	return m
 }
 
+func (a *app) CallbackSend(id uint, args []interface{}) {
+	a.up <- Callback{id, args}
+}
+
 // Create a new domain. If no superdomain is provided, creates an app as well
 // If the app exists, has a connection, and is connected then immediately call onJoin on that domain
 func (a *app) NewDomain(name string) Domain {
