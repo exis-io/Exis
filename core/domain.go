@@ -220,9 +220,9 @@ func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 
 	if err := softCumin(binding.expectedTypes, msg.Arguments); err == nil {
 		// Debug("Cuminciation succeeded.")
-		// c.Delegate.Invoke(binding.callback, msg.Arguments)
-		c.app.CallbackSend(binding.callback, msg.Arguments...)
-		// c.app.up <- Callback{binding.callback, msg.Arguments}
+
+		// Invocations also include the invocation id for later yielding
+		c.app.CallbackSend(binding.callback, append([]interface{}{msg.Request}, msg.Arguments)...)
 	} else {
 		// Debug("Cuminication failed.")
 
@@ -245,8 +245,6 @@ func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
 
 	if e := softCumin(binding.expectedTypes, msg.Arguments); e == nil {
 		// Debug("Cuminciation succeeded.")
-		// c.Delegate.Invoke(binding.callback, msg.Arguments)
-		// c.app.up <- Callback{binding.callback, msg.Arguments}
 		c.app.CallbackSend(binding.callback, msg.Arguments...)
 	} else {
 		// Debug("Cuminication failed.")
