@@ -9,13 +9,14 @@ import (
 type Connection interface {
 	Send([]byte)
 	Close(string) error
+	SetApp(App)
 }
 
 const (
-	LocalFabric      string = "ws://localhost:8000/ws"
-	DevFabric        string = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
-	SandboxFabric    string = "ws://sandbox.exis.io/ws"
-	ProudctionFabric string = "wss://node.exis.io/wss"
+	FabricLocal      string = "ws://localhost:8000/ws"
+	FabricDev        string = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
+	FabricSandbox    string = "ws://sandbox.exis.io/ws"
+	FabricProduction string = "wss://node.exis.io/wss"
 
 	maxId          int64         = 1 << 53
 	MessageTimeout time.Duration = 3 * time.Second
