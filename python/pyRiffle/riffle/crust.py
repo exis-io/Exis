@@ -64,3 +64,4 @@ app = riffle.App()
 print("t.F()")
 d = app.NewDomain()
 d.Join()
+print d
