@@ -79,6 +79,11 @@ class Domain(object):
         self.mantleDomain.Publish(fn, endpoint, json.dumps(args))
         # app.callbacks[fn] = handler
 
+    def call(self, endpoint, *args):
+        fn = cbid()
+        self.mantleDomain.Call(fn, endpoint, json.dumps(args))
+        # app.callbacks[fn] = handler
+
 def main():
     d = Domain("xs.damouse")
     d.join()

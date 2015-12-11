@@ -12,11 +12,11 @@ class Receiver(riffle.Domain):
         self.register("reg", self.registration)
         self.subscribe("sub", self.subscription)
 
-    def registration(self):
-        print "Received a call!"
+    def registration(self, bol):
+        print "Received a call. Args: ", bol
 
-    def subscription(self):
-        print "Received a publish!"
+    def subscription(self, name):
+        print "Received a publish from", name
 
 
 Receiver("xs.damouse.b").join()

@@ -81,6 +81,12 @@ func (d Domain) Publish(cb uint, endpoint string, args string) {
 	}()
 }
 
+func (d Domain) Call(cb uint, endpoint string, args string) {
+	go func() {
+		d.coreDomain.Call(endpoint, cb, unmarshal(args))
+	}()
+}
+
 // Applys a set of parameters to the core domain using the passed function
 // func domainCall(operation func(), endpoint string, args []interface{}) (uint, uint) {
 // 	d := *(*core.Domain)(pdomain)
