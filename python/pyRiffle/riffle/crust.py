@@ -23,7 +23,7 @@ class Deferred(object):
 
 def cbid():
     return random.getrandbits(53)
-    
+
 class App(object):
 
     def __init__(self):
@@ -48,6 +48,7 @@ class App(object):
                 self.subscriptions[i](*args)
 
             elif i in self.registrations:
+                returnId = args.pop(0)
                 ret = self.registrations[i](*args)
 
 
