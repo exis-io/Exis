@@ -32,6 +32,7 @@ type jSONSerializer struct{}
 // applies a list of values from a WAMP message to a message type
 func apply(msgType messageType, arr []interface{}) (message, error) {
 	msg := msgType.New()
+
 	if msg == nil {
 		return nil, fmt.Errorf("Unsupported message type")
 	}

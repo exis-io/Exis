@@ -11,6 +11,10 @@ import riffle
 def cbid():
     return random.getrandbits(53)
 
+class Deferred(object):
+    def __init__(self):
+        cb, eb = None, None
+
 class App(object):
 
     def __init__(self):
@@ -24,8 +28,8 @@ class App(object):
             # Wrap it all in a try-catch, return publish and call errors
             # Don't return yield errors-- its not clear who should deal with those 
 
+            # Turned out to work as a leave case, though this isn't  clean
             if i == 0:
-                print 'Special leave case?'
                 break
 
             # Possible remove meta on completion
@@ -53,11 +57,6 @@ class App(object):
             else: 
                 riffle.Error("No handler available for " + str(i))
 
-
-# Internalize this reference into the domain object. For now, its ok global
-app = App()
-
-
 class Domain(object):
 
     def __init__(self, name, superdomain=None):
@@ -65,16 +64,18 @@ class Domain(object):
 
         if superdomain is None:
             self.mantleDomain = riffle.NewDomain(name)
+            self.app = App()
         else:
             self.mantleDomain = superdomain.mantleDomain.Subdomain(name)
+            self.app = superdomain.app
 
     def join(self):
         cb, eb = cbid(), cbid()
-        app.control[cb] = self.onJoin
+        self.app.control[cb] = self.onJoin
         self.mantleDomain.Join(cb, eb)
 
         # Make this explicit by putting it in its own method?
-        app.recv(self.mantleDomain)
+        self.app.recv(self.mantleDomain)
 
     def onJoin(self):
         riffle.Info("Default onJoin")
@@ -84,14 +85,13 @@ class Domain(object):
 
     def subscribe(self, endpoint, handler):
         fn = cbid()
-        riffle.Debug('Subscribing with id: ' + str(fn))
         self.mantleDomain.Subscribe(fn, endpoint)
-        app.subscriptions[fn] = handler
+        self.app.subscriptions[fn] = handler
 
     def register(self, endpoint, handler):
         fn = cbid()
         self.mantleDomain.Register(fn, endpoint)
-        app.registrations[fn] = handler
+        self.app.registrations[fn] = handler
 
     def publish(self, endpoint, *args):
         self.mantleDomain.Publish(cbid(), endpoint, json.dumps(args))
@@ -101,8 +101,7 @@ class Domain(object):
         self.mantleDomain.Call(fn, endpoint, json.dumps(args))
 
         if handler is not None:
-            app.results[fn] = handler
+            self.app.results[fn] = handler
 
     def leave(self):
         self.mantleDomain.Leave()
-
