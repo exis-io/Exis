@@ -6,12 +6,13 @@ import (
 	"github.com/exis-io/core"
 )
 
+// This is badly out of date. Can't enforce Cumin with left side return arguments
 type Domain interface {
 	Subscribe(string, interface{}) error
 	Register(string, interface{}) error
 
 	Publish(string, ...interface{}) error
-	Call(string, ...interface{}) ([]interface{}, error)
+	Call(string, ...interface{}) error
 
 	Unsubscribe(string) error
 	Unregister(string) error
@@ -51,7 +52,7 @@ func NewDomain(name string) Domain {
 		kill:     make(chan bool),
 	}
 
-	d.mirror = wrap.honcho.NewDomain(name, d)
+	d.mirror = wrap.honcho.NewDomain(name)
 	return d
 }
 
@@ -81,10 +82,10 @@ func (d domain) Publish(endpoint string, args ...interface{}) error {
 	return err
 }
 
-func (d domain) Call(endpoint string, args ...interface{}) ([]interface{}, error) {
+func (d domain) Call(endpoint string, args ...interface{}) error {
 	id := core.NewID()
-	args, err := d.mirror.Call(endpoint, id, args)
-	return args, err
+	err := d.mirror.Call(endpoint, id, args)
+	return err
 }
 
 func (d domain) Unsubscribe(endpoint string) error {
@@ -130,15 +131,6 @@ func (d domain) Invoke(id uint, args []interface{}) {
 	if handler, ok := d.handlers[id]; ok {
 		core.Cumin(handler, args)
 	}
-}
-
-func (d domain) OnJoin(string) {
-	fmt.Println("Delegate joined!")
-}
-
-func (d domain) OnLeave(string) {
-	fmt.Println("Delegate left!!")
-	d.kill <- true
 }
 
 // Spin and run while the domain is still connected

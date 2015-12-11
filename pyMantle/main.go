@@ -1,16 +1,14 @@
 package riffle
 
 import (
-	"encoding/json"
 	"fmt"
-	"unsafe"
 
 	"github.com/exis-io/core"
 	"github.com/exis-io/core/goRiffle"
 )
 
 type Domain interface {
-	Subscribe(string, uint) error
+	Subscribe(string) (int, int)
 	// Register(string, uint, []interface{}) error
 
 	// Publish(string, uint, []interface{}) error
@@ -32,7 +30,7 @@ type App struct {
 }
 
 type domain struct {
-	core *core.Domain
+	core core.Domain
 }
 
 // var man = &Mantle{
@@ -56,29 +54,22 @@ func (m *App) NewDomain(name string) Domain {
 }
 
 // Applys a set of parameters to the core domain using the passed function
-func domainCall(operation func(), endpoint string, args []interface{}) (uint, uint) {
-	d := *(*core.Domain)(pdomain)
-	cb, eb := core.NewID(), core.NewID()
+// func domainCall(operation func(), endpoint string, args []interface{}) (uint, uint) {
+// 	d := *(*core.Domain)(pdomain)
+// 	cb, eb := core.NewID(), core.NewID()
 
-	go func() {
-		d.Subscribe(endpoint), cb, make([]interface{}, 0))
-	}()
+// 	go func() {
+// 		d.Subscribe(endpoint), cb, make([]interface{}, 0))
+// 	}()
 
-	return marshall([]uint{cb, eb})
+// 	return marshall([]uint{cb, eb})
+// }
+
+func (d domain) Subscribe(endpoint string) (int, int) {
+	return 0, 0
 }
 
-
-func Subscribe(endpoint string) []byte {
-	d := *(*core.Domain)(pdomain)
-	cb, eb := core.NewID(), core.NewID()
-
-	go func() {
-		d.Subscribe(endpoint), cb, make([]interface{}, 0))
-	}()
-
-	return marshall([]uint{cb, eb})
-}
-
+/*
 //export Register
 func Register(endpoint string) []byte {
 	d := *(*core.Domain)(pdomain)
@@ -177,19 +168,20 @@ func marshall(data interface{}) []byte {
 func unmarshall() {
 
 }
+*/
 
 // Unexported Functions
-func (m mantle) Invoke(id uint, args []interface{}) {
-	core.Debug("Invoke called: ", id, args)
-	// man.recv <- marshall(map[string]interface{}{"0": id, "1": args})
-	man.recv <- marshall([]interface{}{id, args})
-}
+// func (m *App) invoke(id uint, args []interface{}) {
+// core.Debug("Invoke called: ", id, args)
+// man.recv <- marshall(map[string]interface{}{"0": id, "1": args})
+// m.recv <- marshall([]interface{}{id, args})
+// }
 
-func (m mantle) InvokeError(id uint, e string) {
-	// core.Debug("Invoking error: ", id, e)
-	s := fmt.Sprintf("Err: %s", e)
-	man.recv <- marshall([]interface{}{id, s})
-}
+// func (m *App) InvokeError(id uint, e string) {
+// core.Debug("Invoking error: ", id, e)
+// s := fmt.Sprintf("Err: %s", e)
+// m.recv <- marshall([]interface{}{id, s})
+// }
 
 //export SetLoggingLevel
 func SetLoggingLevel(l int) {
