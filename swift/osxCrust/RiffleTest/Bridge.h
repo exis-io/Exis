@@ -9,6 +9,7 @@
 #ifndef Bridge_h
 #define Bridge_h
 
+#include <stdlib.h>
 #import "riffle.h"
 
 #endif /* Bridge_h */

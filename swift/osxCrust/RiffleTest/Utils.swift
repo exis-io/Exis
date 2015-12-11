@@ -83,3 +83,11 @@ func invocation(slice: GoSlice) -> (Int64, Int64) {
     // let data = try! NSJSONSerialization.JSONObjectWithData(d, options: .AllowFragments) as! NSArray
     // return ((data[0] as! NSNumber).longLongValue, (data[1] as! NSNumber).longLongValue)
 }
+
+// Generate a callbackId for passing to the mantle
+func cbid() -> Int {
+    
+    let a = arc4random_uniform(pow(Double(2), Double(32)))
+    return a
+    
+}
