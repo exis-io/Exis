@@ -8,8 +8,6 @@ type Domain interface {
 	Publish(string, uint, []interface{}) error
 	Call(string, uint, []interface{}) error
 
-	Yield(uint, []interface{})
-
 	Unsubscribe(string) error
 	Unregister(string) error
 
@@ -151,31 +149,6 @@ func (c domain) Call(endpoint string, requestId uint, args []interface{}) error 
 	}
 }
 
-func (c domain) Yield(request uint, args []interface{}) {
-	// Big todo here
-	m := &yield{
-		Request:   request,
-		Options:   make(map[string]interface{}),
-		Arguments: args,
-	}
-
-	// if err != nil {
-	//     m = &errorMessage{
-	//         Type:      iNVOCATION,
-	//         Request:   request,
-	//         Details:   make(map[string]interface{}),
-	//         Arguments: args,
-	//         Error:     "Not Implemented",
-	//     }
-	// }
-
-	if err := c.app.Send(m); err != nil {
-		Warn("Could not send yield")
-	} else {
-		Info("Yield: %s", m)
-	}
-}
-
 // This isn't going to work on the callback chain... no request id passed in
 func (c domain) Unsubscribe(endpoint string) error {
 	endpoint = makeEndpoint(c.name, endpoint)
@@ -222,7 +195,7 @@ func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 		// Debug("Cuminciation succeeded.")
 
 		// Invocations also include the invocation id for later yielding
-		c.app.CallbackSend(binding.callback, append([]interface{}{msg.Request}, msg.Arguments)...)
+		c.app.CallbackSend(binding.callback, append([]interface{}{msg.Request}, msg.Arguments...)...)
 	} else {
 		// Debug("Cuminication failed.")
 
@@ -244,10 +217,8 @@ func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
 	Debug("Processing publish: %s", msg)
 
 	if e := softCumin(binding.expectedTypes, msg.Arguments); e == nil {
-		// Debug("Cuminciation succeeded.")
 		c.app.CallbackSend(binding.callback, msg.Arguments...)
 	} else {
-		// Debug("Cuminication failed.")
 		tosend := &errorMessage{Type: pUBLISH, Request: msg.Subscription, Details: make(map[string]interface{}), Arguments: make([]interface{}, 0), Error: e.Error()}
 
 		if err := c.app.Send(tosend); err != nil {
