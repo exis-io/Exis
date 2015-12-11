@@ -36,16 +36,21 @@ class App(object):
         while True:
             i, args = json.loads(self._app.Receive())
             args = args if args is not None else []
-            # How do we check return values on the return?
+
+            # Wrap it all in a try-catch, return publish and call errors
+            # Don't return yield errors-- its not clear who should deal with those 
 
             if i in self.meta:
                 self.meta[i](*args)
+
+                # Remove the meta calls (?)
 
             elif i in self.subscriptions:
                 self.subscriptions[i](*args)
 
             elif i in self.registrations:
-                self.registrations[i](*args)
+                ret = self.registrations[i](*args)
+                
 
             else: 
                 print "No handler available for ", i

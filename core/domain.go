@@ -103,7 +103,7 @@ func (c domain) Subscribe(endpoint string, requestId uint, types []interface{}) 
 
 func (c domain) Register(endpoint string, requestId uint, types []interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
-	register := &register{Request: NewID(), Options: make(map[string]interface{}), Name: endpoint}
+	register := &register{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
 
 	if msg, err := c.app.requestListenType(register, "*core.registered"); err != nil {
 		return err
