@@ -1,9 +1,8 @@
 package riffle
 
 import (
-	"fmt"
-
 	"github.com/exis-io/core"
+	"github.com/exis-io/core/goRiffle"
 )
 
 func main() {}
@@ -24,81 +23,59 @@ func main() {}
 // 	// Leave() error
 // }
 
-// type AppIface interface {
-// 	NewDomain(string) Domain
-// }
-
-// type App struct {
-// 	coreApp core.App
-// 	conn    *goRiffle.WebsocketConnection
-// }
-
-// type Domain struct {
-// 	*App
-// 	core core.Domain
-// }
-
-// func (a *App) NewDomain(name string) Domain {
-// 	if a.coreApp == nil {
-// 		a.coreApp = core.NewApp()
-// 	}
-
-// 	d := Domain{
-// 		App:  a,
-// 		core: a.coreApp.NewDomain(name),
-// 	}
-
-// 	return d
-// }
-
-// Exmaple
-// Defines productivity for python programs
 type AppIface interface {
-	NewDomain() Domain
+	Init()
+	NewDomain(string) Domain
+	Receive() string
 }
 
 type DomainIface interface {
 	Join()
 }
 
-type App struct{}
-
-type Domain struct{}
-
-func (t *App) NewDomain() Domain {
-	fmt.Printf("App.NewDomain\n")
-	return Domain{}
+type App struct {
+	coreApp core.App
 }
 
-func (t *Domain) Join() {
-	fmt.Printf("Domain.Join\n")
+type Domain struct {
+	app        *App
+	coreDomain core.Domain
 }
 
-// func (d *Domain) Join() int {
+func (a *App) Init() {
+	a.coreApp = core.NewApp()
+}
 
-// 	if d.App.conn != nil {
-// 		// man.InvokeError(eb, "Connection is already open!")
-// 		core.Warn("Connection is already open!")
-// 	}
+func (a *App) NewDomain(name string) Domain {
+	d := Domain{
+		app:        a,
+		coreDomain: a.coreApp.NewDomain(name),
+	}
 
-// 	if c, err := goRiffle.Open(core.DevFabric); err != nil {
-// 		// man.InvokeError(eb, err.Error())
-// 		core.Warn("Unable to open connection: %s", err.Error())
-// 	} else {
-// 		d.App.conn = c
-// 		c.App = d.App.app
+	return d
+}
 
-// 		if err := d.core.Join(c); err != nil {
-// 			core.Warn("Unable to join! %s", err)
-// 			// man.InvokeError(eb, err.Error())
-// 		} else {
-// 			core.Info("Joined!")
-// 			// man.Invoke(cb, nil)
-// 		}
-// 	}
+func (a *App) Receive() string {
+	a.coreApp.CallbackListen()
+	return "Message!"
+}
 
-// 	return 0
-// }
+func (d *Domain) Join() {
+	if c, err := goRiffle.Open(core.LocalFabric); err != nil {
+		// man.InvokeError(eb, err.Error())
+		core.Warn("Unable to open connection: %s", err.Error())
+	} else {
+		c.App = d.app.coreApp
+
+		if err := d.coreDomain.Join(c); err != nil {
+			core.Warn("Unable to join! %s", err)
+			// man.InvokeError(eb, err.Error())
+		} else {
+			core.Info("Joined!")
+			// man.Invoke(cb, nil)
+		}
+	}
+}
 
 // func (d Domain) Subscribe(endpoint string) (int, int) {
 // 	return 0, 0
