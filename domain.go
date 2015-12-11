@@ -131,8 +131,6 @@ func (c domain) Call(endpoint string, requestId uint, args []interface{}) error 
 	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
 		return err
 	} else {
-		// c.Delegate.Invoke(requestId, msg.(*result).Arguments)
-		// c.app.up <- Callback{requestId, msg.(*result).Arguments}
 		c.app.CallbackSend(requestId, msg.(*result).Arguments...)
 		return nil
 	}
