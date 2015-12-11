@@ -40,8 +40,8 @@ func (a *app) CallbackListen() Callback {
 	return m
 }
 
-func (a *app) CallbackSend(id uint, args []interface{}) {
-	Debug("Sending: %s", args)
+func (a *app) CallbackSend(id uint, args ...interface{}) {
+	// Debug("Sending: %s", args)
 	a.up <- Callback{id, args}
 }
 
@@ -164,7 +164,7 @@ func (c app) handle(msg message) {
 			} else {
 				log.Println("no listener for message", msg)
 				Info("Listeners: ", c.listeners)
-				panic("Unhandled message!")
+				// panic("Unhandled message!")
 			}
 		} else {
 			panic("Bad handler picking up requestID!")
