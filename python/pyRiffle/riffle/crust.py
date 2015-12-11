@@ -43,11 +43,10 @@ class App(object):
                 if not isinstance(ret, (list, tuple)):
                     ret = [ret]
 
-                print 'Returning: ', ret
                 domain.Yield(returnId, json.dumps(ret))
 
             else: 
-                riffle.Warn("No handler available for " + str(i))
+                riffle.Error("No handler available for " + str(i))
 
 
 # Internalize this reference into the domain object. For now, its ok global
@@ -57,6 +56,8 @@ app = App()
 class Domain(object):
 
     def __init__(self, name, superdomain=None):
+        self.name = name
+
         if superdomain is None:
             self.mantleDomain = riffle.NewDomain(name)
         else:
