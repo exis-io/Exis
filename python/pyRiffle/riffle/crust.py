@@ -40,6 +40,10 @@ class App(object):
                 ret = self.registrations[i](*args)
                 ret = [] if ret is None else ret
 
+                if not isinstance(ret, (list, tuple)):
+                    ret = [ret]
+                    
+                print 'Returning: ', ret
                 self._app.Yield(returnId, json.dumps(ret))
 
             else: 
