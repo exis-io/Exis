@@ -188,14 +188,9 @@ func (c domain) Unregister(endpoint string) error {
 }
 
 func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
-	Debug("Processing invocation: %s", msg)
-
 	if err := softCumin(binding.expectedTypes, msg.Arguments); err == nil {
-		// Debug("Cuminciation succeeded.")
 		c.app.CallbackSend(binding.callback, append([]interface{}{msg.Request}, msg.Arguments...)...)
 	} else {
-		// Debug("Cuminication failed.")
-
 		tosend := &errorMessage{
 			Type:      iNVOCATION,
 			Request:   msg.Request,
@@ -211,8 +206,6 @@ func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 }
 
 func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
-	Debug("Processing publish: %s", msg)
-
 	if e := softCumin(binding.expectedTypes, msg.Arguments); e == nil {
 		c.app.CallbackSend(binding.callback, msg.Arguments...)
 	} else {
