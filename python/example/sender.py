@@ -4,16 +4,21 @@ import riffle
 riffle.SetFabricLocal()
 riffle.SetLogLevelDebug()
 
+app = riffle.Domain("xs.damouse")
+# print 1
+b = riffle.Domain("b", superdomain=app)
+# print 2
+
 class Sender(riffle.Domain):
 
     def onJoin(self):
         print "Sender Joined" 
 
-        self.publish("xs.damouse.b/sub", "John")
+        b.publish("sub", "John")
 
-        self.call("xs.damouse.b/reg", self.result, 1, 2)
+        b.call("reg", self.result, 1, 2)
 
     def result(self, ret):
         print 'Call returned with result: ', ret
 
-Sender("xs.damouse.a").join()
+Sender("a", superdomain=app).join()

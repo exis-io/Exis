@@ -56,9 +56,11 @@ app = App()
 
 class Domain(object):
 
-    def __init__(self, name):
-        self.mantleDomain = riffle.NewDomain(name)
-        self.name = name
+    def __init__(self, name, superdomain=None):
+        if superdomain is None:
+            self.mantleDomain = riffle.NewDomain(name)
+        else:
+            self.mantleDomain = superdomain.mantleDomain.Subdomain(name)
 
     def join(self):
         cb, eb = cbid(), cbid()

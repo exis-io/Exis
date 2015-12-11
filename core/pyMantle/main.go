@@ -5,6 +5,7 @@ import (
 	"github.com/exis-io/core/goRiffle"
 )
 
+// By default always connect to the production fabric at node.exis.io
 var fabric string = core.FabricProduction
 
 type Domain struct {
@@ -17,8 +18,10 @@ func NewDomain(name string) Domain {
 	}
 }
 
-func (d *Domain) Subdomain(name string) Domain {
-	return d.Subdomain(name)
+func (d Domain) Subdomain(name string) Domain {
+	return Domain{
+		coreDomain: d.coreDomain.Subdomain(name),
+	}
 }
 
 // Blocks on callbacks from the core.
