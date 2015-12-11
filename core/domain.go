@@ -3,6 +3,8 @@ package core
 import "fmt"
 
 type Domain interface {
+	Subdomain(string) Domain
+
 	Subscribe(string, uint, []interface{}) error
 	Register(string, uint, []interface{}) error
 	Publish(string, uint, []interface{}) error
@@ -60,6 +62,7 @@ func NewDomain(name string, a *app) Domain {
 }
 
 func (d domain) Subdomain(name string) Domain {
+	Debug("Creating subdomain %s", name)
 	return NewDomain(d.name+"."+name, d.app)
 }
 
