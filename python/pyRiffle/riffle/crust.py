@@ -22,8 +22,8 @@ class Deferred(object):
         self._callbackId, self._errbackId = -1, -1
 
 def cbid():
-    return int(random.getrandbits(64))
-
+    return random.getrandbits(53)
+    
 class App(object):
 
     def __init__(self):
@@ -41,16 +41,15 @@ class App(object):
             # Don't return yield errors-- its not clear who should deal with those 
 
             if i in self.meta:
+                # Remove the meta call after called? It should not be called more than once, no?
                 self.meta[i](*args)
-
-                # Remove the meta calls (?)
 
             elif i in self.subscriptions:
                 self.subscriptions[i](*args)
 
             elif i in self.registrations:
                 ret = self.registrations[i](*args)
-                
+
 
             else: 
                 print "No handler available for ", i
@@ -68,17 +67,21 @@ class Domain(object):
 
     def join(self):
         cb, eb = cbid(), cbid()
-
         app.meta[cb] = self.onJoin
-
         self.mantleDomain.Join(cb, eb)
+
+        # Make this explicit by putting it in its own method
         app.recv()
 
     def onJoin(self):
-        print "Domain %s joined!" % self.name
+        riffle.Info("Default onJoin")
+
+    def onLeave(self):
+        riffle.Info("Default onLeave")
 
     def subscribe(self, endpoint, handler):
         fn = cbid()
+        riffle.Debug('Subscribing with id: ' + str(fn))
         self.mantleDomain.Subscribe(fn, endpoint)
         app.subscriptions[fn] = handler
 
