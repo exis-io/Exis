@@ -10,7 +10,6 @@ class Receiver(riffle.Domain):
         print "Receiver Joined" 
 
         self.register("reg", self.registration)
-
         self.subscribe("sub", self.subscription)
 
     def registration(self):

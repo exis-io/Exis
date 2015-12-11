@@ -30,17 +30,9 @@ type Domain interface {
 	Leave() error
 }
 
-type Persistence interface {
-	Load(string, []byte)
-	Save(string, []byte)
-}
-
 // Interface to external connection implementations
 type Connection interface {
-	// Send a message
 	Send([]byte)
-
-	// Called with a reason for the close
 	Close(string) error
 }
 
