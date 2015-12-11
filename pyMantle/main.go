@@ -1,8 +1,6 @@
 package riffle
 
 import (
-	"encoding/json"
-
 	"github.com/exis-io/core"
 	"github.com/exis-io/core/goRiffle"
 )
@@ -31,7 +29,7 @@ func (a *App) NewDomain(name string) Domain {
 
 // Blocks on callbacks from the core. TODO: trigger a close meta callback when connection is lost
 func (a *App) Receive() string {
-	return marshall(a.coreApp.CallbackListen())
+	return core.MantleMarshall(a.coreApp.CallbackListen())
 }
 
 func (d *Domain) Join(cb uint, eb uint) {
@@ -62,19 +60,19 @@ func (d Domain) Register(cb uint, endpoint string) {
 // Args are string encoded json
 func (d Domain) Publish(cb uint, endpoint string, args string) {
 	go func() {
-		d.coreDomain.Publish(endpoint, cb, unmarshal(args))
+		d.coreDomain.Publish(endpoint, cb, core.MantleUnmarshal(args))
 	}()
 }
 
 func (d Domain) Call(cb uint, endpoint string, args string) {
 	go func() {
-		d.coreDomain.Call(endpoint, cb, unmarshal(args))
+		d.coreDomain.Call(endpoint, cb, core.MantleUnmarshal(args))
 	}()
 }
 
 func (a *App) Yield(request uint, args string) {
 	go func() {
-		a.coreApp.Yield(request, unmarshal(args))
+		a.coreApp.Yield(request, core.MantleUnmarshal(args))
 	}()
 }
 
@@ -86,28 +84,8 @@ func (d Domain) Unregister(endpoint string) {
 
 }
 
-//export Leave
 func (d Domain) Leave() {
 
-}
-
-func unmarshal(a string) []interface{} {
-	var d []interface{}
-	if e := json.Unmarshal([]byte(a), &d); e == nil {
-		return d
-	} else {
-		core.Warn("Unable to unmarshall data: %s", e)
-		return nil
-	}
-}
-
-func marshall(d core.Callback) string {
-	if r, e := json.Marshal([]interface{}{d.Id, d.Args}); e == nil {
-		return string(r)
-	} else {
-		core.Warn("Unable to marshall data: %s", e)
-		return ""
-	}
 }
 
 func SetLogLevelApp()       { core.LogLevel = core.LogLevelApp }
