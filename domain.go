@@ -13,6 +13,7 @@ type Domain interface {
 
 	Join(Connection) error
 	Leave() error
+	GetApp() App
 }
 
 type domain struct {
@@ -29,8 +30,41 @@ type boundEndpoint struct {
 	expectedTypes []interface{}
 }
 
+// Create a new domain. If no superdomain is provided, creates an app as well
+// If the app exists, has a connection, and is connected then immediately call onJoin on that domain
+func NewDomain(name string, a *app) Domain {
+	Debug("Creating domain %s", name)
+
+	if a == nil {
+		a = &app{
+			domains:    make([]*domain, 0),
+			serializer: new(jSONSerializer),
+			in:         make(chan message, 10),
+			up:         make(chan Callback, 10),
+			listeners:  make(map[uint]chan message),
+		}
+	}
+
+	d := &domain{
+		app:           a,
+		name:          name,
+		joined:        false,
+		subscriptions: make(map[uint]*boundEndpoint),
+		registrations: make(map[uint]*boundEndpoint),
+	}
+
+	// TODO: trigger onJoin if the superdomain has joined
+
+	a.domains = append(a.domains, d)
+	return d
+}
+
 func (d domain) Subdomain(name string) Domain {
-	return d.app.NewDomain(d.name + "." + name)
+	return NewDomain(d.name+"."+name, d.app)
+}
+
+func (d domain) GetApp() App {
+	return d.app
 }
 
 // Accepts a connection that has just been opened. This method should only
@@ -40,10 +74,12 @@ func (c domain) Join(conn Connection) error {
 		return fmt.Errorf("Domain %s is already joined", c.name)
 	}
 
+	// Handshake between the connection and the app
 	c.app.Connection = conn
+	conn.SetApp(c.app)
 
 	// Should we hard close on conn.Close()? The App may be interested in knowing about the close
-	if err := c.app.SendNow(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {
+	if err := c.app.Send(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {
 		c.app.Close("ERR: could not send a hello message")
 		return err
 	}
@@ -52,14 +88,13 @@ func (c domain) Join(conn Connection) error {
 		c.app.Close(err.Error())
 		return err
 	} else if _, ok := msg.(*welcome); !ok {
-		c.app.SendNow(&abort{Details: map[string]interface{}{}, Reason: "Error- unexpected_message_type"})
+		c.app.Send(&abort{Details: map[string]interface{}{}, Reason: "Error- unexpected_message_type"})
 		c.app.Close("Error- unexpected_message_type")
 		return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME.String()))
 	}
 
 	// This is super dumb, and the reason its in here was fixed. Please revert
 	go c.app.receiveLoop()
-	go c.app.sendLoop()
 
 	// old contents of app.join
 	for _, x := range c.app.domains {
