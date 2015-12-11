@@ -12,42 +12,55 @@ import os
 # When running with gopy
 import riffle
 
-# mantle.SetLoggingLevel(3)
+riffle.SetLoggingLevel(3)
 
 
-class App(object):
+# class App(object):
 
-    def __init__(self):
-        self._app = riffle.App()
+#     def __init__(self):
+#         self._app = riffle.App()
 
-    def recv(self):
-        print "Starting receive"
+#     def recv(self):
+#         print "Starting receive"
 
-        while True:
-            invocation = riffle.Recieve()
-            print "Received invocation: ", invocation
+#         while True:
+#             invocation = riffle.Recieve()
+#             print "Received invocation: ", invocation
 
-app = App()
-
-
-class Domain(object):
-
-    def __init__(self, name):
-        self._domain = riffle.NewDomain(name)
-        self.name = name
-
-    def join(self):
-        # riffle.Join(self._p_domain)
-        app.recv()
+# app = App()
 
 
-def main():
-    print "Starting"
+# class Domain(object):
 
-    d = app._app.NewDomain("xs.damouse")
-    # d.join()
+#     def __init__(self, name):
+#         self._domain = riffle.NewDomain(name)
+#         self.name = name
 
-    print "Stopped"
+#     def join(self):
+#         self._domain.Join()
+#         app.recv()
 
-if __name__ == '__main__':
-    main()
+
+# def main():
+#     print "Starting"
+
+#     d = app._app.NewDomain("xs.damouse")
+#     d.join()
+
+#     print "Stopped"
+
+# if __name__ == '__main__':
+#     main()
+
+
+####################################33
+# Sandboxing
+######################################
+
+
+print("t = iface.T()")
+app = riffle.App()
+
+print("t.F()")
+d = app.NewDomain()
+d.Join()
