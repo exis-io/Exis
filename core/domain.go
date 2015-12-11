@@ -124,16 +124,15 @@ func (c domain) Publish(endpoint string, requestId uint, args []interface{}) err
 	})
 }
 
-func (c domain) Call(endpoint string, requestId uint, args []interface{}) ([]interface{}, error) {
+func (c domain) Call(endpoint string, requestId uint, args []interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 	call := &call{Request: requestId, Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
 
-	if _, err := c.app.requestListenType(call, "*core.result"); err != nil {
-		return nil, err
+	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
+		return err
 	} else {
-		// return msg.(*result).Arguments, nil
-		// Invoke with requestId
-		return nil, nil
+		c.Delegate.Invoke(requestId, msg.(*result).Arguments)
+		return nil
 	}
 }
 
