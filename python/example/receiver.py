@@ -1,7 +1,7 @@
 
 import riffle
 
-riffle.SetLocalFabric()
+riffle.SetFabricLocal()
 riffle.SetLogLevelDebug()
 
 class Receiver(riffle.Domain):

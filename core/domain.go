@@ -93,6 +93,8 @@ func (c *domain) Leave() error {
 		c.app.Close("Closing: no domains connected")
 	}
 
+	// Trigger closing callbacks
+
 	return nil
 }
 
@@ -139,7 +141,7 @@ func (c domain) Publish(endpoint string, requestId uint, args []interface{}) err
 
 func (c domain) Call(endpoint string, requestId uint, args []interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
-	call := &call{Request: NewID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
+	call := &call{Request: requestId, Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
 
 	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
 		return err
@@ -149,7 +151,6 @@ func (c domain) Call(endpoint string, requestId uint, args []interface{}) error 
 	}
 }
 
-// This isn't going to work on the callback chain... no request id passed in
 func (c domain) Unsubscribe(endpoint string) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 
@@ -168,7 +169,6 @@ func (c domain) Unsubscribe(endpoint string) error {
 	}
 }
 
-// Same as above -- won't work on the callbacks
 func (c domain) Unregister(endpoint string) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 
@@ -187,14 +187,11 @@ func (c domain) Unregister(endpoint string) error {
 	}
 }
 
-// This blocks on the invoke. Does the goroutine block waiting for the response?
 func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 	Debug("Processing invocation: %s", msg)
 
 	if err := softCumin(binding.expectedTypes, msg.Arguments); err == nil {
 		// Debug("Cuminciation succeeded.")
-
-		// Invocations also include the invocation id for later yielding
 		c.app.CallbackSend(binding.callback, append([]interface{}{msg.Request}, msg.Arguments...)...)
 	} else {
 		// Debug("Cuminication failed.")

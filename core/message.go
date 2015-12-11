@@ -74,61 +74,60 @@ func (mt messageType) New() message {
 func (mt messageType) String() string {
 	switch mt {
 	case hELLO:
-		return "hELLO"
+		return "HELLO"
 	case wELCOME:
-		return "wELCOME"
+		return "WELCOME"
 	case aBORT:
-		return "aBORT"
+		return "ABORT"
 	case cHALLENGE:
-		return "cHALLENGE"
+		return "CHALLENGE"
 	case aUTHENTICATE:
-		return "aUTHENTICATE"
+		return "AUTHENTICATE"
 	case gOODBYE:
-		return "gOODBYE"
+		return "GOODBYE"
 	case hEARTBEAT:
-		return "hEARTBEAT"
+		return "HEARTBEAT"
 	case eRROR:
-		return "eRROR"
+		return "ERROR"
 
 	case pUBLISH:
-		return "pUBLISH"
+		return "PUBLISH"
 	case pUBLISHED:
-		return "pUBLISHED"
+		return "PUBLISHED"
 
 	case sUBSCRIBE:
-		return "sUBSCRIBE"
+		return "SUBSCRIBE"
 	case sUBSCRIBED:
-		return "sUBSCRIBED"
+		return "SUBSCRIBED"
 	case uNSUBSCRIBE:
-		return "uNSUBSCRIBE"
+		return "UNSUBSCRIBE"
 	case uNSUBSCRIBED:
-		return "uNSUBSCRIBED"
+		return "UNSUBSCRIBED"
 	case eVENT:
-		return "eVENT"
+		return "EVENT"
 
 	case cALL:
-		return "cALL"
+		return "CALL"
 	case cANCEL:
-		return "cANCEL"
+		return "CANCEL"
 	case rESULT:
-		return "rESULT"
+		return "RESULT"
 
 	case rEGISTER:
-		return "rEGISTER"
+		return "REGISTER"
 	case rEGISTERED:
-		return "rEGISTERED"
+		return "REGISTERED"
 	case uNREGISTER:
-		return "uNREGISTER"
+		return "UNREGISTER"
 	case uNREGISTERED:
-		return "uNREGISTERED"
+		return "UNREGISTERED"
 	case iNVOCATION:
-		return "iNVOCATION"
+		return "INVOCATION"
 	case iNTERRUPT:
-		return "iNTERRUPT"
+		return "INTERRUPT"
 	case yIELD:
-		return "yIELD"
+		return "YIELD"
 	default:
-		// TODO: allow custom message types?
 		panic("Invalid message type")
 	}
 }
