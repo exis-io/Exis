@@ -25,211 +25,192 @@ Reg, Sub, Pub, Call all return indicies to callbacks they will later call.
 // Required main method
 func main() {}
 
-type mantle struct {
-	app    core.App
-	conn   *goRiffle.WebsocketConnection
-	recv   chan []byte
-	fabric string
-}
-
-var man = &mantle{
-	recv:   make(chan []byte),
-	fabric: core.ProudctionFabric,
-}
+// By default always connect to the production fabric at node.exis.io
+var fabric string = core.FabricProduction
 
 //export NewDomain
-func NewDomain(name *C.char) unsafe.Pointer {
-	if man.app == nil {
-		man.app = core.NewApp()
-	}
-
-	d := man.app.NewDomain(C.GoString(name), man)
-	return unsafe.Pointer(&d)
+func NewDomain(name *C.char) unsafe.Pointer  {
+    d := core.NewDomain(C.GoString(name), nil)
+    return unsafe.Pointer(&d)
 }
 
-//export Subscribe
-func Subscribe(pdomain unsafe.Pointer, endpoint *C.char, data []bytes) []byte {
-	d := *(*core.Domain)(pdomain)
-	return coreInvoke(d.Subscribe, endpoint, unmarshall(data))
+//export Subdomain
+func Subdomain(pdomain unsafe.Pointer, name *C.char) unsafe.Pointer  {
+    d := *(*core.Domain)(pdomain)
+    n := d.Subdomain(C.GoString(name))
+    return unsafe.Pointer(&n)
 }
 
-//export Register
-func Register(pdomain unsafe.Pointer, endpoint *C.char, data []byte) []byte {
-	d := *(*core.Domain)(pdomain)
-	return coreInvoke(d.Register, endpoint, unmarshall(data))
-}
 
-//export Publish
-func Publish(pdomain unsafe.Pointer, endpoint *C.char, data []byte) []byte {
-	d := *(*core.Domain)(pdomain)
-	return coreInvoke(d.Publish, endpoint, unmarshall(data))
-}
+// //export Subscribe
+// func Subscribe(pdomain unsafe.Pointer, endpoint *C.char, data []bytes) []byte {
+// 	d := *(*core.Domain)(pdomain)
+// 	return coreInvoke(d.Subscribe, endpoint, unmarshall(data))
+// }
 
-//export Call
-func Call(pdomain unsafe.Pointer, endpoint *C.char, data []byte) []byte {
-	d := *(*core.Domain)(pdomain)
-	return coreInvoke(d.Call, endpoint, unmarshall(data))
-}
+// //export Register
+// func Register(pdomain unsafe.Pointer, endpoint *C.char, data []byte) []byte {
+// 	d := *(*core.Domain)(pdomain)
+// 	return coreInvoke(d.Register, endpoint, unmarshall(data))
+// }
 
-// Accepts a domain operator function, a list of any arguments, and an endpoint. Performs the operation on the given domain.
-func coreInvoke(operation func(string, uint, []interface{}) error, endpoint *C.char, args []interface{}) []byte {
-	cb, eb := core.NewID(), core.NewID()
-	go func() {
-		if err := operation(C.GoString(endpoint), cb, args); err != nil {
-			man.InvokeError(eb, err.Error())
-		}
-	}()
-	return marshall([]uint{cb, eb})
-}
+// //export Publish
+// func Publish(pdomain unsafe.Pointer, endpoint *C.char, data []byte) []byte {
+// 	d := *(*core.Domain)(pdomain)
+// 	return coreInvoke(d.Publish, endpoint, unmarshall(data))
+// }
 
-//export Yield
-func Yield(args []byte) {
-	// What to pass in as the id?
+// //export Call
+// func Call(pdomain unsafe.Pointer, endpoint *C.char, data []byte) []byte {
+// 	d := *(*core.Domain)(pdomain)
+// 	return coreInvoke(d.Call, endpoint, unmarshall(data))
+// }
 
-	// This needs work
-	// core.Yield(C.GoString(e))
-}
+// // Accepts a domain operator function, a list of any arguments, and an endpoint. Performs the operation on the given domain.
+// func coreInvoke(operation func(string, uint, []interface{}) error, endpoint *C.char, args []interface{}) []byte {
+// 	cb, eb := core.NewID(), core.NewID()
+// 	go func() {
+// 		if err := operation(C.GoString(endpoint), cb, args); err != nil {
+// 			man.InvokeError(eb, err.Error())
+// 		}
+// 	}()
+// 	return marshall([]uint{cb, eb})
+// }
 
-//export Unsubscribe
-func Unsubscribe(pdomain unsafe.Pointer, e *C.char) {
-	d := *(*core.Domain)(pdomain)
-	d.Unsubscribe(C.GoString(e))
-}
+// //export Yield
+// func Yield(args []byte) {
+// 	// What to pass in as the id?
 
-//export Unregister
-func Unregister(pdomain unsafe.Pointer, e *C.char) {
-	d := *(*core.Domain)(pdomain)
-	d.Unregister(C.GoString(e))
-}
+// 	// This needs work
+// 	// core.Yield(C.GoString(e))
+// }
 
-//export Join
-func Join(pdomain unsafe.Pointer) []byte {
-	d := *(*core.Domain)(pdomain)
-	cb, eb := core.NewID(), core.NewID()
+// //export Unsubscribe
+// func Unsubscribe(pdomain unsafe.Pointer, e *C.char) {
+// 	d := *(*core.Domain)(pdomain)
+// 	d.Unsubscribe(C.GoString(e))
+// }
 
-	go func() {
-		if man.conn != nil {
-			man.InvokeError(eb, "Connection is already open!")
-		}
+// //export Unregister
+// func Unregister(pdomain unsafe.Pointer, e *C.char) {
+// 	d := *(*core.Domain)(pdomain)
+// 	d.Unregister(C.GoString(e))
+// }
 
-		if c, err := goRiffle.Open(man.fabric); err != nil {
-			man.InvokeError(eb, err.Error())
-		} else {
-			man.conn = c
-			c.App = man.app
+// //export Join
+// func Join(pdomain unsafe.Pointer) []byte {
+// 	d := *(*core.Domain)(pdomain)
+// 	cb, eb := core.NewID(), core.NewID()
 
-			if err := d.Join(c); err != nil {
-				core.Warn("Unable to join! %s", err)
-				man.InvokeError(eb, err.Error())
-			} else {
-				core.Info("Joined!")
-				man.Invoke(cb, nil)
-			}
-		}
-	}()
+// 	go func() {
+// 		if man.conn != nil {
+// 			man.InvokeError(eb, "Connection is already open!")
+// 		}
 
-	return marshall([]uint{cb, eb})
-}
+// 		if c, err := goRiffle.Open(man.fabric); err != nil {
+// 			man.InvokeError(eb, err.Error())
+// 		} else {
+// 			man.conn = c
+// 			c.App = man.app
 
-//export Leave
-func Leave(pdomain unsafe.Pointer) {
-	d := *(*core.Domain)(pdomain)
-	d.Leave()
-}
+// 			if err := d.Join(c); err != nil {
+// 				core.Warn("Unable to join! %s", err)
+// 				man.InvokeError(eb, err.Error())
+// 			} else {
+// 				core.Info("Joined!")
+// 				man.Invoke(cb, nil)
+// 			}
+// 		}
+// 	}()
 
-//export Recieve
-func Recieve() []byte {
-	data := <-man.recv
-	return data
-}
+// 	return marshall([]uint{cb, eb})
+// }
 
-func marshall(data interface{}) []byte {
-	if r, e := json.Marshal(data); e == nil {
-		return r
-	} else {
-		fmt.Println("Unable to marshall data!")
-		return nil
-	}
-}
+// //export Leave
+// func Leave(pdomain unsafe.Pointer) {
+// 	d := *(*core.Domain)(pdomain)
+// 	d.Leave()
+// }
 
-func unmarshall(data []byte) []interface{} {
-	var ret []interface{}
-	if err := json.Unmarshal(data, &ret); err != nil {
-		// Handle this error a little more gracefully, eh?
-		core.Warn("Unable to unmarshall call from crust! %s", data)
-		return nil
-	} else {
-		return ret
-	}
-}
+// //export Recieve
+// func Recieve() []byte {
+// 	data := <-man.recv
+// 	return data
+// }
 
-// Unexported Functions
-func (m mantle) Invoke(id uint, args []interface{}) {
-	core.Debug("Invoke called: ", id, args)
-	// man.recv <- marshall(map[string]interface{}{"0": id, "1": args})
-	man.recv <- marshall([]interface{}{id, args})
-}
+// func marshall(data interface{}) []byte {
+// 	if r, e := json.Marshal(data); e == nil {
+// 		return r
+// 	} else {
+// 		fmt.Println("Unable to marshall data!")
+// 		return nil
+// 	}
+// }
 
-func (m mantle) InvokeError(id uint, e string) {
-	// core.Debug("Invoking error: ", id, e)
-	s := fmt.Sprintf("Err: %s", e)
-	man.recv <- marshall([]interface{}{id, s})
-}
+// func unmarshall(data []byte) []interface{} {
+// 	var ret []interface{}
+// 	if err := json.Unmarshal(data, &ret); err != nil {
+// 		// Handle this error a little more gracefully, eh?
+// 		core.Warn("Unable to unmarshall call from crust! %s", data)
+// 		return nil
+// 	} else {
+// 		return ret
+// 	}
+// }
 
-func (m mantle) OnJoin(string) {
-	fmt.Println("Domain joined!")
-}
+// // Unexported Functions
+// func (m mantle) Invoke(id uint, args []interface{}) {
+// 	core.Debug("Invoke called: ", id, args)
+// 	// man.recv <- marshall(map[string]interface{}{"0": id, "1": args})
+// 	man.recv <- marshall([]interface{}{id, args})
+// }
 
-func (m mantle) OnLeave(string) {
-	fmt.Println("Domain left!")
-}
+// func (m mantle) InvokeError(id uint, e string) {
+// 	// core.Debug("Invoking error: ", id, e)
+// 	s := fmt.Sprintf("Err: %s", e)
+// 	man.recv <- marshall([]interface{}{id, s})
+// }
 
-//export SetLoggingLevel
-func SetLoggingLevel(l int) {
-	core.LogLevel = l
-}
+// func (m mantle) OnJoin(string) {
+// 	fmt.Println("Domain joined!")
+// }
 
+// func (m mantle) OnLeave(string) {
+// 	fmt.Println("Domain left!")
+// }
+
+
+//export SetLogLevelOff
+func SetLogLevelOff()   { core.LogLevel = core.LogLevelOff }
+//export SetLogLevelApp
+func SetLogLevelApp()   { core.LogLevel = core.LogLevelApp }
 //export SetLogLevelErr
-func SetLogLevelErr() {
-	core.LogLevel = core.LogLevelErr
-}
-
+func SetLogLevelErr()   { core.LogLevel = core.LogLevelErr }
 //export SetLogLevelWarn
-func SetLogLevelWarn() {
-	core.LogLevel = core.LogLevelWarn
-}
-
+func SetLogLevelWarn()  { core.LogLevel = core.LogLevelWarn }
 //export SetLogLevelInfo
-func SetLogLevelInfo() {
-	core.LogLevel = core.LogLevelInfo
-}
-
+func SetLogLevelInfo()  { core.LogLevel = core.LogLevelInfo }
 //export SetLogLevelDebug
-func SetLogLevelDebug() {
-	core.LogLevel = core.LogLevelDebug
-}
+func SetLogLevelDebug() { core.LogLevel = core.LogLevelDebug }
 
-//export SetDevFabric
-func SetDevFabric() {
-	man.fabric = core.DevFabric
-}
+//export SetFabricDev
+func SetFabricDev()        { fabric = core.FabricDev }
+//export SetFabricSandbox
+func SetFabricSandbox()    { fabric = core.FabricSandbox }
+//export SetFabricProduction
+func SetFabricProduction() { fabric = core.FabricProduction }
+//export SetFabricLocal
+func SetFabricLocal()      { fabric = core.FabricLocal }
+//export SetFabric
+func SetFabric(url string) { fabric = url }
 
-//export SetSandboxFabric
-func SetSandboxFabric() {
-	man.fabric = core.SandboxFabric
-}
-
-//export SetProductionFabric
-func SetProductionFabric() {
-	man.fabric = core.ProudctionFabric
-}
-
-//export SetLocalFabric
-func SetLocalFabric() {
-	man.fabric = core.ProudctionFabric
-}
-
-//export SetCustomFabric
-func SetCustomFabric(url *C.char) {
-	man.fabric = C.GoString(url)
-}
+//export Application
+func Application(s string) { core.Application("%s", s) }
+//export Debug
+func Debug(s string)       { core.Debug("%s", s) }
+//export Info
+func Info(s string)        { core.Info("%s", s) }
+//export Warn
+func Warn(s string)        { core.Warn("%s", s) }
+//export Error
+func Error(s string)       { core.Error("%s", s) }
