@@ -2,17 +2,20 @@ package core
 
 // Global interfaces and public configuration
 
-// The reeceiving end
-type Delegate interface {
-	Invoke(uint, []interface{})
-	OnJoin(string)
-	OnLeave(string)
+// Manages a set of domains, receives messages from the wrapper's connections
+type App interface {
+	NewDomain(string) Domain
+
+	ReceiveBytes([]byte)
+	ReceiveString(string)
+	ReceiveMessage(message)
+
+	Close(string)
 }
 
 type Domain interface {
 	Subscribe(string, uint, []interface{}) error
 	Register(string, uint, []interface{}) error
-
 	Publish(string, uint, []interface{}) error
 	Call(string, uint, []interface{}) error
 
@@ -37,17 +40,6 @@ type Connection interface {
 
 	// Called with a reason for the close
 	Close(string) error
-}
-
-// Manages a set of domains, receives messages from the wrapper's connections
-type App interface {
-	NewDomain(string, Delegate) Domain
-
-	ReceiveBytes([]byte)
-	ReceiveString(string)
-	ReceiveMessage(message)
-
-	Close(string)
 }
 
 const (

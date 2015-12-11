@@ -26,15 +26,15 @@ Reg, Sub, Pub, Call all return indicies to callbacks they will later call.
 func main() {}
 
 type mantle struct {
-	app  core.App
-	conn *goRiffle.WebsocketConnection
-	recv chan []byte
-    fabric string
+	app    core.App
+	conn   *goRiffle.WebsocketConnection
+	recv   chan []byte
+	fabric string
 }
 
 var man = &mantle{
-	recv: make(chan []byte),
-    fabric: core.ProudctionFabric,
+	recv:   make(chan []byte),
+	fabric: core.ProudctionFabric,
 }
 
 //export NewDomain
@@ -50,42 +50,42 @@ func NewDomain(name *C.char) unsafe.Pointer {
 //export Subscribe
 func Subscribe(pdomain unsafe.Pointer, endpoint *C.char, data []bytes) []byte {
 	d := *(*core.Domain)(pdomain)
-    return coreInvoke(d.Subscribe, endpoint, unmarshall(data))
+	return coreInvoke(d.Subscribe, endpoint, unmarshall(data))
 }
 
 //export Register
 func Register(pdomain unsafe.Pointer, endpoint *C.char, data []byte) []byte {
 	d := *(*core.Domain)(pdomain)
-    return coreInvoke(d.Register, endpoint, unmarshall(data))
+	return coreInvoke(d.Register, endpoint, unmarshall(data))
 }
 
 //export Publish
-func Publish(pdomain unsafe.Pointer, endpoint *C.char, data []byte) []byte{
-    d := *(*core.Domain)(pdomain)
-    return coreInvoke(d.Publish, endpoint, unmarshall(data))
+func Publish(pdomain unsafe.Pointer, endpoint *C.char, data []byte) []byte {
+	d := *(*core.Domain)(pdomain)
+	return coreInvoke(d.Publish, endpoint, unmarshall(data))
 }
 
 //export Call
 func Call(pdomain unsafe.Pointer, endpoint *C.char, data []byte) []byte {
-    d := *(*core.Domain)(pdomain)
-    return coreInvoke(d.Call, endpoint, unmarshall(data))
+	d := *(*core.Domain)(pdomain)
+	return coreInvoke(d.Call, endpoint, unmarshall(data))
 }
 
-// Accepts a domain operator function, a list of any arguments, and an endpoint. Performs the operation on the given domain. 
-func coreInvoke(operation func(string, uint, []interface{})error, endpoint *C.char, args []interface{}) []byte {
+// Accepts a domain operator function, a list of any arguments, and an endpoint. Performs the operation on the given domain.
+func coreInvoke(operation func(string, uint, []interface{}) error, endpoint *C.char, args []interface{}) []byte {
 	cb, eb := core.NewID(), core.NewID()
 	go func() {
 		if err := operation(C.GoString(endpoint), cb, args); err != nil {
-            man.InvokeError(eb, err.Error())
-        }
+			man.InvokeError(eb, err.Error())
+		}
 	}()
 	return marshall([]uint{cb, eb})
 }
 
 //export Yield
 func Yield(args []byte) {
-    // What to pass in as the id?
-    
+	// What to pass in as the id?
+
 	// This needs work
 	// core.Yield(C.GoString(e))
 }
@@ -153,14 +153,14 @@ func marshall(data interface{}) []byte {
 }
 
 func unmarshall(data []byte) []interface{} {
-    var ret []interface{}
-    if err := json.Unmarshal(data, &ret); err != nil {
-        // Handle this error a little more gracefully, eh?
-        core.Warn("Unable to unmarshall call from crust! %s", data)
-        return nil 
-    } else {
-        return ret
-    }
+	var ret []interface{}
+	if err := json.Unmarshal(data, &ret); err != nil {
+		// Handle this error a little more gracefully, eh?
+		core.Warn("Unable to unmarshall call from crust! %s", data)
+		return nil
+	} else {
+		return ret
+	}
 }
 
 // Unexported Functions
@@ -191,47 +191,45 @@ func SetLoggingLevel(l int) {
 
 //export SetLogLevelErr
 func SetLogLevelErr() {
-    core.LogLevel = core.LogLevelErr
+	core.LogLevel = core.LogLevelErr
 }
 
 //export SetLogLevelWarn
 func SetLogLevelWarn() {
-    core.LogLevel = core.LogLevelWarn
+	core.LogLevel = core.LogLevelWarn
 }
 
 //export SetLogLevelInfo
 func SetLogLevelInfo() {
-    core.LogLevel = core.LogLevelInfo
+	core.LogLevel = core.LogLevelInfo
 }
 
 //export SetLogLevelDebug
 func SetLogLevelDebug() {
-    core.LogLevel = core.LogLevelDebug
+	core.LogLevel = core.LogLevelDebug
 }
 
 //export SetDevFabric
 func SetDevFabric() {
-    man.fabric = core.DevFabric
+	man.fabric = core.DevFabric
 }
 
 //export SetSandboxFabric
 func SetSandboxFabric() {
-    man.fabric = core.SandboxFabric
+	man.fabric = core.SandboxFabric
 }
 
 //export SetProductionFabric
 func SetProductionFabric() {
-    man.fabric = core.ProudctionFabric
+	man.fabric = core.ProudctionFabric
 }
 
 //export SetLocalFabric
 func SetLocalFabric() {
-    man.fabric = core.ProudctionFabric
+	man.fabric = core.ProudctionFabric
 }
 
 //export SetCustomFabric
 func SetCustomFabric(url *C.char) {
-    man.fabric = C.GoString(url)
+	man.fabric = C.GoString(url)
 }
-
-

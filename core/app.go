@@ -14,7 +14,14 @@ type app struct {
 	serializer
 	in        chan message
 	out       chan []byte
+	up        chan Callback
 	listeners map[uint]chan message
+}
+
+// Sent up to the mantle and then the crust as callbacks are triggered
+type Callback struct {
+	id   uint
+	args []interface{}
 }
 
 func NewApp() App {
@@ -23,17 +30,18 @@ func NewApp() App {
 		serializer: new(jSONSerializer),
 		in:         make(chan message, 10),
 		out:        make(chan []byte, 10),
+		up:         make(chan Callback, 10),
 		listeners:  make(map[uint]chan message),
 	}
 }
 
 // Create a new domain. If no superdomain is provided, creates an app as well
 // If the app exists, has a connection, and is connected then immediately call onJoin on that domain
-func (a *app) NewDomain(name string, delegate Delegate) Domain {
+func (a *app) NewDomain(name string) Domain {
 	Debug("Creating domain %s", name)
+
 	d := &domain{
 		app:           a,
-		Delegate:      delegate,
 		name:          name,
 		joined:        false,
 		subscriptions: make(map[uint]*boundEndpoint),
@@ -72,6 +80,7 @@ func (c app) Close(reason string) {
 
 	close(c.in)
 	close(c.out)
+	close(c.up)
 
 	// Theres some missing logic here when it comes to closing the external connection,
 	// especially when either end could call and trigger a close
