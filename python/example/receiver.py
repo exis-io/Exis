@@ -2,7 +2,7 @@
 import riffle
 
 riffle.SetFabricLocal()
-riffle.SetLogLevelDebug()
+riffle.SetLogLevelInfo()
 
 
 app = riffle.Domain("xs.damouse")
@@ -14,6 +14,8 @@ class Receiver(riffle.Domain):
         print "Receiver Joined" 
 
         self.register("reg", self.registration)
+        self.register("kill", self.kill)
+
         self.subscribe("sub", self.subscription)
 
     def registration(self, a, b):
@@ -22,5 +24,10 @@ class Receiver(riffle.Domain):
 
     def subscription(self, name):
         print "Received a publish from", name
+
+    def kill(self):
+        print 'Asked to close. Leaving'
+
+        self.leave() 
 
 Receiver("beta", superdomain=app).join()

@@ -18,7 +18,7 @@ func NewDomain(name string) Domain {
 	}
 }
 
-func (d Domain) Subdomain(name string) Domain {
+func (d *Domain) Subdomain(name string) Domain {
 	return Domain{
 		coreDomain: d.coreDomain.Subdomain(name),
 	}
@@ -42,50 +42,50 @@ func (d *Domain) Join(cb uint, eb uint) {
 	}
 }
 
-func (d Domain) Subscribe(cb uint, endpoint string) {
+func (d *Domain) Subscribe(cb uint, endpoint string) {
 	go func() {
 		d.coreDomain.Subscribe(endpoint, cb, make([]interface{}, 0))
 	}()
 }
 
-func (d Domain) Register(cb uint, endpoint string) {
+func (d *Domain) Register(cb uint, endpoint string) {
 	go func() {
 		d.coreDomain.Register(endpoint, cb, make([]interface{}, 0))
 	}()
 }
 
 // Args are string encoded json
-func (d Domain) Publish(cb uint, endpoint string, args string) {
+func (d *Domain) Publish(cb uint, endpoint string, args string) {
 	go func() {
 		d.coreDomain.Publish(endpoint, cb, core.MantleUnmarshal(args))
 	}()
 }
 
-func (d Domain) Call(cb uint, endpoint string, args string) {
+func (d *Domain) Call(cb uint, endpoint string, args string) {
 	go func() {
 		d.coreDomain.Call(endpoint, cb, core.MantleUnmarshal(args))
 	}()
 }
 
-func (d Domain) Yield(request uint, args string) {
+func (d *Domain) Yield(request uint, args string) {
 	go func() {
 		d.coreDomain.GetApp().Yield(request, core.MantleUnmarshal(args))
 	}()
 }
 
-func (d Domain) Unsubscribe(endpoint string) {
+func (d *Domain) Unsubscribe(endpoint string) {
 	go func() {
 		d.coreDomain.Unsubscribe(endpoint)
 	}()
 }
 
-func (d Domain) Unregister(endpoint string) {
+func (d *Domain) Unregister(endpoint string) {
 	go func() {
 		d.coreDomain.Unregister(endpoint)
 	}()
 }
 
-func (d Domain) Leave() {
+func (d *Domain) Leave() {
 	go func() {
 		d.coreDomain.Leave()
 	}()

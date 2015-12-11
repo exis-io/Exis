@@ -14,7 +14,7 @@ def cbid():
 class App(object):
 
     def __init__(self):
-        self.registrations, self.subscriptions, self.results, self.meta = {}, {}, {}, {}
+        self.registrations, self.subscriptions, self.results, self.control = {}, {}, {}, {}
 
     def recv(self, domain):
         while True:
@@ -24,13 +24,18 @@ class App(object):
             # Wrap it all in a try-catch, return publish and call errors
             # Don't return yield errors-- its not clear who should deal with those 
 
-            if i in self.meta:
-                # Remove the meta call after called? It should not be called more than once, no?
-                self.meta[i](*args)
+            if i == 0:
+                print 'Special leave case?'
+                break
+
+            # Possible remove meta on completion
+            if i in self.control:
+                self.control[i](*args)
 
             elif i in self.subscriptions:
                 self.subscriptions[i](*args)
 
+            # Remove results on completion
             elif i in self.results:
                 self.results[i](*args)
 
@@ -65,10 +70,10 @@ class Domain(object):
 
     def join(self):
         cb, eb = cbid(), cbid()
-        app.meta[cb] = self.onJoin
+        app.control[cb] = self.onJoin
         self.mantleDomain.Join(cb, eb)
 
-        # Make this explicit by putting it in its own method
+        # Make this explicit by putting it in its own method?
         app.recv(self.mantleDomain)
 
     def onJoin(self):
@@ -94,7 +99,10 @@ class Domain(object):
     def call(self, endpoint, handler, *args):
         fn = cbid()
         self.mantleDomain.Call(fn, endpoint, json.dumps(args))
-        app.results[fn] = handler
 
-    # def subdomain()
+        if handler is not None:
+            app.results[fn] = handler
+
+    def leave(self):
+        self.mantleDomain.Leave()
 

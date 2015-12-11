@@ -1,7 +1,5 @@
 package core
 
-import "log"
-
 // Message is a generic container for a WAMP message.
 type message interface {
 	messageType() messageType
@@ -498,6 +496,10 @@ func requestID(m message) (uint, bool) {
 		return msg.Request, true
 	case *unregistered:
 		return msg.Request, true
+	case *unsubscribe:
+		return msg.Request, true
+	case *unregister:
+		return msg.Request, true
 	case *result:
 		return msg.Request, true
 	case *errorMessage:
@@ -511,7 +513,7 @@ func requestID(m message) (uint, bool) {
 	case *call:
 		return msg.Request, true
 	default:
-		log.Println("Cant get requestID for message: ", m, msg.messageType())
+		Warn("Cant get requestID for %s: %v", msg.messageType(), m)
 		return 0, false
 	}
 }

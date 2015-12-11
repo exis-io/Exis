@@ -13,7 +13,9 @@ type App interface {
 	ReceiveMessage(message)
 
 	Yield(uint, []interface{})
+
 	Close(string)
+	ConnectionClosed(string)
 
 	CallbackListen() Callback
 	CallbackSend(uint, ...interface{})
@@ -23,6 +25,7 @@ type app struct {
 	domains []*domain
 	Connection
 	serializer
+	agent     string
 	in        chan message
 	up        chan Callback
 	listeners map[uint]chan message
@@ -46,6 +49,7 @@ func (a *app) CallbackSend(id uint, args ...interface{}) {
 func (c app) Send(m message) error {
 	Debug("Sending %s: %v", m.messageType(), m)
 
+	// There's going to have to be a better way of handling these messages
 	if b, err := c.serializer.serialize(m); err != nil {
 		return err
 	} else {
@@ -55,7 +59,11 @@ func (c app) Send(m message) error {
 }
 
 func (c app) Close(reason string) {
-	Info("Asked to close! Reason: ", reason)
+	Info("Closing internally: ", reason)
+
+	if err := c.Send(&goodbye{Details: map[string]interface{}{}, Reason: ErrCloseRealm}); err != nil {
+		Warn("Error sending goodbye: %v", err)
+	}
 
 	close(c.in)
 	close(c.up)
@@ -65,6 +73,13 @@ func (c app) Close(reason string) {
 	c.Connection.Close(reason)
 }
 
+func (c app) ConnectionClosed(reason string) {
+	Info("Connection was closed: ", reason)
+
+	close(c.in)
+	close(c.up)
+}
+
 func (a app) Yield(request uint, args []interface{}) {
 	m := &yield{
 		Request:   request,
@@ -72,28 +87,30 @@ func (a app) Yield(request uint, args []interface{}) {
 		Arguments: args,
 	}
 
-	// How do we deal with errors on the return?
-	// if err != nil {
-	//     m = &errorMessage{
-	//         Type:      iNVOCATION,
-	//         Request:   request,
-	//         Details:   make(map[string]interface{}),
-	//         Arguments: args,
-	//         Error:     "Not Implemented",
-	//     }
-	// }
-
 	if err := a.Send(m); err != nil {
 		Warn("Could not send yield")
-	} else {
-		Info("Yield: %s", m)
+	}
+}
+
+// Not fully implemented
+func (a app) YieldError(request uint, args []interface{}) {
+	m := &errorMessage{
+		Type:      iNVOCATION,
+		Request:   request,
+		Details:   make(map[string]interface{}),
+		Arguments: args,
+		Error:     "Not Implemented",
+	}
+
+	if err := a.Send(m); err != nil {
+		Warn("Could not send yield error")
 	}
 }
 
 func (c app) receiveLoop() {
 	for {
 		if msg, open := <-c.in; !open {
-			Warn("Receive loop close")
+			Debug("Receive loop close")
 			break
 		} else {
 			Debug("Received %s: %v", msg.messageType(), msg)
@@ -114,6 +131,7 @@ func (c app) handle(msg message) {
 			}
 		}
 
+		// We can't be delivered to a sub we don't have... right?
 		Warn("No handler registered for subscription:", msg.Subscription)
 
 	case *invocation:
@@ -135,6 +153,7 @@ func (c app) handle(msg message) {
 
 	case *goodbye:
 		c.Close("Fabric said goodbye. Closing connection")
+		panic("Not implemented!")
 
 	default:
 		id, ok := requestID(msg)
@@ -146,7 +165,7 @@ func (c app) handle(msg message) {
 				l <- msg
 			} else {
 				Warn("no listener for message %v", msg)
-				// panic("Unhandled message!")
+				panic("Unhandled message!")
 			}
 		} else {
 			panic("Bad handler picking up requestID!")
