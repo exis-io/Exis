@@ -64,7 +64,6 @@ func (mt messageType) New() message {
 	case yIELD:
 		return new(yield)
 	default:
-		// TODO: allow custom message types?
 		return nil
 	}
 }
