@@ -56,30 +56,34 @@ func NewDomain(name string) Domain {
 }
 
 func (d domain) Subscribe(endpoint string, handler interface{}) error {
-	if i, err := d.mirror.Subscribe(endpoint, []interface{}{}); err != nil {
+	id := core.NewID()
+	if err := d.mirror.Subscribe(endpoint, id, []interface{}{}); err != nil {
 		return err
 	} else {
-		d.handlers[i] = handler
+		d.handlers[id] = handler
 		return nil
 	}
 }
 
 func (d domain) Register(endpoint string, handler interface{}) error {
-	if i, err := d.mirror.Register(endpoint, []interface{}{}); err != nil {
+	id := core.NewID()
+	if err := d.mirror.Register(endpoint, id, []interface{}{}); err != nil {
 		return err
 	} else {
-		d.handlers[i] = handler
+		d.handlers[id] = handler
 		return nil
 	}
 }
 
 func (d domain) Publish(endpoint string, args ...interface{}) error {
-	err := d.mirror.Publish(endpoint, args)
+	id := core.NewID()
+	err := d.mirror.Publish(endpoint, id, args)
 	return err
 }
 
 func (d domain) Call(endpoint string, args ...interface{}) ([]interface{}, error) {
-	args, err := d.mirror.Call(endpoint, args)
+	id := core.NewID()
+	args, err := d.mirror.Call(endpoint, id, args)
 	return args, err
 }
 
@@ -120,8 +124,12 @@ func (d domain) Leave() error {
 	return err
 }
 
-func (d domain) Invoke(id uint, args []interface{}) ([]interface{}, error) {
-	return core.Cumin(d.handlers[id], args)
+func (d domain) Invoke(id uint, args []interface{}) {
+	Debug("Called with %s", args)
+
+	if handler, ok := d.handlers[id]; ok {
+		core.Cumin(handler, args)
+	}
 }
 
 func (d domain) OnJoin(string) {

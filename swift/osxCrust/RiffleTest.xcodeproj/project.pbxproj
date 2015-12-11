@@ -8,8 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		50533C191C029E2700E046D0 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50533C181C029E2700E046D0 /* main.swift */; };
-		50533C251C02A44B00E046D0 /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 50533C241C02A44B00E046D0 /* SRWebSocket.m */; };
+		5073DA1B1C1A0F9600C970C6 /* Riffle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5073DA1A1C1A0F9600C970C6 /* Riffle.swift */; settings = {ASSET_TAGS = (); }; };
 		50AAF0811C177D67009978FB /* riffle.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50AAF07F1C177D67009978FB /* riffle.a */; };
+		50AAF0831C19114A009978FB /* Deferred.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AAF0821C19114A009978FB /* Deferred.swift */; };
+		50AAF0851C192125009978FB /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AAF0841C192125009978FB /* Domain.swift */; };
+		50AAF0871C192577009978FB /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AAF0861C192577009978FB /* Utils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,10 +31,12 @@
 		50533C151C029E2700E046D0 /* RiffleTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RiffleTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		50533C181C029E2700E046D0 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		50533C221C029E6A00E046D0 /* Bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bridge.h; sourceTree = "<group>"; };
-		50533C231C02A44B00E046D0 /* SRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocket.h; sourceTree = "<group>"; };
-		50533C241C02A44B00E046D0 /* SRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocket.m; sourceTree = "<group>"; };
+		5073DA1A1C1A0F9600C970C6 /* Riffle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Riffle.swift; sourceTree = "<group>"; };
 		50AAF07F1C177D67009978FB /* riffle.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = riffle.a; sourceTree = "<group>"; };
 		50AAF0801C177D67009978FB /* riffle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = riffle.h; sourceTree = "<group>"; };
+		50AAF0821C19114A009978FB /* Deferred.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Deferred.swift; sourceTree = "<group>"; };
+		50AAF0841C192125009978FB /* Domain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Domain.swift; sourceTree = "<group>"; };
+		50AAF0861C192577009978FB /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,9 +72,11 @@
 			children = (
 				50AAF07F1C177D67009978FB /* riffle.a */,
 				50AAF0801C177D67009978FB /* riffle.h */,
-				50533C231C02A44B00E046D0 /* SRWebSocket.h */,
-				50533C241C02A44B00E046D0 /* SRWebSocket.m */,
+				50AAF0821C19114A009978FB /* Deferred.swift */,
 				50533C181C029E2700E046D0 /* main.swift */,
+				50AAF0841C192125009978FB /* Domain.swift */,
+				5073DA1A1C1A0F9600C970C6 /* Riffle.swift */,
+				50AAF0861C192577009978FB /* Utils.swift */,
 				50533C221C029E6A00E046D0 /* Bridge.h */,
 			);
 			path = RiffleTest;
@@ -132,8 +139,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				50533C251C02A44B00E046D0 /* SRWebSocket.m in Sources */,
+				50AAF0871C192577009978FB /* Utils.swift in Sources */,
+				50AAF0831C19114A009978FB /* Deferred.swift in Sources */,
 				50533C191C029E2700E046D0 /* main.swift in Sources */,
+				5073DA1B1C1A0F9600C970C6 /* Riffle.swift in Sources */,
+				50AAF0851C192125009978FB /* Domain.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

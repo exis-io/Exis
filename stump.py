@@ -23,6 +23,7 @@ SUBTREES = [
     ("ios/swiftRiffle", "swiftRiffle", "git@github.com:exis-io/swiftRiffle.git"),
     ("ios/appBackendSeed", "iosAppBackendSeed", "git@github.com:exis-io/iosAppBackendSeed.git"),
     ("ios/appSeed", "iosAppSeed", "git@github.com:exis-io/iosAppSeed.git"),
+    ("ios/example", "iosExample", "git@github.com:exis-io/iOSExample.git"),
     ("js/jsRiffle", "jsRiffle", "git@github.com:exis-io/jsRiffle.git"),
     ("js/ngRiffle", "ngRiffle", "git@github.com:exis-io/ngRiffle.git"),
     ("js/angularSeed", "ngSeed", "git@github.com:exis-io/ngSeed.git"),
@@ -61,7 +62,7 @@ if __name__ == '__main__':
             print "Remote: ", r
 
     elif args['push']:
-        if 'all' in args['REPOS']:
+        if args['all']:
             repos = SUBTREES
         else:
             repos = [x for x in SUBTREES if x[1] in args['REPOS']]
@@ -71,11 +72,11 @@ if __name__ == '__main__':
         print "Pushing: ", repos
 
         for p, r, u in repos:
-            print "git subtree push --prefix %s %s %s" % (p, r, b,)
-            # call("git subtree push --prefix %s %s %s" % (p, r, b,), shell=True)
+            # print "git subtree push --prefix %s %s %s" % (p, r, b,)
+            call("git subtree push --prefix %s %s %s" % (p, r, b,), shell=True)
 
     elif args['pull']:
-        repos = SUBTREES if 'all' in args['REPOS'] else args['REPOS']
+        repos = SUBTREES if args['all'] else args['REPOS']
         b = 'master'
 
         for p, r, u in repos:
