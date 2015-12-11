@@ -1,7 +1,6 @@
 package core
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"reflect"
@@ -26,11 +25,9 @@ const (
 	mSGPACK
 )
 
-type messagePackSerializer struct {
-}
+type messagePackSerializer struct{}
 
-type jSONSerializer struct {
-}
+type jSONSerializer struct{}
 
 // applies a list of values from a WAMP message to a message type
 func apply(msgType messageType, arr []interface{}) (message, error) {
@@ -38,19 +35,23 @@ func apply(msgType messageType, arr []interface{}) (message, error) {
 	if msg == nil {
 		return nil, fmt.Errorf("Unsupported message type")
 	}
+
 	val := reflect.ValueOf(msg)
 	if val.Kind() == reflect.Ptr {
 		val = val.Elem()
 	}
+
 	for i := 0; i < val.NumField() && i < len(arr)-1; i++ {
 		f := val.Field(i)
 		if arr[i+1] == nil {
 			continue
 		}
+
 		arg := reflect.ValueOf(arr[i+1])
 		if arg.Kind() == reflect.Ptr {
 			arg = arg.Elem()
 		}
+
 		if arg.Type().AssignableTo(f.Type()) {
 			f.Set(arg)
 		} else if arg.Type().ConvertibleTo(f.Type()) {
@@ -177,19 +178,11 @@ func (s *messagePackSerializer) deserializeString(data []interface{}) (message, 
 }
 
 // Serialize marshals the payload into a message.
-//
-// This method does not handle binary data according to WAMP specifications automatically,
-// but instead uses the default implementation in encoding/json.
-// Use the BinaryData type in your structures if using binary data.
 func (s *jSONSerializer) serialize(msg message) ([]byte, error) {
 	return json.Marshal(toList(msg))
 }
 
 // Deserialize unmarshals the payload into a message.
-//
-// This method does not handle binary data according to WAMP specifications automatically,
-// but instead uses the default implementation in encoding/json.
-// Use the BinaryData type in your structures if using binary data.
 func (s *jSONSerializer) deserialize(data []byte) (message, error) {
 	var arr []interface{}
 	if err := json.Unmarshal(data, &arr); err != nil {
@@ -221,26 +214,23 @@ func (s *jSONSerializer) deserializeString(arr []interface{}) (message, error) {
 	return apply(msgType, arr)
 }
 
-// Marshals and unmarshals byte arrays according to WAMP specifications:
-// https://github.com/tavendo/WAMP/blob/master/spec/basic.md#binary-conversion-of-json-strings
-//
-// This type *should* be used in types that will be marshalled as jSON.
-type BinaryData []byte
-
-func (b BinaryData) marshaljSON() ([]byte, error) {
-	s := base64.StdEncoding.EncodeToString([]byte(b))
-	return json.Marshal("\x00" + s)
-}
-
-func (b *BinaryData) unmarshaljSON(arr []byte) error {
-	var s string
-	err := json.Unmarshal(arr, &s)
-	if err != nil {
+// Unmarshal json data in the mantle as it arrives from the crust
+func MantleUnmarshal(a string) []interface{} {
+	var d []interface{}
+	if e := json.Unmarshal([]byte(a), &d); e == nil {
+		return d
+	} else {
+		Warn("Unable to unmarshall data: %s", e)
 		return nil
 	}
-	if s[0] != '\x00' {
-		return fmt.Errorf("Not a binary string, doesn't start with a NUL: %v", arr)
+}
+
+// Marshall data into json as it moves from the core to the crust
+func MantleMarshall(d Callback) string {
+	if r, e := json.Marshal([]interface{}{d.Id, d.Args}); e == nil {
+		return string(r)
+	} else {
+		Warn("Unable to marshall data: %s", e)
+		return ""
 	}
-	*b, err = base64.StdEncoding.DecodeString(s[1:])
-	return err
 }

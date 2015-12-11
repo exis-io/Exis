@@ -1,10 +1,6 @@
 package core
 
 import (
-	"bytes"
-	"encoding/base64"
-	"encoding/json"
-	"fmt"
 	"reflect"
 	"testing"
 
@@ -63,27 +59,27 @@ func TestApplySlice(t *testing.T) {
 	})
 }
 
-func TestBinaryData(t *testing.T) {
-	from := []byte("hello")
+// func TestBinaryData(t *testing.T) {
+// 	from := []byte("hello")
 
-	arr, err := json.Marshal(BinaryData(from))
-	if err != nil {
-		t.Error("Error marshalling BinaryData:", err.Error())
-	}
+// 	arr, err := json.Marshal(BinaryData(from))
+// 	if err != nil {
+// 		t.Error("Error marshalling BinaryData:", err.Error())
+// 	}
 
-	exp := fmt.Sprintf(`"\u0000%s"`, base64.StdEncoding.EncodeToString(from))
-	if !bytes.Equal([]byte(exp), arr) {
-		//t.Errorf("%s != %s", string(arr), exp)
-	}
+// 	exp := fmt.Sprintf(`"\u0000%s"`, base64.StdEncoding.EncodeToString(from))
+// 	if !bytes.Equal([]byte(exp), arr) {
+// 		//t.Errorf("%s != %s", string(arr), exp)
+// 	}
 
-	var b BinaryData
-	err = json.Unmarshal(arr, &b)
-	if err != nil {
-		t.Errorf("Error unmarshalling marshalled BinaryData: %v", err)
-	} else if !bytes.Equal([]byte(b), from) {
-		t.Errorf("%s != %s", string(b), string(from))
-	}
-}
+// 	var b BinaryData
+// 	err = json.Unmarshal(arr, &b)
+// 	if err != nil {
+// 		t.Errorf("Error unmarshalling marshalled BinaryData: %v", err)
+// 	} else if !bytes.Equal([]byte(b), from) {
+// 		t.Errorf("%s != %s", string(b), string(from))
+// 	}
+// }
 
 func TestToList(t *testing.T) {
 	type test struct {
