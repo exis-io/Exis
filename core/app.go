@@ -35,6 +35,11 @@ func NewApp() App {
 	}
 }
 
+func (a *app) CallbackListen() Callback {
+	m := <-a.up
+	return m
+}
+
 // Create a new domain. If no superdomain is provided, creates an app as well
 // If the app exists, has a connection, and is connected then immediately call onJoin on that domain
 func (a *app) NewDomain(name string) Domain {

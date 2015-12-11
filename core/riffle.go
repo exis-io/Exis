@@ -11,6 +11,7 @@ type App interface {
 	ReceiveMessage(message)
 
 	Close(string)
+	CallbackListen() Callback
 }
 
 type Domain interface {
