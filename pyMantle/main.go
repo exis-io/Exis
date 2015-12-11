@@ -37,6 +37,7 @@ func (d *Domain) Join(cb uint, eb uint) {
 		d.app.coreApp.CallbackSend(eb, err.Error())
 	} else {
 		c.App = d.app.coreApp
+
 		if err := d.coreDomain.Join(c); err != nil {
 			d.app.coreApp.CallbackSend(eb, err.Error())
 		} else {
