@@ -23,6 +23,9 @@ riffle.a
 libriffmantle.h
 libriffmantle.so
 
+riffmantle.h
+riffmantle.so
+
 IosMantle.framework/
 
 products/
