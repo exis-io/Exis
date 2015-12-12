@@ -144,6 +144,20 @@ func (c *domain) Leave() error {
 // Message Patterns
 /////////////////////////////////////////////
 
+// Apply the arguments to the given function on this domain.
+// Accepts a list of arguments and a list of types for cuminication
+// func (c domain) apply(fn func(string, uint, []interface{}), endpoint string, cb uint, eb uint) {
+// 	// TODO: Validate endpoint, else errback
+// 	endpoint = makeEndpoint(c.name, endpoint)
+
+// 	// with function Subscribe:
+// 	if e := fn(&c, endpoint, cb); e != nil {
+// 		// If the function returns an error, err it back immediately
+// 	}
+
+// 	// Note that the above won't work for unsubscribe and unregister, since their success case returns nil
+// }
+
 func (c domain) Subscribe(endpoint string, requestId uint, types []interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 	sub := &subscribe{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
