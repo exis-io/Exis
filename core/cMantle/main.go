@@ -15,6 +15,11 @@ func main() {}
 // By default always connect to the production fabric at node.exis.io
 var fabric string = core.FabricProduction
 
+//export CBID
+func CBID() uint {
+    return core.NewID()
+}
+
 //export NewDomain
 func NewDomain(name *C.char) unsafe.Pointer {
 	d := core.NewDomain(C.GoString(name), nil)
@@ -29,9 +34,9 @@ func Subdomain(pdomain unsafe.Pointer, name *C.char) unsafe.Pointer {
 }
 
 //export Receive
-func Receive(pdomain unsafe.Pointer) string {
+func Receive(pdomain unsafe.Pointer) []byte {
 	d := *(*core.Domain)(pdomain)
-	return core.MantleMarshall(d.GetApp().CallbackListen())
+	return []byte(core.MantleMarshall(d.GetApp().CallbackListen()))
 }
 
 //export Join
