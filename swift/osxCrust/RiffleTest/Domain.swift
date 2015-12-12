@@ -19,8 +19,7 @@ import Foundation
 
 public class Domain: RiffleDelegate {
     var mantleDomain: UnsafeMutablePointer<Void>
-    
-    var handlers: [Int64: (Any) -> (Any?)] = [:]
+    var handlers: [UInt64: (Any) -> (Any?)] = [:]
     
     var delegate: RiffleDelegate?
     
@@ -36,7 +35,8 @@ public class Domain: RiffleDelegate {
     }
     
     public func subscribe(endpoint: String, fn: (Any) -> ()) {
-        let (cb, _) = invocation(Subscribe(self.mantleDomain, endpoint.cString()))
+        let cb = CBID()
+        Subscribe(self.mantleDomain, cb, endpoint.cString())
         
         handlers[cb] = { (a: Any) -> (Any?) in
             fn(a)
@@ -44,18 +44,20 @@ public class Domain: RiffleDelegate {
         }
     }
     
-    public func register(domain: String, fn: (Any) -> (Any?)) {
-        let (cb, _) = invocation(Register(mantleDomain, domain.cString()))
+    public func register(endpoint: String, fn: (Any) -> (Any?)) {
+        let cb = CBID()
+        Register(self.mantleDomain, cb, endpoint.cString())
         
         handlers[cb] = { (a: Any) -> (Any?) in
             return fn(a)
         }
     }
+    
     func receive() {
         while true {
-            let (i, args) = decode(Recieve())
+            let (i, args) = decode(Receive(self.mantleDomain))
             
-            if let handler = handlers[Int64(i)] {
+            if let handler = handlers[UInt64(i)] {
                 if let a = args as? Any {
                     
                     //Cuminicate here
@@ -100,7 +102,10 @@ public class Domain: RiffleDelegate {
     }
     
     public func join() {
-        let (cb, eb) = invocation(Join(mantleDomain))
+        let cb = CBID()
+        let eb = CBID()
+        
+        Join(mantleDomain, cb, eb)
         
         handlers[cb] = { (a: Any) -> (Any?) in
             if let d = self.delegate {
