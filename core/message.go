@@ -161,6 +161,38 @@ const (
 	yIELD        messageType = 70 //	Rx 	Tx
 )
 
+// const messages map[int]string = map[int]string{
+// 	hELLO:        1,
+// 	wELCOME:      2,
+// 	aBORT:        3,
+// 	cHALLENGE:    4,
+// 	aUTHENTICATE: 5,
+// 	gOODBYE:      6,
+// 	hEARTBEAT:    7,
+// 	eRROR:        8,
+
+// 	pUBLISH:   16,
+// 	pUBLISHED: 17,
+
+// 	sUBSCRIBE:    32,
+// 	sUBSCRIBED:   33,
+// 	uNSUBSCRIBE:  34,
+// 	uNSUBSCRIBED: 35,
+// 	eVENT:        36,
+
+// 	cALL:   48,
+// 	cANCEL: 49,
+// 	rESULT: 50,
+
+// 	rEGISTER:     64,
+// 	rEGISTERED:   65,
+// 	uNREGISTER:   66,
+// 	uNREGISTERED: 67,
+// 	iNVOCATION:   68,
+// 	iNTERRUPT:    69,
+// 	yIELD:        70,
+// }
+
 // [hELLO, Realm|uri, Details|dict]
 type hello struct {
 	Realm   string

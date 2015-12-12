@@ -2,7 +2,7 @@
 import riffle
 
 riffle.SetFabricLocal()
-riffle.SetLogLevelInfo()
+riffle.SetLogLevelDebug()
 
 class Sender(riffle.Domain):
 
