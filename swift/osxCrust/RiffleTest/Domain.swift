@@ -70,6 +70,8 @@ public class Domain: RiffleDelegate {
                 print(handlers)
             }
             
+            // TODO: Yield here
+            
 //            let s = Recieve()
 //            //print("Received: \(s)")
 //            let d = NSData(bytes: s.data , length: NSNumber(longLong: s.len).integerValue)
