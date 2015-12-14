@@ -7,9 +7,9 @@ all: libRiffle.so riffle.swiftmodule
 %.o:%.swift
 	swiftc -I. -c $< -import-objc-header bridgingHeader.h
 
-libRiffle.so: Deferred.o riffle.o 
-	swiftc -emit-library Deferred.swift riffle.swift -module-name riffle -import-objc-header bridgingHeader.h
-	clang -shared -o libRiffle.so Deferred.o riffle.o 
+libRiffle.so: riffle.o 
+	swiftc -emit-library riffle.swift -module-name riffle -import-objc-header bridgingHeader.h
+	clang -shared -o libRiffle.so riffle.o 
 
 riffle.swiftmodule:	libRiffle.so
 	swiftc -emit-module -module-name riffle riffle.swift -import-objc-header bridgingHeader.h

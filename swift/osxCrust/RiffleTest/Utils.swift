@@ -32,7 +32,7 @@ extension String {
 }
 
 // Decode arbitrary returns from the mantle
-func decode(p: GoSlice) -> (Int64, [Any]) {
+func decode(p: GoSlice) -> (UInt64, [Any]) {
     let int8Ptr = unsafeBitCast(p.data, UnsafePointer<Int8>.self)
     let dataString = String.fromCString(int8Ptr)!
     
@@ -50,7 +50,7 @@ func decode(p: GoSlice) -> (Int64, [Any]) {
         }
     }
     
-    return (Int64(i), ret)
+    return (UInt64(i), ret)
 }
 
 // Return a goslice of the JSON marshaled arguments
