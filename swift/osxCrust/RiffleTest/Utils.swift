@@ -48,12 +48,12 @@ func decode(p: GoSlice) -> (UInt64, [Any]) {
     
     for x in data {
         if x == JSON.NullValue {
-            print("nill")
+
         } else {
             ret.append(x)
         }
     }
-    
+        
     return (UInt64(i), ret)
 }
 
