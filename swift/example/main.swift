@@ -2,12 +2,14 @@
 import riffle
 
 print("Linux example starting")
-riffle.SetLoggingLevel(3)
+riffle.SetLogLevelDebug()
+riffle.SetFabricLocal()
 
 let domain = riffle.Domain(name: "xs.damouse")
 
 class TestingDomain: riffle.RiffleDelegate {
     
+
     init() {}
 
     func onJoin() {
@@ -18,6 +20,7 @@ class TestingDomain: riffle.RiffleDelegate {
             return nil
         }
         
+
         domain.subscribe("sub") { (args: Any) in
             print("Received publish! \(args)")
         }
