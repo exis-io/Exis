@@ -148,8 +148,8 @@ func SetFabricProduction() { fabric = core.FabricProduction }
 //export SetFabricLocal
 func SetFabricLocal() { fabric = core.FabricLocal }
 
-//export SetFabric
-func SetFabric(url string) { fabric = url }
+//export MantleSetFabric
+func MantleSetFabric(url *C.char) { fabric = C.GoString(url) }
 
 //export Application
 func Application(s string) { core.Application("%s", s) }
