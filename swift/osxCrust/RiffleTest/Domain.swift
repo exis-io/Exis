@@ -56,7 +56,9 @@ public class Domain: RiffleDelegate {
     }
     
     public func publish(endpoint: String, args: AnyObject...) {
-        Publish(self.mantleDomain, 0, endpoint.cString(), marshall(args))
+        let marshalled = marshall(args)
+        print("Publishing: \(endpoint) with args \(args) marshalled: \(marshalled)")
+        Publish(self.mantleDomain, 0, endpoint.cString(), marshalled)
     }
     
     func receive() {
@@ -96,9 +98,9 @@ public class Domain: RiffleDelegate {
         }
         
         // Kick off the receive thread
-        //let thread = NSThread(target: self, selector: "receive", object: nil)
-        //thread.start()
-        //NSRunLoop.currentRunLoop().run()
+        let thread = NSThread(target: self, selector: "receive", object: nil)
+        thread.start()
+        NSRunLoop.currentRunLoop().run()
         receive()
     }
     
