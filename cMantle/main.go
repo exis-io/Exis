@@ -17,7 +17,7 @@ var fabric string = core.FabricProduction
 
 //export CBID
 func CBID() uint {
-    return core.NewID()
+	return core.NewID()
 }
 
 //export NewDomain
@@ -70,7 +70,6 @@ func Register(pdomain unsafe.Pointer, cb uint, endpoint *C.char) {
 	}()
 }
 
-// Bytes for args!
 //export Publish
 func Publish(pdomain unsafe.Pointer, cb uint, endpoint *C.char, args []byte) {
 	d := *(*core.Domain)(pdomain)
@@ -118,7 +117,6 @@ func Leave(pdomain unsafe.Pointer) {
 		d.Leave()
 	}()
 }
-
 
 //export SetLogLevelOff
 func SetLogLevelOff() { core.LogLevel = core.LogLevelOff }
