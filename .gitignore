@@ -29,3 +29,5 @@ riffmantle.so
 IosMantle.framework/
 
 products/
+
+swift/osxCrust/Build/
