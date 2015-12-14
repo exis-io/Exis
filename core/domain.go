@@ -202,7 +202,8 @@ func (c domain) Call(endpoint string, requestId uint, args []interface{}) error 
 	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
 		return err
 	} else {
-		c.app.CallbackSend(requestId, msg.(*result).Arguments...)
+		// No cumin here?
+		c.app.CallbackSend(requestId, msg.(*result).Arguments...)		
 		return nil
 	}
 }
