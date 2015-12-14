@@ -8,6 +8,10 @@
 
 import Foundation
 
+func SetFabric(url: String) {
+    MantleSetFabric(url.cString())
+}
+
 extension String {
     func cString() -> UnsafeMutablePointer<Int8> {
         var ret: UnsafeMutablePointer<Int8> = UnsafeMutablePointer<Int8>()
