@@ -2,6 +2,7 @@
 import riffle
 
 print("Linux example starting")
+
 riffle.SetLogLevelDebug()
 riffle.SetFabricLocal()
 

@@ -71,26 +71,26 @@ func Register(pdomain unsafe.Pointer, cb uint, endpoint *C.char) {
 }
 
 //export Publish
-func Publish(pdomain unsafe.Pointer, cb uint, endpoint *C.char, args []byte) {
+func Publish(pdomain unsafe.Pointer, cb uint, endpoint *C.char, args *C.char) {
 	d := *(*core.Domain)(pdomain)
 	go func() {
-		d.Publish(C.GoString(endpoint), cb, core.MantleUnmarshal(string(args)))
+		d.Publish(C.GoString(endpoint), cb, core.MantleUnmarshal(C.GoString(args)))
 	}()
 }
 
 //export Call
-func Call(pdomain unsafe.Pointer, cb uint, endpoint *C.char, args []byte) {
+func Call(pdomain unsafe.Pointer, cb uint, endpoint *C.char, args *C.char) {
 	d := *(*core.Domain)(pdomain)
 	go func() {
-		d.Call(C.GoString(endpoint), cb, core.MantleUnmarshal(string(args)))
+		d.Call(C.GoString(endpoint), cb, core.MantleUnmarshal(C.GoString(args)))
 	}()
 }
 
 //export Yield
-func Yield(pdomain unsafe.Pointer, request uint, args []byte) {
+func Yield(pdomain unsafe.Pointer, request uint, args *C.char) {
 	d := *(*core.Domain)(pdomain)
 	go func() {
-		d.GetApp().Yield(request, core.MantleUnmarshal(string(args)))
+		d.GetApp().Yield(request, core.MantleUnmarshal(C.GoString(args)))
 	}()
 }
 
