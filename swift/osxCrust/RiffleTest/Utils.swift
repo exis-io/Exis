@@ -8,14 +8,6 @@
 
 import Foundation
 
-// Incompatible with Swift 2.2
-//extension String {
-//    func cString() -> UnsafeMutablePointer<Int8> {
-//        let cs = (self as NSString).UTF8String
-//        return UnsafeMutablePointer(cs)
-//    }
-//}
-
 extension String {
     func cString() -> UnsafeMutablePointer<Int8> {
         var ret: UnsafeMutablePointer<Int8> = UnsafeMutablePointer<Int8>()
@@ -40,47 +32,39 @@ extension String {
 }
 
 // Decode arbitrary returns from the mantle
-func decode(p: GoSlice) -> (Int64, [AnyObject]) {
-    // v2.1
-    let d = NSData(bytes: p.data , length: NSNumber(longLong: p.len).integerValue)
-    var data = try! NSJSONSerialization.JSONObjectWithData(d, options: .AllowFragments) as! [AnyObject]
-    let i = data.removeAtIndex(0) as! Int
-    return (Int64(i), data)
+func decode(p: GoSlice) -> (Int64, [Any]) {
+    let int8Ptr = unsafeBitCast(p.data, UnsafePointer<Int8>.self)
+    let dataString = String.fromCString(int8Ptr)!
     
-    // v2.2
-//    let int8Ptr = unsafeBitCast(p.data, UnsafePointer<Int8>.self)
-//    let dataString = String.fromCString(int8Ptr)!
-//    var data = try! JSONDecode().decode(dataString) as! JSONArrayType
-//    
-//    var i = data[0] as! Int
-//    var ret: [Any] = []
-//    data.array.removeAtIndex(0)
-//    
-//    for x in data.array {
-//        if let y = x as? JNull {
-//            
-//        } else {
-//            if let z = x as? Any {
-//                ret.append(z)
-//            }
-//        }
-//    }
-//    
-//    return (Int64(i), ret)
-}
-
-// Decode an invocation from the mantle
-func invocation(slice: GoSlice) -> (Int64, Int64) {
-    let (i, a) = decode(slice)
+    var data = try! JSONParser.parse(dataString).arrayValue!
+    let i = data[0].uintValue!
+    var ret: [Any] = []
     
-    if let z = a as? Int {
-        return (i, Int64(z))
-    } else {
-        return (i, 0)
+    data.removeAtIndex(0)
+    
+    for x in data {
+        if x == JSON.NullValue {
+            print("nill")
+        } else {
+            ret.append(x)
+        }
     }
     
-    // let d = NSData(bytes: slice.data , length: NSNumber(longLong: slice.len).integerValue)
-    // let data = try! NSJSONSerialization.JSONObjectWithData(d, options: .AllowFragments) as! NSArray
-    // return ((data[0] as! NSNumber).longLongValue, (data[1] as! NSNumber).longLongValue)
+    return (Int64(i), ret)
 }
 
+// Return a goslice of the JSON marshaled arguments
+func marshall(args: AnyObject...) -> UnsafeMutablePointer<Int8> {
+    let json = JSON.from(args)
+    let jsonString = json.serialize(DefaultJSONSerializer())
+    return jsonString.cString()
+}
+
+// Given a goslice, return the packed arugments within
+//func unmarshall(slice: GoSlice) -> [Any] {
+//    let int8Ptr = unsafeBitCast(slice.data, UnsafePointer<Int8>.self)
+//    let dataString = String.fromCString(int8Ptr)!
+//    
+//    let data = try! JSONParser.parse(dataString).arrayValue!
+//    return data
+//}

@@ -53,6 +53,14 @@ public class Domain: RiffleDelegate {
         }
     }
     
+    public func call(endpoint: String, args: AnyObject...) {
+        let cb = CBID()
+        
+        
+        
+//        Call(self.mantleDomain, cb, endpoint.cString(), )
+    }
+    
     func receive() {
         while true {
             let (i, args) = decode(Receive(self.mantleDomain))
@@ -61,7 +69,9 @@ public class Domain: RiffleDelegate {
                 if let a = args as? Any {
                     
                     //Cuminicate here
-                    handler(a)
+                    if let ret = handler(a) {
+                        // If ret then we have a return value
+                    }
                 } else {
                     print("Unknown args \(args)")
                 }
@@ -69,37 +79,6 @@ public class Domain: RiffleDelegate {
                 print("No handler found for subscription \(i)")
                 print(handlers)
             }
-            
-            // TODO: Yield here
-            
-//            let s = Recieve()
-//            //print("Received: \(s)")
-//            let d = NSData(bytes: s.data , length: NSNumber(longLong: s.len).integerValue)
-//            let data = try! NSJSONSerialization.JSONObjectWithData(d, options: .AllowFragments) as! [AnyObject]
-//            
-//            if let handler = handlers[data[0].longLongValue] {
-//                // Cuminicate here
-//                let args = data[1]
-//                handler(args)
-//            } else {
-//                print("No handler found for subscription \(data[0])")
-//                print(handlers)
-//            }
-            
-            /*
-            if let results = handlers[data[0].longLongValue]!(args) {
-                let json: [String: AnyObject] = [
-                    "id": String(Int64(data["request"] as! Double)),
-                    "ok": "",
-                    "result": results
-                ]
-
-                let out = try! NSJSONSerialization.dataWithJSONObject(json, options: . PrettyPrinted)
-
-                let slice = GoSlice(data: UnsafeMutablePointer<Void>(out.bytes), len: NSNumber(integer: out.length).longLongValue, cap: NSNumber(integer: out.length).longLongValue)
-                Yield(slice)
-            }
-            */
         }
     }
     
