@@ -971,7 +971,7 @@ extension GenericJSONParser {
 // Utils.swift
 //////////////////////////////////////
 
-func SetFabric(url: String) {
+public func SetFabric(url: String) {
     MantleSetFabric(url.cString())
 }
 
