@@ -22,25 +22,13 @@ var go = require('./go.js');
 var ws = require('./transport/websocket.js');
 
 
-
-
-FABRIC_URL = "ws://localhost:8000/ws";
-
 // External websocket implementation, for now
+// Dont need any of this-- just return the conn
 var Ws = function () {
-    this.send = function(message) {
-        this.conn.send(message);
-    };
-
-    this.close = function(code, reason) {
-        this.conn.close(code, reason)
-    }
-
     this.open = function(url) {
         // Methods available on the conn: console.log, protocol, send, close, onmessage, onopen, onclose, info
         var factory = new ws.Factory({'type': 'websocket', 'url': url});
         this.conn = factory.create();
-
         this.conn.onmessage = this.onmessage;
         this.conn.onopen = this.onopen;
         this.conn.onclose = this.onclose;
