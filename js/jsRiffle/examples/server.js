@@ -25,6 +25,9 @@ var riffle = require('jsriffle');
 // me.join();
 
 
+var app = riffle.Domain("xs.damouse");
+var me = app.Subdomain("alpha");
+
 // var domain = riffle.Domain("xs.damouse.js.alpha")
 
 // domain.Join()
@@ -32,3 +35,10 @@ var riffle = require('jsriffle');
 // domain.Subscribe("sub", function() {
 //     console.log("Received a publish!")
 // })
+
+
+
+me.Join()
+
+//console.log(domain);
+//console.log(subdomain);
