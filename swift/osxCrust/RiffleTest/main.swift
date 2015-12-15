@@ -37,10 +37,10 @@ class Receiver: Domain {
 }
 
 // Start the scripts
-if let result = NSProcessInfo.processInfo().environment["SENDER"] {
-    print("Starting Sender")
-    Sender(name: "xs.damouse.beta").join()
-} else {
+if let result = NSProcessInfo.processInfo().environment["RECEIVER"] {
     print("Starting Receiver")
     Receiver(name: "xs.damouse.alpha").join()
+} else {
+    print("Starting Sender")
+    Sender(name: "xs.damouse.beta").join()
 }

@@ -98,9 +98,9 @@ public class Domain: RiffleDelegate {
         }
         
         // Kick off the receive thread
-        let thread = NSThread(target: self, selector: "receive", object: nil)
-        thread.start()
-        NSRunLoop.currentRunLoop().run()
+        //let thread = NSThread(target: self, selector: "receive", object: nil)
+        //thread.start()
+        //NSRunLoop.currentRunLoop().run()
         receive()
     }
     
