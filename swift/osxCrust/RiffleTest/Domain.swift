@@ -72,14 +72,13 @@ public class Domain: RiffleDelegate {
                 // but retaining that functionality until I remember. It started in the python implementation
                 let unwrap = args[0] as! JSON
                 var args = unwrap.arrayValue!
-                let resultId = args.removeAtIndex(0)
                 
-                if let ret = fn(args) {
-                    //print("Handling return with args: \(ret)")
-                    Yield(mantleDomain, UInt64(resultId.doubleValue!), marshall(ret))
-                } else {
-                    print("Not handling returns!")
-                }
+                let resultId = args.removeAtIndex(0)
+                var ret = fn(args)
+                ret = ret == nil ? [] : ret
+                
+                //print("Handling return with args: \(ret)")
+                Yield(mantleDomain, UInt64(resultId.doubleValue!), marshall(ret))
             } else {
                 print("No handlers found for id \(i)!")
             }
