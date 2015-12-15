@@ -167,7 +167,7 @@ public class RiffleDomain: NSObject, RiffleDelegate {
             Riffle.debug("INVOCATION: \(endpoint)")
             
             do {
-                result = try fn(extractDetails(endpoint, invocation.arguments))
+                result = try fn(extractDetails(invocation.arguments))
                 
                 // Wait for deferreds to resolve before moving forward
                 if let wait = result as? Deferred {

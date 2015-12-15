@@ -17,7 +17,7 @@ var fabric string = core.FabricProduction
 
 //export CBID
 func CBID() uint {
-    return core.NewID()
+	return core.NewID()
 }
 
 //export NewDomain
@@ -70,28 +70,27 @@ func Register(pdomain unsafe.Pointer, cb uint, endpoint *C.char) {
 	}()
 }
 
-// Bytes for args!
 //export Publish
-func Publish(pdomain unsafe.Pointer, cb uint, endpoint *C.char, args []byte) {
+func Publish(pdomain unsafe.Pointer, cb uint, endpoint *C.char, args *C.char) {
 	d := *(*core.Domain)(pdomain)
 	go func() {
-		d.Publish(C.GoString(endpoint), cb, core.MantleUnmarshal(string(args)))
+		d.Publish(C.GoString(endpoint), cb, core.MantleUnmarshal(C.GoString(args)))
 	}()
 }
 
 //export Call
-func Call(pdomain unsafe.Pointer, cb uint, endpoint *C.char, args []byte) {
+func Call(pdomain unsafe.Pointer, cb uint, endpoint *C.char, args *C.char) {
 	d := *(*core.Domain)(pdomain)
 	go func() {
-		d.Call(C.GoString(endpoint), cb, core.MantleUnmarshal(string(args)))
+		d.Call(C.GoString(endpoint), cb, core.MantleUnmarshal(C.GoString(args)))
 	}()
 }
 
 //export Yield
-func Yield(pdomain unsafe.Pointer, request uint, args []byte) {
+func Yield(pdomain unsafe.Pointer, request uint, args *C.char) {
 	d := *(*core.Domain)(pdomain)
 	go func() {
-		d.GetApp().Yield(request, core.MantleUnmarshal(string(args)))
+		d.GetApp().Yield(request, core.MantleUnmarshal(C.GoString(args)))
 	}()
 }
 
@@ -118,7 +117,6 @@ func Leave(pdomain unsafe.Pointer) {
 		d.Leave()
 	}()
 }
-
 
 //export SetLogLevelOff
 func SetLogLevelOff() { core.LogLevel = core.LogLevelOff }
@@ -150,8 +148,8 @@ func SetFabricProduction() { fabric = core.FabricProduction }
 //export SetFabricLocal
 func SetFabricLocal() { fabric = core.FabricLocal }
 
-//export SetFabric
-func SetFabric(url string) { fabric = url }
+//export MantleSetFabric
+func MantleSetFabric(url *C.char) { fabric = C.GoString(url) }
 
 //export Application
 func Application(s string) { core.Application("%s", s) }
