@@ -2,14 +2,10 @@
 package main
 
 import (
-	"log"
-	"net"
-	"sync"
-	"time"
+	"fmt"
 
 	"github.com/exis-io/core"
 	"github.com/gopherjs/gopherjs/js"
-	"golang.org/x/net/websocket"
 )
 
 // A good resource on working with gopherjs
@@ -21,7 +17,7 @@ TODO
     Inject writer for logging and saving
 */
 
-var fabric string = core.FabricProduction
+var fabric string = core.FabricLocal
 
 func main() {
 	// Functions are autoexported on non-pointer types-- dont need "Subdomain" listed here
@@ -54,6 +50,43 @@ type Domain struct {
 	coreDomain core.Domain
 }
 
+type Conn struct {
+	wrapper *js.Object
+	// jswsConn *js.Object
+	app    core.App
+	domain *Domain
+}
+
+func (c Conn) OnMessage(msg *js.Object) {
+	c.app.ReceiveString(msg.String())
+}
+
+func (c Conn) OnOpen(msg *js.Object) {
+	fmt.Println("Opened internally!")
+
+	// c.jswsConn = c.wrapper.Get("conn")
+
+	go c.domain.FinishJoin(&c)
+}
+
+func (c Conn) OnClose(msg *js.Object) {
+	fmt.Println("Closed internally!")
+}
+
+func (c Conn) Send(data []byte) {
+	c.wrapper.Call("send", string(data))
+}
+
+func (c Conn) Close(reason string) error {
+	fmt.Println("Asked to close: ", reason)
+	c.wrapper.Call("close", 1001, reason)
+	return nil
+}
+
+func (c Conn) SetApp(app core.App) {
+	c.app = app
+}
+
 func New(name string) *js.Object {
 	d := Domain{
 		coreDomain: core.NewDomain(name, nil),
@@ -70,22 +103,40 @@ func (d *Domain) Subdomain(name string) *js.Object {
 	return js.MakeWrapper(&n)
 }
 
+// var conn Conn
+
 // Blocks on callbacks from the core.
 // TODO: trigger a close meta callback when connection is lost
 func (d *Domain) Receive() string {
 	return core.MantleMarshall(d.coreDomain.GetApp().CallbackListen())
 }
 
-func (d *Domain) Join(cb uint, eb uint) {
-	// if c, err := goRiffle.Open(fabric); err != nil {
-	// 	d.coreDomain.GetApp().CallbackSend(eb, err.Error())
-	// } else {
-	// 	if err := d.coreDomain.Join(c); err != nil {
-	// 		d.coreDomain.GetApp().CallbackSend(eb, err.Error())
-	// 	} else {
-	// 		d.coreDomain.GetApp().CallbackSend(cb)
-	// 	}
-	// }
+func (d *Domain) Join() {
+	w := js.Global.Get("WsWrapper")
+
+	conn := Conn{
+		wrapper: w,
+		domain:  d,
+		app:     d.coreDomain.GetApp(),
+	}
+
+	w.Set("onmessage", conn.OnMessage)
+	w.Set("onopen", conn.OnOpen)
+	w.Set("onclose", conn.OnClose)
+
+	w.Call("open", fabric)
+}
+
+// The actual join method
+func (d *Domain) FinishJoin(c *Conn) {
+	if err := d.coreDomain.Join(c); err != nil {
+		// d.coreDomain.GetApp().CallbackSend(eb, err.Error())
+		fmt.Println("Cant joine: ", err)
+	} else {
+		// d.coreDomain.GetApp().CallbackSend(cb)
+		fmt.Println("Joined")
+	}
+
 }
 
 func (d *Domain) Subscribe(cb uint, endpoint string) {
@@ -155,95 +206,6 @@ func Debug(s string)       { core.Debug("%s", s) }
 func Info(s string)        { core.Info("%s", s) }
 func Warn(s string)        { core.Warn("%s", s) }
 func Error(s string)       { core.Error("%s", s) }
-
-type WebsocketConnection struct {
-	conn        *net.Conn
-	lock        *sync.Mutex
-	app         core.App
-	payloadType int
-	closed      bool
-}
-
-func Open(url string) (*WebsocketConnection, error) {
-	core.Debug("Opening ws connection to %s", url)
-	// dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
-
-	if conn, _, err := websocket.Dial(url, nil); err != nil {
-		core.Debug("Cant dial connection: %e", err)
-		return nil, err
-	} else {
-		connection := &WebsocketConnection{
-			conn:        conn,
-			lock:        &sync.Mutex{},
-			payloadType: 1,
-		}
-
-		go connection.run()
-		return connection, nil
-	}
-}
-
-func (ep *WebsocketConnection) Send(data []byte) {
-	// core.Debug("Writing data")
-	// Does the lock block? The locks should be faster than working off the channel,
-	// but the comments in the other code imply that the lock blocks on the send?
-
-	ep.lock.Lock()
-	if err := ep.conn.WriteMessage(ep.payloadType, data); err != nil {
-		core.Warn("No one is dealing with my errors! Cant write to socket. Eror: %s", err)
-		panic("Unrecoverable error")
-	}
-	ep.lock.Unlock()
-}
-
-func (ep *WebsocketConnection) SetApp(app core.App) {
-	ep.app = app
-}
-
-// Who the hell do we call close first on? App or connection?
-// Either way one or the other may have to check on the other, which is no good
-func (ep *WebsocketConnection) Close(reason string) error {
-	core.Info("Closing connection with reason: %s", reason)
-
-	closeMsg := websocket.FormatCloseMessage(websocket.CloseNormalClosure, "goodbye")
-	err := ep.conn.WriteControl(websocket.CloseMessage, closeMsg, time.Now().Add(5*time.Second))
-
-	if err != nil {
-		log.Println("error sending close message:", err)
-	}
-
-	ep.lock = nil
-	ep.closed = true
-
-	return ep.conn.Close()
-}
-
-func (ep *WebsocketConnection) run() {
-	// Theres some missing logic here when it comes to dealing with closes, including whats
-	// actually returned from those closes
-
-	for {
-		if msgType, bytes, err := ep.conn.ReadMessage(); err != nil {
-			if ep.closed {
-				core.Info("peer connection closed")
-			} else {
-				core.Info("error reading from peer:", err)
-				ep.conn.Close()
-			}
-
-			// ep.App.Close()
-			break
-		} else if msgType == websocket.CloseMessage {
-			core.Info("Close message recieved")
-			ep.conn.Close()
-
-			// ep.App.Close()
-			break
-		} else {
-			ep.app.ReceiveBytes(bytes)
-		}
-	}
-}
 
 // Do we want a GetName? Most likely yes
 

@@ -22,54 +22,45 @@ var go = require('./go.js');
 var ws = require('./transport/websocket.js');
 
 
-// console.log(global.Domain.Hello);
-var domain = global.Domain.New("xs.damouse");
-console.log(domain);
-
-var subdomain = domain.Subdomain("alpha");
-
-console.log(domain);
-console.log(subdomain);
 
 
 FABRIC_URL = "ws://localhost:8000/ws";
 
 // External websocket implementation, for now
 var Ws = function () {
-    self = this;
+    this.send = function(message) {
+        this.conn.send(message);
+    };
 
-    this.open = function() {
+    this.close = function(code, reason) {
+        this.conn.close(code, reason)
+    }
+
+    this.open = function(url) {
         // Methods available on the conn: console.log, protocol, send, close, onmessage, onopen, onclose, info
+        var factory = new ws.Factory({'type': 'websocket', 'url': url});
+        this.conn = factory.create();
 
-        var factory = new ws.Factory({'type': 'websocket', 'url': FABRIC_URL});
-        self.conn = factory.create();
-
-        self.conn.onmessage = global.Wrapper.NewMessage;
-        self.conn.onopen = global.Wrapper.ConnectionOpened;
-
-        self.conn.onclose = function() {
-            console.log("DEFAULT Transport closed");
-
-            // Call closed on the core
-        };
+        this.conn.onmessage = this.onmessage;
+        this.conn.onopen = this.onopen;
+        this.conn.onclose = this.onclose;
     }
 }; 
 
-Ws.prototype.send = function(message) {
-    console.log("Sending message: ", message)
-    this.conn.send(message);
-};
+global.WsWrapper = new Ws();
 
-Ws.prototype.close = function(code, reason) {
-    console.log("Closing connection with reason: ", reason)
-    this.conn.close(code, reason)
-};
+// console.log(global.Domain.Hello);
+var domain = global.MantleDomain.New("xs.damouse");
+var subdomain = domain.Subdomain("alpha");
+
+domain.Join()
+
+//console.log(domain);
+//console.log(subdomain);
 
 
+/*
 global.Wrapper.New();
-
-
-global.Domain.Hello();
 
 // Create and open the connection, let the wrapper have it 
 var conn = new Ws();
@@ -202,3 +193,4 @@ Domain.prototype.unsubscribe = function(action) {
 Domain.prototype.unregister = function(action) {
 
 };
+*/
