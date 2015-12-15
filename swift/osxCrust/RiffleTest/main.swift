@@ -9,7 +9,7 @@ SetFabricLocal()
 class Sender: Domain {
     
     override func onJoin() {
-        publish("xs.damouse.alpha/sub")
+        publish("xs.damouse.alpha/sub", 1, "2", true)
     }
     
     override func onLeave() {
