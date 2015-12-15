@@ -4,6 +4,7 @@ package main
 import (
 	"fmt"
 
+	_ "github.com/augustoroman/promise"
 	"github.com/exis-io/core"
 	"github.com/gopherjs/gopherjs/js"
 )
@@ -21,7 +22,7 @@ var fabric string = core.FabricLocal
 
 func main() {
 	// Functions are autoexported on non-pointer types-- dont need "Subdomain" listed here
-	js.Global.Set("MantleDomain", map[string]interface{}{
+	js.Global.Set("Domain", map[string]interface{}{
 		"New": New,
 	})
 

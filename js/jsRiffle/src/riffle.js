@@ -22,7 +22,6 @@ var go = require('./go.js');
 var ws = require('./transport/websocket.js');
 
 
-// External websocket implementation, for now
 // Dont need any of this-- just return the conn
 var Ws = function () {
     this.open = function(url) {
@@ -37,15 +36,7 @@ var Ws = function () {
 
 global.WsWrapper = new Ws();
 
-// console.log(global.Domain.Hello);
-var domain = global.MantleDomain.New("xs.damouse");
-var subdomain = domain.Subdomain("alpha");
-
-domain.Join()
-
-//console.log(domain);
-//console.log(subdomain);
-
+exports.Domain = global.Domain.New;
 
 /*
 global.Wrapper.New();
