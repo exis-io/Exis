@@ -21,17 +21,22 @@ osx:
 
 # Orphaned-- don't use yet
 ios: 
+	# Build using gomobile, generating a framework. Orphaned, but may work
+
+	# Run directly
+	# go run ~/code/go/src/golang.org/x/mobile/cmd/gomobile/bind.go -target=ios github.com/exis-io/core/iosMantle
+
+	gomobile bind -target=ios github.com/exis-io/core/iosMantle
+	rm -rf swift/iosCrust/RiffleTesterIos/IosMantle.framework
+	mv IosMantle.framework swift/iosCrust/RiffleTesterIos/IosMantle.framework
+
 	# Attempt to build a static library cross compiled for ARM. Currently not functional
 	# GOARM=7 CGO_ENABLED=1 GOARCH=arm CC_FOR_TARGET=`pwd`/swift/clangwrap.sh CXX_FOR_TARGET=`pwd`/swift/clangwrap.sh go build -buildmode=c-archive -o assets/riffmantle.a core/cMantle/main.go
 	# GOARM=7 CGO_ENABLED=1 GOARCH=arm go build -buildmode=c-archive -o assets/riffmantle.a core/cMantle/main.go
 
 	# cp assets/riffmantle.a swift/twopointone/Pod/Classes/riffmantle.a
 	# cp assets/riffmantle.h swift/twopointone/Pod/Classes/riffmantle.h
-
-	# Build using gomobile, generating a framework. Orphaned, but may work
-	GOGCCFLAGS="--Wl,-no_pie" gomobile bind -ldflags="-extldflags=-pie" -target=ios -work core/cMantle/main.go
-	# rm -rf swift/Goriffle.framework
-	# mv Goriffle.framework swift/Goriffle.framework
+	
 
 python: 
 	gopy bind github.com/exis-io/core/pyMantle
@@ -60,3 +65,7 @@ clean:
 	$(MAKE) -C swift/container clean
 
 
+# To debug and extract the build commands, check golang.org/x/mobile/cmd/gomobile/bind_iosapp.go
+# This is where the commands are emitted to create the library 
+#
+# Make changes, then 'go install' in golang.org/x/mobile/cmd/gomobile

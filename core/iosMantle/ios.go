@@ -1,176 +1,119 @@
 package iosMantle
 
 import (
-	"encoding/json"
-	"fmt"
-	"log"
-	"strconv"
+    "fmt"
+    // "github.com/exis-io/core"
+    // "github.com/exis-io/core/goRiffle"
 )
 
-var dom *Domain
-
-var mem chan message
-var kill chan uint
-
-// Might not have to use PSubscribe at all, actually.
-// Make the regular methods return their ids and toggle on
-// the custom receiver loop
-func PSubscribe(s string) []byte {
-	// Ooh, this is tricky. Can't really have this here
-	e := dom.Subscribe(s, nil)
-
-	if e != nil {
-		fmt.Println("GR: error subscribing: ", e)
-	}
-
-	if i, _, ok := bindingForEndpoint(dom.events, s); ok {
-		fmt.Println("Subscribed for endpoint: ", int(i))
-		return marshall(i)
-	} else {
-		fmt.Println("GR: WARN-- no subscription found for ", s)
-		return nil
-	}
+func Hello() {
+    fmt.Println("Hello!")
 }
 
-func PRegister(s string) []byte {
-	dom.Register(s, nil, map[string]interface{}{})
+/*
+// By default always connect to the production fabric at node.exis.io
+var fabric string = core.FabricProduction
 
-	if i, _, ok := bindingForEndpoint(dom.procedures, s); ok {
-		fmt.Println("Registered for endpoint: ", int(i))
-		return marshall(i)
-	} else {
-		fmt.Println("GR: WARN-- no registration found for ", s)
-		return nil
-	}
+type Domain struct {
+    coreDomain core.Domain
 }
 
-// Cant return an int safely!
-func PRecieve() []byte {
-	var m message
-	//fmt.Println("GR: receive loop")
-
-	select {
-	case m = <-mem:
-		switch msg := m.(type) {
-
-		case *event:
-			return marshall(map[string]interface{}{
-				"id":   msg.Subscription,
-				"data": msg.Arguments,
-			})
-
-		case *invocation:
-			// fmt.Println("GR: invocation: ", msg)
-
-			return marshall(map[string]interface{}{
-				"id":      msg.Registration,
-				"request": msg.Request,
-				"data":    msg.Arguments,
-			})
-
-		default:
-			log.Println("unhandled message:", msg.messageType(), msg)
-			panic("Unhandled message!")
-		}
-
-	case <-kill:
-		fmt.Println("GR: kill received")
-		return nil
-	}
+func NewDomain(name string) Domain {
+    return Domain{
+        coreDomain: core.NewDomain(name, nil),
+    }
 }
 
-func PYield(args []byte) {
-	var dat map[string]interface{}
 
-	if err := json.Unmarshal(args, &dat); err != nil {
-		panic(err)
-	}
-
-	strRequest, status, result := dat["id"].(string), dat["ok"].(string), dat["result"].([]interface{})
-	j, _ := strconv.ParseUint(strRequest, 10, 64)
-	request := uint(j)
-
-	//fmt.Println("Yielding with: ", dat)
-
-	var tosend message
-
-	tosend = &yield{
-		Request:   request,
-		Options:   make(map[string]interface{}),
-		Arguments: result,
-	}
-
-	if status != "" {
-		tosend = &errorMessage{
-			Type:      iNVOCATION,
-			Request:   request,
-			Details:   make(map[string]interface{}),
-			Arguments: result,
-			Error:     status,
-		}
-	}
-
-	if err := dom.Send(tosend); err != nil {
-		log.Println("error sending message:", err)
-	}
+func (d *Domain) Subdomain(name string) Domain {
+    return Domain{
+        coreDomain: d.coreDomain.Subdomain(name),
+    }
 }
 
-func marshall(data interface{}) []byte {
-	if r, e := json.Marshal(data); e == nil {
-		return r
-	} else {
-		fmt.Println("GR: WARN-- unable to marshall args")
-		return nil
-	}
+// Blocks on callbacks from the core.
+// TODO: trigger a close meta callback when connection is lost
+func (d *Domain) Receive() string {
+    return core.MantleMarshall(d.coreDomain.GetApp().CallbackListen())
 }
 
-func internalReceive() {
-	fmt.Println("Internal receive")
-
-	c := dom
-	for msg := range c.connection.Receive() {
-
-		fmt.Println("GR: Internal MSG: ", msg)
-		switch msg := msg.(type) {
-
-		case *event:
-			if _, ok := c.events[msg.Subscription]; ok {
-				mem <- msg
-
-			} else {
-				log.Println("no handler registered for subscription:", msg.Subscription)
-			}
-
-		case *invocation:
-			if _, ok := c.procedures[msg.Registration]; ok {
-				mem <- msg
-
-			} else {
-				log.Println("no handler registered for registration:", msg.Registration)
-			}
-
-		case *registered:
-			c.notifyListener(msg, msg.Request)
-		case *subscribed:
-			c.notifyListener(msg, msg.Request)
-		case *unsubscribed:
-			c.notifyListener(msg, msg.Request)
-		case *unregistered:
-			c.notifyListener(msg, msg.Request)
-		case *result:
-			c.notifyListener(msg, msg.Request)
-		case *errorMessage:
-			c.notifyListener(msg, msg.Request)
-
-		case *goodbye:
-			// fmt.Println("GR: Goodbye!")
-			break
-
-		default:
-			log.Println("unhandled message:", msg.messageType(), msg)
-			panic("Unhandled message!")
-		}
-	}
-
-	fmt.Println("GR: Internal receive done")
+func (d *Domain) Join(cb uint, eb uint) {
+    if c, err := goRiffle.Open(fabric); err != nil {
+        d.coreDomain.GetApp().CallbackSend(eb, err.Error())
+    } else {
+        if err := d.coreDomain.Join(c); err != nil {
+            d.coreDomain.GetApp().CallbackSend(eb, err.Error())
+        } else {
+            d.coreDomain.GetApp().CallbackSend(cb)
+        }
+    }
 }
+
+func (d *Domain) Subscribe(cb uint, endpoint string) {
+    go func() {
+        d.coreDomain.Subscribe(endpoint, cb, make([]interface{}, 0))
+    }()
+}
+
+func (d *Domain) Register(cb uint, endpoint string) {
+    go func() {
+        d.coreDomain.Register(endpoint, cb, make([]interface{}, 0))
+    }()
+}
+
+// Args are string encoded json
+func (d *Domain) Publish(cb uint, endpoint string, args string) {
+    go func() {
+        d.coreDomain.Publish(endpoint, cb, core.MantleUnmarshal(args))
+    }()
+}
+
+func (d *Domain) Call(cb uint, endpoint string, args string) {
+    go func() {
+        d.coreDomain.Call(endpoint, cb, core.MantleUnmarshal(args))
+    }()
+}
+
+func (d *Domain) Yield(request uint, args string) {
+    go func() {
+        d.coreDomain.GetApp().Yield(request, core.MantleUnmarshal(args))
+    }()
+}
+
+func (d *Domain) Unsubscribe(endpoint string) {
+    go func() {
+        d.coreDomain.Unsubscribe(endpoint)
+    }()
+}
+
+func (d *Domain) Unregister(endpoint string) {
+    go func() {
+        d.coreDomain.Unregister(endpoint)
+    }()
+}
+
+func (d *Domain) Leave() {
+    go func() {
+        d.coreDomain.Leave()
+    }()
+}
+
+func SetLogLevelOff()   { core.LogLevel = core.LogLevelOff }
+func SetLogLevelApp()   { core.LogLevel = core.LogLevelApp }
+func SetLogLevelErr()   { core.LogLevel = core.LogLevelErr }
+func SetLogLevelWarn()  { core.LogLevel = core.LogLevelWarn }
+func SetLogLevelInfo()  { core.LogLevel = core.LogLevelInfo }
+func SetLogLevelDebug() { core.LogLevel = core.LogLevelDebug }
+
+func SetFabricDev()        { fabric = core.FabricDev }
+func SetFabricSandbox()    { fabric = core.FabricSandbox }
+func SetFabricProduction() { fabric = core.FabricProduction }
+func SetFabricLocal()      { fabric = core.FabricLocal }
+func SetFabric(url string) { fabric = url }
+
+func Application(s string) { core.Application("%s", s) }
+func Debug(s string)       { core.Debug("%s", s) }
+func Info(s string)        { core.Info("%s", s) }
+func Warn(s string)        { core.Warn("%s", s) }
+func Error(s string)       { core.Error("%s", s) }
+*/
