@@ -27,6 +27,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		503ACC951C1BBCC40090DB6C /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
 		50533C151C029E2700E046D0 /* RiffleTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RiffleTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		50533C181C029E2700E046D0 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		50533C221C029E6A00E046D0 /* Bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bridge.h; sourceTree = "<group>"; };
@@ -69,6 +70,7 @@
 			isa = PBXGroup;
 			children = (
 				50AAF07F1C177D67009978FB /* riffle.a */,
+				503ACC951C1BBCC40090DB6C /* MyPlayground.playground */,
 				50AAF0801C177D67009978FB /* riffle.h */,
 				50AAF0821C19114A009978FB /* Deferred.swift */,
 				50533C181C029E2700E046D0 /* main.swift */,
