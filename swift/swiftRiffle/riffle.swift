@@ -975,6 +975,27 @@ public func SetFabric(url: String) {
     MantleSetFabric(url.cString())
 }
 
+public func ApplicationLog(s: String){
+    Application(s.cString())
+}
+
+public func DebugLog(s: String){
+    Debug(s.cString())
+}
+
+public func InfoLog(s: String){
+    Info(s.cString())
+}
+
+public func WarnLog(s: String){
+    Warn(s.cString())
+}
+
+public func ErrorLog(s: String){
+    Error(s.cString())
+}
+
+
 extension String {
     func cString() -> UnsafeMutablePointer<Int8> {
         var ret: UnsafeMutablePointer<Int8> = UnsafeMutablePointer<Int8>()
