@@ -228,17 +228,23 @@ public enum JSON {
             if let value = value as? Bool {
                 jsonArray.append(JSON.from(value))
             }
-            if let value = value as? Double {
+            else if let value = value as? Double {
                 jsonArray.append(JSON.from(value))
             }
-            if let value = value as? String {
+            else if let value = value as? Int {
+                jsonArray.append(JSON.from(Double(value)))
+            }
+            else if let value = value as? String {
                 jsonArray.append(JSON.from(value))
             }
-            if let value = value as? [Any] {
+            else if let value = value as? [Any] {
                 jsonArray.append(JSON.from(value))
             }
-            if let value = value as? [String: Any] {
+            else if let value = value as? [String: Any] {
                 jsonArray.append(JSON.from(value))
+            }
+            else {
+                print("WARN: Unable to determine value of \(value) of type \(value.dynamicType)")
             }
         }
         return JSON.from(jsonArray)

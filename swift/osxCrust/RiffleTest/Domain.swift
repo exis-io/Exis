@@ -49,15 +49,14 @@ public class Domain: RiffleDelegate {
         registrations[cb] = fn
     }
     
-    public func call(endpoint: String, args: AnyObject..., handler: (Any) -> ()) {
+    public func call(endpoint: String, _ args: AnyObject..., handler: (Any) -> ()) {
         let cb = CBID()
         Call(self.mantleDomain, cb, endpoint.cString(), marshall(args))
         invocations[cb] = handler
     }
     
-    public func publish(endpoint: String, args: AnyObject...) {
+    public func publish(endpoint: String, _ args: Any...) {
         let marshalled = marshall(args)
-        print("Publishing: \(endpoint) with args \(args) marshalled: \(marshalled)")
         Publish(self.mantleDomain, 0, endpoint.cString(), marshalled)
     }
     

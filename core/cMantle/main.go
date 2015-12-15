@@ -73,8 +73,11 @@ func Register(pdomain unsafe.Pointer, cb uint, endpoint *C.char) {
 //export Publish
 func Publish(pdomain unsafe.Pointer, cb uint, endpoint *C.char, args *C.char) {
 	d := *(*core.Domain)(pdomain)
+    a := C.GoString(args)
+    s := core.MantleUnmarshal(a)
+    core.Debug("String: %s, Unmarshalled: %s", a, s)
 	go func() {
-		d.Publish(C.GoString(endpoint), cb, core.MantleUnmarshal(C.GoString(args)))
+		d.Publish(C.GoString(endpoint), cb, s)
 	}()
 }
 
