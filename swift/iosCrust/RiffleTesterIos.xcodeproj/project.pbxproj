@@ -7,15 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		503ACCA01C2034B00090DB6C /* IosMantle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 503ACC9F1C2034B00090DB6C /* IosMantle.framework */; };
 		50533C331C02C49400E046D0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50533C321C02C49400E046D0 /* AppDelegate.swift */; };
 		50533C351C02C49400E046D0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50533C341C02C49400E046D0 /* ViewController.swift */; };
 		50533C381C02C49400E046D0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 50533C361C02C49400E046D0 /* Main.storyboard */; };
 		50533C3A1C02C49400E046D0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 50533C391C02C49400E046D0 /* Assets.xcassets */; };
 		50533C3D1C02C49400E046D0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 50533C3B1C02C49400E046D0 /* LaunchScreen.storyboard */; };
-		50533C481C02E28300E046D0 /* Riffle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50533C471C02E28300E046D0 /* Riffle.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		503ACC9F1C2034B00090DB6C /* IosMantle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = IosMantle.framework; sourceTree = "<group>"; };
 		50533C2F1C02C49400E046D0 /* RiffleTesterIos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RiffleTesterIos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		50533C321C02C49400E046D0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		50533C341C02C49400E046D0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -24,7 +25,6 @@
 		50533C3C1C02C49400E046D0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		50533C3E1C02C49400E046D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		50533C461C02C4BC00E046D0 /* Bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bridge.h; sourceTree = "<group>"; };
-		50533C471C02E28300E046D0 /* Riffle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Riffle.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,7 +32,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				50533C481C02E28300E046D0 /* Riffle.framework in Frameworks */,
+				503ACCA01C2034B00090DB6C /* IosMantle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,7 +44,6 @@
 			children = (
 				50533C311C02C49400E046D0 /* RiffleTesterIos */,
 				50533C301C02C49400E046D0 /* Products */,
-				50533C471C02E28300E046D0 /* Riffle.framework */,
 			);
 			sourceTree = "<group>";
 		};
@@ -59,6 +58,7 @@
 		50533C311C02C49400E046D0 /* RiffleTesterIos */ = {
 			isa = PBXGroup;
 			children = (
+				503ACC9F1C2034B00090DB6C /* IosMantle.framework */,
 				50533C321C02C49400E046D0 /* AppDelegate.swift */,
 				50533C341C02C49400E046D0 /* ViewController.swift */,
 				50533C461C02C4BC00E046D0 /* Bridge.h */,
@@ -255,12 +255,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/RiffleTesterIos",
 				);
 				INFOPLIST_FILE = RiffleTesterIos/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/RiffleTesterIos",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.paradrop.RiffleTesterIos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = RiffleTesterios/Bridge.h;
@@ -271,12 +277,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/RiffleTesterIos",
 				);
 				INFOPLIST_FILE = RiffleTesterIos/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/RiffleTesterIos",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.paradrop.RiffleTesterIos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = RiffleTesterios/Bridge.h;

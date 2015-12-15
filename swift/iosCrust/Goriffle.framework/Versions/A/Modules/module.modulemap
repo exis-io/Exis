@@ -1,4 +1,0 @@
-framework module "Goriffle" {
-    header "Goriffle.h"
-    export *
-}

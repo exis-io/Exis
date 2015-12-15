@@ -1,4 +1,0 @@
-framework module "Riffle" {
-    header "Riffle.h"
-    export *
-}
