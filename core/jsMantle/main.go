@@ -52,9 +52,8 @@ type Domain struct {
 
 type Conn struct {
 	wrapper *js.Object
-	// jswsConn *js.Object
-	app    core.App
-	domain *Domain
+	app     core.App
+	domain  *Domain
 }
 
 func (c Conn) OnMessage(msg *js.Object) {
@@ -62,15 +61,11 @@ func (c Conn) OnMessage(msg *js.Object) {
 }
 
 func (c Conn) OnOpen(msg *js.Object) {
-	fmt.Println("Opened internally!")
-
-	// c.jswsConn = c.wrapper.Get("conn")
-
 	go c.domain.FinishJoin(&c)
 }
 
 func (c Conn) OnClose(msg *js.Object) {
-	fmt.Println("Closed internally!")
+	c.app.Close(msg.String())
 }
 
 func (c Conn) Send(data []byte) {
