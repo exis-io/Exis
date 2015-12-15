@@ -28,17 +28,12 @@ var riffle = require('jsriffle');
 var app = riffle.Domain("xs.damouse");
 var me = app.Subdomain("alpha");
 
-// var domain = riffle.Domain("xs.damouse.js.alpha")
+me.onJoin = function() {
+    console.log("Sender Joined");
 
-// domain.Join()
-
-// domain.Subscribe("sub", function() {
-//     console.log("Received a publish!")
-// })
-
-
+    this.Subscribe("sub", function() {
+        console.log("Received a publish!")
+    })
+};
 
 me.Join()
-
-//console.log(domain);
-//console.log(subdomain);
