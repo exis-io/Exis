@@ -42,7 +42,7 @@ python:
 # 	cp assets/libriffmantle.h python/pyRiffle/riffle/libriffmantle.h
 
 js: 
-	gopherjs build -mvw core/jsMantle/main.go
+	gopherjs build -mv core/jsMantle/main.go
 	mv main.js js/jsRiffle/src/go.js
 	mv main.js.map js/jsRiffle/src/go.js.map
 
