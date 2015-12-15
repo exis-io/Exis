@@ -1,13 +1,14 @@
 
 import riffle
 
-riffle.SetFabricLocal()
+riffle.SetFabricDev()
 riffle.SetLogLevelDebug()
+
 
 class Sender(riffle.Domain):
 
     def onJoin(self):
-        print "Sender Joined" 
+        print "Sender Joined"
         beta.publish("sub", self.name)
         beta.call("reg", self.result, 1, 2)
 
