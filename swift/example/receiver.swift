@@ -4,6 +4,8 @@ import riffle
 riffle.SetLogLevelDebug()
 riffle.SetFabricLocal()
 
+riffle.ApplicationLog("Hello!")
+
 class Receiver: riffle.Domain, riffle.Delegate {
 
     override func onJoin() {
