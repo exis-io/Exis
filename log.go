@@ -43,7 +43,10 @@ func Error(format string, a ...interface{}) {
 
 func Application(format string, a ...interface{}) {
 	if LogLevel >= LogLevelApp {
-		out(fmt.Sprintf("%s", fmt.Sprintf(format, a...)))
+		// out(fmt.Sprintf(format, a...))
+
+		// Use out here, please
+		fmt.Println(fmt.Sprintf(format, a...))
 	}
 }
 
