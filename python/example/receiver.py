@@ -1,13 +1,14 @@
 
 import riffle
 
-riffle.SetFabricLocal()
+riffle.SetFabricDev()
 riffle.SetLogLevelDebug()
+
 
 class Receiver(riffle.Domain):
 
     def onJoin(self):
-        print "Receiver Joined" 
+        print "Receiver Joined"
 
         self.register("reg", self.registration)
         self.register("kill", self.kill)
@@ -24,7 +25,7 @@ class Receiver(riffle.Domain):
         print 'Asked to close. Leaving'
 
         # Not ready. Leaves, but not cleanly
-        # self.leave() 
+        # self.leave()
 
 if __name__ == '__main__':
     app = riffle.Domain("xs.damouse")
