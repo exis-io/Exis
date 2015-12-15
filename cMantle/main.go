@@ -73,9 +73,9 @@ func Register(pdomain unsafe.Pointer, cb uint, endpoint *C.char) {
 //export Publish
 func Publish(pdomain unsafe.Pointer, cb uint, endpoint *C.char, args *C.char) {
 	d := *(*core.Domain)(pdomain)
-    a := C.GoString(args)
-    s := core.MantleUnmarshal(a)
-    core.Debug("String: %s, Unmarshalled: %s", a, s)
+	a := C.GoString(args)
+	s := core.MantleUnmarshal(a)
+	core.Debug("String: %s, Unmarshalled: %s", a, s)
 	go func() {
 		d.Publish(C.GoString(endpoint), cb, s)
 	}()
@@ -155,16 +155,16 @@ func SetFabricLocal() { fabric = core.FabricLocal }
 func MantleSetFabric(url *C.char) { fabric = C.GoString(url) }
 
 //export Application
-func Application(s string) { core.Application("%s", s) }
+func Application(s *C.char) { core.Application("%s", C.GoString(s)) }
 
 //export Debug
-func Debug(s string) { core.Debug("%s", s) }
+func Debug(s *C.char) { core.Debug("%s", C.GoString(s)) }
 
 //export Info
-func Info(s string) { core.Info("%s", s) }
+func Info(s *C.char) { core.Info("%s", C.GoString(s)) }
 
 //export Warn
-func Warn(s string) { core.Warn("%s", s) }
+func Warn(s *C.char) { core.Warn("%s", C.GoString(s)) }
 
 //export Error
-func Error(s string) { core.Error("%s", s) }
+func Error(s *C.char) { core.Error("%s", C.GoString(s)) }
