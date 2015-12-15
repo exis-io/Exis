@@ -10,6 +10,10 @@ class Sender: Domain {
     
     override func onJoin() {
         publish("xs.damouse.alpha/sub", 1, "2", true)
+        
+        call("xs.damouse.alpha/reg", "Johnathan", "Seed") { returnArgs in
+            print("Call received result \(returnArgs)")
+        }
     }
     
     override func onLeave() {
@@ -23,7 +27,7 @@ class Receiver: Domain {
     override func onJoin() {
         register("reg") { (args: Any) -> Any? in
             print("Received call! Args: \(args)")
-            return nil
+            return "Receiver says hi!"
         }
         
         subscribe("sub") { (args: Any) in

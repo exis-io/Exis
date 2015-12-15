@@ -49,26 +49,33 @@ public class Domain: RiffleDelegate {
         registrations[cb] = fn
     }
     
-    public func call(endpoint: String, _ args: AnyObject..., handler: (Any) -> ()) {
+    public func call(endpoint: String, _ args: Any..., handler: (Any) -> ()) {
         let cb = CBID()
         Call(self.mantleDomain, cb, endpoint.cString(), marshall(args))
         invocations[cb] = handler
     }
     
     public func publish(endpoint: String, _ args: Any...) {
-        let marshalled = marshall(args)
-        Publish(self.mantleDomain, 0, endpoint.cString(), marshalled)
+        Publish(self.mantleDomain, 0, endpoint.cString(), marshall(args))
     }
     
     func receive() {
         while true {
-            let (i, args) = decode(Receive(self.mantleDomain))
+            var (i, args) = decode(Receive(self.mantleDomain))
             
             if let fn = handlers[i] {
                 fn(args)
             } else if let fn = invocations[i] {
                 fn(args)
             } else if let fn = registrations[i] {
+                // Pop off the return arg. Note that we started passing it into crusts as a nested list for some reason. Cant remember why, 
+                // but retaining that functionality until I remember. It started in the python implementation
+                let unwrap = args[0] as! JSON
+                var args = unwrap.arrayValue!
+                let resultId = args.removeAtIndex(0)
+                
+                print("Handling return with id: \(resultId)")
+                
                 if let ret = fn(args) {
                     print("Handling return with args: \(ret)")
                 } else {
