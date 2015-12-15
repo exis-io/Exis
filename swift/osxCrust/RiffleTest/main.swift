@@ -26,3 +26,4 @@ class TestingDomain: Domain {
 }
 
 TestingDomain(name: "xs.damouse").join()
+
