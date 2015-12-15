@@ -69,12 +69,12 @@ func (c Conn) OnClose(msg *js.Object) {
 }
 
 func (c Conn) Send(data []byte) {
-	c.wrapper.Call("send", string(data))
+	c.wrapper.Get("conn").Call("send", string(data))
 }
 
 func (c Conn) Close(reason string) error {
 	fmt.Println("Asked to close: ", reason)
-	c.wrapper.Call("close", 1001, reason)
+	c.wrapper.Get("conn").Call("close", 1001, reason)
 	return nil
 }
 
@@ -126,10 +126,10 @@ func (d *Domain) Join() {
 func (d *Domain) FinishJoin(c *Conn) {
 	if err := d.coreDomain.Join(c); err != nil {
 		// d.coreDomain.GetApp().CallbackSend(eb, err.Error())
-		fmt.Println("Cant joine: ", err)
+		fmt.Println("Cant join: ", err)
 	} else {
 		// d.coreDomain.GetApp().CallbackSend(cb)
-		fmt.Println("Joined")
+		fmt.Println("Joined!")
 	}
 
 }
