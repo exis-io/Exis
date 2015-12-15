@@ -4,7 +4,7 @@ package main
 import (
 	"fmt"
 
-	_ "github.com/augustoroman/promise"
+	// _ "github.com/augustoroman/promise"
 	"github.com/exis-io/core"
 	"github.com/gopherjs/gopherjs/js"
 )
@@ -49,6 +49,7 @@ func main() {
 
 type Domain struct {
 	coreDomain core.Domain
+	wrapped    *js.Object
 }
 
 type Conn struct {
@@ -88,7 +89,8 @@ func New(name string) *js.Object {
 		coreDomain: core.NewDomain(name, nil),
 	}
 
-	return js.MakeWrapper(&d)
+	d.wrapped = js.MakeWrapper(&d)
+	return d.wrapped
 }
 
 func (d *Domain) Subdomain(name string) *js.Object {
@@ -96,7 +98,8 @@ func (d *Domain) Subdomain(name string) *js.Object {
 		coreDomain: d.coreDomain.Subdomain(name),
 	}
 
-	return js.MakeWrapper(&n)
+	n.wrapped = js.MakeWrapper(&n)
+	return n.wrapped
 }
 
 // var conn Conn
@@ -123,6 +126,10 @@ func (d *Domain) Join() {
 	w.Call("open", fabric)
 }
 
+func (d Domain) OnJoin() {
+	fmt.Println("Default onJoin")
+}
+
 // The actual join method
 func (d *Domain) FinishJoin(c *Conn) {
 	if err := d.coreDomain.Join(c); err != nil {
@@ -131,6 +138,11 @@ func (d *Domain) FinishJoin(c *Conn) {
 	} else {
 		// d.coreDomain.GetApp().CallbackSend(cb)
 		fmt.Println("Joined!")
+
+		// Only call onJoin if it exsts
+		if j := d.wrapped.Get("onJoin"); j != js.Undefined {
+			d.wrapped.Call("onJoin")
+		}
 	}
 
 }
