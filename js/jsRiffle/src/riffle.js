@@ -21,8 +21,20 @@ exports.log = log;
 var go = require('./go.js');
 var ws = require('./transport/websocket.js');
 
+
+// console.log(global.Domain.Hello);
+var domain = global.Domain.New("xs.damouse");
+console.log(domain);
+
+var subdomain = domain.Subdomain("alpha");
+
+console.log(domain);
+console.log(subdomain);
+
+
 FABRIC_URL = "ws://localhost:8000/ws";
 
+// External websocket implementation, for now
 var Ws = function () {
     self = this;
 
@@ -55,6 +67,9 @@ Ws.prototype.close = function(code, reason) {
 
 
 global.Wrapper.New();
+
+
+global.Domain.Hello();
 
 // Create and open the connection, let the wrapper have it 
 var conn = new Ws();
