@@ -5,11 +5,22 @@ import Foundation
 SetLogLevelDebug()
 SetFabricLocal()
 
-class TestingDomain: Domain {
+
+class Sender: Domain {
     
     override func onJoin() {
-        print("Subclass joined!")
-        
+        publish("xs.damouse.alpha/sub")
+    }
+    
+    override func onLeave() {
+        print("Subclass left!")
+    }
+}
+
+
+class Receiver: Domain {
+    
+    override func onJoin() {
         register("reg") { (args: Any) -> Any? in
             print("Received call! Args: \(args)")
             return nil
@@ -25,5 +36,11 @@ class TestingDomain: Domain {
     }
 }
 
-TestingDomain(name: "xs.damouse").join()
-
+// Start the scripts
+if let result = NSProcessInfo.processInfo().environment["SENDER"] {
+    print("Starting Sender")
+    Sender(name: "xs.damouse.beta").join()
+} else {
+    print("Starting Receiver")
+    Receiver(name: "xs.damouse.alpha").join()
+}

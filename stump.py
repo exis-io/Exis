@@ -52,6 +52,11 @@ if __name__ == '__main__':
         else:
             corePath = os.path.join(gopath, 'src/github.com/exis-io/core')
 
+            # Remove existing symlinks
+            if os.path.islink(corePath):
+                os.unlink(corePath)
+
+            # Delete the library if there's anything there
             if os.path.exists(corePath):
                 shutil.rmtree(corePath)
 

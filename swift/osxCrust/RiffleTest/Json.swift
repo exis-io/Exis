@@ -1,21 +1,13 @@
-/*
-Fun fun.
-*/
+//
+//  Json.swift
+//  RiffleTest
+//
+//  Created by damouse on 12/14/15.
+//  Copyright © 2015 exis. All rights reserved.
+//
 
 import Foundation
-import CoreFoundation
 
-#if os(Linux)
-    import SwiftGlibc
-    import Glibc
-#else
-    import Darwin.C
-#endif
-
-
-//////////////////////////////////////
-// JSON Implementation 
-//////////////////////////////////////
 
 let unescapeMapping: [UnicodeScalar: UnicodeScalar] = [
     "t": "\t",
@@ -29,10 +21,10 @@ let escapeMapping: [Character: String] = [
     "\t": "\\t",
     "\\": "\\\\",
     "\"": "\\\"",
-
+    
     "\u{2028}": "\\u2028",
     "\u{2029}": "\\u2029",
-
+    
     "\r\n": "\\r\\n"
 ]
 
@@ -70,7 +62,7 @@ let digitMapping: [UnicodeScalar:Int] = [
 
 public func escapeAsJSONString(source : String) -> String {
     var s = "\""
-
+    
     for c in source.characters {
         if let escapedSymbol = escapeMapping[c] {
             s.appendContentsOf(escapedSymbol)
@@ -78,9 +70,9 @@ public func escapeAsJSONString(source : String) -> String {
             s.append(c)
         }
     }
-
+    
     s.appendContentsOf("\"")
-
+    
     return s
 }
 
@@ -109,7 +101,7 @@ public class DefaultJSONSerializer: JSONSerializer {
         case .ObjectValue(let o): return serializeObject(o)
         }
     }
-
+    
     func serializeNumber(n: Double) -> String {
         if n == Double(Int64(n)) {
             return Int64(n).description
@@ -117,86 +109,86 @@ public class DefaultJSONSerializer: JSONSerializer {
             return n.description
         }
     }
-
+    
     func serializeArray(a: [JSON]) -> String {
         var s = "["
-
+        
         for var i = 0; i < a.count; i++ {
             s += a[i].serialize(self)
-
+            
             if i != (a.count - 1) {
                 s += ","
             }
         }
-
+        
         return s + "]"
     }
-
+    
     func serializeObject(o: [String: JSON]) -> String {
         var s = "{"
         var i = 0
-
+        
         for entry in o {
             s += "\(escapeAsJSONString(entry.0)):\(entry.1.serialize(self))"
             if i++ != (o.count - 1) {
                 s += ","
             }
         }
-
+        
         return s + "}"
     }
 }
 
 public final class PrettyJSONSerializer: DefaultJSONSerializer {
     var indentLevel = 0
-
+    
     override public func serializeArray(a: [JSON]) -> String {
         var s = "["
         indentLevel++
-
+        
         for var i = 0; i < a.count; i++ {
             s += "\n"
             s += indent()
             s += a[i].serialize(self)
-
+            
             if i != (a.count - 1) {
                 s += ","
             }
         }
-
+        
         indentLevel--
         return s + "\n" + indent() + "]"
     }
-
+    
     override public func serializeObject(o: [String: JSON]) -> String {
         var s = "{"
         indentLevel++
         var i = 0
-
+        
         var keys = Array(o.keys)
         keys.sortInPlace()
-
+        
         for key in keys {
             s += "\n"
             s += indent()
             s += "\(escapeAsJSONString(key)): \(o[key]!.serialize(self))"
-
+            
             if i++ != (o.count - 1) {
                 s += ","
             }
         }
-
+        
         indentLevel--
         return s + "\n" + indent() + "}"
     }
-
+    
     func indent() -> String {
         var s = ""
-
+        
         for var i = 0; i < indentLevel; i++ {
             s += "    "
         }
-
+        
         return s
     }
 }
@@ -208,27 +200,27 @@ public enum JSON {
     case StringValue(String)
     case ArrayValue([JSON])
     case ObjectValue([String: JSON])
-
+    
     public static func from(value: Bool) -> JSON {
         return .BooleanValue(value)
     }
-
+    
     public static func from(value: Double) -> JSON {
         return .NumberValue(value)
     }
-
+    
     public static func from(value: String) -> JSON {
         return .StringValue(value)
     }
-
+    
     public static func from(value: [JSON]) -> JSON {
         return .ArrayValue(value)
     }
-
+    
     public static func from(value: [String: JSON]) -> JSON {
         return .ObjectValue(value)
     }
-
+    
     // TODO: decide what to do if Any is not a JSON value
     public static func from(values: [Any]) -> JSON {
         var jsonArray: [JSON] = []
@@ -251,7 +243,7 @@ public enum JSON {
         }
         return JSON.from(jsonArray)
     }
-
+    
     // TODO: decide what to do if Any is not a JSON value
     public static func from(value: [String: Any]) -> JSON {
         var jsonDictionary: [String: JSON] = [:]
@@ -272,94 +264,94 @@ public enum JSON {
                 jsonDictionary[key] = JSON.from(value)
             }
         }
-
+        
         return JSON.from(jsonDictionary)
     }
-
+    
     public var isBoolean: Bool {
         switch self {
         case .BooleanValue: return true
         default: return false
         }
     }
-
+    
     public var isNumber: Bool {
         switch self {
         case .NumberValue: return true
         default: return false
         }
     }
-
+    
     public var isString: Bool {
         switch self {
         case .StringValue: return true
         default: return false
         }
     }
-
+    
     public var isArray: Bool {
         switch self {
         case .ArrayValue: return true
         default: return false
         }
     }
-
+    
     public var isObject: Bool {
         switch self {
         case .ObjectValue: return true
         default: return false
         }
     }
-
+    
     public var boolValue: Bool? {
         switch self {
         case .BooleanValue(let b): return b
         default: return nil
         }
     }
-
+    
     public var doubleValue: Double? {
         switch self {
         case .NumberValue(let n): return n
         default: return nil
         }
     }
-
+    
     public var intValue: Int? {
         if let v = doubleValue {
             return Int(v)
         }
         return nil
     }
-
+    
     public var uintValue: UInt? {
         if let v = doubleValue {
             return UInt(v)
         }
         return nil
     }
-
+    
     public var stringValue: String? {
         switch self {
         case .StringValue(let s): return s
         default: return nil
         }
     }
-
+    
     public var arrayValue: [JSON]? {
         switch self {
         case .ArrayValue(let array): return array
         default: return nil
         }
     }
-
+    
     public var dictionaryValue: [String: JSON]? {
         switch self {
         case .ObjectValue(let dictionary): return dictionary
         default: return nil
         }
     }
-
+    
     public subscript(index: UInt) -> JSON? {
         set {
             switch self {
@@ -384,12 +376,12 @@ public enum JSON {
             }
         }
     }
-
+    
     public subscript(key: String) -> JSON? {
         set {
             switch self {
             case .ObjectValue(let o):
-                var o = o 
+                var o = o
                 o[key] = newValue
                 self = .ObjectValue(o)
             default: break
@@ -403,7 +395,7 @@ public enum JSON {
             }
         }
     }
-
+    
     public func serialize(serializer: JSONSerializer) -> String {
         return serializer.serialize(self)
     }
@@ -484,7 +476,7 @@ extension JSON: FloatLiteralConvertible {
 
 extension JSON: StringLiteralConvertible {
     public typealias UnicodeScalarLiteralType = String
-
+    
     public init(unicodeScalarLiteral value: UnicodeScalarLiteralType) {
         self = .StringValue(value)
     }
@@ -509,7 +501,7 @@ extension JSON: ArrayLiteralConvertible {
 extension JSON: DictionaryLiteralConvertible {
     public init(dictionaryLiteral elements: (String, JSON)...) {
         var dictionary = [String: JSON](minimumCapacity: elements.count)
-
+        
         for pair in elements {
             dictionary[pair.0] = pair.1
         }
@@ -525,7 +517,7 @@ enum JSONParseError: ErrorType, CustomStringConvertible {
     case NonStringKeyError(reason: String, lineNumber: Int, columnNumber: Int)
     case InvalidStringError(reason: String, lineNumber: Int, columnNumber: Int)
     case InvalidNumberError(reason: String, lineNumber: Int, columnNumber: Int)
-
+    
     var description: String {
         switch self {
         case UnexpectedTokenError(let r, let l, let c):
@@ -550,11 +542,11 @@ public struct JSONParser {
     public static func parse(source: String) throws -> JSON {
         return try GenericJSONParser(source.utf8).parse()
     }
-
+    
     public static func parse(source: [UInt8]) throws -> JSON {
         return try GenericJSONParser(source).parse()
     }
-
+    
     public static func parse(source: [Int8]) throws -> JSON {
         return try parse(source.map({UInt8($0)}))
     }
@@ -563,20 +555,20 @@ public struct JSONParser {
 public class GenericJSONParser<ByteSequence: CollectionType where ByteSequence.Generator.Element == UInt8> {
     public typealias Source = ByteSequence
     typealias Char = Source.Generator.Element
-
+    
     let source: Source
     var cur: Source.Index
     let end: Source.Index
-
+    
     public var lineNumber = 1
     public var columnNumber = 1
-
+    
     public init(_ source: Source) {
         self.source = source
         self.cur = source.startIndex
         self.end = source.endIndex
     }
-
+    
     public func parse() throws -> JSON {
         let JSON = try parseValue()
         skipWhitespaces()
@@ -604,7 +596,7 @@ extension GenericJSONParser {
                 columnNumber: columnNumber
             )
         }
-
+        
         switch currentChar {
         case Char(ascii: "n"): return try parseSymbol("null", JSON.NullValue)
         case Char(ascii: "t"): return try parseSymbol("true", JSON.BooleanValue(true))
@@ -617,22 +609,22 @@ extension GenericJSONParser {
             reason: "unexpected token: \(c)",
             lineNumber: lineNumber,
             columnNumber: columnNumber
-        )
+            )
         }
     }
-
+    
     private var currentChar: Char {
         return source[cur]
     }
-
+    
     private var nextChar: Char {
         return source[cur.successor()]
     }
-
+    
     private var currentSymbol: Character {
         return Character(UnicodeScalar(currentChar))
     }
-
+    
     private func parseSymbol(target: StaticString, @autoclosure _ iftrue: Void -> JSON) throws -> JSON {
         if expect(target) {
             return iftrue()
@@ -644,12 +636,12 @@ extension GenericJSONParser {
             )
         }
     }
-
+    
     private func parseString() throws -> JSON {
         assert(currentChar == Char(ascii: "\""), "points a double quote")
         advance()
         var buffer: [CChar] = []
-
+        
         LOOP: for ; cur != end; advance() {
             switch currentChar {
             case Char(ascii: "\\"):
@@ -661,7 +653,7 @@ extension GenericJSONParser {
                         columnNumber: columnNumber
                     )
                 }
-
+                
                 if let c = parseEscapedChar() {
                     for u in String(c).utf8 {
                         buffer.append(CChar(bitPattern: u))
@@ -677,7 +669,7 @@ extension GenericJSONParser {
             default: buffer.append(CChar(bitPattern: currentChar))
             }
         }
-
+        
         if !expect("\"") {
             throw JSONParseError.InvalidStringError(
                 reason: "missing double quote",
@@ -685,45 +677,45 @@ extension GenericJSONParser {
                 columnNumber: columnNumber
             )
         }
-
+        
         buffer.append(0)
         let s = String.fromCString(buffer)!
         return .StringValue(s)
     }
-
+    
     private func parseEscapedChar() -> UnicodeScalar? {
         let c = UnicodeScalar(currentChar)
-
+        
         if c == "u" {
             var length = 0
             var value: UInt32 = 0
-
+            
             while let d = hexToDigit(nextChar) {
                 advance()
                 length++
-
+                
                 if length > 8 {
                     break
                 }
-
+                
                 value = (value << 4) | d
             }
-
+            
             if length < 2 {
                 return nil
             }
-
+            
             return UnicodeScalar(value)
         } else {
             let c = UnicodeScalar(currentChar)
             return unescapeMapping[c] ?? c
         }
     }
-
+    
     private func parseNumber() throws -> JSON {
         let sign = expect("-") ? -1.0 : 1.0
         var integer: Int64 = 0
-
+        
         switch currentChar {
         case Char(ascii: "0"): advance()
         case Char(ascii: "1") ... Char(ascii: "9"):
@@ -741,7 +733,7 @@ extension GenericJSONParser {
                 columnNumber: columnNumber
             )
         }
-
+        
         if integer != Int64(Double(integer)) {
             throw JSONParseError.InvalidNumberError(
                 reason: "too large number",
@@ -749,13 +741,13 @@ extension GenericJSONParser {
                 columnNumber: columnNumber
             )
         }
-
+        
         var fraction: Double = 0.0
-
+        
         if expect(".") {
             var factor = 0.1
             var fractionLength = 0
-
+            
             for ; cur != end; advance() {
                 if let value = digitToInt(currentChar) {
                     fraction += (Double(value) * factor)
@@ -765,7 +757,7 @@ extension GenericJSONParser {
                     break
                 }
             }
-
+            
             if fractionLength == 0 {
                 throw JSONParseError.InvalidNumberError(
                     reason: "insufficient fraction part in number",
@@ -774,19 +766,19 @@ extension GenericJSONParser {
                 )
             }
         }
-
+        
         var exponent: Int64 = 0
-
+        
         if expect("e") || expect("E") {
             var expSign: Int64 = 1
-
+            
             if expect("-") {
                 expSign = -1
             } else if expect("+") {}
-
+            
             exponent = 0
             var exponentLength = 0
-
+            
             for ; cur != end; advance() {
                 if let value = digitToInt(currentChar) {
                     exponent = (exponent * 10) + Int64(value)
@@ -795,7 +787,7 @@ extension GenericJSONParser {
                     break
                 }
             }
-
+            
             if exponentLength == 0 {
                 throw JSONParseError.InvalidNumberError(
                     reason: "insufficient exponent part in number",
@@ -803,26 +795,26 @@ extension GenericJSONParser {
                     columnNumber: columnNumber
                 )
             }
-
+            
             exponent *= expSign
         }
-
+        
         return .NumberValue(sign * (Double(integer) + fraction) * pow(10, Double(exponent)))
     }
-
+    
     private func parseObject() throws -> JSON {
         assert(currentChar == Char(ascii: "{"), "points \"{\"")
         advance()
         skipWhitespaces()
         var object: [String: JSON] = [:]
-
+        
         LOOP: while cur != end && !expect("}") {
             let keyValue = try parseValue()
-
+            
             switch keyValue {
             case .StringValue(let key):
                 skipWhitespaces()
-
+                
                 if !expect(":") {
                     throw JSONParseError.UnexpectedTokenError(
                         reason: "missing colon (:)",
@@ -830,12 +822,12 @@ extension GenericJSONParser {
                         columnNumber: columnNumber
                     )
                 }
-
+                
                 skipWhitespaces()
                 let value = try parseValue()
                 object[key] = value
                 skipWhitespaces()
-
+                
                 if expect(",") {
                     break
                 } else if expect("}") {
@@ -855,17 +847,17 @@ extension GenericJSONParser {
                 )
             }
         }
-
+        
         return .ObjectValue(object)
     }
-
+    
     private func parseArray() throws -> JSON {
         assert(currentChar == Char(ascii: "["), "points \"[\"")
         advance()
         skipWhitespaces()
-
+        
         var array: [JSON] = []
-
+        
         LOOP: while cur != end && !expect("]") {
             let JSON = try parseValue()
             skipWhitespaces()
@@ -958,162 +950,4 @@ extension GenericJSONParser {
             }
         }
     }
-}
-
-
-//////////////////////////////////////
-// Domain.swift
-//////////////////////////////////////
-
-// Sets itself as the delegate if none provided
-public protocol RiffleDelegate {
-    func onJoin()
-    func onLeave()
-}
-
-
-//////////////////////////////////////
-// Utils.swift
-//////////////////////////////////////
-
-extension String {
-    func cString() -> UnsafeMutablePointer<Int8> {
-        var ret: UnsafeMutablePointer<Int8> = UnsafeMutablePointer<Int8>()
-
-        self.withCString { p in
-            var c = 0
-            while p[c] != 0 {
-                c += 1
-            }
-            c += 1
-            let a = UnsafeMutablePointer<Int8>.alloc(c)
-            a.initialize(0)
-            for i in 0..<c {
-                a[i] = p[i]
-            }
-            a[c-1] = 0
-            ret = a
-        }
-
-        return ret
-    }
-}
-
-// Decoding specific to mantle 
-func decode(p: GoSlice) -> (Int64, [Any]) {    
-    let int8Ptr = unsafeBitCast(p.data, UnsafePointer<Int8>.self)
-    let dataString = String.fromCString(int8Ptr)!
-
-    var data = try! JSONParser.parse(dataString).arrayValue! 
-    var i = data[0].uintValue!
-    var ret: [Any] = []
-
-    data.removeAtIndex(0) 
-
-    for x in data {
-        if x == JSON.NullValue {
-            print("nill")
-        } else {
-            if let z = x as? Any {
-                ret.append(z)
-            }
-        }
-    }
-
-    return (Int64(i), ret)
-}
-
-//////////////////////////////////////
-// Deferred.swift
-//////////////////////////////////////
-
-func invocation(slice: GoSlice) -> (Int64, Int64) {
-    let (i, a) = decode(slice)
-
-    if let z = a as? Int {
-        return (i, Int64(z))
-    } else {
-        return (i, 0)
-    }
-}
-
-
-public class Domain {
-    var mantleDomain: UnsafeMutablePointer<Void>
-    var handlers: [UInt64: (Any) -> (Any?)] = [:]
-    
-    public var delegate: RiffleDelegate?
-    
-    
-    public init(name: String) {
-        let d = Deferred()
-        
-        mantleDomain = NewDomain(name.cString())
-        // delegate = self
-    }
-    
-    public func subscribe(endpoint: String, fn: (Any) -> ()) {
-        let cb = CBID()
-        Subscribe(self.mantleDomain, cb, endpoint.cString())
-        
-        handlers[cb] = { (a: Any) -> (Any?) in
-            fn(a)
-            return nil
-        }
-    }
-    
-    public func register(endpoint: String, fn: (Any) -> (Any?)) {
-        let cb = CBID()
-        Register(self.mantleDomain, cb, endpoint.cString())
-        
-        handlers[cb] = { (a: Any) -> (Any?) in
-            return fn(a)
-        }
-    }
-    
-    
-    func receive() {
-        while true {
-            let (i, args) = decode(Receive(mantleDomain))
-
-            if let handler = handlers[UInt64(i)] {
-                if let a = args as? Any {
-                    //Cuminicate here
-                    handler(a)
-                } else {
-                    print("Unknown args \(args)")
-                }
-            } else {
-                print("No handler found for subscription \(i)")
-                print(handlers)
-            }            
-        }
-    }
-    
-    public func join() {
-        let cb = CBID()
-        let eb = CBID()
-        
-        Join(mantleDomain, cb, eb)
-        
-        handlers[cb] = { (a: Any) -> (Any?) in
-            if let d = self.delegate {
-                d.onJoin()
-            }
-            
-            return nil
-        }
-        
-        handlers[eb] = { (a: Any) -> (Any?) in
-            print("Unable to join!")
-            return nil
-        }
-        
-        receive()
-    }
-    
-    
-    // MARK: Delegate methods
-    public func onJoin() { }
-    public func onLeave() { }
 }

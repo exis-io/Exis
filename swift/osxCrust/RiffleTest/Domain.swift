@@ -8,6 +8,7 @@
 
 /*
 TODO:
+
     Integrate with main swiftRiffle lib for testing
     Make conditional compilers for ios and osx
     Cleanup and integrate new changes with goRiffle
@@ -19,9 +20,11 @@ import Foundation
 
 public class Domain: RiffleDelegate {
     var mantleDomain: UnsafeMutablePointer<Void>
-    var handlers: [UInt64: (Any) -> (Any?)] = [:]
-    
     var delegate: RiffleDelegate?
+    
+    var handlers: [UInt64: (Any) -> ()] = [:]
+    var invocations: [UInt64: (Any) -> ()] = [:]
+    var registrations: [UInt64: (Any) -> (Any?)] = [:]
     
     
     init(name: String) {
@@ -37,69 +40,44 @@ public class Domain: RiffleDelegate {
     public func subscribe(endpoint: String, fn: (Any) -> ()) {
         let cb = CBID()
         Subscribe(self.mantleDomain, cb, endpoint.cString())
-        
-        handlers[cb] = { (a: Any) -> (Any?) in
-            fn(a)
-            return nil
-        }
+        handlers[cb] = fn
     }
     
     public func register(endpoint: String, fn: (Any) -> (Any?)) {
         let cb = CBID()
         Register(self.mantleDomain, cb, endpoint.cString())
-        
-        handlers[cb] = { (a: Any) -> (Any?) in
-            return fn(a)
-        }
+        registrations[cb] = fn
+    }
+    
+    public func call(endpoint: String, args: AnyObject..., handler: (Any) -> ()) {
+        let cb = CBID()
+        Call(self.mantleDomain, cb, endpoint.cString(), marshall(args))
+        invocations[cb] = handler
+    }
+    
+    public func publish(endpoint: String, args: AnyObject...) {
+        let marshalled = marshall(args)
+        print("Publishing: \(endpoint) with args \(args) marshalled: \(marshalled)")
+        Publish(self.mantleDomain, 0, endpoint.cString(), marshalled)
     }
     
     func receive() {
         while true {
             let (i, args) = decode(Receive(self.mantleDomain))
             
-            if let handler = handlers[UInt64(i)] {
-                if let a = args as? Any {
-                    
-                    //Cuminicate here
-                    handler(a)
+            if let fn = handlers[i] {
+                fn(args)
+            } else if let fn = invocations[i] {
+                fn(args)
+            } else if let fn = registrations[i] {
+                if let ret = fn(args) {
+                    print("Handling return with args: \(ret)")
                 } else {
-                    print("Unknown args \(args)")
+                    print("Not handling returns!")
                 }
             } else {
-                print("No handler found for subscription \(i)")
-                print(handlers)
+                print("No handlers found for id \(i)")
             }
-            
-            // TODO: Yield here
-            
-//            let s = Recieve()
-//            //print("Received: \(s)")
-//            let d = NSData(bytes: s.data , length: NSNumber(longLong: s.len).integerValue)
-//            let data = try! NSJSONSerialization.JSONObjectWithData(d, options: .AllowFragments) as! [AnyObject]
-//            
-//            if let handler = handlers[data[0].longLongValue] {
-//                // Cuminicate here
-//                let args = data[1]
-//                handler(args)
-//            } else {
-//                print("No handler found for subscription \(data[0])")
-//                print(handlers)
-//            }
-            
-            /*
-            if let results = handlers[data[0].longLongValue]!(args) {
-                let json: [String: AnyObject] = [
-                    "id": String(Int64(data["request"] as! Double)),
-                    "ok": "",
-                    "result": results
-                ]
-
-                let out = try! NSJSONSerialization.dataWithJSONObject(json, options: . PrettyPrinted)
-
-                let slice = GoSlice(data: UnsafeMutablePointer<Void>(out.bytes), len: NSNumber(integer: out.length).longLongValue, cap: NSNumber(integer: out.length).longLongValue)
-                Yield(slice)
-            }
-            */
         }
     }
     
@@ -109,23 +87,20 @@ public class Domain: RiffleDelegate {
         
         Join(mantleDomain, cb, eb)
         
-        handlers[cb] = { (a: Any) -> (Any?) in
+        handlers[cb] = { a in
             if let d = self.delegate {
                 d.onJoin()
             }
-            
-            return nil
         }
         
-        handlers[eb] = { (a: Any) -> (Any?) in
+        handlers[eb] = { (a: Any) in
             print("Unable to join!")
-            return nil
         }
         
         // Kick off the receive thread
-//        let thread = NSThread(target: self, selector: "receive", object: nil)
-//        thread.start()
-//        NSRunLoop.currentRunLoop().run()
+        let thread = NSThread(target: self, selector: "receive", object: nil)
+        thread.start()
+        NSRunLoop.currentRunLoop().run()
         receive()
     }
     
