@@ -1,24 +1,13 @@
-// package name: reef
 package main
 
 import (
 	"fmt"
 
-	// _ "github.com/augustoroman/promise"
 	"github.com/exis-io/core"
 	"github.com/gopherjs/gopherjs/js"
 )
 
-// A good resource on working with gopherjs
-// http://legacytotheedge.blogspot.de/2014/03/gopherjs-go-to-javascript-transpiler.html
-
-/*
-TODO
-    Remove fmt from core to reduce size of library
-    Inject writer for logging and saving
-*/
-
-var fabric string = core.FabricLocal
+var fabric string = core.FabricProduction
 
 func main() {
 	// Functions are autoexported on non-pointer types-- dont need "Subdomain" listed here
@@ -48,8 +37,10 @@ func main() {
 }
 
 type Domain struct {
-	coreDomain core.Domain
-	wrapped    *js.Object
+	coreDomain    core.Domain
+	wrapped       *js.Object
+	registrations map[uint]*js.Object
+	subscriptions map[uint]*js.Object
 }
 
 type Conn struct {
@@ -86,7 +77,9 @@ func (c Conn) SetApp(app core.App) {
 
 func New(name string) *js.Object {
 	d := Domain{
-		coreDomain: core.NewDomain(name, nil),
+		coreDomain:    core.NewDomain(name, nil),
+		registrations: make(map[uint]*js.Object),
+		subscriptions: make(map[uint]*js.Object),
 	}
 
 	d.wrapped = js.MakeWrapper(&d)
@@ -95,7 +88,9 @@ func New(name string) *js.Object {
 
 func (d *Domain) Subdomain(name string) *js.Object {
 	n := Domain{
-		coreDomain: d.coreDomain.Subdomain(name),
+		coreDomain:    d.coreDomain.Subdomain(name),
+		registrations: make(map[uint]*js.Object),
+		subscriptions: make(map[uint]*js.Object),
 	}
 
 	n.wrapped = js.MakeWrapper(&n)
@@ -126,49 +121,50 @@ func (d *Domain) Join() {
 	w.Call("open", fabric)
 }
 
-func (d Domain) OnJoin() {
-	fmt.Println("Default onJoin")
-}
-
 // The actual join method
 func (d *Domain) FinishJoin(c *Conn) {
 	if err := d.coreDomain.Join(c); err != nil {
-		// d.coreDomain.GetApp().CallbackSend(eb, err.Error())
 		fmt.Println("Cant join: ", err)
 	} else {
-		// d.coreDomain.GetApp().CallbackSend(cb)
 		fmt.Println("Joined!")
-
-		// Only call onJoin if it exsts
 		if j := d.wrapped.Get("onJoin"); j != js.Undefined {
 			d.wrapped.Call("onJoin")
 		}
 	}
-
 }
 
-func (d *Domain) Subscribe(cb uint, endpoint string) {
+func (d *Domain) Subscribe(endpoint string, handler *js.Object) {
+	cb := core.NewID()
+	d.subscriptions[cb] = handler
+
 	go func() {
 		d.coreDomain.Subscribe(endpoint, cb, make([]interface{}, 0))
 	}()
 }
 
-func (d *Domain) Register(cb uint, endpoint string) {
+func (d *Domain) Register(endpoint string, handler *js.Object) {
+	cb := core.NewID()
+	d.registrations[cb] = handler
+
 	go func() {
 		d.coreDomain.Register(endpoint, cb, make([]interface{}, 0))
 	}()
 }
 
-// Args are string encoded json
-func (d *Domain) Publish(cb uint, endpoint string, args string) {
+func (d *Domain) Publish(endpoint string, args ...interface{}) {
+	fmt.Println("Publishing: ", args)
+	cb := core.NewID()
+
 	go func() {
-		d.coreDomain.Publish(endpoint, cb, core.MantleUnmarshal(args))
+		d.coreDomain.Publish(endpoint, cb, args)
 	}()
 }
 
-func (d *Domain) Call(cb uint, endpoint string, args string) {
+func (d *Domain) Call(endpoint string, args ...interface{}) {
+	cb := core.NewID()
+
 	go func() {
-		d.coreDomain.Call(endpoint, cb, core.MantleUnmarshal(args))
+		d.coreDomain.Call(endpoint, cb, args)
 	}()
 }
 
@@ -214,202 +210,3 @@ func Debug(s string)       { core.Debug("%s", s) }
 func Info(s string)        { core.Info("%s", s) }
 func Warn(s string)        { core.Warn("%s", s) }
 func Error(s string)       { core.Error("%s", s) }
-
-// Do we want a GetName? Most likely yes
-
-/*
-type wrapper struct {
-	app    core.App
-	conn   *js.Object
-	opened chan bool
-}
-
-type domain struct {
-	wrapper  *wrapper
-	mirror   core.Domain
-	handlers map[uint]*js.Object
-	kill     chan bool
-}
-
-type Domain interface {
-	Subscribe(string, interface{}) error
-	Register(string, interface{}) error
-
-	Publish(string, ...interface{}) error
-	Call(string, ...interface{}) ([]interface{}, error)
-
-	Unsubscribe(string) error
-	Unregister(string) error
-
-	Join() error
-	Leave() error
-}
-
-var wrap *wrapper
-
-// Required main method
-func main() {
-	js.Global.Set("Core", map[string]interface{}{
-		"SetLoggingDebug": core.SetLoggingDebug,
-		"SetLoggingInfo":  core.SetLoggingInfo,
-		"SetLoggingWarn":  core.SetLoggingWarn,
-	})
-
-	// Change Wrapper to Pool
-	js.Global.Set("Wrapper", map[string]interface{}{
-		"New":              NewWrapper,
-		"SetConnection":    SetConnection,
-		"ConnectionOpened": ConnectionOpened,
-		"NewMessage":       NewMessage,
-	})
-
-	js.Global.Set("Domain", map[string]interface{}{
-		"New": NewDomain,
-	})
-
-	// core.SetLogWriter()
-}
-
-/////////////////////////////////////////////
-// Connection Wrapper
-/////////////////////////////////////////////
-
-func NewWrapper() {
-	if wrap == nil {
-		h := core.NewApp()
-
-		wrap = &wrapper{
-			app:    h,
-			opened: make(chan bool),
-		}
-	}
-}
-
-func (w *wrapper) Send(data []byte) {
-	w.conn.Call("send", string(data))
-}
-
-func (w *wrapper) Close(reason string) error {
-	w.conn.Call("close", 1000, reason)
-	return nil
-}
-
-// Call SetConnection, then Join
-func SetConnection(c *js.Object) {
-	fmt.Println("Connection set: ", c)
-	wrap.conn = c
-	// c.Set("onmessage", wrap.app.ReceiveString)
-}
-
-func NewMessage(c *js.Object) {
-	fmt.Println("Message Receive: ", c.String())
-	wrap.app.ReceiveString(c.String())
-}
-
-func ConnectionOpened() {
-	wrap.opened <- true
-}
-
-/////////////////////////////////////////////
-// Domain Functions
-/////////////////////////////////////////////
-
-func NewDomain(name string) *js.Object {
-	fmt.Println("Created a new domain")
-
-	if wrap == nil {
-		fmt.Println("WARN: wrapper hasn't been created yet!")
-	}
-
-	d := domain{
-		wrapper:  wrap,
-		handlers: make(map[uint]*js.Object),
-		kill:     make(chan bool),
-	}
-
-	d.mirror = wrap.app.NewDomain(name, d)
-	return js.MakeWrapper(&d)
-}
-
-func (d *domain) Subscribe(endpoint string, handler *js.Object) error {
-	// Cute, but not the best idea long term. Deferreds are going to be easiest (?)
-	go func() {
-		if i, err := d.mirror.Subscribe(endpoint, []interface{}{}); err != nil {
-			// return err
-			fmt.Println("Unable to subscribe: ", err.Error())
-		} else {
-			// fmt.Println("Subscribedd with id, handler: ", i, handler)
-			d.handlers[i] = handler
-			// return nil
-		}
-	}()
-
-	return nil
-}
-
-func (d *domain) Register(endpoint string, handler *js.Object) error {
-	if i, err := d.mirror.Register(endpoint, []interface{}{}); err != nil {
-		return err
-	} else {
-		d.handlers[i] = handler
-		return nil
-	}
-}
-
-func (d *domain) Publish(endpoint string, args ...interface{}) error {
-	err := d.mirror.Publish(endpoint, args)
-	return err
-}
-
-func (d *domain) Call(endpoint string, args ...interface{}) ([]interface{}, error) {
-	args, err := d.mirror.Call(endpoint, args)
-	return args, err
-}
-
-func (d *domain) Unsubscribe(endpoint string) error {
-	err := d.mirror.Unsubscribe(endpoint)
-	return err
-}
-
-func (d *domain) Unregister(endpoint string) error {
-	err := d.mirror.Unregister(endpoint)
-	return err
-}
-
-func (d *domain) Join() error {
-	// If this domain doesnt have a pool, create one now and obtain a connection
-	// If we can't call out because of the platform, the wrapper must push us a connection when a domain calls join
-
-	go func() {
-		// wait for onopen from the connection
-		<-d.wrapper.opened
-		d.mirror.Join(d.wrapper)
-	}()
-
-	return nil
-}
-
-func (d *domain) Leave() error {
-	err := d.mirror.Leave()
-
-	// for each subscription
-	// for each registration
-
-	return err
-}
-
-func (d domain) Invoke(endpoint string, id uint, args []interface{}) ([]interface{}, error) {
-	// return core.Cumin(d.handlers[id], args)
-	d.handlers[id].Invoke(args)
-	return nil, nil
-}
-
-func (d domain) OnJoin(string) {
-	fmt.Println("Delegate joined!")
-}
-
-func (d domain) OnLeave(string) {
-	fmt.Println("Delegate left!!")
-	d.kill <- true
-}
-*/

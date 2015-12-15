@@ -165,8 +165,8 @@ func (c domain) Subscribe(endpoint string, requestId uint, types []interface{}) 
 	if msg, err := c.app.requestListenType(sub, "*core.subscribed"); err != nil {
 		return err
 	} else {
-		subbed := msg.(*subscribed)
 		Info("Subscribed: %s", endpoint)
+		subbed := msg.(*subscribed)
 		c.subscriptions[subbed.Subscription] = &boundEndpoint{requestId, endpoint, types}
 		return nil
 	}
@@ -202,8 +202,8 @@ func (c domain) Call(endpoint string, requestId uint, args []interface{}) error 
 	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
 		return err
 	} else {
-		// No cumin here?
-		c.app.CallbackSend(requestId, msg.(*result).Arguments...)		
+		c.app.CallbackSend(requestId, msg.(*result).Arguments...)
+		// return msg.(*result).Arguments, nil
 		return nil
 	}
 }
