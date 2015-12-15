@@ -74,15 +74,14 @@ public class Domain: RiffleDelegate {
                 var args = unwrap.arrayValue!
                 let resultId = args.removeAtIndex(0)
                 
-                print("Handling return with id: \(resultId)")
-                
                 if let ret = fn(args) {
-                    print("Handling return with args: \(ret)")
+                    //print("Handling return with args: \(ret)")
+                    Yield(mantleDomain, UInt64(resultId.doubleValue!), marshall(ret))
                 } else {
                     print("Not handling returns!")
                 }
             } else {
-                print("No handlers found for id \(i)")
+                print("No handlers found for id \(i)!")
             }
         }
     }
