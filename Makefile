@@ -45,6 +45,10 @@ python:
 # python: libriffmantle.so
 # 	cp assets/libriffmantle.so python/pyRiffle/riffle/libriffmantle.so
 # 	cp assets/libriffmantle.h python/pyRiffle/riffle/libriffmantle.h
+#
+# On debugging system python with osx: 
+# https://github.com/numenta/nupic/issues/1813
+#
 
 js: 
 	gopherjs build -mv core/jsMantle/main.go
