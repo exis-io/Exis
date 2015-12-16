@@ -7,8 +7,8 @@ type Domain interface {
 
 	Subscribe(string, uint, []interface{}) error
 	Register(string, uint, []interface{}) error
-	Publish(string, uint, []interface{}) error
-	Call(string, uint, []interface{}) error
+	Publish(string, []interface{}) error
+	Call(string, []interface{}, []interface{}) ([]interface{}, error)
 
 	Unsubscribe(string) error
 	Unregister(string) error
@@ -144,20 +144,6 @@ func (c *domain) Leave() error {
 // Message Patterns
 /////////////////////////////////////////////
 
-// Apply the arguments to the given function on this domain.
-// Accepts a list of arguments and a list of types for cuminication
-// func (c domain) apply(fn func(string, uint, []interface{}), endpoint string, cb uint, eb uint) {
-// 	// TODO: Validate endpoint, else errback
-// 	endpoint = makeEndpoint(c.name, endpoint)
-
-// 	// with function Subscribe:
-// 	if e := fn(&c, endpoint, cb); e != nil {
-// 		// If the function returns an error, err it back immediately
-// 	}
-
-// 	// Note that the above won't work for unsubscribe and unregister, since their success case returns nil
-// }
-
 func (c domain) Subscribe(endpoint string, requestId uint, types []interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 	sub := &subscribe{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
@@ -186,7 +172,7 @@ func (c domain) Register(endpoint string, requestId uint, types []interface{}) e
 	}
 }
 
-func (c domain) Publish(endpoint string, requestId uint, args []interface{}) error {
+func (c domain) Publish(endpoint string, args []interface{}) error {
 	return c.app.Send(&publish{
 		Request:   NewID(),
 		Options:   make(map[string]interface{}),
@@ -195,16 +181,15 @@ func (c domain) Publish(endpoint string, requestId uint, args []interface{}) err
 	})
 }
 
-func (c domain) Call(endpoint string, requestId uint, args []interface{}) error {
+func (c domain) Call(endpoint string, args []interface{}, types []interface{}) ([]interface{}, error) {
 	endpoint = makeEndpoint(c.name, endpoint)
-	call := &call{Request: requestId, Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
+	call := &call{Request: NewID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
 
 	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
-		return err
+		return nil, err
 	} else {
-		c.app.CallbackSend(requestId, msg.(*result).Arguments...)
-		// return msg.(*result).Arguments, nil
-		return nil
+		// TODO: check the types of the retuend arguments
+		return msg.(*result).Arguments, nil
 	}
 }
 

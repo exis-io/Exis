@@ -1,200 +1,87 @@
 package riffle
 
 import (
-	"encoding/json"
-	"fmt"
-	"unsafe"
-
 	"github.com/exis-io/core"
 	"github.com/exis-io/core/goRiffle"
 )
 
-type Domain interface {
-	Subscribe(string, uint) error
-	// Register(string, uint, []interface{}) error
-
-	// Publish(string, uint, []interface{}) error
-	// Call(string, uint, []interface{}) ([]interface{}, error)
-
-	// Yield(uint, []interface{})
-
-	// Unsubscribe(string) error
-	// Unregister(string) error
-
-	// Join(Connection) error
-	// Leave() error
+type Domain struct {
+	coreDomain core.Domain
 }
 
-type App struct {
-	app  core.App
-	conn *goRiffle.WebsocketConnection
-	recv chan []byte
+func NewDomain(name string) Domain {
+	return Domain{coreDomain: core.NewDomain(name, nil)}
 }
 
-type domain struct {
-	core *core.Domain
+func (d *Domain) Subdomain(name string) Domain {
+	return Domain{coreDomain: d.coreDomain.Subdomain(name)}
 }
 
-// var man = &Mantle{
-// 	recv: make(chan []byte),
-// }
-
-func main() {}
-
-func (m *App) NewDomain(name string) Domain {
-	fmt.Println("NewDomain called!")
-
-	if m.app == nil {
-		m.app = core.NewApp()
-	}
-
-	d := domain{
-		core: m.app.NewDomain(name, m),
-	}
-
-	return d
+// Blocks on callbacks from the core
+func (d *Domain) Receive() string {
+	return core.MantleMarshall(d.coreDomain.GetApp().CallbackListen())
 }
 
-func (d *Domain) Subscribe(endpoint string, types string, cb uint, eb uint, handler uint) {
-	// Accept eb, cb, handler
-	// Callback with error or success at the end of the main operation
-
-	go func() {
-		if err := d.coreDomain.Subscribe(endpoint, handler, core.MantleUnmarshal(args)); err != nil {
-			d.coreDomain.GetApp().CallbackSend(cb)
-		} else {
-			d.coreDomain.GetApp().CallbackSend(eb, err.Error())
-		}
-	}()
-
-	return marshall([]uint{cb, eb})
-}
-
-
-func Subscribe(endpoint string) []byte {
-	d := *(*core.Domain)(pdomain)
-	cb, eb := core.NewID(), core.NewID()
-
-	go func() {
-		d.Subscribe(endpoint), cb, make([]interface{}, 0))
-	}()
-
-	return marshall([]uint{cb, eb})
-}
-
-//export Register
-func Register(endpoint string) []byte {
-	d := *(*core.Domain)(pdomain)
-	cb, eb := core.NewID(), core.NewID()
-
-	go func() {
-		d.Register(endpoint), cb, make([]interface{}, 0))
-	}()
-
-	return marshall([]uint{cb, eb})
-}
-
-func Yield(args []byte) {
-	// This needs work
-	// core.Yield(e))
-}
-
-func Publish(endpoint string) {
-	d := *(*core.Domain)(pdomain)
-	cb, _ := core.NewID(), core.NewID()
-
-	go func() {
-		d.Publish(endpoint), cb, make([]interface{}, 0))
-	}()
-}
-
-func Call(endpoint string) {
-	d := *(*core.Domain)(pdomain)
-	cb, _ := core.NewID(), core.NewID()
-
-	go func() {
-		d.Call(endpoint), cb, make([]interface{}, 0))
-	}()
-}
-
-func Unsubscribe(pdomain unsafe.Pointer, e string) {
-	d := *(*core.Domain)(pdomain)
-	d.Unsubscribe(e))
-}
-
-func Unregister(pdomain unsafe.Pointer, e string) {
-	d := *(*core.Domain)(pdomain)
-	d.Unregister(e))
-}
-
-//export Join
-func Join(pdomain unsafe.Pointer) []byte {
-	d := *(*core.Domain)(pdomain)
-	cb, eb := core.NewID(), core.NewID()
-
-	go func() {
-		if man.conn != nil {
-			man.InvokeError(eb, "Connection is already open!")
-		}
-
-		if c, err := goRiffle.Open(core.DevFabric); err != nil {
-			man.InvokeError(eb, err.Error())
-		} else {
-			man.conn = c
-			c.App = man.app
-
-			if err := d.Join(c); err != nil {
-				core.Warn("Unable to join! %s", err)
-				man.InvokeError(eb, err.Error())
-			} else {
-				core.Info("Joined!")
-				man.Invoke(cb, nil)
-			}
-		}
-	}()
-
-	return marshall([]uint{cb, eb})
-}
-
-//export Leave
-func Leave(pdomain unsafe.Pointer) {
-	d := *(*core.Domain)(pdomain)
-	d.Leave()
-}
-
-//export Recieve
-func Recieve() []byte {
-	data := <-man.recv
-	return data
-}
-
-func marshall(data interface{}) []byte {
-	if r, e := json.Marshal(data); e == nil {
-		return r
+// TODO: Move this to the mantle helper
+func (d *Domain) Join(cb uint, eb uint) {
+	if c, err := goRiffle.Open(core.Fabric); err != nil {
+		d.coreDomain.GetApp().CallbackSend(eb, err.Error())
 	} else {
-		fmt.Println("Unable to marshall data!")
-		return nil
+		if err := d.coreDomain.Join(c); err != nil {
+			d.coreDomain.GetApp().CallbackSend(eb, err.Error())
+		} else {
+			d.coreDomain.GetApp().CallbackSend(cb)
+		}
 	}
 }
 
-func unmarshall() {
-
+func (d *Domain) Subscribe(endpoint string, cb uint, eb uint, fn uint, types string) {
+	go core.MantleSubscribe(d.coreDomain, endpoint, cb, eb, fn, core.MantleUnmarshal(types))
 }
 
-// Unexported Functions
-func (m mantle) Invoke(id uint, args []interface{}) {
-	core.Debug("Invoke called: ", id, args)
-	// man.recv <- marshall(map[string]interface{}{"0": id, "1": args})
-	man.recv <- marshall([]interface{}{id, args})
+func (d *Domain) Register(endpoint string, cb uint, eb uint, fn uint, types string) {
+	go core.MantleRegister(d.coreDomain, endpoint, cb, eb, fn, core.MantleUnmarshal(types))
 }
 
-func (m mantle) InvokeError(id uint, e string) {
-	// core.Debug("Invoking error: ", id, e)
-	s := fmt.Sprintf("Err: %s", e)
-	man.recv <- marshall([]interface{}{id, s})
+func (d *Domain) Publish(endpoint string, cb uint, eb uint, args string) {
+	go core.MantlePublish(d.coreDomain, endpoint, cb, eb, core.MantleUnmarshal(args))
 }
 
-//export SetLoggingLevel
-func SetLoggingLevel(l int) {
-	core.LogLevel = l
+func (d *Domain) Call(endpoint string, cb uint, eb uint, args string, types string) {
+	go core.MantleCall(d.coreDomain, endpoint, cb, eb, core.MantleUnmarshal(args), core.MantleUnmarshal(types))
 }
+
+func (d *Domain) Unsubscribe(endpoint string, cb uint, eb uint) {
+	go core.MantleUnsubscribe(d.coreDomain, endpoint, cb, eb)
+}
+
+func (d *Domain) Unregister(endpoint string, cb uint, eb uint) {
+	go core.MantleUnregister(d.coreDomain, endpoint, cb, eb)
+}
+
+func (d *Domain) Yield(request uint, args string) {
+	go d.coreDomain.GetApp().Yield(request, core.MantleUnmarshal(args))
+}
+
+func (d *Domain) Leave() {
+	go d.coreDomain.Leave()
+}
+
+func SetLogLevelOff()   { core.LogLevel = core.LogLevelOff }
+func SetLogLevelApp()   { core.LogLevel = core.LogLevelApp }
+func SetLogLevelErr()   { core.LogLevel = core.LogLevelErr }
+func SetLogLevelWarn()  { core.LogLevel = core.LogLevelWarn }
+func SetLogLevelInfo()  { core.LogLevel = core.LogLevelInfo }
+func SetLogLevelDebug() { core.LogLevel = core.LogLevelDebug }
+
+func SetFabricDev()        { core.Fabric = core.FabricDev }
+func SetFabricSandbox()    { core.Fabric = core.FabricSandbox }
+func SetFabricProduction() { core.Fabric = core.FabricProduction }
+func SetFabricLocal()      { core.Fabric = core.FabricLocal }
+func SetFabric(url string) { core.Fabric = url }
+
+func Application(s string) { core.Application("%s", s) }
+func Debug(s string)       { core.Debug("%s", s) }
+func Info(s string)        { core.Info("%s", s) }
+func Warn(s string)        { core.Warn("%s", s) }
+func Error(s string)       { core.Error("%s", s) }

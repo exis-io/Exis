@@ -1,7 +1,7 @@
 
 import riffle
 
-riffle.SetFabricDev()
+riffle.SetFabricLocal()
 riffle.SetLogLevelDebug()
 
 
