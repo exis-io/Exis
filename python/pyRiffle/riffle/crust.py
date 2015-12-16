@@ -7,18 +7,10 @@ from greenlet import greenlet
 
 import riffle
 
-# Create a new random callback id
-
 
 def newID(n):
     ''' Returns n random unsigned integers to act as Callback Ids '''
-    return tuple([random.getrandbits(53) for x in range(num)])
-
-
-class Deferred(object):
-
-    def __init__(self):
-        cb, eb = None, None
+    return tuple([random.getrandbits(53) for x in range(n)])
 
 
 class App(object):
@@ -33,6 +25,8 @@ class App(object):
 
             # Wrap it all in a try-catch, return publish and call errors
             # Don't return yield errors-- its not clear who should deal with those
+
+            print "Invoking with id " + str(i) + " args: " + str(args)
 
             # Turned out to work as a leave case, though this isn't  clean
             if i == 0:
@@ -93,12 +87,12 @@ class Domain(object):
 
     def subscribe(self, endpoint, handler):
         cb, eb, fn = newID(3)
-        self.mantleDomain.Subscribe(endpoint, cb, eb, fn, "")
+        self.mantleDomain.Subscribe(endpoint, cb, eb, fn, json.dumps([]))
         self.app.subscriptions[fn] = handler
 
     def register(self, endpoint, handler):
         cb, eb, fn = newID(3)
-        self.mantleDomain.Register(endpoint, cb, eb, fn, "")
+        self.mantleDomain.Register(endpoint, cb, eb, fn, json.dumps([]))
         self.app.registrations[fn] = handler
 
     def publish(self, endpoint, *args):
@@ -107,10 +101,10 @@ class Domain(object):
 
     def call(self, endpoint, handler, *args):
         cb, eb = newID(2)
-        self.mantleDomain.Call(endpoint, cb, eb, json.dumps(args))
+        self.mantleDomain.Call(endpoint, cb, eb, json.dumps(args), json.dumps([]))
 
         if handler is not None:
-            self.app.results[fn] = handler
+            self.app.results[cb] = handler
 
     def leave(self):
         self.mantleDomain.Leave()
