@@ -8,12 +8,18 @@ from greenlet import greenlet
 import riffle
 
 # Create a new random callback id
-def cbid():
-    return random.getrandbits(53)
+
+
+def newID(n):
+    ''' Returns n random unsigned integers to act as Callback Ids '''
+    return tuple([random.getrandbits(53) for x in range(num)])
+
 
 class Deferred(object):
+
     def __init__(self):
         cb, eb = None, None
+
 
 class App(object):
 
@@ -26,7 +32,7 @@ class App(object):
             args = args if args is not None else []
 
             # Wrap it all in a try-catch, return publish and call errors
-            # Don't return yield errors-- its not clear who should deal with those 
+            # Don't return yield errors-- its not clear who should deal with those
 
             # Turned out to work as a leave case, though this isn't  clean
             if i == 0:
@@ -54,8 +60,9 @@ class App(object):
 
                 domain.Yield(returnId, json.dumps(ret))
 
-            else: 
+            else:
                 riffle.Error("No handler available for " + str(i))
+
 
 class Domain(object):
 
@@ -70,7 +77,8 @@ class Domain(object):
             self.app = superdomain.app
 
     def join(self):
-        cb, eb = cbid(), cbid()
+        cb, eb = newID(2)
+
         self.app.control[cb] = self.onJoin
         self.mantleDomain.Join(cb, eb)
 
@@ -84,21 +92,22 @@ class Domain(object):
         riffle.Info("Default onLeave")
 
     def subscribe(self, endpoint, handler):
-        fn = cbid()
-        self.mantleDomain.Subscribe(fn, endpoint)
+        cb, eb, fn = newID(3)
+        self.mantleDomain.Subscribe(endpoint, cb, eb, fn, "")
         self.app.subscriptions[fn] = handler
 
     def register(self, endpoint, handler):
-        fn = cbid()
-        self.mantleDomain.Register(fn, endpoint)
+        cb, eb, fn = newID(3)
+        self.mantleDomain.Register(endpoint, cb, eb, fn, "")
         self.app.registrations[fn] = handler
 
     def publish(self, endpoint, *args):
-        self.mantleDomain.Publish(cbid(), endpoint, json.dumps(args))
+        cb, eb = newID(2)
+        self.mantleDomain.Publish(endpoint, cb, eb, json.dumps(args))
 
     def call(self, endpoint, handler, *args):
-        fn = cbid()
-        self.mantleDomain.Call(fn, endpoint, json.dumps(args))
+        cb, eb = newID(2)
+        self.mantleDomain.Call(endpoint, cb, eb, json.dumps(args))
 
         if handler is not None:
             self.app.results[fn] = handler

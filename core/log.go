@@ -15,8 +15,6 @@ const (
 	LogLevelDebug int = 5
 )
 
-var LogLevel int = 1
-
 func Debug(format string, a ...interface{}) {
 	if LogLevel >= LogLevelDebug {
 		out(fmt.Sprintf("%s", fmt.Sprintf(format, a...)))

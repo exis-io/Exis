@@ -29,6 +29,11 @@ const (
 	ErrAuthorizationFailed = "ERR-- Unable to Authorize. Try harder."
 )
 
+var (
+	LogLevel int    = 1
+	Fabric   string = FabricProduction
+)
+
 func NewID() uint {
 	return uint(rand.Int63n(maxId))
 }
