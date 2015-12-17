@@ -96,9 +96,6 @@ def recv():
             return
 
 
-spinner = greenlet(recv)
-
-
 class Deferred(object):
 
     # def __init__(self):
@@ -107,7 +104,7 @@ class Deferred(object):
     def wait(self):
         # We should receive a set of args here and return
 
-        return spinner.switch(greenlet.getcurrent())
+        return greenlet.getcurrent().parent.switch(greenlet.getcurrent())
 
 
 def onJoin():
@@ -138,6 +135,7 @@ gr2 = greenlet(test2)
 
 
 def testGreenlets():
+    spinner = greenlet(recv)
     spinner.switch()
 
 
