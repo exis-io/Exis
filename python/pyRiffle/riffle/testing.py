@@ -6,6 +6,7 @@ def register(n):
     print "Registering :", n
     return Deferred()
 
+
 def target():
     register(0)
 
@@ -14,6 +15,7 @@ def target():
         print 'Got data: ', data
 
     yield "Done"
+
 
 def testGenerators():
     fn = target
@@ -61,46 +63,85 @@ def want(*types):
         return wrapper
     return real_decorator
 
+
 @want(int, str)
 def fn(a, b):
     print 'Function Called!'
+
 
 def testDecorators():
     print fn(1, '2')
     print fn
 
 
-class Deferred(object):
-    def __init__(self):
-        self.greenlet = greenlet()
-
-    def wait(self):
-        # We should receive a set of args here and return
-        pass
-
 def recv():
     ''' Spin on the receive loop, get results '''
 
+    joined = greenlet(onJoin)
+    waiting = joined.switch()
+
+    print 'Joined returned with greenlent', waiting
+
+    a = [1, 2, 3, 4, 5]
+
+    while True:
+        print 'Starting spin loop'
+        args = a.pop(0)
+
+        waiting = waiting.switch(args)
+
+        if waiting is None:
+            print 'No greenlets left. Continue spinning now?'
+
+            return
+
+
+spinner = greenlet(recv)
+
+
+class Deferred(object):
+
+    # def __init__(self):
+    #     self.greenlet = greenlet()
+
+    def wait(self):
+        # We should receive a set of args here and return
+
+        return spinner.switch(greenlet.getcurrent())
+
+
+def onJoin():
+    ''' Starts in a greenlet '''
+    print 'onJoin'
+
+    a = test1().wait()
+    print 'A wait done', a
+
+    b = test2().wait()
+    print 'B wait done', b
+
+    # print 'Done'
+
+
 def test1():
-    print 12
-    gr2.switch()
-    print 34
+    print 'Test 1 started'
+    return Deferred()
+
 
 def test2():
-    print 56
-    gr1.switch()
-    print 78
+    print 'Test 2 started'
+    return Deferred()
+
 
 gr1 = greenlet(test1)
 gr2 = greenlet(test2)
 
+
 def testGreenlets():
-    
-    gr1.switch()
+    spinner.switch()
 
 
 if __name__ == '__main__':
     testGreenlets()
     # testGenerators()
     # testDecorators()
-
