@@ -10,8 +10,8 @@ class Receiver(riffle.Domain):
     def onJoin(self):
         print "Receiver Joined"
 
-        self.register("reg", self.registration)
-        self.register("kill", self.kill)
+        # self.register("reg", self.registration)
+        # self.register("kill", self.kill)
         self.subscribe("sub", self.subscription)
 
     def registration(self, a, b):
