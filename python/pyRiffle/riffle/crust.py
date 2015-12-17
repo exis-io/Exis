@@ -29,27 +29,14 @@ class Deferred(object):
 
     def __init__(self):
         self.cb, self.eb = newID(2)
-
-    def _invoke(self, deferredList, invocation, args):
-        if invocation == self.cb:
-            if self.callback is not None:
-
-                del deferredList[self.cb]
-                del deferredList[self.eb]
-
-        elif invocation == self.eb:
-            if self.errback is not None:
-
-                del deferredList[self.cb]
-                del deferredList[self.eb]
-
-        else:
-            riffle.Error("Deferred unable to process invocation " + str(invocation))
+        self.green = None
 
     def wait(self):
         ''' Wait until the results of this invocation are resolved '''
         # Pass our ids so the parent knows when to reinvoke
-        results = self.parent.switch(greenlet.getcurrent())
+        self.green = greenlet.getcurrent()
+        results = self.green.parent.switch(self)
+        return results
 
 
 class App(object):
@@ -62,6 +49,7 @@ class App(object):
         self.green = None
 
     def handle(self, domain):
+        ''' Open connection with the core and begin handling callbacks '''
 
         while True:
             i, args = json.loads(domain.Receive())
@@ -71,44 +59,33 @@ class App(object):
             if i == 0:
                 break
 
-            # print "Received invocation " + str(i) + " with args " + str(args)
-            # print "Current deferrds: " + str(self.deferreds)
+            if i in self.deferreds:
+                d = self.deferreds[i]
 
-            # if i in self.deferreds:
-            #     d = self.deferreds[i]
+                # Resolve the deferred
+                del self.deferreds[d.cb]
+                del self.deferreds[d.eb]
 
-            # TODO: throw exception down the wire
-            #     results = d._invoke(self.deferreds, i, args)
+                # Handle success seperate from failures-- Might be able to just pass in an appropriate exception
+                if d.green is not None:
+                    print 'Reentering deffered with ', args
+                    d = d.green.switch(*args)
 
-            # Check if this is a registration and yield if so
-            #     if d.hn == i and d.isRegistration:
-            #         pass
+                    # If user code called .wait() agaain we get another deferred
+                    if d is not None:
+                        self.deferreds[d.cb], self.deferreds[d.eb] = d, d
 
-            # elif i in self.registrations:
-            #     pass
-
-            # elif i in self.subscriptions:
-            #     pass
-
-            # This is a registration
-            # if results is not None:
-            # pass
-            # else:
-            #     riffle.Debug("Invocation not found in handlers, subscriptions, or registrations for id" + str(i))
-
-            # Wrap it all in a try-catch, return publish and call errors
-            # Don't return yield errors-- its not clear who should deal with those
-
-            # Possible remove meta on completion
+            # Orphaned
             if i in self.control:
-                self.control[i](*args)
+                task = greenlet(self.control[i])
+                d = task.switch(*args)
+
+                # If user code called .wait(), this deferred is emitted, waiting on the results of some operation
+                if d is not None:
+                    self.deferreds[d.cb], self.deferreds[d.eb] = d, d
 
             elif i in self.subscriptions:
                 self.subscriptions[i](*args)
-
-            # Remove results on completion
-            # elif i in self.results:
-            #     self.results[i](*args)
 
             elif i in self.registrations:
                 returnId = args.pop(0)
@@ -123,6 +100,10 @@ class App(object):
 
             else:
                 riffle.Error("No handler available for " + str(i))
+
+    def maybeDeferred(self):
+        ''' Call some function with some args. If that function produces a deferred, add it to our list'''
+        pass
 
 
 class Domain(object):
@@ -142,10 +123,6 @@ class Domain(object):
         self.app.control[cb] = self.onJoin
         self.mantleDomain.Join(cb, eb)
 
-        # Make this explicit by putting it in its own method?
-        # This is partially covered by whatever new login system gets done
-        # self.app.handle(self.mantleDomain)
-
         # Start the handler loop, send the join, then handle from there
 
         spin = greenlet(self.app.handle)
@@ -164,29 +141,30 @@ class Domain(object):
 
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
         self.app.subscriptions[hn] = handler
-
         self.mantleDomain.Subscribe(endpoint, d.cb, d.eb, hn, json.dumps([]))
         return d
 
     def register(self, endpoint, handler):
         d = Deferred()
-        d.handler = handler
+        hn = newID()
 
-        self.app.deferreds[d.cb], self.app.deferreds[d.eb], self.app.deferreds[d.hn] = d, d, d
-        self.mantleDomain.Register(endpoint, d.cb, d.eb, d.hn, json.dumps([]))
+        self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
+        self.app.registrations[hn] = handler
+        self.mantleDomain.Register(endpoint, d.cb, d.eb, hn, json.dumps([]))
         return d
 
     def publish(self, endpoint, *args):
-        cb, eb = newID(2)
-        self.mantleDomain.Publish(endpoint, cb, eb, json.dumps(args))
-        # return d
-
-    def call(self, endpoint, handler, *args):
         d = Deferred()
-
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
-        self.mantleDomain.Call(endpoint, cb, eb, json.dumps(args), json.dumps([]))
+        self.mantleDomain.Publish(endpoint, d.cb, d.eb, json.dumps(args))
+        return d
+
+    def call(self, endpoint, *args):
+        d = Deferred()
+        self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
+        self.mantleDomain.Call(endpoint, d.cb, d.eb, json.dumps(args), json.dumps([]))
         return d
 
     def leave(self):
+        # Deferreds here, please
         self.mantleDomain.Leave()
