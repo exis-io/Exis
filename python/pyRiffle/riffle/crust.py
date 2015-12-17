@@ -13,49 +13,120 @@ def newID(n):
     return tuple([random.getrandbits(53) for x in range(n)])
 
 
+class Deferred(object):
+    '''
+    Non-general purpose deferred object associated with and resolved by ID-indexed invocations from 
+    coreRiffle. 
+    
+    Unlike true deferreds, callbacks here MAY be able to be triggered more than once, depending on the 
+    type of callback. 
+
+    There are three types of funtions stored here: callbacks, errbacks, and handlers. 
+    '''
+
+    def __init__(self, isRegistration=False):
+        self.callback, self.errback, self.handler = None, None, None
+        self.cb, self.eb, self.hn = newID(3)
+
+        self.isRegistration = isRegistration
+
+    def _invoke(self, deferredList, invocation, args):
+        ''' This represents a request to invoke one of the handlers on this deferred. '''
+
+        if invocation == self.cb:
+            if self.callback is not None:
+                self.callback(*args)
+                
+                del deferredList[self.cb]
+                del deferredList[self.eb]
+
+        elif invocation == self.eb: 
+            if self.errback is not None:
+                self.errback(*args)
+                
+                del deferredList[self.cb]
+                del deferredList[self.eb]
+
+        elif invocation == self.hn: 
+            # Handlers can never be None and invoked. This is a serious error
+            if self.handler is None: 
+                riffle.Error("Invoked a non-existant handler")
+                return None
+
+            if not self.isRegistration:
+                self.handler(*args)
+            else:
+                returnId = args.pop(0)
+                ret = self.handler(*args)
+                ret = [] if ret is None else ret
+                return ret if isinstance(ret, (list, tuple)) else [ret]
+
+        else:
+            riffle.Error("Deferred unable to process invocation " + str(invocation))
+
+
 class App(object):
 
     def __init__(self):
-        self.registrations, self.subscriptions, self.results, self.control = {}, {}, {}, {}
+        self.deferreds = {}
+
+        # self.registrations, self.subscriptions, self.results, self.control = {}, {}, {}, {}
 
     def recv(self, domain):
         while True:
             i, args = json.loads(domain.Receive())
-            args = args if args is not None else []
+            args = [] if args is None else args
+
+            # Turned out to work as a leave case, though this isn't clean
+            if i == 0:
+                break
+
+            # print "Received invocation " + str(i) + " with args " + str(args)
+            # print "Current deferrds: " + str(self.deferreds)
+
+            if i in self.deferreds: 
+                d = self.deferreds[i]
+
+                # TODO: throw exception down the wire
+                results = d._invoke(self.deferreds, i, args)
+
+                # Check if this is a registration and yield if so
+                if d.hn == i and d.isRegistration:
+                    pass
+
+                # This is a registration
+                # if results is not None: 
+                #     pass
+            else:
+                riffle.Debug("No handler available for " + str(i))
 
             # Wrap it all in a try-catch, return publish and call errors
             # Don't return yield errors-- its not clear who should deal with those
 
-            print "Invoking with id " + str(i) + " args: " + str(args)
+            # # Possible remove meta on completion
+            # if i in self.control:
+            #     self.control[i](*args)
 
-            # Turned out to work as a leave case, though this isn't  clean
-            if i == 0:
-                break
+            # elif i in self.subscriptions:
+            #     self.subscriptions[i](*args)
 
-            # Possible remove meta on completion
-            if i in self.control:
-                self.control[i](*args)
+            # # Remove results on completion
+            # elif i in self.results:
+            #     self.results[i](*args)
 
-            elif i in self.subscriptions:
-                self.subscriptions[i](*args)
+            # elif i in self.registrations:
+            #     returnId = args.pop(0)
 
-            # Remove results on completion
-            elif i in self.results:
-                self.results[i](*args)
+            #     ret = self.registrations[i](*args)
+            #     ret = [] if ret is None else ret
 
-            elif i in self.registrations:
-                returnId = args.pop(0)
+            #     if not isinstance(ret, (list, tuple)):
+            #         ret = [ret]
 
-                ret = self.registrations[i](*args)
-                ret = [] if ret is None else ret
+            #     domain.Yield(returnId, json.dumps(ret))
 
-                if not isinstance(ret, (list, tuple)):
-                    ret = [ret]
-
-                domain.Yield(returnId, json.dumps(ret))
-
-            else:
-                riffle.Error("No handler available for " + str(i))
+            # else:
+            #     riffle.Error("No handler available for " + str(i))
 
 
 class Domain(object):
@@ -71,12 +142,14 @@ class Domain(object):
             self.app = superdomain.app
 
     def join(self):
-        cb, eb = newID(2)
+        d = Deferred()
+        d.callback = self.onJoin
 
-        self.app.control[cb] = self.onJoin
-        self.mantleDomain.Join(cb, eb)
+        self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
+        self.mantleDomain.Join(d.cb, d.eb)
 
         # Make this explicit by putting it in its own method?
+        # This is partially covered by whatever new login system gets done
         self.app.recv(self.mantleDomain)
 
     def onJoin(self):
@@ -86,25 +159,28 @@ class Domain(object):
         riffle.Info("Default onLeave")
 
     def subscribe(self, endpoint, handler):
-        cb, eb, fn = newID(3)
-        self.mantleDomain.Subscribe(endpoint, cb, eb, fn, json.dumps([]))
-        self.app.subscriptions[fn] = handler
+        d = Deferred()
+        d.handler = handler
+
+        self.app.deferreds[d.cb], self.app.deferreds[d.eb], self.app.deferreds[d.hn] = d, d, d 
+        self.mantleDomain.Subscribe(endpoint, d.cb, d.eb, d.hn, json.dumps([]))
 
     def register(self, endpoint, handler):
-        cb, eb, fn = newID(3)
-        self.mantleDomain.Register(endpoint, cb, eb, fn, json.dumps([]))
-        self.app.registrations[fn] = handler
+        d = Deferred(isRegistration=True)
+        d.handler = handler
+
+        self.app.deferreds[d.cb], self.app.deferreds[d.eb], self.app.deferreds[d.hn] = d, d, d 
+        self.mantleDomain.Register(endpoint, d.cb, d.eb, d.hn, json.dumps([]))
 
     def publish(self, endpoint, *args):
         cb, eb = newID(2)
         self.mantleDomain.Publish(endpoint, cb, eb, json.dumps(args))
 
     def call(self, endpoint, handler, *args):
-        cb, eb = newID(2)
-        self.mantleDomain.Call(endpoint, cb, eb, json.dumps(args), json.dumps([]))
+        d = Deferred()
 
-        if handler is not None:
-            self.app.results[cb] = handler
+        self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d 
+        self.mantleDomain.Call(endpoint, cb, eb, json.dumps(args), json.dumps([]))
 
     def leave(self):
         self.mantleDomain.Leave()

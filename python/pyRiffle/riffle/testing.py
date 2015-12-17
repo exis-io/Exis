@@ -1,6 +1,6 @@
-class Deferred(object):
-    def __init__(self):
-        cb, eb = None, None
+
+from greenlet import greenlet
+
 
 def register(n):
     print "Registering :", n
@@ -15,7 +15,7 @@ def target():
 
     yield "Done"
 
-def testGreenlets():
+def testGenerators():
     fn = target
 
     if inspect.isgeneratorfunction(fn):
@@ -70,7 +70,37 @@ def testDecorators():
     print fn
 
 
+class Deferred(object):
+    def __init__(self):
+        self.greenlet = greenlet()
+
+    def wait(self):
+        # We should receive a set of args here and return
+        pass
+
+def recv():
+    ''' Spin on the receive loop, get results '''
+
+def test1():
+    print 12
+    gr2.switch()
+    print 34
+
+def test2():
+    print 56
+    gr1.switch()
+    print 78
+
+gr1 = greenlet(test1)
+gr2 = greenlet(test2)
+
+def testGreenlets():
+    
+    gr1.switch()
+
+
 if __name__ == '__main__':
-    # testGreenlets()
-    testDecorators()
+    testGreenlets()
+    # testGenerators()
+    # testDecorators()
 
