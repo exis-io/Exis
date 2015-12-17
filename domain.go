@@ -62,7 +62,6 @@ func NewDomain(name string, a *app) Domain {
 }
 
 func (d domain) Subdomain(name string) Domain {
-	Debug("Creating subdomain %s", name)
 	return NewDomain(d.name+"."+name, d.app)
 }
 
