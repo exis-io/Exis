@@ -10,7 +10,9 @@ class Sender(riffle.Domain):
     def onJoin(self):
         print "Sender Joined"
         beta.publish("sub", self.name)
-        # beta.call("reg", self.result, 1, 2)
+
+        result = beta.call("reg", 1, 2).wait()
+        print 'Done with result:', result
 
     def result(self, ret):
         print 'Call returned with result: ', ret
