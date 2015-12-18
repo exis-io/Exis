@@ -48,32 +48,6 @@ def testGenerators():
     # Continie
 
 
-def want(*types):
-    def real_decorator(function):
-        def wrapper(*args):
-            print "Args", args
-            print 'Types', types
-
-            # Works for enforcement, but we actually dont care about enforcement... until it comes to objects
-            for t, a, in zip(types, args):
-                print t, a
-
-            function(*args)
-
-        return wrapper
-    return real_decorator
-
-
-@want(int, str)
-def fn(a, b):
-    print 'Function Called!'
-
-
-def testDecorators():
-    print fn(1, '2')
-    print fn
-
-
 def recv():
     ''' Spin on the receive loop, get results '''
 
@@ -140,6 +114,6 @@ def testGreenlets():
 
 
 if __name__ == '__main__':
-    testGreenlets()
+    # testGreenlets()
     # testGenerators()
-    # testDecorators()
+    testDecorators()
