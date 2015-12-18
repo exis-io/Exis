@@ -11,7 +11,10 @@ me.onJoin = function() {
     console.log("Sender Joined");
 
     receiver.Publish("sub", 1, 2, 3)
-    receiver.Call("reg", 1, 2, 3)
+
+    receiver.Call("reg", 1, 2, 3).then(function(results){
+        console.log("Results: ", results);
+    });
 };
 
 me.Join()

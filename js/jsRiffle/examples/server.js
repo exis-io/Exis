@@ -19,6 +19,7 @@ me.onJoin = function() {
 
     this.Register("reg", function(args) {
         console.log("Received a Call: ", args)
+        return true;
     });
 };
 

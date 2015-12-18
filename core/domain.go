@@ -185,9 +185,11 @@ func (c domain) Call(endpoint string, args []interface{}, types []interface{}) (
 	call := &call{Request: NewID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
 
 	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
+		Debug("Call err with results: %v", msg)
 		return nil, err
 	} else {
 		// TODO: check the types of the retuend arguments
+		Debug("Call suceed with results: %v", msg)
 		return msg.(*result).Arguments, nil
 	}
 }
