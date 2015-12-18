@@ -17,11 +17,9 @@ me.onJoin = function() {
          console.log("Error with args: ", args) 
     });
 
-    console.log("Done");
-
-    // this.Register("reg", function() {
-    //     console.log("Received a publish!")
-    // })
+    this.Register("reg", function(args) {
+        console.log("Received a Call: ", args)
+    });
 };
 
 me.Join()
