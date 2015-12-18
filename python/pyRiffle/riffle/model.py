@@ -3,14 +3,7 @@ import sys
 import os
 
 
-class RiffleError(Exception):
-    pass
-
-class Unimplemented(RiffleError):
-    pass
-
-
-class RiffleModel(object):
+class Model(object):
 
     @classmethod
     def reflect(klass):
@@ -102,19 +95,6 @@ class RiffleModel(object):
     def _serialize(self): 
         return self.__values 
 
-
-
-class User(RiffleModel):
-    name = "John Doe"
-    email = ''
-
-    def __init__(self, email):
-        super(User, self).__init__()
-
-        # Internal private fields are not tracked
-        # self._internal = False
-
-
 def want(*types):
     def real_decorator(function):
         def wrapper(*args, **kwargs):
@@ -126,14 +106,6 @@ def want(*types):
             return function(*args)
         return wrapper
     return real_decorator
-
-# Testing
-@want(int, str, bool, User)
-def fn(a, b):
-    print 'Function Called!'
-
-def notSpeciffied(a, b):
-    pass
 
 def cuminReflect(handler):
     '''
@@ -178,6 +150,38 @@ def cuminReflect(handler):
                 print 'Type ' + str(t) + ' is not natively serializible!'
 
     return typeList
+
+
+class RiffleError(Exception):
+    pass
+
+class Unimplemented(RiffleError):
+    pass
+    
+##############################
+# Inline testing, please ignore
+##############################
+
+class User(RiffleModel):
+    name = "John Doe"
+    email = ''
+
+    def __init__(self, email):
+        super(User, self).__init__()
+
+        # Internal private fields are not tracked
+        # self._internal = False
+
+
+# Testing
+@want(int, str, bool, User)
+def fn(a, b):
+    print 'Function Called!'
+
+def notSpeciffied(a, b):
+    pass
+
+
 
 def testDecorators():
     print cuminReflect(fn)

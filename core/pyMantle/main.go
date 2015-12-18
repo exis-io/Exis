@@ -1,4 +1,4 @@
-package riffle
+package pymantle
 
 import (
 	"github.com/exis-io/core"

@@ -5,7 +5,8 @@ import json
 
 from greenlet import greenlet
 
-import riffle
+import pymantle
+# from riffle import model
 
 '''
 I made a mistake. Deferreds should only cover success/failure callbacks, while the handlers
@@ -31,8 +32,10 @@ class Deferred(object):
         self.cb, self.eb = newID(2)
         self.green = None
 
-    def wait(self):
+    def wait(self, *types):
         ''' Wait until the results of this invocation are resolved '''
+        # TODO: pass typelist down to call for later checking
+
         # Pass our ids so the parent knows when to reinvoke
         self.green = greenlet.getcurrent()
         results = self.green.parent.switch(self)
@@ -113,7 +116,7 @@ class Domain(object):
         self.name = name
 
         if superdomain is None:
-            self.mantleDomain = riffle.NewDomain(name)
+            self.mantleDomain = pymantle.NewDomain(name)
             self.app = App()
         else:
             self.mantleDomain = superdomain.mantleDomain.Subdomain(name)
@@ -131,10 +134,10 @@ class Domain(object):
         spin.switch(self.mantleDomain)
 
     def onJoin(self):
-        riffle.Info("Default onJoin")
+        pymantle.Info("Default onJoin")
 
     def onLeave(self):
-        riffle.Info("Default onLeave")
+        pymantle.Info("Default onLeave")
 
     def subscribe(self, endpoint, handler):
         d = Deferred()

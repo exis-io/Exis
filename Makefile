@@ -40,7 +40,7 @@ ios:
 
 python: 
 	gopy bind github.com/exis-io/core/pyMantle
-	mv riffle.so python/pyRiffle/riffle/riffle.so
+	mv pymantle.so python/pyRiffle/riffle/pymantle.so
 	
 # python: libriffmantle.so
 # 	cp assets/libriffmantle.so python/pyRiffle/riffle/libriffmantle.so
