@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/augustoroman/promise"
 	"github.com/exis-io/core"
 	"github.com/gopherjs/gopherjs/js"
 )
@@ -34,19 +35,34 @@ func main() {
 		"Error":               Error,
 	})
 
+	// js.Global.Set("whoami", Promisify(whoami))
 }
 
+// This is a blocking function -- it doesn't return until the XHR
+// completes or fails.
+// func whoami() (bool, error) {
+// 	if resp, err := http.Get("/api/whoami"); err != nil {
+// 		return nil, err
+// 	}
+// 	return parseUserJson(resp)
+// }
+
 type Domain struct {
-	coreDomain    core.Domain
-	wrapped       *js.Object
-	registrations map[uint]*js.Object
-	subscriptions map[uint]*js.Object
+	coreDomain core.Domain
+	wrapped    *js.Object
+	app        *App
 }
 
 type Conn struct {
 	wrapper *js.Object
 	app     core.App
 	domain  *Domain
+}
+
+type App struct {
+	conn          Conn
+	registrations map[uint]*js.Object
+	subscriptions map[uint]*js.Object
 }
 
 func (c Conn) OnMessage(msg *js.Object) {
@@ -76,10 +92,14 @@ func (c Conn) SetApp(app core.App) {
 }
 
 func New(name string) *js.Object {
-	d := Domain{
-		coreDomain:    core.NewDomain(name, nil),
+	a := &App{
 		registrations: make(map[uint]*js.Object),
 		subscriptions: make(map[uint]*js.Object),
+	}
+
+	d := Domain{
+		coreDomain: core.NewDomain(name, nil),
+		app:        a,
 	}
 
 	d.wrapped = js.MakeWrapper(&d)
@@ -88,21 +108,36 @@ func New(name string) *js.Object {
 
 func (d *Domain) Subdomain(name string) *js.Object {
 	n := Domain{
-		coreDomain:    d.coreDomain.Subdomain(name),
-		registrations: make(map[uint]*js.Object),
-		subscriptions: make(map[uint]*js.Object),
+		coreDomain: d.coreDomain.Subdomain(name),
+		app:        d.app,
 	}
 
 	n.wrapped = js.MakeWrapper(&n)
 	return n.wrapped
 }
 
-// var conn Conn
-
 // Blocks on callbacks from the core.
 // TODO: trigger a close meta callback when connection is lost
-func (d *Domain) Receive() string {
-	return core.MantleMarshall(d.coreDomain.GetApp().CallbackListen())
+func (a *App) Receive() {
+	Debug("Starting receive")
+
+	for {
+		cb := a.conn.app.CallbackListen()
+		core.Debug("Have callback: %v", cb)
+
+		if cb.Id == 0 {
+			core.Info("Terminating receive loop")
+			return
+		}
+
+		if fn, ok := a.subscriptions[cb.Id]; ok {
+			fn.Invoke(cb.Args)
+		}
+
+		if fn, ok := a.registrations[cb.Id]; ok {
+			fn.Invoke(cb.Args)
+		}
+	}
 }
 
 func (d *Domain) Join() {
@@ -114,10 +149,11 @@ func (d *Domain) Join() {
 		app:     d.coreDomain.GetApp(),
 	}
 
+	d.app.conn = conn
+
 	w.Set("onmessage", conn.OnMessage)
 	w.Set("onopen", conn.OnOpen)
 	w.Set("onclose", conn.OnClose)
-
 	w.Call("open", fabric)
 }
 
@@ -127,70 +163,63 @@ func (d *Domain) FinishJoin(c *Conn) {
 		fmt.Println("Cant join: ", err)
 	} else {
 		fmt.Println("Joined!")
+
+		go d.app.Receive()
+
 		if j := d.wrapped.Get("onJoin"); j != js.Undefined {
 			d.wrapped.Call("onJoin")
 		}
 	}
 }
 
-func (d *Domain) Subscribe(endpoint string, handler *js.Object) {
+func (d *Domain) Subscribe(endpoint string, handler *js.Object) *js.Object {
+	core.Debug("Subscribing to %s", endpoint)
 	cb := core.NewID()
-	d.subscriptions[cb] = handler
+	d.app.subscriptions[cb] = handler
+	var p promise.Promise
 
 	go func() {
-		d.coreDomain.Subscribe(endpoint, cb, make([]interface{}, 0))
+		if err := d.coreDomain.Subscribe(endpoint, cb, make([]interface{}, 0)); err == nil {
+			Debug("Internal: resolving promise")
+			p.Resolve(nil)
+		} else {
+			Debug("Internal: resolving promise ERR")
+			p.Reject(err)
+		}
 	}()
+
+	return p.Js()
 }
 
-func (d *Domain) Register(endpoint string, handler *js.Object) {
-	cb := core.NewID()
-	d.registrations[cb] = handler
-
-	go func() {
-		d.coreDomain.Register(endpoint, cb, make([]interface{}, 0))
-	}()
-}
+// func (d *Domain) Register(endpoint string, handler *js.Object) {
+// 	cb := core.NewID()
+// 	d.registrations[cb] = handler
+// 	return d.coreDomain.Register(endpoint, cb, make([]interface{}, 0))
+// }
 
 func (d *Domain) Publish(endpoint string, args ...interface{}) {
-	fmt.Println("Publishing: ", args)
-	cb := core.NewID()
-
-	go func() {
-		d.coreDomain.Publish(endpoint, cb, args)
-	}()
+	d.coreDomain.Publish(endpoint, args)
 }
 
-func (d *Domain) Call(endpoint string, args ...interface{}) {
-	cb := core.NewID()
+// func (d *Domain) Call(endpoint string, args ...interface{}) {
+// 	return d.coreDomain.Call(endpoint, args, make([]interface{}, 0))
+// }
 
-	go func() {
-		d.coreDomain.Call(endpoint, cb, args)
-	}()
-}
+// func (d *Domain) Yield(request uint, args string) {
+// 	go d.coreDomain.GetApp().Yield(request, core.MantleUnmarshal(args))
+// }
 
-func (d *Domain) Yield(request uint, args string) {
-	go func() {
-		d.coreDomain.GetApp().Yield(request, core.MantleUnmarshal(args))
-	}()
-}
+// func (d *Domain) Unsubscribe(endpoint string) {
+// 	return d.coreDomain.Unsubscribe(endpoint)
+// }
 
-func (d *Domain) Unsubscribe(endpoint string) {
-	go func() {
-		d.coreDomain.Unsubscribe(endpoint)
-	}()
-}
+// func (d *Domain) Unregister(endpoint string) {
+// 	return d.coreDomain.Unregister(endpoint)
+// }
 
-func (d *Domain) Unregister(endpoint string) {
-	go func() {
-		d.coreDomain.Unregister(endpoint)
-	}()
-}
-
-func (d *Domain) Leave() {
-	go func() {
-		d.coreDomain.Leave()
-	}()
-}
+// func (d *Domain) Leave() {
+// 	return d.coreDomain.Leave()
+// }
 
 func SetLogLevelOff()   { core.LogLevel = core.LogLevelOff }
 func SetLogLevelApp()   { core.LogLevel = core.LogLevelApp }
