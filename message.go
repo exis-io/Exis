@@ -205,7 +205,7 @@ func (msg *hello) messageType() messageType {
 
 // [wELCOME, Session|id, Details|dict]
 type welcome struct {
-	Id      uint
+	Id      uint64
 	Details map[string]interface{}
 }
 
@@ -256,8 +256,8 @@ func (msg *goodbye) messageType() messageType {
 // [hEARTBEAT, IncomingSeq|integer, OutgoingSeq|integer
 // [hEARTBEAT, IncomingSeq|integer, OutgoingSeq|integer, Discard|string]
 type heartbeat struct {
-	IncomingSeq uint
-	OutgoingSeq uint
+	IncomingSeq uint64
+	OutgoingSeq uint64
 	Discard     string
 }
 
@@ -270,7 +270,7 @@ func (msg *heartbeat) messageType() messageType {
 // [eRROR, REQUEST.Type|int, REQUEST.Request|id, Details|dict, Error|uri, Arguments|list, ArgumentsKw|dict]
 type errorMessage struct {
 	Type        messageType
-	Request     uint
+	Request     uint64
 	Details     map[string]interface{}
 	Error       string
 	Arguments   []interface{}          `wamp:"omitempty"`
@@ -285,7 +285,7 @@ func (msg *errorMessage) messageType() messageType {
 // [pUBLISH, Request|id, Options|dict, name|uri, Arguments|list]
 // [pUBLISH, Request|id, Options|dict, name|uri, Arguments|list, ArgumentsKw|dict]
 type publish struct {
-	Request     uint
+	Request     uint64
 	Options     map[string]interface{}
 	Name        string
 	Arguments   []interface{}          `wamp:"omitempty"`
@@ -298,8 +298,8 @@ func (msg *publish) messageType() messageType {
 
 // [pUBLISHED, pUBLISH.Request|id, Publication|id]
 type published struct {
-	Request     uint
-	Publication uint
+	Request     uint64
+	Publication uint64
 }
 
 func (msg *published) messageType() messageType {
@@ -308,7 +308,7 @@ func (msg *published) messageType() messageType {
 
 // [sUBSCRIBE, Request|id, Options|dict, name|uri]
 type subscribe struct {
-	Request uint
+	Request uint64
 	Options map[string]interface{}
 	Name    string
 }
@@ -319,8 +319,8 @@ func (msg *subscribe) messageType() messageType {
 
 // [sUBSCRIBED, sUBSCRIBE.Request|id, Subscription|id]
 type subscribed struct {
-	Request      uint
-	Subscription uint
+	Request      uint64
+	Subscription uint64
 }
 
 func (msg *subscribed) messageType() messageType {
@@ -329,8 +329,8 @@ func (msg *subscribed) messageType() messageType {
 
 // [uNSUBSCRIBE, Request|id, sUBSCRIBED.Subscription|id]
 type unsubscribe struct {
-	Request      uint
-	Subscription uint
+	Request      uint64
+	Subscription uint64
 }
 
 func (msg *unsubscribe) messageType() messageType {
@@ -339,7 +339,7 @@ func (msg *unsubscribe) messageType() messageType {
 
 // [uNSUBSCRIBED, uNSUBSCRIBE.Request|id]
 type unsubscribed struct {
-	Request uint
+	Request uint64
 }
 
 func (msg *unsubscribed) messageType() messageType {
@@ -351,8 +351,8 @@ func (msg *unsubscribed) messageType() messageType {
 // [eVENT, sUBSCRIBED.Subscription|id, pUBLISHED.Publication|id, Details|dict, pUBLISH.Arguments|list,
 //     pUBLISH.ArgumentsKw|dict]
 type event struct {
-	Subscription uint
-	Publication  uint
+	Subscription uint64
+	Publication  uint64
 	Details      map[string]interface{}
 	Arguments    []interface{}          `wamp:"omitempty"`
 	ArgumentsKw  map[string]interface{} `wamp:"omitempty"`
@@ -373,7 +373,7 @@ type callResult struct {
 // [cALL, Request|id, Options|dict, name|uri, Arguments|list]
 // [cALL, Request|id, Options|dict, name|uri, Arguments|list, ArgumentsKw|dict]
 type call struct {
-	Request     uint
+	Request     uint64
 	Options     map[string]interface{}
 	Name        string
 	Arguments   []interface{}          `wamp:"omitempty"`
@@ -388,7 +388,7 @@ func (msg *call) messageType() messageType {
 // [rESULT, cALL.Request|id, Details|dict, yIELD.Arguments|list]
 // [rESULT, cALL.Request|id, Details|dict, yIELD.Arguments|list, yIELD.ArgumentsKw|dict]
 type result struct {
-	Request     uint
+	Request     uint64
 	Details     map[string]interface{}
 	Arguments   []interface{}          `wamp:"omitempty"`
 	ArgumentsKw map[string]interface{} `wamp:"omitempty"`
@@ -400,7 +400,7 @@ func (msg *result) messageType() messageType {
 
 // [rEGISTER, Request|id, Options|dict, name|uri]
 type register struct {
-	Request uint
+	Request uint64
 	Options map[string]interface{}
 	Name    string
 }
@@ -411,8 +411,8 @@ func (msg *register) messageType() messageType {
 
 // [rEGISTERED, rEGISTER.Request|id, Registration|id]
 type registered struct {
-	Request      uint
-	Registration uint
+	Request      uint64
+	Registration uint64
 }
 
 func (msg *registered) messageType() messageType {
@@ -421,8 +421,8 @@ func (msg *registered) messageType() messageType {
 
 // [uNREGISTER, Request|id, rEGISTERED.Registration|id]
 type unregister struct {
-	Request      uint
-	Registration uint
+	Request      uint64
+	Registration uint64
 }
 
 func (msg *unregister) messageType() messageType {
@@ -431,7 +431,7 @@ func (msg *unregister) messageType() messageType {
 
 // [uNREGISTERED, uNREGISTER.Request|id]
 type unregistered struct {
-	Request uint
+	Request uint64
 }
 
 func (msg *unregistered) messageType() messageType {
@@ -442,8 +442,8 @@ func (msg *unregistered) messageType() messageType {
 // [iNVOCATION, Request|id, rEGISTERED.Registration|id, Details|dict, cALL.Arguments|list]
 // [iNVOCATION, Request|id, rEGISTERED.Registration|id, Details|dict, cALL.Arguments|list, cALL.ArgumentsKw|dict]
 type invocation struct {
-	Request      uint
-	Registration uint
+	Request      uint64
+	Registration uint64
 	Details      map[string]interface{}
 	Arguments    []interface{}          `wamp:"omitempty"`
 	ArgumentsKw  map[string]interface{} `wamp:"omitempty"`
@@ -457,7 +457,7 @@ func (msg *invocation) messageType() messageType {
 // [yIELD, iNVOCATION.Request|id, Options|dict, Arguments|list]
 // [yIELD, iNVOCATION.Request|id, Options|dict, Arguments|list, ArgumentsKw|dict]
 type yield struct {
-	Request     uint
+	Request     uint64
 	Options     map[string]interface{}
 	Arguments   []interface{}          `wamp:"omitempty"`
 	ArgumentsKw map[string]interface{} `wamp:"omitempty"`
@@ -469,7 +469,7 @@ func (msg *yield) messageType() messageType {
 
 // [cANCEL, cALL.Request|id, Options|dict]
 type cancel struct {
-	Request uint
+	Request uint64
 	Options map[string]interface{}
 }
 
@@ -479,7 +479,7 @@ func (msg *cancel) messageType() messageType {
 
 // [iNTERRUPT, iNVOCATION.Request|id, Options|dict]
 type interrupt struct {
-	Request uint
+	Request uint64
 	Options map[string]interface{}
 }
 
@@ -516,8 +516,8 @@ func destination(m *message) (string, error) {
 	}
 }
 
-// Given a message, return the request uint
-func requestID(m message) (uint, bool) {
+// Given a message, return the request uint64
+func requestID(m message) (uint64, bool) {
 	switch msg := (m).(type) {
 	case *registered:
 		return msg.Request, true

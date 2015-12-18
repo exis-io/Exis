@@ -1,13 +1,13 @@
 package iosMantle
 
 import (
-    "fmt"
-    // "github.com/exis-io/core"
-    // "github.com/exis-io/core/goRiffle"
+	"fmt"
+	// "github.com/exis-io/core"
+	// "github.com/exis-io/core/goRiffle"
 )
 
 func Hello() {
-    fmt.Println("Hello!")
+	fmt.Println("Hello!")
 }
 
 /*
@@ -37,7 +37,7 @@ func (d *Domain) Receive() string {
     return core.MantleMarshall(d.coreDomain.GetApp().CallbackListen())
 }
 
-func (d *Domain) Join(cb uint, eb uint) {
+func (d *Domain) Join(cb uint64, eb uint64) {
     if c, err := goRiffle.Open(fabric); err != nil {
         d.coreDomain.GetApp().CallbackSend(eb, err.Error())
     } else {
@@ -49,32 +49,32 @@ func (d *Domain) Join(cb uint, eb uint) {
     }
 }
 
-func (d *Domain) Subscribe(cb uint, endpoint string) {
+func (d *Domain) Subscribe(cb uint64, endpoint string) {
     go func() {
         d.coreDomain.Subscribe(endpoint, cb, make([]interface{}, 0))
     }()
 }
 
-func (d *Domain) Register(cb uint, endpoint string) {
+func (d *Domain) Register(cb uint64, endpoint string) {
     go func() {
         d.coreDomain.Register(endpoint, cb, make([]interface{}, 0))
     }()
 }
 
 // Args are string encoded json
-func (d *Domain) Publish(cb uint, endpoint string, args string) {
+func (d *Domain) Publish(cb uint64, endpoint string, args string) {
     go func() {
         d.coreDomain.Publish(endpoint, cb, core.MantleUnmarshal(args))
     }()
 }
 
-func (d *Domain) Call(cb uint, endpoint string, args string) {
+func (d *Domain) Call(cb uint64, endpoint string, args string) {
     go func() {
         d.coreDomain.Call(endpoint, cb, core.MantleUnmarshal(args))
     }()
 }
 
-func (d *Domain) Yield(request uint, args string) {
+func (d *Domain) Yield(request uint64, args string) {
     go func() {
         d.coreDomain.GetApp().Yield(request, core.MantleUnmarshal(args))
     }()
