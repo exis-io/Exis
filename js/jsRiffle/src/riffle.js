@@ -1,26 +1,13 @@
 
-
-require('./polyfill.js');
-
-var log = require('./log.js');
-var pjson = require('../package.json');
-var when = require('when');
-var fn = require("when/function");
-var configure = require('./configure.js');
-
-exports.version = pjson.version;
-exports.transports = configure.transports;
-exports.when = when;
-exports.log = log;
-
-
-//
-// Begin GOJS implementation
-//
-
-var go = require('./go.js');
+require('./go.js');
 var ws = require('./transport/websocket.js');
+var pjson = require('../package.json');
+exports.version = pjson.version;
 
+// Used to counteract uint generation on seemlingly 32 bit platforms
+global.NewID = function() {
+   return Math.floor(Math.random() * 9007199254740992);
+}
 
 // Dont need any of this-- just return the conn
 var Ws = function () {

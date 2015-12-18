@@ -1089,51 +1089,51 @@ public class Domain {
         // delegate = self
     }
     
-    public func subscribe(endpoint: String, fn: (Any) -> ()) {
-        let cb = CBID()
-        Subscribe(self.mantleDomain, cb, endpoint.cString())
-        handlers[cb] = fn
-    }
+    // public func subscribe(endpoint: String, fn: (Any) -> ()) {
+    //     let cb = CBID()
+    //     Subscribe(self.mantleDomain, cb, endpoint.cString())
+    //     handlers[cb] = fn
+    // }
     
-    public func register(endpoint: String, fn: (Any) -> (Any?)) {
-        let cb = CBID()
-        Register(self.mantleDomain, cb, endpoint.cString())
-        registrations[cb] = fn
-    }
+    // public func register(endpoint: String, fn: (Any) -> (Any?)) {
+    //     let cb = CBID()
+    //     Register(self.mantleDomain, cb, endpoint.cString())
+    //     registrations[cb] = fn
+    // }
     
-    public func call(endpoint: String, _ args: Any..., handler: (Any) -> ()) {
-        let cb = CBID()
-        Call(self.mantleDomain, cb, endpoint.cString(), marshall(args))
-        invocations[cb] = handler
-    }
+    // public func call(endpoint: String, _ args: Any..., handler: (Any) -> ()) {
+    //     let cb = CBID()
+    //     Call(self.mantleDomain, cb, endpoint.cString(), marshall(args))
+    //     invocations[cb] = handler
+    // }
     
-    public func publish(endpoint: String, _ args: Any...) {
-        Publish(self.mantleDomain, 0, endpoint.cString(), marshall(args))
-    }
+    // public func publish(endpoint: String, _ args: Any...) {
+    //     Publish(self.mantleDomain, 0, endpoint.cString(), marshall(args))
+    // }
     
     public func receive() {
         while true {
-            var (i, args) = decode(Receive(self.mantleDomain))
+            // var (i, args) = decode(Receive(self.mantleDomain))
             
-            if let fn = handlers[i] {
-                fn(args)
-            } else if let fn = invocations[i] {
-                fn(args)
-            } else if let fn = registrations[i] {
-                // Pop off the return arg. Note that we started passing it into crusts as a nested list for some reason. Cant remember why, 
-                // but retaining that functionality until I remember. It started in the python implementation
-                let unwrap = args[0] as! JSON
-                var args = unwrap.arrayValue!
+            // if let fn = handlers[i] {
+            //     fn(args)
+            // } else if let fn = invocations[i] {
+            //     fn(args)
+            // } else if let fn = registrations[i] {
+            //     // Pop off the return arg. Note that we started passing it into crusts as a nested list for some reason. Cant remember why, 
+            //     // but retaining that functionality until I remember. It started in the python implementation
+            //     let unwrap = args[0] as! JSON
+            //     var args = unwrap.arrayValue!
                 
-                let resultId = args.removeAtIndex(0)
-                var ret = fn(args)
-                ret = ret == nil ? ([] as! [Any]) : ret
+            //     let resultId = args.removeAtIndex(0)
+            //     var ret = fn(args)
+            //     ret = ret == nil ? ([] as! [Any]) : ret
                 
-                //print("Handling return with args: \(ret)")
-                Yield(mantleDomain, UInt64(resultId.doubleValue!), marshall(ret))
-            } else {
-                print("No handlers found for id \(i)!")
-            }
+            //     //print("Handling return with args: \(ret)")
+            //     Yield(mantleDomain, UInt64(resultId.doubleValue!), marshall(ret))
+            // } else {
+            //     print("No handlers found for id \(i)!")
+            // }
         }
     }
     

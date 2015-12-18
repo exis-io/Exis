@@ -3,7 +3,7 @@ package core
 // Helper methods for mantles. Operate functionally on Domains, triggering success or
 // error callbacks based on the intended functionality
 
-func MantleSubscribe(d Domain, endpoint string, cb uint, eb uint, handler uint, types []interface{}) {
+func MantleSubscribe(d Domain, endpoint string, cb uint64, eb uint64, handler uint64, types []interface{}) {
 	if err := d.Subscribe(endpoint, handler, types); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
@@ -11,7 +11,7 @@ func MantleSubscribe(d Domain, endpoint string, cb uint, eb uint, handler uint, 
 	}
 }
 
-func MantleRegister(d Domain, endpoint string, cb uint, eb uint, handler uint, types []interface{}) {
+func MantleRegister(d Domain, endpoint string, cb uint64, eb uint64, handler uint64, types []interface{}) {
 	if err := d.Register(endpoint, handler, types); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
@@ -19,7 +19,7 @@ func MantleRegister(d Domain, endpoint string, cb uint, eb uint, handler uint, t
 	}
 }
 
-func MantlePublish(d Domain, endpoint string, cb uint, eb uint, args []interface{}) {
+func MantlePublish(d Domain, endpoint string, cb uint64, eb uint64, args []interface{}) {
 	if err := d.Publish(endpoint, args); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
@@ -27,7 +27,7 @@ func MantlePublish(d Domain, endpoint string, cb uint, eb uint, args []interface
 	}
 }
 
-func MantleCall(d Domain, endpoint string, cb uint, eb uint, args []interface{}, types []interface{}) {
+func MantleCall(d Domain, endpoint string, cb uint64, eb uint64, args []interface{}, types []interface{}) {
 	if results, err := d.Call(endpoint, args, types); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
@@ -35,7 +35,7 @@ func MantleCall(d Domain, endpoint string, cb uint, eb uint, args []interface{},
 	}
 }
 
-func MantleUnsubscribe(d Domain, endpoint string, cb uint, eb uint) {
+func MantleUnsubscribe(d Domain, endpoint string, cb uint64, eb uint64) {
 	if err := d.Unsubscribe(endpoint); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
@@ -43,7 +43,7 @@ func MantleUnsubscribe(d Domain, endpoint string, cb uint, eb uint) {
 	}
 }
 
-func MantleUnregister(d Domain, endpoint string, cb uint, eb uint) {
+func MantleUnregister(d Domain, endpoint string, cb uint64, eb uint64) {
 	if err := d.Unregister(endpoint); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
@@ -53,7 +53,7 @@ func MantleUnregister(d Domain, endpoint string, cb uint, eb uint) {
 
 // Apply the arguments to the given function on this domain.
 // If the function returns an error, callback with error, otherwise callback with success
-// func (c domain) apply(fn func(*domain, string, uint, []interface{}) error, endpoint string, cb uint, eb uint, hn uint) {
+// func (c domain) apply(fn func(*domain, string, uint64, []interface{}) error, endpoint string, cb uint64, eb uint64, hn uint64) {
 //  // TODO: validate the endpoint, else errback
 //  endpoint = makeEndpoint(c.name, endpoint)
 

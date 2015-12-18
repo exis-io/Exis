@@ -99,7 +99,8 @@ class App(object):
                 domain.Yield(returnId, json.dumps(ret))
 
             else:
-                riffle.Error("No handler available for " + str(i))
+                pass
+                # riffle.Error("No handler available for " + str(i))
 
     def maybeDeferred(self):
         ''' Call some function with some args. If that function produces a deferred, add it to our list'''

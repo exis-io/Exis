@@ -24,7 +24,7 @@ package goRiffle
 // type domain struct {
 // 	mantle   *mantle
 // 	mirror   core.Domain
-// 	handlers map[uint]interface{}
+// 	handlers map[uint64]interface{}
 // 	kill     chan bool
 // }
 
@@ -42,7 +42,7 @@ package goRiffle
 
 // 	d := domain{
 // 		mantle:   wrap,
-// 		handlers: make(map[uint]interface{}),
+// 		handlers: make(map[uint64]interface{}),
 // 		kill:     make(chan bool),
 // 	}
 
@@ -118,7 +118,7 @@ package goRiffle
 // 	return err
 // }
 
-// func (d domain) Invoke(id uint, args []interface{}) {
+// func (d domain) Invoke(id uint64, args []interface{}) {
 // 	Debug("Called with %s", args)
 
 // 	if handler, ok := d.handlers[id]; ok {

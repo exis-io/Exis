@@ -5,8 +5,8 @@ import "fmt"
 type Domain interface {
 	Subdomain(string) Domain
 
-	Subscribe(string, uint, []interface{}) error
-	Register(string, uint, []interface{}) error
+	Subscribe(string, uint64, []interface{}) error
+	Register(string, uint64, []interface{}) error
 	Publish(string, []interface{}) error
 	Call(string, []interface{}, []interface{}) ([]interface{}, error)
 
@@ -22,12 +22,12 @@ type domain struct {
 	app           *app
 	name          string
 	joined        bool
-	subscriptions map[uint]*boundEndpoint
-	registrations map[uint]*boundEndpoint
+	subscriptions map[uint64]*boundEndpoint
+	registrations map[uint64]*boundEndpoint
 }
 
 type boundEndpoint struct {
-	callback      uint
+	callback      uint64
 	endpoint      string
 	expectedTypes []interface{}
 }
@@ -43,7 +43,7 @@ func NewDomain(name string, a *app) Domain {
 			serializer: new(jSONSerializer),
 			in:         make(chan message, 10),
 			up:         make(chan Callback, 10),
-			listeners:  make(map[uint]chan message),
+			listeners:  make(map[uint64]chan message),
 		}
 	}
 
@@ -51,8 +51,8 @@ func NewDomain(name string, a *app) Domain {
 		app:           a,
 		name:          name,
 		joined:        false,
-		subscriptions: make(map[uint]*boundEndpoint),
-		registrations: make(map[uint]*boundEndpoint),
+		subscriptions: make(map[uint64]*boundEndpoint),
+		registrations: make(map[uint64]*boundEndpoint),
 	}
 
 	// TODO: trigger onJoin if the superdomain has joined
@@ -143,7 +143,7 @@ func (c *domain) Leave() error {
 // Message Patterns
 /////////////////////////////////////////////
 
-func (c domain) Subscribe(endpoint string, requestId uint, types []interface{}) error {
+func (c domain) Subscribe(endpoint string, requestId uint64, types []interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 	sub := &subscribe{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
 
@@ -157,7 +157,7 @@ func (c domain) Subscribe(endpoint string, requestId uint, types []interface{}) 
 	}
 }
 
-func (c domain) Register(endpoint string, requestId uint, types []interface{}) error {
+func (c domain) Register(endpoint string, requestId uint64, types []interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 	register := &register{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
 
@@ -185,9 +185,11 @@ func (c domain) Call(endpoint string, args []interface{}, types []interface{}) (
 	call := &call{Request: NewID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
 
 	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
+		Debug("Call err with results: %v", err)
 		return nil, err
 	} else {
 		// TODO: check the types of the retuend arguments
+		Debug("Call suceed with results: %v", msg)
 		return msg.(*result).Arguments, nil
 	}
 }
