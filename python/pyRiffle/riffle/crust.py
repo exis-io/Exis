@@ -75,7 +75,7 @@ class App(object):
                     if d is not None:
                         self.deferreds[d.cb], self.deferreds[d.eb] = d, d
 
-            # Orphaned
+            # Orphaned-- onJoin and other control messages should be handled with their own deferreds
             if i in self.control:
                 task = greenlet(self.control[i])
                 d = task.switch(*args)
