@@ -6,7 +6,7 @@ import json
 from greenlet import greenlet
 
 import pymantle
-# from riffle import model
+from riffle.model import Model, cuminReflect
 
 '''
 I made a mistake. Deferreds should only cover success/failure callbacks, while the handlers
@@ -143,6 +143,9 @@ class Domain(object):
         d = Deferred()
         hn = newID()
 
+        # types = cuminReflect(handler)
+        # print 'Subscribing with types:', types
+
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
         self.app.subscriptions[hn] = handler
         self.mantleDomain.Subscribe(endpoint, d.cb, d.eb, hn, json.dumps([]))
@@ -152,9 +155,12 @@ class Domain(object):
         d = Deferred()
         hn = newID()
 
+        # types = cuminReflect(handler)
+        # print 'Registering with types:', types
+
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
         self.app.registrations[hn] = handler
-        self.mantleDomain.Register(endpoint, d.cb, d.eb, hn, json.dumps([]))
+        self.mantleDomain.Register(endpoint, d.cb, d.eb, hn, json.dumps(cuminReflect(handler)))
         return d
 
     def publish(self, endpoint, *args):
@@ -166,7 +172,7 @@ class Domain(object):
     def call(self, endpoint, *args):
         d = Deferred()
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
-        self.mantleDomain.Call(endpoint, d.cb, d.eb, json.dumps(args), json.dumps([]))
+        self.mantleDomain.Call(endpoint, d.cb, d.eb, json.dumps(args), json.dumps(cuminReflect(handler)))
         return d
 
     def leave(self):
