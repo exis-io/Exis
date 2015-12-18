@@ -14,6 +14,8 @@ me.onJoin = function() {
 
     receiver.Call("reg", 1, 2, 3).then(function(results){
         console.log("Results: ", results);
+    }, function(error) {
+        console.log("Call failed with error: ", error);
     });
 };
 

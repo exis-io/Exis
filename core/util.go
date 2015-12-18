@@ -34,8 +34,14 @@ var (
 	Fabric   string = FabricProduction
 )
 
-func NewID() uint {
-	return uint(rand.Int63n(maxId))
+func NewID() uint64 {
+	// r := rand.Int63n(maxId)
+	// sf := uint64(r)
+	// native := uint(r)
+
+	// Info("Random: %s, 64: %s, uint: %s", r, sf, native)
+
+	return uint64(rand.Int63n(maxId))
 }
 
 func formatUnexpectedMessage(msg message, expected string) string {
