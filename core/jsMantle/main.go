@@ -3,14 +3,12 @@ package main
 import (
 	"fmt"
 
+	"github.com/augustoroman/promise"
 	"github.com/exis-io/core"
 	"github.com/gopherjs/gopherjs/js"
 )
 
-var fabric string = core.FabricProduction
-
 func main() {
-	// Functions are autoexported on non-pointer types-- dont need "Subdomain" listed here
 	js.Global.Set("Domain", map[string]interface{}{
 		"New": New,
 	})
@@ -33,20 +31,30 @@ func main() {
 		"Warn":                Warn,
 		"Error":               Error,
 	})
-
 }
 
 type Domain struct {
-	coreDomain    core.Domain
-	wrapped       *js.Object
-	registrations map[uint]*js.Object
-	subscriptions map[uint]*js.Object
+	coreDomain core.Domain
+	wrapped    *js.Object
+	app        *App
 }
 
 type Conn struct {
 	wrapper *js.Object
 	app     core.App
 	domain  *Domain
+}
+
+type App struct {
+	conn          Conn
+	registrations map[uint64]*js.Object
+	subscriptions map[uint64]*js.Object
+}
+
+type idGenerator struct{}
+
+func (i idGenerator) NewID() uint64 {
+	return js.Global.Get("NewID").Invoke().Uint64()
 }
 
 func (c Conn) OnMessage(msg *js.Object) {
@@ -76,10 +84,16 @@ func (c Conn) SetApp(app core.App) {
 }
 
 func New(name string) *js.Object {
+	core.ExternalGenerator = idGenerator{}
+
+	a := &App{
+		registrations: make(map[uint64]*js.Object),
+		subscriptions: make(map[uint64]*js.Object),
+	}
+
 	d := Domain{
-		coreDomain:    core.NewDomain(name, nil),
-		registrations: make(map[uint]*js.Object),
-		subscriptions: make(map[uint]*js.Object),
+		coreDomain: core.NewDomain(name, nil),
+		app:        a,
 	}
 
 	d.wrapped = js.MakeWrapper(&d)
@@ -88,21 +102,40 @@ func New(name string) *js.Object {
 
 func (d *Domain) Subdomain(name string) *js.Object {
 	n := Domain{
-		coreDomain:    d.coreDomain.Subdomain(name),
-		registrations: make(map[uint]*js.Object),
-		subscriptions: make(map[uint]*js.Object),
+		coreDomain: d.coreDomain.Subdomain(name),
+		app:        d.app,
 	}
 
 	n.wrapped = js.MakeWrapper(&n)
 	return n.wrapped
 }
 
-// var conn Conn
-
 // Blocks on callbacks from the core.
 // TODO: trigger a close meta callback when connection is lost
-func (d *Domain) Receive() string {
-	return core.MantleMarshall(d.coreDomain.GetApp().CallbackListen())
+func (a *App) Receive() {
+	Debug("Starting receive")
+
+	for {
+		cb := a.conn.app.CallbackListen()
+		core.Debug("Have callback: %v", cb)
+
+		if cb.Id == 0 {
+			// Trigger onLeave for all domains
+			core.Info("Terminating receive loop")
+			return
+		}
+
+		if fn, ok := a.subscriptions[cb.Id]; ok {
+			fn.Invoke(cb.Args)
+		}
+
+		if fn, ok := a.registrations[cb.Id]; ok {
+			core.Debug("Invocation: %v", cb.Args)
+			ret := fn.Invoke(cb.Args[1:]...)
+
+			a.conn.app.Yield(cb.Args[0].(uint64), []interface{}{ret.Interface()})
+		}
+	}
 }
 
 func (d *Domain) Join() {
@@ -114,11 +147,12 @@ func (d *Domain) Join() {
 		app:     d.coreDomain.GetApp(),
 	}
 
+	d.app.conn = conn
+
 	w.Set("onmessage", conn.OnMessage)
 	w.Set("onopen", conn.OnOpen)
 	w.Set("onclose", conn.OnClose)
-
-	w.Call("open", fabric)
+	w.Call("open", core.Fabric)
 }
 
 // The actual join method
@@ -127,69 +161,115 @@ func (d *Domain) FinishJoin(c *Conn) {
 		fmt.Println("Cant join: ", err)
 	} else {
 		fmt.Println("Joined!")
+
+		go d.app.Receive()
+
 		if j := d.wrapped.Get("onJoin"); j != js.Undefined {
 			d.wrapped.Call("onJoin")
 		}
 	}
 }
 
-func (d *Domain) Subscribe(endpoint string, handler *js.Object) {
+func (d *Domain) Subscribe(endpoint string, handler *js.Object) *js.Object {
 	cb := core.NewID()
-	d.subscriptions[cb] = handler
+	var p promise.Promise
 
 	go func() {
-		d.coreDomain.Subscribe(endpoint, cb, make([]interface{}, 0))
+		if err := d.coreDomain.Subscribe(endpoint, cb, make([]interface{}, 0)); err == nil {
+			d.app.subscriptions[cb] = handler
+			p.Resolve(nil)
+		} else {
+			p.Reject(err)
+		}
 	}()
+
+	return p.Js()
 }
 
-func (d *Domain) Register(endpoint string, handler *js.Object) {
+func (d *Domain) Register(endpoint string, handler *js.Object) *js.Object {
 	cb := core.NewID()
-	d.registrations[cb] = handler
+	var p promise.Promise
 
 	go func() {
-		d.coreDomain.Register(endpoint, cb, make([]interface{}, 0))
+		if err := d.coreDomain.Register(endpoint, cb, make([]interface{}, 0)); err == nil {
+			d.app.registrations[cb] = handler
+			p.Resolve(nil)
+		} else {
+			p.Reject(err)
+		}
 	}()
+
+	return p.Js()
 }
 
-func (d *Domain) Publish(endpoint string, args ...interface{}) {
-	fmt.Println("Publishing: ", args)
-	cb := core.NewID()
+func (d *Domain) Publish(endpoint string, args ...interface{}) *js.Object {
+	var p promise.Promise
 
 	go func() {
-		d.coreDomain.Publish(endpoint, cb, args)
+		if err := d.coreDomain.Publish(endpoint, args); err == nil {
+			p.Resolve(nil)
+		} else {
+			p.Reject(err)
+		}
 	}()
+
+	return p.Js()
 }
 
-func (d *Domain) Call(endpoint string, args ...interface{}) {
-	cb := core.NewID()
+func (d *Domain) Call(endpoint string, args ...interface{}) *js.Object {
+	var p promise.Promise
 
 	go func() {
-		d.coreDomain.Call(endpoint, cb, args)
+		if results, err := d.coreDomain.Call(endpoint, args, make([]interface{}, 0)); err == nil {
+			p.Resolve(results)
+		} else {
+			p.Reject(err.Error())
+		}
 	}()
+
+	return p.Js()
 }
 
-func (d *Domain) Yield(request uint, args string) {
+func (d *Domain) Unsubscribe(endpoint string) *js.Object {
+	var p promise.Promise
+
 	go func() {
-		d.coreDomain.GetApp().Yield(request, core.MantleUnmarshal(args))
+		if err := d.coreDomain.Unsubscribe(endpoint); err == nil {
+			p.Resolve(nil)
+		} else {
+			p.Reject(err)
+		}
 	}()
+
+	return p.Js()
 }
 
-func (d *Domain) Unsubscribe(endpoint string) {
+func (d *Domain) Unregister(endpoint string) *js.Object {
+	var p promise.Promise
+
 	go func() {
-		d.coreDomain.Unsubscribe(endpoint)
+		if err := d.coreDomain.Unregister(endpoint); err == nil {
+			p.Resolve(nil)
+		} else {
+			p.Reject(err)
+		}
 	}()
+
+	return p.Js()
 }
 
-func (d *Domain) Unregister(endpoint string) {
-	go func() {
-		d.coreDomain.Unregister(endpoint)
-	}()
-}
+func (d *Domain) Leave() *js.Object {
+	var p promise.Promise
 
-func (d *Domain) Leave() {
 	go func() {
-		d.coreDomain.Leave()
+		if err := d.coreDomain.Leave(); err == nil {
+			p.Resolve(nil)
+		} else {
+			p.Reject(err)
+		}
 	}()
+
+	return p.Js()
 }
 
 func SetLogLevelOff()   { core.LogLevel = core.LogLevelOff }
@@ -199,11 +279,11 @@ func SetLogLevelWarn()  { core.LogLevel = core.LogLevelWarn }
 func SetLogLevelInfo()  { core.LogLevel = core.LogLevelInfo }
 func SetLogLevelDebug() { core.LogLevel = core.LogLevelDebug }
 
-func SetFabricDev()        { fabric = core.FabricDev }
-func SetFabricSandbox()    { fabric = core.FabricSandbox }
-func SetFabricProduction() { fabric = core.FabricProduction }
-func SetFabricLocal()      { fabric = core.FabricLocal }
-func SetFabric(url string) { fabric = url }
+func SetFabricDev()        { core.Fabric = core.FabricDev }
+func SetFabricSandbox()    { core.Fabric = core.FabricSandbox }
+func SetFabricProduction() { core.Fabric = core.FabricProduction }
+func SetFabricLocal()      { core.Fabric = core.FabricLocal }
+func SetFabric(url string) { core.Fabric = url }
 
 func Application(s string) { core.Application("%s", s) }
 func Debug(s string)       { core.Debug("%s", s) }
