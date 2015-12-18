@@ -56,3 +56,19 @@ exports.Debug = global.Config.Debug;
 exports.Info = global.Config.Info;
 exports.Warn = global.Config.Warn;
 exports.Error = global.Config.Error;
+
+
+// console.log("Testing promises...");
+
+// global.Ipromise().then(
+//     function(args){
+//         console.log("Success with args:", args)
+//     },
+//     function(args){
+//         console.log("Error with args: ", args)
+//     }
+// );
+
+// console.log("domain: ", global.Domain)
+// d = exports.Domain("xs.damouse")
+// console.log("Instantiates: ", d);

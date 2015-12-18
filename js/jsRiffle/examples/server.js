@@ -10,12 +10,20 @@ me.onJoin = function() {
     console.log("Receiever Joined");
 
     this.Subscribe("sub", function() {
-        console.log("Received a publish!")
-    })
+        console.log("Received a publish!");
+    }).then( function(args){ 
+        console.log("Success with args:", args) 
+    }, function(args){ 
+         console.log("Error with args: ", args) 
+    });
 
-    this.Register("reg", function() {
-        console.log("Received a publish!")
-    })
+    console.log("Done");
+
+    // this.Register("reg", function() {
+    //     console.log("Received a publish!")
+    // })
 };
 
 me.Join()
+
+
