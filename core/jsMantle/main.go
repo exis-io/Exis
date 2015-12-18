@@ -226,6 +226,7 @@ func (d *Domain) Call(endpoint string, args ...interface{}) *js.Object {
 
 	go func() {
 		if results, err := d.coreDomain.Call(endpoint, args, make([]interface{}, 0)); err == nil {
+			Debug("Resolving with args: ", results)
 			p.Resolve(results)
 		} else {
 			p.Reject(err)
