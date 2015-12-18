@@ -55,71 +55,57 @@ func Join(pdomain unsafe.Pointer, cb uint64, eb uint64) {
 }
 
 //export Subscribe
-func Subscribe(pdomain unsafe.Pointer, cb uint64, endpoint *C.char) {
+func Subscribe(pdomain unsafe.Pointer, endpoint *C.char, cb uint64, eb uint64, fn uint64, types string) {
 	d := *(*core.Domain)(pdomain)
-	go func() {
-		d.Subscribe(C.GoString(endpoint), cb, make([]interface{}, 0))
-	}()
+	// go core.MantleSubscribe(d, C.GoString(endpoint), cb, make([]interface{}, 0))
+	go core.MantleSubscribe(d, C.GoString(endpoint), cb, eb, fn, core.MantleUnmarshal(types))
 }
 
-//export Register
-func Register(pdomain unsafe.Pointer, cb uint64, endpoint *C.char) {
-	d := *(*core.Domain)(pdomain)
-	go func() {
-		d.Register(C.GoString(endpoint), cb, make([]interface{}, 0))
-	}()
-}
+// //export Register
+// func Register(pdomain unsafe.Pointer, cb uint64, endpoint *C.char) {
+// 	d := *(*core.Domain)(pdomain)
+// 	go core.MantleRegister(d, C.GoString(endpoint), cb, make([]interface{}, 0))
+// }
 
-//export Publish
-func Publish(pdomain unsafe.Pointer, cb uint64, endpoint *C.char, args *C.char) {
-	d := *(*core.Domain)(pdomain)
-	a := C.GoString(args)
-	s := core.MantleUnmarshal(a)
-	core.Debug("String: %s, Unmarshalled: %s", a, s)
-	go func() {
-		d.Publish(C.GoString(endpoint), cb, s)
-	}()
-}
+// //export Publish
+// func Publish(pdomain unsafe.Pointer, cb uint64, endpoint *C.char, args *C.char) {
+// 	d := *(*core.Domain)(pdomain)
+// 	a := C.GoString(args)
+// 	s := core.MantleUnmarshal(a)
+// 	// core.Debug("String: %s, Unmarshalled: %s", a, s)
 
-//export Call
-func Call(pdomain unsafe.Pointer, cb uint64, endpoint *C.char, args *C.char) {
-	d := *(*core.Domain)(pdomain)
-	go func() {
-		d.Call(C.GoString(endpoint), cb, core.MantleUnmarshal(C.GoString(args)))
-	}()
-}
+// 	go core.MantlePublish(d, C.GoString(endpoint), cb, s)
+// }
 
-//export Yield
-func Yield(pdomain unsafe.Pointer, request uint64, args *C.char) {
-	d := *(*core.Domain)(pdomain)
-	go func() {
-		d.GetApp().Yield(request, core.MantleUnmarshal(C.GoString(args)))
-	}()
-}
+// //export Call
+// func Call(pdomain unsafe.Pointer, cb uint64, endpoint *C.char, args *C.char) {
+// 	d := *(*core.Domain)(pdomain)
+// 	go core.MantleCall(d, C.GoString(endpoint), cb, core.MantleUnmarshal(C.GoString(args)))
+// }
 
-//export Unsubscribe
-func Unsubscribe(pdomain unsafe.Pointer, endpoint *C.char) {
-	d := *(*core.Domain)(pdomain)
-	go func() {
-		d.Unsubscribe(C.GoString(endpoint))
-	}()
-}
+// //export Yield
+// func Yield(pdomain unsafe.Pointer, request uint64, args *C.char) {
+// 	d := *(*core.Domain)(pdomain)
+// 	go d.GetApp().Yield(request, core.MantleUnmarshal(C.GoString(args)))
+// }
 
-//export Unregister
-func Unregister(pdomain unsafe.Pointer, endpoint *C.char) {
-	d := *(*core.Domain)(pdomain)
-	go func() {
-		d.Unregister(C.GoString(endpoint))
-	}()
-}
+// //export Unsubscribe
+// func Unsubscribe(pdomain unsafe.Pointer, endpoint *C.char) {
+// 	d := *(*core.Domain)(pdomain)
+// 	go core.MantleUnsubscribe(d, C.GoString(endpoint))
+// }
 
-//export Leave
-func Leave(pdomain unsafe.Pointer) {
-	d := *(*core.Domain)(pdomain)
-	go func() {
-		d.Leave()
-	}()
-}
+// //export Unregister
+// func Unregister(pdomain unsafe.Pointer, endpoint *C.char) {
+// 	d := *(*core.Domain)(pdomain)
+// 	go core.MantleUnregister(d, C.GoString(endpoint))
+// }
+
+// //export Leave
+// func Leave(pdomain unsafe.Pointer) {
+// 	d := *(*core.Domain)(pdomain)
+// 	go d.Leave()
+// }
 
 //export SetLogLevelOff
 func SetLogLevelOff() { core.LogLevel = core.LogLevelOff }
