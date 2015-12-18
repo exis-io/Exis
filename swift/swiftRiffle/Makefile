@@ -1,6 +1,10 @@
 ## Note-- this does not build the mantle. Use the makefile in the top level directory for that
 
+# .PHONY: libRiffle.so riffle.swiftmodule
+
 all: libRiffle.so riffle.swiftmodule
+
+# emit-dependencies doesnt work 
 
 %.o:%.swift
 	swiftc -I. -c $< -import-objc-header bridgingHeader.h

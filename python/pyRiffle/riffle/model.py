@@ -120,7 +120,7 @@ def cuminReflect(handler):
     except TypeError, e:
         # If the method does not accept a _riffle_reflect, its not a wrapped function
         # TODO: HOWEVER-- a **kwargs function will fail here. Have to catch **kwargs functions
-        # and immediately err on them!
+        # and immediately err on them! Receives can only accept *args and may embed as elements
         return None
 
     typeList = []
