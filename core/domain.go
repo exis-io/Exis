@@ -161,6 +161,8 @@ func (c domain) Register(endpoint string, requestId uint64, types []interface{})
 	endpoint = makeEndpoint(c.name, endpoint)
 	register := &register{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
 
+	Debug("Registering with types: %s", types)
+
 	if msg, err := c.app.requestListenType(register, "*core.registered"); err != nil {
 		return err
 	} else {

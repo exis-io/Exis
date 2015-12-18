@@ -143,7 +143,7 @@ def cuminReflect(handler):
             elif t is dict:
                 print 'Dictionary serialization not implemented'
 
-            elif issubclass(t, RiffleModel):
+            elif issubclass(t, Model):
                 typeList.append(t.reflect())
 
             else: 
@@ -162,19 +162,16 @@ class Unimplemented(RiffleError):
 # Inline testing, please ignore
 ##############################
 
-class User(RiffleModel):
+class User(Model):
     name = "John Doe"
     email = ''
 
     def __init__(self, email):
         super(User, self).__init__()
 
-        # Internal private fields are not tracked
-        # self._internal = False
-
 
 # Testing
-@want(int, str, bool, User)
+@want(int, str, User)
 def fn(a, b):
     print 'Function Called!'
 
