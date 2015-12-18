@@ -1,31 +1,12 @@
 
-
-require('./polyfill.js');
-
-var log = require('./log.js');
-var pjson = require('../package.json');
-var when = require('when');
-var fn = require("when/function");
-var configure = require('./configure.js');
-
-exports.version = pjson.version;
-exports.transports = configure.transports;
-exports.when = when;
-exports.log = log;
-
-
-//
-// Begin GOJS implementation
-//
-
-var go = require('./go.js');
+require('./go.js');
 var ws = require('./transport/websocket.js');
+var pjson = require('../package.json');
+exports.version = pjson.version;
 
-// This might be needed to counteract uInt ID generation
+// Used to counteract uint generation on seemlingly 32 bit platforms
 global.NewID = function() {
-   var id = Math.floor(Math.random() * 9007199254740992);
-   console.log("Created new id: " + id)
-   return id
+   return Math.floor(Math.random() * 9007199254740992);
 }
 
 // Dont need any of this-- just return the conn
@@ -62,19 +43,3 @@ exports.Debug = global.Config.Debug;
 exports.Info = global.Config.Info;
 exports.Warn = global.Config.Warn;
 exports.Error = global.Config.Error;
-
-
-// console.log("Testing promises...");
-
-// global.Ipromise().then(
-//     function(args){
-//         console.log("Success with args:", args)
-//     },
-//     function(args){
-//         console.log("Error with args: ", args)
-//     }
-// );
-
-// console.log("domain: ", global.Domain)
-// d = exports.Domain("xs.damouse")
-// console.log("Instantiates: ", d);

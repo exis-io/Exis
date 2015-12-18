@@ -8,10 +8,7 @@ import (
 	"github.com/gopherjs/gopherjs/js"
 )
 
-var fabric string = core.FabricProduction
-
 func main() {
-	// Functions are autoexported on non-pointer types-- dont need "Subdomain" listed here
 	js.Global.Set("Domain", map[string]interface{}{
 		"New": New,
 	})
@@ -34,18 +31,7 @@ func main() {
 		"Warn":                Warn,
 		"Error":               Error,
 	})
-
-	// js.Global.Set("whoami", Promisify(whoami))
 }
-
-// This is a blocking function -- it doesn't return until the XHR
-// completes or fails.
-// func whoami() (bool, error) {
-// 	if resp, err := http.Get("/api/whoami"); err != nil {
-// 		return nil, err
-// 	}
-// 	return parseUserJson(resp)
-// }
 
 type Domain struct {
 	coreDomain core.Domain
@@ -134,6 +120,7 @@ func (a *App) Receive() {
 		core.Debug("Have callback: %v", cb)
 
 		if cb.Id == 0 {
+			// Trigger onLeave for all domains
 			core.Info("Terminating receive loop")
 			return
 		}
@@ -165,7 +152,7 @@ func (d *Domain) Join() {
 	w.Set("onmessage", conn.OnMessage)
 	w.Set("onopen", conn.OnOpen)
 	w.Set("onclose", conn.OnClose)
-	w.Call("open", fabric)
+	w.Call("open", core.Fabric)
 }
 
 // The actual join method
@@ -234,7 +221,6 @@ func (d *Domain) Call(endpoint string, args ...interface{}) *js.Object {
 
 	go func() {
 		if results, err := d.coreDomain.Call(endpoint, args, make([]interface{}, 0)); err == nil {
-			core.Debug("Resolving with args: ", results)
 			p.Resolve(results)
 		} else {
 			p.Reject(err.Error())
@@ -293,11 +279,11 @@ func SetLogLevelWarn()  { core.LogLevel = core.LogLevelWarn }
 func SetLogLevelInfo()  { core.LogLevel = core.LogLevelInfo }
 func SetLogLevelDebug() { core.LogLevel = core.LogLevelDebug }
 
-func SetFabricDev()        { fabric = core.FabricDev }
-func SetFabricSandbox()    { fabric = core.FabricSandbox }
-func SetFabricProduction() { fabric = core.FabricProduction }
-func SetFabricLocal()      { fabric = core.FabricLocal }
-func SetFabric(url string) { fabric = url }
+func SetFabricDev()        { core.Fabric = core.FabricDev }
+func SetFabricSandbox()    { core.Fabric = core.FabricSandbox }
+func SetFabricProduction() { core.Fabric = core.FabricProduction }
+func SetFabricLocal()      { core.Fabric = core.FabricLocal }
+func SetFabric(url string) { core.Fabric = url }
 
 func Application(s string) { core.Application("%s", s) }
 func Debug(s string)       { core.Debug("%s", s) }
