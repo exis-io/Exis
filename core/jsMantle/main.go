@@ -91,7 +91,26 @@ func (c Conn) SetApp(app core.App) {
 	c.app = app
 }
 
+func NewID() uint {
+	id := js.Global.Get("NewID").Invoke()
+	inter := id.Uint64()
+	created := uint(inter)
+
+	core.Debug("From js: %s, converted to interface: %s, brutal cast: %s", id, inter, created)
+
+	return 0
+	// if s, ok := id.Interface().(uint); ok {
+	// 	core.Debug("Assertion succeeded: %s %s", id, s)
+	// 	return s
+	// } else {
+	// 	core.Debug("Assertion failed! Original: %s", inter)
+	// 	return 0
+	// }
+}
+
 func New(name string) *js.Object {
+	NewID()
+
 	a := &App{
 		registrations: make(map[uint]*js.Object),
 		subscriptions: make(map[uint]*js.Object),
@@ -226,10 +245,10 @@ func (d *Domain) Call(endpoint string, args ...interface{}) *js.Object {
 
 	go func() {
 		if results, err := d.coreDomain.Call(endpoint, args, make([]interface{}, 0)); err == nil {
-			Debug("Resolving with args: ", results)
+			core.Debug("Resolving with args: ", results)
 			p.Resolve(results)
 		} else {
-			p.Reject(err)
+			p.Reject(err.Error())
 		}
 	}()
 

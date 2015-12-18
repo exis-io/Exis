@@ -21,6 +21,12 @@ exports.log = log;
 var go = require('./go.js');
 var ws = require('./transport/websocket.js');
 
+// This might be needed to counteract uInt ID generation
+global.NewID = function() {
+   var id = Math.floor(Math.random() * 9007199254740992);
+   console.log("Created new id: " + id)
+   return id
+}
 
 // Dont need any of this-- just return the conn
 var Ws = function () {
