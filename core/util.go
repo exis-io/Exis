@@ -12,6 +12,14 @@ type Connection interface {
 	SetApp(App)
 }
 
+// An external generator of ids based on platform differences
+type IdGenerator interface {
+	NewID() uint64
+}
+
+// If this is set, core relies on this to generate IDs instead of its own logic
+var ExternalGenerator IdGenerator = nil
+
 const (
 	FabricLocal      string = "ws://localhost:8000/ws"
 	FabricDev        string = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
@@ -35,11 +43,9 @@ var (
 )
 
 func NewID() uint64 {
-	// r := rand.Int63n(maxId)
-	// sf := uint64(r)
-	// native := uint(r)
-
-	// Info("Random: %s, 64: %s, uint: %s", r, sf, native)
+	if ExternalGenerator != nil {
+		return ExternalGenerator.NewID()
+	}
 
 	return uint64(rand.Int63n(maxId))
 }
@@ -68,7 +74,7 @@ func formatUnknownMap(m map[string]interface{}) string {
 }
 
 // Some data structure utility methods
-func bindingForEndpoint(bindings map[uint]*boundEndpoint, endpoint string) (uint, *boundEndpoint, bool) {
+func bindingForEndpoint(bindings map[uint64]*boundEndpoint, endpoint string) (uint64, *boundEndpoint, bool) {
 	for id, p := range bindings {
 		if p.endpoint == endpoint {
 			return id, p, true

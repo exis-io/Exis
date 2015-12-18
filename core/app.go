@@ -12,13 +12,13 @@ type App interface {
 	ReceiveString(string)
 	ReceiveMessage(message)
 
-	Yield(uint, []interface{})
+	Yield(uint64, []interface{})
 
 	Close(string)
 	ConnectionClosed(string)
 
 	CallbackListen() Callback
-	CallbackSend(uint, ...interface{})
+	CallbackSend(uint64, ...interface{})
 }
 
 type app struct {
@@ -28,12 +28,12 @@ type app struct {
 	agent     string
 	in        chan message
 	up        chan Callback
-	listeners map[uint]chan message
+	listeners map[uint64]chan message
 }
 
 // Sent up to the mantle and then the crust as callbacks are triggered
 type Callback struct {
-	Id   uint
+	Id   uint64
 	Args []interface{}
 }
 
@@ -42,7 +42,7 @@ func (a *app) CallbackListen() Callback {
 	return m
 }
 
-func (a *app) CallbackSend(id uint, args ...interface{}) {
+func (a *app) CallbackSend(id uint64, args ...interface{}) {
 	a.up <- Callback{id, args}
 }
 
@@ -80,7 +80,7 @@ func (c app) ConnectionClosed(reason string) {
 	close(c.up)
 }
 
-func (a app) Yield(request uint, args []interface{}) {
+func (a app) Yield(request uint64, args []interface{}) {
 	m := &yield{
 		Request:   request,
 		Options:   make(map[string]interface{}),
@@ -93,7 +93,7 @@ func (a app) Yield(request uint, args []interface{}) {
 }
 
 // Not fully implemented
-func (a app) YieldError(request uint, args []interface{}) {
+func (a app) YieldError(request uint64, args []interface{}) {
 	m := &errorMessage{
 		Type:      iNVOCATION,
 		Request:   request,

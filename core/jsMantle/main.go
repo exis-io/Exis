@@ -61,8 +61,14 @@ type Conn struct {
 
 type App struct {
 	conn          Conn
-	registrations map[uint]*js.Object
-	subscriptions map[uint]*js.Object
+	registrations map[uint64]*js.Object
+	subscriptions map[uint64]*js.Object
+}
+
+type idGenerator struct{}
+
+func (i idGenerator) NewID() uint64 {
+	return js.Global.Get("NewID").Invoke().Uint64()
 }
 
 func (c Conn) OnMessage(msg *js.Object) {
@@ -91,29 +97,12 @@ func (c Conn) SetApp(app core.App) {
 	c.app = app
 }
 
-func NewID() uint {
-	id := js.Global.Get("NewID").Invoke()
-	inter := id.Uint64()
-	created := uint(inter)
-
-	core.Debug("From js: %s, converted to interface: %s, brutal cast: %s", id, inter, created)
-
-	return 0
-	// if s, ok := id.Interface().(uint); ok {
-	// 	core.Debug("Assertion succeeded: %s %s", id, s)
-	// 	return s
-	// } else {
-	// 	core.Debug("Assertion failed! Original: %s", inter)
-	// 	return 0
-	// }
-}
-
 func New(name string) *js.Object {
-	NewID()
+	core.ExternalGenerator = idGenerator{}
 
 	a := &App{
-		registrations: make(map[uint]*js.Object),
-		subscriptions: make(map[uint]*js.Object),
+		registrations: make(map[uint64]*js.Object),
+		subscriptions: make(map[uint64]*js.Object),
 	}
 
 	d := Domain{
@@ -157,7 +146,7 @@ func (a *App) Receive() {
 			core.Debug("Invocation: %v", cb.Args)
 			ret := fn.Invoke(cb.Args[1:]...)
 
-			a.conn.app.Yield(cb.Args[0].(uint), []interface{}{ret.Interface()})
+			a.conn.app.Yield(cb.Args[0].(uint64), []interface{}{ret.Interface()})
 		}
 	}
 }

@@ -23,7 +23,7 @@ func (d *Domain) Receive() string {
 }
 
 // TODO: Move this to the mantle helper
-func (d *Domain) Join(cb uint, eb uint) {
+func (d *Domain) Join(cb uint64, eb uint64) {
 	if c, err := goRiffle.Open(core.Fabric); err != nil {
 		d.coreDomain.GetApp().CallbackSend(eb, err.Error())
 	} else {
@@ -35,31 +35,31 @@ func (d *Domain) Join(cb uint, eb uint) {
 	}
 }
 
-func (d *Domain) Subscribe(endpoint string, cb uint, eb uint, fn uint, types string) {
+func (d *Domain) Subscribe(endpoint string, cb uint64, eb uint64, fn uint64, types string) {
 	go core.MantleSubscribe(d.coreDomain, endpoint, cb, eb, fn, core.MantleUnmarshal(types))
 }
 
-func (d *Domain) Register(endpoint string, cb uint, eb uint, fn uint, types string) {
+func (d *Domain) Register(endpoint string, cb uint64, eb uint64, fn uint64, types string) {
 	go core.MantleRegister(d.coreDomain, endpoint, cb, eb, fn, core.MantleUnmarshal(types))
 }
 
-func (d *Domain) Publish(endpoint string, cb uint, eb uint, args string) {
+func (d *Domain) Publish(endpoint string, cb uint64, eb uint64, args string) {
 	go core.MantlePublish(d.coreDomain, endpoint, cb, eb, core.MantleUnmarshal(args))
 }
 
-func (d *Domain) Call(endpoint string, cb uint, eb uint, args string, types string) {
+func (d *Domain) Call(endpoint string, cb uint64, eb uint64, args string, types string) {
 	go core.MantleCall(d.coreDomain, endpoint, cb, eb, core.MantleUnmarshal(args), core.MantleUnmarshal(types))
 }
 
-func (d *Domain) Unsubscribe(endpoint string, cb uint, eb uint) {
+func (d *Domain) Unsubscribe(endpoint string, cb uint64, eb uint64) {
 	go core.MantleUnsubscribe(d.coreDomain, endpoint, cb, eb)
 }
 
-func (d *Domain) Unregister(endpoint string, cb uint, eb uint) {
+func (d *Domain) Unregister(endpoint string, cb uint64, eb uint64) {
 	go core.MantleUnregister(d.coreDomain, endpoint, cb, eb)
 }
 
-func (d *Domain) Yield(request uint, args string) {
+func (d *Domain) Yield(request uint64, args string) {
 	go d.coreDomain.GetApp().Yield(request, core.MantleUnmarshal(args))
 }
 

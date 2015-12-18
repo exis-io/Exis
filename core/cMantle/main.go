@@ -16,7 +16,7 @@ func main() {}
 var fabric string = core.FabricProduction
 
 //export CBID
-func CBID() uint {
+func CBID() uint64 {
 	return core.NewID()
 }
 
@@ -40,7 +40,7 @@ func Receive(pdomain unsafe.Pointer) []byte {
 }
 
 //export Join
-func Join(pdomain unsafe.Pointer, cb uint, eb uint) {
+func Join(pdomain unsafe.Pointer, cb uint64, eb uint64) {
 	d := *(*core.Domain)(pdomain)
 
 	if c, err := goRiffle.Open(fabric); err != nil {
@@ -55,7 +55,7 @@ func Join(pdomain unsafe.Pointer, cb uint, eb uint) {
 }
 
 //export Subscribe
-func Subscribe(pdomain unsafe.Pointer, cb uint, endpoint *C.char) {
+func Subscribe(pdomain unsafe.Pointer, cb uint64, endpoint *C.char) {
 	d := *(*core.Domain)(pdomain)
 	go func() {
 		d.Subscribe(C.GoString(endpoint), cb, make([]interface{}, 0))
@@ -63,7 +63,7 @@ func Subscribe(pdomain unsafe.Pointer, cb uint, endpoint *C.char) {
 }
 
 //export Register
-func Register(pdomain unsafe.Pointer, cb uint, endpoint *C.char) {
+func Register(pdomain unsafe.Pointer, cb uint64, endpoint *C.char) {
 	d := *(*core.Domain)(pdomain)
 	go func() {
 		d.Register(C.GoString(endpoint), cb, make([]interface{}, 0))
@@ -71,7 +71,7 @@ func Register(pdomain unsafe.Pointer, cb uint, endpoint *C.char) {
 }
 
 //export Publish
-func Publish(pdomain unsafe.Pointer, cb uint, endpoint *C.char, args *C.char) {
+func Publish(pdomain unsafe.Pointer, cb uint64, endpoint *C.char, args *C.char) {
 	d := *(*core.Domain)(pdomain)
 	a := C.GoString(args)
 	s := core.MantleUnmarshal(a)
@@ -82,7 +82,7 @@ func Publish(pdomain unsafe.Pointer, cb uint, endpoint *C.char, args *C.char) {
 }
 
 //export Call
-func Call(pdomain unsafe.Pointer, cb uint, endpoint *C.char, args *C.char) {
+func Call(pdomain unsafe.Pointer, cb uint64, endpoint *C.char, args *C.char) {
 	d := *(*core.Domain)(pdomain)
 	go func() {
 		d.Call(C.GoString(endpoint), cb, core.MantleUnmarshal(C.GoString(args)))
@@ -90,7 +90,7 @@ func Call(pdomain unsafe.Pointer, cb uint, endpoint *C.char, args *C.char) {
 }
 
 //export Yield
-func Yield(pdomain unsafe.Pointer, request uint, args *C.char) {
+func Yield(pdomain unsafe.Pointer, request uint64, args *C.char) {
 	d := *(*core.Domain)(pdomain)
 	go func() {
 		d.GetApp().Yield(request, core.MantleUnmarshal(C.GoString(args)))
