@@ -135,7 +135,10 @@ func (a *App) Receive() {
 		}
 
 		if fn, ok := a.registrations[cb.Id]; ok {
-			fn.Invoke(cb.Args)
+			core.Debug("Invocation: %v", cb.Args)
+			ret := fn.Invoke(cb.Args[1:]...)
+
+			a.conn.app.Yield(cb.Args[0].(uint), []interface{}{ret.Interface()})
 		}
 	}
 }
@@ -173,17 +176,14 @@ func (d *Domain) FinishJoin(c *Conn) {
 }
 
 func (d *Domain) Subscribe(endpoint string, handler *js.Object) *js.Object {
-	core.Debug("Subscribing to %s", endpoint)
 	cb := core.NewID()
-	d.app.subscriptions[cb] = handler
 	var p promise.Promise
 
 	go func() {
 		if err := d.coreDomain.Subscribe(endpoint, cb, make([]interface{}, 0)); err == nil {
-			Debug("Internal: resolving promise")
+			d.app.subscriptions[cb] = handler
 			p.Resolve(nil)
 		} else {
-			Debug("Internal: resolving promise ERR")
 			p.Reject(err)
 		}
 	}()
@@ -191,35 +191,91 @@ func (d *Domain) Subscribe(endpoint string, handler *js.Object) *js.Object {
 	return p.Js()
 }
 
-// func (d *Domain) Register(endpoint string, handler *js.Object) {
-// 	cb := core.NewID()
-// 	d.registrations[cb] = handler
-// 	return d.coreDomain.Register(endpoint, cb, make([]interface{}, 0))
-// }
+func (d *Domain) Register(endpoint string, handler *js.Object) *js.Object {
+	cb := core.NewID()
+	var p promise.Promise
 
-func (d *Domain) Publish(endpoint string, args ...interface{}) {
-	d.coreDomain.Publish(endpoint, args)
+	go func() {
+		if err := d.coreDomain.Register(endpoint, cb, make([]interface{}, 0)); err == nil {
+			d.app.registrations[cb] = handler
+			p.Resolve(nil)
+		} else {
+			p.Reject(err)
+		}
+	}()
+
+	return p.Js()
 }
 
-// func (d *Domain) Call(endpoint string, args ...interface{}) {
-// 	return d.coreDomain.Call(endpoint, args, make([]interface{}, 0))
-// }
+func (d *Domain) Publish(endpoint string, args ...interface{}) *js.Object {
+	var p promise.Promise
 
-// func (d *Domain) Yield(request uint, args string) {
-// 	go d.coreDomain.GetApp().Yield(request, core.MantleUnmarshal(args))
-// }
+	go func() {
+		if err := d.coreDomain.Publish(endpoint, args); err == nil {
+			p.Resolve(nil)
+		} else {
+			p.Reject(err)
+		}
+	}()
 
-// func (d *Domain) Unsubscribe(endpoint string) {
-// 	return d.coreDomain.Unsubscribe(endpoint)
-// }
+	return p.Js()
+}
 
-// func (d *Domain) Unregister(endpoint string) {
-// 	return d.coreDomain.Unregister(endpoint)
-// }
+func (d *Domain) Call(endpoint string, args ...interface{}) *js.Object {
+	var p promise.Promise
 
-// func (d *Domain) Leave() {
-// 	return d.coreDomain.Leave()
-// }
+	go func() {
+		if results, err := d.coreDomain.Call(endpoint, args, make([]interface{}, 0)); err == nil {
+			p.Resolve(results)
+		} else {
+			p.Reject(err)
+		}
+	}()
+
+	return p.Js()
+}
+
+func (d *Domain) Unsubscribe(endpoint string) *js.Object {
+	var p promise.Promise
+
+	go func() {
+		if err := d.coreDomain.Unsubscribe(endpoint); err == nil {
+			p.Resolve(nil)
+		} else {
+			p.Reject(err)
+		}
+	}()
+
+	return p.Js()
+}
+
+func (d *Domain) Unregister(endpoint string) *js.Object {
+	var p promise.Promise
+
+	go func() {
+		if err := d.coreDomain.Unregister(endpoint); err == nil {
+			p.Resolve(nil)
+		} else {
+			p.Reject(err)
+		}
+	}()
+
+	return p.Js()
+}
+
+func (d *Domain) Leave() *js.Object {
+	var p promise.Promise
+
+	go func() {
+		if err := d.coreDomain.Leave(); err == nil {
+			p.Resolve(nil)
+		} else {
+			p.Reject(err)
+		}
+	}()
+
+	return p.Js()
+}
 
 func SetLogLevelOff()   { core.LogLevel = core.LogLevelOff }
 func SetLogLevelApp()   { core.LogLevel = core.LogLevelApp }
