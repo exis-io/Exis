@@ -1,6 +1,6 @@
-# swiftRiffle (Ubuntu, swift 2.2)
+# swiftRiffle (swift 2.2 Open Source)
 
-This section is a work in progress and may be subject to change. It describes building swiftRiffle with Swift 2.2. 
+This is for the open source version of swift. This directory is exploratory and subject to change. 
 
 **1**. Install [Go][https://golang.org/dl/].
 
