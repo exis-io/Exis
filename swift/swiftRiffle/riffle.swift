@@ -16,7 +16,7 @@ import CoreFoundation
 //////////////////////////////////////
 // JSON Implementation 
 //////////////////////////////////////
-/*
+
 let unescapeMapping: [UnicodeScalar: UnicodeScalar] = [
     "t": "\t",
     "r": "\r",
@@ -965,7 +965,7 @@ extension GenericJSONParser {
         }
     }
 }
-*/
+
 //////////////////////////////////////
 // Utils.swift
 //////////////////////////////////////
