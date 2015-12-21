@@ -1088,11 +1088,14 @@ public class Domain {
         // delegate = self
     }
     
-    // public func subscribe(endpoint: String, fn: (Any) -> ()) {
-    //     let cb = CBID()
-    //     Subscribe(self.mantleDomain, cb, endpoint.cString())
-    //     handlers[cb] = fn
-    // }
+    public func subscribe(endpoint: String, fn: (Any) -> ()) {
+        let cb = CBID()
+        let eb = CBID()
+        let hn = CBID() 
+
+        Subscribe(self.mantleDomain, endpoint.cString(), cb, eb, hn, "[]".cString())
+        handlers[cb] = fn
+    }
     
     // public func register(endpoint: String, fn: (Any) -> (Any?)) {
     //     let cb = CBID()

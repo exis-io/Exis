@@ -17,7 +17,6 @@ User(RiffleModel)
     bool czar
 ```
 
-
 Players are not given a room to begin with. They have to request a room  assignment by calling `play`. Note that the room receives the name of the caller as a `#details` registration.
 
 ```
