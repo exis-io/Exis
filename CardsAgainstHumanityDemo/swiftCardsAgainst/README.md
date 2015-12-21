@@ -4,7 +4,7 @@ This project is the result of a [tutorial on getting started with exis](http://d
 
 This project lives at https://github.com/exis-io/CardsAgainst. You might be in a subtree. 
 
-## Building the Example
+## Building the Example 
 
 At least Xcode 7.1 and Swift 2.1 are required. 
 
