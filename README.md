@@ -1,3 +1,4 @@
+
 <div align="center">
   <img src ="assets/exis-logo.png" height="200" width="150" /> <br>
   <h3>Stop writing network code. Seriously.</h3>
@@ -7,6 +8,9 @@
   <img src="https://img.shields.io/badge/OS-iOS%209-brightgreen.svg">
   <img src="https://img.shields.io/badge/language-Swift%202-brightgreen.svg">
 </div>
+
+See full documentation at docs.exis.io. Find out more at exis.io. 
+
 ## Why Exis?
 While we were developing Exis, simplicity and ease of use was at our highest priority.  With Exis, if you can make a function call, you can create incredibly complex apps in just minutes.<br><br>
 No more needing to worry about learning several languages to create the backend suited for your needs.  Instead, use the languages that you know and are comfortable with.  We support WebSockets and HTTP - so if your device can talk to HTTP, it can use Exis.
