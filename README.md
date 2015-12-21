@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/badge/language-Swift%202-brightgreen.svg">
 </div>
 
-See full documentation at docs.exis.io. Find out more at exis.io. 
+See full documentation at [docs.exis.io](docs.exis.io). Find out more at exis.io. 
 
 ## Why Exis?
 While we were developing Exis, simplicity and ease of use was at our highest priority.  With Exis, if you can make a function call, you can create incredibly complex apps in just minutes.<br><br>
