@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/badge/language-Swift%202-brightgreen.svg">
 </div>
 
-See full documentation at [docs.exis.io](http://docs.exis.io/) or [docs.exis.io](https://docs.exis.io). Find out more at exis.io. 
+[exis.io](exis.io) is our main website landing page. Documentation lives at [docs.exis.io](http://docs.exis.io). 
 
 ## Why Exis?
 While we were developing Exis, simplicity and ease of use was at our highest priority.  With Exis, if you can make a function call, you can create incredibly complex apps in just minutes.<br><br>
