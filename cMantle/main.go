@@ -55,10 +55,10 @@ func Join(pdomain unsafe.Pointer, cb uint64, eb uint64) {
 }
 
 //export Subscribe
-func Subscribe(pdomain unsafe.Pointer, endpoint *C.char, cb uint64, eb uint64, fn uint64, types string) {
+func Subscribe(pdomain unsafe.Pointer, endpoint *C.char, cb uint64, eb uint64, fn uint64, types *C.char) {
 	d := *(*core.Domain)(pdomain)
 	// go core.MantleSubscribe(d, C.GoString(endpoint), cb, make([]interface{}, 0))
-	go core.MantleSubscribe(d, C.GoString(endpoint), cb, eb, fn, core.MantleUnmarshal(types))
+	go core.MantleSubscribe(d, C.GoString(endpoint), cb, eb, fn, core.MantleUnmarshal(C.GoString(types)))
 }
 
 // //export Register
