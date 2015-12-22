@@ -2,19 +2,32 @@
 
 import Foundation
 
-SetLoggingLevel(3)
+SetLogLevelDebug()
+SetFabricLocal()
 
-//let url = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
-//let domain = "xs.damouse"
 
-class TestingDomain: Domain {
+class Sender: Domain {
     
     override func onJoin() {
-        print("Subclass joined!")
+        publish("xs.damouse.alpha/sub", 1, "2", true)
         
+        call("xs.damouse.alpha/reg", "Johnathan", "Seed") { returnArgs in
+            print("Call received result \(returnArgs)")
+        }
+    }
+    
+    override func onLeave() {
+        print("Subclass left!")
+    }
+}
+
+
+class Receiver: Domain {
+    
+    override func onJoin() {
         register("reg") { (args: Any) -> Any? in
             print("Received call! Args: \(args)")
-            return nil
+            return "Receiver says hi!"
         }
         
         subscribe("sub") { (args: Any) in
@@ -27,4 +40,11 @@ class TestingDomain: Domain {
     }
 }
 
-TestingDomain(name: "xs.damouse").join()
+// Start the scripts
+if let result = NSProcessInfo.processInfo().environment["RECEIVER"] {
+    print("Starting Receiver")
+    Receiver(name: "xs.damouse.alpha").join()
+} else {
+    print("Starting Sender")
+    Sender(name: "xs.damouse.beta").join()
+}

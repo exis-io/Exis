@@ -2,23 +2,71 @@ package core
 
 import "fmt"
 
+type Domain interface {
+	Subdomain(string) Domain
+
+	Subscribe(string, uint64, []interface{}) error
+	Register(string, uint64, []interface{}) error
+	Publish(string, []interface{}) error
+	Call(string, []interface{}, []interface{}) ([]interface{}, error)
+
+	Unsubscribe(string) error
+	Unregister(string) error
+
+	Join(Connection) error
+	Leave() error
+	GetApp() App
+}
+
 type domain struct {
-	Delegate
 	app           *app
 	name          string
 	joined        bool
-	subscriptions map[uint]*boundEndpoint
-	registrations map[uint]*boundEndpoint
+	subscriptions map[uint64]*boundEndpoint
+	registrations map[uint64]*boundEndpoint
 }
 
 type boundEndpoint struct {
-	callback      uint
+	callback      uint64
 	endpoint      string
 	expectedTypes []interface{}
 }
 
-func (d domain) Subdomain(name string, delegate Delegate) Domain {
-	return d.app.NewDomain(d.name+"."+name, delegate)
+// Create a new domain. If no superdomain is provided, creates an app as well
+// If the app exists, has a connection, and is connected then immediately call onJoin on that domain
+func NewDomain(name string, a *app) Domain {
+	Debug("Creating domain %s", name)
+
+	if a == nil {
+		a = &app{
+			domains:    make([]*domain, 0),
+			serializer: new(jSONSerializer),
+			in:         make(chan message, 10),
+			up:         make(chan Callback, 10),
+			listeners:  make(map[uint64]chan message),
+		}
+	}
+
+	d := &domain{
+		app:           a,
+		name:          name,
+		joined:        false,
+		subscriptions: make(map[uint64]*boundEndpoint),
+		registrations: make(map[uint64]*boundEndpoint),
+	}
+
+	// TODO: trigger onJoin if the superdomain has joined
+
+	a.domains = append(a.domains, d)
+	return d
+}
+
+func (d domain) Subdomain(name string) Domain {
+	return NewDomain(d.name+"."+name, d.app)
+}
+
+func (d domain) GetApp() App {
+	return d.app
 }
 
 // Accepts a connection that has just been opened. This method should only
@@ -28,10 +76,15 @@ func (c domain) Join(conn Connection) error {
 		return fmt.Errorf("Domain %s is already joined", c.name)
 	}
 
+	// Handshake between the connection and the app
 	c.app.Connection = conn
+	conn.SetApp(c.app)
+
+	// Set the agent string, or who WE are. When this domain leaves, termintate the connection
+	c.app.agent = c.name
 
 	// Should we hard close on conn.Close()? The App may be interested in knowing about the close
-	if err := c.app.SendNow(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {
+	if err := c.app.Send(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {
 		c.app.Close("ERR: could not send a hello message")
 		return err
 	}
@@ -40,20 +93,20 @@ func (c domain) Join(conn Connection) error {
 		c.app.Close(err.Error())
 		return err
 	} else if _, ok := msg.(*welcome); !ok {
-		c.app.SendNow(&abort{Details: map[string]interface{}{}, Reason: "Error- unexpected_message_type"})
+		c.app.Send(&abort{Details: map[string]interface{}{}, Reason: "Error- unexpected_message_type"})
 		c.app.Close("Error- unexpected_message_type")
 		return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME.String()))
 	}
 
 	// This is super dumb, and the reason its in here was fixed. Please revert
 	go c.app.receiveLoop()
-	go c.app.sendLoop()
 
 	// old contents of app.join
 	for _, x := range c.app.domains {
 		if !x.joined {
 			x.joined = true
-			x.Delegate.OnJoin(x.name)
+			// x.Delegate.OnJoin(x.name)
+			// Invoke the onjoin method for the domain!
 		}
 	}
 
@@ -62,23 +115,26 @@ func (c domain) Join(conn Connection) error {
 }
 
 func (c *domain) Leave() error {
+	for _, v := range c.registrations {
+		c.Unregister(v.endpoint)
+	}
+
+	for _, v := range c.subscriptions {
+		c.Unsubscribe(v.endpoint)
+	}
+
 	if dems, ok := removeDomain(c.app.domains, c); !ok {
 		return fmt.Errorf("WARN: couldn't find %s to remove!", c)
 	} else {
 		c.app.domains = dems
 	}
 
-	if err := c.app.Send(&goodbye{
-		Details: map[string]interface{}{},
-		Reason:  ErrCloseRealm,
-	}); err != nil {
-		return fmt.Errorf("Error leaving fabric: %v", err)
+	// if no domains remain, terminate the connection
+	if len(c.app.domains) == 0 || c.app.agent == c.name {
+		c.app.Close("No domains connected")
 	}
 
-	// if no domains remain, terminate the connection
-	if len(c.app.domains) == 0 {
-		c.app.Close("Closing: no domains connected")
-	}
+	// Trigger closing callbacks
 
 	return nil
 }
@@ -87,23 +143,25 @@ func (c *domain) Leave() error {
 // Message Patterns
 /////////////////////////////////////////////
 
-func (c domain) Subscribe(endpoint string, requestId uint, types []interface{}) error {
+func (c domain) Subscribe(endpoint string, requestId uint64, types []interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 	sub := &subscribe{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
 
 	if msg, err := c.app.requestListenType(sub, "*core.subscribed"); err != nil {
 		return err
 	} else {
-		subbed := msg.(*subscribed)
 		Info("Subscribed: %s", endpoint)
+		subbed := msg.(*subscribed)
 		c.subscriptions[subbed.Subscription] = &boundEndpoint{requestId, endpoint, types}
 		return nil
 	}
 }
 
-func (c domain) Register(endpoint string, requestId uint, types []interface{}) error {
+func (c domain) Register(endpoint string, requestId uint64, types []interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 	register := &register{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
+
+	Debug("Registering with types: %s", types)
 
 	if msg, err := c.app.requestListenType(register, "*core.registered"); err != nil {
 		return err
@@ -115,54 +173,29 @@ func (c domain) Register(endpoint string, requestId uint, types []interface{}) e
 	}
 }
 
-func (c domain) Publish(endpoint string, requestId uint, args []interface{}) error {
+func (c domain) Publish(endpoint string, args []interface{}) error {
 	return c.app.Send(&publish{
-		Request:   requestId,
+		Request:   NewID(),
 		Options:   make(map[string]interface{}),
 		Name:      makeEndpoint(c.name, endpoint),
 		Arguments: args,
 	})
 }
 
-func (c domain) Call(endpoint string, requestId uint, args []interface{}) ([]interface{}, error) {
+func (c domain) Call(endpoint string, args []interface{}, types []interface{}) ([]interface{}, error) {
 	endpoint = makeEndpoint(c.name, endpoint)
-	call := &call{Request: requestId, Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
+	call := &call{Request: NewID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
 
-	if _, err := c.app.requestListenType(call, "*core.result"); err != nil {
+	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
+		Debug("Call err with results: %v", err)
 		return nil, err
 	} else {
-		// return msg.(*result).Arguments, nil
-		// Invoke with requestId
-		return nil, nil
+		// TODO: check the types of the retuend arguments
+		Debug("Call suceed with results: %v", msg)
+		return msg.(*result).Arguments, nil
 	}
 }
 
-func (c domain) Yield(request uint, args []interface{}) {
-	// Big todo here
-	m := &yield{
-		Request:   request,
-		Options:   make(map[string]interface{}),
-		Arguments: args,
-	}
-
-	// if err != nil {
-	//     m = &errorMessage{
-	//         Type:      iNVOCATION,
-	//         Request:   request,
-	//         Details:   make(map[string]interface{}),
-	//         Arguments: args,
-	//         Error:     "Not Implemented",
-	//     }
-	// }
-
-	if err := c.app.Send(m); err != nil {
-		Warn("Could not send yield")
-	} else {
-		Info("Yield: %s", m)
-	}
-}
-
-// This isn't going to work on the callback chain... no request id passed in
 func (c domain) Unsubscribe(endpoint string) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 
@@ -181,7 +214,6 @@ func (c domain) Unsubscribe(endpoint string) error {
 	}
 }
 
-// Same as above -- won't work on the callbacks
 func (c domain) Unregister(endpoint string) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 
@@ -200,16 +232,10 @@ func (c domain) Unregister(endpoint string) error {
 	}
 }
 
-// This blocks on the invoke. Does the goroutine block waiting for the response?
 func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
-	Debug("Processing invocation: %s", msg)
-
 	if err := softCumin(binding.expectedTypes, msg.Arguments); err == nil {
-		// Debug("Cuminciation succeeded.")
-		c.Delegate.Invoke(binding.callback, msg.Arguments)
+		c.app.CallbackSend(binding.callback, append([]interface{}{msg.Request}, msg.Arguments...)...)
 	} else {
-		// Debug("Cuminication failed.")
-
 		tosend := &errorMessage{
 			Type:      iNVOCATION,
 			Request:   msg.Request,
@@ -225,13 +251,9 @@ func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 }
 
 func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
-	Debug("Processing publish: %s", msg)
-
 	if e := softCumin(binding.expectedTypes, msg.Arguments); e == nil {
-		// Debug("Cuminciation succeeded.")
-		c.Delegate.Invoke(binding.callback, msg.Arguments)
+		c.app.CallbackSend(binding.callback, msg.Arguments...)
 	} else {
-		// Debug("Cuminication failed.")
 		tosend := &errorMessage{Type: pUBLISH, Request: msg.Subscription, Details: make(map[string]interface{}), Arguments: make([]interface{}, 0), Error: e.Error()}
 
 		if err := c.app.Send(tosend); err != nil {
