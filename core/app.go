@@ -3,62 +3,53 @@ package core
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"reflect"
 	"time"
 )
+
+type App interface {
+	ReceiveBytes([]byte)
+	ReceiveString(string)
+	ReceiveMessage(message)
+
+	Yield(uint64, []interface{})
+
+	Close(string)
+	ConnectionClosed(string)
+
+	CallbackListen() Callback
+	CallbackSend(uint64, ...interface{})
+}
 
 type app struct {
 	domains []*domain
 	Connection
 	serializer
+	agent     string
 	in        chan message
-	out       chan []byte
-	listeners map[uint]chan message
+	up        chan Callback
+	listeners map[uint64]chan message
 }
 
-func NewApp() App {
-	return &app{
-		domains:    make([]*domain, 0),
-		serializer: new(jSONSerializer),
-		in:         make(chan message, 10),
-		out:        make(chan []byte, 10),
-		listeners:  make(map[uint]chan message),
-	}
+// Sent up to the mantle and then the crust as callbacks are triggered
+type Callback struct {
+	Id   uint64
+	Args []interface{}
 }
 
-// Create a new domain. If no superdomain is provided, creates an app as well
-// If the app exists, has a connection, and is connected then immediately call onJoin on that domain
-func (a *app) NewDomain(name string, delegate Delegate) Domain {
-	Debug("Creating domain %s", name)
-	d := &domain{
-		app:           a,
-		Delegate:      delegate,
-		name:          name,
-		joined:        false,
-		subscriptions: make(map[uint]*boundEndpoint),
-		registrations: make(map[uint]*boundEndpoint),
-	}
+func (a *app) CallbackListen() Callback {
+	m := <-a.up
+	return m
+}
 
-	// TODO: trigger onJoin if the superdomain has joined
-
-	a.domains = append(a.domains, d)
-	return d
+func (a *app) CallbackSend(id uint64, args ...interface{}) {
+	a.up <- Callback{id, args}
 }
 
 func (c app) Send(m message) error {
-	Debug("Sending: %s: %s", m.messageType(), m)
+	Debug("Sending %s: %v", m.messageType(), m)
 
-	if b, err := c.serializer.serialize(m); err != nil {
-		return err
-	} else {
-		c.out <- b
-		return nil
-	}
-}
-
-func (c app) SendNow(m message) error {
-	Debug("Sending: %s: %s", m.messageType(), m)
+	// There's going to have to be a better way of handling these messages
 	if b, err := c.serializer.serialize(m); err != nil {
 		return err
 	} else {
@@ -68,35 +59,62 @@ func (c app) SendNow(m message) error {
 }
 
 func (c app) Close(reason string) {
-	Info("Asked to close! Reason: ", reason)
+	Info("Closing internally: ", reason)
+
+	if err := c.Send(&goodbye{Details: map[string]interface{}{}, Reason: ErrCloseRealm}); err != nil {
+		Warn("Error sending goodbye: %v", err)
+	}
 
 	close(c.in)
-	close(c.out)
+	close(c.up)
 
 	// Theres some missing logic here when it comes to closing the external connection,
 	// especially when either end could call and trigger a close
+	c.Connection.Close(reason)
+}
+
+func (c app) ConnectionClosed(reason string) {
+	Info("Connection was closed: ", reason)
+
+	close(c.in)
+	close(c.up)
+}
+
+func (a app) Yield(request uint64, args []interface{}) {
+	m := &yield{
+		Request:   request,
+		Options:   make(map[string]interface{}),
+		Arguments: args,
+	}
+
+	if err := a.Send(m); err != nil {
+		Warn("Could not send yield")
+	}
+}
+
+// Not fully implemented
+func (a app) YieldError(request uint64, args []interface{}) {
+	m := &errorMessage{
+		Type:      iNVOCATION,
+		Request:   request,
+		Details:   make(map[string]interface{}),
+		Arguments: args,
+		Error:     "Not Implemented",
+	}
+
+	if err := a.Send(m); err != nil {
+		Warn("Could not send yield error")
+	}
 }
 
 func (c app) receiveLoop() {
 	for {
 		if msg, open := <-c.in; !open {
-			Warn("Receive loop close")
+			Debug("Receive loop close")
 			break
 		} else {
-			Debug("Received message: ", msg)
+			Debug("Received %s: %v", msg.messageType(), msg)
 			c.handle(msg)
-		}
-	}
-}
-
-// This guy doesn't need to be here
-func (c app) sendLoop() {
-	for {
-		if b, open := <-c.out; !open {
-			Info("Send loop closed")
-			break
-		} else {
-			c.Connection.Send(b)
 		}
 	}
 }
@@ -113,6 +131,7 @@ func (c app) handle(msg message) {
 			}
 		}
 
+		// We can't be delivered to a sub we don't have... right?
 		Warn("No handler registered for subscription:", msg.Subscription)
 
 	case *invocation:
@@ -123,8 +142,9 @@ func (c app) handle(msg message) {
 			}
 		}
 
-		Warn("No handler registered for registration:", msg.Registration)
 		s := fmt.Sprintf("no handler for registration: %v", msg.Registration)
+		Warn(s)
+
 		m := &errorMessage{Type: iNVOCATION, Request: msg.Request, Details: make(map[string]interface{}), Error: s}
 
 		if err := c.Send(m); err != nil {
@@ -133,6 +153,7 @@ func (c app) handle(msg message) {
 
 	case *goodbye:
 		c.Close("Fabric said goodbye. Closing connection")
+		panic("Not implemented!")
 
 	default:
 		id, ok := requestID(msg)
@@ -143,8 +164,7 @@ func (c app) handle(msg message) {
 			if l, found := c.listeners[id]; found {
 				l <- msg
 			} else {
-				log.Println("no listener for message", msg)
-				Info("Listeners: ", c.listeners)
+				Warn("no listener for message %v", msg)
 				panic("Unhandled message!")
 			}
 		} else {

@@ -2,6 +2,7 @@ package goRiffle
 
 import (
 	"log"
+	"sync"
 	"time"
 
 	"github.com/exis-io/core"
@@ -9,8 +10,9 @@ import (
 )
 
 type WebsocketConnection struct {
-	conn *websocket.Conn
-	core.App
+	conn        *websocket.Conn
+	lock        *sync.Mutex
+	app         core.App
 	payloadType int
 	closed      bool
 }
@@ -25,6 +27,7 @@ func Open(url string) (*WebsocketConnection, error) {
 	} else {
 		connection := &WebsocketConnection{
 			conn:        conn,
+			lock:        &sync.Mutex{},
 			payloadType: websocket.TextMessage,
 		}
 
@@ -38,16 +41,23 @@ func (ep *WebsocketConnection) Send(data []byte) {
 	// Does the lock block? The locks should be faster than working off the channel,
 	// but the comments in the other code imply that the lock blocks on the send?
 
+	ep.lock.Lock()
 	if err := ep.conn.WriteMessage(ep.payloadType, data); err != nil {
-		Warn("No one is dealing with my errors! Cant write to socket. Eror: %s", err)
-        panic("Unrecoverable error")
+		core.Warn("No one is dealing with my errors! Cant write to socket. Eror: %s", err)
+		panic("Unrecoverable error")
 	}
+	ep.lock.Unlock()
+}
+
+func (ep *WebsocketConnection) SetApp(app core.App) {
+	ep.app = app
 }
 
 // Who the hell do we call close first on? App or connection?
 // Either way one or the other may have to check on the other, which is no good
 func (ep *WebsocketConnection) Close(reason string) error {
 	core.Info("Closing connection with reason: %s", reason)
+
 	closeMsg := websocket.FormatCloseMessage(websocket.CloseNormalClosure, "goodbye")
 	err := ep.conn.WriteControl(websocket.CloseMessage, closeMsg, time.Now().Add(5*time.Second))
 
@@ -55,9 +65,9 @@ func (ep *WebsocketConnection) Close(reason string) error {
 		log.Println("error sending close message:", err)
 	}
 
-	// Close the channel!
-
+	ep.lock = nil
 	ep.closed = true
+
 	return ep.conn.Close()
 }
 
@@ -66,7 +76,6 @@ func (ep *WebsocketConnection) run() {
 	// actually returned from those closes
 
 	for {
-		// the blank assignment is 'b'
 		if msgType, bytes, err := ep.conn.ReadMessage(); err != nil {
 			if ep.closed {
 				core.Info("peer connection closed")
@@ -84,8 +93,7 @@ func (ep *WebsocketConnection) run() {
 			// ep.App.Close()
 			break
 		} else {
-			// core.Debug("Socket received data")
-			ep.App.ReceiveBytes(bytes)
+			ep.app.ReceiveBytes(bytes)
 		}
 	}
 }

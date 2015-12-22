@@ -6,6 +6,15 @@ import (
 	"strings"
 )
 
+const (
+	LogLevelOff   int = 0
+	LogLevelApp   int = 1
+	LogLevelErr   int = 2
+	LogLevelWarn  int = 3
+	LogLevelInfo  int = 4
+	LogLevelDebug int = 5
+)
+
 func Debug(format string, a ...interface{}) {
 	if LogLevel >= LogLevelDebug {
 		out(fmt.Sprintf("%s", fmt.Sprintf(format, a...)))
@@ -20,13 +29,22 @@ func Info(format string, a ...interface{}) {
 
 func Warn(format string, a ...interface{}) {
 	if LogLevel >= LogLevelWarn {
-		out(fmt.Sprintf("%s", fmt.Sprintf(format, a...)))
+		out(fmt.Sprintf("WARN: %s", fmt.Sprintf(format, a...)))
 	}
 }
 
 func Error(format string, a ...interface{}) {
 	if LogLevel >= LogLevelErr {
-		out(fmt.Sprintf("%s", fmt.Sprintf(format, a...)))
+		out(fmt.Sprintf("ERROR: %s", fmt.Sprintf(format, a...)))
+	}
+}
+
+func Application(format string, a ...interface{}) {
+	if LogLevel >= LogLevelApp {
+		// out(fmt.Sprintf(format, a...))
+
+		// Use out here, please
+		fmt.Println(fmt.Sprintf(format, a...))
 	}
 }
 

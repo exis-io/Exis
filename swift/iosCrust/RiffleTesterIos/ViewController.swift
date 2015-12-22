@@ -8,6 +8,8 @@
 
 import UIKit
 
+import IosMantle
+
 let url = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
 let domain = "xs.damouse"
 
@@ -15,6 +17,7 @@ let domain = "xs.damouse"
 
 class ViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
+        GoIosMantleHello()
 //        let ret = GoRiffleEPConnector(url, domain)
 //        
 //        print(String.fromCString(ret))

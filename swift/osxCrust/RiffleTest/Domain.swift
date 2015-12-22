@@ -8,6 +8,7 @@
 
 /*
 TODO:
+
     Integrate with main swiftRiffle lib for testing
     Make conditional compilers for ios and osx
     Cleanup and integrate new changes with goRiffle
@@ -19,9 +20,11 @@ import Foundation
 
 public class Domain: RiffleDelegate {
     var mantleDomain: UnsafeMutablePointer<Void>
-    var handlers: [Int64: (Any) -> (Any?)] = [:]
-    
     var delegate: RiffleDelegate?
+    
+    var handlers: [UInt64: (Any) -> ()] = [:]
+    var invocations: [UInt64: (Any) -> ()] = [:]
+    var registrations: [UInt64: (Any) -> (Any?)] = [:]
     
     
     init(name: String) {
@@ -29,89 +32,80 @@ public class Domain: RiffleDelegate {
         delegate = self
     }
     
-    public func subscribe(domain: String, fn: (Any) -> ()) {
-        let (cb, _) = invocation(Subscribe(mantleDomain, domain.cString()))
-        
-        handlers[cb] = { (a: Any) -> (Any?) in
-            fn(a)
-            return nil
-        }
+    init(name: String, superdomain: Domain) {
+        mantleDomain = Subdomain(superdomain.mantleDomain, name.cString())
+        delegate = self
     }
     
-    public func register(domain: String, fn: (Any) -> (Any?)) {
-        let (cb, _) = invocation(Register(mantleDomain, domain.cString()))
-        
-        handlers[cb] = { (a: Any) -> (Any?) in
-            return fn(a)
-        }
+    public func subscribe(endpoint: String, fn: (Any) -> ()) {
+        let cb = CBID()
+        Subscribe(self.mantleDomain, cb, endpoint.cString())
+        handlers[cb] = fn
     }
+    
+    public func register(endpoint: String, fn: (Any) -> (Any?)) {
+        let cb = CBID()
+        Register(self.mantleDomain, cb, endpoint.cString())
+        registrations[cb] = fn
+    }
+    
+    public func call(endpoint: String, _ args: Any..., handler: (Any) -> ()) {
+        let cb = CBID()
+        Call(self.mantleDomain, cb, endpoint.cString(), marshall(args))
+        invocations[cb] = handler
+    }
+    
+    public func publish(endpoint: String, _ args: Any...) {
+        Publish(self.mantleDomain, 0, endpoint.cString(), marshall(args))
+    }
+    
     func receive() {
         while true {
-            let (i, args) = decode(Recieve())
+            var (i, args) = decode(Receive(self.mantleDomain))
             
-            if let handler = handlers[Int64(i)] {
-                if let a = args as? Any {
-                    //Cuminicate here
-                    handler(a)
-                } else {
-                    print("Unknown args \(args)")
-                }
+            if let fn = handlers[i] {
+                fn(args)
+            } else if let fn = invocations[i] {
+                fn(args)
+            } else if let fn = registrations[i] {
+                // Pop off the return arg. Note that we started passing it into crusts as a nested list for some reason. Cant remember why, 
+                // but retaining that functionality until I remember. It started in the python implementation
+                let unwrap = args[0] as! JSON
+                var args = unwrap.arrayValue!
+                
+                let resultId = args.removeAtIndex(0)
+                var ret = fn(args)
+                ret = ret == nil ? [] : ret
+                
+                //print("Handling return with args: \(ret)")
+                Yield(mantleDomain, UInt64(resultId.doubleValue!), marshall(ret))
             } else {
-                print("No handler found for subscription \(i)")
-                print(handlers)
+                print("No handlers found for id \(i)!")
             }
-            
-//            let s = Recieve()
-//            //print("Received: \(s)")
-//            let d = NSData(bytes: s.data , length: NSNumber(longLong: s.len).integerValue)
-//            let data = try! NSJSONSerialization.JSONObjectWithData(d, options: .AllowFragments) as! [AnyObject]
-//            
-//            if let handler = handlers[data[0].longLongValue] {
-//                // Cuminicate here
-//                let args = data[1]
-//                handler(args)
-//            } else {
-//                print("No handler found for subscription \(data[0])")
-//                print(handlers)
-//            }
-            
-            /*
-            if let results = handlers[data[0].longLongValue]!(args) {
-                let json: [String: AnyObject] = [
-                    "id": String(Int64(data["request"] as! Double)),
-                    "ok": "",
-                    "result": results
-                ]
-
-                let out = try! NSJSONSerialization.dataWithJSONObject(json, options: . PrettyPrinted)
-
-                let slice = GoSlice(data: UnsafeMutablePointer<Void>(out.bytes), len: NSNumber(integer: out.length).longLongValue, cap: NSNumber(integer: out.length).longLongValue)
-                Yield(slice)
-            }
-            */
         }
     }
     
     public func join() {
-        let (cb, eb) = invocation(Join(mantleDomain))
+        let cb = CBID()
+        let eb = CBID()
         
-        handlers[cb] = { (a: Any) -> (Any?) in
+        Join(mantleDomain, cb, eb)
+        
+        handlers[cb] = { a in
             if let d = self.delegate {
                 d.onJoin()
             }
-            
-            return nil
         }
         
-        handlers[eb] = { (a: Any) -> (Any?) in
+        handlers[eb] = { (a: Any) in
             print("Unable to join!")
-            return nil
         }
         
         // Kick off the receive thread
-        let thread = NSThread(target: self, selector: "receive", object: nil)
-        thread.start()
-        NSRunLoop.currentRunLoop().run()
+        //let thread = NSThread(target: self, selector: "receive", object: nil)
+        //thread.start()
+        //NSRunLoop.currentRunLoop().run()
+        receive()
     }
     
     

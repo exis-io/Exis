@@ -16,9 +16,18 @@ biddly
 
 libriff.h
 libriff.so
+
 riffle.h
+riffle.a
 
 libriffmantle.h
 libriffmantle.so
 
+riffmantle.h
+riffmantle.so
+
+IosMantle.framework/
+
 products/
+
+swift/osxCrust/Build/
