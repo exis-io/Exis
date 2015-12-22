@@ -2,7 +2,7 @@
 
 This project is the result of a [tutorial on getting started with exis](http://docs.exis.io/#/pages/samples/SwiftCardsTutorial.md). All our docs live at [docs.exis.io](http://docs.exis.io). 
 
-This project lives at https://github.com/exis-io/CardsAgainst. You might be in a subtree. 
+This project lives at https://github.com/exis-io/CardsAgainst. 
 
 ## Building the Example 
 
