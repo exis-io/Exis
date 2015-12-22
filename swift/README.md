@@ -1,5 +1,7 @@
 # swiftRiffle (swift 2.2 Open Source)
 
+All our docs live at [docs.exis.io](http://docs.exis.io). 
+
 This is for the open source version of swift. This directory is exploratory and subject to change. 
 
 **1**. Install [Go][https://golang.org/dl/].

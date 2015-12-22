@@ -1,5 +1,7 @@
 # pyRiffle
 
+All our docs live at [docs.exis.io](http://docs.exis.io). 
+
 Riffle functionality for python. 
 
 1. Install [Go][https://golang.org/dl/] and gopy. 
