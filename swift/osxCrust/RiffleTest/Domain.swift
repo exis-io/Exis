@@ -39,24 +39,35 @@ public class Domain: RiffleDelegate {
     
     public func subscribe(endpoint: String, fn: (Any) -> ()) {
         let cb = CBID()
-        Subscribe(self.mantleDomain, cb, endpoint.cString())
-        handlers[cb] = fn
+        let eb = CBID()
+        let hn = CBID()
+        
+        Subscribe(self.mantleDomain, endpoint.cString(), cb, eb, hn, "[]".cString())
+        handlers[hn] = fn
     }
     
     public func register(endpoint: String, fn: (Any) -> (Any?)) {
         let cb = CBID()
-        Register(self.mantleDomain, cb, endpoint.cString())
-        registrations[cb] = fn
+        let eb = CBID()
+        let hn = CBID()
+        
+        Register(self.mantleDomain, endpoint.cString(), cb, eb, hn, "[]".cString())
+        registrations[hn] = fn
+    }
+    
+    public func publish(endpoint: String, _ args: Any...) {
+        let cb = CBID()
+        let eb = CBID()
+        
+        Publish(self.mantleDomain, endpoint.cString(), cb, eb, marshall(args))
     }
     
     public func call(endpoint: String, _ args: Any..., handler: (Any) -> ()) {
         let cb = CBID()
-        Call(self.mantleDomain, cb, endpoint.cString(), marshall(args))
+        let eb = CBID()
+        
+        Call(self.mantleDomain, endpoint.cString(), cb, eb, marshall(args), "[]".cString())
         invocations[cb] = handler
-    }
-    
-    public func publish(endpoint: String, _ args: Any...) {
-        Publish(self.mantleDomain, 0, endpoint.cString(), marshall(args))
     }
     
     func receive() {
@@ -80,7 +91,7 @@ public class Domain: RiffleDelegate {
                 //print("Handling return with args: \(ret)")
                 Yield(mantleDomain, UInt64(resultId.doubleValue!), marshall(ret))
             } else {
-                print("No handlers found for id \(i)!")
+                //print("No handlers found for id \(i)!")
             }
         }
     }

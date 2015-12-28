@@ -1,6 +1,8 @@
-# Cards Against Demo
+Find documentation at [docs.exis.io](http://docs.exis.io). 
 
-Demo application showcasing applications written with Exis. 
+# Cards Against Humanity Demo
+
+Final product of the Cards Against Humanity tutorial. Please click through to a subdirectory to see platform specific details.  
 
 Client applications communicate with a *backend*, or remotely running program, that manages global game state. The backend creates a set of *rooms* that each host a game. For this application the backend is called *gamelogic*.
 
