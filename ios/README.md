@@ -52,7 +52,3 @@ target :Backend, :exclusive => true do
 end
 ```
 
-
-## Known Issues
-
-In progress.
