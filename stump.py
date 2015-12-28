@@ -38,17 +38,16 @@ if __name__ == '__main__':
     args = docopt.docopt(__doc__, options_first=True, help=True)
 
     if args['init']:
-        print "Adding remotes..."
+        print "Adding remotes"
 
         for p, r, u in SUBTREES:
             call("git remote add %s %s" % (r, u,), shell=True)
 
         print "Linking go libraries"
-
         gopath = os.getenv('GOPATH', None)
 
         if gopath is None:
-            print 'You dont have a $GOPATH set. Is go installed?'
+            print 'You dont have a $GOPATH set. Is go installed correctly?'
         else:
             corePath = os.path.join(gopath, 'src/github.com/exis-io/core')
 
