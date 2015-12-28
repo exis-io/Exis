@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		500E7B331C31BA9700D277C6 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 500E7B321C31BA9700D277C6 /* Model.swift */; settings = {ASSET_TAGS = (); }; };
 		50533C191C029E2700E046D0 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50533C181C029E2700E046D0 /* main.swift */; };
 		5073DA1D1C1F5D2600C970C6 /* Json.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5073DA1C1C1F5D2600C970C6 /* Json.swift */; };
 		50AAF0811C177D67009978FB /* riffle.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50AAF07F1C177D67009978FB /* riffle.a */; };
@@ -28,6 +29,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		500E7B321C31BA9700D277C6 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		500E7B341C31BA9E00D277C6 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
 		50533C151C029E2700E046D0 /* RiffleTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RiffleTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		50533C181C029E2700E046D0 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		50533C221C029E6A00E046D0 /* Bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bridge.h; sourceTree = "<group>"; };
@@ -75,6 +78,8 @@
 				50AAF0821C19114A009978FB /* Deferred.swift */,
 				5073DA1C1C1F5D2600C970C6 /* Json.swift */,
 				50533C181C029E2700E046D0 /* main.swift */,
+				500E7B321C31BA9700D277C6 /* Model.swift */,
+				500E7B341C31BA9E00D277C6 /* MyPlayground.playground */,
 				50AAF0841C192125009978FB /* Domain.swift */,
 				50AAF0861C192577009978FB /* Utils.swift */,
 				50533C221C029E6A00E046D0 /* Bridge.h */,
@@ -142,6 +147,7 @@
 				50AAF0871C192577009978FB /* Utils.swift in Sources */,
 				5073DA1D1C1F5D2600C970C6 /* Json.swift in Sources */,
 				50AAF0831C19114A009978FB /* Deferred.swift in Sources */,
+				500E7B331C31BA9700D277C6 /* Model.swift in Sources */,
 				50533C191C029E2700E046D0 /* main.swift in Sources */,
 				50AAF0851C192125009978FB /* Domain.swift in Sources */,
 			);
