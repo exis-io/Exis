@@ -40,6 +40,8 @@ class Receiver: Domain {
     }
 }
 
+//Receiver(name: "xs.damouse.alpha").join()
+
 // Start the scripts
 if let result = NSProcessInfo.processInfo().environment["RECEIVER"] {
     print("Starting Receiver")
