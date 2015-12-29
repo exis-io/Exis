@@ -1,10 +1,4 @@
-
 import riffle
-
-riffle.SetLogLevelDebug()
-riffle.SetFabricLocal()
-
-riffle.ApplicationLog("Hello!")
 
 class Receiver: riffle.Domain, riffle.Delegate {
 
@@ -28,6 +22,3 @@ class Receiver: riffle.Domain, riffle.Delegate {
 }
 
 
-let receiver = Receiver(name: "xs.damouse.alpha")
-receiver.delegate = receiver
-receiver.join()

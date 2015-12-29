@@ -1,8 +1,4 @@
-
 import riffle
-
-riffle.SetLogLevelDebug()
-riffle.SetFabricLocal()
 
 class Sender: riffle.Domain, riffle.Delegate  {
     
@@ -20,8 +16,4 @@ class Sender: riffle.Domain, riffle.Delegate  {
         print("Sender left")
     }
 }
-
-let sender = Sender(name: "xs.damouse.beta")
-sender.delegate = sender
-sender.join()
 
