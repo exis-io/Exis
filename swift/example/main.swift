@@ -1,8 +1,10 @@
 
 import Riffle
 
-Riffle.SetLogLevelDebug()
-Riffle.SetFabricLocal()
+print("Starting example test")
+
+Riffle.LogLevelDebug()
+Riffle.FabricLocal()
 
 Riffle.ApplicationLog("Hello!")
 

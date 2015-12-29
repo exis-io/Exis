@@ -17,17 +17,15 @@ TODO:
 */
 
 import Foundation
-// import mantle
+import CoreFoundation
+import mantle
 
 #if os(Linux)
-    import mantle
     import SwiftGlibc
     import Glibc
 #else
     import Darwin.C
 #endif
-
-
 
 public protocol Delegate {
     func onJoin()
@@ -56,8 +54,8 @@ public class Domain {
     public func subscribe(endpoint: String, fn: (Any) -> ()) {
         let cb = CBID()
         let eb = CBID()
-        let hn = CBID()
-        
+        let hn = CBID() 
+
         Subscribe(self.mantleDomain, endpoint.cString(), cb, eb, hn, "[]".cString())
         handlers[hn] = fn
     }
@@ -65,23 +63,23 @@ public class Domain {
     public func register(endpoint: String, fn: (Any) -> (Any?)) {
         let cb = CBID()
         let eb = CBID()
-        let hn = CBID()
-        
+        let hn = CBID() 
+
         Register(self.mantleDomain, endpoint.cString(), cb, eb, hn, "[]".cString())
         registrations[hn] = fn
     }
-    
+
     public func publish(endpoint: String, _ args: Any...) {
         let cb = CBID()
         let eb = CBID()
-        
+
         Publish(self.mantleDomain, endpoint.cString(), cb, eb, marshall(args))
     }
     
     public func call(endpoint: String, _ args: Any..., handler: (Any) -> ()) {
         let cb = CBID()
         let eb = CBID()
-        
+
         Call(self.mantleDomain, endpoint.cString(), cb, eb, marshall(args), "[]".cString())
         invocations[cb] = handler
     }
@@ -95,7 +93,7 @@ public class Domain {
             } else if let fn = invocations[i] {
                 fn(args)
             } else if let fn = registrations[i] {
-                // Pop off the return arg. Note that we started passing it into crusts as a nested list for some reason. Cant remember why,
+                // Pop off the return arg. Note that we started passing it into crusts as a nested list for some reason. Cant remember why, 
                 // but retaining that functionality until I remember. It started in the python implementation
                 let unwrap = args[0] as! JSON
                 var args = unwrap.arrayValue!
@@ -123,7 +121,7 @@ public class Domain {
                 d.onJoin()
             }
         }
-        
+
         handlers[eb] = { a in
             if let d = self.delegate {
                 d.onLeave()

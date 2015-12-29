@@ -6,8 +6,9 @@
 //  Copyright © 2015 exis. All rights reserved.
 //
 
+
 import Foundation
-import CFoundation
+import CoreFoundation
 
 #if os(Linux)
     import mantle
@@ -100,11 +101,14 @@ public func ErrorLog(s: String){
     Error(s.cString())
 }
 
-    
-public func SetLogLevelDebug(){
-    SetLogLevelDebug()
-}
+public func LogLevelOff() { SetLogLevelOff() }
+public func LogLevelApp() { SetLogLevelApp() }
+public func LogLevelErr() { SetLogLevelErr() }
+public func LogLevelWarn() { SetLogLevelWarn() }
+public func LogLevelInfo() { SetLogLevelInfo() }
+public func LogLevelDebug() { SetLogLevelDebug() }
 
-public func SetFabricLocal() {
-    SetFabricLocal()
-}
+public func FabricDev() { SetFabricDev() }
+public func FabricSandbox() { SetFabricSandbox() }
+public func FabricProduction() { SetFabricProduction() }
+public func FabricLocal() { SetFabricLocal() }
