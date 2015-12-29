@@ -8,6 +8,13 @@
 
 import Foundation
 
+#if os(Linux)
+    import SwiftGlibc
+    import Glibc
+#else
+    import Darwin.C
+#endif
+
 
 let unescapeMapping: [UnicodeScalar: UnicodeScalar] = [
     "t": "\t",

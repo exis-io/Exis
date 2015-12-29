@@ -1,10 +1,10 @@
 
-import riffle
+import Riffle
 
-riffle.SetLogLevelDebug()
-riffle.SetFabricLocal()
+Riffle.SetLogLevelDebug()
+Riffle.SetFabricLocal()
 
-riffle.ApplicationLog("Hello!")
+Riffle.ApplicationLog("Hello!")
 
 // Setup receiver
 let receiver = Receiver(name: "xs.damouse.alpha")
