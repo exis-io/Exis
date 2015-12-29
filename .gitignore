@@ -1,3 +1,4 @@
+build.log
 .DS_Store
 ios/appSeed/.DS_Store
 *.log
@@ -7,6 +8,7 @@ CardsAgainstHumanityDemo/swiftCardsAgainst/.DS_Store
 *.xcuserstate
 CardsAgainstHumanityDemo/swiftCardsAgainst/ExAgainst.xcworkspace/xcuserdata/Damouse.xcuserdatad/UserInterfaceState.xcuserstate
 
+*.swp
 *.swiftdoc
 *.swiftmodule
 biddly
