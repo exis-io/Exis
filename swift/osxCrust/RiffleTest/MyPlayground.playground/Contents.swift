@@ -165,20 +165,74 @@ Classroom.first().then { results in
 
 // TESTING
 
+/*
+Cumin Overview
 
-//func testVariance(foo:(Int)->Any){foo(1)}
-//
-//func innerAnyInt(p1:Any) -> Int{ return 1 }
-//func innerAnyAny(p1:Any) -> Any{ return 1 }
-//func innerIntInt(p1:Int) -> Int{ return 1 }
-//func innerIntAny(p1:Int) -> Any{ return 1 }
-//
-//testVariance(innerIntAny)
-//testVariance(innerAnyInt)
-//testVariance(innerAnyAny)
-//testVariance(innerIntInt)
-//
+1- Reflect the receiver, convert to a list of strings that represent the types of the receiver
+2- Receive JSON, apply it to the receiver; if the receiver takes complex types, construct them
+*/
 
+protocol Cuminicable {}
+extension Int: Cuminicable {}
+
+
+var holder: ([Any] -> Any)?
+
+// Convert the given argument to requested type recursively
+func coerce<T: Cuminicable>(a: Any, t: T.Type) -> T {
+    return 0 as! T
+}
+
+func cumin(fn: (Int) -> Any) {
+//    fn(1)
+    
+//    var holder: Int -> Any = fn
+//    hold(fn)
+    
+    holder = { args -> Any in
+        // For arg in arg, for type in type, coerce types
+        
+        // Sadly this doesnt help to narrow down the generic receivers...
+        
+        return fn(args[0] as! Int)
+    }
+}
+
+func innerAnyInt(p1:Any) -> Int { return 1 }
+cumin(innerAnyInt)
+
+func innerAnyAny(p1:Any) -> Any { return 1 }
+cumin(innerAnyInt)
+
+func innerIntInt(p1:Int) -> Int { return 1 }
+cumin(innerAnyAny)
+
+func innerIntAny(p1:Int) -> Any { return 1 }
+cumin(innerIntInt)
+
+
+
+func add(a: Int) -> Any { return 0 }
+func sub(a: String) -> String { return "Some String" }
+
+
+holder!([12])
+
+
+let z = 1
+let w = [1]
+
+
+func test <T: Cuminicable> (t: T) {
+    print(t)
+}
+
+func test <T: CollectionType where T.Generator.Element: Cuminicable> (t: T) {
+    print(t)
+}
+
+test(z)
+test(w)
 
 
 
