@@ -9,9 +9,11 @@
 /* Begin PBXBuildFile section */
 		504D0A131C332F8F009F5A7B /* riffle.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 504D0A111C332F8F009F5A7B /* riffle.a */; };
 		504D0A181C332FA8009F5A7B /* Json.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504D0A141C332FA8009F5A7B /* Json.swift */; };
-		504D0A1A1C332FA8009F5A7B /* riffle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504D0A161C332FA8009F5A7B /* riffle.swift */; };
-		504D0A1B1C332FA8009F5A7B /* wrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504D0A171C332FA8009F5A7B /* wrapper.swift */; };
 		504D0A1D1C332FE9009F5A7B /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504D0A1C1C332FE9009F5A7B /* main.swift */; };
+		504D0A221C333FC9009F5A7B /* Cumin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504D0A1E1C333FC9009F5A7B /* Cumin.swift */; };
+		504D0A231C333FC9009F5A7B /* Deferred.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504D0A1F1C333FC9009F5A7B /* Deferred.swift */; };
+		504D0A241C333FC9009F5A7B /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504D0A201C333FC9009F5A7B /* Domain.swift */; };
+		504D0A251C333FC9009F5A7B /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504D0A211C333FC9009F5A7B /* Utils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -33,9 +35,11 @@
 		504D0A111C332F8F009F5A7B /* riffle.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = riffle.a; sourceTree = SOURCE_ROOT; };
 		504D0A121C332F8F009F5A7B /* riffle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = riffle.h; sourceTree = SOURCE_ROOT; };
 		504D0A141C332FA8009F5A7B /* Json.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Json.swift; path = Riffle/Json.swift; sourceTree = SOURCE_ROOT; };
-		504D0A161C332FA8009F5A7B /* riffle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = riffle.swift; path = Riffle/riffle.swift; sourceTree = SOURCE_ROOT; };
-		504D0A171C332FA8009F5A7B /* wrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = wrapper.swift; path = Riffle/wrapper.swift; sourceTree = SOURCE_ROOT; };
 		504D0A1C1C332FE9009F5A7B /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = SOURCE_ROOT; };
+		504D0A1E1C333FC9009F5A7B /* Cumin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Cumin.swift; path = Riffle/Cumin.swift; sourceTree = SOURCE_ROOT; };
+		504D0A1F1C333FC9009F5A7B /* Deferred.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Deferred.swift; path = Riffle/Deferred.swift; sourceTree = SOURCE_ROOT; };
+		504D0A201C333FC9009F5A7B /* Domain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Domain.swift; path = Riffle/Domain.swift; sourceTree = SOURCE_ROOT; };
+		504D0A211C333FC9009F5A7B /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Utils.swift; path = Riffle/Utils.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,7 +57,9 @@
 		504D09FC1C3324B3009F5A7B = {
 			isa = PBXGroup;
 			children = (
+				504D0A1C1C332FE9009F5A7B /* main.swift */,
 				504D0A071C3324B3009F5A7B /* SwiftRiffle */,
+				506BC3241C33402A00FE896F /* Misc */,
 				504D0A061C3324B3009F5A7B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -69,16 +75,24 @@
 		504D0A071C3324B3009F5A7B /* SwiftRiffle */ = {
 			isa = PBXGroup;
 			children = (
-				504D0A0F1C332F8F009F5A7B /* Bridge.h */,
-				504D0A101C332F8F009F5A7B /* MyPlayground.playground */,
-				504D0A111C332F8F009F5A7B /* riffle.a */,
-				504D0A121C332F8F009F5A7B /* riffle.h */,
+				504D0A1E1C333FC9009F5A7B /* Cumin.swift */,
+				504D0A1F1C333FC9009F5A7B /* Deferred.swift */,
+				504D0A201C333FC9009F5A7B /* Domain.swift */,
 				504D0A141C332FA8009F5A7B /* Json.swift */,
-				504D0A161C332FA8009F5A7B /* riffle.swift */,
-				504D0A171C332FA8009F5A7B /* wrapper.swift */,
-				504D0A1C1C332FE9009F5A7B /* main.swift */,
+				504D0A211C333FC9009F5A7B /* Utils.swift */,
 			);
 			path = SwiftRiffle;
+			sourceTree = "<group>";
+		};
+		506BC3241C33402A00FE896F /* Misc */ = {
+			isa = PBXGroup;
+			children = (
+				504D0A121C332F8F009F5A7B /* riffle.h */,
+				504D0A0F1C332F8F009F5A7B /* Bridge.h */,
+				504D0A111C332F8F009F5A7B /* riffle.a */,
+				504D0A101C332F8F009F5A7B /* MyPlayground.playground */,
+			);
+			name = Misc;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -138,10 +152,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				504D0A1B1C332FA8009F5A7B /* wrapper.swift in Sources */,
 				504D0A181C332FA8009F5A7B /* Json.swift in Sources */,
 				504D0A1D1C332FE9009F5A7B /* main.swift in Sources */,
-				504D0A1A1C332FA8009F5A7B /* riffle.swift in Sources */,
+				504D0A231C333FC9009F5A7B /* Deferred.swift in Sources */,
+				504D0A221C333FC9009F5A7B /* Cumin.swift in Sources */,
+				504D0A241C333FC9009F5A7B /* Domain.swift in Sources */,
+				504D0A251C333FC9009F5A7B /* Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

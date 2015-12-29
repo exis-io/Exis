@@ -8,11 +8,6 @@ import CoreFoundation
     import Darwin.C
 #endif
 
-
-//////////////////////////////////////
-// JSON Implementation 
-//////////////////////////////////////
-
 let unescapeMapping: [UnicodeScalar: UnicodeScalar] = [
     "t": "\t",
     "r": "\r",
