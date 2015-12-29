@@ -17,10 +17,10 @@ TODO:
 */
 
 import Foundation
-import mantle
+// import mantle
 
 #if os(Linux)
-//    import mantle
+    import mantle
     import SwiftGlibc
     import Glibc
 #else
