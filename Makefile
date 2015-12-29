@@ -45,14 +45,6 @@ ios:
 python: 
 	gopy bind github.com/exis-io/core/pyMantle
 	mv pymantle.so python/pyRiffle/riffle/pymantle.so
-	
-# python: libriffmantle.so
-# 	cp assets/libriffmantle.so python/pyRiffle/riffle/libriffmantle.so
-# 	cp assets/libriffmantle.h python/pyRiffle/riffle/libriffmantle.h
-#
-# On debugging system python with osx: 
-# https://github.com/numenta/nupic/issues/1813
-#
 
 js: 
 	gopherjs build -mv core/jsMantle/main.go
@@ -62,9 +54,6 @@ js:
 libriffmantle.so: 
 	@echo "Building core..."
 	@go build -buildmode=c-shared -o assets/libriffmantle.so core/cMantle/main.go
-
-# riffmantle.a: 
-# 	GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o assets/riffmantle.a core/cMantle/main.go
 
 swiftclean: 
 	@-rm -f assets/libriffmantle.so assets/libriffmantle.h >$(LOG) ||:
