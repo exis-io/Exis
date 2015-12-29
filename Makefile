@@ -12,10 +12,13 @@ printcheck:
 swift: printcheck libriffmantle.so
 	@cp assets/libriffmantle.so swift/mantle/libriffmantle.so
 	@cp assets/libriffmantle.h swift/mantle/libriffmantle.h
+
 	@echo "Installing mantle..."
 	@$(MAKE) -C swift/mantle all >>$(LOG)
+
 	@echo "Installing crust..."
-	@$(MAKE) -C swift/swiftRiffle all >>$(LOG)
+	@$(MAKE) -C swift/swiftRiffle/Riffle all >>$(LOG)
+
 	@echo "Building example..."
 	@$(MAKE) -C swift/example all >>$(LOG)
 	@echo "Now 'cd swift/example' and run './Example'"
@@ -58,7 +61,7 @@ libriffmantle.so:
 swiftclean: 
 	@-rm -f assets/libriffmantle.so assets/libriffmantle.h >$(LOG) ||:
 	@$(MAKE) -C swift/mantle clean >$(LOG) ||:
-	@$(MAKE) -C swift/swiftRiffle clean >$(LOG) ||:
+	@$(MAKE) -C swift/swiftRiffle/Riffle clean >$(LOG) ||:
 	@$(MAKE) -C swift/example clean >$(LOG) ||:
 
 clean: 

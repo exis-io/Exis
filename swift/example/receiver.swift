@@ -1,6 +1,6 @@
-import riffle
+import Riffle
 
-class Receiver: riffle.Domain, riffle.Delegate {
+class Receiver: Riffle.Domain, Riffle.Delegate {
 
     override func onJoin() {
         print("Receiver joined!")
