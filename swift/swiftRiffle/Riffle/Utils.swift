@@ -7,8 +7,11 @@
 //
 
 import Foundation
+import CFoundation
 
-import mantle
+#if os(Linux)
+    import mantle
+#endif
 
 extension String {
     func cString() -> UnsafeMutablePointer<Int8> {
