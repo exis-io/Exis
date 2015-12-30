@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 import riffle
 
@@ -7,6 +8,11 @@ riffle.SetFabricLocal()
 riffle.ApplicationLog("Hello!")
 
 class Receiver: riffle.Domain, riffle.Delegate {
+=======
+import Riffle
+
+class Receiver: Riffle.Domain, Riffle.Delegate {
+>>>>>>> f2e18e49bf8dd889f4359ce8faa5a92a3f4d6426
 
     override func onJoin() {
         print("Receiver joined!")
@@ -28,6 +34,9 @@ class Receiver: riffle.Domain, riffle.Delegate {
 }
 
 
+<<<<<<< HEAD
 let receiver = Receiver(name: "xs.damouse.alpha")
 receiver.delegate = receiver
 receiver.join()
+=======
+>>>>>>> f2e18e49bf8dd889f4359ce8faa5a92a3f4d6426

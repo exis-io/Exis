@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 ## Note-- this does not build the mantle. Use the makefile in the top level directory for that
 
 all: sender receiver
@@ -14,3 +15,11 @@ receiver: receiver.o
 
 clean:
 	rm -rf *.o *.swiftmodule *.swiftdoc *.so sender receiver
+=======
+all:
+	@swift build 2>&1
+	@cp .build/debug/Example .
+
+clean:
+	@rm -rf .build Example Packages
+>>>>>>> f2e18e49bf8dd889f4359ce8faa5a92a3f4d6426

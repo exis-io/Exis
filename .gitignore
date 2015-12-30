@@ -1,3 +1,4 @@
+build.log
 .DS_Store
 ios/appSeed/.DS_Store
 *.log
@@ -7,6 +8,7 @@ CardsAgainstHumanityDemo/swiftCardsAgainst/.DS_Store
 *.xcuserstate
 CardsAgainstHumanityDemo/swiftCardsAgainst/ExAgainst.xcworkspace/xcuserdata/Damouse.xcuserdatad/UserInterfaceState.xcuserstate
 
+*.swp
 *.swiftdoc
 *.swiftmodule
 biddly
@@ -30,4 +32,12 @@ IosMantle.framework/
 
 products/
 
+<<<<<<< HEAD
 swift/osxCrust/Build/
+=======
+swift/osxCrust/Build/
+.build/
+
+swift/example/Packages/*
+swift/example/Example
+>>>>>>> f2e18e49bf8dd889f4359ce8faa5a92a3f4d6426

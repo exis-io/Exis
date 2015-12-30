@@ -3,13 +3,34 @@ all: swift osx ios python js
 
 .PHONY: python js clean osx ios
 
+LOG="./build.log"
 
+<<<<<<< HEAD
 swift: libriffmantle.so
 	cp assets/libriffmantle.so swift/swiftRiffle/libriffmantle.so
 	cp assets/libriffmantle.h swift/swiftRiffle/libriffmantle.h
 
 	$(MAKE) -C swift/swiftRiffle all
 	$(MAKE) -C swift/example all
+=======
+printcheck:
+	@>$(LOG)
+	@echo "Check $(LOG) for warnings and errors"
+
+swift: printcheck libriffmantle.so
+	@cp assets/libriffmantle.so swift/mantle/libriffmantle.so
+	@cp assets/libriffmantle.h swift/mantle/libriffmantle.h
+
+	@echo "Installing mantle..."
+	@$(MAKE) -C swift/mantle all >>$(LOG)
+
+	@echo "Installing crust..."
+	@$(MAKE) -C swift/swiftRiffle/Riffle all >>$(LOG)
+
+	@echo "Building example..."
+	@$(MAKE) -C swift/example all >>$(LOG)
+	@echo "Now 'cd swift/example' and run './Example'"
+>>>>>>> f2e18e49bf8dd889f4359ce8faa5a92a3f4d6426
 
 osx: 
 	GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o swift/osxCrust/RiffleTest/riffle.a core/cMantle/main.go
@@ -36,6 +57,7 @@ ios:
 python: 
 	gopy bind github.com/exis-io/core/pyMantle
 	mv pymantle.so python/pyRiffle/riffle/pymantle.so
+<<<<<<< HEAD
 	
 # python: libriffmantle.so
 # 	cp assets/libriffmantle.so python/pyRiffle/riffle/libriffmantle.so
@@ -44,6 +66,8 @@ python:
 # On debugging system python with osx: 
 # https://github.com/numenta/nupic/issues/1813
 #
+=======
+>>>>>>> f2e18e49bf8dd889f4359ce8faa5a92a3f4d6426
 
 js: 
 	gopherjs build -mv core/jsMantle/main.go
@@ -51,20 +75,29 @@ js:
 	mv main.js.map js/jsRiffle/src/go.js.map
 
 libriffmantle.so: 
-	go build -buildmode=c-shared -o assets/libriffmantle.so core/cMantle/main.go
+	@echo "Building core..."
+	@go build -buildmode=c-shared -o assets/libriffmantle.so core/cMantle/main.go
+
+swiftclean: 
 
 # riffmantle.a: 
 # 	GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o assets/riffmantle.a core/cMantle/main.go
 
 clean: 
-	rm assets/libriffmantle.so assets/libriffmantle.h
-	rm swift/osxCrust/RiffleTest/riffle.a  swift/osxCrust/RiffleTest/riffle.h
-	# rm python/pyRiffle/riffle/libriffmantle.so python/pyRiffle/riffle/libriffmantle.h
+	@-rm -f assets/libriffmantle.so assets/libriffmantle.h
+	@-rm -f swift/osxCrust/RiffleTest/riffle.a  swift/osxCrust/RiffleTest/riffle.h
 
-	$(MAKE) -C swift/container clean
+	@-rm -f assets/libriffmantle.so assets/libriffmantle.h >$(LOG) ||:
+	@$(MAKE) -C swift/mantle clean >$(LOG) ||:
+	@$(MAKE) -C swift/swiftRiffle/Riffle clean >$(LOG) ||:
+	@$(MAKE) -C swift/example clean >$(LOG) ||:
 
 
 # To debug and extract the build commands, check golang.org/x/mobile/cmd/gomobile/bind_iosapp.go
 # This is where the commands are emitted to create the library 
 #
+<<<<<<< HEAD
 # Make changes, then 'go install' in golang.org/x/mobile/cmd/gomobile
+=======
+# Make changes, then 'go install' in golang.org/x/mobile/cmd/gomobile
+>>>>>>> f2e18e49bf8dd889f4359ce8faa5a92a3f4d6426
