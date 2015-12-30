@@ -34,4 +34,6 @@ products/
 
 swift/osxCrust/Build/
 .build/
+
 swift/example/Packages/*
+swift/example/Example
