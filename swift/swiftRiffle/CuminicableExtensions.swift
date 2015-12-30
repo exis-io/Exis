@@ -12,6 +12,9 @@ import Foundation
 // This allows each property to handle its construction differently
 public protocol Convertible {
     static func isModel() -> Bool
+    
+    // Return a constructed form of this object
+    static func create(from: Any) -> Any
 }
 
 public protocol BaseConvertible: Convertible {}
@@ -19,6 +22,10 @@ public protocol BaseConvertible: Convertible {}
 extension BaseConvertible {
     public static func isModel() -> Bool {
         return false
+    }
+    
+    public static func create(from: Any) -> Any {
+        return from
     }
 }
 

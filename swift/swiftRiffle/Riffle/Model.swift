@@ -9,6 +9,9 @@
 import Foundation
 
 public class Model: Cuminicable, Silvery, Property {
+    
+    required public init() {}
+    
     public static func convert(object: AnyObject) -> Cuminicable? {
         return nil
     }
@@ -16,11 +19,36 @@ public class Model: Cuminicable, Silvery, Property {
     public static func brutalize<T: Cuminicable>(object: Cuminicable, _ t: T.Type) -> Cuminicable? {
         return nil
     }
+    
+    public var description:String {
+        return "\(self.dynamicType){\(self.propertyNames().map { "\($0): \(self[$0])"}.joinWithSeparator(", "))}"
+    }
 }
 
 extension Model: Convertible {
     public static func isModel() -> Bool {
         return true
+    }
+    
+    // Creates a new instance of this model object from the given json
+    public static func create(from: Any) -> Any {
+        // Why no AnyObject? This may change based on the JSON implementation
+        
+        //guard let json = from as? [String: AnyObject] else {
+        guard let json = from as? [String: NSObject] else {
+            print("WARN: model wasn't given a json!")
+            return from
+        }
+        
+        var ret = self.init()
+        
+        // Set the properties from the json 
+        // NOTE: recursively check for nested model objects!
+        for property in ret.propertyNames() {
+            ret[property] = json[property]
+        }
+        
+        return ret
     }
 }
 

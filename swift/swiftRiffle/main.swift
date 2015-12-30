@@ -7,15 +7,6 @@ class Dog: Model {
     var age = 43
 }
 
-// Sample usage of dynamic assignment
-var d = Dog()
-
-print(d.propertyNames())
-
-print(d.name)
-d["name"] = "Spot"
-print(d.name)
-
 var holder: (([Any]) -> ())? = nil
 
 func newcumin<A: Property, B: Property, C: Property>(fn: (A, B, C) -> ()) {
@@ -24,20 +15,23 @@ func newcumin<A: Property, B: Property, C: Property>(fn: (A, B, C) -> ()) {
     
     // NOTE: Collections only need to be detected for nested objects
     
-    print("C is a model: \(C.isModel())")
+    // Construct cumin strings here and pass to core
+    //print("C is a model: \(C.isModel())")
     
     holder = { args in
-        fn(args[0] as! A, args[1] as! B, args[2] as! C)
+        // Coerce types, constructing them if needed
+        
+        fn(A.create(args[0]) as! A, B.create(args[1]) as! B, C.create(args[2]) as! C)
     }
 }
 
 func add(a: Int, b: [String], c: Dog) {
-    print("Adding: \(a), with list: \(b), and user: \(c.name)")
+    print("Adding: \(a), with list: \(b), and pup: \(c.description)")
 }
 
 newcumin(add)
 
-holder!([1, ["Hey", "There"], Dog()])
+holder!([1, ["Hey", "There"], ["name": "Billiam", "age": 88]])
 
 
 

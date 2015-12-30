@@ -58,10 +58,6 @@ extension Silvery {
         }
     }
     
-    public static func allProperties() -> [String] {
-        return []
-    }
-    
     mutating func pointerAdvancedBy(offset: Int) -> UnsafePointer<Int> {
         if let object = self as? AnyObject {
             return UnsafePointer(bitPattern: unsafeAddressOf(object).hashValue).advancedBy(offset + 2)
@@ -111,20 +107,20 @@ extension Silvery {
     }
     
     public func propertyNames() -> [String] {
-        let m = Mirror(reflecting: self)
-        
-        var ret: [String: Any.Type] = [:]
-        
-        var s = ""
-        for c in m.children {
-            s = "\(s), \(c.label!)-\(c.value.dynamicType)"
-            
-            // Generate a list of the types once for the core and once for us
-            ret[c.label!] = c.value.dynamicType
-        }
-        
-        print(ret)
-        
+//        let m = Mirror(reflecting: self)
+//        
+//        var ret: [String: Any.Type] = [:]
+//        
+//        var s = ""
+//        for c in m.children {
+//            s = "\(s), \(c.label!)-\(c.value.dynamicType)"
+//            
+//            // Generate a list of the types once for the core and once for us
+//            ret[c.label!] = c.value.dynamicType
+//        }
+//        
+//        print(ret)
+//        
         return Mirror(reflecting: self).children.filter { $0.label != nil }.map { $0.label! }
     }
 }
