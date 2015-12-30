@@ -6,11 +6,13 @@
 //  Copyright © 2015 exis. All rights reserved.
 //
 
-import Foundation
 
-func SetFabric(url: String) {
-    MantleSetFabric(url.cString())
-}
+import Foundation
+import CoreFoundation
+
+#if os(Linux)
+    import mantle
+#endif
 
 extension String {
     func cString() -> UnsafeMutablePointer<Int8> {
@@ -74,3 +76,60 @@ func marshall(args: Any...) -> UnsafeMutablePointer<Int8> {
 //    let data = try! JSONParser.parse(dataString).arrayValue!
 //    return data
 //}
+
+// Orphaned helper methods from old iosRiffle
+// extension RangeReplaceableCollectionType where Generator.Element : Equatable {
+    
+//     // Remove first collection element that is equal to the given `object`:
+//     mutating func removeObject(object : Generator.Element) {
+//         if let index = self.indexOf(object) {
+//             self.removeAtIndex(index)
+//         }
+//     }
+// }
+
+// func env(key: String, _ normal: String) -> String {
+//     if let result = NSProcessInfo.processInfo().environment[key] {
+//         return result
+//     } else {
+//         Riffle.debug("Unable to extract environment variable \(key). Using \(normal) instead")
+//         return normal
+//     }
+// }
+
+
+public func SetFabric(url: String) {
+    MantleSetFabric(url.cString())
+}
+
+public func ApplicationLog(s: String){
+    Application(s.cString())
+}
+
+public func DebugLog(s: String){
+    Debug(s.cString())
+}
+
+public func InfoLog(s: String){
+    Info(s.cString())
+}
+
+public func WarnLog(s: String){
+    Warn(s.cString())
+}
+
+public func ErrorLog(s: String){
+    Error(s.cString())
+}
+
+public func LogLevelOff() { SetLogLevelOff() }
+public func LogLevelApp() { SetLogLevelApp() }
+public func LogLevelErr() { SetLogLevelErr() }
+public func LogLevelWarn() { SetLogLevelWarn() }
+public func LogLevelInfo() { SetLogLevelInfo() }
+public func LogLevelDebug() { SetLogLevelDebug() }
+
+public func FabricDev() { SetFabricDev() }
+public func FabricSandbox() { SetFabricSandbox() }
+public func FabricProduction() { SetFabricProduction() }
+public func FabricLocal() { SetFabricLocal() }

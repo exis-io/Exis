@@ -1,4 +1,4 @@
-// Testing
+// Local testing only.
 
 import Foundation
 

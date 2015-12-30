@@ -17,31 +17,45 @@ TODO:
 */
 
 import Foundation
+import CoreFoundation
+import mantle
 
-public class Domain: RiffleDelegate {
-    var mantleDomain: UnsafeMutablePointer<Void>
-    var delegate: RiffleDelegate?
+#if os(Linux)
+    import SwiftGlibc
+    import Glibc
+#else
+    import Darwin.C
+#endif
+
+public protocol Delegate {
+    func onJoin()
+    func onLeave()
+}
+
+public class Domain {
+    public var mantleDomain: UnsafeMutablePointer<Void>
+    public var delegate: Delegate?
     
-    var handlers: [UInt64: (Any) -> ()] = [:]
-    var invocations: [UInt64: (Any) -> ()] = [:]
-    var registrations: [UInt64: (Any) -> (Any?)] = [:]
+    public var handlers: [UInt64: (Any) -> ()] = [:]
+    public var invocations: [UInt64: (Any) -> ()] = [:]
+    public var registrations: [UInt64: (Any) -> (Any?)] = [:]
     
     
-    init(name: String) {
+    public init(name: String) {
         mantleDomain = NewDomain(name.cString())
-        delegate = self
+        // delegate = self
     }
     
-    init(name: String, superdomain: Domain) {
+    public init(name: String, superdomain: Domain) {
         mantleDomain = Subdomain(superdomain.mantleDomain, name.cString())
-        delegate = self
+        // delegate = self
     }
     
     public func subscribe(endpoint: String, fn: (Any) -> ()) {
         let cb = CBID()
         let eb = CBID()
-        let hn = CBID()
-        
+        let hn = CBID() 
+
         Subscribe(self.mantleDomain, endpoint.cString(), cb, eb, hn, "[]".cString())
         handlers[hn] = fn
     }
@@ -49,28 +63,28 @@ public class Domain: RiffleDelegate {
     public func register(endpoint: String, fn: (Any) -> (Any?)) {
         let cb = CBID()
         let eb = CBID()
-        let hn = CBID()
-        
+        let hn = CBID() 
+
         Register(self.mantleDomain, endpoint.cString(), cb, eb, hn, "[]".cString())
         registrations[hn] = fn
     }
-    
+
     public func publish(endpoint: String, _ args: Any...) {
         let cb = CBID()
         let eb = CBID()
-        
+
         Publish(self.mantleDomain, endpoint.cString(), cb, eb, marshall(args))
     }
     
     public func call(endpoint: String, _ args: Any..., handler: (Any) -> ()) {
         let cb = CBID()
         let eb = CBID()
-        
+
         Call(self.mantleDomain, endpoint.cString(), cb, eb, marshall(args), "[]".cString())
         invocations[cb] = handler
     }
     
-    func receive() {
+    public func receive() {
         while true {
             var (i, args) = decode(Receive(self.mantleDomain))
             
@@ -86,12 +100,12 @@ public class Domain: RiffleDelegate {
                 
                 let resultId = args.removeAtIndex(0)
                 var ret = fn(args)
-                ret = ret == nil ? [] : ret
+                ret = ret == nil ? ([] as! [Any]) : ret
                 
                 //print("Handling return with args: \(ret)")
                 Yield(mantleDomain, UInt64(resultId.doubleValue!), marshall(ret))
             } else {
-                //print("No handlers found for id \(i)!")
+                print("No handlers found for id \(i)!")
             }
         }
     }
@@ -105,6 +119,12 @@ public class Domain: RiffleDelegate {
         handlers[cb] = { a in
             if let d = self.delegate {
                 d.onJoin()
+            }
+        }
+
+        handlers[eb] = { a in
+            if let d = self.delegate {
+                d.onLeave()
             }
         }
         
@@ -123,10 +143,4 @@ public class Domain: RiffleDelegate {
     // MARK: Delegate methods
     public func onJoin() { }
     public func onLeave() { }
-}
-
-// Sets itself as the delegate if none provided
-public protocol RiffleDelegate {
-    func onJoin()
-    func onLeave()
 }

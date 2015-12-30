@@ -3,6 +3,6 @@ import PackageDescription
 let package = Package(
     name: "Example",
     dependencies: [
-        .Package(url: "../swiftRiffle", majorVersion: 1)
+        .Package(url: "../swiftRiffle/Riffle", majorVersion: 1)
     ]
 )

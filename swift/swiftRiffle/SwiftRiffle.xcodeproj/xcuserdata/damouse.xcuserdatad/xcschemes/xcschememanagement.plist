@@ -4,7 +4,7 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>RiffleTest.xcscheme</key>
+		<key>SwiftRiffle.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
@@ -12,7 +12,7 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>50533C141C029E2700E046D0</key>
+		<key>504D0A041C3324B3009F5A7B</key>
 		<dict>
 			<key>primary</key>
 			<true/>

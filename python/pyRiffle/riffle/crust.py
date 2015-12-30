@@ -11,6 +11,9 @@ from riffle.model import Model, cuminReflect
 '''
 I made a mistake. Deferreds should only cover success/failure callbacks, while the handlers
 are only for register/subscribe
+
+Fixing the osx python version: 
+    https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Common-Issues.md#python-segmentation-fault-11-on-import-some_python_module
 '''
 
 

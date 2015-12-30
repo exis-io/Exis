@@ -19,7 +19,15 @@ class Model {
     // Note that we don't need "new" or "create". Implicityly, init() is "new"
     init() {}
     
-    required init(json: [String: AnyObject]?) {}
+    required init(json: [String: AnyObject]?) { }
+    
+    func toJson() -> [String: AnyObject] {
+        return [:]
+    }
+    
+    class func schema() -> [String: AnyObject] {
+        return [:]
+    }
     
     
     // Active record makes a distinction between save and update. Do we care?
@@ -78,7 +86,7 @@ class Classroom: Model {
 // Case 2: Instantiate the model and save it
 let m = User()
 m.name = "joebob"
-m.save()
+//m.save()
 
 
 /*
@@ -101,7 +109,6 @@ print(users[0].name)
 
 // Query parameters here
 let queryUsers: [User] = User.find("name == joebob")  // #=> User1 (name == "joebob")
-
 
 // Case 4: Delete a model 
 m.delete()
@@ -136,7 +143,16 @@ like this.
 
 // Case 6: Load a simple to-many relation
 let loaded = Classroom.first()
+
 let kids = loaded!.students // #=> User1, User2...
+
+/*
+
+Classroom.first().then { results in
+    let kids = results.students
+}
+
+*/
 
 // This won't scale, have to be able to load the relations lazily. Can't really load them lazily and then 
 // access them normally, since b = loaded.students is a synchronous operation

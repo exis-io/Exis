@@ -16,3 +16,11 @@ This is for the open source version of swift. This directory is exploratory and 
 
 **6**. Compile and run sample project. In `swift/example`: `make` and then `./run`. 
 
+
+## Notes
+
+Starting Xcode with 2.2 toolchain: 
+
+```
+xcrun launch-with-toolchain /Library/Developer/Toolchains/swift-latest.xctoolchain
+```

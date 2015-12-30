@@ -34,3 +34,5 @@ IosMantle.framework/
 products/
 
 swift/osxCrust/Build/
+.build/
+swift/example/Packages/*
