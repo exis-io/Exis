@@ -32,12 +32,8 @@ IosMantle.framework/
 
 products/
 
-<<<<<<< HEAD
-swift/osxCrust/Build/
-=======
 swift/osxCrust/Build/
 .build/
 
 swift/example/Packages/*
 swift/example/Example
->>>>>>> f2e18e49bf8dd889f4359ce8faa5a92a3f4d6426

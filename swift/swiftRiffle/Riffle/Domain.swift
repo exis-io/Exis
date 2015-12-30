@@ -36,7 +36,7 @@ public class Domain {
     public var mantleDomain: UnsafeMutablePointer<Void>
     public var delegate: Delegate?
     
-    public var handlers: [UInt64: (Any) -> ()] = [:]
+    public var handlers: [UInt64: ([Any]) -> ()] = [:]
     public var invocations: [UInt64: (Any) -> ()] = [:]
     public var registrations: [UInt64: (Any) -> (Any?)] = [:]
     
@@ -51,7 +51,7 @@ public class Domain {
         // delegate = self
     }
     
-    public func subscribe(endpoint: String, fn: (Any) -> ()) {
+    public func _subscribe(endpoint: String, fn: ([Any]) -> ()) {
         let cb = CBID()
         let eb = CBID()
         let hn = CBID() 

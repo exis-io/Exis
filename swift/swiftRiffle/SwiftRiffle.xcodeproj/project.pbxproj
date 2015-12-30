@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		503ACCA51C339E260090DB6C /* CuminicableExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503ACCA41C339E260090DB6C /* CuminicableExtensions.swift */; };
 		504D0A131C332F8F009F5A7B /* riffle.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 504D0A111C332F8F009F5A7B /* riffle.a */; };
 		504D0A181C332FA8009F5A7B /* Json.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504D0A141C332FA8009F5A7B /* Json.swift */; };
 		504D0A1D1C332FE9009F5A7B /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504D0A1C1C332FE9009F5A7B /* main.swift */; };
@@ -18,6 +17,7 @@
 		5077CE3E1C334EEB00152D00 /* GenericShotgun.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5077CE3C1C334EEB00152D00 /* GenericShotgun.swift */; };
 		5077CE3F1C334EEB00152D00 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5077CE3D1C334EEB00152D00 /* Model.swift */; };
 		5077CE411C335EE700152D00 /* Silver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5077CE401C335EE700152D00 /* Silver.swift */; };
+		5077CE431C3460F000152D00 /* CuminicableExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5077CE421C3460F000152D00 /* CuminicableExtensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -33,7 +33,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		503ACCA41C339E260090DB6C /* CuminicableExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CuminicableExtensions.swift; sourceTree = SOURCE_ROOT; };
 		503ACCA61C33A3450090DB6C /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
 		504D0A051C3324B3009F5A7B /* SwiftRiffle */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SwiftRiffle; sourceTree = BUILT_PRODUCTS_DIR; };
 		504D0A0F1C332F8F009F5A7B /* Bridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bridge.h; sourceTree = SOURCE_ROOT; };
@@ -48,6 +47,7 @@
 		5077CE3C1C334EEB00152D00 /* GenericShotgun.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GenericShotgun.swift; path = Riffle/GenericShotgun.swift; sourceTree = SOURCE_ROOT; };
 		5077CE3D1C334EEB00152D00 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Model.swift; path = Riffle/Model.swift; sourceTree = SOURCE_ROOT; };
 		5077CE401C335EE700152D00 /* Silver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Silver.swift; path = Riffle/Silver.swift; sourceTree = SOURCE_ROOT; };
+		5077CE421C3460F000152D00 /* CuminicableExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CuminicableExtensions.swift; path = Riffle/CuminicableExtensions.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,7 +66,7 @@
 			isa = PBXGroup;
 			children = (
 				5077CE401C335EE700152D00 /* Silver.swift */,
-				503ACCA41C339E260090DB6C /* CuminicableExtensions.swift */,
+				5077CE421C3460F000152D00 /* CuminicableExtensions.swift */,
 			);
 			name = Silver;
 			sourceTree = "<group>";
@@ -180,7 +180,7 @@
 				5077CE411C335EE700152D00 /* Silver.swift in Sources */,
 				504D0A241C333FC9009F5A7B /* Domain.swift in Sources */,
 				504D0A251C333FC9009F5A7B /* Utils.swift in Sources */,
-				503ACCA51C339E260090DB6C /* CuminicableExtensions.swift in Sources */,
+				5077CE431C3460F000152D00 /* CuminicableExtensions.swift in Sources */,
 				5077CE3F1C334EEB00152D00 /* Model.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

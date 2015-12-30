@@ -1,6 +1,23 @@
 // Straight Boilerplate-- make the compiler happy
 import Foundation
 
+public extension Domain {
+    public func subscribe<A: Property, B: Property, C: Property>(endpoint: String, _ fn: (A, B, C) -> ()) {
+        // Assume we're getting primitive types well-constructed
+        // Detect collections and objects, build them appropriately
+        
+        // NOTE: Collections only need to be detected for nested objects
+        
+        // Construct cumin strings here and pass to core-- repr might be betterer
+        //print("C is a model: \(C.isModel())")
+        
+        _subscribe(endpoint) { args in
+            // Coerce types, constructing them if needed, and call the function with the results
+            fn(A.create(args[0]) as! A, B.create(args[1]) as! B, C.create(args[2]) as! C)
+        }
+    }
+}
+
 /*
 public extension RiffleDomain {
     public func register(pdid: String, _ fn: () -> ()) -> Deferred {

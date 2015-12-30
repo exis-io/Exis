@@ -2,11 +2,13 @@
 
 import Foundation
 
+
 class Dog: Model {
     var name = "Fido"
     var age = 43
 }
 
+/*
 var holder: (([Any]) -> ())? = nil
 
 func newcumin<A: Property, B: Property, C: Property>(fn: (A, B, C) -> ()) {
@@ -15,12 +17,11 @@ func newcumin<A: Property, B: Property, C: Property>(fn: (A, B, C) -> ()) {
     
     // NOTE: Collections only need to be detected for nested objects
     
-    // Construct cumin strings here and pass to core
+    // Construct cumin strings here and pass to core-- repr might be betterer
     //print("C is a model: \(C.isModel())")
     
     holder = { args in
-        // Coerce types, constructing them if needed
-        
+        // Coerce types, constructing them if needed, and call the function with the results
         fn(A.create(args[0]) as! A, B.create(args[1]) as! B, C.create(args[2]) as! C)
     }
 }
@@ -32,10 +33,10 @@ func add(a: Int, b: [String], c: Dog) {
 newcumin(add)
 
 holder!([1, ["Hey", "There"], ["name": "Billiam", "age": 88]])
+*/
 
 
 
-/*
 SetLogLevelDebug()
 SetFabricLocal()
 
@@ -43,7 +44,7 @@ SetFabricLocal()
 class Sender: Domain {
     
     override func onJoin() {
-        publish("xs.damouse.alpha/sub", 1, "2", true)
+        publish("xs.damouse.alpha/sub", 1, ["Hey", "There"], ["name": "Billiam", "age": 88])
         
         call("xs.damouse.alpha/reg", "Johnathan", "Seed") { returnArgs in
             print("Call received result \(returnArgs)")
@@ -64,8 +65,9 @@ class Receiver: Domain {
             return "Receiver says hi!"
         }
         
-        subscribe("sub") { (args: Any) in
-            print("Received publish! \(args)")
+        subscribe("sub") { (a: Int, b: [String], c: Dog) in
+            //print("Received publish! \(args)")
+            print("Received publish: \(a), with list: \(b), and pup: \(c.description)")
         }
     }
     
@@ -84,4 +86,3 @@ if let result = NSProcessInfo.processInfo().environment["RECEIVER"] {
     print("Starting Sender")
     Sender(name: "xs.damouse.beta").join()
 }
-*/
