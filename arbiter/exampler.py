@@ -8,12 +8,21 @@ import glob, re
 
 from collections import defaultdict as ddict
 
+# They provide "python" but we need to know the extension is "py"
 LANGS = {"python": "py", "swift": "swift", "js": "js", "go": "go"}
+# We found a file with extension "py" and need to know its "python"
 LANGS_EXT = {"py": "python", "swift": "swift", "js": "js", "go": "go"}
 
+# Match to the start of an example, pull out the name of the example, and the docs for it
 EX_START_RE = re.compile("^.*Example (.*)? - (.*)$")
+# Match to the end of an example, and pull out the name of the example
 EX_END_RE = re.compile("^.*End Example (.*)$")
+# Trying to match specifically on calls to the 4 primary function calls, with an optional space
+# between the function name and (. Also dealing with lower/upper case, and trying to look for 
+# functional calls specifically so we ignore comments and stuff like that
+EXIS_CMDS_RE = re.compile(".*([Rr]egister *\(|[Cc]all *\(|[Ss]ubscribe *\(|[Pp]ublish *\().*$")
 
+# Valid comments for each language
 LANG_COMMENT_CHAR = {"py": "#", "swift": "//", "js": "//", "go": "//"}
 
 def _parseStartMatch(m):
@@ -81,9 +90,9 @@ class Examples:
         """
         baseName = task.split('*')[0] if task else None
         for l, tasks in self.tasks.iteritems():
-            if(LANGS.get(lang, None) == l or lang is None):
+            if(lang is None or LANGS.get(lang, None) == l):
                 for name, t in tasks.iteritems():
-                    if(name.startswith(baseName) or baseName is None):
+                    if(baseName is None or name.startswith(baseName)):
                         yield t
 
     def _addTask(self, t):
@@ -102,8 +111,10 @@ class Examples:
                     break
                 lst.extend(l)
         
+        # Setup regex based on file type
         ftype = fileName.split(".")[-1]
         expect_re = _getExpectRe(ftype)
+        
         # Run through the file
         FSM = "START"
         t = Task(fileName)
@@ -131,6 +142,7 @@ class Examples:
                     t.expect(mExpect.group(1), mExpect.group(2))
                     FSM = "END"
                     t.feed(c)
+                # They could also not provide an expect if they don't care
                 elif(mEnd):
                     n, o = _parseEndMatch(mEnd)
                     t.end(n, o, lineNum)
@@ -143,12 +155,14 @@ class Examples:
                     t.feed(c)
             
             elif(FSM == "END"):
+                # Found end, wrap it up and start over
                 if mEnd:
                     n, o = _parseEndMatch(mEnd)
                     t.end(n, o, lineNum)
                     self._addTask(t)
                     t = Task(fileName)
                     FSM = "START"
+                # Looking for end, but keep adding to the code for this Task
                 else:
                     t.feed(c)
                 if(mStart or mExpect):
@@ -169,7 +183,6 @@ class TaskSet:
         self.taskSend = None
 
     def isValid(self):
-        #print(self.taskRecv, self.taskSend)
         return self.taskRecv is not None and self.taskSend is not None
 
     def details(self):
@@ -209,11 +222,12 @@ class TaskSet:
     def add(self, task):
         if(self.isValid()):
             raise Exception("TaskSet already valid but getting more tasks to add")
-        
-        if(task.expectType is not None):
+        if(task.actionType in ("register", "subscribe")):
             self.taskRecv = task
-        else:
+        elif(task.actionType in ("call", "publish")):
             self.taskSend = task
+        else:
+            print("!! No action type found")
 
     def __str__(self):
         name = self.getName()
@@ -237,6 +251,7 @@ class Task:
         self.valid = False
         self.expectType, self.expectVal = None, None
         self.lineStart, self.lineEnd = 0, 0
+        self.actionType = None
 
     def expect(self, eType, eVal):
         """
@@ -269,6 +284,13 @@ class Task:
         """
         if(self.name is None):
             raise Exception("Never called start!!")
+        # Look for the important commands (reg/call/pub/sub)
+        m = EXIS_CMDS_RE.match(line)
+        if(m):
+            if(self.actionType is not None):
+                print("!! Already have {} as type, now found {}".format(self.actionType, m.group(1)))
+            self.actionType = m.group(1)[:-1].lower()
+        
         self.code += "{}\n".format(line)
 
     def end(self, name, opts, lineNum):
@@ -282,6 +304,6 @@ class Task:
     
     def __str__(self):
         s = "{} - {}\n".format(self.fullName(), self.doc)
-        s += "({} Lines {}-{})\n".format(self.fileName, self.lineStart, self.lineEnd)
+        s += "({} lines {}-{})\n".format(self.fileName, self.lineStart, self.lineEnd)
         s += self.code
         return s

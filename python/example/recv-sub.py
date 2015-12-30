@@ -25,7 +25,6 @@ class Recv(riffle.Domain):
         # End Example Pub/Sub Objects
         
         # Example Pub/Sub OOO Racey - This shows that pubs can arrive out of order unless you call .wait() on them
-        @singlethread
         def oooRaceSub(i):
             print("[oooRaceSub] Got: {}".format(i))
         self.subscribe("oooRaceSub", oooRaceSub)

@@ -125,6 +125,10 @@ class Domain(object):
             self.mantleDomain = superdomain.mantleDomain.Subdomain(name)
             self.app = superdomain.app
 
+    def want(self, *types):
+        print("Want: ", types)
+        return self
+    
     def join(self):
         cb, eb = newID(2)
         self.app.control[cb] = self.onJoin
@@ -178,7 +182,7 @@ class Domain(object):
     def call(self, endpoint, *args):
         d = Deferred()
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
-        self.mantleDomain.Call(endpoint, d.cb, d.eb, json.dumps(args), json.dumps(cuminReflect(handler)))
+        self.mantleDomain.Call(endpoint, d.cb, d.eb, json.dumps(args), json.dumps([])) #TODO json.dumps(cuminReflect(handler)))
         return d
 
     def leave(self):
