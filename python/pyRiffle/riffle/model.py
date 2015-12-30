@@ -97,6 +97,22 @@ class Model(object):
     def _serialize(self): 
         return self.__values 
 
+def reconstruct(args, types):
+    """
+    Takes a tuple of values and a tuple of their types and properly reconstructs them
+    """
+    # Allow this to be a pass-through if they didn't provide any types to check
+    if not types:
+        return args
+    
+    l = list()
+    for x, y in zip(args, types):
+        if issubclass(y, Model):
+            l.append(y._deserialize(x))
+        else:
+            l.append(x)
+    return tuple(l)
+
 def want(*types):
     def real_decorator(function):
         def wrapper(*args, **kwargs):
@@ -105,14 +121,7 @@ def want(*types):
                 # return [x.__name__ for x in list(types)]
                 return list(types)
             
-            l = list()
-            for x, y in zip(args, types):
-                if issubclass(y, Model):
-                    l.append(y._deserialize(x))
-                else:
-                    l.append(x)
-            
-            return function(*l)
+            return function(*reconstruct(args, types))
         return wrapper
     return real_decorator
 

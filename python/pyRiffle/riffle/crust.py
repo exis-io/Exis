@@ -6,7 +6,7 @@ import json
 from greenlet import greenlet
 
 import pymantle
-from riffle.model import Model, cuminReflect
+from riffle.model import Model, cuminReflect, reconstruct
 
 '''
 I made a mistake. Deferreds should only cover success/failure callbacks, while the handlers
@@ -37,13 +37,15 @@ class Deferred(object):
 
     def wait(self, *types):
         ''' Wait until the results of this invocation are resolved '''
-        # TODO: pass typelist down to call for later checking
 
         # Pass our ids so the parent knows when to reinvoke
         self.green = greenlet.getcurrent()
         results = self.green.parent.switch(self)
-        return results
-
+        r = reconstruct(results, types)
+        if r:
+            return r[0] if len(r) == 1 else r
+        else:
+            return r
 
 class App(object):
 
@@ -74,7 +76,7 @@ class App(object):
 
                 # Handle success seperate from failures-- Might be able to just pass in an appropriate exception
                 if d.green is not None:
-                    print 'Reentering deffered with ', args
+                    #print 'Reentering deffered with ', args
                     d = d.green.switch(*args)
 
                     # If user code called .wait() agaain we get another deferred
@@ -125,10 +127,6 @@ class Domain(object):
             self.mantleDomain = superdomain.mantleDomain.Subdomain(name)
             self.app = superdomain.app
 
-    def want(self, *types):
-        print("Want: ", types)
-        return self
-    
     def join(self):
         cb, eb = newID(2)
         self.app.control[cb] = self.onJoin
@@ -182,7 +180,7 @@ class Domain(object):
     def call(self, endpoint, *args):
         d = Deferred()
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
-        self.mantleDomain.Call(endpoint, d.cb, d.eb, json.dumps(args), json.dumps([])) #TODO json.dumps(cuminReflect(handler)))
+        self.mantleDomain.Call(endpoint, d.cb, d.eb, json.dumps(args), json.dumps([]))
         return d
 
     def leave(self):

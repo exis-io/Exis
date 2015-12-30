@@ -3,28 +3,50 @@ import time
 
 timestr = lambda x=None: time.asctime(time.localtime(x)) if x else time.asctime()
 
-def oscall(cmd, get=False):
+def oscall(cmd, get=False, blocking=True, **kwargs):
     """
         This function performs a OS subprocess call.
         All output is thrown away unless an error has occured or if @get is True
         Arguments:
             @cmd: the string command to run
             [get] : True means return (stdout, stderr)
+            [kw]  : Pass directly to the Popen call (stuff like cwd)
         Returns:
             None if not @get and no error
             (stdout, retcode, stderr) if @get or yes error
     """
     # Since we are already in a deferred chain, use subprocess to block and make the call to mount right HERE AND NOW
-    proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs)
+    if(blocking):
+        output, errors = proc.communicate()
+        if(proc.returncode or get):
+            return (output, proc.returncode, errors)
+        else:
+            if(output and output != ""):
+                print('-- "%s" stdout: "%s"\n' % (cmd, output.rstrip()))
+            if(errors and errors != ""):
+                print('-- "%s" stderr: "%s"' % (cmd, errors.rstrip()))
+            return None
+    else:
+        return proc
+
+def procCommunicate(proc):
+    """
+    Ends a process by performing communicate
+    """
     output, errors = proc.communicate()
-    if(proc.returncode or get):
+    if(proc.returncode):
         return (output, proc.returncode, errors)
     else:
-        if(output and output != ""):
-            print('-- "%s" stdout: "%s"\n' % (cmd, output.rstrip()))
-        if(errors and errors != ""):
-            print('-- "%s" stderr: "%s"' % (cmd, errors.rstrip()))
-        return None
+        return (output, 0, errors)
+
+def procTerminate(proc):
+    """
+    Terminate a process handle.
+    """
+    proc.terminate()
+    proc.wait()
+
 
 def timedur(x):
     """

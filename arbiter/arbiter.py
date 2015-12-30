@@ -13,14 +13,15 @@
         EXISPATH - the path to the Exis repo
 """
 
-import sys, os, time, glob, argparse
+import sys, os, time, glob, argparse, re
 
 EXISPATH = os.environ.get("EXISPATH", "..")
 sys.path.append(EXISPATH)
 
 from utils import functionizer as funcizer
 from utils import utils
-import exampler
+
+import exampler, repl
 
 
 def findTasks(lang=None, task=None, verbose=False):
@@ -49,6 +50,52 @@ def findTask(lang, task):
     else:
         print("No Task found")
 
+TASK_DEF_RE = re.compile("(.*)? (.*):(.*)$")
+def _ripTaskDef(t):
+    """
+    Internal function that rips apart a task definition like "language action:example"
+    """
+    m = TASK_DEF_RE.match(t)
+    if not m:
+        print("!! Malformed task: {}".format(t))
+        return [None] * 3
+    return m.groups()
+
+def test(*tasks):
+    """
+    Executes potentially many tasks provided as individual arguments.
+    NOTE: Please order your tasks intelligently - this means place subs/regs before calls/pubs.
+    Arguments:
+        tasks... : potentially many tasks to execute, in the format "language action:example name"
+        -v       : if the last arg is -v then print extra data about the tasks found
+
+    Example:
+        test("python register:Reg/Call", "swift call:Reg/Call")
+            This will setup the reg of the Reg/Call example in python and call it with the Reg/Call
+            example from Swift.
+
+        test("python register:Reg/Call Basic", "swift publish:Pub/Sub")
+            This will setup the python reg of "Reg/Call Basic" and the swift publish from Pub/Sub
+            obviously nothing will happen and that is the point - know what you are doing...
+    """
+    if(tasks[-1] == "-v"):
+        tasks = tasks[:-1]
+        verbose = True
+    examples = exampler.Examples.find(EXISPATH)
+    
+    taskList = list()
+    actionList = list()
+    for t in tasks:
+        lang, action, taskName = _ripTaskDef(t)
+        ts = examples.getTask(lang, taskName)
+        if not ts:
+            print("!! No TaskSet found")
+        else:
+            taskList.append(ts)
+            actionList.append(action)
+    
+    # Exec all of them
+    repl.executeAll(taskList, actionList)
 
 def _getArgs():
     parser = argparse.ArgumentParser(description=__doc__)

@@ -60,7 +60,7 @@ class Examples:
         self.tasks = {k: ddict(lambda: TaskSet()) for k in LANGS.values()}
 
     @classmethod
-    def find(cls, EXISPATH, lang):
+    def find(cls, EXISPATH, lang=None):
         thepath = lang or "*"
         path = "{}/{}/example/*.{}".format(EXISPATH, thepath, LANGS.get(lang, "*"))
         c = cls()
@@ -179,55 +179,50 @@ class TaskSet:
     and regs need expects).
     """
     def __init__(self):
-        self.taskRecv = None
-        self.taskSend = None
+        self.tasks = list()
 
     def isValid(self):
-        return self.taskRecv is not None and self.taskSend is not None
+        for t in self.tasks:
+            if not t.valid:
+                return False
+        return True
 
     def details(self):
         name = self.getName()
         lang = LANGS_EXT[self.getLang()]
         if(self.isValid()):
             s = "TaskSet {} - {}\n".format(lang, name)
-            s += "---------------------------------------------\n"
-            s += "  Send\n"
-            s += "    {}".format(str(self.taskSend).replace("\n", "\n    "))
-            s += "\n---------------------------------------------\n"
-            s += "  Recv\n"
-            s += "    {}".format(str(self.taskRecv).replace("\n", "\n    "))
-            s += "\n---------------------------------------------\n"
+            for t in self.tasks:
+                s += "---------------------------------------------\n"
+                s += "  {}\n".format(t.action)
+                s += "    {}".format(str(t).replace("\n", "\n    "))
             return s
         else:
             return "TaskSet {} - {} (INCOMPLETE)".format(lang, name)
     
+    def getTask(self, action):
+        """
+        Return the task associated with the action provided, or None.
+        """
+        for t in self.tasks:
+            if action == t.action:
+                return t
+        return None
+    
     def getLang(self):
-        if self.taskSend:
-            name = self.taskSend.lang
-        elif self.taskRecv:
-            name = self.taskRecv.lang
-        else:
-            name = ""
-        return name
+        for t in self.tasks:
+            if t.valid:
+                return t.lang
+        return ""
 
     def getName(self):
-        if self.taskSend:
-            name = self.taskSend.fullName()
-        elif self.taskRecv:
-            name = self.taskRecv.fullName()
-        else:
-            name = "EMPTY"
-        return name
+        for t in self.tasks:
+            if t:
+                return t.fullName()
+        return "EMPTY"
         
     def add(self, task):
-        if(self.isValid()):
-            raise Exception("TaskSet already valid but getting more tasks to add")
-        if(task.actionType in ("register", "subscribe")):
-            self.taskRecv = task
-        elif(task.actionType in ("call", "publish")):
-            self.taskSend = task
-        else:
-            print("!! No action type found")
+        self.tasks.append(task)
 
     def __str__(self):
         name = self.getName()
@@ -244,14 +239,15 @@ class Task:
     def __init__(self, fileName):
         self.lang = fileName.split(".")[-1]
         self.fileName = fileName
-        self.code = ""
+        self.code = list()
         self.name = None
         self.opts = None
         self.doc = None
         self.valid = False
         self.expectType, self.expectVal = None, None
+        self.expectLine = -1
         self.lineStart, self.lineEnd = 0, 0
-        self.actionType = None
+        self.action = None
 
     def expect(self, eType, eVal):
         """
@@ -259,6 +255,7 @@ class Task:
         """
         self.expectType = eType
         self.expectVal = eVal
+        self.expectLine = len(self.code)
     
     def fullName(self):
         """
@@ -267,6 +264,9 @@ class Task:
         if(not self.valid):
             raise Exception("Not a valid Task")
         return "{}{}".format(self.name, " " + self.opts if self.opts else "")
+
+    def getLang(self):
+        return LANGS_EXT[self.lang]
     
     def start(self, name, opts, doc, lineNum):
         """
@@ -287,11 +287,11 @@ class Task:
         # Look for the important commands (reg/call/pub/sub)
         m = EXIS_CMDS_RE.match(line)
         if(m):
-            if(self.actionType is not None):
-                print("!! Already have {} as type, now found {}".format(self.actionType, m.group(1)))
-            self.actionType = m.group(1)[:-1].lower()
+            if(self.action is not None):
+                print("!! Already have {} as type, now found {}".format(self.action, m.group(1)))
+            self.action = m.group(1)[:-1].lower()
         
-        self.code += "{}\n".format(line)
+        self.code.append(line)
 
     def end(self, name, opts, lineNum):
         """
@@ -305,5 +305,5 @@ class Task:
     def __str__(self):
         s = "{} - {}\n".format(self.fullName(), self.doc)
         s += "({} lines {}-{})\n".format(self.fileName, self.lineStart, self.lineEnd)
-        s += self.code
+        s += "\n".join(self.code)
         return s

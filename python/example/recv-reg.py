@@ -24,16 +24,15 @@ class Recv(riffle.Domain):
         # Example Reg/Call Basic 2 - This is a basic reg/call
         def basicReg2(s):
             print(s) # Expects a string, like "Hello"
-            return "{} World".format(s)
+            return "{} World".format(s), 69
         self.register("basicReg2", basicReg2)
         # End Example Reg/Call Basic 2
 
 
 
 if __name__ == '__main__':
-    app = riffle.Domain("xs.damouse")
-    alpha = riffle.Domain("alpha", superdomain=app)
-    Recv("beta", superdomain=app).join()
+    app = riffle.Domain("xs.demo.test")
+    Recv("example", superdomain=app).join()
     exit()
 
 
