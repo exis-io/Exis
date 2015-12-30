@@ -14,14 +14,15 @@ public extension Domain {
         _subscribe(endpoint) { args in
             // Coerce types, constructing them if needed, and call the function with the results
             
-            print("Received: \(args), first element: \(args[0]), first first element: ")
-            let json = args[0] as! JSON
+            //print("Received: \(args), first element: \(args[0]), first first element: ")
+            let json = args[0] as! [Any]
             
-            //if let stupidfuckingjson = json as? JSON {
-            //    print("Have json", stupidfuckingjson.value, stupidfuckingjson.value.dynamicType)
-            //}
+            let dasStrings = B.create(json[1])
+            print(dasStrings)
+            print(dasStrings.dynamicType)
+            print(B.self)
             
-            fn(A.create(args[0]) as! A, B.create(args[1]) as! B, C.create(args[2]) as! C)
+            fn(A.create(json[0]) as! A, B.create(json[1]) as! B, C.create(json[2]) as! C)
         }
     }
 }

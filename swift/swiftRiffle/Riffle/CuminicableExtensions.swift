@@ -87,6 +87,116 @@ extension Optional : OptionalProperty {
     }
 }
 
+// Deprecated or not present in swift 2.2
+
+// extension AutoreleasingUnsafeMutablePointer : Property, BaseConvertible {}
+
+// Extremely primitive types
+extension Int: Property, Convertible {
+    public static func isModel() -> Bool { return false }
+    
+    public static func create(from: Any) -> Any {
+        if let x = from as? Int {
+            return x
+        }
+        
+        if let x = from as? String {
+            return Int(x)
+        }
+        
+        if let x = from as? Double {
+            return Int(x)
+        }
+        
+        print("WARN: Convertible was not able to complete for type \(self) with value \(from)")
+        return from
+    }
+}
+
+extension String: Property, Convertible {
+    public static func isModel() -> Bool { return false }
+    
+    public static func create(from: Any) -> Any {
+        
+        if let x = from as? String {
+            return x
+        }
+        
+        if let x = from as? Int {
+            return String(x)
+        }
+        
+        print("WARN: Convertible was not able to complete for type \(self) with value \(from)")
+        return from
+    }
+}
+
+extension Double: Property, Convertible {
+    public static func isModel() -> Bool { return false }
+    
+    public static func create(from: Any) -> Any {
+        if let x = from as? Double {
+            return x
+        }
+        
+        if let x = from as? Int {
+            return Double(x)
+        }
+        
+        print("WARN: Convertible was not able to complete for type \(self) with value \(from)")
+        return from
+    }
+}
+
+extension Float: Property, Convertible {
+    public static func isModel() -> Bool { return false }
+    
+    public static func create(from: Any) -> Any {
+        if let x = from as? Float {
+            return x
+        }
+        
+        if let x = from as? Int {
+            return Float(x)
+        }
+        
+        print("WARN: Convertible was not able to complete for type \(self) with value \(from)")
+        return from
+    }
+}
+
+extension Bool: Property, Convertible {
+    public static func isModel() -> Bool { return false }
+    
+    public static func create(from: Any) -> Any {
+        if let x = from as? Bool {
+            return x
+        }
+        
+        if let x = from as? Int {
+            return x == 1 ? true : false
+        }
+        
+        print("WARN: Convertible was not able to complete for type \(self) with value \(from)")
+        return from
+    }
+}
+
+extension Array : Property, BaseConvertible {
+    public static func isModel() -> Bool { return false }
+    
+    public static func create(from: Any) -> Any {
+        print("Array converting from: \(from) to expected type: \(Element.self)")
+        
+        if let arr = from as? [Any] {
+            print("Able to read ")
+            return arr.map { $0 as! Element }
+        }
+        
+        return from
+    }
+}
+
 /// Structures
 
 extension AnyBidirectionalCollection : Property, BaseConvertible {}
@@ -96,10 +206,7 @@ extension AnyForwardIndex : Property, BaseConvertible {}
 extension AnyRandomAccessCollection : Property, BaseConvertible {}
 extension AnyRandomAccessIndex : Property, BaseConvertible {}
 extension AnySequence : Property, BaseConvertible {}
-extension Array : Property, BaseConvertible {}
 extension ArraySlice : Property, BaseConvertible {}
-// extension AutoreleasingUnsafeMutablePointer : Property, BaseConvertible {}
-extension Bool : Property, BaseConvertible {}
 extension COpaquePointer : Property, BaseConvertible {}
 extension CVaListPointer : Property, BaseConvertible {}
 extension Character : Property, BaseConvertible {}
@@ -110,7 +217,6 @@ extension Dictionary : Property, BaseConvertible {}
 extension DictionaryGenerator : Property, BaseConvertible {}
 extension DictionaryIndex : Property, BaseConvertible {}
 extension DictionaryLiteral : Property, BaseConvertible {}
-extension Double : Property, BaseConvertible {}
 extension EmptyCollection : Property, BaseConvertible {}
 extension EmptyGenerator : Property, BaseConvertible {}
 extension EnumerateGenerator : Property, BaseConvertible {}
@@ -121,12 +227,10 @@ extension FlattenCollection : Property, BaseConvertible {}
 extension FlattenCollectionIndex : Property, BaseConvertible {}
 extension FlattenGenerator : Property, BaseConvertible {}
 extension FlattenSequence : Property, BaseConvertible {}
-extension Float : Property, BaseConvertible {}
 extension GeneratorOfOne : Property, BaseConvertible {}
 extension GeneratorSequence : Property, BaseConvertible {}
 extension HalfOpenInterval : Property, BaseConvertible {}
 extension IndexingGenerator : Property, BaseConvertible {}
-extension Int : Property, BaseConvertible {}
 extension Int16 : Property, BaseConvertible {}
 extension Int32 : Property, BaseConvertible {}
 extension Int64 : Property, BaseConvertible {}
@@ -164,7 +268,6 @@ extension StrideThrough : Property, BaseConvertible {}
 extension StrideThroughGenerator : Property, BaseConvertible {}
 extension StrideTo : Property, BaseConvertible {}
 extension StrideToGenerator : Property, BaseConvertible {}
-extension String : Property, BaseConvertible {}
 extension String.CharacterView : Property, BaseConvertible {}
 extension String.CharacterView.Index : Property, BaseConvertible {}
 extension String.UTF16View : Property, BaseConvertible {}
