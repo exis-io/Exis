@@ -46,9 +46,9 @@ class Sender: Domain {
     override func onJoin() {
         publish("xs.damouse.alpha/sub", 1, ["Hey", "There"], ["name": "Billiam", "age": 88])
         
-        call("xs.damouse.alpha/reg", "Johnathan", "Seed") { returnArgs in
-            print("Call received result \(returnArgs)")
-        }
+//        call("xs.damouse.alpha/reg", "Johnathan", "Seed") { returnArgs in
+//            print("Call received result \(returnArgs)")
+//        }
     }
     
     override func onLeave() {
@@ -60,10 +60,10 @@ class Sender: Domain {
 class Receiver: Domain {
     
     override func onJoin() {
-        register("reg") { (args: Any) -> Any? in
-            print("Received call! Args: \(args)")
-            return "Receiver says hi!"
-        }
+//        register("reg") { (args: Any) -> Any? in
+//            print("Received call! Args: \(args)")
+//            return "Receiver says hi!"
+//        }
         
         subscribe("sub") { (a: Int, b: [String], c: Dog) in
             //print("Received publish! \(args)")
@@ -78,8 +78,11 @@ class Receiver: Domain {
 
 //Receiver(name: "xs.damouse.alpha").join()
 
+let switchemup = false
+let result = NSProcessInfo.processInfo().environment["RECEIVER"]
+
 // Start the scripts
-if let result = NSProcessInfo.processInfo().environment["RECEIVER"] {
+if result != nil || switchemup {
     print("Starting Receiver")
     Receiver(name: "xs.damouse.alpha").join()
 } else {

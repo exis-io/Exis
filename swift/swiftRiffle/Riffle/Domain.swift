@@ -73,6 +73,8 @@ public class Domain {
         let cb = CBID()
         let eb = CBID()
 
+        print("PUBLISHING ARGS: \(args)")
+        
         Publish(self.mantleDomain, endpoint.cString(), cb, eb, marshall(args))
     }
     
@@ -105,7 +107,7 @@ public class Domain {
                 //print("Handling return with args: \(ret)")
                 Yield(mantleDomain, UInt64(resultId.doubleValue!), marshall(ret))
             } else {
-                print("No handlers found for id \(i)!")
+                //print("No handlers found for id \(i)!")
             }
         }
     }
@@ -119,12 +121,16 @@ public class Domain {
         handlers[cb] = { a in
             if let d = self.delegate {
                 d.onJoin()
+            } else {
+                self.onJoin()
             }
         }
 
         handlers[eb] = { a in
             if let d = self.delegate {
                 d.onLeave()
+            } else {
+                self.onLeave()
             }
         }
         

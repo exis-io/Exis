@@ -224,20 +224,44 @@ public enum JSON {
     public static func from(values: [Any]) -> JSON {
         var jsonArray: [JSON] = []
         for value in values {
+            
+            if value.dynamicType == [String].self {
+                print("Is String Array")
+                
+                if let arr = value as? [String] {
+                    print("I can recognize a normal [String]")
+                }
+                
+                if let arr = value as? [Any] {
+                    print("I can recognize an [Any]")
+                }
+                
+                if let arr = value as? [JSON] {
+                    print("I can recognize an [JSON]")
+                }
+                
+                print("done")
+            }
+            
             if let value = value as? Bool {
                 jsonArray.append(JSON.from(value))
             }
-            if let value = value as? Double {
+            else if let value = value as? Double {
                 jsonArray.append(JSON.from(value))
             }
-            if let value = value as? String {
+            else if let value = value as? Int {
+                jsonArray.append(JSON.from(Double(value)))
+            }
+            else if let value = value as? String {
                 jsonArray.append(JSON.from(value))
             }
-            if let value = value as? [Any] {
+            else if let value = value as? [Any] {
                 jsonArray.append(JSON.from(value))
             }
-            if let value = value as? [String: Any] {
+            else if let value = value as? [String: Any] {
                 jsonArray.append(JSON.from(value))
+            } else {
+                print("WARN: Cant json value: \(value) of type: \(value.dynamicType)")
             }
         }
         return JSON.from(jsonArray)
