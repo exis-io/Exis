@@ -182,14 +182,12 @@ extension Bool: Property, Convertible {
     }
 }
 
+// TODO: Dictionaries
 extension Array : Property, BaseConvertible {
     public static func isModel() -> Bool { return false }
     
     public static func create(from: Any) -> Any {
-        print("Array converting from: \(from) to expected type: \(Element.self)")
-        
         if let arr = from as? [Any] {
-            print("Able to read ")
             return arr.map { $0 as! Element }
         }
         
@@ -197,7 +195,7 @@ extension Array : Property, BaseConvertible {
     }
 }
 
-/// Structures
+// Structures
 
 extension AnyBidirectionalCollection : Property, BaseConvertible {}
 extension AnyBidirectionalIndex : Property, BaseConvertible {}

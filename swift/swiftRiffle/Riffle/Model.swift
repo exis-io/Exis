@@ -35,8 +35,8 @@ extension Model: Convertible {
         // Why no AnyObject? This may change based on the JSON implementation
         
         //guard let json = from as? [String: AnyObject] else {
-        guard let json = from as? [String: NSObject] else {
-            print("WARN: model wasn't given a json!")
+        guard let json = from as? [String: Any] else {
+            print("WARN: model wasn't given a json! Instead received type: \(from.dynamicType)")
             return from
         }
         
