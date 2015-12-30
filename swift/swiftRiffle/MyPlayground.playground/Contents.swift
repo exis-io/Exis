@@ -259,15 +259,13 @@ d.setValue("Bill", forKey: "name")
 
 print(d.name)
 
-//let arr = a as? [Any] {
-//    print("I can recognize an [Any]")
-//}
 
-//let subject = "[\"hello\"]"
-//let data = subject.dataUsingEncoding(NSUTF8StringEncoding)
-//let result = try NSJSONSerialization.JSONObjectWithData(data!, options: []) as? [String]
-//
-//print(result!)
+let subject = "[\"hello\"]"
+let data = subject.dataUsingEncoding(NSUTF8StringEncoding)
+let result = try NSJSONSerialization.JSONObjectWithData(subject.utf8, options: []) as? [String]
+
+print(result!)
+
 
 
 

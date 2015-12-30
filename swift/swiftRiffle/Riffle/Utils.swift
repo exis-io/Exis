@@ -49,6 +49,11 @@ func decode(p: GoSlice) -> (UInt64, [Any]) {
     
     data.removeAtIndex(0)
     
+    // Doubly nested array bug
+    if let nestedArray = data[0].arrayValue {
+        data = nestedArray
+    }
+    
     for x in data {
         if x == JSON.NullValue {
 

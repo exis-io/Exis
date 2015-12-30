@@ -14,13 +14,12 @@ public extension Domain {
         _subscribe(endpoint) { args in
             // Coerce types, constructing them if needed, and call the function with the results
             
-            // TODO: Getting doubly nested jsons here (again)
             print("Received: \(args), first element: \(args[0]), first first element: ")
-            let json = args[0]
+            let json = args[0] as! JSON
             
-            if let stupidfuckingjson = json as? JSON {
-                print("Have json", stupidfuckingjson.value, stupidfuckingjson.dynamicType)
-            }
+            //if let stupidfuckingjson = json as? JSON {
+            //    print("Have json", stupidfuckingjson.value, stupidfuckingjson.value.dynamicType)
+            //}
             
             fn(A.create(args[0]) as! A, B.create(args[1]) as! B, C.create(args[2]) as! C)
         }
