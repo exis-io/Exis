@@ -262,11 +262,13 @@ print(d.name)
 
 let subject = "[\"hello\"]"
 let data = subject.dataUsingEncoding(NSUTF8StringEncoding)
-let result = try NSJSONSerialization.JSONObjectWithData(subject.utf8, options: []) as? [String]
-
+let result = try NSJSONSerialization.JSONObjectWithData(data!, options: []) as? [String]
 print(result!)
 
 
+let recombined = try! NSJSONSerialization.dataWithJSONObject(result!, options: .PrettyPrinted)
+let finalString = NSString(data: recombined, encoding: NSUTF8StringEncoding)
+print(finalString!)
 
 
 

@@ -578,15 +578,15 @@ enum JSONParseError: ErrorType, CustomStringConvertible {
 
 
 public struct JSONParser {
-    public static func parse(source: String) throws -> JSON {
+    public static func parse(source: String) throws -> Any {
         return try GenericJSONParser(source.utf8).parse()
     }
 
-    public static func parse(source: [UInt8]) throws -> JSON {
+    public static func parse(source: [UInt8]) throws -> Any {
         return try GenericJSONParser(source).parse()
     }
 
-    public static func parse(source: [Int8]) throws -> JSON {
+    public static func parse(source: [Int8]) throws -> Any {
         return try parse(source.map({UInt8($0)}))
     }
 }
@@ -608,9 +608,10 @@ public class GenericJSONParser<ByteSequence: CollectionType where ByteSequence.G
         self.end = source.endIndex
     }
 
-    public func parse() throws -> JSON {
+    public func parse() throws -> Any {
         let JSON = try parseValue()
         skipWhitespaces()
+        
         if (cur == end) {
             return JSON
         } else {
@@ -624,8 +625,9 @@ public class GenericJSONParser<ByteSequence: CollectionType where ByteSequence.G
 }
 
 extension GenericJSONParser {
-    private func parseValue() throws -> JSON {
+    private func parseValue() throws -> Any {
         skipWhitespaces()
+        
         if cur == end {
             throw JSONParseError.InsufficientTokenError(
                 reason: "unexpected end of tokens",
@@ -635,9 +637,9 @@ extension GenericJSONParser {
         }
 
         switch currentChar {
-        case Char(ascii: "n"): return try parseSymbol("null", JSON.NullValue)
-        case Char(ascii: "t"): return try parseSymbol("true", JSON.BooleanValue(true))
-        case Char(ascii: "f"): return try parseSymbol("false", JSON.BooleanValue(false))
+        case Char(ascii: "n"): return try parseSymbol("null", NSNull())
+        case Char(ascii: "t"): return try parseSymbol("true", true)
+        case Char(ascii: "f"): return try parseSymbol("false", false)
         case Char(ascii: "-"), Char(ascii: "0") ... Char(ascii: "9"): return try parseNumber()
         case Char(ascii: "\""): return try parseString()
         case Char(ascii: "{"): return try parseObject()
@@ -662,7 +664,7 @@ extension GenericJSONParser {
         return Character(UnicodeScalar(currentChar))
     }
 
-    private func parseSymbol(target: StaticString, @autoclosure _ iftrue: Void -> JSON) throws -> JSON {
+    private func parseSymbol(target: StaticString, @autoclosure _ iftrue: Void -> Any) throws -> Any {
         if expect(target) {
             return iftrue()
         } else {
@@ -674,7 +676,7 @@ extension GenericJSONParser {
         }
     }
 
-    private func parseString() throws -> JSON {
+    private func parseString() throws -> Any {
         assert(currentChar == Char(ascii: "\""), "points a double quote")
         advance()
         var buffer: [CChar] = []
@@ -717,7 +719,7 @@ extension GenericJSONParser {
 
         buffer.append(0)
         let s = String.fromCString(buffer)!
-        return .StringValue(s)
+        return s
     }
 
     private func parseEscapedChar() -> UnicodeScalar? {
@@ -749,7 +751,7 @@ extension GenericJSONParser {
         }
     }
 
-    private func parseNumber() throws -> JSON {
+    private func parseNumber() throws -> Any {
         let sign = expect("-") ? -1.0 : 1.0
         var integer: Int64 = 0
 
@@ -836,20 +838,19 @@ extension GenericJSONParser {
             exponent *= expSign
         }
 
-        return .NumberValue(sign * (Double(integer) + fraction) * pow(10, Double(exponent)))
+        return sign * (Double(integer) + fraction) * pow(10, Double(exponent))
     }
 
-    private func parseObject() throws -> JSON {
+    private func parseObject() throws -> Any {
         assert(currentChar == Char(ascii: "{"), "points \"{\"")
         advance()
         skipWhitespaces()
-        var object: [String: JSON] = [:]
+        var object: [String: Any] = [:]
 
         LOOP: while cur != end && !expect("}") {
             let keyValue = try parseValue()
 
-            switch keyValue {
-            case .StringValue(let key):
+            if let key = keyValue as? String {
                 skipWhitespaces()
 
                 if !expect(":") {
@@ -876,7 +877,7 @@ extension GenericJSONParser {
                         columnNumber: columnNumber
                     )
                 }
-            default:
+            } else {
                 throw JSONParseError.NonStringKeyError(
                     reason: "unexpected value for object key",
                     lineNumber: lineNumber,
@@ -885,15 +886,15 @@ extension GenericJSONParser {
             }
         }
 
-        return .ObjectValue(object)
+        return object
     }
 
-    private func parseArray() throws -> JSON {
+    private func parseArray() throws -> Any {
         assert(currentChar == Char(ascii: "["), "points \"[\"")
         advance()
         skipWhitespaces()
 
-        var array: [JSON] = []
+        var array: [Any] = []
 
         LOOP: while cur != end && !expect("]") {
             let JSON = try parseValue()
@@ -913,7 +914,7 @@ extension GenericJSONParser {
             }
         }
         
-        return .ArrayValue(array)
+        return array
     }
     
     
