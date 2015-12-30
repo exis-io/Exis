@@ -225,24 +225,6 @@ public enum JSON {
         var jsonArray: [JSON] = []
         for value in values {
             
-            if value.dynamicType == [String].self {
-                print("Is String Array")
-                
-                if let arr = value as? [String] {
-                    print("I can recognize a normal [String]")
-                }
-                
-                if let arr = value as? [Any] {
-                    print("I can recognize an [Any]")
-                }
-                
-                if let arr = value as? [JSON] {
-                    print("I can recognize an [JSON]")
-                }
-                
-                print("done")
-            }
-            
             if let value = value as? Bool {
                 jsonArray.append(JSON.from(value))
             }
@@ -255,15 +237,39 @@ public enum JSON {
             else if let value = value as? String {
                 jsonArray.append(JSON.from(value))
             }
+                
+            // Covariance hacks for arrays
+            else if let arr = value as? [String] {
+                jsonArray.append(JSON.from(arr.map { $0 as Any }))
+            }
+            else if let arr = value as? [Double] {
+                jsonArray.append(JSON.from(arr.map { $0 as Any }))
+            }
+            else if let arr = value as? [Int] {
+                jsonArray.append(JSON.from(arr.map { $0 as Any }))
+            }
+            else if let arr = value as? [Bool] {
+                jsonArray.append(JSON.from(arr.map { $0 as Any }))
+            }
             else if let value = value as? [Any] {
                 jsonArray.append(JSON.from(value))
             }
+                
+            // Covariance hacks for dictionaries
+            else if let dict = value as? [String: NSObject] {
+                var rebuild: [String: Any] = [:]
+                _ = dict.map { rebuild[$0] = $1 as Any}
+                
+                jsonArray.append(JSON.from(rebuild))
+            }
             else if let value = value as? [String: Any] {
                 jsonArray.append(JSON.from(value))
-            } else {
+            }
+            else {
                 print("WARN: Cant json value: \(value) of type: \(value.dynamicType)")
             }
         }
+        
         return JSON.from(jsonArray)
     }
 
