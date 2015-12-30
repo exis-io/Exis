@@ -8,6 +8,13 @@
 
 import Foundation
 
+#if os(Linux)
+    import SwiftGlibc
+    import Glibc
+#else
+    import Darwin.C
+#endif
+
 // All properties implement Convertible, but Models react differently 
 // This allows each property to handle its construction differently
 public protocol Convertible {
@@ -91,7 +98,7 @@ extension AnyRandomAccessIndex : Property, BaseConvertible {}
 extension AnySequence : Property, BaseConvertible {}
 extension Array : Property, BaseConvertible {}
 extension ArraySlice : Property, BaseConvertible {}
-extension AutoreleasingUnsafeMutablePointer : Property, BaseConvertible {}
+// extension AutoreleasingUnsafeMutablePointer : Property, BaseConvertible {}
 extension Bool : Property, BaseConvertible {}
 extension COpaquePointer : Property, BaseConvertible {}
 extension CVaListPointer : Property, BaseConvertible {}

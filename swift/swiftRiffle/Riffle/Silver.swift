@@ -83,7 +83,7 @@ extension Silvery {
     
     func x(x: Any, isY y: Any.Type) throws {
         if x.dynamicType == y {
-        } else if let x = x as? AnyObject, let y = y as? AnyClass where x.isKindOfClass(y) {
+        // } else if let x = x as? AnyObject, let y = y as? AnyClass where x.isKindOfClass(y) {
         } else {
             throw SilverError.CannotSetTypeAsType(x: x.dynamicType, y: y)
         }
