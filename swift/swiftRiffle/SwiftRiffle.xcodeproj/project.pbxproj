@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		503ACCA51C339E260090DB6C /* CuminicableExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503ACCA41C339E260090DB6C /* CuminicableExtensions.swift */; };
 		504D0A131C332F8F009F5A7B /* riffle.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 504D0A111C332F8F009F5A7B /* riffle.a */; };
 		504D0A181C332FA8009F5A7B /* Json.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504D0A141C332FA8009F5A7B /* Json.swift */; };
 		504D0A1D1C332FE9009F5A7B /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504D0A1C1C332FE9009F5A7B /* main.swift */; };
@@ -32,9 +33,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		503ACCA41C339E260090DB6C /* CuminicableExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CuminicableExtensions.swift; sourceTree = SOURCE_ROOT; };
+		503ACCA61C33A3450090DB6C /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
 		504D0A051C3324B3009F5A7B /* SwiftRiffle */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SwiftRiffle; sourceTree = BUILT_PRODUCTS_DIR; };
 		504D0A0F1C332F8F009F5A7B /* Bridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bridge.h; sourceTree = SOURCE_ROOT; };
-		504D0A101C332F8F009F5A7B /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = SOURCE_ROOT; };
 		504D0A111C332F8F009F5A7B /* riffle.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = riffle.a; sourceTree = SOURCE_ROOT; };
 		504D0A121C332F8F009F5A7B /* riffle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = riffle.h; sourceTree = SOURCE_ROOT; };
 		504D0A141C332FA8009F5A7B /* Json.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Json.swift; path = Riffle/Json.swift; sourceTree = SOURCE_ROOT; };
@@ -60,6 +62,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		503ACCA31C339E090090DB6C /* Silver */ = {
+			isa = PBXGroup;
+			children = (
+				5077CE401C335EE700152D00 /* Silver.swift */,
+				503ACCA41C339E260090DB6C /* CuminicableExtensions.swift */,
+			);
+			name = Silver;
+			sourceTree = "<group>";
+		};
 		504D09FC1C3324B3009F5A7B = {
 			isa = PBXGroup;
 			children = (
@@ -81,14 +92,14 @@
 		504D0A071C3324B3009F5A7B /* SwiftRiffle */ = {
 			isa = PBXGroup;
 			children = (
+				503ACCA31C339E090090DB6C /* Silver */,
 				504D0A1E1C333FC9009F5A7B /* Cumin.swift */,
 				504D0A1F1C333FC9009F5A7B /* Deferred.swift */,
 				504D0A201C333FC9009F5A7B /* Domain.swift */,
-				5077CE401C335EE700152D00 /* Silver.swift */,
 				504D0A141C332FA8009F5A7B /* Json.swift */,
+				5077CE3D1C334EEB00152D00 /* Model.swift */,
 				504D0A211C333FC9009F5A7B /* Utils.swift */,
 				5077CE3C1C334EEB00152D00 /* GenericShotgun.swift */,
-				5077CE3D1C334EEB00152D00 /* Model.swift */,
 			);
 			path = SwiftRiffle;
 			sourceTree = "<group>";
@@ -96,10 +107,10 @@
 		506BC3241C33402A00FE896F /* Misc */ = {
 			isa = PBXGroup;
 			children = (
+				503ACCA61C33A3450090DB6C /* MyPlayground.playground */,
 				504D0A121C332F8F009F5A7B /* riffle.h */,
 				504D0A0F1C332F8F009F5A7B /* Bridge.h */,
 				504D0A111C332F8F009F5A7B /* riffle.a */,
-				504D0A101C332F8F009F5A7B /* MyPlayground.playground */,
 			);
 			name = Misc;
 			sourceTree = "<group>";
@@ -169,6 +180,7 @@
 				5077CE411C335EE700152D00 /* Silver.swift in Sources */,
 				504D0A241C333FC9009F5A7B /* Domain.swift in Sources */,
 				504D0A251C333FC9009F5A7B /* Utils.swift in Sources */,
+				503ACCA51C339E260090DB6C /* CuminicableExtensions.swift in Sources */,
 				5077CE3F1C334EEB00152D00 /* Model.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

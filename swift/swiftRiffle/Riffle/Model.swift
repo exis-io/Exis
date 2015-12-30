@@ -8,13 +8,19 @@
 
 import Foundation
 
-public class Model: Cuminicable {
+public class Model: Cuminicable, Silvery, Property {
     public static func convert(object: AnyObject) -> Cuminicable? {
         return nil
     }
 
     public static func brutalize<T: Cuminicable>(object: Cuminicable, _ t: T.Type) -> Cuminicable? {
         return nil
+    }
+}
+
+extension Model: Convertible {
+    public static func isModel() -> Bool {
+        return true
     }
 }
 

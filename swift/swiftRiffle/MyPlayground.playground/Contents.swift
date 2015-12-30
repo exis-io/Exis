@@ -1,86 +1,87 @@
 
 import Cocoa
+import SwiftRiffle
 
 /*
 Scratchpad for object storage.
 
-Notable absent is validation, since it isnt well expressed by native languages styles and thus
+Notaby absent is validation, since it isnt well expressed by native languages styles and thus
 doesn't fit into the whole "looks like native code!" bit. Much like native objects, validation is an
-excercise left to the reader for the time being.
+excercise left to the reader for now.
 
 The theme here is "ActiveRecord," but theres a heavy list of methods from ActiveRecord that I'm not sure
-I want to include. Things like "first", "last", "all" can all be covered by the other methods here.
+I want to include. Things like "first", "last", "all" are all a little redundant.
 */
 
-/*
+
 // Base model implementation. This is here as an example and should not be considered final
 class Model {
-var _id = "randomidofthings"
+    var _id = "randomidofthings"
 
-// Note that we don't need "new" or "create". Implicityly, init() is "new"
-init() {}
+    // Note that we don't need "new" or "create". Implicityly, init() is "new"
+    init() {}
 
-required init(json: [String: AnyObject]?) { }
+    required init(json: [String: AnyObject]?) { }
 
-func toJson() -> [String: AnyObject] {
-return [:]
-}
+    func toJson() -> [String: AnyObject] {
+        return [:]
+    }
 
-class func schema() -> [String: AnyObject] {
-return [:]
-}
-
-
-// Active record makes a distinction between save and update. Do we care?
-// What about mixed collections, with new and existing models in it? Might still want to retain
-// that seperation.
-// Not maintaining that seperation means using "upsert == true" for all save calls
-func save() {}
-
-func delete() {}
+    class func schema() -> [String: AnyObject] {
+        return [:]
+    }
 
 
-// MARK: Class methods an accessors
-class func find<T: Model>(query: AnyObject...) -> [T] {
-// Do some database lookup with the query parameters
+    // Active record makes a distinction between save and update. Do we care?
+    // What about mixed collections, with new and existing models in it? Might still want to retain
+    // that seperation.
+    // Not maintaining that seperation means using "upsert == true" for all save calls
+    func save() {}
 
-// Build THIS class with self access. Have to assert type immediately,
-// since generics are invariant (damnit apple)
+    func delete() {}
 
-let constructed = self.init(json: nil) as! T
-return [constructed]
 
-//return []
-}
+    // MARK: Class methods an accessors
+    class func find<T: Model>(query: AnyObject...) -> [T] {
+        // Do some database lookup with the query parameters
 
-//class func all() -> [Self] {
-//    return []
-//}
+        // Build THIS class with self access. Have to assert type immediately,
+        // since generics are invariant (damnit apple)
 
-// What would be a nice way around the generic covariance constraints, except you have to
-// explicitly pass the type. Great.
-//class func all<T: Model>(t: T.Type) -> [T] {
-//    let new = t.init(json: nil)
-//    return [new]
-//}
+        let constructed = self.init(json: nil) as! T
+        return [constructed]
 
-class func first() -> Self? {
-return self.init(json: nil)
-}
+        //return []
+    }
 
-class func last() -> Self? {
-return self.init(json: nil)
-}
+    //class func all() -> [Self] {
+    //    return []
+    //}
+
+    // What would be a nice way around the generic covariance constraints, except you have to
+    // explicitly pass the type. Great.
+    //class func all<T: Model>(t: T.Type) -> [T] {
+    //    let new = t.init(json: nil)
+    //    return [new]
+    //}
+
+    class func first() -> Self? {
+        return self.init(json: nil)
+    }
+
+    class func last() -> Self? {
+        return self.init(json: nil)
+    }
 }
 
 
 // Case 1: create a new model object and declare fields on it
 class User: Model {
-var name: String = ""
+    var name: String = ""
 }
 
 class Classroom: Model {
-var students: [User] = []
+    var students: [User] = []
 }
 
 
@@ -235,7 +236,7 @@ print(t)
 
 test(z)
 test(w)
-*/
+
 
 // TESTING more reflection
 
@@ -261,6 +262,16 @@ let d = Dog()
 d.setValue("Bill", forKey: "name")
 
 print(d.name)
+
+
+
+
+
+
+
+
+
+
 
 
 
