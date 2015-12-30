@@ -2,84 +2,85 @@
 import Cocoa
 
 /*
-Scratchpad for object storage. 
+Scratchpad for object storage.
 
 Notable absent is validation, since it isnt well expressed by native languages styles and thus
-doesn't fit into the whole "looks like native code!" bit. Much like native objects, validation is an 
-excercise left to the reader for the time being. 
+doesn't fit into the whole "looks like native code!" bit. Much like native objects, validation is an
+excercise left to the reader for the time being.
 
 The theme here is "ActiveRecord," but theres a heavy list of methods from ActiveRecord that I'm not sure
 I want to include. Things like "first", "last", "all" can all be covered by the other methods here.
 */
 
+/*
 // Base model implementation. This is here as an example and should not be considered final
 class Model {
-    var _id = "randomidofthings"
-    
-    // Note that we don't need "new" or "create". Implicityly, init() is "new"
-    init() {}
-    
-    required init(json: [String: AnyObject]?) { }
-    
-    func toJson() -> [String: AnyObject] {
-        return [:]
-    }
-    
-    class func schema() -> [String: AnyObject] {
-        return [:]
-    }
-    
-    
-    // Active record makes a distinction between save and update. Do we care?
-    // What about mixed collections, with new and existing models in it? Might still want to retain 
-    // that seperation. 
-    // Not maintaining that seperation means using "upsert == true" for all save calls
-    func save() {}
-    
-    func delete() {}
-    
-    
-    // MARK: Class methods an accessors
-    class func find<T: Model>(query: AnyObject...) -> [T] {
-        // Do some database lookup with the query parameters 
-        
-        // Build THIS class with self access. Have to assert type immediately, 
-        // since generics are invariant (damnit apple)
-        
-        let constructed = self.init(json: nil) as! T
-        return [constructed]
-        
-        //return []
-    }
-    
-    //class func all() -> [Self] {
-    //    return []
-    //}
-    
-    // What would be a nice way around the generic covariance constraints, except you have to 
-    // explicitly pass the type. Great.
-    //class func all<T: Model>(t: T.Type) -> [T] {
-    //    let new = t.init(json: nil)
-    //    return [new]
-    //}
-    
-    class func first() -> Self? {
-        return self.init(json: nil)
-    }
-    
-    class func last() -> Self? {
-        return self.init(json: nil)
-    }
+var _id = "randomidofthings"
+
+// Note that we don't need "new" or "create". Implicityly, init() is "new"
+init() {}
+
+required init(json: [String: AnyObject]?) { }
+
+func toJson() -> [String: AnyObject] {
+return [:]
+}
+
+class func schema() -> [String: AnyObject] {
+return [:]
+}
+
+
+// Active record makes a distinction between save and update. Do we care?
+// What about mixed collections, with new and existing models in it? Might still want to retain
+// that seperation.
+// Not maintaining that seperation means using "upsert == true" for all save calls
+func save() {}
+
+func delete() {}
+
+
+// MARK: Class methods an accessors
+class func find<T: Model>(query: AnyObject...) -> [T] {
+// Do some database lookup with the query parameters
+
+// Build THIS class with self access. Have to assert type immediately,
+// since generics are invariant (damnit apple)
+
+let constructed = self.init(json: nil) as! T
+return [constructed]
+
+//return []
+}
+
+//class func all() -> [Self] {
+//    return []
+//}
+
+// What would be a nice way around the generic covariance constraints, except you have to
+// explicitly pass the type. Great.
+//class func all<T: Model>(t: T.Type) -> [T] {
+//    let new = t.init(json: nil)
+//    return [new]
+//}
+
+class func first() -> Self? {
+return self.init(json: nil)
+}
+
+class func last() -> Self? {
+return self.init(json: nil)
+}
 }
 
 
 // Case 1: create a new model object and declare fields on it
 class User: Model {
-    var name: String = ""
+var name: String = ""
 }
 
 class Classroom: Model {
-    var students: [User] = []
+var students: [User] = []
 }
 
 
@@ -92,12 +93,12 @@ m.name = "joebob"
 /*
 All operations emit promises/deferreds.
 
-    m.save.then {
-        print("save completed")
-    }
-    .error { reason
-        print("Unable to save! reason: \(reason)")
-    }
+m.save.then {
+print("save completed")
+}
+.error { reason
+print("Unable to save! reason: \(reason)")
+}
 */
 
 
@@ -110,7 +111,7 @@ print(users[0].name)
 // Query parameters here
 let queryUsers: [User] = User.find("name == joebob")  // #=> User1 (name == "joebob")
 
-// Case 4: Delete a model 
+// Case 4: Delete a model
 m.delete()
 
 
@@ -125,16 +126,16 @@ s.save()
 c.save()
 
 /*
-User is saved first here in the active-record way of doing things. Might not have to do that, 
+User is saved first here in the active-record way of doing things. Might not have to do that,
 depends how relations are implemented.
 
 Possibility 1: User has a silent foreign key set when appended to collection. Makes upwards references
 easeier (like user.classroom). This requires custom code within the array or an observer of the array.
-    c._classroom_id = s._id
+c._classroom_id = s._id
 
 Possibility 2: Only the parent is aware of the relation and loads them all when needed. Backwards references
 are going to be tough in the static languages
-    c._student_ids = [c._id]
+c._student_ids = [c._id]
 
 Might be better to stick with whatever AR was doing, since they've likely solved a host of other problems
 like this.
@@ -149,12 +150,12 @@ let kids = loaded!.students // #=> User1, User2...
 /*
 
 Classroom.first().then { results in
-    let kids = results.students
+let kids = results.students
 }
 
 */
 
-// This won't scale, have to be able to load the relations lazily. Can't really load them lazily and then 
+// This won't scale, have to be able to load the relations lazily. Can't really load them lazily and then
 // access them normally, since b = loaded.students is a synchronous operation
 
 
@@ -163,7 +164,8 @@ Classroom.first().then { results in
 // User.find(where collection == c)
 
 
-// TESTING
+
+// TESTING alternate cumin implementations
 
 /*
 Cumin Overview
@@ -180,22 +182,22 @@ var holder: ([Any] -> Any)?
 
 // Convert the given argument to requested type recursively
 func coerce<T: Cuminicable>(a: Any, t: T.Type) -> T {
-    return 0 as! T
+return 0 as! T
 }
 
 func cumin(fn: (Int) -> Any) {
 //    fn(1)
-    
+
 //    var holder: Int -> Any = fn
 //    hold(fn)
-    
-    holder = { args -> Any in
-        // For arg in arg, for type in type, coerce types
-        
-        // Sadly this doesnt help to narrow down the generic receivers...
-        
-        return fn(args[0] as! Int)
-    }
+
+holder = { args -> Any in
+// For arg in arg, for type in type, coerce types
+
+// Sadly this doesnt help to narrow down the generic receivers...
+
+return fn(args[0] as! Int)
+}
 }
 
 func innerAnyInt(p1:Any) -> Int { return 1 }
@@ -224,17 +226,41 @@ let w = [1]
 
 
 func test <T: Cuminicable> (t: T) {
-    print(t)
+print(t)
 }
 
 func test <T: CollectionType where T.Generator.Element: Cuminicable> (t: T) {
-    print(t)
+print(t)
 }
 
 test(z)
 test(w)
+*/
+
+// TESTING more reflection
+
+/*
+Objc style introspection still works, with a couple caveats. 
+
+Class *must not* have non-optional values. Everything needs to have a default value, or implement a no-args 
+init that produces a valid model.
 
 
+... otoh, if a no-args constructor is requried, why not just instantiate the class and read it with the mirr
+*/
+
+
+print("hi")
+
+class Dog: NSObject {
+    var name = "Fido"
+}
+
+let d = Dog()
+
+d.setValue("Bill", forKey: "name")
+
+print(d.name)
 
 
 

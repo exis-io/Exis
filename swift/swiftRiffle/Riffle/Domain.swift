@@ -18,9 +18,9 @@ TODO:
 
 import Foundation
 import CoreFoundation
-import mantle
 
 #if os(Linux)
+    import mantle
     import SwiftGlibc
     import Glibc
 #else
