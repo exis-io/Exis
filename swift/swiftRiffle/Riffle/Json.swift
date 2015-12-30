@@ -200,6 +200,8 @@ public enum JSON {
     case ArrayValue([JSON])
     case ObjectValue([String: JSON])
 
+    
+    
     public static func from(value: Bool) -> JSON {
         return .BooleanValue(value)
     }
@@ -220,7 +222,6 @@ public enum JSON {
         return .ObjectValue(value)
     }
 
-    // TODO: decide what to do if Any is not a JSON value
     public static func from(values: [Any]) -> JSON {
         var jsonArray: [JSON] = []
         for value in values {
@@ -273,7 +274,6 @@ public enum JSON {
         return JSON.from(jsonArray)
     }
 
-    // TODO: decide what to do if Any is not a JSON value
     public static func from(value: [String: Any]) -> JSON {
         var jsonDictionary: [String: JSON] = [:]
         for (key, value) in value {
@@ -351,6 +351,16 @@ public enum JSON {
             return Int(v)
         }
         return nil
+    }
+    
+    public var value: Any {
+        switch self {
+        case .NumberValue: return Int(doubleValue!)
+        case .StringValue(let s): return s
+        default:
+            print("JSON WARN: Unable to extract any value!")
+            return 0
+        }
     }
 
     public var uintValue: UInt? {
@@ -612,8 +622,6 @@ public class GenericJSONParser<ByteSequence: CollectionType where ByteSequence.G
         }
     }
 }
-
-// MARK: - Private
 
 extension GenericJSONParser {
     private func parseValue() throws -> JSON {

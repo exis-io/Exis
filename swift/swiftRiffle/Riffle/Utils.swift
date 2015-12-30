@@ -64,7 +64,7 @@ func decode(p: GoSlice) -> (UInt64, [Any]) {
 func marshall(args: Any...) -> UnsafeMutablePointer<Int8> {
     let json = JSON.from(args)
     let jsonString = json[0]!.serialize(DefaultJSONSerializer())
-    print("Args: \(args) Json: \(json) String: \(jsonString)")
+    //print("Args: \(args) Json: \(json) String: \(jsonString)")
     return jsonString.cString()
 }
 

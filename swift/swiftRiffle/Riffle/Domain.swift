@@ -72,8 +72,6 @@ public class Domain {
     public func publish(endpoint: String, _ args: Any...) {
         let cb = CBID()
         let eb = CBID()
-
-        print("PUBLISHING ARGS: \(args)")
         
         Publish(self.mantleDomain, endpoint.cString(), cb, eb, marshall(args))
     }

@@ -79,10 +79,10 @@ class Receiver: Domain {
 //Receiver(name: "xs.damouse.alpha").join()
 
 let switchemup = false
-let result = NSProcessInfo.processInfo().environment["RECEIVER"]
+let startSender = NSProcessInfo.processInfo().environment["SENDER"]
 
 // Start the scripts
-if result != nil || switchemup {
+if startSender == nil || switchemup {
     print("Starting Receiver")
     Receiver(name: "xs.damouse.alpha").join()
 } else {
