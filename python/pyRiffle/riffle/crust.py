@@ -165,8 +165,11 @@ class Domain(object):
 
     def publish(self, endpoint, *args):
         d = Deferred()
+        l = list()
+        for arg in args:
+            l.append(arg._serialize() if isinstance(arg, Model) else arg)
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
-        self.mantleDomain.Publish(endpoint, d.cb, d.eb, json.dumps(args))
+        self.mantleDomain.Publish(endpoint, d.cb, d.eb, json.dumps(l))
         return d
 
     def call(self, endpoint, *args):
