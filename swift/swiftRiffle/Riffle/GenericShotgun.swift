@@ -15,14 +15,22 @@ public extension Domain {
             // Coerce types, constructing them if needed, and call the function with the results
             
             //print("Received: \(args), first element: \(args[0]), first first element: ")
+            // TODO: remove this by passing the correct types from Domain
             let json = args[0] as! [Any]
-            
-            let dasStrings = B.create(json[1])
-            print(dasStrings)
-            print(dasStrings.dynamicType)
-            print(B.self)
-            
             fn(A.create(json[0]) as! A, B.create(json[1]) as! B, C.create(json[2]) as! C)
+        }
+    }
+    
+    public func register<A: Property, B: Property, R: Property>(endpoint: String, _ fn: (A, B) -> R) {
+        _register(endpoint) { args in
+            let result = fn(A.create(args[0]) as! A, B.create(args[1]) as! B)
+            return result
+        }
+    }
+    
+    public func call<A: Property, B: Property>(endpoint: String, _ callArguments: Any..., _ fn: (A, B) -> ()) {
+        _call(endpoint, callArguments) { args in
+            fn(A.create(args[0]) as! A, B.create(args[1]) as! B)
         }
     }
 }

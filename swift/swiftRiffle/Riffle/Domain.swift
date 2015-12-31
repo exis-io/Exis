@@ -36,9 +36,9 @@ public class Domain {
     public var mantleDomain: UnsafeMutablePointer<Void>
     public var delegate: Delegate?
     
-    public var handlers: [UInt64: ([Any]) -> ()] = [:]
-    public var invocations: [UInt64: (Any) -> ()] = [:]
-    public var registrations: [UInt64: (Any) -> (Any?)] = [:]
+    public var handlers: [UInt64: [Any] -> ()] = [:]
+    public var invocations: [UInt64: [Any] -> ()] = [:]
+    public var registrations: [UInt64: [Any] -> Any?] = [:]
     
     
     public init(name: String) {
@@ -51,7 +51,7 @@ public class Domain {
         // delegate = self
     }
     
-    public func _subscribe(endpoint: String, fn: ([Any]) -> ()) {
+    public func _subscribe(endpoint: String, fn: [Any] -> ()) {
         let cb = CBID()
         let eb = CBID()
         let hn = CBID() 
@@ -60,7 +60,7 @@ public class Domain {
         handlers[hn] = fn
     }
     
-    public func register(endpoint: String, fn: (Any) -> (Any?)) {
+    public func _register(endpoint: String, fn: [Any] -> Any) {
         let cb = CBID()
         let eb = CBID()
         let hn = CBID() 
@@ -76,7 +76,7 @@ public class Domain {
         Publish(self.mantleDomain, endpoint.cString(), cb, eb, marshall(args))
     }
     
-    public func call(endpoint: String, _ args: Any..., handler: (Any) -> ()) {
+    public func _call(endpoint: String, _ args: [Any], handler: [Any] -> ()) {
         let cb = CBID()
         let eb = CBID()
 
@@ -95,15 +95,18 @@ public class Domain {
             } else if let fn = registrations[i] {
                 // Pop off the return arg. Note that we started passing it into crusts as a nested list for some reason. Cant remember why, 
                 // but retaining that functionality until I remember. It started in the python implementation
-                let unwrap = args[0] as! JSON
-                var args = unwrap.arrayValue!
+//                let unwrap = args[0] as! JSON
+//                var args = unwrap.arrayValue!
+                var args = args[0] as! [Any]
                 
-                let resultId = args.removeAtIndex(0)
+                let resultId = args.removeAtIndex(0) as! Double
                 var ret = fn(args)
-                ret = ret == nil ? ([] as! [Any]) : ret
+                
+                let empty: [Any] = []
+                ret = ret == nil ? empty : ret
                 
                 //print("Handling return with args: \(ret)")
-                Yield(mantleDomain, UInt64(resultId.doubleValue!), marshall(ret))
+                Yield(mantleDomain, UInt64(resultId), marshall(ret))
             } else {
                 //print("No handlers found for id \(i)!")
             }

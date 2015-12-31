@@ -44,7 +44,7 @@ func decode(p: GoSlice) -> (UInt64, [Any]) {
     
     let raw = try! JSONParser.parse(dataString)
     var data = anynize(raw) as! [Any]
-    print("Raw contents: \(data)")
+    //print("Raw contents: \(data)")
 
     let i = data[0] as! Double
     data.removeAtIndex(0)
