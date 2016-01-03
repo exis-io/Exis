@@ -215,6 +215,9 @@ class TaskSet:
                 return t.lang
         return ""
 
+    def getFullLang(self):
+        return LANGS_EXT.get(self.getLang(), None)
+
     def getName(self):
         for t in self.tasks:
             if t:

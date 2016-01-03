@@ -11,13 +11,12 @@ class Recv(riffle.Domain):
         @want(str)
         def basicSub(s):
             print "[basicSub] Got: {}".format(s) # Expects a string, like "Hello"
-            print("string", s)
         self.subscribe("basicSub", basicSub)
         # End Example Pub/Sub Basic
         
         # Example Pub/Sub Objects - This sub expects an object
         class Stuff(riffle.Model):
-            name = "The name"
+            name = ""
         @want(Stuff)
         def objectSub(o):
             print "[objectSub] Got: {}".format(repr(o)) # Expects an object, like Stuff
@@ -38,9 +37,8 @@ class Recv(riffle.Domain):
             
 
 if __name__ == '__main__':
-    app = riffle.Domain("xs.damouse")
-    alpha = riffle.Domain("alpha", superdomain=app)
-    Recv("beta", superdomain=app).join()
+    app = riffle.Domain("xs.demo.test")
+    Recv("alpha", superdomain=app).join()
     exit()
 
 

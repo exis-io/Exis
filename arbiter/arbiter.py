@@ -11,6 +11,11 @@
 
     Environment Variables:
         EXISPATH - the path to the Exis repo
+    
+    TODO:
+        - Implement Object checking for Python
+        - Implement other languages
+        - For some reason if you call test on "python publish:Pub/Sub" it fails
 """
 
 import sys, os, time, glob, argparse, re

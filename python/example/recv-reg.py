@@ -24,7 +24,7 @@ class Recv(riffle.Domain):
         # Example Reg/Call Basic 2 - This is a basic reg/call
         def basicReg2(s):
             print(s) # Expects a string, like "Hello"
-            return "{} World".format(s), 69
+            return "{} World".format(s)
         self.register("basicReg2", basicReg2)
         # End Example Reg/Call Basic 2
 
