@@ -44,7 +44,11 @@ SetFabricLocal()
 class Sender: Domain {
     
     override func onJoin() {
-        //publish("xs.damouse.alpha/sub", 1, ["Hey", "There"], ["name": "Billiam", "age": 88])
+        let dog = Dog()
+        dog.name = "Billiam"
+        dog.age = 88
+        
+        publish("xs.damouse.alpha/sub", 1, ["Hey", "There"], dog)
         
         call("xs.damouse.alpha/reg", "Johnathan", "Seed") { (a: String) in
             print("Call received: ", a)
@@ -81,7 +85,7 @@ class Receiver: Domain {
 let startSender = NSProcessInfo.processInfo().environment["SENDER"] != nil
 
 // Start the scripts
-if !startSender {
+if startSender {
     print("Starting Sender")
     Sender(name: "xs.damouse.beta").join()
 } else {

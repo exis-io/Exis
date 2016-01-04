@@ -32,6 +32,18 @@ public protocol Delegate {
     func onLeave()
 }
 
+func serializeArguments(args: [Any]) -> [Any] {
+    var ret: [Any] = []
+    
+    for a in args {
+        if let arg = a as? Property {
+            ret.append(arg.serialize())
+        }
+    }
+    
+    return ret
+}
+
 public class Domain {
     public var mantleDomain: UnsafeMutablePointer<Void>
     public var delegate: Delegate?
@@ -54,8 +66,8 @@ public class Domain {
     public func _subscribe(endpoint: String, fn: [Any] -> ()) {
         let cb = CBID()
         let eb = CBID()
-        let hn = CBID() 
-
+        let hn = CBID()
+        
         Subscribe(self.mantleDomain, endpoint.cString(), cb, eb, hn, "[]".cString())
         handlers[hn] = fn
     }
@@ -73,14 +85,14 @@ public class Domain {
         let cb = CBID()
         let eb = CBID()
         
-        Publish(self.mantleDomain, endpoint.cString(), cb, eb, marshall(args))
+        Publish(self.mantleDomain, endpoint.cString(), cb, eb, marshall(serializeArguments(args)))
     }
     
     public func _call(endpoint: String, _ args: [Any], handler: [Any] -> ()) {
         let cb = CBID()
         let eb = CBID()
 
-        Call(self.mantleDomain, endpoint.cString(), cb, eb, marshall(args), "[]".cString())
+        Call(self.mantleDomain, endpoint.cString(), cb, eb, marshall(serializeArguments(args)), "[]".cString())
         invocations[cb] = handler
     }
     

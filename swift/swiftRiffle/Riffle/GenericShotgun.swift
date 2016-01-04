@@ -17,13 +17,13 @@ public extension Domain {
             //print("Received: \(args), first element: \(args[0]), first first element: ")
             // TODO: remove this by passing the correct types from Domain
             let json = args[0] as! [Any]
-            fn(A.create(json[0]) as! A, B.create(json[1]) as! B, C.create(json[2]) as! C)
+            fn(A.deserialize(json[0]) as! A, B.deserialize(json[1]) as! B, C.deserialize(json[2]) as! C)
         }
     }
     
     public func register<A: Property, B: Property, R: Property>(endpoint: String, _ fn: (A, B) -> R) {
         _register(endpoint) { args in
-            let result = fn(A.create(args[0]) as! A, B.create(args[1]) as! B)
+            let result = fn(A.deserialize(args[0]) as! A, B.deserialize(args[1]) as! B)
             
             return result
         }
@@ -37,7 +37,7 @@ public extension Domain {
             let nest1 = args[0] as! [Any]
             let nest2 = nest1[0] as! [Any]
             
-            fn(A.create(nest2[0]) as! A)
+            fn(A.deserialize(nest2[0]) as! A)
         }
     }
 }

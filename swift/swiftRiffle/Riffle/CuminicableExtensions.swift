@@ -21,7 +21,8 @@ public protocol Convertible {
     static func isModel() -> Bool
     
     // Return a constructed form of this object
-    static func create(from: Any) -> Any
+    static func deserialize(from: Any) -> Any
+    func serialize() -> Any
 }
 
 public protocol BaseConvertible: Convertible {}
@@ -31,8 +32,12 @@ extension BaseConvertible {
         return false
     }
     
-    public static func create(from: Any) -> Any {
+    public static func deserialize(from: Any) -> Any {
         return from
+    }
+    
+    public func serialize() -> Any {
+        return self
     }
 }
 
@@ -93,9 +98,11 @@ extension Optional : OptionalProperty {
 
 // Extremely primitive types
 extension Int: Property, Convertible {
-    public static func isModel() -> Bool { return false }
     
-    public static func create(from: Any) -> Any {
+    public static func isModel() -> Bool { return false }
+    public func serialize() -> Any { return self }
+    
+    public static func deserialize(from: Any) -> Any {
         if let x = from as? Int {
             return x
         }
@@ -114,9 +121,11 @@ extension Int: Property, Convertible {
 }
 
 extension String: Property, Convertible {
-    public static func isModel() -> Bool { return false }
     
-    public static func create(from: Any) -> Any {
+    public static func isModel() -> Bool { return false }
+    public func serialize() -> Any { return self }
+    
+    public static func deserialize(from: Any) -> Any {
         
         if let x = from as? String {
             return x
@@ -132,9 +141,11 @@ extension String: Property, Convertible {
 }
 
 extension Double: Property, Convertible {
-    public static func isModel() -> Bool { return false }
     
-    public static func create(from: Any) -> Any {
+    public static func isModel() -> Bool { return false }
+    public func serialize() -> Any { return self }
+    
+    public static func deserialize(from: Any) -> Any {
         if let x = from as? Double {
             return x
         }
@@ -149,9 +160,11 @@ extension Double: Property, Convertible {
 }
 
 extension Float: Property, Convertible {
-    public static func isModel() -> Bool { return false }
     
-    public static func create(from: Any) -> Any {
+    public static func isModel() -> Bool { return false }
+    public func serialize() -> Any { return self }
+    
+    public static func deserialize(from: Any) -> Any {
         if let x = from as? Float {
             return x
         }
@@ -166,9 +179,11 @@ extension Float: Property, Convertible {
 }
 
 extension Bool: Property, Convertible {
-    public static func isModel() -> Bool { return false }
     
-    public static func create(from: Any) -> Any {
+    public static func isModel() -> Bool { return false }
+    public func serialize() -> Any { return self }
+    
+    public static func deserialize(from: Any) -> Any {
         if let x = from as? Bool {
             return x
         }
@@ -186,12 +201,18 @@ extension Bool: Property, Convertible {
 extension Array : Property, BaseConvertible {
     public static func isModel() -> Bool { return false }
     
-    public static func create(from: Any) -> Any {
+    
+    public static func deserialize(from: Any) -> Any {
         if let arr = from as? [Any] {
             return arr.map { $0 as! Element }
         }
         
         return from
+    }
+    
+    public func serialize() -> Any {
+        // Apply recursive serialization here
+        return self
     }
 }
 

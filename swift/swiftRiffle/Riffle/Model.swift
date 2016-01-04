@@ -23,6 +23,10 @@ public class Model: Cuminicable, Silvery, Property {
     public var description:String {
         return "\(self.dynamicType){\(self.propertyNames().map { "\($0): \(self[$0])"}.joinWithSeparator(", "))}"
     }
+    
+    func _serialize() {
+        
+    }
 }
 
 extension Model: Convertible {
@@ -31,7 +35,7 @@ extension Model: Convertible {
     }
     
     // Creates a new instance of this model object from the given json
-    public static func create(from: Any) -> Any {
+    public static func deserialize(from: Any) -> Any {
         guard let json = from as? [String: Any] else {
             print("WARN: model wasn't given a json! Instead received type: \(from.dynamicType)")
             return from
@@ -43,6 +47,16 @@ extension Model: Convertible {
         // TODO: recursively check for nested model objects
         for property in ret.propertyNames() {
             ret[property] = json[property]
+        }
+        
+        return ret
+    }
+    
+    public func serialize() -> Any {
+        var ret: [String: Any] = [:]
+        
+        for property in self.propertyNames() {
+            ret[property] = self[property]
         }
         
         return ret
