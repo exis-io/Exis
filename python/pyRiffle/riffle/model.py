@@ -89,15 +89,10 @@ class Model(object):
     def __repr__(self):
         return str(self.__class__) + repr(self.__values)
 
-<<<<<<< HEAD
-    def _deserialize(self, json):
-        self.__values = json
-=======
     @classmethod
-    def _deserialize(cls, json): 
+    def _deserialize(cls, json):
         c = cls(**json)
         return c
->>>>>>> origin/arbiter
 
     def _serialize(self):
         return self.__values
@@ -110,7 +105,7 @@ def reconstruct(args, types):
     # Allow this to be a pass-through if they didn't provide any types to check
     if not types:
         return args
-    
+
     l = list()
     for x, y in zip(args, types):
         if issubclass(y, Model):
@@ -119,6 +114,7 @@ def reconstruct(args, types):
             l.append(x)
     return tuple(l)
 
+
 def want(*types):
     def real_decorator(function):
         def wrapper(*args, **kwargs):
@@ -126,7 +122,7 @@ def want(*types):
             if '_riffle_reflect' in kwargs:
                 # return [x.__name__ for x in list(types)]
                 return list(types)
-            
+
             return function(*reconstruct(args, types))
         return wrapper
     return real_decorator
