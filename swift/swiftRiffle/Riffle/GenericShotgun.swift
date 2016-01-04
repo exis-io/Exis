@@ -14,9 +14,12 @@ public extension Domain {
         _subscribe(endpoint) { args in
             // Coerce types, constructing them if needed, and call the function with the results
             
+            //Error(id, "Why ")
+            
             //print("Received: \(args), first element: \(args[0]), first first element: ")
             // TODO: remove this by passing the correct types from Domain
             let json = args[0] as! [Any]
+            
             fn(A.deserialize(json[0]) as! A, B.deserialize(json[1]) as! B, C.deserialize(json[2]) as! C)
         }
     }

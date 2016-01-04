@@ -89,23 +89,25 @@ class Model(object):
     def __repr__(self):
         return repr(self.__values)
 
-    def _deserialize(self, json): 
+    def _deserialize(self, json):
         self.__values = json
 
-    def _serialize(self): 
-        return self.__values 
+    def _serialize(self):
+        return self.__values
+
 
 def want(*types):
     def real_decorator(function):
         def wrapper(*args, **kwargs):
             # return the types this call expects as a list if asked
-            if '_riffle_reflect' in kwargs: 
+            if '_riffle_reflect' in kwargs:
                 # return [x.__name__ for x in list(types)]
                 return list(types)
 
             return function(*args)
         return wrapper
     return real_decorator
+
 
 def cuminReflect(handler):
     '''
@@ -115,7 +117,7 @@ def cuminReflect(handler):
 
     No arguments are denoted by an empty list. The decorator is @want() 
     '''
-    try: 
+    try:
         types = handler(_riffle_reflect=True)
     except TypeError, e:
         # If the method does not accept a _riffle_reflect, its not a wrapped function
@@ -125,10 +127,10 @@ def cuminReflect(handler):
 
     typeList = []
 
-    if types is None: 
+    if types is None:
         return typeList
     else:
-        for t in types: 
+        for t in types:
 
             # If primitive type, continue
             if t in [int, float, bool, str, list, dict]:
@@ -146,7 +148,7 @@ def cuminReflect(handler):
             elif issubclass(t, Model):
                 typeList.append(t.reflect())
 
-            else: 
+            else:
                 print 'Type ' + str(t) + ' is not natively serializible!'
 
     return typeList
@@ -155,12 +157,14 @@ def cuminReflect(handler):
 class RiffleError(Exception):
     pass
 
+
 class Unimplemented(RiffleError):
     pass
-    
+
 ##############################
 # Inline testing, please ignore
 ##############################
+
 
 class User(Model):
     name = "John Doe"
@@ -175,9 +179,9 @@ class User(Model):
 def fn(a, b):
     print 'Function Called!'
 
+
 def notSpeciffied(a, b):
     pass
-
 
 
 def testDecorators():
