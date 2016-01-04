@@ -8,17 +8,9 @@
 
 import Foundation
 
-public class Model: Cuminicable, Silvery, Property {
+public class Model: Silvery, Property {
     
     required public init() {}
-    
-    public static func convert(object: AnyObject) -> Cuminicable? {
-        return nil
-    }
-
-    public static func brutalize<T: Cuminicable>(object: Cuminicable, _ t: T.Type) -> Cuminicable? {
-        return nil
-    }
     
     public var description:String {
         return "\(self.dynamicType){\(self.propertyNames().map { "\($0): \(self[$0])"}.joinWithSeparator(", "))}"

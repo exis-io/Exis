@@ -6,10 +6,8 @@ public extension Domain {
         // Assume we're getting primitive types well-constructed
         // Detect collections and objects, build them appropriately
         // NOTE: Collections only need to be detected for nested objects
-        _subscribe(endpoint) { args in
-            // Coerce types, constructing them if needed, and call the function with the results
-            fn(A.deserialize(args[0]) as! A, B.deserialize(args[1]) as! B, C.deserialize(args[2]) as! C)
-        }
+        
+        _subscribe(endpoint) { a in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
     }
     
     public func register<A: Property, B: Property, R: Property>(endpoint: String, _ fn: (A, B) -> R) {
