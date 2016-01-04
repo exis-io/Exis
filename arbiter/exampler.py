@@ -193,7 +193,7 @@ class TaskSet:
         if(self.isValid()):
             s = "TaskSet {} - {}\n".format(lang, name)
             for t in self.tasks:
-                s += "---------------------------------------------\n"
+                s += "\n---------------------------------------------\n"
                 s += "  {}\n".format(t.action)
                 s += "    {}".format(str(t).replace("\n", "\n    "))
             return s
