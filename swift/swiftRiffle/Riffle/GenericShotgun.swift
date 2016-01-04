@@ -2,15 +2,11 @@
 import Foundation
 
 public extension Domain {
-    public func subscribe<A: Property, B: Property, C: Property>(endpoint: String, _ fn: (A, B, C) -> ()) {
-        // Assume we're getting primitive types well-constructed
-        // Detect collections and objects, build them appropriately
-        // NOTE: Collections only need to be detected for nested objects
-        
+    public func subscribe<A: PR, B: PR, C: PR>(endpoint: String, _ fn: (A, B, C) -> ()) {
         _subscribe(endpoint) { a in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
     }
     
-    public func register<A: Property, B: Property, R: Property>(endpoint: String, _ fn: (A, B) -> R) {
+    public func register<A: PR, B: PR, R: PR>(endpoint: String, _ fn: (A, B) -> R) {
         _register(endpoint) { args in
             let result = fn(A.deserialize(args[0]) as! A, B.deserialize(args[1]) as! B)
             
@@ -18,7 +14,7 @@ public extension Domain {
         }
     }
     
-    public func call<A: Property>(endpoint: String, _ callArguments: Any..., _ fn: (A) -> ()) {
+    public func call<A: PR>(endpoint: String, _ callArguments: Any..., _ fn: (A) -> ()) {
         _call(endpoint, callArguments) { args in
             fn(A.deserialize(args[0]) as! A)
         }

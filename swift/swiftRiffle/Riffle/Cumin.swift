@@ -15,7 +15,9 @@ associativity right
 precedence 155
 }
 
-
 func <- <T: Property> (t:T.Type, object: Any) -> T {
     return T.deserialize(object) as! T
 }
+
+// Here to make the generic shotgun cleaner
+public typealias PR = Property
