@@ -150,6 +150,7 @@ func _brutalize<A, T: Cuminicable>(object: Cuminicable, _ expected: A.Type, _ t:
     return nil
 }
 
+
 // MARK: Tuple Handling
 func arrayForTuple(tuple: Any?) -> [AnyObject]? {
     // Returns a tuple as a list of AnyObjects. If the passed arg is not a tuple, returns nil

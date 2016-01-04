@@ -42,12 +42,27 @@ func decode(p: GoSlice) -> (UInt64, [Any]) {
     let int8Ptr = unsafeBitCast(p.data, UnsafePointer<Int8>.self)
     let dataString = String.fromCString(int8Ptr)!
     
+    let raw = try! JSONParser.parse(dataString)
+    var data = anynize(raw) as! [Any]
+    //print("Raw contents: \(data)")
+
+    let i = data[0] as! Double
+    data.removeAtIndex(0)
+    return (UInt64(i), data)
+    
+    /*
     //print("Deserializing: \(dataString)")
     var data = try! JSONParser.parse(dataString).arrayValue!
+    
     let i = data[0].uintValue!
     var ret: [Any] = []
     
     data.removeAtIndex(0)
+    
+    // Doubly nested array bug
+    if let nestedArray = data[0].arrayValue {
+        data = nestedArray
+    }
     
     for x in data {
         if x == JSON.NullValue {
@@ -58,6 +73,7 @@ func decode(p: GoSlice) -> (UInt64, [Any]) {
     }
         
     return (UInt64(i), ret)
+    */
 }
 
 // Return a goslice of the JSON marshaled arguments as a cString

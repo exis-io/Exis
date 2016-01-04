@@ -62,5 +62,3 @@ extension Model: Convertible {
         return ret
     }
 }
-
-

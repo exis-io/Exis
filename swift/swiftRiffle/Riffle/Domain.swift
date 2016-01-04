@@ -52,6 +52,7 @@ public class Domain {
     public var invocations: [UInt64: [Any] -> ()] = [:]
     public var registrations: [UInt64: [Any] -> Any?] = [:]
     
+    
     public init(name: String) {
         mantleDomain = NewDomain(name.cString())
         // delegate = self
@@ -65,8 +66,8 @@ public class Domain {
     public func _subscribe(endpoint: String, fn: [Any] -> ()) {
         let cb = CBID()
         let eb = CBID()
-        let hn = CBID() 
-
+        let hn = CBID()
+        
         Subscribe(self.mantleDomain, endpoint.cString(), cb, eb, hn, "[]".cString())
         handlers[hn] = fn
     }
@@ -126,7 +127,7 @@ public class Domain {
 //                //print("Handling return with args: \(ret)")
 //                Yield(mantleDomain, UInt64(resultId), marshall(ret))
             } else {
-                print("No handlers found for id \(i)!")
+                //print("No handlers found for id \(i)!")
             }
         }
     }
@@ -150,12 +151,6 @@ public class Domain {
                 d.onLeave()
             } else {
                 self.onLeave()
-            }
-        }
-
-        handlers[eb] = { a in
-            if let d = self.delegate {
-                d.onLeave()
             }
         }
         
