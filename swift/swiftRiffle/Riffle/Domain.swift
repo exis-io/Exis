@@ -18,15 +18,9 @@ TODO:
 
 import Foundation
 import CoreFoundation
-<<<<<<< HEAD:swift/swiftRiffle/Riffle/Domain.swift
 
 #if os(Linux)
     import mantle
-=======
-import mantle
-
-#if os(Linux)
->>>>>>> origin/arbiter:swift/swiftRiffle/Riffle/Domain.swift
     import SwiftGlibc
     import Glibc
 #else
@@ -38,7 +32,6 @@ public protocol Delegate {
     func onLeave()
 }
 
-<<<<<<< HEAD:swift/swiftRiffle/Riffle/Domain.swift
 func serializeArguments(args: [Any]) -> [Any] {
     var ret: [Any] = []
     
@@ -47,15 +40,6 @@ func serializeArguments(args: [Any]) -> [Any] {
             ret.append(arg.serialize())
         }
     }
-=======
-public class Domain {
-    public var mantleDomain: UnsafeMutablePointer<Void>
-    public var delegate: Delegate?
-    
-    public var handlers: [UInt64: (Any) -> ()] = [:]
-    public var invocations: [UInt64: (Any) -> ()] = [:]
-    public var registrations: [UInt64: (Any) -> (Any?)] = [:]
->>>>>>> origin/arbiter:swift/swiftRiffle/Riffle/Domain.swift
     
     return ret
 }
@@ -68,10 +52,6 @@ public class Domain {
     public var invocations: [UInt64: [Any] -> ()] = [:]
     public var registrations: [UInt64: [Any] -> Any?] = [:]
     
-<<<<<<< HEAD:swift/swiftRiffle/Riffle/Domain.swift
-    
-=======
->>>>>>> origin/arbiter:swift/swiftRiffle/Riffle/Domain.swift
     public init(name: String) {
         mantleDomain = NewDomain(name.cString())
         // delegate = self
@@ -103,24 +83,15 @@ public class Domain {
     public func publish(endpoint: String, _ args: Any...) {
         let cb = CBID()
         let eb = CBID()
-<<<<<<< HEAD:swift/swiftRiffle/Riffle/Domain.swift
         
         Publish(self.mantleDomain, endpoint.cString(), cb, eb, marshall(serializeArguments(args)))
-=======
-
-        Publish(self.mantleDomain, endpoint.cString(), cb, eb, marshall(args))
->>>>>>> origin/arbiter:swift/swiftRiffle/Riffle/Domain.swift
     }
     
     public func _call(endpoint: String, _ args: [Any], handler: [Any] -> ()) {
         let cb = CBID()
         let eb = CBID()
 
-<<<<<<< HEAD:swift/swiftRiffle/Riffle/Domain.swift
         Call(self.mantleDomain, endpoint.cString(), cb, eb, marshall(serializeArguments(args)), "[]".cString())
-=======
-        Call(self.mantleDomain, endpoint.cString(), cb, eb, marshall(args), "[]".cString())
->>>>>>> origin/arbiter:swift/swiftRiffle/Riffle/Domain.swift
         invocations[cb] = handler
     }
     
@@ -138,7 +109,6 @@ public class Domain {
                 var args = args[0] as! [Any]
                 let resultId = args.removeAtIndex(0) as! Double
                 
-<<<<<<< HEAD:swift/swiftRiffle/Riffle/Domain.swift
                 // Optional serialization has some problems. This unwraps the result to avoid that particular issue
                 if let ret = fn(args) {
                     // TODO: handle tuple returns
@@ -146,11 +116,6 @@ public class Domain {
                 } else {
                     Yield(mantleDomain, UInt64(resultId), marshall([]))
                 }
-=======
-                let resultId = args.removeAtIndex(0)
-                var ret = fn(args)
-                ret = ret == nil ? ([] as! [Any]) : ret
->>>>>>> origin/arbiter:swift/swiftRiffle/Riffle/Domain.swift
                 
 //                var ret = fn(args)
 //                print("Function returning with result: \(ret)")

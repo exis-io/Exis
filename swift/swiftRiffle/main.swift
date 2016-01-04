@@ -25,7 +25,7 @@ class Sender: Domain {
 class Receiver: Domain {
     
     override func onJoin() {
-        register("reg") { (args: Any) -> Any? in
+        register("reg") { (args: Any) -> String? in
             print("Received call! Args: \(args)")
             return "Receiver says hi!"
         }
