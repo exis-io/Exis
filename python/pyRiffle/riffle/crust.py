@@ -1,4 +1,3 @@
-
 import random
 import os
 import json
@@ -98,7 +97,18 @@ class App(object):
             elif i in self.registrations:
                 returnId = args.pop(0)
 
-                ret = self.registrations[i](*args)
+                try:
+                    ret = self.registrations[i](*args)
+                except Exception as error:
+                    # TODO: Differentiate Riffle errors vs. other exceptions,
+                    # maybe reraise other exceptions.
+                    #
+                    # I hard-coded "wamp.error.internal_error" for now because
+                    # we cannot tell the cause of the error yet.
+                    domain.YieldError(returnId, "wamp.error.internal_error",
+                            json.dumps([str(error)]))
+                    continue
+
                 ret = [] if ret is None else ret
 
                 if not isinstance(ret, (list, tuple)):

@@ -42,7 +42,7 @@ class Receiver(riffle.Domain):
         print 'Asked to close. Leaving'
 
         # Not ready. Leaves, but not cleanly
-        # self.leave()
+        self.leave()
 
 if __name__ == '__main__':
     app = riffle.Domain("xs.damouse")
