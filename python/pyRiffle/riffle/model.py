@@ -82,19 +82,42 @@ class Model(object):
 
     def __setattr__(self, name, value):
         if name.startswith("_"):
-            super(RiffleModel, self).__setattr__(name, value)
+            super(Model, self).__setattr__(name, value)
         else:
             self.__values[name] = value
 
     def __repr__(self):
-        return repr(self.__values)
+        return str(self.__class__) + repr(self.__values)
 
+<<<<<<< HEAD
     def _deserialize(self, json):
         self.__values = json
+=======
+    @classmethod
+    def _deserialize(cls, json): 
+        c = cls(**json)
+        return c
+>>>>>>> origin/arbiter
 
     def _serialize(self):
         return self.__values
 
+
+def reconstruct(args, types):
+    """
+    Takes a tuple of values and a tuple of their types and properly reconstructs them
+    """
+    # Allow this to be a pass-through if they didn't provide any types to check
+    if not types:
+        return args
+    
+    l = list()
+    for x, y in zip(args, types):
+        if issubclass(y, Model):
+            l.append(y._deserialize(x))
+        else:
+            l.append(x)
+    return tuple(l)
 
 def want(*types):
     def real_decorator(function):
@@ -103,8 +126,8 @@ def want(*types):
             if '_riffle_reflect' in kwargs:
                 # return [x.__name__ for x in list(types)]
                 return list(types)
-
-            return function(*args)
+            
+            return function(*reconstruct(args, types))
         return wrapper
     return real_decorator
 

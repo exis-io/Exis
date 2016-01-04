@@ -57,8 +57,13 @@ extension Model: Convertible {
         
         for property in self.propertyNames() {
             ret[property] = self[property]
+}
+
+
         }
         
         return ret
     }
 }
+
+

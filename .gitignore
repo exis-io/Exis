@@ -8,6 +8,7 @@ CardsAgainstHumanityDemo/swiftCardsAgainst/.DS_Store
 *.xcuserstate
 CardsAgainstHumanityDemo/swiftCardsAgainst/ExAgainst.xcworkspace/xcuserdata/Damouse.xcuserdatad/UserInterfaceState.xcuserstate
 
+*.pyc
 *.swp
 *.swiftdoc
 *.swiftmodule
@@ -37,3 +38,4 @@ swift/osxCrust/Build/
 
 swift/example/Packages/*
 swift/example/Example
+swift/swiftRiffle/ModuleCache/

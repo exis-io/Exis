@@ -60,8 +60,6 @@ libriffmantle.so:
 
 swiftclean: 
 
-# riffmantle.a: 
-# 	GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o assets/riffmantle.a core/cMantle/main.go
 
 clean: 
 	@-rm -f assets/libriffmantle.so assets/libriffmantle.h

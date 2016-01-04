@@ -6,25 +6,13 @@ SetLogLevelDebug()
 SetFabricLocal()
 
 
-class Dog: Model {
-    var name = "Fido"
-    var age = 43
-}
-
 class Sender: Domain {
     
     override func onJoin() {
-        // Create an object
-        let dog = Dog()
-        dog.name = "Billiam"
-        dog.age = 88
+        publish("xs.damouse.alpha/sub", 1, "2", true)
         
-        // Publish the object and assorted other arguments
-        publish("xs.damouse.alpha/sub", 1, ["Hey", "There"], dog)
-        
-        // Ca; with assorted arguments, stipulating the resulting return types
-        call("xs.damouse.alpha/reg", "Johnathan", "Seed") { (a: String) in
-            print("Call received: ", a)
+        call("xs.damouse.alpha/reg", "Johnathan", "Seed") { returnArgs in
+            print("Call received result \(returnArgs)")
         }
     }
     
@@ -37,14 +25,13 @@ class Sender: Domain {
 class Receiver: Domain {
     
     override func onJoin() {
-        register("reg") { (first: String, second: String) -> String in
-            print("Received call! Args: ", first, second)
+        register("reg") { (args: Any) -> Any? in
+            print("Received call! Args: \(args)")
             return "Receiver says hi!"
         }
         
-        subscribe("sub") { (a: Int, b: [String], c: Dog) in
-            //print("Received publish! \(args)")
-            print("Received publish: \(a), with list: \(b), and pup: \(c.description)")
+        subscribe("sub") { (args: Any) in
+            print("Received publish! \(args)")
         }
     }
     
@@ -53,13 +40,13 @@ class Receiver: Domain {
     }
 }
 
-// Allows this script to act as a receiver or a sender
-let startSender = NSProcessInfo.processInfo().environment["SENDER"] != nil
+//Receiver(name: "xs.damouse.alpha").join()
 
-if startSender {
-    print("Starting Sender")
-    Sender(name: "xs.damouse.beta").join()
-} else {
+// Start the scripts
+if let result = NSProcessInfo.processInfo().environment["RECEIVER"] {
     print("Starting Receiver")
     Receiver(name: "xs.damouse.alpha").join()
+} else {
+    print("Starting Sender")
+    Sender(name: "xs.damouse.beta").join()
 }
