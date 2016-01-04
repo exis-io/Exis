@@ -55,12 +55,10 @@ public class Domain {
     
     public init(name: String) {
         mantleDomain = NewDomain(name.cString())
-        // delegate = self
     }
     
     public init(name: String, superdomain: Domain) {
         mantleDomain = Subdomain(superdomain.mantleDomain, name.cString())
-        // delegate = self
     }
     
     public func _subscribe(endpoint: String, fn: [Any] -> ()) {
@@ -106,7 +104,7 @@ public class Domain {
                 fn(args)
             } else if let fn = registrations[i] {
                 // Pop off the return arg. Note that we started passing it into crusts as a nested list for some reason. Cant remember why, 
-                // but retaining that functionality until I remember. It started in the python implementation
+                // but retaining that functionality until I remember.
                 var args = args[0] as! [Any]
                 let resultId = args.removeAtIndex(0) as! Double
                 
@@ -117,15 +115,6 @@ public class Domain {
                 } else {
                     Yield(mantleDomain, UInt64(resultId), marshall([]))
                 }
-                
-//                var ret = fn(args)
-//                print("Function returning with result: \(ret)")
-//                
-//                let empty: [Any] = []
-//                ret = ret == nil ? empty : ret
-//                
-//                //print("Handling return with args: \(ret)")
-//                Yield(mantleDomain, UInt64(resultId), marshall(ret))
             } else {
                 //print("No handlers found for id \(i)!")
             }
