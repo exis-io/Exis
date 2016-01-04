@@ -31,7 +31,7 @@ func MantleCall(d Domain, endpoint string, cb uint64, eb uint64, args []interfac
 	if results, err := d.Call(endpoint, args, types); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
-		d.GetApp().CallbackSend(cb, results)
+		d.GetApp().CallbackSend(cb, results...)
 	}
 }
 

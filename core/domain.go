@@ -190,7 +190,6 @@ func (c domain) Call(endpoint string, args []interface{}, types []interface{}) (
 		Debug("Call err with results: %v", err)
 		return nil, err
 	} else {
-		// TODO: check the types of the retuend arguments
 		Debug("Call suceed with results: %v", msg)
 		return msg.(*result).Arguments, nil
 	}

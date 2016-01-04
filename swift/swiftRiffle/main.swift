@@ -20,7 +20,7 @@ class Sender: Domain {
         dog.age = 88
         
         // Publish the object and assorted other arguments
-        publish("xs.damouse.alpha/sub", 1, ["Hey", "There"], dog)
+        //publish("xs.damouse.alpha/sub", 1, ["Hey", "There"], dog)
         
         // Ca; with assorted arguments, stipulating the resulting return types
         call("xs.damouse.alpha/reg", "Johnathan", "Seed") { (a: String) in

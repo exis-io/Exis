@@ -1,26 +1,14 @@
-// Straight Boilerplate-- make the compiler happy
+
 import Foundation
 
 public extension Domain {
     public func subscribe<A: Property, B: Property, C: Property>(endpoint: String, _ fn: (A, B, C) -> ()) {
         // Assume we're getting primitive types well-constructed
         // Detect collections and objects, build them appropriately
-        
         // NOTE: Collections only need to be detected for nested objects
-        
-        // Construct cumin strings here and pass to core-- repr might be betterer
-        //print("C is a model: \(C.isModel())")
-        
         _subscribe(endpoint) { args in
             // Coerce types, constructing them if needed, and call the function with the results
-            
-            //Error(id, "Why ")
-            
-            //print("Received: \(args), first element: \(args[0]), first first element: ")
-            // TODO: remove this by passing the correct types from Domain
-            let json = args[0] as! [Any]
-            
-            fn(A.deserialize(json[0]) as! A, B.deserialize(json[1]) as! B, C.deserialize(json[2]) as! C)
+            fn(A.deserialize(args[0]) as! A, B.deserialize(args[1]) as! B, C.deserialize(args[2]) as! C)
         }
     }
     
@@ -34,13 +22,7 @@ public extension Domain {
     
     public func call<A: Property>(endpoint: String, _ callArguments: Any..., _ fn: (A) -> ()) {
         _call(endpoint, callArguments) { args in
-            
-            // Lord the nesting. Arguments come back as double nested arrays!
-            // Please oh please fix this. Terribly inconsistant across languages, not to mention functionally
-            let nest1 = args[0] as! [Any]
-            let nest2 = nest1[0] as! [Any]
-            
-            fn(A.deserialize(nest2[0]) as! A)
+            fn(A.deserialize(args[0]) as! A)
         }
     }
 }

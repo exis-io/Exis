@@ -105,7 +105,6 @@ public class Domain {
             } else if let fn = registrations[i] {
                 // Pop off the return arg. Note that we started passing it into crusts as a nested list for some reason. Cant remember why, 
                 // but retaining that functionality until I remember.
-                var args = args[0] as! [Any]
                 let resultId = args.removeAtIndex(0) as! Double
                 
                 // Optional serialization has some problems. This unwraps the result to avoid that particular issue
