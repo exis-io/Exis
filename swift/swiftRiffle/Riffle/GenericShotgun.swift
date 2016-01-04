@@ -8,9 +8,7 @@ public extension Domain {
     
     public func register<A: PR, B: PR, R: PR>(endpoint: String, _ fn: (A, B) -> R) {
         _register(endpoint) { args in
-            let result = fn(A.deserialize(args[0]) as! A, B.deserialize(args[1]) as! B)
-            
-            return result
+            return fn(A.deserialize(args[0]) as! A, B.deserialize(args[1]) as! B)
         }
     }
     

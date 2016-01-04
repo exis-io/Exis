@@ -89,15 +89,10 @@ class Model(object):
     def __repr__(self):
         return str(self.__class__) + repr(self.__values)
 
-<<<<<<< HEAD
-    def _deserialize(self, json):
-        self.__values = json
-=======
     @classmethod
     def _deserialize(cls, json): 
         c = cls(**json)
         return c
->>>>>>> origin/arbiter
 
     def _serialize(self):
         return self.__values

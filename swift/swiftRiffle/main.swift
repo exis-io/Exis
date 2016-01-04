@@ -1,3 +1,4 @@
+
 // Local testing only.
 
 import Foundation
@@ -14,6 +15,7 @@ class Dog: Model {
 class Sender: Domain {
     
     override func onJoin() {
+        
         // Create an object
         let dog = Dog()
         dog.name = "Billiam"
