@@ -13,6 +13,7 @@ type App interface {
 	ReceiveMessage(message)
 
 	Yield(uint64, []interface{})
+	YieldError(uint64, string, []interface{})
 
 	Close(string)
 	ConnectionClosed(string)
@@ -92,14 +93,13 @@ func (a app) Yield(request uint64, args []interface{}) {
 	}
 }
 
-// Not fully implemented
-func (a app) YieldError(request uint64, args []interface{}) {
+func (a app) YieldError(request uint64, etype string, args []interface{}) {
 	m := &errorMessage{
 		Type:      iNVOCATION,
 		Request:   request,
 		Details:   make(map[string]interface{}),
 		Arguments: args,
-		Error:     "Not Implemented",
+		Error:     etype,
 	}
 
 	if err := a.Send(m); err != nil {
