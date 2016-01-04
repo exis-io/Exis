@@ -44,10 +44,10 @@ SetFabricLocal()
 class Sender: Domain {
     
     override func onJoin() {
-        publish("xs.damouse.alpha/sub", 1, ["Hey", "There"], ["name": "Billiam", "age": 88])
+        //publish("xs.damouse.alpha/sub", 1, ["Hey", "There"], ["name": "Billiam", "age": 88])
         
-        call("xs.damouse.alpha/reg", "Johnathan", "Seed") { (a: String, b: String) in
-            print("Call received: ", a, b)
+        call("xs.damouse.alpha/reg", "Johnathan", "Seed") { (a: String) in
+            print("Call received: ", a)
         }
     }
     
@@ -60,7 +60,7 @@ class Sender: Domain {
 class Receiver: Domain {
     
     override func onJoin() {
-        register("reg") { (first: String, second: String) -> Any? in
+        register("reg") { (first: String, second: String) -> String in
             print("Received call! Args: ", first, second)
             return "Receiver says hi!"
         }
@@ -78,14 +78,13 @@ class Receiver: Domain {
 
 //Receiver(name: "xs.damouse.alpha").join()
 
-let switchemup = false
-let startSender = NSProcessInfo.processInfo().environment["SENDER"]
+let startSender = NSProcessInfo.processInfo().environment["SENDER"] != nil
 
 // Start the scripts
-if startSender == nil || switchemup {
-    print("Starting Receiver")
-    Receiver(name: "xs.damouse.alpha").join()
-} else {
+if !startSender {
     print("Starting Sender")
     Sender(name: "xs.damouse.beta").join()
+} else {
+    print("Starting Receiver")
+    Receiver(name: "xs.damouse.alpha").join()
 }

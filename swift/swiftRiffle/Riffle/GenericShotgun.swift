@@ -24,13 +24,20 @@ public extension Domain {
     public func register<A: Property, B: Property, R: Property>(endpoint: String, _ fn: (A, B) -> R) {
         _register(endpoint) { args in
             let result = fn(A.create(args[0]) as! A, B.create(args[1]) as! B)
+            
             return result
         }
     }
     
-    public func call<A: Property, B: Property>(endpoint: String, _ callArguments: Any..., _ fn: (A, B) -> ()) {
+    public func call<A: Property>(endpoint: String, _ callArguments: Any..., _ fn: (A) -> ()) {
         _call(endpoint, callArguments) { args in
-            fn(A.create(args[0]) as! A, B.create(args[1]) as! B)
+            
+            // Lord the nesting. Arguments come back as double nested arrays!
+            // Please oh please fix this. Terribly inconsistant across languages, not to mention functionally
+            let nest1 = args[0] as! [Any]
+            let nest2 = nest1[0] as! [Any]
+            
+            fn(A.create(nest2[0]) as! A)
         }
     }
 }

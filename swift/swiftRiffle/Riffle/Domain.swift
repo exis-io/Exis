@@ -95,18 +95,25 @@ public class Domain {
             } else if let fn = registrations[i] {
                 // Pop off the return arg. Note that we started passing it into crusts as a nested list for some reason. Cant remember why, 
                 // but retaining that functionality until I remember. It started in the python implementation
-//                let unwrap = args[0] as! JSON
-//                var args = unwrap.arrayValue!
                 var args = args[0] as! [Any]
-                
                 let resultId = args.removeAtIndex(0) as! Double
-                var ret = fn(args)
                 
-                let empty: [Any] = []
-                ret = ret == nil ? empty : ret
+                // Optional serialization has some problems. This unwraps the result to avoid that particular issue
+                if let ret = fn(args) {
+                    // TODO: handle tuple returns
+                    Yield(mantleDomain, UInt64(resultId), marshall([ret]))
+                } else {
+                    Yield(mantleDomain, UInt64(resultId), marshall([]))
+                }
                 
-                //print("Handling return with args: \(ret)")
-                Yield(mantleDomain, UInt64(resultId), marshall(ret))
+//                var ret = fn(args)
+//                print("Function returning with result: \(ret)")
+//                
+//                let empty: [Any] = []
+//                ret = ret == nil ? empty : ret
+//                
+//                //print("Handling return with args: \(ret)")
+//                Yield(mantleDomain, UInt64(resultId), marshall(ret))
             } else {
                 //print("No handlers found for id \(i)!")
             }
