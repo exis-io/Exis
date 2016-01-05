@@ -53,58 +53,90 @@ func Cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 	return ret, nil
 }
 
-// Checks the types of the provided arguments and the receiver.
+// Checks the types of the provided positional arguments and the receiver.
 func softCumin(types []interface{}, args []interface{}) error {
+    //fmt.Printf("SoftCumin: %v against %v\n", types, args)
+
     if len(types) != len(args) {
         return fmt.Errorf("Cumin: Invalid number of arguments, expected %d, receieved %s", len(types), len(args))
     }
 
 	for i, x := range args {		
-        v := reflect.ValueOf(x)
+        argument := reflect.ValueOf(x)
         expected := types[i]
 
-        switch v.Kind() {
-        case reflect.Bool: 
-            if expected != "bool" {
-                return fmt.Errorf("Cumin: got Bool for argument #%d, expected %s", i, expected)
-            }
+        fmt.Printf("Expecting %v against %v\n", x, expected)
 
-        case reflect.String: 
-            if expected != "str" {
-                return fmt.Errorf("Cumin: got String for argument #%d, expected %s", i, expected)
-            }
-
-        case reflect.Float64:
-            if !(expected == "float" || expected == "int") {
-                return fmt.Errorf("Cumin: got Number for argument #%d, expected %s", i, expected)
-            }
-
-        case reflect.Slice:
-            // INCORRECT-- should iterate over values within the array, assuming a singly typed array
-            
-            if nestedSlice, ok := expected.([]interface{}); !ok {
-                return fmt.Errorf("Cumin: got Array for argument #%d, expected %s", i, expected)
-            } else if e := softCumin(nestedSlice, x.([]interface{})); e != nil {   
+        // If the expected type is a string, we're looking for a primitive
+        if s, ok := expected.(string); ok {
+            if e := primitiveCheck(s, argument.Kind()); e != nil {
                 return e
             }
+        } else if nestedSlice, ok := expected.([]string); ok {
+            // An array of strings indicates an array of primitives. Each element of the array must be of the same type
 
-        case reflect.Map:
+            if len(nestedSlice) != 1 {
+                return fmt.Errorf("Cumin: array expected at position #%d is not homogenous. %s", i, expected)
+            }
+
+            if argumentList, ok := x.([]interface{}); !ok {
+                return fmt.Errorf("Cant read interface list %v at position %d", x, i)
+            } else {
+                for _, v := range argumentList {
+                    if e := primitiveCheck(nestedSlice[0], reflect.ValueOf(v).Kind()); e != nil {
+                        return e
+                    }
+                }
+            }
+        } else if nestedMap, ok := expected.(map[string]interface{}); ok {  
+            fmt.Println("Array of objects", nestedMap)
+        } else {
+            return fmt.Errorf("Cumin: couldnt find primitive, list, or dictionary at #%d", i)
+        }
+
+        // switch argument.Kind() {
+        // case reflect.Slice:
+        //     // INCORRECT-- should iterate over values within the array, assuming a singly typed array
+        //     fmt.Printf("SLICE: %v, expecting: %v\n", argument, reflect.TypeOf(expected))
+
+        //     // v is the ARGUMENT
+
+        //     // Collections get a little hairy, since one type can correctly satisfy many possible arguments
+        //     if nestedSlice, ok := expected.([]string); ok {
+        //         if len(nestedSlice) != 1 {
+        //             return fmt.Errorf("Cumin: array expected at position #%d is not homogenous. %s", i, expected)
+        //         }
+
+        //         fmt.Println("Array of strings", nestedSlice)
+        //     } 
+
+        // case reflect.Map:
             
-        }
+        // }
 
-        if v.Kind() == reflect.Bool {
-
-        }
-
-        if v.Kind() == reflect.Slice {
-
-        }
-
-        if v.Kind() == reflect.Map {
-
-        }
+        
 	}
 
 	// int, string, bool, float, map, []string
 	return nil
 }
+
+// Return an error if the argument is not of the expected type OR the expected type is not a primitive
+func primitiveCheck(expected string, argument reflect.Kind) error {  
+    if argument == reflect.Bool && expected == "bool" ||
+        argument == reflect.String && expected == "str" ||
+        argument == reflect.Float64 && (expected == "float" || expected == "int") ||
+        argument == reflect.Int && (expected == "float" || expected == "int") {
+        return nil
+    }
+
+    return fmt.Errorf("Cumin: got %s, expected %s", argument, expected) 
+}
+
+
+
+
+
+
+
+
