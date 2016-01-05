@@ -47,10 +47,11 @@ func decode(p: GoSlice) -> (UInt64, [Any]) {
         return (UInt64(0), [])
     }
     
-    let i = data[0]
-    data.removeAtIndex(0)
-    
-    return (UInt64(i as! Double), data)
+    if let args = data[1] as? [Any] {
+        return (UInt64(data[0] as! Double), args)
+    } else {
+        return (UInt64(data[0] as! Double), [])
+    }
 }
 
 // Return a goslice of the JSON marshaled arguments as a cString

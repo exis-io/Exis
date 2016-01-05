@@ -104,7 +104,7 @@ public class Domain {
     public func receive() {
         while true {
             var (i, args) = decode(Receive(self.mantleDomain))
-            
+            print("Receive loop has args: ", args)
             if let fn = handlers[i] {
                 fn(args)
             } else if let fn = invocations[i] {
