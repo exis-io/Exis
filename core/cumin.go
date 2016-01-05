@@ -65,7 +65,8 @@ func softCumin(types []interface{}, args []interface{}) error {
         argument := reflect.ValueOf(x)
         expected := types[i]
 
-        //fmt.Printf("Expected: %v Argument: %v\n", expected, x)
+        fmt.Printf("Expected: %v Argument: %v\n", expected, x)
+        fmt.Printf("Type of expected: %v\n", reflect.ValueOf(expected))
 
         // If the expected type is a string, we're looking for a primitive
         if s, ok := expected.(string); ok {
@@ -88,23 +89,23 @@ func softCumin(types []interface{}, args []interface{}) error {
                     }
                 }
             }
-        } else if nestedSlice, ok := expected.([]map[string]interface{}); ok {
-            // An array of objects
-            
-            fmt.Println("Array of objects, ", nestedSlice)
-            if len(nestedSlice) != 1 {
-                return fmt.Errorf("Cumin: array expected at position #%d is not homogenous. %s", i, expected)
-            }
+        } else if _, ok := expected.([]map[string]interface{}); ok {
+            // TODO: arrays of objects
 
-            if argumentList, ok := x.([]map[string]interface{}); !ok {
-                return fmt.Errorf("Cant read dictionary %v at position %d", x, i)
-            } else {
-                for _, v := range argumentList {
-                    if e := mapCheck(nestedSlice[0], v); e != nil {
-                        return e
-                    }
-                }
-            }
+            // fmt.Println("Array of objects, ", nestedSlice)
+            // if len(nestedSlice) != 1 {
+            //     return fmt.Errorf("Cumin: array expected at position #%d is not homogenous. %s", i, expected)
+            // }
+
+            // if argumentList, ok := x.([]map[string]interface{}); !ok {
+            //     return fmt.Errorf("Cant read dictionary %v at position %d", x, i)
+            // } else {
+            //     for _, v := range argumentList {
+            //         if e := mapCheck(nestedSlice[0], v); e != nil {
+            //             return e
+            //         }
+            //     }
+            // }
         } else if nestedMap, ok := expected.(map[string]interface{}); ok {  
 
             if argumentMap, ok := x.(map[string]interface{}); !ok {
@@ -136,8 +137,6 @@ func primitiveCheck(expected string, argument reflect.Kind) error {
 
 // Recursively check an object. Return nil if the object matches the expected types
 func mapCheck(expected map[string]interface{}, argument map[string]interface{}) error {
-    fmt.Printf("Object check: %v, got %v\n", expected, argument)
-
     if len(expected) != len(argument) {
         return fmt.Errorf("Cumin: object invalid number of keys, expected %d, receieved %s", len(expected), len(argument))
     }
