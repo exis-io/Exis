@@ -1,5 +1,6 @@
 import subprocess
 import time
+import json
 
 timestr = lambda x=None: time.asctime(time.localtime(x)) if x else time.asctime()
 
@@ -29,6 +30,12 @@ def oscall(cmd, get=False, blocking=True, **kwargs):
             return None
     else:
         return proc
+
+def jsonPretty(j):
+    """
+        Returns a string of a JSON object in 'pretty print' format fully indented, and sorted.
+    """
+    return json.dumps(j, sort_keys=True, indent=4, separators=(',', ': '))
 
 def procCommunicate(proc):
     """

@@ -306,6 +306,9 @@ class ReplIt:
         return "\n".join(code)
 
 def executeAll(taskList, actionList):
+    """
+    Given a list of tasks and an action it will zip them together and then execute them properly.
+    """
     procs = list()
     for ts, a in zip(taskList, actionList):
         r = ReplIt(ts, a)
@@ -329,5 +332,40 @@ def executeAll(taskList, actionList):
         for p in procs:
             p.cleanup()
     
+def executeTaskSet(taskSet):
+    """
+    Given one specific TaskSet it will execute the corresponding components of that (pub/sub or reg/call).
+    """
+    procs = list()
+    
+    # Pull the proper actions from the task
+    recv = taskSet.getTask("register") or taskSet.getTask("subscribe")
+    send = taskSet.getTask("publish") or taskSet.getTask("call")
+
+    if None in (recv, send):
+        print "!! Unable to find one of send/recv"
+        print recv, send
+       
+    # Startup the actions
+    for r in recv, send:
+        rr = ReplIt(taskSet, r.action)
+        rr.execute()
+        a = rr.buildComplete.wait(5)
+        if a is False:
+            print "!! {} never completed setup process (BUILDCOMPLETE never found)".format(r)
+        procs.append(rr)
+    
+    # Now let the system do its thing
+    time.sleep(5)
+
+    # Go back through and terminate in reverse order
+    ok = True
+    for p in procs[::-1]:
+        ok &= p.kill()
+
+    # If everything was ok then cleanup the temp dirs
+    if ok:
+        for p in procs:
+            p.cleanup()
 
 
