@@ -57,12 +57,12 @@ func TestSoftCumin(t *testing.T) {
     Convey("Failed array checks", t, func() {
         Convey("Should not accept booleans as ints", func() {
             i := []bool{true, true, false}
-            So(softCumin([]interface{}{"[int]"}, []interface{}{i}), ShouldNotBeNil)
+            So(softCumin([]interface{}{[]string{"int"}}, []interface{}{i}), ShouldNotBeNil)
         })
 
         Convey("Should not accept non homogenous arrays", func() {
             i := []interface{}{1, true, false}
-            So(softCumin([]interface{}{"[int]"}, []interface{}{i}), ShouldNotBeNil)
+            So(softCumin([]interface{}{[]string{"int"}}, []interface{}{i}), ShouldNotBeNil)
         })
     })
 }
