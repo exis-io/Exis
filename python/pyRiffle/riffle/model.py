@@ -1,4 +1,4 @@
-
+import inspect
 import sys
 import os
 
@@ -116,13 +116,26 @@ def reconstruct(args, types):
 
 def want(*types):
     def real_decorator(function):
+        print(type(function))
+        print(dir(function))
         def wrapper(*args, **kwargs):
             # return the types this call expects as a list if asked
             if '_riffle_reflect' in kwargs:
                 # return [x.__name__ for x in list(types)]
                 return list(types)
-            
-            return function(*reconstruct(args, types))
+
+            # Test if function looks like a method and set aside the first
+            # argument.  At first glance, inspect.ismethod should tell us this,
+            # but it doesn't, so for now we just look for a "self" argument.
+            pre_args = tuple()
+            argspec = inspect.getargspec(function).args
+            if argspec and argspec[0] == "self":
+                pre_args = args[0:1]
+                args = args[1:]
+
+            final_args = pre_args + reconstruct(args, types)
+
+            return function(*final_args)
         return wrapper
     return real_decorator
 
