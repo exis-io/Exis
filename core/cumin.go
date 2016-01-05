@@ -65,7 +65,7 @@ func softCumin(types []interface{}, args []interface{}) error {
         argument := reflect.ValueOf(x)
         expected := types[i]
 
-        fmt.Printf("Expecting %v against %v\n", x, expected)
+        //fmt.Printf("Expected: %v Argument: %v\n", expected, x)
 
         // If the expected type is a string, we're looking for a primitive
         if s, ok := expected.(string); ok {
@@ -88,36 +88,37 @@ func softCumin(types []interface{}, args []interface{}) error {
                     }
                 }
             }
+        } else if nestedSlice, ok := expected.([]map[string]interface{}); ok {
+            // An array of objects
+            
+            fmt.Println("Array of objects, ", nestedSlice)
+            if len(nestedSlice) != 1 {
+                return fmt.Errorf("Cumin: array expected at position #%d is not homogenous. %s", i, expected)
+            }
+
+            if argumentList, ok := x.([]map[string]interface{}); !ok {
+                return fmt.Errorf("Cant read dictionary %v at position %d", x, i)
+            } else {
+                for _, v := range argumentList {
+                    if e := mapCheck(nestedSlice[0], v); e != nil {
+                        return e
+                    }
+                }
+            }
         } else if nestedMap, ok := expected.(map[string]interface{}); ok {  
-            fmt.Println("Array of objects", nestedMap)
+
+            if argumentMap, ok := x.(map[string]interface{}); !ok {
+                return fmt.Errorf("Cumin: expected dictionary at position %d, got %v", i, reflect.ValueOf(x))
+            } else {
+                if e := mapCheck(nestedMap, argumentMap); e != nil {
+                    return e
+                }
+            }
         } else {
             return fmt.Errorf("Cumin: couldnt find primitive, list, or dictionary at #%d", i)
-        }
-
-        // switch argument.Kind() {
-        // case reflect.Slice:
-        //     // INCORRECT-- should iterate over values within the array, assuming a singly typed array
-        //     fmt.Printf("SLICE: %v, expecting: %v\n", argument, reflect.TypeOf(expected))
-
-        //     // v is the ARGUMENT
-
-        //     // Collections get a little hairy, since one type can correctly satisfy many possible arguments
-        //     if nestedSlice, ok := expected.([]string); ok {
-        //         if len(nestedSlice) != 1 {
-        //             return fmt.Errorf("Cumin: array expected at position #%d is not homogenous. %s", i, expected)
-        //         }
-
-        //         fmt.Println("Array of strings", nestedSlice)
-        //     } 
-
-        // case reflect.Map:
-            
-        // }
-
-        
+        }        
 	}
 
-	// int, string, bool, float, map, []string
 	return nil
 }
 
@@ -133,7 +134,23 @@ func primitiveCheck(expected string, argument reflect.Kind) error {
     return fmt.Errorf("Cumin: got %s, expected %s", argument, expected) 
 }
 
+// Recursively check an object. Return nil if the object matches the expected types
+func mapCheck(expected map[string]interface{}, argument map[string]interface{}) error {
+    fmt.Printf("Object check: %v, got %v\n", expected, argument)
 
+    if len(expected) != len(argument) {
+        return fmt.Errorf("Cumin: object invalid number of keys, expected %d, receieved %s", len(expected), len(argument))
+    }
+
+    // TODO: nested collections and objects
+    for k, v := range argument {
+        if e := primitiveCheck(expected[k].(string), reflect.ValueOf(v).Kind()); e != nil {
+            return e
+        }
+    }
+
+    return nil 
+}
 
 
 

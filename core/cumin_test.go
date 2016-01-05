@@ -49,21 +49,60 @@ func TestSoftCumin(t *testing.T) {
 
 	Convey("Successful array checks", t, func() {
 		Convey("Should accept arrays of primitives", func() {
-			i := []int{1, 2}
-			So(softCumin([]interface{}{[]string{"int"}}, jsonicate(i)), ShouldBeNil)
+			So(softCumin([]interface{}{[]string{"int"}}, jsonicate([]int{1, 2})), ShouldBeNil)
 		})
 	})
 
     Convey("Failed array checks", t, func() {
         Convey("Should not accept booleans as ints", func() {
-            i := []bool{true, true, false}
-            So(softCumin([]interface{}{[]string{"int"}}, []interface{}{i}), ShouldNotBeNil)
+            So(softCumin([]interface{}{[]string{"int"}}, jsonicate([]bool{true, true, false})), ShouldNotBeNil)
         })
 
         Convey("Should not accept non homogenous arrays", func() {
             i := []interface{}{1, true, false}
-            So(softCumin([]interface{}{[]string{"int"}}, []interface{}{i}), ShouldNotBeNil)
+            So(softCumin([]interface{}{[]string{"int"}}, jsonicate(i)), ShouldNotBeNil)
         })
+    })
+
+    Convey("Successful dictionary checks", t, func() {
+        Convey("Should accept a simple object", func() {
+            incoming := []byte(`[{"a":"alpha","b":1}]`)
+            expected := []byte(`[{"a":"str","b":"int"}]`)
+
+            So(softCumin(unmarshalForTests(expected), unmarshalForTests(incoming)), ShouldBeNil)
+        })
+    })
+
+    Convey("Failed dictionary checks", t, func() {
+        Convey("Should not accept bad types", func() {
+            incoming := []byte(`[{"a":"alpha","b":1}]`)
+            expected := []byte(`[{"a":"str","b":"bool"}]`)
+
+            So(softCumin(unmarshalForTests(expected), unmarshalForTests(incoming)), ShouldNotBeNil)
+        })
+
+        Convey("Should not accept extra keys", func() {
+            incoming := []byte(`[{"a":"alpha","b":1,"c":3}]`)
+            expected := []byte(`[{"a":"str","b":"int"}]`)
+
+            So(softCumin(unmarshalForTests(expected), unmarshalForTests(incoming)), ShouldNotBeNil)
+        })
+    })
+
+    Convey("Lists of objects", t, func() {
+        Convey("Should succeed on simple collections", func() {
+            incoming := []byte(`[[{"a":"alpha","b":1},{"a":"beta","b":2}]]`)
+            expected := []byte(`[[{"a":"str","b":"bool"}]]`)
+
+            So(softCumin(unmarshalForTests(expected), unmarshalForTests(incoming)), ShouldBeNil)
+        })
+
+        // Convey("Should fail on bad keys", func() {
+        //     incoming := []byte(`[[{"a":"alpha","b":1},{"a":"beta","b":true}]]`)
+        //     expected := []byte(`[[{"a":"str","b":"bool"}]]`)
+
+        //     So(softCumin(unmarshalForTests(expected), unmarshalForTests(incoming)), ShouldNotBeNil)
+        // })
     })
 }
 
@@ -76,6 +115,15 @@ func jsonicate(args ...interface{}) []interface{} {
     var dat []interface{}
     j, _ := json.Marshal(args)
     if err := json.Unmarshal(j, &dat); err != nil {
+        panic(err)
+    }
+
+    return dat
+}
+
+func unmarshalForTests(literal []byte) []interface{} {
+    var dat []interface{}
+    if err := json.Unmarshal(literal, &dat); err != nil {
         panic(err)
     }
 
