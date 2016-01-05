@@ -4,7 +4,7 @@
     can hold many Task objects which represents the actual code to execute.
 """
 
-import glob, re
+import glob, re, os
 
 from collections import defaultdict as ddict
 
@@ -66,16 +66,19 @@ class Examples:
         if lang:
             c.mylang = lang
         thepath = lang or "*"
-        path = "{}/{}/example/*.{}".format(EXISPATH, thepath, LANGS.get(lang, "*"))
-        files = glob.glob(path)
-        if(len(files) == 0):
-            print("!! No example files found")
-            return c
         
-        for f in files:
-            # Skip file extensions that don't match
-            if(LANGS_EXT.get(f.split('.')[-1], None) is None):
-                continue
+        allFiles = list()
+        def walker(path):
+            for f in glob.glob("{}/*".format(path)):
+                if os.path.isdir(f) and "arbiter" not in f:
+                    walker(f)
+                elif os.path.isfile(f):
+                    if LANGS_EXT.get(f.split('.')[-1], None) is not None:
+                        allFiles.append(f)
+        walker(EXISPATH)
+        #print(allFiles)
+
+        for f in allFiles:
             c._parse(f)
         return c
 
