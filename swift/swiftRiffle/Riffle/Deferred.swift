@@ -4,60 +4,55 @@
 //
 //  Created by damouse on 12/4/15.
 //
-//  Homebaked, python Twisted inspired deferreds.
-//
-//  True twisted style chain hopping has not been implemented
+//  Homebaked, python Twisted inspired deferreds with A+ inspired syntax
+//  These guys will chain callbacks and errbacks
 
-// import Foundation
 
- public class Deferred {
-     var _callback: ((AnyObject?) -> AnyObject?)? = nil
-     var _errback: ((AnyObject?) -> AnyObject?)? = nil
+import Foundation
+
+public class Deferred {
+    var callback: ([Any] -> Any?)? = nil
+    var errback: ([Any] -> Any?)? = nil
     
-     var fired = false
+    var next: Deferred?
     
-     public init() {}
+    // Called when a callback has been assigned. Used internally for Call cuminication
+    var onCallbackAssigned: (([Any]) -> ())? = nil
     
-     public func callback(args: AnyObject? = nil) -> AnyObject? {
-         if fired {
-             print("Defereds can only fire once!")
-             return nil
-         }
+    public init() {}
+    
+    // Final, internal implementation of addCallback
+    func _then(fn: ([Any]) -> Any?) -> Deferred {
+        next = Deferred()
         
-         fired = true
+        if let cuminication = onCallbackAssigned {
+            // TODO: pass types of cuminicated function here
+            cuminication([])
+        }
         
-         if let cb = _callback {
-             return cb(args)
-         } else {
-             print("No callback registered")
-             return nil
-         }
-     }
+        return next!
+    }
     
-     public func errback(args: AnyObject? = nil) -> AnyObject? {
-         if fired {
-             print("Defereds can only fire once!")
-             return nil
-         }
-        
-         fired = true
-        
-         if let cb = _errback {
-             return cb(args)
-         } else {
-             print("No callback registered")
-             return nil
-         }
-     }
+    public func error(fn: (String) -> ()) -> Deferred {
+        next = Deferred()
+        errback = { a in fn(a[0] as! String) }
+        return next!
+    }
     
+    // TODO: try/catch the callback and errback, trigger the next one if appropriate
+    public func callback(args: [Any]) -> Any? {
+        if let cb = callback {
+            return cb(args)
+        } else {
+            return nil
+        }
+    }
     
-     public func addCallback(cb: (AnyObject?) -> (AnyObject?)) -> Deferred {
-         _callback = cb
-         return self
-     }
-    
-     public func addErrback(cb: (AnyObject?) -> (AnyObject?)) -> Deferred {
-         _errback = cb
-         return self
-     }
- }
+    public func errback(args: [Any]) -> Any? {
+        if let eb = errback {
+            return eb(args)
+        } else {
+            return nil
+        }
+    }
+}

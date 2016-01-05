@@ -44,6 +44,14 @@ func serializeArguments(args: [Any]) -> [Any] {
     return ret
 }
 
+public extension Domain {
+    public func call<A: PR>(endpoint: String, _ callArguments: Any..., _ fn: (A) -> ()) -> Deferred {
+        return _call(endpoint, callArguments) { args in
+            fn(A.deserialize(args[0]) as! A)
+        }
+    }
+}
+
 public class Domain {
     public var mantleDomain: UnsafeMutablePointer<Void>
     public var delegate: Delegate?
@@ -51,6 +59,8 @@ public class Domain {
     public var handlers: [UInt64: [Any] -> ()] = [:]
     public var invocations: [UInt64: [Any] -> ()] = [:]
     public var registrations: [UInt64: [Any] -> Any?] = [:]
+    
+    var deferreds: [UInt64: Deferred] = [:]
     
     
     public init(name: String) {
@@ -107,8 +117,6 @@ public class Domain {
             } else if let fn = invocations[i] {
                 fn(args)
             } else if let fn = registrations[i] {
-                // Pop off the return arg. Note that we started passing it into crusts as a nested list for some reason. Cant remember why, 
-                // but retaining that functionality until I remember.
                 let resultId = args.removeAtIndex(0) as! Double
                 
                 // Optional serialization has some problems. This unwraps the result to avoid that particular issue
@@ -118,8 +126,6 @@ public class Domain {
                 } else {
                     Yield(mantleDomain, UInt64(resultId), marshall([]))
                 }
-            } else {
-                //print("No handlers found for id \(i)!")
             }
         }
     }
