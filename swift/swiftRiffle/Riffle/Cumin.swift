@@ -61,7 +61,7 @@ public extension Domain {
 		return _register(endpoint) { a in return fn(A.self <- a[0]) }
 	}
 
-	public func register<A: PR, B: PR, R>(endpoint: String, _ fn: (A, B) -> (R)) -> Deferred {
+	public func register<A: PR, B: PR, R>(endpoint: String, _ fn: (A, B) -> (R)) -> Deferred {        
 		return _register(endpoint) { a in return fn(A.self <- a[0], B.self <- a[1]) }
 	}
 
@@ -94,6 +94,7 @@ public extension Domain {
 	}
 
 	public func subscribe<A: PR, B: PR, C: PR>(endpoint: String, _ fn: (A, B, C) -> ()) -> Deferred {
+        print("Registering with", A.representation(), B.representation(), C.representation())
 		return _subscribe(endpoint) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
 	}
 

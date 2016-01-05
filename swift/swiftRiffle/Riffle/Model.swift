@@ -53,4 +53,19 @@ extension Model: Convertible {
         
         return ret
     }
+    
+
+    
+    public static func representation() -> String {
+        let me = self.init()
+        
+        var fields: [String: String] = [:]
+        
+        for property in me.propertyNames() {
+            fields[property] = me[property]!.dynamicType.representation()
+            print("Property: \(property): \(fields[property]!)")
+        }
+        
+        return "{\(me.propertyNames().map { "\($0): \(me[$0]!.dynamicType.representation())"}.joinWithSeparator(", "))}"
+    }
 }
