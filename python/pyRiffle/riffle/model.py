@@ -116,8 +116,6 @@ def reconstruct(args, types):
 
 def want(*types):
     def real_decorator(function):
-        print(type(function))
-        print(dir(function))
         def wrapper(*args, **kwargs):
             # return the types this call expects as a list if asked
             if '_riffle_reflect' in kwargs:
