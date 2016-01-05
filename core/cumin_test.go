@@ -17,7 +17,31 @@ func TestCuminXNone(t *testing.T) {
 			_, e := Cumin(oneNone, []interface{}{1})
 
 			So(e, ShouldBeNil)
-			// So(r[0] ShouldEqual, 1)
+		})
+	})
+}
+
+func TestSoftCumin(t *testing.T) {
+	Convey("Successful primitives checks", t, func() {
+		Convey("Should accept ints", func() {
+			var i float64 = 1
+			e := softCumin([]interface{}{"float"}, []interface{}{i})
+			So(e, ShouldBeNil)
+		})
+	})
+
+	Convey("Failed primitives checks", t, func() {
+		Convey("Should only accept numbers", func() {
+			i := true
+			e := softCumin([]interface{}{"float"}, []interface{}{i})
+			So(e, ShouldNotBeNil)
+		})
+	})
+
+	Convey("Invalid number of arguments", t, func() {
+		Convey("Should fail", func() {
+			e := softCumin([]interface{}{"float"}, []interface{}{})
+			So(e, ShouldNotBeNil)
 		})
 	})
 }
