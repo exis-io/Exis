@@ -22,10 +22,14 @@ class Sender: Domain {
         dog.age = 88
         
         // Publish the object and assorted other arguments
-        publish("xs.damouse.alpha/sub", 1, ["Hey", "There"], dog)
+        publish("xs.damouse.alpha/sub", 1, ["Hey", "There"], dog).then {
+            print("Publish succeeded")
+        }.error { reason in
+            print("An error occured", reason)
+        }
         
         // Call with assorted arguments, stipulating the resulting return types
-        call("xs.damouse.alpha/reg", "Johnathan", "Seed") { (a: String) in
+        call("xs.damouse.alpha/reg", "Johnathan", "Seed").then { (a: String) in
             print("Call received: ", a)
         }
     }
@@ -48,13 +52,13 @@ class Receiver: Domain {
             print("An error occured", reason)
         }
         
-//        subscribe("sub") { (a: Int, b: [String], c: Dog) in
-//            print("Received publish: \(a), with list: \(b), and pup: \(c.description)")
-//        }.then {
-//            print("Subscription succeeded")
-//        }.error { reason in
-//            print("An error occured", reason)
-//        }
+        subscribe("sub") { (a: Int, b: [String], c: Dog) in
+            print("Received publish: \(a), with list: \(b), and pup: \(c.description)")
+        }.then {
+            print("Subscription succeeded")
+        }.error { reason in
+            print("An error occured", reason)
+        }
     }
     
     override func onLeave() {

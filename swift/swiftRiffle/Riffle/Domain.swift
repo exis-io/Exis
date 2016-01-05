@@ -44,15 +44,6 @@ func serializeArguments(args: [Any]) -> [Any] {
     return ret
 }
 
-// Just here for testing right now, will end up in Cumin
-public extension Domain {
-    public func call<A: PR>(endpoint: String, _ callArguments: Any..., _ fn: (A) -> ()) -> Deferred {
-        return _call(endpoint, callArguments) { args in
-            fn(A.deserialize(args[0]) as! A)
-        }
-    }
-}
-
 public class Domain {
     public var mantleDomain: UnsafeMutablePointer<Void>
     public var delegate: Delegate?
@@ -96,8 +87,8 @@ public class Domain {
         return d
     }
     
-    public func _call(endpoint: String, _ args: [Any], handler: [Any] -> ()) -> Deferred {
-        let d = Deferred(domain: self)
+    public func call(endpoint: String, _ args: Any...) -> HandlerDeferred {
+        let d = HandlerDeferred(domain: self)
         Call(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)), "[]".cString())
         return d
     }

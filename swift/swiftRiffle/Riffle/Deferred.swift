@@ -23,6 +23,7 @@ public class Deferred {
     // Called when a callback has been assigned. Used internally for Call cuminication
     var onCallbackAssigned: (([Any]) -> ())? = nil
     
+    
     public init() {}
     
     public init(domain: Domain) {
@@ -39,15 +40,22 @@ public class Deferred {
         next = Deferred()
         
         if let cuminication = onCallbackAssigned {
-            // TODO: pass types of cuminicated function here
             cuminication([])
         }
         
-        // Missing logic here for all the calls
-        callbackFuntion = { a in
-            fn()
-            return nil
+        callbackFuntion = { a in return fn() }
+        
+        return next!
+    }
+    
+    public func _then(fn: [Any] -> ()) -> Deferred {
+        next = Deferred()
+        
+        if let cuminication = onCallbackAssigned {
+            cuminication([])
         }
+        
+        callbackFuntion = { a in return fn(a) }
         
         return next!
     }
@@ -58,7 +66,6 @@ public class Deferred {
         return next!
     }
     
-    // TODO: try/catch the callback and errback, trigger the next one if appropriate
     public func callback(args: [Any]) -> Any? {
         if let cb = callbackFuntion {
              // if the next result is a deferred, wait for it to complete before returning (?)
@@ -83,9 +90,14 @@ public class Deferred {
                 n.errback(args)
             }
             
-            // No chain exists. Send the error to some well-known place
+            // No chain exists. TODO: Send the error to some well-known place
             WarnLog("Unhandled error: \(args)")
             return nil
         }
     }
+}
+
+// Contains handler "then"s to replace handler functions
+public class HandlerDeferred: Deferred {
+    
 }

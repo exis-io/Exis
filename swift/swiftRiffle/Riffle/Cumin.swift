@@ -16,10 +16,11 @@ precedence 155
 }
 
 func <- <T: Property> (t:T.Type, object: Any) -> T {
+    // Deserialize is implemented as part of the Convertible protocol. All properties implement Convertible
     return T.deserialize(object) as! T
 }
 
-// Here to make the generic shotgun cleaner
+// Used only in this file to shorten the length of the method signatures
 public typealias PR = Property
 
 public extension Domain {
@@ -93,9 +94,7 @@ public extension Domain {
 	}
 
 	public func subscribe<A: PR, B: PR, C: PR>(endpoint: String, _ fn: (A, B, C) -> ()) -> Deferred {
-		return _subscribe(endpoint) { a in
-            return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2])
-        }
+		return _subscribe(endpoint) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
 	}
 
 	public func subscribe<A: PR, B: PR, C: PR, D: PR>(endpoint: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
@@ -109,5 +108,36 @@ public extension Domain {
 	public func subscribe<A: PR, B: PR, C: PR, D: PR, E: PR, F: PR>(endpoint: String, _ fn: (A, B, C, D, E, F) -> ()) -> Deferred {
 		return _subscribe(endpoint) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5]) }
 	}
+
+}
+
+
+// Deferred handler overloads
+public extension HandlerDeferred {
+
+	public func then<A: PR>(fn: (A) -> ()) -> Deferred {
+		return _then() { a in return fn(A.self <- a[0]) }
+	}
+
+	public func then<A: PR, B: PR>(fn: (A, B) -> ()) -> Deferred {
+		return _then() { a in return fn(A.self <- a[0], B.self <- a[1]) }
+	}
+
+	public func then<A: PR, B: PR, C: PR>(fn: (A, B, C) -> ()) -> Deferred {
+		return _then() { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
+	}
+
+	public func then<A: PR, B: PR, C: PR, D: PR>(fn: (A, B, C, D) -> ()) -> Deferred {
+		return _then() { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3]) }
+	}
+
+	public func then<A: PR, B: PR, C: PR, D: PR, E: PR>(fn: (A, B, C, D, E) -> ()) -> Deferred {
+		return _then() { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4]) }
+	}
+
+	public func then<A: PR, B: PR, C: PR, D: PR, E: PR, F: PR>(fn: (A, B, C, D, E, F) -> ()) -> Deferred {
+		return _then() { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5]) }
+	}
+
 }
 

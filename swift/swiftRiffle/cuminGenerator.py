@@ -4,7 +4,7 @@ Generator for Cumin functions.
 
 import os
 
-# Header for the cumin file 
+# Header for the cumin file
 header = '''
 // 
 // Cumin generic wrapper functions. Each overloaded function corresponds to a handler with a different number of 
@@ -34,6 +34,13 @@ public extension Domain {
 
 '''
 
+deferredHeader = '''
+
+// Deferred handler overloads
+public extension HandlerDeferred {
+
+'''
+
 PRODUCTION = 'Riffle/Cumin.swift'
 DEV = 'cumin.txt'
 
@@ -41,7 +48,7 @@ generics = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
 returns = ['R', 'S', 'T', 'U', 'V', 'X', 'Y', 'Z']
 
 handlerTemplate = '\tpublic func %s<%s>(endpoint: String, _ fn: (%s) -> (%s)) -> Deferred {\n\t\treturn _%s(endpoint) { a in return fn(%s) }\n\t}'
-callTemplate = '\tpublic func %s<%s>(endpoint: String, _ fn: (%s) -> (%s)) -> Deferred {\n\t\treturn _%s(endpoint) { a in return fn(%s) }\n\t}'
+callTemplate = '\tpublic func %s<%s>(fn: (%s) -> (%s)) -> Deferred {\n\t\treturn _%s() { a in return fn(%s) }\n\t}'
 
 
 def renderCaller(template, name, args, ret, renderingArrays):
@@ -52,22 +59,27 @@ def renderCaller(template, name, args, ret, renderingArrays):
 
     return (template % (name, both, args, ret, name, cumin)).replace("<>", "")
 
+
 def main():
-    r, s, n = [], [], []
+    r, s, c = [], [], []
 
     for j in range(2):  # The number of return types
         for i in range(0, 7):  # Number of parameters
             if j == 0:
                 s.append(renderCaller(handlerTemplate, 'subscribe', generics[:i], returns[:j], False))
-                # n.append(renderCaller(callTemplate, 'call', generics[:i], returns[:j], False))
+
+                if i > 0:
+                    c.append(renderCaller(callTemplate, 'then', generics[:i], returns[:j], False))
 
             r.append(renderCaller(handlerTemplate, 'register', generics[:i], returns[:j], False))
 
     with open(os.path.join(os.getcwd(), PRODUCTION), 'w') as f:
         f.write(header)
-        e = r + s + n
+        [f.write(x + '\n\n') for x in (r + s)]
+        f.write("}\n")
 
-        [f.write(x + '\n\n') for x in e]
+        f.write(deferredHeader)
+        [f.write(x + '\n\n') for x in c]
         f.write("}\n\n")
 
 if __name__ == '__main__':
