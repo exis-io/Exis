@@ -63,7 +63,7 @@ public class Domain {
         mantleDomain = Subdomain(superdomain.mantleDomain, name.cString())
     }
     
-    public func _subscribe(endpoint: String, fn: [Any] -> ()) -> Deferred {
+    public func _subscribe(endpoint: String, _ types: [Any], fn: [Any] -> ()) -> Deferred {
         let hn = CBID()
         handlers[hn] = fn
         
@@ -72,7 +72,7 @@ public class Domain {
         return d
     }
     
-    public func _register(endpoint: String, fn: [Any] -> Any) -> Deferred {
+    public func _register(endpoint: String, _ types: [Any], fn: [Any] -> Any) -> Deferred {
         let hn = CBID()
         registrations[hn] = fn
 

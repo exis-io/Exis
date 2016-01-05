@@ -26,88 +26,87 @@ public typealias PR = Property
 public extension Domain {
 
 	public func register(endpoint: String, _ fn: () -> ()) -> Deferred {
-		return _register(endpoint) { a in return fn() }
+		return _register(endpoint, []) { a in return fn() }
 	}
 
 	public func register<A: PR>(endpoint: String, _ fn: (A) -> ()) -> Deferred {
-		return _register(endpoint) { a in return fn(A.self <- a[0]) }
+		return _register(endpoint, [A.representation()]) { a in return fn(A.self <- a[0]) }
 	}
 
 	public func register<A: PR, B: PR>(endpoint: String, _ fn: (A, B) -> ()) -> Deferred {
-		return _register(endpoint) { a in return fn(A.self <- a[0], B.self <- a[1]) }
+		return _register(endpoint, [A.representation(), B.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1]) }
 	}
 
 	public func register<A: PR, B: PR, C: PR>(endpoint: String, _ fn: (A, B, C) -> ()) -> Deferred {
-		return _register(endpoint) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
+		return _register(endpoint, [A.representation(), B.representation(), C.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
 	}
 
 	public func register<A: PR, B: PR, C: PR, D: PR>(endpoint: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
-		return _register(endpoint) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3]) }
+		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3]) }
 	}
 
 	public func register<A: PR, B: PR, C: PR, D: PR, E: PR>(endpoint: String, _ fn: (A, B, C, D, E) -> ()) -> Deferred {
-		return _register(endpoint) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4]) }
+		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation(), E.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4]) }
 	}
 
 	public func register<A: PR, B: PR, C: PR, D: PR, E: PR, F: PR>(endpoint: String, _ fn: (A, B, C, D, E, F) -> ()) -> Deferred {
-		return _register(endpoint) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5]) }
+		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation(), E.representation(), F.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5]) }
 	}
 
 	public func register<R>(endpoint: String, _ fn: () -> (R)) -> Deferred {
-		return _register(endpoint) { a in return fn() }
+		return _register(endpoint, []) { a in return fn() }
 	}
 
 	public func register<A: PR, R>(endpoint: String, _ fn: (A) -> (R)) -> Deferred {
-		return _register(endpoint) { a in return fn(A.self <- a[0]) }
+		return _register(endpoint, [A.representation()]) { a in return fn(A.self <- a[0]) }
 	}
 
-	public func register<A: PR, B: PR, R>(endpoint: String, _ fn: (A, B) -> (R)) -> Deferred {        
-		return _register(endpoint) { a in return fn(A.self <- a[0], B.self <- a[1]) }
+	public func register<A: PR, B: PR, R>(endpoint: String, _ fn: (A, B) -> (R)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1]) }
 	}
 
 	public func register<A: PR, B: PR, C: PR, R>(endpoint: String, _ fn: (A, B, C) -> (R)) -> Deferred {
-		return _register(endpoint) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
+		return _register(endpoint, [A.representation(), B.representation(), C.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
 	}
 
 	public func register<A: PR, B: PR, C: PR, D: PR, R>(endpoint: String, _ fn: (A, B, C, D) -> (R)) -> Deferred {
-		return _register(endpoint) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3]) }
+		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3]) }
 	}
 
 	public func register<A: PR, B: PR, C: PR, D: PR, E: PR, R>(endpoint: String, _ fn: (A, B, C, D, E) -> (R)) -> Deferred {
-		return _register(endpoint) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4]) }
+		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation(), E.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4]) }
 	}
 
 	public func register<A: PR, B: PR, C: PR, D: PR, E: PR, F: PR, R>(endpoint: String, _ fn: (A, B, C, D, E, F) -> (R)) -> Deferred {
-		return _register(endpoint) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5]) }
+		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation(), E.representation(), F.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5]) }
 	}
 
 	public func subscribe(endpoint: String, _ fn: () -> ()) -> Deferred {
-		return _subscribe(endpoint) { a in return fn() }
+		return _subscribe(endpoint, []) { a in return fn() }
 	}
 
 	public func subscribe<A: PR>(endpoint: String, _ fn: (A) -> ()) -> Deferred {
-		return _subscribe(endpoint) { a in return fn(A.self <- a[0]) }
+		return _subscribe(endpoint, [A.representation()]) { a in return fn(A.self <- a[0]) }
 	}
 
 	public func subscribe<A: PR, B: PR>(endpoint: String, _ fn: (A, B) -> ()) -> Deferred {
-		return _subscribe(endpoint) { a in return fn(A.self <- a[0], B.self <- a[1]) }
+		return _subscribe(endpoint, [A.representation(), B.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1]) }
 	}
 
 	public func subscribe<A: PR, B: PR, C: PR>(endpoint: String, _ fn: (A, B, C) -> ()) -> Deferred {
-        print("Registering with", A.representation(), B.representation(), C.representation())
-		return _subscribe(endpoint) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
+		return _subscribe(endpoint, [A.representation(), B.representation(), C.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
 	}
 
 	public func subscribe<A: PR, B: PR, C: PR, D: PR>(endpoint: String, _ fn: (A, B, C, D) -> ()) -> Deferred {
-		return _subscribe(endpoint) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3]) }
+		return _subscribe(endpoint, [A.representation(), B.representation(), C.representation(), D.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3]) }
 	}
 
 	public func subscribe<A: PR, B: PR, C: PR, D: PR, E: PR>(endpoint: String, _ fn: (A, B, C, D, E) -> ()) -> Deferred {
-		return _subscribe(endpoint) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4]) }
+		return _subscribe(endpoint, [A.representation(), B.representation(), C.representation(), D.representation(), E.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4]) }
 	}
 
 	public func subscribe<A: PR, B: PR, C: PR, D: PR, E: PR, F: PR>(endpoint: String, _ fn: (A, B, C, D, E, F) -> ()) -> Deferred {
-		return _subscribe(endpoint) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5]) }
+		return _subscribe(endpoint, [A.representation(), B.representation(), C.representation(), D.representation(), E.representation(), F.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5]) }
 	}
 
 }

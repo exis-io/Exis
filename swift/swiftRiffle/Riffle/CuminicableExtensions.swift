@@ -23,7 +23,7 @@ public protocol Convertible {
     func serialize() -> Any
     
     // Returns a core representation of this type
-    static func representation() -> String
+    static func representation() -> Any
 }
 
 public protocol BaseConvertible: Convertible {}
@@ -33,7 +33,7 @@ extension BaseConvertible {
         return from
     }
     
-    public static func representation() -> String {
+    public static func representation() -> Any {
         return "\(Self.self)"
     }
     
@@ -118,7 +118,7 @@ extension Int: Property, Convertible {
         return from
     }
     
-    public static func representation() -> String {
+    public static func representation() -> Any {
         return "int"
     }
 }
@@ -140,7 +140,7 @@ extension String: Property, Convertible {
         return from
     }
     
-    public static func representation() -> String {
+    public static func representation() -> Any {
         return "str"
     }
 }
@@ -161,7 +161,7 @@ extension Double: Property, Convertible {
         return from
     }
     
-    public static func representation() -> String {
+    public static func representation() -> Any {
         return "double"
     }
 }
@@ -182,7 +182,7 @@ extension Float: Property, Convertible {
         return from
     }
     
-    public static func representation() -> String {
+    public static func representation() -> Any {
         return "float"
     }
 }
@@ -203,7 +203,7 @@ extension Bool: Property, Convertible {
         return from
     }
     
-    public static func representation() -> String {
+    public static func representation() -> Any {
         return "bool"
     }
 }
@@ -224,7 +224,7 @@ extension Array : Property, BaseConvertible {
         return self
     }
     
-    public static func representation() -> String {
+    public static func representation() -> Any {
         if let child = Generator.Element.self as? Convertible.Type {
             return "[\(child.representation())]"
         }

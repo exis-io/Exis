@@ -56,10 +56,10 @@ extension Model: Convertible {
     
 
     
-    public static func representation() -> String {
+    public static func representation() -> Any {
         let me = self.init()
         
-        var fields: [String: String] = [:]
+        var fields: [String: Any] = [:]
         
         for property in me.propertyNames() {
             fields[property] = me[property]!.dynamicType.representation()

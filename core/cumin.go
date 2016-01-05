@@ -5,14 +5,6 @@ import (
 	"reflect"
 )
 
-// Stores valid conversions FROM the json type TO the expected type. If the expected type is present in the row, 
-// the conversion is valid
-var conversionMatrix = map[reflect.Kind][]string{
-    reflect.Bool: []string{"bool"},
-    reflect.String: []string{"str"},
-    reflect.Float64: []string{"int", "float"},
-}
-
 // Convert and apply args to arbitrary function fn
 func Cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 	reciever := reflect.TypeOf(fn)
@@ -65,8 +57,8 @@ func softCumin(types []interface{}, args []interface{}) error {
         argument := reflect.ValueOf(x)
         expected := types[i]
 
-        fmt.Printf("Expected: %v Argument: %v\n", expected, x)
-        fmt.Printf("Type of expected: %v\n", reflect.ValueOf(expected))
+        //fmt.Printf("Expected: %v Argument: %v\n", expected, x)
+        //fmt.Printf("Type of expected: %v\n", reflect.ValueOf(expected))
 
         // If the expected type is a string, we're looking for a primitive
         if s, ok := expected.(string); ok {

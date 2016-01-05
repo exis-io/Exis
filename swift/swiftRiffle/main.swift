@@ -43,14 +43,14 @@ class Sender: Domain {
 class Receiver: Domain {
     
     override func onJoin() {
-        register("reg") { (first: String, second: String) -> String in
-            print("Received call! Args: ", first, second)
-            return "Receiver says hi!"
-        }.then {
-            print("Registration succeeded")
-        }.error { reason in
-            print("An error occured", reason)
-        }
+//        register("reg") { (first: String, second: String) -> String in
+//            print("Received call! Args: ", first, second)
+//            return "Receiver says hi!"
+//        }.then {
+//            print("Registration succeeded")
+//        }.error { reason in
+//            print("An error occured", reason)
+//        }
         
         subscribe("sub") { (a: Int, b: [String], c: Dog) in
             print("Received publish: \(a), with list: \(b), and pup: \(c.description)")

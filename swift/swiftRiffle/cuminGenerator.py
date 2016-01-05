@@ -47,17 +47,22 @@ DEV = 'cumin.txt'
 generics = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
 returns = ['R', 'S', 'T', 'U', 'V', 'X', 'Y', 'Z']
 
-handlerTemplate = '\tpublic func %s<%s>(endpoint: String, _ fn: (%s) -> (%s)) -> Deferred {\n\t\treturn _%s(endpoint) { a in return fn(%s) }\n\t}'
+handlerTemplate = '\tpublic func %s<%s>(endpoint: String, _ fn: (%s) -> (%s)) -> Deferred {\n\t\treturn _%s(endpoint, [%s]) { a in return fn(%s) }\n\t}'
 callTemplate = '\tpublic func %s<%s>(fn: (%s) -> (%s)) -> Deferred {\n\t\treturn _%s() { a in return fn(%s) }\n\t}'
 
 
 def renderCaller(template, name, args, ret, renderingArrays):
     cumin = ', '.join(["%s.self <- a[%s]" % (x, i) for i, x in enumerate(args)])
+    types = ', '.join([x + ".representation()" for x in args])
     both = ', '.join([x + ": PR" for x in args] + ret)
     args = ', '.join(args)
     ret = ', '.join(ret)
 
-    return (template % (name, both, args, ret, name, cumin)).replace("<>", "")
+    # Temp, just to get cumin up and running 
+    if name == "then":
+        return (template % (name, both, args, ret, name, cumin)).replace("<>", "")
+
+    return (template % (name, both, args, ret, name, types, cumin)).replace("<>", "")
 
 
 def main():
