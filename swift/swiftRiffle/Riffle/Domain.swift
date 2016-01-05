@@ -32,56 +32,70 @@ public protocol Delegate {
     func onLeave()
 }
 
+func serializeArguments(args: [Any]) -> [Any] {
+    var ret: [Any] = []
+    
+    for a in args {
+        if let arg = a as? Property {
+            ret.append(arg.serialize())
+        }
+    }
+    
+    return ret
+}
+
 public class Domain {
     public var mantleDomain: UnsafeMutablePointer<Void>
     public var delegate: Delegate?
     
-    public var handlers: [UInt64: ([Any]) -> ()] = [:]
-    public var invocations: [UInt64: (Any) -> ()] = [:]
-    public var registrations: [UInt64: (Any) -> (Any?)] = [:]
+    public var handlers: [UInt64: [Any] -> ()] = [:]
+    public var invocations: [UInt64: [Any] -> ()] = [:]
+    public var registrations: [UInt64: [Any] -> Any?] = [:]
     
     
     public init(name: String) {
         mantleDomain = NewDomain(name.cString())
-        // delegate = self
     }
     
     public init(name: String, superdomain: Domain) {
         mantleDomain = Subdomain(superdomain.mantleDomain, name.cString())
-        // delegate = self
     }
     
-    public func _subscribe(endpoint: String, fn: ([Any]) -> ()) {
+    public func _subscribe(endpoint: String, fn: [Any] -> ()) -> Deferred {
         let cb = CBID()
         let eb = CBID()
-        let hn = CBID() 
-
+        let hn = CBID()
+        
         Subscribe(self.mantleDomain, endpoint.cString(), cb, eb, hn, "[]".cString())
         handlers[hn] = fn
+        return Deferred()
     }
     
-    public func register(endpoint: String, fn: (Any) -> (Any?)) {
+    public func _register(endpoint: String, fn: [Any] -> Any) -> Deferred {
         let cb = CBID()
         let eb = CBID()
         let hn = CBID() 
 
         Register(self.mantleDomain, endpoint.cString(), cb, eb, hn, "[]".cString())
         registrations[hn] = fn
+        return Deferred()
     }
 
-    public func publish(endpoint: String, _ args: Any...) {
+    public func publish(endpoint: String, _ args: Any...) -> Deferred {
         let cb = CBID()
         let eb = CBID()
         
-        Publish(self.mantleDomain, endpoint.cString(), cb, eb, marshall(args))
+        Publish(self.mantleDomain, endpoint.cString(), cb, eb, marshall(serializeArguments(args)))
+        return Deferred()
     }
     
-    public func call(endpoint: String, _ args: Any..., handler: (Any) -> ()) {
+    public func _call(endpoint: String, _ args: [Any], handler: [Any] -> ()) -> Deferred {
         let cb = CBID()
         let eb = CBID()
 
-        Call(self.mantleDomain, endpoint.cString(), cb, eb, marshall(args), "[]".cString())
+        Call(self.mantleDomain, endpoint.cString(), cb, eb, marshall(serializeArguments(args)), "[]".cString())
         invocations[cb] = handler
+        return Deferred()
     }
     
     public func receive() {
@@ -94,16 +108,16 @@ public class Domain {
                 fn(args)
             } else if let fn = registrations[i] {
                 // Pop off the return arg. Note that we started passing it into crusts as a nested list for some reason. Cant remember why, 
-                // but retaining that functionality until I remember. It started in the python implementation
-                let unwrap = args[0] as! JSON
-                var args = unwrap.arrayValue!
+                // but retaining that functionality until I remember.
+                let resultId = args.removeAtIndex(0) as! Double
                 
-                let resultId = args.removeAtIndex(0)
-                var ret = fn(args)
-                ret = ret == nil ? ([] as! [Any]) : ret
-                
-                //print("Handling return with args: \(ret)")
-                Yield(mantleDomain, UInt64(resultId.doubleValue!), marshall(ret))
+                // Optional serialization has some problems. This unwraps the result to avoid that particular issue
+                if let ret = fn(args) {
+                    // TODO: handle tuple returns
+                    Yield(mantleDomain, UInt64(resultId), marshall([ret]))
+                } else {
+                    Yield(mantleDomain, UInt64(resultId), marshall([]))
+                }
             } else {
                 //print("No handlers found for id \(i)!")
             }

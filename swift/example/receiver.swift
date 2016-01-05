@@ -1,8 +1,6 @@
-
 import Riffle
 
 class Receiver: Riffle.Domain, Riffle.Delegate {
-
 
     override func onJoin() {
         print("Receiver joined!")
@@ -13,13 +11,14 @@ class Receiver: Riffle.Domain, Riffle.Delegate {
         }
         
 
-        subscribe("sub") { (args: Any) in
+        // Example Pub/Sub Basic - This is a basic version of a pub/sub
+        subscribe("sub") { (args: Any) in       // Expects an Any, like "Hello"
             print("Received publish! \(args)")
         }
+        // End Example Pub/Sub Basic
     }
     
     override func onLeave() {
         print("Receiver left!")
     }
 }
-

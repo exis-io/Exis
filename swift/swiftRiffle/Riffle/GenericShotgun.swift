@@ -1,27 +1,20 @@
-// Straight Boilerplate-- make the compiler happy
+
 import Foundation
 
 public extension Domain {
-    public func subscribe<A: Property, B: Property, C: Property>(endpoint: String, _ fn: (A, B, C) -> ()) {
-        // Assume we're getting primitive types well-constructed
-        // Detect collections and objects, build them appropriately
-        
-        // NOTE: Collections only need to be detected for nested objects
-        
-        // Construct cumin strings here and pass to core-- repr might be betterer
-        //print("C is a model: \(C.isModel())")
-        
-        _subscribe(endpoint) { args in
-            // Coerce types, constructing them if needed, and call the function with the results
-            
-            print("Received: \(args), first element: \(args[0]), first first element: ")
-//            let json = args[0] as! JSON
-            
-            //if let stupidfuckingjson = json as? JSON {
-            //    print("Have json", stupidfuckingjson.value, stupidfuckingjson.value.dynamicType)
-            //}
-            
-            fn(A.create(args[0]) as! A, B.create(args[1]) as! B, C.create(args[2]) as! C)
+    public func subscribe<A: PR, B: PR, C: PR>(endpoint: String, _ fn: (A, B, C) -> ()) -> Deferred {
+        return _subscribe(endpoint) { a in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
+    }
+    
+    public func register<A: PR, B: PR, R: PR>(endpoint: String, _ fn: (A, B) -> R) -> Deferred {
+        return _register(endpoint) { args in
+            return fn(A.deserialize(args[0]) as! A, B.deserialize(args[1]) as! B)
+        }
+    }
+    
+    public func call<A: PR>(endpoint: String, _ callArguments: Any..., _ fn: (A) -> ()) -> Deferred {
+        return _call(endpoint, callArguments) { args in
+            fn(A.deserialize(args[0]) as! A)
         }
     }
 }

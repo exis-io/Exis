@@ -48,7 +48,6 @@ func Cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 // thats on the client library (although its possible it could try that....)
 // How do we handle model objects?
 func softCumin(types []interface{}, args []interface{}) error {
-
 	// If wrong number of arguments...
 
 	// int, string, bool, float, map, []string

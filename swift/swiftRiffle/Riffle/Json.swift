@@ -989,3 +989,26 @@ extension GenericJSONParser {
         }
     }
 }
+
+// Convert parsed JSON to Any, because why the hell do you think everyone wants to manually query their json?
+func anynize(from: JSON) -> Any {
+    switch from {
+    case .NullValue:
+        return NSNull()
+    case .BooleanValue:
+        return from.boolValue!
+    case .StringValue:
+        return from.stringValue!
+    case .NumberValue:
+        return from.doubleValue!
+    case .ArrayValue:
+        return from.arrayValue!.map { anynize($0) }
+    case .ObjectValue:
+        var ret: [String: Any] = [:]
+        for (k, v) in from.dictionaryValue! {
+            ret[k] = anynize(v)
+        }
+        
+        return ret
+    }
+}

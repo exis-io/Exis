@@ -96,10 +96,10 @@
 				504D0A1E1C333FC9009F5A7B /* Cumin.swift */,
 				504D0A1F1C333FC9009F5A7B /* Deferred.swift */,
 				504D0A201C333FC9009F5A7B /* Domain.swift */,
+				5077CE3C1C334EEB00152D00 /* GenericShotgun.swift */,
 				504D0A141C332FA8009F5A7B /* Json.swift */,
 				5077CE3D1C334EEB00152D00 /* Model.swift */,
 				504D0A211C333FC9009F5A7B /* Utils.swift */,
-				5077CE3C1C334EEB00152D00 /* GenericShotgun.swift */,
 			);
 			path = SwiftRiffle;
 			sourceTree = "<group>";

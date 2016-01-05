@@ -82,30 +82,50 @@ class Model(object):
 
     def __setattr__(self, name, value):
         if name.startswith("_"):
-            super(RiffleModel, self).__setattr__(name, value)
+            super(Model, self).__setattr__(name, value)
         else:
             self.__values[name] = value
 
     def __repr__(self):
-        return repr(self.__values)
+        return str(self.__class__) + repr(self.__values)
 
-    def _deserialize(self, json): 
-        self.__values = json
+    @classmethod
+    def _deserialize(cls, json): 
+        c = cls(**json)
+        return c
 
-    def _serialize(self): 
-        return self.__values 
+    def _serialize(self):
+        return self.__values
+
+
+def reconstruct(args, types):
+    """
+    Takes a tuple of values and a tuple of their types and properly reconstructs them
+    """
+    # Allow this to be a pass-through if they didn't provide any types to check
+    if not types:
+        return args
+    
+    l = list()
+    for x, y in zip(args, types):
+        if issubclass(y, Model):
+            l.append(y._deserialize(x))
+        else:
+            l.append(x)
+    return tuple(l)
 
 def want(*types):
     def real_decorator(function):
         def wrapper(*args, **kwargs):
             # return the types this call expects as a list if asked
-            if '_riffle_reflect' in kwargs: 
+            if '_riffle_reflect' in kwargs:
                 # return [x.__name__ for x in list(types)]
                 return list(types)
-
-            return function(*args)
+            
+            return function(*reconstruct(args, types))
         return wrapper
     return real_decorator
+
 
 def cuminReflect(handler):
     '''
@@ -115,7 +135,7 @@ def cuminReflect(handler):
 
     No arguments are denoted by an empty list. The decorator is @want() 
     '''
-    try: 
+    try:
         types = handler(_riffle_reflect=True)
     except TypeError, e:
         # If the method does not accept a _riffle_reflect, its not a wrapped function
@@ -125,10 +145,10 @@ def cuminReflect(handler):
 
     typeList = []
 
-    if types is None: 
+    if types is None:
         return typeList
     else:
-        for t in types: 
+        for t in types:
 
             # If primitive type, continue
             if t in [int, float, bool, str, list, dict]:
@@ -146,7 +166,7 @@ def cuminReflect(handler):
             elif issubclass(t, Model):
                 typeList.append(t.reflect())
 
-            else: 
+            else:
                 print 'Type ' + str(t) + ' is not natively serializible!'
 
     return typeList
@@ -155,12 +175,14 @@ def cuminReflect(handler):
 class RiffleError(Exception):
     pass
 
+
 class Unimplemented(RiffleError):
     pass
-    
+
 ##############################
 # Inline testing, please ignore
 ##############################
+
 
 class User(Model):
     name = "John Doe"
@@ -175,9 +197,9 @@ class User(Model):
 def fn(a, b):
     print 'Function Called!'
 
+
 def notSpeciffied(a, b):
     pass
-
 
 
 def testDecorators():

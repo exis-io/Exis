@@ -6,17 +6,14 @@ import json
 from greenlet import greenlet
 
 import pymantle
-from riffle.model import Model, cuminReflect
+from riffle.model import Model, cuminReflect, reconstruct
 
 '''
 I made a mistake. Deferreds should only cover success/failure callbacks, while the handlers
 are only for register/subscribe
-<<<<<<< HEAD
-=======
 
 Fixing the osx python version: 
     https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Common-Issues.md#python-segmentation-fault-11-on-import-some_python_module
->>>>>>> f2e18e49bf8dd889f4359ce8faa5a92a3f4d6426
 '''
 
 
@@ -40,13 +37,15 @@ class Deferred(object):
 
     def wait(self, *types):
         ''' Wait until the results of this invocation are resolved '''
-        # TODO: pass typelist down to call for later checking
 
         # Pass our ids so the parent knows when to reinvoke
         self.green = greenlet.getcurrent()
         results = self.green.parent.switch(self)
-        return results
-
+        r = reconstruct(results, types)
+        if r:
+            return r[0] if len(r) == 1 else r
+        else:
+            return r
 
 class App(object):
 
@@ -77,7 +76,7 @@ class App(object):
 
                 # Handle success seperate from failures-- Might be able to just pass in an appropriate exception
                 if d.green is not None:
-                    print 'Reentering deffered with ', args
+                    #print 'Reentering deffered with ', args
                     d = d.green.switch(*args)
 
                     # If user code called .wait() agaain we get another deferred
@@ -171,14 +170,17 @@ class Domain(object):
 
     def publish(self, endpoint, *args):
         d = Deferred()
+        l = list()
+        for arg in args:
+            l.append(arg._serialize() if isinstance(arg, Model) else arg)
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
-        self.mantleDomain.Publish(endpoint, d.cb, d.eb, json.dumps(args))
+        self.mantleDomain.Publish(endpoint, d.cb, d.eb, json.dumps(l))
         return d
 
     def call(self, endpoint, *args):
         d = Deferred()
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
-        self.mantleDomain.Call(endpoint, d.cb, d.eb, json.dumps(args), json.dumps(cuminReflect(handler)))
+        self.mantleDomain.Call(endpoint, d.cb, d.eb, json.dumps(args), json.dumps([]))
         return d
 
     def leave(self):

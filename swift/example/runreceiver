@@ -1,1 +1,0 @@
-LD_LIBRARY_PATH=../swiftRiffle:$LD_LIBRARY_PATH ./receiver 
