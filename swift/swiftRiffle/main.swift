@@ -3,7 +3,7 @@
 
 import Foundation
 
-SetLogLevelInfo()
+SetLogLevelDebug()
 SetFabricLocal()
 
 class Dog: Model {

@@ -44,6 +44,7 @@ func serializeArguments(args: [Any]) -> [Any] {
     return ret
 }
 
+// Just here for testing right now, will end up in Cumin
 public extension Domain {
     public func call<A: PR>(endpoint: String, _ callArguments: Any..., _ fn: (A) -> ()) -> Deferred {
         return _call(endpoint, callArguments) { args in
