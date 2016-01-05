@@ -3,9 +3,8 @@
 
 import Foundation
 
-SetLogLevelDebug()
+SetLogLevelInfo()
 SetFabricLocal()
-
 
 class Dog: Model {
     var name = "Fido"
@@ -24,7 +23,7 @@ class Sender: Domain {
         // Publish the object and assorted other arguments
         publish("xs.damouse.alpha/sub", 1, ["Hey", "There"], dog)
         
-        // Ca; with assorted arguments, stipulating the resulting return types
+        // Call with assorted arguments, stipulating the resulting return types
         call("xs.damouse.alpha/reg", "Johnathan", "Seed") { (a: String) in
             print("Call received: ", a)
         }
@@ -45,7 +44,6 @@ class Receiver: Domain {
         }
         
         subscribe("sub") { (a: Int, b: [String], c: Dog) in
-            //print("Received publish! \(args)")
             print("Received publish: \(a), with list: \(b), and pup: \(c.description)")
         }
     }

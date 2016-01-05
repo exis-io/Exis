@@ -11,6 +11,10 @@
 import Foundation
 
 public class Deferred {
+    // Callback and Errback ids
+    var cb: UInt64 = 0
+    var eb: UInt64 = 0
+    
     var callback: ([Any] -> Any?)? = nil
     var errback: ([Any] -> Any?)? = nil
     
@@ -20,6 +24,15 @@ public class Deferred {
     var onCallbackAssigned: (([Any]) -> ())? = nil
     
     public init() {}
+    
+    public init(domain: Domain) {
+        // Automatically creates and sets callback and errback assignments for the given domain
+        cb = CBID()
+        eb = CBID()
+        
+        domain.deferreds[eb] = self
+        domain.deferreds[cb] = self
+    }
     
     // Final, internal implementation of addCallback
     func _then(fn: ([Any]) -> Any?) -> Deferred {

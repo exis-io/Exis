@@ -56,12 +56,11 @@ public class Domain {
     public var mantleDomain: UnsafeMutablePointer<Void>
     public var delegate: Delegate?
     
-    public var handlers: [UInt64: [Any] -> ()] = [:]
     public var invocations: [UInt64: [Any] -> ()] = [:]
     public var registrations: [UInt64: [Any] -> Any?] = [:]
     
     var deferreds: [UInt64: Deferred] = [:]
-    
+    var handlers: [UInt64: [Any] -> ()] = [:]
     
     public init(name: String) {
         mantleDomain = NewDomain(name.cString())
@@ -72,39 +71,32 @@ public class Domain {
     }
     
     public func _subscribe(endpoint: String, fn: [Any] -> ()) -> Deferred {
-        let cb = CBID()
-        let eb = CBID()
         let hn = CBID()
-        
-        Subscribe(self.mantleDomain, endpoint.cString(), cb, eb, hn, "[]".cString())
         handlers[hn] = fn
-        return Deferred()
+        
+        let d = Deferred(domain: self)
+        Subscribe(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, "[]".cString())
+        return d
     }
     
     public func _register(endpoint: String, fn: [Any] -> Any) -> Deferred {
-        let cb = CBID()
-        let eb = CBID()
-        let hn = CBID() 
-
-        Register(self.mantleDomain, endpoint.cString(), cb, eb, hn, "[]".cString())
+        let hn = CBID()
         registrations[hn] = fn
+
+        let d = Deferred(domain: self)
+        Register(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, "[]".cString())
         return Deferred()
     }
 
     public func publish(endpoint: String, _ args: Any...) -> Deferred {
-        let cb = CBID()
-        let eb = CBID()
-        
-        Publish(self.mantleDomain, endpoint.cString(), cb, eb, marshall(serializeArguments(args)))
+        let d = Deferred(domain: self)
+        Publish(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)))
         return Deferred()
     }
     
     public func _call(endpoint: String, _ args: [Any], handler: [Any] -> ()) -> Deferred {
-        let cb = CBID()
-        let eb = CBID()
-
-        Call(self.mantleDomain, endpoint.cString(), cb, eb, marshall(serializeArguments(args)), "[]".cString())
-        invocations[cb] = handler
+        let d = Deferred(domain: self)
+        Call(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)), "[]".cString())
         return Deferred()
     }
     

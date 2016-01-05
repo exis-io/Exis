@@ -42,7 +42,6 @@ func decode(p: GoSlice) -> (UInt64, [Any]) {
     let int8Ptr = unsafeBitCast(p.data, UnsafePointer<Int8>.self)
     let dataString = String.fromCString(int8Ptr)!
     
-    print("Deserializing: \(dataString)")
     guard var data = try! JSONParser.parse(dataString) as? [Any] else {
         print("DID NOT RECEIVE ARRAY BACK!")
         return (UInt64(0), [])
