@@ -41,9 +41,16 @@ func TestSoftCumin(t *testing.T) {
 	})
 
 	Convey("Failed primitives checks", t, func() {
-		Convey("Should only accept numbers", func() {
+		Convey("Should not accept booleans as floats", func() {
 			i := true
 			So(softCumin([]interface{}{"float"}, []interface{}{i}), ShouldNotBeNil)
+		})
+	})
+
+	Convey("Successful array checks", t, func() {
+		Convey("Should accept arrays of primitives", func() {
+			i := []int{1, 2}
+			So(softCumin([]interface{}{"[int]"}, []interface{}{i}), ShouldNotBeNil)
 		})
 	})
 }

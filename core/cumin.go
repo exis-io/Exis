@@ -80,6 +80,8 @@ func softCumin(types []interface{}, args []interface{}) error {
             }
 
         case reflect.Slice:
+            // INCORRECT-- should iterate over values within the array, assuming a singly typed array
+            
             if nestedSlice, ok := expected.([]interface{}); !ok {
                 return fmt.Errorf("Cumin: got Array for argument #%d, expected %s", i, expected)
             } else if e := softCumin(nestedSlice, x.([]interface{})); e != nil {   
