@@ -63,6 +63,7 @@ public class Domain {
     var deferreds: [UInt64: Deferred] = [:]
     var handlers: [UInt64: [Any] -> ()] = [:]
     
+    
     public init(name: String) {
         mantleDomain = NewDomain(name.cString())
     }
@@ -86,26 +87,40 @@ public class Domain {
 
         let d = Deferred(domain: self)
         Register(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, "[]".cString())
-        return Deferred()
+        return d
     }
 
     public func publish(endpoint: String, _ args: Any...) -> Deferred {
         let d = Deferred(domain: self)
         Publish(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)))
-        return Deferred()
+        return d
     }
     
     public func _call(endpoint: String, _ args: [Any], handler: [Any] -> ()) -> Deferred {
         let d = Deferred(domain: self)
         Call(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)), "[]".cString())
-        return Deferred()
+        return d
     }
     
     public func receive() {
         while true {
             var (i, args) = decode(Receive(self.mantleDomain))
-            print("Receive loop has args: ", args)
-            if let fn = handlers[i] {
+            
+            if let d = deferreds[i] {
+                // remove the deferred (should this ever be optional?)
+                deferreds[d.cb] = nil
+                deferreds[d.eb] = nil
+                
+                if d.cb == i {
+                    d.callback(args)
+                }
+                
+                if d.eb == i {
+                    d.errback(args)
+                }
+            }
+            
+            else if let fn = handlers[i] {
                 fn(args)
             } else if let fn = invocations[i] {
                 fn(args)

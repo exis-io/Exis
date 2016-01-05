@@ -62,36 +62,6 @@ func marshall(args: Any...) -> UnsafeMutablePointer<Int8> {
     return jsonString.cString()
 }
 
-// Given a goslice, return the packed arugments within
-//func unmarshall(slice: GoSlice) -> [Any] {
-//    let int8Ptr = unsafeBitCast(slice.data, UnsafePointer<Int8>.self)
-//    let dataString = String.fromCString(int8Ptr)!
-//    
-//    let data = try! JSONParser.parse(dataString).arrayValue!
-//    return data
-//}
-
-// Orphaned helper methods from old iosRiffle
-// extension RangeReplaceableCollectionType where Generator.Element : Equatable {
-    
-//     // Remove first collection element that is equal to the given `object`:
-//     mutating func removeObject(object : Generator.Element) {
-//         if let index = self.indexOf(object) {
-//             self.removeAtIndex(index)
-//         }
-//     }
-// }
-
-// func env(key: String, _ normal: String) -> String {
-//     if let result = NSProcessInfo.processInfo().environment[key] {
-//         return result
-//     } else {
-//         Riffle.debug("Unable to extract environment variable \(key). Using \(normal) instead")
-//         return normal
-//     }
-// }
-
-
 public func SetFabric(url: String) {
     MantleSetFabric(url.cString())
 }

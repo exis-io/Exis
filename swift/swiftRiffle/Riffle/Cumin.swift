@@ -93,9 +93,7 @@ public extension Domain {
 	}
 
 	public func subscribe<A: PR, B: PR, C: PR>(endpoint: String, _ fn: (A, B, C) -> ()) -> Deferred {
-        print("Shotgun expecting:", A.self, B.self, C.self)
 		return _subscribe(endpoint) { a in
-            print("Received: ", a)
             return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2])
         }
 	}

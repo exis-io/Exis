@@ -15,8 +15,8 @@ public class Deferred {
     var cb: UInt64 = 0
     var eb: UInt64 = 0
     
-    var callback: ([Any] -> Any?)? = nil
-    var errback: ([Any] -> Any?)? = nil
+    var callbackFuntion: ([Any] -> Any?)? = nil
+    var errbackFunction: ([Any] -> Any?)? = nil
     
     var next: Deferred?
     
@@ -35,7 +35,7 @@ public class Deferred {
     }
     
     // Final, internal implementation of addCallback
-    func _then(fn: ([Any]) -> Any?) -> Deferred {
+    public func then(fn: () -> ()) -> Deferred {
         next = Deferred()
         
         if let cuminication = onCallbackAssigned {
@@ -43,28 +43,48 @@ public class Deferred {
             cuminication([])
         }
         
+        // Missing logic here for all the calls
+        callbackFuntion = { a in
+            fn()
+            return nil
+        }
+        
         return next!
     }
     
     public func error(fn: (String) -> ()) -> Deferred {
         next = Deferred()
-        errback = { a in fn(a[0] as! String) }
+        errbackFunction = { a in fn(a[0] as! String) }
         return next!
     }
     
     // TODO: try/catch the callback and errback, trigger the next one if appropriate
     public func callback(args: [Any]) -> Any? {
-        if let cb = callback {
+        if let cb = callbackFuntion {
+             // if the next result is a deferred, wait for it to complete before returning (?)
             return cb(args)
         } else {
+            // follow the chain, propogate the calback to the next deferred
+            if let n = next {
+                n.callback(args)
+            }
+            
+            // No chain exists. Do nothing
             return nil
         }
     }
     
     public func errback(args: [Any]) -> Any? {
-        if let eb = errback {
+        if let eb = errbackFunction {
             return eb(args)
         } else {
+            // Follow the chain, propogate the error to the next deferred
+            if let n = next {
+                n.errback(args)
+            }
+            
+            // No chain exists. Send the error to some well-known place
+            WarnLog("Unhandled error: \(args)")
             return nil
         }
     }
