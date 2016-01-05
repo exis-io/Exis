@@ -61,37 +61,41 @@ public class Domain {
         mantleDomain = Subdomain(superdomain.mantleDomain, name.cString())
     }
     
-    public func _subscribe(endpoint: String, fn: [Any] -> ()) {
+    public func _subscribe(endpoint: String, fn: [Any] -> ()) -> Deferred {
         let cb = CBID()
         let eb = CBID()
         let hn = CBID()
         
         Subscribe(self.mantleDomain, endpoint.cString(), cb, eb, hn, "[]".cString())
         handlers[hn] = fn
+        return Deferred()
     }
     
-    public func _register(endpoint: String, fn: [Any] -> Any) {
+    public func _register(endpoint: String, fn: [Any] -> Any) -> Deferred {
         let cb = CBID()
         let eb = CBID()
         let hn = CBID() 
 
         Register(self.mantleDomain, endpoint.cString(), cb, eb, hn, "[]".cString())
         registrations[hn] = fn
+        return Deferred()
     }
 
-    public func publish(endpoint: String, _ args: Any...) {
+    public func publish(endpoint: String, _ args: Any...) -> Deferred {
         let cb = CBID()
         let eb = CBID()
         
         Publish(self.mantleDomain, endpoint.cString(), cb, eb, marshall(serializeArguments(args)))
+        return Deferred()
     }
     
-    public func _call(endpoint: String, _ args: [Any], handler: [Any] -> ()) {
+    public func _call(endpoint: String, _ args: [Any], handler: [Any] -> ()) -> Deferred {
         let cb = CBID()
         let eb = CBID()
 
         Call(self.mantleDomain, endpoint.cString(), cb, eb, marshall(serializeArguments(args)), "[]".cString())
         invocations[cb] = handler
+        return Deferred()
     }
     
     public func receive() {

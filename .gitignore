@@ -39,3 +39,5 @@ swift/osxCrust/Build/
 swift/example/Packages/*
 swift/example/Example
 swift/swiftRiffle/ModuleCache/
+
+cumin.txt

@@ -2,18 +2,18 @@
 import Foundation
 
 public extension Domain {
-    public func subscribe<A: PR, B: PR, C: PR>(endpoint: String, _ fn: (A, B, C) -> ()) {
-        _subscribe(endpoint) { a in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
+    public func subscribe<A: PR, B: PR, C: PR>(endpoint: String, _ fn: (A, B, C) -> ()) -> Deferred {
+        return _subscribe(endpoint) { a in fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
     }
     
-    public func register<A: PR, B: PR, R: PR>(endpoint: String, _ fn: (A, B) -> R) {
-        _register(endpoint) { args in
+    public func register<A: PR, B: PR, R: PR>(endpoint: String, _ fn: (A, B) -> R) -> Deferred {
+        return _register(endpoint) { args in
             return fn(A.deserialize(args[0]) as! A, B.deserialize(args[1]) as! B)
         }
     }
     
-    public func call<A: PR>(endpoint: String, _ callArguments: Any..., _ fn: (A) -> ()) {
-        _call(endpoint, callArguments) { args in
+    public func call<A: PR>(endpoint: String, _ callArguments: Any..., _ fn: (A) -> ()) -> Deferred {
+        return _call(endpoint, callArguments) { args in
             fn(A.deserialize(args[0]) as! A)
         }
     }
