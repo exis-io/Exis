@@ -257,19 +257,20 @@ func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
 	if err := softCumin(binding.expectedTypes, msg.Arguments); err == nil {
 		c.app.CallbackSend(binding.callback, msg.Arguments...)
 	} else {
-        Info("Cuminication failed: %v", err)
+        Warn("%v", err)
 
-		tosend := &errorMessage{
-            Type: pUBLISH,
-            Request: msg.Publication,
-            Details: make(map[string]interface{}),
-            Arguments: msg.Arguments,
-            Error: err.Error(),
-        }
+        // Errors are not emitted back to the publisher. Because its dangerous. 
+		// tosend := &errorMessage{
+  //           Type: pUBLISH,
+  //           Request: msg.Publication,
+  //           Details: make(map[string]interface{}),
+  //           Arguments: msg.Arguments,
+  //           Error: err.Error(),
+  //       }
 
-		if err := c.app.Send(tosend); err != nil {
-            //TODO: Warn the application 
-			Warn("error sending message:", err)
-		}
+		// if err := c.app.Send(tosend); err != nil {
+  //           //TODO: Warn the application 
+		// 	Warn("error sending message:", err)
+		// }
 	}
 }

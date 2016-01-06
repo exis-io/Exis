@@ -89,21 +89,21 @@ func TestSoftCumin(t *testing.T) {
         })
     })
 
-    // Convey("Lists of objects", t, func() {
-    //     Convey("Should succeed on simple collections", func() {
-    //         incoming := []byte(`[[{"a":"alpha","b":1},{"a":"beta","b":2}]]`)
-    //         expected := []byte(`[[{"a":"str","b":"int"}]]`)
+    Convey("Lists of objects", t, func() {
+        Convey("Should succeed on simple collections", func() {
+            incoming := []byte(`[[{"a":"alpha","b":1},{"a":"beta","b":2}]]`)
+            expected := []byte(`[[{"a":"str","b":"int"}]]`)
 
-    //         So(softCumin(unmarshalForTests(expected), unmarshalForTests(incoming)), ShouldBeNil)
-    //     })
+            So(softCumin(unmarshalForTests(expected), unmarshalForTests(incoming)), ShouldBeNil)
+        })
 
-    //     // Convey("Should fail on bad keys", func() {
-    //     //     incoming := []byte(`[[{"a":"alpha","b":1},{"a":"beta","b":true}]]`)
-    //     //     expected := []byte(`[[{"a":"str","b":"bool"}]]`)
+        // Convey("Should fail on bad keys", func() {
+        //     incoming := []byte(`[[{"a":"alpha","b":1},{"a":"beta","b":true}]]`)
+        //     expected := []byte(`[[{"a":"str","b":"bool"}]]`)
 
-    //     //     So(softCumin(unmarshalForTests(expected), unmarshalForTests(incoming)), ShouldNotBeNil)
-    //     // })
-    // })
+        //     So(softCumin(unmarshalForTests(expected), unmarshalForTests(incoming)), ShouldNotBeNil)
+        // })
+    })
 }
 
 // Functions for cuminication

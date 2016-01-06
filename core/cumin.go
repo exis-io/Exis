@@ -48,7 +48,7 @@ func Cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 // Checks the types of the provided positional arguments and the receiver.
 func softCumin(types []interface{}, args []interface{}) error {
     // Until the node issue is resolved, softCumin isnt going to happen
-    return nil
+    // return nil
     
     //fmt.Printf("SoftCumin: %v against %v\n", types, args)
 

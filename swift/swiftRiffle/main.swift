@@ -22,7 +22,7 @@ class Sender: Domain {
         dog.age = 88
         
         // Publish the object and assorted other arguments
-        publish("xs.damouse.alpha/sub", 1, ["Hey", "There"], dog).then {
+        publish("xs.damouse.alpha/sub", 1, ["Hey", "There", "Bob"], dog).then {
             print("Publish succeeded")
         }.error { reason in
             print("An error occured", reason)
@@ -46,18 +46,10 @@ class Receiver: Domain {
         register("reg") { (first: String, second: String) -> String in
             print("Received call! Args: ", first, second)
             return "Receiver says hi!"
-        }.then {
-            print("Registration succeeded")
-        }.error { reason in
-            print("An error occured", reason)
         }
         
         subscribe("sub") { (a: Int, b: [String], c: Dog) in
             print("Received publish: \(a), with list: \(b), and pup: \(c.description)")
-        }.then {
-            print("Subscription succeeded")
-        }.error { reason in
-            print("An error occured", reason)
         }
     }
     
