@@ -10,6 +10,11 @@
 
 import Foundation
 
+#if os(Linux)
+    import mantle
+#endif
+
+
 public class Deferred {
     // Callback and Errback ids
     var cb: UInt64 = 0

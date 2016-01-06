@@ -3,19 +3,11 @@ import Riffle
 
 print("Starting example test")
 
-Riffle.LogLevelDebug()
+Riffle.LogLevelInfo()
 Riffle.FabricLocal()
 
-Riffle.ApplicationLog("Hello!")
+Receiver(name: "xs.damouse.alpha").join()
 
-// Setup receiver
-let receiver = Receiver(name: "xs.damouse.alpha")
-receiver.delegate = receiver
-receiver.join()
-
-// Setup sender
-let sender = Sender(name: "xs.damouse.beta")
-sender.delegate = sender
-sender.join()
+Sender(name: "xs.damouse.beta").join()
 
 

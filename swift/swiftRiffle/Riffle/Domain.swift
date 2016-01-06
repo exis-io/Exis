@@ -123,7 +123,8 @@ public class Domain {
                     // TODO: handle tuple returns
                     Yield(mantleDomain, UInt64(resultId), marshall([ret]))
                 } else {
-                    Yield(mantleDomain, UInt64(resultId), marshall([]))
+                    let empty: [Any] = []
+                    Yield(mantleDomain, UInt64(resultId), marshall(empty))
                 }
             }
         }
