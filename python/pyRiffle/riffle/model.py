@@ -1,4 +1,4 @@
-
+import inspect
 import sys
 import os
 
@@ -123,7 +123,18 @@ def want(*types):
                 # return [x.__name__ for x in list(types)]
                 return list(types)
 
-            return function(*reconstruct(args, types))
+            # Test if function looks like a method and set aside the first
+            # argument.  At first glance, inspect.ismethod should tell us this,
+            # but it doesn't, so for now we just look for a "self" argument.
+            pre_args = tuple()
+            argspec = inspect.getargspec(function).args
+            if argspec and argspec[0] == "self":
+                pre_args = args[0:1]
+                args = args[1:]
+
+            final_args = pre_args + reconstruct(args, types)
+
+            return function(*final_args)
         return wrapper
     return real_decorator
 
@@ -183,7 +194,6 @@ class Unimplemented(RiffleError):
 ##############################
 # Inline testing, please ignore
 ##############################
-
 
 class User(Model):
     name = "John Doe"

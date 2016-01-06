@@ -4,7 +4,7 @@
     can hold many Task objects which represents the actual code to execute.
 """
 
-import glob, re
+import glob, re, os
 
 from collections import defaultdict as ddict
 
@@ -58,31 +58,37 @@ class Examples:
     """
     def __init__(self):
         self.tasks = {k: ddict(lambda: TaskSet()) for k in LANGS.values()}
+        self.mylang = None
 
     @classmethod
     def find(cls, EXISPATH, lang=None):
-        thepath = lang or "*"
-        path = "{}/{}/example/*.{}".format(EXISPATH, thepath, LANGS.get(lang, "*"))
         c = cls()
-        files = glob.glob(path)
-        if(len(files) == 0):
-            print("!! No example files found")
-            return c
+        if lang:
+            c.mylang = lang
+        thepath = lang or "*"
         
-        for f in files:
-            # Skip file extensions that don't match
-            if(LANGS_EXT.get(f.split('.')[-1], None) is None):
-                continue
+        allFiles = list()
+        def walker(path):
+            for f in glob.glob("{}/*".format(path)):
+                if os.path.isdir(f) and "arbiter" not in f:
+                    walker(f)
+                elif os.path.isfile(f):
+                    if LANGS_EXT.get(f.split('.')[-1], None) is not None:
+                        allFiles.append(f)
+        walker(EXISPATH)
+        #print(allFiles)
+
+        for f in allFiles:
             c._parse(f)
         return c
 
-    def getTask(self, lang, task):
+    def getTask(self, task, lang=None):
         """
         Return specific task for a specific language or None
         """
-        t = self.tasks.get(LANGS[lang])
-        return self.tasks.get(LANGS[lang]).get(task, None)
-        
+        l = lang or self.mylang
+        t = self.tasks.get(LANGS[l])
+        return self.tasks.get(LANGS[l]).get(task, None)
 
     def getTasks(self, lang=None, task=None):
         """

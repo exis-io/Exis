@@ -92,7 +92,11 @@ class App(object):
                     self.deferreds[d.cb], self.deferreds[d.eb] = d, d
 
             elif i in self.subscriptions:
-                self.subscriptions[i](*args)
+                try:
+                    self.subscriptions[i](*args)
+                except Exception as error:
+                    print("Exception in subscription handler: {}".format(error))
+                    continue
 
             elif i in self.registrations:
                 returnId = args.pop(0)
