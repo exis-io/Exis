@@ -61,9 +61,6 @@ libriffmantle.so:
 	@echo "Building core..."
 	@go build -buildmode=c-shared -o assets/libriffmantle.so core/cMantle/main.go
 
-swiftclean: 
-
-
 clean: 
 	@-rm -f assets/libriffmantle.so assets/libriffmantle.h
 	@-rm -f swift/osxCrust/RiffleTest/riffle.a  swift/osxCrust/RiffleTest/riffle.h
@@ -71,7 +68,6 @@ clean:
 	@-rm -f assets/libriffmantle.so assets/libriffmantle.h >$(LOG) ||:
 	@$(MAKE) -C swift/mantle clean >$(LOG) ||:
 	@$(MAKE) -C swift/swiftRiffle/Riffle clean >$(LOG) ||:
-	@$(MAKE) -C swift/example clean >$(LOG) ||:
 
 
 # To debug and extract the build commands, check golang.org/x/mobile/cmd/gomobile/bind_iosapp.go

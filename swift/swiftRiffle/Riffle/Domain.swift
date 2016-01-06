@@ -67,6 +67,8 @@ public class Domain {
         let hn = CBID()
         handlers[hn] = fn
         
+        print("SWIFT: type representation: \(types)")
+
         let d = Deferred(domain: self)
         Subscribe(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(types))
         return d
