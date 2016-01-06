@@ -15,23 +15,50 @@ Compile Java:
 Run:
     java -classpath jna.jar:. Hello
 
+
 Above doesn't work. This looks very promising: 
     https://blog.dogan.io/2015/08/15/java-jni-jnr-go/
 
-Install this using Maven or some other tool
+Download jar, rename it to jnr-ffi.jar: 
+    http://mvnrepository.com/artifact/com.github.jnr/jnr-ffi/2.0.7
+
+Build shared: 
+    go build -buildmode=c-shared -o libmath.so math.go
+
+Compile and run: 
+    javac -classpath jnr-ffi.jar Hello.java MathLib.java
+    java -classpath jnr-ffi.jar:. Hello
+
 */
 
-import com.sun.jna.Library;
-import com.sun.jna.Native;
+// import jnr.ffi.LibraryLoader;
+
+// public class Hello {
+
+//     private static final MathLib MATH_LIB;
+
+//     static {
+//         MATH_LIB = LibraryLoader.create(MathLib.class).load("math");
+//     }
+
+//     public static void main(String[] args) {
+//         System.out.println(MATH_LIB.Multiply(12345, 67890));
+//         // output: 838102050
+//     }
+// }
+
+import jnr.ffi.LibraryLoader;
 
 public class Hello {
-    public interface Mantle extends Library {
-        public void HelloJava();
+    public static interface LibC {
+        long Multiply(long x, long y);
     }
 
-    static public void main(String argv[]) {
-        Mantle mantle = (Mantle) Native.loadLibrary("mantle", Mantle.class);
-        System.out.println(mantle);
-        mantle.HelloJava();
+    public static void main(String[] args) {
+        LibC libc = LibraryLoader.create(LibC.class).load("math");
+        System.out.println(libc.Multiply(12345, 67890));
+        // output: 838102050
+
+        //libc.puts("Hello, World");
     }
 }
