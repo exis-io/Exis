@@ -45,31 +45,48 @@ func Cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 	return ret, nil
 }
 
+/*
+   There are four cases softCumin can hit.
+       - Initial case: positional array of heterogenous elements (starting condition)
+       - Lists: array of homogenous elements checked against one type
+       - Dictionaries: dictionary of key/value pairs. Check key, value, and recursive
+       - Primitive: end case
+
+   The type of the next case is determined by reflecting the type of the expected element at that position.
+   Current version is not recursive, so dictionaries are not handled.
+
+Version from the test:
+    [int [str] map[a:str b:int]] against [1 [Hey There] map[b:1 a:alpha]]
+
+Version from swift:
+    [int [str] {name: str, age: int}] against [1 [Hey There] map[name:Billiam]]
+*/
+
 // Checks the types of the provided positional arguments and the receiver.
 func softCumin(types []interface{}, args []interface{}) error {
-	// Until the node issue is resolved, softCumin isnt going to happen
-	// return nil
+	fmt.Printf("SoftCumin: %v against %v\n", types, args)
 
-	//fmt.Printf("SoftCumin: %v against %v\n", types, args)
+	// Description to print on every failure
+	description := fmt.Sprintf("Types: %v, Arguments: %v", types, args)
 
 	if len(types) != len(args) {
-		return fmt.Errorf("Cumin: Invalid number of arguments, expected %d, receieved %s", len(types), len(args))
+		return fmt.Errorf("Cumin: Invalid number of arguments, expected %d, receieved %s. %v", len(types), len(args), description)
 	}
 
 	for i, x := range args {
 		argument := reflect.ValueOf(x)
 		expected := types[i]
 
-		Debug("Expected: %v expected type: %v, Argument: %v", expected, reflect.ValueOf(expected), x)
+		//Debug("Expected: %v expected type: %v, Argument: %v", expected, reflect.ValueOf(expected), x)
+		fmt.Printf("Expected: %v expected type: %v, Argument: %v\n", expected, reflect.TypeOf(expected), x)
 
 		// If the expected type is a string, we're looking for a primitive
 		if s, ok := expected.(string); ok {
 			if e := primitiveCheck(s, argument.Kind()); e != nil {
 				return e
 			}
-		} else if nestedSlice, ok := expected.([]string); ok {
-			// An array of strings indicates an array of primitives. Each element of the array must be of the same type
 
+		} else if nestedSlice, ok := expected.([]interface{}); ok {
 			if len(nestedSlice) != 1 {
 				return fmt.Errorf("Cumin: array expected at position #%d is not homogenous. %s", i, expected)
 			}
@@ -78,28 +95,11 @@ func softCumin(types []interface{}, args []interface{}) error {
 				return fmt.Errorf("Cant read interface list %v at position %d", x, i)
 			} else {
 				for _, v := range argumentList {
-					if e := primitiveCheck(nestedSlice[0], reflect.ValueOf(v).Kind()); e != nil {
+					if e := primitiveCheck(nestedSlice[0].(string), reflect.ValueOf(v).Kind()); e != nil {
 						return e
 					}
 				}
 			}
-		} else if _, ok := expected.([]map[string]interface{}); ok {
-			// TODO: arrays of objects
-
-			// fmt.Println("Array of objects, ", nestedSlice)
-			// if len(nestedSlice) != 1 {
-			//     return fmt.Errorf("Cumin: array expected at position #%d is not homogenous. %s", i, expected)
-			// }
-
-			// if argumentList, ok := x.([]map[string]interface{}); !ok {
-			//     return fmt.Errorf("Cant read dictionary %v at position %d", x, i)
-			// } else {
-			//     for _, v := range argumentList {
-			//         if e := mapCheck(nestedSlice[0], v); e != nil {
-			//             return e
-			//         }
-			//     }
-			// }
 		} else if nestedMap, ok := expected.(map[string]interface{}); ok {
 
 			if argumentMap, ok := x.(map[string]interface{}); !ok {
@@ -110,7 +110,7 @@ func softCumin(types []interface{}, args []interface{}) error {
 				}
 			}
 		} else {
-			return fmt.Errorf("Cumin: couldnt find primitive, list, or dictionary at #%d", i)
+			return fmt.Errorf("Cumin: couldnt find primitive, list, or dictionary at #%d. %v", i, description)
 		}
 	}
 
@@ -126,7 +126,7 @@ func primitiveCheck(expected string, argument reflect.Kind) error {
 		return nil
 	}
 
-	return fmt.Errorf("Cumin: got %s, expected %s", argument, expected)
+	return fmt.Errorf("Cumin: expecting primitive %s, got %s. %v", expected, argument, description)
 }
 
 // Recursively check an object. Return nil if the object matches the expected types
@@ -144,3 +144,20 @@ func mapCheck(expected map[string]interface{}, argument map[string]interface{}) 
 
 	return nil
 }
+
+// TODO: arrays of objects
+
+// fmt.Println("Array of objects, ", nestedSlice)
+// if len(nestedSlice) != 1 {
+//     return fmt.Errorf("Cumin: array expected at position #%d is not homogenous. %s", i, expected)
+// }
+
+// if argumentList, ok := x.([]map[string]interface{}); !ok {
+//     return fmt.Errorf("Cant read dictionary %v at position %d", x, i)
+// } else {
+//     for _, v := range argumentList {
+//         if e := mapCheck(nestedSlice[0], v); e != nil {
+//             return e
+//         }
+//     }
+// }

@@ -10,14 +10,14 @@ class Receiver: Riffle.Domain, Riffle.Delegate {
     override func onJoin() {
         print("Receiver joined!")
         
-        register("reg") { (first: String, second: String) -> String in
-            print("Received call! Args: ", first, second)
-            return "Receiver says hi!"
-        }.then {
-            print("Registration succeeded")
-        }.error { reason in
-            print("An error occured", reason)
-        }
+        // register("reg") { (first: String, second: String) -> String in
+        //     print("Received call! Args: ", first, second)
+        //     return "Receiver says hi!"
+        // }.then {
+        //     print("Registration succeeded")
+        // }.error { reason in
+        //     print("An error occured", reason)
+        // }
         
         // Example Pub/Sub Basic - This is a basic version of a pub/sub
         subscribe("sub") { (a: Int, b: [String], c: Dog) in

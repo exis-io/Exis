@@ -17,9 +17,9 @@ class Sender: Riffle.Domain, Riffle.Delegate  {
         }
         // End Example Pub/Sub Basic
         
-        call("xs.damouse.alpha/reg", "Johnathan", "Seed").then { (a: String) in
-            print("Call received: ", a)
-        }
+        // call("xs.damouse.alpha/reg", "Johnathan", "Seed").then { (a: String) in
+        //     print("Call received: ", a)
+        // }
     }
     
     override func onLeave() {

@@ -39,20 +39,24 @@ func TestSoftCumin(t *testing.T) {
 		})
 	})
 
-	// Convey("When expecting arrays", t, func() {
-	// 	Convey("Should accept arrays of primitives", func() {
-	// 		So(softCumin(unmarshal(`[["int"]]`), unmarshal(`[[1, 2]]`)), ShouldBeNil)
-	// 	})
+	Convey("When expecting arrays", t, func() {
+		Convey("Should accept arrays of ints", func() {
+			So(softCumin(unmarshal(`[["int"]]`), unmarshal(`[[1, 2]]`)), ShouldBeNil)
+		})
 
-	// 	Convey("Should not accept booleans as ints", func() {
-	// 		So(softCumin(unmarshal(`[["int"]]`), unmarshal(`[[false, true, true]]`)), ShouldNotBeNil)
+		Convey("Should accept arrays of strings", func() {
+			So(softCumin(unmarshal(`[["str"]]`), unmarshal(`[["alpha", "beta"]]`)), ShouldBeNil)
+		})
 
-	// 	})
+		Convey("Should not accept booleans as ints", func() {
+			So(softCumin(unmarshal(`[["int"]]`), unmarshal(`[[false, true, true]]`)), ShouldNotBeNil)
 
-	// 	Convey("Should not accept non homogenous arrays", func() {
-	// 		So(softCumin(unmarshal(`[["int"]]`), unmarshal(`[[1, true, true]]`)), ShouldNotBeNil)
-	// 	})
-	// })
+		})
+
+		Convey("Should not accept non homogenous arrays", func() {
+			So(softCumin(unmarshal(`[["int"]]`), unmarshal(`[[1, true, true]]`)), ShouldNotBeNil)
+		})
+	})
 
 	Convey("When expecting dictionaries", t, func() {
 		Convey("Should accept a simple object", func() {
@@ -74,6 +78,15 @@ func TestSoftCumin(t *testing.T) {
 			expected := `[{"a":"str","b":"int"}]`
 
 			So(softCumin(unmarshal(expected), unmarshal(incoming)), ShouldNotBeNil)
+		})
+	})
+
+	Convey("When expecting composite", t, func() {
+		Convey("Should accept primitives, strings, and a dictionary", func() {
+			incoming := `[1, ["Hey", "There"], {"a":"alpha","b":1}]`
+			expected := `["int", ["str"], {"a":"str","b":"int"}]`
+
+			So(softCumin(unmarshal(expected), unmarshal(incoming)), ShouldBeNil)
 		})
 	})
 

@@ -147,12 +147,10 @@ func (c domain) Subscribe(endpoint string, requestId uint64, types []interface{}
 	endpoint = makeEndpoint(c.name, endpoint)
 	sub := &subscribe{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
 
-    Debug("Subscribing with types: %s", types)
-
 	if msg, err := c.app.requestListenType(sub, "*core.subscribed"); err != nil {
 		return err
 	} else {
-		Info("Subscribed: %s", endpoint)
+		Info("Subscribed: %s %v", endpoint, types)
 		subbed := msg.(*subscribed)
 		c.subscriptions[subbed.Subscription] = &boundEndpoint{requestId, endpoint, types}
 		return nil
@@ -163,12 +161,10 @@ func (c domain) Register(endpoint string, requestId uint64, types []interface{})
 	endpoint = makeEndpoint(c.name, endpoint)
 	register := &register{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
 
-	Debug("Registering with types: %s", types)
-
 	if msg, err := c.app.requestListenType(register, "*core.registered"); err != nil {
 		return err
 	} else {
-		Info("Registered: %s", endpoint)
+		Info("Registered: %s %v", endpoint, types)
 		reg := msg.(*registered)
 		c.registrations[reg.Registration] = &boundEndpoint{requestId, endpoint, types}
 		return nil
@@ -185,7 +181,7 @@ func (c domain) Publish(endpoint string, args []interface{}) error {
 }
 
 func (c domain) Call(endpoint string, args []interface{}, types []interface{}) ([]interface{}, error) {
-    // TODO: Most likely have to pass in a requestID here to catch type assertions on the outbound
+	// TODO: Most likely have to pass in a requestID here to catch type assertions on the outbound
 	endpoint = makeEndpoint(c.name, endpoint)
 	call := &call{Request: NewID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
 
@@ -247,7 +243,7 @@ func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 		}
 
 		if err := c.app.Send(tosend); err != nil {
-            //TODO: Warn the application 
+			//TODO: Warn the application
 			Warn("error sending message:", err)
 		}
 	}
@@ -257,19 +253,19 @@ func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
 	if err := softCumin(binding.expectedTypes, msg.Arguments); err == nil {
 		c.app.CallbackSend(binding.callback, msg.Arguments...)
 	} else {
-        Warn("%v", err)
+		Warn("%v", err)
 
-        // Errors are not emitted back to the publisher. Because its dangerous. 
+		// Errors are not emitted back to the publisher. Because its dangerous.
 		// tosend := &errorMessage{
-  //           Type: pUBLISH,
-  //           Request: msg.Publication,
-  //           Details: make(map[string]interface{}),
-  //           Arguments: msg.Arguments,
-  //           Error: err.Error(),
-  //       }
+		//           Type: pUBLISH,
+		//           Request: msg.Publication,
+		//           Details: make(map[string]interface{}),
+		//           Arguments: msg.Arguments,
+		//           Error: err.Error(),
+		//       }
 
 		// if err := c.app.Send(tosend); err != nil {
-  //           //TODO: Warn the application 
+		//           //TODO: Warn the application
 		// 	Warn("error sending message:", err)
 		// }
 	}
