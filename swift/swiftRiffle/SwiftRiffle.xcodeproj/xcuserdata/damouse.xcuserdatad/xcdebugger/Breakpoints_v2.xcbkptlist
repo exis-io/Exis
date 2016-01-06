@@ -10,11 +10,43 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Riffle/Json.swift"
-            timestampString = "473202936.697851"
+            timestampString = "473810453.222387"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "358"
-            endingLineNumber = "358">
+            startingLineNumber = "365"
+            endingLineNumber = "365">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "SwiftRiffle.JSON.value.getter : protocol&lt;&gt;"
+                  moduleName = "SwiftRiffle"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/damouse/Documents/riffle/swift/swiftRiffle/Riffle/Json.swift"
+                  timestampString = "473810460.956016"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "365"
+                  endingLineNumber = "365"
+                  offsetFromSymbolStart = "885">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "SwiftRiffle.JSON.value.getter : protocol&lt;&gt;"
+                  moduleName = "SwiftRiffle"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/damouse/Documents/riffle/swift/swiftRiffle/Riffle/Json.swift"
+                  timestampString = "473810460.956362"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "365"
+                  endingLineNumber = "365"
+                  offsetFromSymbolStart = "909">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

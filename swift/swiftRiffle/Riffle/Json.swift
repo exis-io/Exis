@@ -283,6 +283,12 @@ public enum JSON {
             if let value = value as? Double {
                 jsonDictionary[key] = JSON.from(value)
             }
+            if let value = value as? Float {
+                jsonDictionary[key] = JSON.from(Double(value))
+            }
+            if let value = value as? Int {
+                jsonDictionary[key] = JSON.from(Double(value))
+            }
             if let value = value as? String {
                 jsonDictionary[key] = JSON.from(value)
             }

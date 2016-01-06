@@ -48,7 +48,7 @@ extension Model: Convertible {
         var ret: [String: Any] = [:]
         
         for property in self.propertyNames() {
-            ret[property] = self[property]
+            ret[property] = self[property]!
         }
         
         return ret
