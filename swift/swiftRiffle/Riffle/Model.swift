@@ -58,13 +58,12 @@ extension Model: Convertible {
     
     public static func representation() -> Any {
         let me = self.init()
-        
-        var fields: [String: Any] = [:]
-        
-        for property in me.propertyNames() {
-            fields[property] = me[property]!.dynamicType.representation()
-            print("Property: \(property): \(fields[property]!)")
-        }
+//        var fields: [String: Any] = [:]
+//        
+//        for property in me.propertyNames() {
+//            fields[property] = me[property]!.dynamicType.representation()
+//            print("Property: \(property): \(fields[property]!)")
+//        }
         
         return "{\(me.propertyNames().map { "\($0): \(me[$0]!.dynamicType.representation())"}.joinWithSeparator(", "))}"
     }

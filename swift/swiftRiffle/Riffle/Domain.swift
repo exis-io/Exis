@@ -68,7 +68,7 @@ public class Domain {
         handlers[hn] = fn
         
         let d = Deferred(domain: self)
-        Subscribe(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, "[]".cString())
+        Subscribe(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(types))
         return d
     }
     
@@ -77,7 +77,7 @@ public class Domain {
         registrations[hn] = fn
 
         let d = Deferred(domain: self)
-        Register(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, "[]".cString())
+        Register(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(types))
         return d
     }
 
