@@ -1,13 +1,15 @@
 
+import Foundation
 import Riffle
 
-print("Starting example test")
-
-Riffle.LogLevelInfo()
+Riffle.LogLevelDebug()
 Riffle.FabricLocal()
 
-Receiver(name: "xs.damouse.alpha").join()
-
-Sender(name: "xs.damouse.beta").join()
+// Set an environment variable to launch either the sender or the receiver
+if NSProcessInfo.processInfo().environment["SENDER"] != nil {
+    Sender(name: "xs.damouse.beta").join()
+} else {
+    Receiver(name: "xs.damouse.alpha").join()
+}
 
 

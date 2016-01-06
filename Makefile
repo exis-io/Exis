@@ -20,8 +20,8 @@ swift: printcheck libriffmantle.so
 	@$(MAKE) -C swift/swiftRiffle/Riffle all >>$(LOG)
 
 	@echo "Building example..."
-	@$(MAKE) -C swift/example all >>$(LOG)
-	@echo "Now 'cd swift/example' and run './Example'"
+	@swift build --chdir swift/example
+	@echo "Now 'cd swift/example' and run './.build/debug/Example', 'SENDER=true ./.build/debug/Example'"
 
 osx: 
 	GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o swift/swiftRiffle/riffle.a core/cMantle/main.go
