@@ -16,18 +16,9 @@ biddly
 *.a
 *.o
 *.so
-
-libriff.h
-libriff.so
-
-riffle.h
-riffle.a
+*.jar
 
 libriffmantle.h
-libriffmantle.so
-
-riffmantle.h
-riffmantle.so
 
 IosMantle.framework/
 
@@ -41,3 +32,5 @@ swift/example/Example
 swift/swiftRiffle/ModuleCache/
 
 cumin.txt
+
+*.class

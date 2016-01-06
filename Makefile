@@ -1,7 +1,7 @@
 
 all: swift osx ios python js
 
-.PHONY: python js clean osx ios
+.PHONY: python js clean osx ios java
 
 LOG="./build.log"
 
@@ -43,7 +43,10 @@ ios:
 
 	# cp assets/riffmantle.a swift/twopointone/Pod/Classes/riffmantle.a
 	# cp assets/riffmantle.h swift/twopointone/Pod/Classes/riffmantle.h
-	
+
+java: 
+	@echo "Building core..."
+	@go build -buildmode=c-shared -o java/javaRiffle/libmantle.so core/javaMantle/main.go
 
 python: 
 	gopy bind github.com/exis-io/core/pyMantle
