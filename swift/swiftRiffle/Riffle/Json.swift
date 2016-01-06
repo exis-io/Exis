@@ -622,7 +622,7 @@ public class GenericJSONParser<ByteSequence: CollectionType where ByteSequence.G
             return JSON
         } else {
             throw JSONParseError.ExtraTokenError(
-                reason: "extra tokens found",
+                reason: "extra tokens foundd",
                 lineNumber: lineNumber,
                 columnNumber: columnNumber
             )

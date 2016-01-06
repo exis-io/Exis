@@ -42,6 +42,10 @@ func decode(p: GoSlice) -> (UInt64, [Any]) {
     let int8Ptr = unsafeBitCast(p.data, UnsafePointer<Int8>.self)
     let dataString = String.fromCString(int8Ptr)!
     
+    //var scrubbed = dataString.stringByReplacingOccurrencesOfString("\"", withString: "'")
+    
+    print("DAAATASTRING: \(dataString)")
+    
     guard var data = try! JSONParser.parse(dataString) as? [Any] else {
         print("DID NOT RECEIVE ARRAY BACK!")
         return (UInt64(0), [])
@@ -58,7 +62,7 @@ func decode(p: GoSlice) -> (UInt64, [Any]) {
 func marshall(args: [Any]) -> UnsafeMutablePointer<Int8> {
     let json = JSON.from(args)
     let jsonString = json.serialize(DefaultJSONSerializer())
-    //print("Args: \(args) Json: \(json) String: \(jsonString)")
+    print("Args: \(args) Json: \(json) String: \(jsonString)")
     return jsonString.cString()
 }
 

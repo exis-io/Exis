@@ -61,6 +61,11 @@ Version from the test:
 Version from swift:
     [int [str] map[age:int name:str]]
     [int [str] {name: str, age: int}] against [1 [Hey There] map[name:Billiam]]
+
+
+Errors: This appears to be incorrect
+    [core.cumin:85] Expected: [str] expected type: string, Argument: [Hey There Bob]
+    Expected type should be list, not string
 */
 
 // Checks the types of the provided positional arguments and the receiver.
@@ -78,7 +83,7 @@ func softCumin(types []interface{}, args []interface{}) error {
 		argument := reflect.ValueOf(x)
 		expected := types[i]
 
-		Debug("Expected: %v expected type: %v, Argument: %v", expected, reflect.ValueOf(expected), x)
+		Debug("Expected: %v expected type: %v, Argument: %v", expected, reflect.TypeOf(expected), x)
 		//fmt.Printf("Expected: %v expected type: %v, Argument: %v\n", expected, reflect.TypeOf(expected), x)
 
 		// If the expected type is a string, we're looking for a primitive
@@ -96,7 +101,7 @@ func softCumin(types []interface{}, args []interface{}) error {
 				return fmt.Errorf("Cant read interface list %v at position %d", x, i)
 			} else {
 				for _, v := range argumentList {
-					if e := primitiveCheck(nestedSlice[0].(string), reflect.ValueOf(v).Kind()); e != nil {
+					if e := primitiveCheck(nestedSlice[0].(string), reflect.TypeOf(v).Kind()); e != nil {
 						return e
 					}
 				}
@@ -105,7 +110,7 @@ func softCumin(types []interface{}, args []interface{}) error {
 		} else if nestedMap, ok := expected.(map[string]interface{}); ok {
 
 			if argumentMap, ok := x.(map[string]interface{}); !ok {
-				return fmt.Errorf("Cumin: expected dictionary at position %d, got %v", i, reflect.ValueOf(x))
+				return fmt.Errorf("Cumin: expected dictionary at position %d, got %v", i, reflect.TypeOf(x))
 			} else {
 				if e := mapCheck(nestedMap, argumentMap); e != nil {
 					return e

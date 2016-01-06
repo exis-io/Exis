@@ -226,6 +226,7 @@ extension Array : Property, BaseConvertible {
     
     public static func representation() -> Any {
         if let child = Generator.Element.self as? Convertible.Type {
+            return [child.representation()]
             return "[\(child.representation())]"
         }
         
