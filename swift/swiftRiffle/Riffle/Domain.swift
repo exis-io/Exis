@@ -67,10 +67,10 @@ public class Domain {
         let hn = CBID()
         handlers[hn] = fn
         
-        print("SWIFT: type representation: \(types)")
+        //print("SWIFT: type representation: \(types)")
 
         let d = Deferred(domain: self)
-        Subscribe(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(types))
+        Subscribe(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(serializeArguments(types)))
         return d
     }
     
@@ -98,6 +98,8 @@ public class Domain {
     public func receive() {
         while true {
             var (i, args) = decode(Receive(self.mantleDomain))
+            
+            //print("Receive loop has args: \(args)")
             
             if let d = deferreds[i] {
                 // remove the deferred (should this ever be optional?)

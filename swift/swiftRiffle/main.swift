@@ -13,9 +13,7 @@ class Dog: Model {
 }
 
 class Sender: Domain {
-    
     override func onJoin() {
-        
         // Create an object
         let dog = Dog()
         dog.name = "Billiam"
@@ -29,9 +27,9 @@ class Sender: Domain {
         }
         
         // Call with assorted arguments, stipulating the resulting return types
-        call("xs.damouse.alpha/reg", "Johnathan", "Seed").then { (a: String) in
-            print("Call received: ", a)
-        }
+//        call("xs.damouse.alpha/reg", "Johnathan", "Seed").then { (a: String) in
+//            print("Call received: ", a)
+//        }
     }
     
     override func onLeave() {
@@ -39,14 +37,12 @@ class Sender: Domain {
     }
 }
 
-
 class Receiver: Domain {
-    
     override func onJoin() {
-        register("reg") { (first: String, second: String) -> String in
-            print("Received call! Args: ", first, second)
-            return "Receiver says hi!"
-        }
+//        register("reg") { (first: String, second: String) -> String in
+//            print("Received call! Args: ", first, second)
+//            return "Receiver says hi!"
+//        }
         
         subscribe("sub") { (a: Int, b: [String], c: Dog) in
             print("Received publish: \(a), with list: \(b), and pup: \(c.description)")
