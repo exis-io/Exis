@@ -68,6 +68,7 @@ clean:
 	@-rm -f assets/libriffmantle.so assets/libriffmantle.h >$(LOG) ||:
 	@$(MAKE) -C swift/mantle clean >$(LOG) ||:
 	@$(MAKE) -C swift/swiftRiffle/Riffle clean >$(LOG) ||:
+	@rm -rf swift/example/Packages >$(LOG) ||:
 
 
 # To debug and extract the build commands, check golang.org/x/mobile/cmd/gomobile/bind_iosapp.go
