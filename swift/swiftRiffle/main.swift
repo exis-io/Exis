@@ -8,7 +8,7 @@ let dataString = "{\"age\":88,\"name\":\"Billiam\"}"
 //var scrubbed = dataString.stringByReplacingOccurrencesOfString("\"", withString: "'")
 
 print("DAAATASTRING: \(dataString)")
-var data = try! JSONParser.parse(dataString) as? [Any]
+var data = try! JSONParser.parse(dataString)
 print("Result: \(data)")
 
 

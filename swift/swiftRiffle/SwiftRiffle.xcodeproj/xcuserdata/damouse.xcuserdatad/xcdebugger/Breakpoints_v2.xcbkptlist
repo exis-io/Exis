@@ -24,7 +24,7 @@
                   moduleName = "SwiftRiffle"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/damouse/Documents/riffle/swift/swiftRiffle/Riffle/Json.swift"
-                  timestampString = "473815218.986897"
+                  timestampString = "473815772.550594"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "365"
@@ -39,7 +39,7 @@
                   moduleName = "SwiftRiffle"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/damouse/Documents/riffle/swift/swiftRiffle/Riffle/Json.swift"
-                  timestampString = "473815218.987084"
+                  timestampString = "473815772.550845"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "365"
@@ -47,6 +47,22 @@
                   offsetFromSymbolStart = "909">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Riffle/Json.swift"
+            timestampString = "473815545.439089"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "855"
+            endingLineNumber = "855"
+            landmarkName = "parseObject()"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
