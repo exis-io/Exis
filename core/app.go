@@ -1,7 +1,14 @@
 package core
 
 import (
+	"crypto"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/sha512"
+	"crypto/x509"
+	"encoding/base64"
 	"encoding/json"
+	"encoding/pem"
 	"fmt"
 	"os"
 	"reflect"
@@ -267,6 +274,22 @@ func (c app) getMessageTimeout() (message, error) {
 	}
 }
 
+func DecodePrivateKey(data []byte) (*rsa.PrivateKey, error) {
+    // Decode the PEM public key
+    block, _ := pem.Decode(data)
+    if block == nil {
+        return nil, fmt.Errorf("Error decoding PEM file")
+    }
+
+    // Parse the private key.
+    priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+    if err != nil {
+        return nil, err
+    }
+
+	return priv, nil
+}
+
 func (c app) handleChallenge(msg *challenge) error {
 	response := &authenticate{
 		Signature: "",
@@ -276,7 +299,24 @@ func (c app) handleChallenge(msg *challenge) error {
 	switch msg.AuthMethod {
 	case "token":
 		response.Signature = c.token
-	// TODO: implement signature and warn on unrecognized authmethod
+
+	case "signature":
+		nonce, _ := msg.Extra["challenge"].(string)
+		hashed := sha512.Sum512([]byte(nonce))
+
+		key, err := DecodePrivateKey([]byte(c.key))
+		if err != nil {
+			return err
+		}
+
+		sig, err := rsa.SignPKCS1v15(rand.Reader, key, crypto.SHA512, hashed[:])
+		if err != nil {
+			return err
+		}
+
+		response.Signature = base64.StdEncoding.EncodeToString(sig)
+
+	// TODO: warn on unrecognized auth method
 	}
 
 	c.Send(response)
