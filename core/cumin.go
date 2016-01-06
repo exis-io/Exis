@@ -59,12 +59,13 @@ Version from the test:
     [int [str] map[a:str b:int]] against [1 [Hey There] map[b:1 a:alpha]]
 
 Version from swift:
+    [int [str] map[age:int name:str]]
     [int [str] {name: str, age: int}] against [1 [Hey There] map[name:Billiam]]
 */
 
 // Checks the types of the provided positional arguments and the receiver.
 func softCumin(types []interface{}, args []interface{}) error {
-	//fmt.Printf("SoftCumin: %v against %v\n", types, args)
+	fmt.Printf("SOFTCUMIN: %v against %v\n", types, args)
 
 	// Description to print on every failure
 	description := fmt.Sprintf("Types: %v, Arguments: %v", types, args)
@@ -77,7 +78,7 @@ func softCumin(types []interface{}, args []interface{}) error {
 		argument := reflect.ValueOf(x)
 		expected := types[i]
 
-		//Debug("Expected: %v expected type: %v, Argument: %v", expected, reflect.ValueOf(expected), x)
+		Debug("Expected: %v expected type: %v, Argument: %v", expected, reflect.ValueOf(expected), x)
 		//fmt.Printf("Expected: %v expected type: %v, Argument: %v\n", expected, reflect.TypeOf(expected), x)
 
 		// If the expected type is a string, we're looking for a primitive
@@ -100,6 +101,7 @@ func softCumin(types []interface{}, args []interface{}) error {
 					}
 				}
 			}
+
 		} else if nestedMap, ok := expected.(map[string]interface{}); ok {
 
 			if argumentMap, ok := x.(map[string]interface{}); !ok {

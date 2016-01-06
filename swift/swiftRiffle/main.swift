@@ -57,7 +57,7 @@ class Receiver: Domain {
 // Allows this script to act as a receiver or a sender
 let startSender = NSProcessInfo.processInfo().environment["SENDER"] != nil
 
-if !startSender {
+if startSender {
     print("Starting Sender")
     Sender(name: "xs.damouse.beta").join()
 } else {
