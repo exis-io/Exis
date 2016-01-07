@@ -15,10 +15,11 @@
     TODO:
         - Implement Object checking for Python
         - Implement other languages
-        - For some reason if you call test on "python publish:Pub/Sub" it fails
 """
 
 import sys, os, time, glob, argparse, re
+
+from collections import defaultdict as ddict
 
 EXISPATH = os.environ.get("EXISPATH", "..")
 sys.path.append(EXISPATH)
@@ -49,7 +50,7 @@ def findTask(lang, task):
     Finds and prints reference to a specific task in a specific language.
     """
     examples = exampler.Examples.find(EXISPATH, lang)
-    ts = examples.getTask(lang, task)
+    ts = examples.getTask(task)
     if(ts):
         print(ts.details())
     else:
@@ -101,6 +102,52 @@ def test(*tasks):
     
     # Exec all of them
     repl.executeAll(taskList, actionList)
+
+def testAll(lang):
+    """
+    Executes all found tests for the language provided.
+    """
+    examples = exampler.Examples.find(EXISPATH, lang)
+    for t in examples.getTasks():
+        repl.executeTaskSet(t)
+
+def genDocs():
+    """
+    Takes all code found and generates a JSON style doc system that can be consumed by the website.
+    Looks like:
+           {
+            TaskName: {
+                    lang: {
+                        action: {
+                            file: str,
+                            lines: str,
+                            code: ...,
+                            expectType: str,
+                            expectVal: str
+                        }
+                    }
+                }
+            }
+    """
+    examples = exampler.Examples.find(EXISPATH)
+
+    docs = ddict(lambda: {k: dict() for k in exampler.LANGS.keys()})
+    for t in examples.getTasks():
+        for tt in t.tasks:
+            d = dict(file=tt.fileName, lineStart=tt.lineStart, lineEnd=tt.lineEnd, code=tt.code, 
+                    expectType=tt.expectType, expectVal=tt.expectVal)
+            docs[t.getName()][t.getFullLang()][tt.action] = d
+
+    # Strip out anything that isn't populated
+    for k, v in docs.iteritems():
+        l = list()
+        for kk, vv in v.iteritems():
+            if not vv:
+                l.append(kk)
+        for ll in l:
+            v.pop(ll)
+    
+    print utils.jsonPretty(docs)
 
 def _getArgs():
     parser = argparse.ArgumentParser(description=__doc__)

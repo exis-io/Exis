@@ -63,6 +63,10 @@ func (d *Domain) Yield(request uint64, args string) {
 	go d.coreDomain.GetApp().Yield(request, core.MantleUnmarshal(args))
 }
 
+func (d *Domain) YieldError(request uint64, etype string, args string) {
+	go d.coreDomain.GetApp().YieldError(request, etype, core.MantleUnmarshal(args))
+}
+
 func (d *Domain) Leave() {
 	go d.coreDomain.Leave()
 }

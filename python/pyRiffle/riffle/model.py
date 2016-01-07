@@ -1,4 +1,4 @@
-
+import inspect
 import sys
 import os
 
@@ -90,7 +90,7 @@ class Model(object):
         return str(self.__class__) + repr(self.__values)
 
     @classmethod
-    def _deserialize(cls, json): 
+    def _deserialize(cls, json):
         c = cls(**json)
         return c
 
@@ -105,7 +105,7 @@ def reconstruct(args, types):
     # Allow this to be a pass-through if they didn't provide any types to check
     if not types:
         return args
-    
+
     l = list()
     for x, y in zip(args, types):
         if issubclass(y, Model):
@@ -121,8 +121,19 @@ def want(*types):
             if '_riffle_reflect' in kwargs:
                 # return [x.__name__ for x in list(types)]
                 return list(types)
-            
-            return function(*reconstruct(args, types))
+
+            # Test if function looks like a method and set aside the first
+            # argument.  At first glance, inspect.ismethod should tell us this,
+            # but it doesn't, so for now we just look for a "self" argument.
+            pre_args = tuple()
+            argspec = inspect.getargspec(function).args
+            if argspec and argspec[0] == "self":
+                pre_args = args[0:1]
+                args = args[1:]
+
+            final_args = pre_args + reconstruct(args, types)
+
+            return function(*final_args)
         return wrapper
     return real_decorator
 

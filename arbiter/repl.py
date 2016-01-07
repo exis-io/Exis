@@ -6,13 +6,13 @@
 """
 
 import sys, os, tempfile, shutil, subprocess, time, signal
-from threading import Thread
+from threading import Thread, Event
 
 # Make sure we know where the core appliances are
 APPLS = os.environ.get("EXIS_APPLIANCES", None)
 if(APPLS is None):
     print("!! Need the $EXIS_APPLIANCES variable set to proceed")
-    exit()
+    exit(1)
 
 ON_POSIX = "posix" in sys.builtin_module_names
 
@@ -22,35 +22,10 @@ WS_URL = os.environ.get("WS_URL", "ws://localhost:8000/ws")
 DOMAIN = os.environ.get("DOMAIN", "xs.demo.test")
 BASEPATH = "{}/repler".format(APPLS)
 
-def _expectPython(line, eType, eVal):
-    """
-    Internal function that takes the expect line of code and restructures it into something
-    that can be called to be functionally tested to return the right value and type.
-    Returns the replacement code
-    """
-    return line.replace('print(', 'assert({} == '.format(eVal))
-
-def _expectSwift(line, et, ev):
-    pass
-
-_expect = {
-    "py": _expectPython,
-    "swift": _expectSwift
-}
-
-def _terminatePython(code):
-    """
-    Adds a leave line, we need to see the code to see how to make the indent look...
-    """
-
-def _terminateSwift(code):
-    pass
-
-_terminate = {
-    "py": _terminatePython,
-    "swift": _terminateSwift
-}
-
+if not os.path.exists("{}/repl-python/run2.sh".format(BASEPATH)) or not os.path.exists("{}/repl-swift/run2.sh".format(BASEPATH)):
+    print "Please checkout proper version of core appliances."
+    print "You must have the {core}/repler/repl-{lang}/run2.sh commands for arbiter to work!"
+    exit(1)
 
 class Coder:
     """
@@ -67,8 +42,36 @@ class Coder:
     def expect2assert(self):
         print "!! Not implemented"
 
-    def checkExecution(self, output):
-        print "!! Not implemented"
+    def checkExecution(self, out, err):
+        """
+        Take the stderr and stdout arrays and check if execute was ok or not.
+        Also check the output for any expect data.
+        Returns:
+            String matching the output that led to the successful result,
+            or None if a failure or no match
+        """
+        #print(out, err)
+        ev = self.getExpect()
+        
+        good = None
+        # Sometimes we shouldn't expect anything and thats ok
+        if ev is None and len(out) == 0:
+            good = "no expect required"
+        
+        for o in out:
+            if ev in o:
+                good = ev
+
+        if err:
+            # Look at the error to see whats up
+            errOk = False
+            for e in err:
+                pass
+            if not errOk:
+                print "!! Found error:"
+                print "\n".join(err)
+                return None
+        return good
 
 class PythonCoder(Coder):
     def setupTerminate(self, code):
@@ -127,12 +130,29 @@ class PythonCoder(Coder):
             if not errOk:
                 print "!! Found error:"
                 print "\n".join(err)
-                return False
+                return None
         return good
+
+class SwiftCoder(Coder):
+    def setupTerminate(self, code):
+        # TODO
+        pass
+    
+    def expect2assert(self):
+        # TODO
+        return None
+
+    def getExpect(self):
+        """
+        Returns a properly formatted lang-specific value that we should be searching for.
+        """
+        return self.task.expectVal
+    
 
 
 coders = {
-    "py": PythonCoder
+    "py": PythonCoder,
+    "swift": SwiftCoder
 }
 def getCoder(task, action):
     """Returns an instance of the proper class or None"""
@@ -155,6 +175,7 @@ class ReplIt:
         self.readThd = None
         self.executing = False
         self.coder = None
+        self.buildComplete = Event()
 
         self._setup()
 
@@ -179,11 +200,14 @@ class ReplIt:
             ff = os.path.join(self.basepath, f)
             if(os.path.isfile(ff)):
                 shutil.copy(ff, self.testDir)
+            elif(os.path.isdir(ff)):
+                shutil.copytree(ff, "{}/{}".format(self.testDir, f))
 
         # Setup env vars
         self.env = {
             "WS_URL": WS_URL,
-            "DOMAIN": DOMAIN
+            "DOMAIN": DOMAIN,
+            "PATH": os.environ["PATH"]
         }
 
         # Language specific things
@@ -200,7 +224,10 @@ class ReplIt:
         """
         while(self.executing):
             for line in iter(out.readline, b''):
-                stor.append(line)
+                if line.rstrip() == "___BUILDCOMPLETE___":
+                    self.buildComplete.set()
+                else:
+                    stor.append(line)
         out.close()
     
     def kill(self):
@@ -241,6 +268,8 @@ class ReplIt:
         """
         Launches the actual function. To do this properly we need to launch a reader
         thread for the stdout since this will result in a blocking call otherwise.
+        This returns a threading.Event() which should be waited() on before starting the next
+        ReplIt.execute function since there are race conditions between building of different langs.
         """
         self.executing = True
         print "EXEC {} : {} @ {}".format(self.action, self.task.fullName(), self.testDir)
@@ -251,10 +280,11 @@ class ReplIt:
 
         self.readOut = Thread(target=self._read, args=(self.proc.stdout, self.stdout))
         self.readOut.daemon = True
-        self.readOut.start()
         
         self.readErr = Thread(target=self._read, args=(self.proc.stderr, self.stderr))
         self.readErr.daemon = True
+        
+        self.readOut.start()
         self.readErr.start()
 
     def getAssertedCode(self):
@@ -262,16 +292,7 @@ class ReplIt:
         Returns the assert added code so that this code segment will not complete properly if
         the return type is not correct (because we replace the "print" with an "assert").
         """
-        # If there is an expect then replace it with an assert for testing
-        if self.task.expectLine >= 0:
-            expectLine = self.task.code[self.task.expectLine]
-            replacement = _expect[self.task.lang](expectLine, self.task.expectType, self.task.expectVal)
-            code = [a for a in self.task.code]
-            # Insert the assert before the print, so that we can search for our results and know
-            # if they came or not in the stdout (an assert would cause them not to come)
-            code.insert(self.task.expectLine, replacement)
-        else:
-            code = [a for a in self.task.code]
+        # TODO
 
     def getTestingCode(self):
         """
@@ -285,14 +306,22 @@ class ReplIt:
         return "\n".join(code)
 
 def executeAll(taskList, actionList):
+    """
+    Given a list of tasks and an action it will zip them together and then execute them properly.
+    """
     procs = list()
     for ts, a in zip(taskList, actionList):
         r = ReplIt(ts, a)
         r.execute()
+        a = r.buildComplete.wait(5)
+        if a is False:
+            print "!! {} never completed setup process (BUILDCOMPLETE never found)".format(ts)
 
         procs.append(r)
     
+    # Now let the system do its thing
     time.sleep(5)
+
     # Go back through and terminate in reverse order
     ok = True
     for p in procs[::-1]:
@@ -303,5 +332,40 @@ def executeAll(taskList, actionList):
         for p in procs:
             p.cleanup()
     
+def executeTaskSet(taskSet):
+    """
+    Given one specific TaskSet it will execute the corresponding components of that (pub/sub or reg/call).
+    """
+    procs = list()
+    
+    # Pull the proper actions from the task
+    recv = taskSet.getTask("register") or taskSet.getTask("subscribe")
+    send = taskSet.getTask("publish") or taskSet.getTask("call")
+
+    if None in (recv, send):
+        print "!! Unable to find one of send/recv"
+        print recv, send
+       
+    # Startup the actions
+    for r in recv, send:
+        rr = ReplIt(taskSet, r.action)
+        rr.execute()
+        a = rr.buildComplete.wait(5)
+        if a is False:
+            print "!! {} never completed setup process (BUILDCOMPLETE never found)".format(r)
+        procs.append(rr)
+    
+    # Now let the system do its thing
+    time.sleep(5)
+
+    # Go back through and terminate in reverse order
+    ok = True
+    for p in procs[::-1]:
+        ok &= p.kill()
+
+    # If everything was ok then cleanup the temp dirs
+    if ok:
+        for p in procs:
+            p.cleanup()
 
 

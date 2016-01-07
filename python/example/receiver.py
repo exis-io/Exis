@@ -40,6 +40,7 @@ class Receiver(riffle.Domain):
 
     def kill(self):
         print 'Asked to close. Leaving'
+        self.leave()
 
 if __name__ == '__main__':
     app = riffle.Domain("xs.damouse")
