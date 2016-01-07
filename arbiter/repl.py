@@ -5,7 +5,7 @@
     Uses the coreappliances repler to execute code but in a local manner.
 """
 
-import sys, os, tempfile, shutil, subprocess, time, signal
+import sys, os, tempfile, shutil, subprocess, time, signal, glob
 from threading import Thread, Event
 
 # Make sure we know where the core appliances are
@@ -21,6 +21,7 @@ from utils import utils
 WS_URL = os.environ.get("WS_URL", "ws://localhost:8000/ws")
 DOMAIN = os.environ.get("DOMAIN", "xs.demo.test")
 BASEPATH = "{}/repler".format(APPLS)
+TEST_PREFIX = "arbiterTask"
 
 if not os.path.exists("{}/repl-python/run2.sh".format(BASEPATH)) or not os.path.exists("{}/repl-swift/run2.sh".format(BASEPATH)):
     print "Please checkout proper version of core appliances."
@@ -192,7 +193,7 @@ class ReplIt:
         self.basepath = "{}/repl-{}/".format(BASEPATH, self.lang)
 
         # Setup a temp dir for this test
-        self.testDir = tempfile.mkdtemp(prefix="arbiterTask")
+        self.testDir = tempfile.mkdtemp(prefix=TEST_PREFIX)
         
         # Copy over everything into this new dir
         src = os.listdir(self.basepath)
@@ -343,8 +344,8 @@ def executeTaskSet(taskSet):
     send = taskSet.getTask("publish") or taskSet.getTask("call")
 
     if None in (recv, send):
-        print "!! Unable to find one of send/recv"
-        print recv, send
+        print "!! Missing send/recv for {}".format(taskSet.getName())
+        return
        
     # Startup the actions
     for r in recv, send:
@@ -368,4 +369,9 @@ def executeTaskSet(taskSet):
         for p in procs:
             p.cleanup()
 
-
+def cleanupTests():
+    # NOTE: This only works on linux flavored systems right now
+    dirs = glob.glob("/tmp/{}*".format(TEST_PREFIX))
+    for d in dirs:
+        print d
+        shutil.rmtree(d)

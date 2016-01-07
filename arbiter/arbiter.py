@@ -110,6 +110,15 @@ def testAll(lang):
     examples = exampler.Examples.find(EXISPATH, lang)
     for t in examples.getTasks():
         repl.executeTaskSet(t)
+        print('-'*80)
+
+def cleanup():
+    """
+    Cleans up all tmp test folders.
+    """
+    print "Cleaning up tmp directories:"
+    repl.cleanupTests()
+    print "DONE"
 
 def genDocs():
     """
