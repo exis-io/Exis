@@ -4,7 +4,6 @@ import riffle
 riffle.SetFabricLocal()
 riffle.SetLogLevelDebug()
 
-
 class Sender(riffle.Domain):
 
     def onJoin(self):
@@ -13,6 +12,9 @@ class Sender(riffle.Domain):
 
         result = beta.call("reg", 1, 2).wait()
         print 'Done with result:', result
+
+        # result = beta.call("nada").wait()
+        # print 'Done with result:', result
 
     def result(self, ret):
         print 'Call returned with result: ', ret

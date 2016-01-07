@@ -50,7 +50,7 @@ func (a *app) CallbackSend(id uint64, args ...interface{}) {
 func (c app) Send(m message) error {
 	Debug("Sending %s: %v", m.messageType(), m)
 
-	// There's going to have to be a better way of handling these messages
+	// There's going to have to be a better way of handling these errors
 	if b, err := c.serializer.serialize(m); err != nil {
 		return err
 	} else {
@@ -76,11 +76,11 @@ func (c app) Close(reason string) {
 
 func (c app) ConnectionClosed(reason string) {
 	Info("Connection was closed: ", reason)
-
 	close(c.in)
 	close(c.up)
 }
 
+// Represents the result of an invokation in the crust
 func (a app) Yield(request uint64, args []interface{}) {
 	m := &yield{
 		Request:   request,
@@ -93,6 +93,7 @@ func (a app) Yield(request uint64, args []interface{}) {
 	}
 }
 
+// Represents an error that ocurred during an invocation in the crust
 func (a app) YieldError(request uint64, etype string, args []interface{}) {
 	m := &errorMessage{
 		Type:      iNVOCATION,
@@ -213,8 +214,6 @@ func (c *app) requestListenType(outgoing message, expecting string) (message, er
 
 	select {
 	case msg := <-wait:
-		// Debug("incoming: %s, expecting: %s", reflect.TypeOf(msg), expecting)
-
 		if e, ok := msg.(*errorMessage); ok {
 			return nil, fmt.Errorf(e.Error)
 		} else if reflect.TypeOf(msg).String() != expecting {
@@ -223,11 +222,13 @@ func (c *app) requestListenType(outgoing message, expecting string) (message, er
 			return msg, nil
 		}
 	case <-time.After(MessageTimeout):
-		return nil, fmt.Errorf("timeout while waiting for message")
+		return nil, fmt.Errorf("Timeout while waiting for message")
 	}
 }
 
-// Blocks on a message from the connection. Don't use this while the run loop is active
+// Blocks on a message from the connection. Don't use this while the run loop is active,
+// since it will compete for messages with the run loop. Bad things will happen.
+// This is largely an orphan, and should be replaced.
 func (c app) getMessageTimeout() (message, error) {
 	select {
 	case msg, open := <-c.in:

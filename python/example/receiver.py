@@ -20,15 +20,20 @@ class Receiver(riffle.Domain):
         print "Receiver Joined"
 
         self.register("reg", self.registration)
-        self.register("kill", self.kill)
-
         self.subscribe("sub", self.subscription)
-        self.subscribe("handshake", self.greeting)
+        
+        # self.register("nada", self.returningNothing)
+
+        # self.register("kill", self.kill)
+        # self.subscribe("handshake", self.greeting)
 
     @want(int, int)
     def registration(self, a, b):
         print "Received a call. Args: ", a, b
         return 42
+
+    def returningNothing(self):
+        print 'Im not giving you squat'
 
     @want(str)
     def subscription(self, name):

@@ -61,11 +61,6 @@ Version from the test:
 Version from swift:
     [int [str] map[age:int name:str]]
     [int [str] {name: str, age: int}] against [1 [Hey There] map[name:Billiam]]
-
-
-Errors: This appears to be incorrect
-    [core.cumin:85] Expected: [str] expected type: string, Argument: [Hey There Bob]
-    Expected type should be list, not string
 */
 
 // Checks the types of the provided positional arguments and the receiver.
@@ -151,20 +146,3 @@ func mapCheck(expected map[string]interface{}, argument map[string]interface{}) 
 
 	return nil
 }
-
-// TODO: arrays of objects
-
-// fmt.Println("Array of objects, ", nestedSlice)
-// if len(nestedSlice) != 1 {
-//     return fmt.Errorf("Cumin: array expected at position #%d is not homogenous. %s", i, expected)
-// }
-
-// if argumentList, ok := x.([]map[string]interface{}); !ok {
-//     return fmt.Errorf("Cant read dictionary %v at position %d", x, i)
-// } else {
-//     for _, v := range argumentList {
-//         if e := mapCheck(nestedSlice[0], v); e != nil {
-//             return e
-//         }
-//     }
-// }
