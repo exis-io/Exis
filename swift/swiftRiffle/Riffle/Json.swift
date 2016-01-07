@@ -616,7 +616,6 @@ public class GenericJSONParser<ByteSequence: CollectionType where ByteSequence.G
 
     public func parse() throws -> Any {
         let JSON = try parseValue()
-        print("Parsing: \(JSON)")
         
         skipWhitespaces()
         
@@ -643,8 +642,6 @@ extension GenericJSONParser {
                 columnNumber: columnNumber
             )
         }
-
-        print("Current char: \(currentChar)")
         
         switch currentChar {
         case Char(ascii: "n"): return try parseSymbol("null", NSNull())
@@ -877,7 +874,7 @@ extension GenericJSONParser {
                 skipWhitespaces()
 
                 if expect(",") {
-                    break
+                    continue
                 } else if expect("}") {
                     break LOOP
                 } else {
@@ -974,6 +971,7 @@ extension GenericJSONParser {
     private func advance() {
         assert(cur != end, "out of range")
         cur++
+
         
         if cur != end {
             switch currentChar {
@@ -990,7 +988,6 @@ extension GenericJSONParser {
     
     private func skipWhitespaces() {
         for ; cur != end; advance() {
-            print("Skipping whitespaces, current: \(currentChar)")
             switch currentChar {
             case Char(ascii: " "), Char(ascii: "\t"), Char(ascii: "\r"), Char(ascii: "\n"):
                 break

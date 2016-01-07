@@ -43,13 +43,7 @@ func NewDomain(name string, a *app) Domain {
 	Debug("Creating domain %s", name)
 
 	if a == nil {
-		a = &app{
-			domains:    make([]*domain, 0),
-			serializer: new(jSONSerializer),
-			in:         make(chan message, 10),
-			up:         make(chan Callback, 10),
-			listeners:  make(map[uint64]chan message),
-		}
+		a = NewApp()
 	}
 
 	d := &domain{
@@ -89,19 +83,34 @@ func (c domain) Join(conn Connection) error {
 	// Set the agent string, or who WE are. When this domain leaves, termintate the connection
 	c.app.agent = c.name
 
+	helloDetails := make(map[string]interface{})
+	helloDetails["authid"] = c.app.getAuthID()
+	helloDetails["authmethods"] = c.app.getAuthMethods()
+
 	// Should we hard close on conn.Close()? The App may be interested in knowing about the close
-	if err := c.app.Send(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {
+	if err := c.app.Send(&hello{Realm: c.name, Details: helloDetails}); err != nil {
 		c.app.Close("ERR: could not send a hello message")
 		return err
 	}
 
-	if msg, err := c.app.getMessageTimeout(); err != nil {
-		c.app.Close(err.Error())
-		return err
-	} else if _, ok := msg.(*welcome); !ok {
-		c.app.Send(&abort{Details: map[string]interface{}{}, Reason: "Error- unexpected_message_type"})
-		c.app.Close("Error- unexpected_message_type")
-		return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME.String()))
+	receivedWelcome := false
+	for !receivedWelcome {
+		msg, err := c.app.getMessageTimeout()
+		if err != nil {
+			c.app.Close(err.Error())
+			return err
+		}
+
+		switch msg := msg.(type) {
+		case *welcome:
+			receivedWelcome = true
+		case *challenge:
+			c.app.handleChallenge(msg)
+		default:
+			c.app.Send(&abort{Details: map[string]interface{}{}, Reason: "Error- unexpected_message_type"})
+			c.app.Close("Error- unexpected_message_type")
+			return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME.String()))
+		}
 	}
 
 	// This is super dumb, and the reason its in here was fixed. Please revert

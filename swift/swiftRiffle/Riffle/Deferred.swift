@@ -25,9 +25,6 @@ public class Deferred {
     
     var next: Deferred?
     
-    // Called when a callback has been assigned. Used internally for Call cuminication
-    var onCallbackAssigned: (([Any]) -> ())? = nil
-    
     
     public init() {}
     
@@ -43,25 +40,7 @@ public class Deferred {
     // Final, internal implementation of addCallback
     public func then(fn: () -> ()) -> Deferred {
         next = Deferred()
-        
-        if let cuminication = onCallbackAssigned {
-            cuminication([])
-        }
-        
         callbackFuntion = { a in return fn() }
-        
-        return next!
-    }
-    
-    public func _then(fn: [Any] -> ()) -> Deferred {
-        next = Deferred()
-        
-        if let cuminication = onCallbackAssigned {
-            cuminication([])
-        }
-        
-        callbackFuntion = { a in return fn(a) }
-        
         return next!
     }
     
@@ -72,9 +51,9 @@ public class Deferred {
     }
     
     public func callback(args: [Any]) -> Any? {
-        if let cb = callbackFuntion {
+        if let handler = callbackFuntion {
              // if the next result is a deferred, wait for it to complete before returning (?)
-            return cb(args)
+            return handler(args)
         } else {
             // follow the chain, propogate the calback to the next deferred
             if let n = next {
@@ -87,8 +66,8 @@ public class Deferred {
     }
     
     public func errback(args: [Any]) -> Any? {
-        if let eb = errbackFunction {
-            return eb(args)
+        if let handler = errbackFunction {
+            return handler(args)
         } else {
             // Follow the chain, propogate the error to the next deferred
             if let n = next {
@@ -104,5 +83,14 @@ public class Deferred {
 
 // Contains handler "then"s to replace handler functions
 public class HandlerDeferred: Deferred {
+    public var mantleDomain: UnsafeMutablePointer<Void>!
     
+    public func _then(types: [Any], _ fn: [Any] -> ()) -> Deferred {
+        next = Deferred()
+        CallExpects(mantleDomain, self.cb, marshall(types))
+        callbackFuntion = { a in return fn(a) }
+        return next!
+    }
 }
+
+

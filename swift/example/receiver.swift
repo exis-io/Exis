@@ -1,3 +1,4 @@
+
 import Riffle
 
 class Dog: Model {
@@ -28,6 +29,13 @@ class Receiver: Riffle.Domain, Riffle.Delegate {
             print("An error occured", reason)
         }
         // End Example Pub/Sub Basic
+
+        // Example Reg/Call Basic 1 - This is a basic reg/call
+        register("basicReg") { (args: String) -> String in
+            print("\(args)") // Expects a String, like "Hello"
+            return "Hello World"
+        }
+        // End Example Reg/Call Basic 1
     }
     
     override func onLeave() {

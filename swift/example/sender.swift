@@ -1,3 +1,4 @@
+
 import Riffle
 
 class Sender: Riffle.Domain, Riffle.Delegate  {
@@ -6,20 +7,14 @@ class Sender: Riffle.Domain, Riffle.Delegate  {
         print("Sender joined")
 
         // Example Pub/Sub Basic - This is a basic version of a pub/sub
-        let dog = Dog()
-        dog.name = "Billiam"
-        dog.age = 88
-
-        publish("xs.damouse.alpha/sub", 1, ["Hey", "There"], dog).then {
-            print("Publish succeeded")
-        }.error { reason in
-            print("An error occured", reason)
-        }
+        publish("xs.demo.test.example/basicSub", "Hello")
         // End Example Pub/Sub Basic
         
-        // call("xs.damouse.alpha/reg", "Johnathan", "Seed").then { (a: String) in
-        //     print("Call received: ", a)
-        // }
+        // Example Reg/Call Basic 1 - This is a basic reg/call
+        call("xs.demo.test.example/basicReg", "Hello").then { (a: String) in
+            print("\(a)") // Expects a String, like "Hello World"
+        }
+        // End Example Reg/Call Basic 1
     }
     
     override func onLeave() {

@@ -93,7 +93,7 @@ def test(*tasks):
     actionList = list()
     for t in tasks:
         lang, action, taskName = _ripTaskDef(t)
-        ts = examples.getTask(lang, taskName)
+        ts = examples.getTask(taskName, lang)
         if not ts:
             print("!! No TaskSet found")
         else:
@@ -108,8 +108,17 @@ def testAll(lang):
     Executes all found tests for the language provided.
     """
     examples = exampler.Examples.find(EXISPATH, lang)
-    for t in examples.getTasks():
+    for t in examples.getTasks(lang):
         repl.executeTaskSet(t)
+        print('-'*80)
+
+def cleanup():
+    """
+    Cleans up all tmp test folders.
+    """
+    print "Cleaning up tmp directories:"
+    repl.cleanupTests()
+    print "DONE"
 
 def genDocs():
     """

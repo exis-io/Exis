@@ -1,8 +1,16 @@
 package core
 
 import (
+	"crypto"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/sha512"
+	"crypto/x509"
+	"encoding/base64"
 	"encoding/json"
+	"encoding/pem"
 	"fmt"
+	"os"
 	"reflect"
 	"time"
 )
@@ -30,12 +38,33 @@ type app struct {
 	in        chan message
 	up        chan Callback
 	listeners map[uint64]chan message
+
+	// authentication options
+	authid string
+	token  string
+	key    string
 }
 
 // Sent up to the mantle and then the crust as callbacks are triggered
 type Callback struct {
 	Id   uint64
 	Args []interface{}
+}
+
+func NewApp() *app {
+	a := &app{
+		domains:    make([]*domain, 0),
+		serializer: new(jSONSerializer),
+		in:         make(chan message, 10),
+		up:         make(chan Callback, 10),
+		listeners:  make(map[uint64]chan message),
+	}
+
+	a.authid = os.Getenv("EXIS_AUTHID")
+	a.token = os.Getenv("EXIS_TOKEN")
+	a.key = os.Getenv("EXIS_KEY")
+
+	return a
 }
 
 func (a *app) CallbackListen() Callback {
@@ -123,6 +152,10 @@ func (c app) receiveLoop() {
 // Handles an incoming message appropriately
 func (c app) handle(msg message) {
 	switch msg := msg.(type) {
+
+	case *challenge:
+		go c.handleChallenge(msg)
+		return
 
 	case *event:
 		for _, x := range c.domains {
@@ -240,4 +273,77 @@ func (c app) getMessageTimeout() (message, error) {
 	case <-time.After(MessageTimeout):
 		return nil, fmt.Errorf("timeout waiting for message")
 	}
+}
+
+func DecodePrivateKey(data []byte) (*rsa.PrivateKey, error) {
+    // Decode the PEM public key
+    block, _ := pem.Decode(data)
+    if block == nil {
+        return nil, fmt.Errorf("Error decoding PEM file")
+    }
+
+    // Parse the private key.
+    priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+    if err != nil {
+        return nil, err
+    }
+
+	return priv, nil
+}
+
+func (c app) handleChallenge(msg *challenge) error {
+	response := &authenticate{
+		Signature: "",
+		Extra:     make(map[string]interface{}),
+	}
+
+	switch msg.AuthMethod {
+	case "token":
+		response.Signature = c.token
+
+	case "signature":
+		nonce, _ := msg.Extra["challenge"].(string)
+		hashed := sha512.Sum512([]byte(nonce))
+
+		key, err := DecodePrivateKey([]byte(c.key))
+		if err != nil {
+			return err
+		}
+
+		sig, err := rsa.SignPKCS1v15(rand.Reader, key, crypto.SHA512, hashed[:])
+		if err != nil {
+			return err
+		}
+
+		response.Signature = base64.StdEncoding.EncodeToString(sig)
+
+	// TODO: warn on unrecognized auth method
+	}
+
+	c.Send(response)
+	return nil
+}
+
+func (c app) getAuthID() string {
+	if c.authid == "" {
+		return c.agent
+	} else {
+		return c.authid
+	}
+}
+
+// Return a list of authentication methods that we support,
+// which depends on what credentials were passed.
+func (c app) getAuthMethods() []string {
+	authmethods := make([]string, 0)
+
+	if c.key != "" {
+		authmethods = append(authmethods, "signature")
+	}
+
+	if c.token != "" {
+		authmethods = append(authmethods, "token")
+	}
+
+	return authmethods
 }

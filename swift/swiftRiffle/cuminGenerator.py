@@ -48,7 +48,7 @@ generics = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
 returns = ['R', 'S', 'T', 'U', 'V', 'X', 'Y', 'Z']
 
 handlerTemplate = '\tpublic func %s<%s>(endpoint: String, _ fn: (%s) -> (%s)) -> Deferred {\n\t\treturn _%s(endpoint, [%s]) { a in return fn(%s) }\n\t}'
-callTemplate = '\tpublic func %s<%s>(fn: (%s) -> (%s)) -> Deferred {\n\t\treturn _%s() { a in return fn(%s) }\n\t}'
+callTemplate = '\tpublic func %s<%s>(fn: (%s) -> (%s)) -> Deferred {\n\t\treturn _%s([%s]) { a in return fn(%s) }\n\t}'
 
 
 def renderCaller(template, name, args, ret, renderingArrays):
@@ -59,8 +59,8 @@ def renderCaller(template, name, args, ret, renderingArrays):
     ret = ', '.join(ret)
 
     # Temp, just to get cumin up and running 
-    if name == "then":
-        return (template % (name, both, args, ret, name, cumin)).replace("<>", "")
+    # if name == "then":
+    #     return (template % (name, both, args, ret, name, cumin)).replace("<>", "")
 
     return (template % (name, both, args, ret, name, types, cumin)).replace("<>", "")
 
