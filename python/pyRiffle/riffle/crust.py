@@ -36,7 +36,7 @@ class Domain(object):
 
         self.app.mainGreenlet = greenlet(self.app.handle)
         self.app.mainGreenlet.switch(self.mantleDomain)
-    
+
     def leave(self):
         # TODO: Emit a deferred here (?)
         self.mantleDomain.Leave()
@@ -65,7 +65,9 @@ class Domain(object):
 
         :param coreFunction: the intended core function, either Subscribe or Register
         :param doesReturn: True if this handler can return a value (is a registration)
-        ''' 
+        '''
+
+        print 'Reflecting: ', cumin.reflect(handler)
 
         d, handlerId = Deferred(), utils.newID()
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
@@ -74,7 +76,7 @@ class Domain(object):
         coreFunction(endpoint, d.cb, d.eb, handlerId, cumin.reflect(handler))
         return d
 
-    def _invoke(self, endpoint, args, coreFunction, doesReturn): 
+    def _invoke(self, endpoint, args, coreFunction, doesReturn):
         '''
         Publish or Call. Invokes targetFunction for the given endpoint and handler.
 
@@ -123,21 +125,22 @@ class Deferred(object):
 
         r = cumin.unmarshall(results, types)
 
-        # Actually, this cant happen. A return from a function should always come back as 
+        # Actually, this cant happen. A return from a function should always come back as
         # a list. Unless you mean a return from... any other thing. In which case, bleh.
         if r is None:
             return r
-        
+
         return r[0] if len(r) == 1 else r
 
     def setCallback(self, handler):
         ''' Traditional Twisted style callbacks '''
         pass
 
+
 class App(object):
 
     def __init__(self):
-        # self.handlers contains a tuple of (function, bool), where the bool is True if the 
+        # self.handlers contains a tuple of (function, bool), where the bool is True if the
         # function can return (i.e. is a registration)
         self.deferreds, self.handlers, self.control = {}, {}, {}
         self.mainGreenlet = None
@@ -149,9 +152,9 @@ class App(object):
             i, args = json.loads(domain.Receive())
             args = [] if args is None else args
 
-            # When the channel that feeds the Receive function closes, 0 is returned 
-            # This is currently automagic and happened to work on accident, but consider 
-            # a more explicit close 
+            # When the channel that feeds the Receive function closes, 0 is returned
+            # This is currently automagic and happened to work on accident, but consider
+            # a more explicit close
             if i == 0:
                 break
 
@@ -178,7 +181,7 @@ class App(object):
                 if canReturn:
                     resultID = args.pop(0)
 
-                # Consolidated handlers into one 
+                # Consolidated handlers into one
                 try:
                     ret = handler(*args)
                 except Exception as error:

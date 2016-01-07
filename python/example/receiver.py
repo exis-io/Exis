@@ -13,14 +13,17 @@ class User(riffle.Model):
     def sayHello(self):
         print 'Im ' + self.name + ', email me at ' + self.email
 
+
 class Receiver(riffle.Domain):
 
     def onJoin(self):
         print "Receiver Joined"
 
-        self.register("reg", self.registration)
-        self.subscribe("sub", self.subscription)
-        self.subscribe("model", self.model)
+        # self.register("reg", self.registration)
+
+        self.subscribe("none", self.none)
+        # self.subscribe("sub", self.subscription)
+        # self.subscribe("model", self.model)
 
     @want(int, int)
     def registration(self, a, b):
@@ -35,6 +38,10 @@ class Receiver(riffle.Domain):
     def model(self, other):
         print "Received a publish from", other
         other.sayHello()
+
+    # Not putting a want allows everything
+    def none(self, name):
+        print name + " called me"
 
 if __name__ == '__main__':
     app = riffle.Domain("xs.damouse")

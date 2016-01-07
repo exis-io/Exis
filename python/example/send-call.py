@@ -15,7 +15,6 @@ class Send(riffle.Domain):
 
         # Example Reg/Call Basic 1 - This is a basic reg/call
         # Make the call
-        print 'HALP'
         s = self.call("basicReg1", "Hello").wait(str)
         print(s)  # Expects a string, like "Hello World"
         # End Example Reg/Call Basic 1

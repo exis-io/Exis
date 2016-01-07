@@ -139,11 +139,10 @@ class PythonCoder(Coder):
             # Look at the error to see whats up
             errOk = False
             for e in err:
-                pass
                 # This needs to be fixed, its a gocore->python specific error that will go away!
-                # if "_shutdown" in e:
-                #     errOk = True
-                #     break
+                if "_shutdown" in e:
+                    errOk = True
+                    break
             if not errOk:
                 print "!! Found error:"
                 print "".join(err)
