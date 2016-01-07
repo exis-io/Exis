@@ -5,7 +5,14 @@
     Uses the coreappliances repler to execute code but in a local manner.
 """
 
-import sys, os, tempfile, shutil, subprocess, time, signal, glob
+import sys
+import os
+import tempfile
+import shutil
+import subprocess
+import time
+import signal
+import glob
 from threading import Thread, Event
 
 # Make sure we know where the core appliances are
@@ -28,11 +35,14 @@ if not os.path.exists("{}/repl-python/run2.sh".format(BASEPATH)) or not os.path.
     print "You must have the {core}/repler/repl-{lang}/run2.sh commands for arbiter to work!"
     exit(1)
 
+
 class Coder:
+
     """
     Super class that contains the methods needed for each language to deal with lang
     specific code and functions.
     """
+
     def __init__(self, task, action):
         self.task = task
         self.action = action
@@ -53,12 +63,12 @@ class Coder:
         """
         #print(out, err)
         ev = self.getExpect()
-        
+
         good = None
         # Sometimes we shouldn't expect anything and thats ok
         if ev is None and len(out) == 0:
             good = "no expect required"
-        
+
         for o in out:
             if ev in o:
                 good = ev
@@ -74,7 +84,9 @@ class Coder:
                 return None
         return good
 
+
 class PythonCoder(Coder):
+
     def setupTerminate(self, code):
         """
         Assume the last line of the code is enough info to judge indenting
@@ -82,8 +94,8 @@ class PythonCoder(Coder):
         """
         if self.task.action in ("publish", "call"):
             c = self.task.code[-1]
-            code.append("{}exit()".format(" " * (len(c)-len(c.lstrip(' ')))))
-    
+            code.append("{}exit()".format(" " * (len(c) - len(c.lstrip(' ')))))
+
     def expect2assert(self):
         if self.task.expectLine >= 0:
             expectLine = self.task.code[self.task.expectLine]
@@ -99,7 +111,7 @@ class PythonCoder(Coder):
             return self.task.expectVal.strip("'\"")
         else:
             return self.task.expectVal
-    
+
     def checkExecution(self, out, err):
         """
         Take the stderr and stdout arrays and check if execute was ok or not.
@@ -110,12 +122,12 @@ class PythonCoder(Coder):
         """
         #print(out, err)
         ev = self.getExpect()
-        
+
         good = None
         # Sometimes we shouldn't expect anything and thats ok
         if ev is None and len(out) == 0:
             good = "no expect required"
-        
+
         for o in out:
             if ev in o:
                 good = ev
@@ -134,11 +146,13 @@ class PythonCoder(Coder):
                 return None
         return good
 
+
 class SwiftCoder(Coder):
+
     def setupTerminate(self, code):
         # TODO
         pass
-    
+
     def expect2assert(self):
         # TODO
         return None
@@ -148,22 +162,26 @@ class SwiftCoder(Coder):
         Returns a properly formatted lang-specific value that we should be searching for.
         """
         return self.task.expectVal
-    
 
 
 coders = {
     "py": PythonCoder,
     "swift": SwiftCoder
 }
+
+
 def getCoder(task, action):
     """Returns an instance of the proper class or None"""
     c = coders.get(task.lang, None)
     return c(task, action) if c else None
 
+
 class ReplIt:
+
     """
     This class holds onto all the components required to take a task and execute it.
     """
+
     def __init__(self, taskSet, action):
         self.action = action
         self.task = taskSet.getTask(action)
@@ -188,13 +206,13 @@ class ReplIt:
         self.coder = getCoder(self.task, self.action)
         if not self.coder:
             raise Exception("Couldn't find the Coder for this lang")
-        
+
         # Where is the repl code we need?
         self.basepath = "{}/repl-{}/".format(BASEPATH, self.lang)
 
         # Setup a temp dir for this test
         self.testDir = tempfile.mkdtemp(prefix=TEST_PREFIX)
-        
+
         # Copy over everything into this new dir
         src = os.listdir(self.basepath)
         for f in src:
@@ -213,12 +231,11 @@ class ReplIt:
 
         # Language specific things
         self.env["PYTHONPATH"] = self.testDir
-        
+
         # Get the code pulled and formatted
         self.execCode = self.getTestingCode()
         self.env["EXIS_REPL_CODE"] = self.execCode
 
-    
     def _read(self, out, stor):
         """
         Threaded function that spins and reads the output from the executing process.
@@ -230,22 +247,22 @@ class ReplIt:
                 else:
                     stor.append(line)
         out.close()
-    
+
     def kill(self):
         """
         Kills the process and stops reading in the data from stdout.
         Returns:
             True if all ok, False otherwise
         """
-        #print "KILL {} : {} @ {} PID {}".format(self.action, self.task.fullName(), self.testDir, self.proc.pid)
+        # print "KILL {} : {} @ {} PID {}".format(self.action, self.task.fullName(), self.testDir, self.proc.pid)
         self.executing = False
         # Need to bring out the big guns to stop the proc, this is because it launches separate children
         # so we first set the process group to a unique value (using preexec_fn below), then we kill that
         # unique process group with the command here:
         os.killpg(os.getpgid(self.proc.pid), signal.SIGTERM)
-        #self.proc.kill()
-        #self.proc.wait()
-        
+        # self.proc.kill()
+        # self.proc.wait()
+
         res = self.coder.checkExecution(self.stdout, self.stderr)
         if res is not None:
             print "{} {} : SUCCESS (Found {})".format(self.action, self.task.fullName(), res)
@@ -257,14 +274,13 @@ class ReplIt:
             print "Code Executed:"
             print self.execCode
             return False
-            
-    
+
     def cleanup(self):
         """
         Removes the temp dirs used for this test.
         """
         shutil.rmtree(self.testDir)
-    
+
     def execute(self):
         """
         Launches the actual function. To do this properly we need to launch a reader
@@ -274,17 +290,17 @@ class ReplIt:
         """
         self.executing = True
         print "EXEC {} : {} @ {}".format(self.action, self.task.fullName(), self.testDir)
-        
+
         self.proc = subprocess.Popen(["./run2.sh"], cwd=self.testDir, env=self.env,
-                        stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
-                        close_fds=ON_POSIX, preexec_fn=os.setsid)
+                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
+                                     close_fds=ON_POSIX, preexec_fn=os.setsid)
 
         self.readOut = Thread(target=self._read, args=(self.proc.stdout, self.stdout))
         self.readOut.daemon = True
-        
+
         self.readErr = Thread(target=self._read, args=(self.proc.stderr, self.stderr))
         self.readErr.daemon = True
-        
+
         self.readOut.start()
         self.readErr.start()
 
@@ -303,8 +319,9 @@ class ReplIt:
         """
         code = [a for a in self.task.code]
         self.coder.setupTerminate(code)
-        
+
         return "\n".join(code)
+
 
 def executeAll(taskList, actionList):
     """
@@ -319,7 +336,7 @@ def executeAll(taskList, actionList):
             print "!! {} never completed setup process (BUILDCOMPLETE never found)".format(ts)
 
         procs.append(r)
-    
+
     # Now let the system do its thing
     time.sleep(5)
 
@@ -332,13 +349,14 @@ def executeAll(taskList, actionList):
     if ok:
         for p in procs:
             p.cleanup()
-    
+
+
 def executeTaskSet(taskSet):
     """
     Given one specific TaskSet it will execute the corresponding components of that (pub/sub or reg/call).
     """
     procs = list()
-    
+
     # Pull the proper actions from the task
     recv = taskSet.getTask("register") or taskSet.getTask("subscribe")
     send = taskSet.getTask("publish") or taskSet.getTask("call")
@@ -346,7 +364,7 @@ def executeTaskSet(taskSet):
     if None in (recv, send):
         print "!! Missing send/recv for {}".format(taskSet.getName())
         return
-       
+
     # Startup the actions
     for r in recv, send:
         rr = ReplIt(taskSet, r.action)
@@ -355,7 +373,7 @@ def executeTaskSet(taskSet):
         if a is False:
             print "!! {} never completed setup process (BUILDCOMPLETE never found)".format(r)
         procs.append(rr)
-    
+
     # Now let the system do its thing
     time.sleep(5)
 
@@ -368,6 +386,7 @@ def executeTaskSet(taskSet):
     if ok:
         for p in procs:
             p.cleanup()
+
 
 def cleanupTests():
     # NOTE: This only works on linux flavored systems right now

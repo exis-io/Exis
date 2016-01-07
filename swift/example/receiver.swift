@@ -1,3 +1,4 @@
+
 import Riffle
 
 class Dog: Model {
