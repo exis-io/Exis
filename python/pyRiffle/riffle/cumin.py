@@ -3,8 +3,8 @@ Type reflection and conversion.
 '''
 
 import inspect
+import json
 
-from riffle.model import reconstruct
 from riffle.model import Model
 
 def want(*types):
@@ -12,7 +12,6 @@ def want(*types):
         def wrapper(*args, **kwargs):
             # return the types this call expects as a list if asked
             if '_riffle_reflect' in kwargs:
-                # return [x.__name__ for x in list(types)]
                 return list(types)
 
             # Test if function looks like a method and set aside the first
@@ -24,20 +23,17 @@ def want(*types):
                 pre_args = args[0:1]
                 args = args[1:]
 
-            final_args = pre_args + reconstruct(args, types)
+            final_args = pre_args + unmarshall(args, types)
 
             return function(*final_args)
         return wrapper
     return real_decorator
 
-
-def cuminReflect(handler):
+def reflect(handler):
     '''
-    Reads the types the receiver expects to receive and returns them as a list. 
+    Reflectes the expected types of the receiver and returns them as a json serialized list.
 
     If no @want is specified, None is returned. This allows any arguments.
-
-    No arguments are denoted by an empty list. The decorator is @want() 
     '''
     try:
         types = handler(_riffle_reflect=True)
@@ -46,13 +42,13 @@ def cuminReflect(handler):
         # thus accepts any argument
         # TODO: HOWEVER-- a **kwargs function will fail here. Have to catch **kwargs functions
         # and immediately err on them! Receives can only accept *args and may embed as elements
-        return None
-
-    typeList = []
+        return json.dumps(None)
 
     if types is None:
-        return typeList
+        return json.dumps(None)
     else:
+        typeList = []
+
         for t in types:
 
             # If primitive type, continue
@@ -74,4 +70,25 @@ def cuminReflect(handler):
             else:
                 print 'Type ' + str(t) + ' is not natively serializible!'
 
-    return typeList
+    return json.dumps(typeList)
+
+def marshall(args):
+    ''' Ask models to serialize themselves, if present '''
+    return json.dumps([x._serialize() if isinstance(x, Model) else x for x in args])
+
+def unmarshall(args, types):
+    '''
+    Prepares arguments from the core for user level code. 
+
+    Objects and exceptions are recreated from dictionaries if appropriate. 
+    '''
+    if not types:
+        return args
+
+    l = list()
+    for x, y in zip(args, types):
+        if issubclass(y, Model):
+            l.append(y._deserialize(x))
+        else:
+            l.append(x)
+    return tuple(l)

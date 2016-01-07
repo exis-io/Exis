@@ -16,9 +16,7 @@ import json
 from greenlet import greenlet
 
 import pymantle
-from riffle.cumin import cuminReflect
-from riffle.model import Model, reconstruct
-from riffle.utils import newID
+from riffle import cumin, utils
 
 
 class Domain(object):
@@ -34,12 +32,13 @@ class Domain(object):
             self.app = superdomain.app
 
     def join(self):
-        cb, eb = newID(2)
+        # TODO: convert the "control plane" to use deferreds using Twisted style callbacks
+        cb, eb = utils.newID(2)
         self.app.control[cb] = self.onJoin
         self.mantleDomain.Join(cb, eb)
 
-        self.app.green = greenlet(self.app.handle)
-        self.app.green.switch(self.mantleDomain)
+        self.app.mainGreenlet = greenlet(self.app.handle)
+        self.app.mainGreenlet.switch(self.mantleDomain)
     
     def leave(self):
         # TODO: Emit a deferred here (?)
@@ -65,17 +64,17 @@ class Domain(object):
 
     def _setHandler(self, endpoint, handler, coreFunction, doesReturn):
         '''
-        Register or Subscrive. Invokes targetFunction for the given endpoint and handler.
+        Register or Subscribe. Invokes targetFunction for the given endpoint and handler.
 
         :param coreFunction: the intended core function, either Subscribe or Register
         :param doesReturn: True if this handler can return a value (is a registration)
         ''' 
 
-        d, handlerId = Deferred(), newID()
+        d, handlerId = Deferred(), utils.newID()
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
         self.app.handlers[handlerId] = handler, doesReturn
 
-        coreFunction(endpoint, d.cb, d.eb, handlerId, json.dumps(cuminReflect(handler)))
+        coreFunction(endpoint, d.cb, d.eb, handlerId, cumin.reflect(handler))
         return d
 
     def _invoke(self, endpoint, args, coreFunction): 
@@ -86,14 +85,14 @@ class Domain(object):
         '''
         d = Deferred()
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
-        coreFunction(endpoint, d.cb, d.eb, json.dumps(args))
+        coreFunction(endpoint, d.cb, d.eb, cumin.marshall(args))
         return d
 
 
 class Deferred(object):
 
     def __init__(self):
-        self.cb, self.eb = newID(2)
+        self.cb, self.eb = utils.newID(2)
         self.green = None
 
     def wait(self, *types):
@@ -104,7 +103,7 @@ class Deferred(object):
 
         # Switch back to the parent greenlet: block until the parent has time to resolve us
         results = self.green.parent.switch(self)
-        r = reconstruct(results, types)
+        r = cumin.unmarshall(results, types)
 
         # if isinstance(Exception), raise exception
 
@@ -125,7 +124,7 @@ class App(object):
         self.deferreds, self.handlers, self.control = {}, {}, {}
 
         # The greenlet that runs the handle loop
-        self.green = None
+        self.mainGreenlet = None
 
     def handle(self, domain):
         ''' Open connection with the core and begin handling callbacks '''

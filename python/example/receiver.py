@@ -25,7 +25,7 @@ class Receiver(riffle.Domain):
         # self.register("nada", self.returningNothing)
 
         # self.register("kill", self.kill)
-        # self.subscribe("model", self.model)
+        self.subscribe("model", self.model)
 
     @want(int, int)
     def registration(self, a, b):

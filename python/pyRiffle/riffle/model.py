@@ -89,29 +89,14 @@ class Model(object):
             self.__values[name] = value
 
     def __repr__(self):
-        return str(self.__class__) + repr(self.__values)
+        return str(self.__class__.__name__) + repr(self.__values)
 
     @classmethod
-    def _deserialize(cls, json):
-        c = cls(**json)
-        return c
+    def _deserialize(klass, json):
+        # TODO: apply deserialze recursively to nested models and collections of models
+        return klass(**json)
 
     def _serialize(self):
+        # TODO: apply serialize recursively to nested models
+        # TODO: check values, make sure they're serializable, else throw an exception
         return self.__values
-
-
-def reconstruct(args, types):
-    """
-    Takes a tuple of values and a tuple of their types and properly reconstructs them
-    """
-    # Allow this to be a pass-through if they didn't provide any types to check
-    if not types:
-        return args
-
-    l = list()
-    for x, y in zip(args, types):
-        if issubclass(y, Model):
-            l.append(y._deserialize(x))
-        else:
-            l.append(x)
-    return tuple(l)

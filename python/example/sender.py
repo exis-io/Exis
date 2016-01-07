@@ -20,7 +20,7 @@ class Sender(riffle.Domain):
         result = beta.call("reg", 1, 2).wait()
         print 'Done with result:', result
 
-        # beta.publish("model", User())
+        beta.publish("model", User())
         # result = beta.call("nada").wait()
         # print 'Done with result:', result
 
