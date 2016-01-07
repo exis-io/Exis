@@ -28,20 +28,6 @@ class Recv(riffle.Domain):
         self.subscribe("objectSub", objectSub)
         # End Example Pub/Sub Objects
 
-        # Example Pub/Sub OOO Racey - This shows that pubs can arrive out of order unless you call .wait() on them
-        def oooRaceSub(i):
-            print("[oooRaceSub] Got: {}".format(i))
-
-        self.subscribe("oooRaceSub", oooRaceSub)
-        # End Example Pub/Sub OOO Racey
-
-        # Example Pub/Sub OOO Corrected - This shows that pubs will arrive in order because we called wait()
-        def oooCorrectSub(i):
-            print("[oooCorrectSub] Got: {}".format(i))
-
-        self.subscribe("oooCorrectSub", oooCorrectSub)
-        # End Example Pub/Sub OOO Corrected
-
 
 if __name__ == '__main__':
     app = riffle.Domain("xs.demo.test")

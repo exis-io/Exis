@@ -23,6 +23,8 @@ if(APPLS is None):
 
 ON_POSIX = "posix" in sys.builtin_module_names
 
+SLEEP_TIME = 1
+
 from utils import utils
 
 WS_URL = os.environ.get("WS_URL", "ws://localhost:8000/ws")
@@ -69,9 +71,10 @@ class Coder:
         if ev is None and len(out) == 0:
             good = "no expect required"
 
-        for o in out:
-            if ev in o:
-                good = ev
+        else:
+            for o in out:
+                if ev in o:
+                    good = ev
 
         if err:
             # Look at the error to see whats up
@@ -338,7 +341,7 @@ def executeAll(taskList, actionList):
         procs.append(r)
 
     # Now let the system do its thing
-    time.sleep(5)
+    time.sleep(SLEEP_TIME)
 
     # Go back through and terminate in reverse order
     ok = True
@@ -375,7 +378,7 @@ def executeTaskSet(taskSet):
         procs.append(rr)
 
     # Now let the system do its thing
-    time.sleep(5)
+    time.sleep(SLEEP_TIME)
 
     # Go back through and terminate in reverse order
     ok = True

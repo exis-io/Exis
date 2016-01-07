@@ -1,3 +1,4 @@
+
 import Riffle
 
 class Sender: Riffle.Domain, Riffle.Delegate  {
