@@ -11,5 +11,8 @@ def newID(n=1):
 class RiffleError(Exception):
     pass
 
+class CuminError(Exception):
+    pass
+
 class Unimplemented(RiffleError):
     pass

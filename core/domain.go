@@ -8,7 +8,7 @@ type Domain interface {
 	Subscribe(string, uint64, []interface{}) error
 	Register(string, uint64, []interface{}) error
 	Publish(string, []interface{}) error
-	Call(string, []interface{}, []interface{}) ([]interface{}, error)
+	Call(string, []interface{}) ([]interface{}, error)
 
 	Unsubscribe(string) error
 	Unregister(string) error
@@ -180,7 +180,7 @@ func (c domain) Publish(endpoint string, args []interface{}) error {
 	})
 }
 
-func (c domain) Call(endpoint string, args []interface{}, types []interface{}) ([]interface{}, error) {
+func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error) {
 	// TODO: Most likely have to pass in a requestID here to catch type assertions on the outbound
 	endpoint = makeEndpoint(c.name, endpoint)
 	call := &call{Request: NewID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}

@@ -27,8 +27,8 @@ func MantlePublish(d Domain, endpoint string, cb uint64, eb uint64, args []inter
 	}
 }
 
-func MantleCall(d Domain, endpoint string, cb uint64, eb uint64, args []interface{}, types []interface{}) {
-	if results, err := d.Call(endpoint, args, types); err != nil {
+func MantleCall(d Domain, endpoint string, cb uint64, eb uint64, args []interface{}) {
+	if results, err := d.Call(endpoint, args); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
 		d.GetApp().CallbackSend(cb, results...)

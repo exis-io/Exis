@@ -3,7 +3,7 @@ import riffle
 from riffle import want
 
 riffle.SetFabricLocal()
-riffle.SetLogLevelDebug()
+riffle.SetLogLevelInfo()
 
 
 class User(riffle.Model):

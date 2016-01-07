@@ -65,7 +65,7 @@ Version from swift:
 
 // Checks the types of the provided positional arguments and the receiver.
 func softCumin(types []interface{}, args []interface{}) error {
-	fmt.Printf("SOFTCUMIN: %v against %v\n", types, args)
+	// fmt.Printf("SOFTCUMIN: %v against %v\n", types, args)
 
 	// Description to print on every failure
 	description := fmt.Sprintf("Types: %v, Arguments: %v", types, args)
@@ -78,7 +78,7 @@ func softCumin(types []interface{}, args []interface{}) error {
 		argument := reflect.ValueOf(x)
 		expected := types[i]
 
-		Debug("Expected: %v expected type: %v, Argument: %v", expected, reflect.TypeOf(expected), x)
+		// Debug("Expected: %v expected type: %v, Argument: %v", expected, reflect.TypeOf(expected), x)
 		//fmt.Printf("Expected: %v expected type: %v, Argument: %v\n", expected, reflect.TypeOf(expected), x)
 
 		// If the expected type is a string, we're looking for a primitive

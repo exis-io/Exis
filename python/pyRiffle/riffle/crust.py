@@ -51,23 +51,26 @@ class Domain(object):
         pymantle.Info("Default onLeave")
 
     def subscribe(self, endpoint, handler):
-        d = Deferred()
-        self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
-
-        hn = newID()
-        self.app.handlers[hn] = handler, False
-
-        self.mantleDomain.Subscribe(endpoint, d.cb, d.eb, hn, json.dumps(cuminReflect(handler)))
-        return d
+        return self._setHandler(endpoint, handler, self.mantleDomain.Subscribe, False)
 
     def register(self, endpoint, handler):
+        return self._setHandler(endpoint, handler, self.mantleDomain.Register, True)
+
+    def _setHandler(self, endpoint, handler, coreFunction, doesReturn):
+        '''
+        Invokes the method targetFunction on the core for the given endpoint and handler.
+
+        :param coreFunction: the intended core function, either Subscribe or Register
+        :param doesReturn: True if this handler can return a value (is a registration)
+        ''' 
+
         d = Deferred()
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
 
         hn = newID()
-        self.app.handlers[hn] = handler, True
+        self.app.handlers[hn] = handler, doesReturn
 
-        self.mantleDomain.Register(endpoint, d.cb, d.eb, hn, json.dumps(cuminReflect(handler)))
+        coreFunction(endpoint, d.cb, d.eb, hn, json.dumps(cuminReflect(handler)))
         return d
 
     def publish(self, endpoint, *args):
@@ -84,7 +87,7 @@ class Domain(object):
     def call(self, endpoint, *args):
         d = Deferred()
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
-        self.mantleDomain.Call(endpoint, d.cb, d.eb, json.dumps(args), json.dumps([]))
+        self.mantleDomain.Call(endpoint, d.cb, d.eb, json.dumps(args))
         return d
 
     def leave(self):
@@ -116,13 +119,10 @@ class Deferred(object):
         
         return r[0] if len(r) == 1 else r
 
-class App(object):
+class App(greenlet):
 
     def __init__(self):
-        self.deferreds = {}
-        self.control = {}
-
-        self.handlers = {}
+        self.deferreds, self.handlers, self.control = {}, {}, {}
 
         # The greenlet that runs the handle loop
         self.green = None
@@ -141,12 +141,11 @@ class App(object):
                 break
 
             if i in self.deferreds:
-                # Resolve the deferred- remove both success and error keys
                 d = self.deferreds[i]
                 del self.deferreds[d.cb]
                 del self.deferreds[d.eb]
 
-                # Deferreds are always created when async operations occur. If the user called .wait()
+                # Deferreds are always emitted by async methods. If the user called .wait()
                 # then the deferred instantiates a greenlet as .green. Resume that greenlet.
                 # If that greenlet emits another deferred the user has called .wait() again.
                 if d.green is not None:
@@ -158,8 +157,9 @@ class App(object):
                 handler, canReturn = self.handlers[i]
 
                 if canReturn:
-                    returnId = args.pop(0)
+                    resultID = args.pop(0)
 
+                # Consolidated handlers into one 
                 try:
                     ret = handler(*args)
                 except Exception as error:
@@ -169,14 +169,14 @@ class App(object):
                     # I hard-coded "wamp.error.internal_error" for now because
                     # we cannot tell the cause of the error yet.
                     if canReturn:
-                        domain.YieldError(returnId, "Exception in handler", json.dumps([str(error)]))
+                        domain.YieldError(resultID, "Exception in handler", json.dumps([str(error)]))
                 else:
                     if canReturn:
                         ret = [] if ret is None else ret
                         if not isinstance(ret, (list, tuple)):
                             ret = [ret]
 
-                        domain.Yield(returnId, json.dumps(ret))
+                        domain.Yield(resultID, json.dumps(ret))
 
             # Orphaned-- onJoin and other control messages should be handled with their own deferreds
             if i in self.control:
@@ -185,12 +185,3 @@ class App(object):
                 # If user code called .wait(), this deferred is emitted, waiting on the results of some operation
                 if d is not None:
                     self.deferreds[d.cb], self.deferreds[d.eb] = d, d
-
-            else:
-                pass
-                # riffle.Error("No handler available for " + str(i))
-
-    def maybeDeferred(self):
-        ''' Call some function with some args. If that function produces a deferred, add it to our list'''
-        pass
-
