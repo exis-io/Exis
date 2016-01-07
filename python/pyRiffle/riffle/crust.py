@@ -123,8 +123,6 @@ class Deferred(object):
 
         r = cumin.unmarshall(results, types)
 
-        # if isinstance(Exception), raise exception
-
         # Actually, this cant happen. A return from a function should always come back as 
         # a list. Unless you mean a return from... any other thing. In which case, bleh.
         if r is None:
@@ -139,9 +137,9 @@ class Deferred(object):
 class App(object):
 
     def __init__(self):
+        # self.handlers contains a tuple of (function, bool), where the bool is True if the 
+        # function can return (i.e. is a registration)
         self.deferreds, self.handlers, self.control = {}, {}, {}
-
-        # The greenlet that runs the handle loop
         self.mainGreenlet = None
 
     def handle(self, domain):

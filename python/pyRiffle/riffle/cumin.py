@@ -5,7 +5,7 @@ Type reflection and conversion.
 import inspect
 import json
 
-from riffle.model import Model
+from riffle import utils, model
 
 def want(*types):
     def real_decorator(function):
@@ -48,7 +48,7 @@ def reflect(handler):
 
 def prepareSchema(types):
     '''
-    Prepares a list of types for consumption by the core. Returns json
+    Prepares a list of types for consumption by the core. Returns json.
     '''
     if types is None:
         return json.dumps(None)
@@ -64,13 +64,19 @@ def prepareSchema(types):
             # Format passed in should be [bool]. Internal types should be homogenous
             # Output should be [bool]
             elif type(t) is list:
-                print 'List serialization not implemented'
+                if len(t) > 1:
+                    raise utils.SyntaxError("Lists can only have one internal type.")
+
+                if t[0] in [int, float, bool, str, list, dict]:
+                    typeList.append([t[0].__name__])
+                else: 
+                    raise utils.SyntaxError("Unknown type ", t[0])
 
             # Same as above-- homogenous key:value pairs, OR just the dict itself
             elif t is dict:
-                print 'Dictionary serialization not implemented'
+                typelist.append({k: v.reflect() if isinstance(v, Model) else v for k, v in t})
 
-            elif issubclass(t, Model):
+            elif issubclass(t, model.Model):
                 typeList.append(t.reflect())
 
             else:
@@ -80,7 +86,7 @@ def prepareSchema(types):
 
 def marshall(args):
     ''' Ask models to serialize themselves, if present. Returns JSON. '''
-    return json.dumps([x._serialize() if isinstance(x, Model) else x for x in args])
+    return json.dumps([x._serialize() if isinstance(x, model.Model) else x for x in args])
 
 def unmarshall(args, types):
     '''
@@ -97,7 +103,7 @@ def unmarshall(args, types):
 
     l = list()
     for x, y in zip(args, types):
-        if issubclass(y, Model):
+        if issubclass(y, model.Model):
             l.append(y._deserialize(x))
         else:
             l.append(x)

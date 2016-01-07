@@ -23,7 +23,7 @@ class Sender(riffle.Domain):
         try: 
             result = beta.call("reg", 1, 2).wait(str)
         except riffle.Error, e:
-            print "An error occured", e
+            print "Call.wait threw an exception:", e
 
         beta.publish("model", User())
 

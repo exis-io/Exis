@@ -11,6 +11,9 @@ def newID(n=1):
 class Error(Exception):
     pass
 
+class SyntaxError(Error):
+    pass
+
 class CuminError(Error):
     pass
 

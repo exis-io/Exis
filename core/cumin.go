@@ -71,7 +71,7 @@ func softCumin(types []interface{}, args []interface{}) error {
 	description := fmt.Sprintf("Types: %v, Arguments: %v", types, args)
 
 	if len(types) != len(args) {
-		return fmt.Errorf("Cumin: Invalid number of arguments, expected %d, receieved %s. %v", len(types), len(args), description)
+		return fmt.Errorf("Cumin: Invalid number of arguments, expected %d, receieved %d. %v", len(types), len(args), description)
 	}
 
 	for i, x := range args {
