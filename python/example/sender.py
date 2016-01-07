@@ -20,6 +20,7 @@ class Sender(riffle.Domain):
         result = beta.call("reg", 1, 2).wait(int)
         print 'Done with result:', result
 
+        # Note: exact same call as above, but with a different .wait type
         try: 
             result = beta.call("reg", 1, 2).wait(str)
         except riffle.Error, e:
