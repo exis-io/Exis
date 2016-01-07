@@ -108,7 +108,7 @@ def testAll(lang):
     Executes all found tests for the language provided.
     """
     examples = exampler.Examples.find(EXISPATH, lang)
-    for t in examples.getTasks():
+    for t in examples.getTasks(lang):
         repl.executeTaskSet(t)
         print('-'*80)
 
