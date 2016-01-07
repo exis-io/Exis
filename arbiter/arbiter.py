@@ -93,7 +93,7 @@ def test(*tasks):
     actionList = list()
     for t in tasks:
         lang, action, taskName = _ripTaskDef(t)
-        ts = examples.getTask(lang, taskName)
+        ts = examples.getTask(taskName, lang)
         if not ts:
             print("!! No TaskSet found")
         else:
