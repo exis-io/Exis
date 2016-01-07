@@ -220,7 +220,7 @@ func (d *Domain) Call(endpoint string, args ...interface{}) *js.Object {
 	var p promise.Promise
 
 	go func() {
-		if results, err := d.coreDomain.Call(endpoint, args, make([]interface{}, 0)); err == nil {
+		if results, err := d.coreDomain.Call(endpoint, args)); err == nil {
 			p.Resolve(results)
 		} else {
 			p.Reject(err.Error())

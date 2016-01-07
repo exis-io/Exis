@@ -70,9 +70,9 @@ func Publish(pdomain unsafe.Pointer, endpoint *C.char, cb uint64, eb uint64, arg
 }
 
 //export Call
-func Call(pdomain unsafe.Pointer, endpoint *C.char, cb uint64, eb uint64, args *C.char, types *C.char) {
+func Call(pdomain unsafe.Pointer, endpoint *C.char, cb uint64, eb uint64, args *C.char) {
 	d := *(*core.Domain)(pdomain)
-	go core.MantleCall(d, C.GoString(endpoint), cb, eb, core.MantleUnmarshal(C.GoString(args)), core.MantleUnmarshal(C.GoString(types)))
+	go core.MantleCall(d, C.GoString(endpoint), cb, eb, core.MantleUnmarshal(C.GoString(args)))
 }
 
 //export Yield
