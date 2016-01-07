@@ -10,8 +10,8 @@ class Sender: Riffle.Domain, Riffle.Delegate  {
         // End Example Pub/Sub Basic
         
         // Example Reg/Call Basic 1 - This is a basic reg/call
-        call("xs.demo.test.example/basicReg", "Hello") { args in
-            print("\(args)") // Expects a String, like "Hello World"
+        call("xs.demo.test.example/basicReg", "Hello").then { (a: String) in
+            print("\(a)") // Expects a String, like "Hello World"
         }
         // End Example Reg/Call Basic 1
     }
