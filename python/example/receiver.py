@@ -3,16 +3,15 @@ import riffle
 from riffle import want
 
 riffle.SetFabricLocal()
-riffle.SetLogLevelDebug()
+riffle.SetLogLevelInfo()
 
 
 class User(riffle.Model):
     name = "John Doe"
-    email = ''
+    email = 'bil@gmail.com'
 
-    def sayHello(self, other):
-        print 'Im ' + self.name + ', how are you, ' + other + '?'
-
+    def sayHello(self):
+        print 'Im ' + self.name + ', email me at ' + self.email
 
 class Receiver(riffle.Domain):
 
@@ -20,10 +19,8 @@ class Receiver(riffle.Domain):
         print "Receiver Joined"
 
         self.register("reg", self.registration)
-        self.register("kill", self.kill)
-
         self.subscribe("sub", self.subscription)
-        self.subscribe("handshake", self.greeting)
+        self.subscribe("model", self.model)
 
     @want(int, int)
     def registration(self, a, b):
@@ -35,14 +32,9 @@ class Receiver(riffle.Domain):
         print "Received a publish from", name
 
     @want(User)
-    def greeting(self, other):
+    def model(self, other):
         print "Received a publish from", other
-
-    def kill(self):
-        print 'Asked to close. Leaving'
-
-        # Not ready. Leaves, but not cleanly
-        self.leave()
+        other.sayHello()
 
 if __name__ == '__main__':
     app = riffle.Domain("xs.damouse")

@@ -27,11 +27,22 @@ func MantlePublish(d Domain, endpoint string, cb uint64, eb uint64, args []inter
 	}
 }
 
-func MantleCall(d Domain, endpoint string, cb uint64, eb uint64, args []interface{}, types []interface{}) {
-	if results, err := d.Call(endpoint, args, types); err != nil {
+func MantleCall(d Domain, endpoint string, cb uint64, eb uint64, args []interface{}) {
+	if results, err := d.Call(endpoint, args); err != nil {
+		d.RemoveCallExpect(cb)
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
-		d.GetApp().CallbackSend(cb, results)
+		if types, ok := d.GetCallExpect(cb); !ok {
+			// We were never asked for types. Don't do anything
+			Info("Call for %v received, but no cumin enforcement present.", endpoint)
+		} else {
+			d.RemoveCallExpect(cb)
+			if err := softCumin(types, results); err == nil {
+				d.GetApp().CallbackSend(cb, results...)
+			} else {
+				d.GetApp().CallbackSend(eb, err.Error())
+			}
+		}
 	}
 }
 

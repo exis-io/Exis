@@ -18,22 +18,23 @@ import Foundation
 // All properties implement Convertible, but Models react differently 
 // This allows each property to handle its construction differently
 public protocol Convertible {
-    static func isModel() -> Bool
-    
     // Return a constructed form of this object
     static func deserialize(from: Any) -> Any
     func serialize() -> Any
+    
+    // Returns a core representation of this type
+    static func representation() -> Any
 }
 
 public protocol BaseConvertible: Convertible {}
 
 extension BaseConvertible {
-    public static func isModel() -> Bool {
-        return false
-    }
-    
     public static func deserialize(from: Any) -> Any {
         return from
+    }
+    
+    public static func representation() -> Any {
+        return "\(Self.self)"
     }
     
     public func serialize() -> Any {
@@ -98,8 +99,6 @@ extension Optional : OptionalProperty {
 
 // Extremely primitive types
 extension Int: Property, Convertible {
-    
-    public static func isModel() -> Bool { return false }
     public func serialize() -> Any { return self }
     
     public static func deserialize(from: Any) -> Any {
@@ -118,11 +117,13 @@ extension Int: Property, Convertible {
         print("WARN: Convertible was not able to complete for type \(self) with value \(from)")
         return from
     }
+    
+    public static func representation() -> Any {
+        return "int"
+    }
 }
 
 extension String: Property, Convertible {
-    
-    public static func isModel() -> Bool { return false }
     public func serialize() -> Any { return self }
     
     public static func deserialize(from: Any) -> Any {
@@ -138,11 +139,13 @@ extension String: Property, Convertible {
         print("WARN: Convertible was not able to complete for type \(self) with value \(from)")
         return from
     }
+    
+    public static func representation() -> Any {
+        return "str"
+    }
 }
 
 extension Double: Property, Convertible {
-    
-    public static func isModel() -> Bool { return false }
     public func serialize() -> Any { return self }
     
     public static func deserialize(from: Any) -> Any {
@@ -157,11 +160,13 @@ extension Double: Property, Convertible {
         print("WARN: Convertible was not able to complete for type \(self) with value \(from)")
         return from
     }
+    
+    public static func representation() -> Any {
+        return "double"
+    }
 }
 
 extension Float: Property, Convertible {
-    
-    public static func isModel() -> Bool { return false }
     public func serialize() -> Any { return self }
     
     public static func deserialize(from: Any) -> Any {
@@ -176,11 +181,13 @@ extension Float: Property, Convertible {
         print("WARN: Convertible was not able to complete for type \(self) with value \(from)")
         return from
     }
+    
+    public static func representation() -> Any {
+        return "float"
+    }
 }
 
 extension Bool: Property, Convertible {
-    
-    public static func isModel() -> Bool { return false }
     public func serialize() -> Any { return self }
     
     public static func deserialize(from: Any) -> Any {
@@ -195,12 +202,14 @@ extension Bool: Property, Convertible {
         print("WARN: Convertible was not able to complete for type \(self) with value \(from)")
         return from
     }
+    
+    public static func representation() -> Any {
+        return "bool"
+    }
 }
 
 // TODO: Dictionaries
 extension Array : Property, BaseConvertible {
-    public static func isModel() -> Bool { return false }
-    
     
     public static func deserialize(from: Any) -> Any {
         if let arr = from as? [Any] {
@@ -213,6 +222,16 @@ extension Array : Property, BaseConvertible {
     public func serialize() -> Any {
         // Apply recursive serialization here
         return self
+    }
+    
+    public static func representation() -> Any {
+        if let child = Generator.Element.self as? Convertible.Type {
+            return [child.representation()]
+            return "[\(child.representation())]"
+        }
+        
+        WarnLog("WARN- Unable to derive representation of array! Type: \(self)")
+        return "[\(Generator.Element.self)]"
     }
 }
 

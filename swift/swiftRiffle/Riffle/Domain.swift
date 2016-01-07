@@ -48,9 +48,11 @@ public class Domain {
     public var mantleDomain: UnsafeMutablePointer<Void>
     public var delegate: Delegate?
     
-    public var handlers: [UInt64: [Any] -> ()] = [:]
     public var invocations: [UInt64: [Any] -> ()] = [:]
     public var registrations: [UInt64: [Any] -> Any?] = [:]
+    
+    var deferreds: [UInt64: Deferred] = [:]
+    var handlers: [UInt64: [Any] -> ()] = [:]
     
     
     public init(name: String) {
@@ -61,51 +63,57 @@ public class Domain {
         mantleDomain = Subdomain(superdomain.mantleDomain, name.cString())
     }
     
-    public func _subscribe(endpoint: String, fn: [Any] -> ()) {
-        let cb = CBID()
-        let eb = CBID()
+    public func _subscribe(endpoint: String, _ types: [Any], fn: [Any] -> ()) -> Deferred {
         let hn = CBID()
-        
-        Subscribe(self.mantleDomain, endpoint.cString(), cb, eb, hn, "[]".cString())
         handlers[hn] = fn
+
+        let d = Deferred(domain: self)
+        Subscribe(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(serializeArguments(types)))
+        return d
     }
     
-    public func _register(endpoint: String, fn: [Any] -> Any) {
-        let cb = CBID()
-        let eb = CBID()
-        let hn = CBID() 
-
-        Register(self.mantleDomain, endpoint.cString(), cb, eb, hn, "[]".cString())
+    public func _register(endpoint: String, _ types: [Any], fn: [Any] -> Any) -> Deferred {
+        let hn = CBID()
         registrations[hn] = fn
+
+        let d = Deferred(domain: self)
+        Register(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(types))
+        return d
     }
 
-    public func publish(endpoint: String, _ args: Any...) {
-        let cb = CBID()
-        let eb = CBID()
-        
-        Publish(self.mantleDomain, endpoint.cString(), cb, eb, marshall(serializeArguments(args)))
+    public func publish(endpoint: String, _ args: Any...) -> Deferred {
+        let d = Deferred(domain: self)
+        Publish(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)))
+        return d
     }
     
-    public func _call(endpoint: String, _ args: [Any], handler: [Any] -> ()) {
-        let cb = CBID()
-        let eb = CBID()
-
-        Call(self.mantleDomain, endpoint.cString(), cb, eb, marshall(serializeArguments(args)), "[]".cString())
-        invocations[cb] = handler
+    public func call(endpoint: String, _ args: Any...) -> HandlerDeferred {
+        let d = HandlerDeferred(domain: self)
+        Call(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)), "[]".cString())
+        return d
     }
     
     public func receive() {
         while true {
             var (i, args) = decode(Receive(self.mantleDomain))
             
-            if let fn = handlers[i] {
+            if let d = deferreds[i] {
+                // remove the deferred (should this ever be optional?)
+                deferreds[d.cb] = nil
+                deferreds[d.eb] = nil
+                
+                if d.cb == i {
+                    d.callback(args)
+                }
+                
+                if d.eb == i {
+                    d.errback(args)
+                }
+            } else if let fn = handlers[i] {
                 fn(args)
             } else if let fn = invocations[i] {
                 fn(args)
             } else if let fn = registrations[i] {
-                // Pop off the return arg. Note that we started passing it into crusts as a nested list for some reason. Cant remember why, 
-                // but retaining that functionality until I remember.
-                var args = args[0] as! [Any]
                 let resultId = args.removeAtIndex(0) as! Double
                 
                 // Optional serialization has some problems. This unwraps the result to avoid that particular issue
@@ -113,10 +121,9 @@ public class Domain {
                     // TODO: handle tuple returns
                     Yield(mantleDomain, UInt64(resultId), marshall([ret]))
                 } else {
-                    Yield(mantleDomain, UInt64(resultId), marshall([]))
+                    let empty: [Any] = []
+                    Yield(mantleDomain, UInt64(resultId), marshall(empty))
                 }
-            } else {
-                //print("No handlers found for id \(i)!")
             }
         }
     }
@@ -147,10 +154,6 @@ public class Domain {
             print("Unable to join!")
         }
         
-        // Kick off the receive thread
-        //let thread = NSThread(target: self, selector: "receive", object: nil)
-        //thread.start()
-        //NSRunLoop.currentRunLoop().run()
         receive()
     }
     

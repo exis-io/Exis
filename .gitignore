@@ -16,18 +16,9 @@ biddly
 *.a
 *.o
 *.so
-
-libriff.h
-libriff.so
-
-riffle.h
-riffle.a
+*.jar
 
 libriffmantle.h
-libriffmantle.so
-
-riffmantle.h
-riffmantle.so
 
 IosMantle.framework/
 
@@ -39,4 +30,7 @@ swift/osxCrust/Build/
 swift/example/Packages/*
 swift/example/Example
 swift/swiftRiffle/ModuleCache/
-beta = riffle.Domain("beta", superdomain=app)
+
+cumin.txt
+
+*.class

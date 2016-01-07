@@ -1,20 +1,20 @@
 #!/usr/bin/python
 """
-    Arbiter:
-    
-    Before you scoff at the name, this program provides the final word of how each programming language
-    should implement function calls while using Exis, so the name is actually quite fitting.
-    
-    It can document and test real live examples of how to use Exis for every langugage.
+'If they came to hear me beg, they will be disappointed.'
 
-    Please run '$0 -ls all' for more info.
+This program provides the final word of how each programming language
+should implement function calls while using Exis, so the name is actually quite fitting.
 
-    Environment Variables:
-        EXISPATH - the path to the Exis repo
-    
-    TODO:
-        - Implement Object checking for Python
-        - Implement other languages
+It can document and test real live examples of how to use Exis for every langugage.
+
+Please run '$0 -ls all' for more info.
+
+Environment Variables:
+    EXISPATH - the path to the Exis repo
+
+TODO:
+    - Implement Object checking for Python
+    - Implement other languages
 """
 
 import sys, os, time, glob, argparse, re

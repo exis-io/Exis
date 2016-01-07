@@ -8,17 +8,9 @@
 
 import Foundation
 
-public class Model: Cuminicable, Silvery, Property {
+public class Model: Silvery, Property {
     
     required public init() {}
-    
-    public static func convert(object: AnyObject) -> Cuminicable? {
-        return nil
-    }
-
-    public static func brutalize<T: Cuminicable>(object: Cuminicable, _ t: T.Type) -> Cuminicable? {
-        return nil
-    }
     
     public var description:String {
         return "\(self.dynamicType){\(self.propertyNames().map { "\($0): \(self[$0])"}.joinWithSeparator(", "))}"
@@ -56,9 +48,23 @@ extension Model: Convertible {
         var ret: [String: Any] = [:]
         
         for property in self.propertyNames() {
-            ret[property] = self[property]
+            ret[property] = self[property]!
         }
         
         return ret
+    }
+    
+
+    
+    public static func representation() -> Any {
+        let me = self.init()
+        var fields: [String: Any] = [:]
+       
+        for property in me.propertyNames() {
+           fields[property] = me[property]!.dynamicType.representation()
+        }
+        
+        // return "{\(me.propertyNames().map { "\($0): \(me[$0]!.dynamicType.representation())"}.joinWithSeparator(", "))}"
+        return fields
     }
 }

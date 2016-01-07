@@ -1,7 +1,7 @@
 
 all: swift osx ios python js
 
-.PHONY: python js clean osx ios
+.PHONY: python js clean osx ios java
 
 LOG="./build.log"
 
@@ -20,8 +20,8 @@ swift: printcheck libriffmantle.so
 	@$(MAKE) -C swift/swiftRiffle/Riffle all >>$(LOG)
 
 	@echo "Building example..."
-	@$(MAKE) -C swift/example all >>$(LOG)
-	@echo "Now 'cd swift/example' and run './Example'"
+	@swift build --chdir swift/example
+	@echo "Now 'cd swift/example' and run './.build/debug/Example', 'SENDER=true ./.build/debug/Example'"
 
 osx: 
 	GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o swift/swiftRiffle/riffle.a core/cMantle/main.go
@@ -43,7 +43,10 @@ ios:
 
 	# cp assets/riffmantle.a swift/twopointone/Pod/Classes/riffmantle.a
 	# cp assets/riffmantle.h swift/twopointone/Pod/Classes/riffmantle.h
-	
+
+java: 
+	@echo "Building core..."
+	@go build -buildmode=c-shared -o java/javaRiffle/libmantle.so core/javaMantle/main.go
 
 python: 
 	gopy bind github.com/exis-io/core/pyMantle
@@ -58,9 +61,6 @@ libriffmantle.so:
 	@echo "Building core..."
 	@go build -buildmode=c-shared -o assets/libriffmantle.so core/cMantle/main.go
 
-swiftclean: 
-
-
 clean: 
 	@-rm -f assets/libriffmantle.so assets/libriffmantle.h
 	@-rm -f swift/osxCrust/RiffleTest/riffle.a  swift/osxCrust/RiffleTest/riffle.h
@@ -68,7 +68,7 @@ clean:
 	@-rm -f assets/libriffmantle.so assets/libriffmantle.h >$(LOG) ||:
 	@$(MAKE) -C swift/mantle clean >$(LOG) ||:
 	@$(MAKE) -C swift/swiftRiffle/Riffle clean >$(LOG) ||:
-	@$(MAKE) -C swift/example clean >$(LOG) ||:
+	@rm -rf swift/example/Packages >$(LOG) ||:
 
 
 # To debug and extract the build commands, check golang.org/x/mobile/cmd/gomobile/bind_iosapp.go

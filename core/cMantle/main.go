@@ -12,9 +12,6 @@ import (
 // Required main method
 func main() {}
 
-// By default always connect to the production fabric at node.exis.io
-var fabric string = core.FabricProduction
-
 //export CBID
 func CBID() uint64 {
 	return core.NewID()
@@ -43,7 +40,7 @@ func Receive(pdomain unsafe.Pointer) []byte {
 func Join(pdomain unsafe.Pointer, cb uint64, eb uint64) {
 	d := *(*core.Domain)(pdomain)
 
-	if c, err := goRiffle.Open(fabric); err != nil {
+	if c, err := goRiffle.Open(core.Fabric); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
 		if err := d.Join(c); err != nil {
@@ -73,9 +70,9 @@ func Publish(pdomain unsafe.Pointer, endpoint *C.char, cb uint64, eb uint64, arg
 }
 
 //export Call
-func Call(pdomain unsafe.Pointer, endpoint *C.char, cb uint64, eb uint64, args *C.char, types *C.char) {
+func Call(pdomain unsafe.Pointer, endpoint *C.char, cb uint64, eb uint64, args *C.char) {
 	d := *(*core.Domain)(pdomain)
-	go core.MantleCall(d, C.GoString(endpoint), cb, eb, core.MantleUnmarshal(C.GoString(args)), core.MantleUnmarshal(C.GoString(types)))
+	go core.MantleCall(d, C.GoString(endpoint), cb, eb, core.MantleUnmarshal(C.GoString(args)))
 }
 
 //export Yield
@@ -121,19 +118,19 @@ func SetLogLevelInfo() { core.LogLevel = core.LogLevelInfo }
 func SetLogLevelDebug() { core.LogLevel = core.LogLevelDebug }
 
 //export SetFabricDev
-func SetFabricDev() { fabric = core.FabricDev }
+func SetFabricDev() { core.Fabric = core.FabricDev }
 
 //export SetFabricSandbox
-func SetFabricSandbox() { fabric = core.FabricSandbox }
+func SetFabricSandbox() { core.Fabric = core.FabricSandbox }
 
 //export SetFabricProduction
-func SetFabricProduction() { fabric = core.FabricProduction }
+func SetFabricProduction() { core.Fabric = core.FabricProduction }
 
 //export SetFabricLocal
-func SetFabricLocal() { fabric = core.FabricLocal }
+func SetFabricLocal() { core.Fabric = core.FabricLocal }
 
 //export MantleSetFabric
-func MantleSetFabric(url *C.char) { fabric = C.GoString(url) }
+func MantleSetFabric(url *C.char) { core.Fabric = C.GoString(url) }
 
 //export Application
 func Application(s *C.char) { core.Application("%s", C.GoString(s)) }

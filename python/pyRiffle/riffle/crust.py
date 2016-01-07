@@ -1,132 +1,19 @@
-import random
+'''
+Top level interface into Riffle library. The crust sits atop the mantle, which sits atop the core. 
+The mantle is imported here as pymantle. It doesn't add functionality on top of the core, just
+translates between coreRiffle and python as needed. 
+
+Fixing the osx python version: 
+    https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Common-Issues.md#python-segmentation-fault-11-on-import-some_python_module
+'''
+
 import os
 import json
 
 from greenlet import greenlet
 
 import pymantle
-from riffle.model import Model, cuminReflect, reconstruct
-
-'''
-I made a mistake. Deferreds should only cover success/failure callbacks, while the handlers
-are only for register/subscribe
-
-Fixing the osx python version: 
-    https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Common-Issues.md#python-segmentation-fault-11-on-import-some_python_module
-'''
-
-
-def newID(n=1):
-    ''' Returns n random unsigned integers to act as Callback Ids '''
-    return random.getrandbits(53) if n == 1 else tuple([random.getrandbits(53) for x in range(n)])
-
-
-class Deferred(object):
-
-    '''
-    Non-general purpose deferred object associated with and resolved by ID-indexed invocations from 
-    coreRiffle. 
-
-    Callbacks can only be fired once. 
-    '''
-
-    def __init__(self):
-        self.cb, self.eb = newID(2)
-        self.green = None
-
-    def wait(self, *types):
-        ''' Wait until the results of this invocation are resolved '''
-
-        # Pass our ids so the parent knows when to reinvoke
-        self.green = greenlet.getcurrent()
-        results = self.green.parent.switch(self)
-        r = reconstruct(results, types)
-        if r:
-            return r[0] if len(r) == 1 else r
-        else:
-            return r
-
-class App(object):
-
-    def __init__(self):
-        self.deferreds, self.registrations, self.subscriptions = {}, {}, {}
-        self.control = {}
-
-        # The greenlet that runs the handle loop
-        self.green = None
-
-    def handle(self, domain):
-        ''' Open connection with the core and begin handling callbacks '''
-
-        while True:
-            i, args = json.loads(domain.Receive())
-            args = [] if args is None else args
-
-            # Turned out to work as a leave case, though this isn't clean
-            if i == 0:
-                break
-
-            if i in self.deferreds:
-                d = self.deferreds[i]
-
-                # Resolve the deferred
-                del self.deferreds[d.cb]
-                del self.deferreds[d.eb]
-
-                # Handle success seperate from failures-- Might be able to just pass in an appropriate exception
-                if d.green is not None:
-                    #print 'Reentering deffered with ', args
-                    d = d.green.switch(*args)
-
-                    # If user code called .wait() agaain we get another deferred
-                    if d is not None:
-                        self.deferreds[d.cb], self.deferreds[d.eb] = d, d
-
-            # Orphaned-- onJoin and other control messages should be handled with their own deferreds
-            if i in self.control:
-                task = greenlet(self.control[i])
-                d = task.switch(*args)
-
-                # If user code called .wait(), this deferred is emitted, waiting on the results of some operation
-                if d is not None:
-                    self.deferreds[d.cb], self.deferreds[d.eb] = d, d
-
-            elif i in self.subscriptions:
-                try:
-                    self.subscriptions[i](*args)
-                except Exception as error:
-                    print("Exception in subscription handler: {}".format(error))
-                    continue
-
-            elif i in self.registrations:
-                returnId = args.pop(0)
-
-                try:
-                    ret = self.registrations[i](*args)
-                except Exception as error:
-                    # TODO: Differentiate Riffle errors vs. other exceptions,
-                    # maybe reraise other exceptions.
-                    #
-                    # I hard-coded "wamp.error.internal_error" for now because
-                    # we cannot tell the cause of the error yet.
-                    domain.YieldError(returnId, "wamp.error.internal_error",
-                            json.dumps([str(error)]))
-                    continue
-
-                ret = [] if ret is None else ret
-
-                if not isinstance(ret, (list, tuple)):
-                    ret = [ret]
-
-                domain.Yield(returnId, json.dumps(ret))
-
-            else:
-                pass
-                # riffle.Error("No handler available for " + str(i))
-
-    def maybeDeferred(self):
-        ''' Call some function with some args. If that function produces a deferred, add it to our list'''
-        pass
+from riffle import cumin, utils
 
 
 class Domain(object):
@@ -142,15 +29,17 @@ class Domain(object):
             self.app = superdomain.app
 
     def join(self):
-        cb, eb = newID(2)
+        # TODO: convert the "control plane" to use deferreds using Twisted style callbacks
+        cb, eb = utils.newID(2)
         self.app.control[cb] = self.onJoin
         self.mantleDomain.Join(cb, eb)
 
-        # Start the handler loop, send the join, then handle from there
-
-        spin = greenlet(self.app.handle)
-        self.app.green = spin
-        spin.switch(self.mantleDomain)
+        self.app.mainGreenlet = greenlet(self.app.handle)
+        self.app.mainGreenlet.switch(self.mantleDomain)
+    
+    def leave(self):
+        # TODO: Emit a deferred here (?)
+        self.mantleDomain.Leave()
 
     def onJoin(self):
         pymantle.Info("Default onJoin")
@@ -159,44 +48,161 @@ class Domain(object):
         pymantle.Info("Default onLeave")
 
     def subscribe(self, endpoint, handler):
-        d = Deferred()
-        hn = newID()
-
-        # types = cuminReflect(handler)
-        # print 'Subscribing with types:', types
-
-        self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
-        self.app.subscriptions[hn] = handler
-        self.mantleDomain.Subscribe(endpoint, d.cb, d.eb, hn, json.dumps([]))
-        return d
+        return self._setHandler(endpoint, handler, self.mantleDomain.Subscribe, False)
 
     def register(self, endpoint, handler):
-        d = Deferred()
-        hn = newID()
-
-        # types = cuminReflect(handler)
-        # print 'Registering with types:', types
-
-        self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
-        self.app.registrations[hn] = handler
-        self.mantleDomain.Register(endpoint, d.cb, d.eb, hn, json.dumps(cuminReflect(handler)))
-        return d
+        return self._setHandler(endpoint, handler, self.mantleDomain.Register, True)
 
     def publish(self, endpoint, *args):
-        d = Deferred()
-        l = list()
-        for arg in args:
-            l.append(arg._serialize() if isinstance(arg, Model) else arg)
-        self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
-        self.mantleDomain.Publish(endpoint, d.cb, d.eb, json.dumps(l))
-        return d
+        return self._invoke(endpoint, args, self.mantleDomain.Publish, False)
 
     def call(self, endpoint, *args):
-        d = Deferred()
+        return self._invoke(endpoint, args, self.mantleDomain.Call, True)
+
+    def _setHandler(self, endpoint, handler, coreFunction, doesReturn):
+        '''
+        Register or Subscribe. Invokes targetFunction for the given endpoint and handler.
+
+        :param coreFunction: the intended core function, either Subscribe or Register
+        :param doesReturn: True if this handler can return a value (is a registration)
+        ''' 
+
+        d, handlerId = Deferred(), utils.newID()
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
-        self.mantleDomain.Call(endpoint, d.cb, d.eb, json.dumps(args), json.dumps([]))
+        self.app.handlers[handlerId] = handler, doesReturn
+
+        coreFunction(endpoint, d.cb, d.eb, handlerId, cumin.reflect(handler))
         return d
 
-    def leave(self):
-        # Deferreds here, please
-        self.mantleDomain.Leave()
+    def _invoke(self, endpoint, args, coreFunction, doesReturn): 
+        '''
+        Publish or Call. Invokes targetFunction for the given endpoint and handler.
+
+        :param coreFunction: the intended core function, either Subscribe or Register
+        :param doesReturn: True if this handler can receive results (is a call)
+        '''
+
+        d = Deferred()
+        d.canReturn = doesReturn
+        d.mantleDomain = self.mantleDomain
+        self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
+
+        coreFunction(endpoint, d.cb, d.eb, cumin.marshall(args))
+        return d
+
+
+class Deferred(object):
+
+    def __init__(self):
+        self.cb, self.eb = utils.newID(2)
+        self.green = None
+
+        # Boy does it hurt me to put this here. canReturn needs to have access to the domain
+        # for call returns
+        self.mantleDomain = None
+
+        # True if this deferred should inform the core of its types once set
+        # Only true for calls
+        self.canReturn = False
+
+    def wait(self, *types):
+        ''' Wait until the results of this invocation are resolved '''
+
+        # if canReturn then this is a call. We need to retroactively inform the core of our types
+        if self.canReturn:
+            self.mantleDomain.CallExpects(self.cb, cumin.prepareSchema(types))
+
+        # Get our current greenlet. If we're not running in a greenlet, someone screwed up bad
+        self.green = greenlet.getcurrent()
+
+        # Switch back to the parent greenlet: block until the parent has time to resolve us
+        results = self.green.parent.switch(self)
+
+        if isinstance(results, Exception):
+            raise results
+
+        r = cumin.unmarshall(results, types)
+
+        # Actually, this cant happen. A return from a function should always come back as 
+        # a list. Unless you mean a return from... any other thing. In which case, bleh.
+        if r is None:
+            return r
+        
+        return r[0] if len(r) == 1 else r
+
+    def setCallback(self, handler):
+        ''' Traditional Twisted style callbacks '''
+        pass
+
+class App(object):
+
+    def __init__(self):
+        # self.handlers contains a tuple of (function, bool), where the bool is True if the 
+        # function can return (i.e. is a registration)
+        self.deferreds, self.handlers, self.control = {}, {}, {}
+        self.mainGreenlet = None
+
+    def handle(self, domain):
+        ''' Open connection with the core and begin handling callbacks '''
+
+        while True:
+            i, args = json.loads(domain.Receive())
+            args = [] if args is None else args
+
+            # When the channel that feeds the Receive function closes, 0 is returned 
+            # This is currently automagic and happened to work on accident, but consider 
+            # a more explicit close 
+            if i == 0:
+                break
+
+            if i in self.deferreds:
+                d = self.deferreds[i]
+                del self.deferreds[d.cb]
+                del self.deferreds[d.eb]
+
+                # Special Python case-- if this is an errback construct an excepction
+                if i == d.eb:
+                    args = utils.Error(args[0])
+
+                # Deferreds are always emitted by async methods. If the user called .wait()
+                # then the deferred instantiates a greenlet as .green. Resume that greenlet.
+                # If that greenlet emits another deferred the user has called .wait() again.
+                if d.green is not None:
+                    d = d.green.switch(args)
+                    if d is not None:
+                        self.deferreds[d.cb], self.deferreds[d.eb] = d, d
+
+            elif i in self.handlers:
+                handler, canReturn = self.handlers[i]
+
+                if canReturn:
+                    resultID = args.pop(0)
+
+                # Consolidated handlers into one 
+                try:
+                    ret = handler(*args)
+                except Exception as error:
+                    # TODO: Differentiate Riffle errors vs. other exceptions,
+                    # maybe reraise other exceptions.
+                    #
+                    # I hard-coded "wamp.error.internal_error" for now because
+                    # we cannot tell the cause of the error yet.
+                    if canReturn:
+                        domain.YieldError(resultID, "Exception in handler", json.dumps([str(error)]))
+                    else:
+                        print "An exception occured: ", error
+                else:
+                    if canReturn:
+                        ret = [] if ret is None else ret
+                        if not isinstance(ret, (list, tuple)):
+                            ret = [ret]
+
+                        domain.Yield(resultID, json.dumps(ret))
+
+            # Control messages. These should really just be deferreds, but not implemented yet
+            if i in self.control:
+                d = greenlet(self.control[i]).switch(*args)
+
+                # If user code called .wait(), this deferred is emitted, waiting on the results of some operation
+                if d is not None:
+                    self.deferreds[d.cb], self.deferreds[d.eb] = d, d

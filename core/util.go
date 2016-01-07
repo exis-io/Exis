@@ -21,11 +21,6 @@ type IdGenerator interface {
 var ExternalGenerator IdGenerator = nil
 
 const (
-	FabricLocal      string = "ws://localhost:8000/ws"
-	FabricDev        string = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
-	FabricSandbox    string = "ws://sandbox.exis.io/ws"
-	FabricProduction string = "wss://node.exis.io/wss"
-
 	maxId          int64         = 1 << 53
 	MessageTimeout time.Duration = 3 * time.Second
 
@@ -35,6 +30,11 @@ const (
 	ErrGoodbyeAndOut       = "ERR-- Goodbye and go away."
 	ErrNotAuthorized       = "ERR-- Not Authorized. Ask nicely."
 	ErrAuthorizationFailed = "ERR-- Unable to Authorize. Try harder."
+
+	FabricLocal      = "ws://localhost:8000/ws"
+	FabricDev        = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
+	FabricSandbox    = "ws://sandbox.exis.io/ws"
+	FabricProduction = "wss://node.exis.io/wss"
 )
 
 var (

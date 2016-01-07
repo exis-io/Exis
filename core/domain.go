@@ -8,7 +8,11 @@ type Domain interface {
 	Subscribe(string, uint64, []interface{}) error
 	Register(string, uint64, []interface{}) error
 	Publish(string, []interface{}) error
-	Call(string, []interface{}, []interface{}) ([]interface{}, error)
+	Call(string, []interface{}) ([]interface{}, error)
+
+	CallExpects(uint64, []interface{})
+	GetCallExpect(uint64) ([]interface{}, bool)
+	RemoveCallExpect(uint64)
 
 	Unsubscribe(string) error
 	Unregister(string) error
@@ -19,11 +23,12 @@ type Domain interface {
 }
 
 type domain struct {
-	app           *app
-	name          string
-	joined        bool
-	subscriptions map[uint64]*boundEndpoint
-	registrations map[uint64]*boundEndpoint
+	app               *app
+	name              string
+	joined            bool
+	subscriptions     map[uint64]*boundEndpoint
+	registrations     map[uint64]*boundEndpoint
+	callResponseTypes map[uint64][]interface{}
 }
 
 type boundEndpoint struct {
@@ -48,11 +53,12 @@ func NewDomain(name string, a *app) Domain {
 	}
 
 	d := &domain{
-		app:           a,
-		name:          name,
-		joined:        false,
-		subscriptions: make(map[uint64]*boundEndpoint),
-		registrations: make(map[uint64]*boundEndpoint),
+		app:               a,
+		name:              name,
+		joined:            false,
+		subscriptions:     make(map[uint64]*boundEndpoint),
+		registrations:     make(map[uint64]*boundEndpoint),
+		callResponseTypes: make(map[uint64][]interface{}),
 	}
 
 	// TODO: trigger onJoin if the superdomain has joined
@@ -106,7 +112,7 @@ func (c domain) Join(conn Connection) error {
 		if !x.joined {
 			x.joined = true
 			// x.Delegate.OnJoin(x.name)
-			// Invoke the onjoin method for the domain!
+			// Invoke the onjoin method for the domain (?)
 		}
 	}
 
@@ -150,7 +156,7 @@ func (c domain) Subscribe(endpoint string, requestId uint64, types []interface{}
 	if msg, err := c.app.requestListenType(sub, "*core.subscribed"); err != nil {
 		return err
 	} else {
-		Info("Subscribed: %s", endpoint)
+		Info("Subscribed: %s %v", endpoint, types)
 		subbed := msg.(*subscribed)
 		c.subscriptions[subbed.Subscription] = &boundEndpoint{requestId, endpoint, types}
 		return nil
@@ -161,12 +167,10 @@ func (c domain) Register(endpoint string, requestId uint64, types []interface{})
 	endpoint = makeEndpoint(c.name, endpoint)
 	register := &register{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
 
-	Debug("Registering with types: %s", types)
-
 	if msg, err := c.app.requestListenType(register, "*core.registered"); err != nil {
 		return err
 	} else {
-		Info("Registered: %s", endpoint)
+		Info("Registered: %s %v", endpoint, types)
 		reg := msg.(*registered)
 		c.registrations[reg.Registration] = &boundEndpoint{requestId, endpoint, types}
 		return nil
@@ -182,16 +186,16 @@ func (c domain) Publish(endpoint string, args []interface{}) error {
 	})
 }
 
-func (c domain) Call(endpoint string, args []interface{}, types []interface{}) ([]interface{}, error) {
+func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error) {
+	// TODO: Most likely have to pass in a requestID here to catch type assertions on the outbound
 	endpoint = makeEndpoint(c.name, endpoint)
 	call := &call{Request: NewID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
 
 	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
-		Debug("Call err with results: %v", err)
+		// Debug("Call err with results: %v", err)
 		return nil, err
 	} else {
-		// TODO: check the types of the retuend arguments
-		Debug("Call suceed with results: %v", msg)
+		// Debug("Call suceed with results: %v", msg)
 		return msg.(*result).Arguments, nil
 	}
 }
@@ -245,19 +249,45 @@ func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 		}
 
 		if err := c.app.Send(tosend); err != nil {
+			//TODO: Warn the application
 			Warn("error sending message:", err)
 		}
 	}
 }
 
 func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
-	if e := softCumin(binding.expectedTypes, msg.Arguments); e == nil {
+	if err := softCumin(binding.expectedTypes, msg.Arguments); err == nil {
 		c.app.CallbackSend(binding.callback, msg.Arguments...)
 	} else {
-		tosend := &errorMessage{Type: pUBLISH, Request: msg.Subscription, Details: make(map[string]interface{}), Arguments: make([]interface{}, 0), Error: e.Error()}
+		Warn("%v", err)
 
-		if err := c.app.Send(tosend); err != nil {
-			Warn("error sending message:", err)
-		}
+		// Errors are not emitted back to the publisher. Because its dangerous.
+		// tosend := &errorMessage{
+		//           Type: pUBLISH,
+		//           Request: msg.Publication,
+		//           Details: make(map[string]interface{}),
+		//           Arguments: msg.Arguments,
+		//           Error: err.Error(),
+		//       }
+
+		// if err := c.app.Send(tosend); err != nil {
+		//           //TODO: Warn the application
+		// 	Warn("error sending message:", err)
+		// }
 	}
+}
+
+// Adds the types to this domains expectant calls. As written, this method is potentially
+// unsafe-- no way to check if the call really went out, which could leave the types in there forever
+func (c domain) CallExpects(id uint64, types []interface{}) {
+	c.callResponseTypes[id] = types
+}
+
+func (c domain) GetCallExpect(id uint64) ([]interface{}, bool) {
+	types, ok := c.callResponseTypes[id]
+	return types, ok
+}
+
+func (c domain) RemoveCallExpect(id uint64) {
+	delete(c.callResponseTypes, id)
 }
