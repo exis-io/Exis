@@ -51,6 +51,10 @@ func (d *Domain) Call(endpoint string, cb uint64, eb uint64, args string) {
 	go core.MantleCall(d.coreDomain, endpoint, cb, eb, core.MantleUnmarshal(args))
 }
 
+func (d *Domain) CallExpects(cb uint64, types string) {
+	go d.coreDomain.CallExpects(cb, core.MantleUnmarshal(types))
+}
+
 func (d *Domain) Unsubscribe(endpoint string, cb uint64, eb uint64) {
 	go core.MantleUnsubscribe(d.coreDomain, endpoint, cb, eb)
 }

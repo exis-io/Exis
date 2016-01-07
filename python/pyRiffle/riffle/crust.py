@@ -84,6 +84,8 @@ class Domain(object):
 
         d = Deferred()
         d.canReturn = doesReturn
+        d.mantleDomain = self.mantleDomain
+        print "Setting deferred domain to ", d.mantleDomain, d
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
 
         coreFunction(endpoint, d.cb, d.eb, cumin.marshall(args))
@@ -96,6 +98,10 @@ class Deferred(object):
         self.cb, self.eb = utils.newID(2)
         self.green = None
 
+        # Boy does it hurt me to put this here. canReturn needs to have access to the domain
+        # for call returns
+        self.mantleDomain = None
+
         # True if this deferred should inform the core of its types once set
         # Only true for calls
         self.canReturn = False
@@ -105,8 +111,9 @@ class Deferred(object):
 
         # This is a call. We need to retroactively inform the core of our types
         if self.canReturn:
-            pass
-            
+            print 'My domain', self.mantleDomain, self
+            self.mantleDomain.CallExpects(self.cb, cumin.prepareSchema(types))
+
         # Get our current greenlet. If we're not running in a greenlet, someone screwed up bad
         self.green = greenlet.getcurrent()
 

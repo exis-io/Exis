@@ -9,7 +9,10 @@ type Domain interface {
 	Register(string, uint64, []interface{}) error
 	Publish(string, []interface{}) error
 	Call(string, []interface{}) ([]interface{}, error)
-	// ExpectingCall(uint64, []interface{})
+
+	CallExpects(uint64, []interface{})
+	GetCallExpect(uint64) ([]interface{}, bool)
+	RemoveCallExpect(uint64)
 
 	Unsubscribe(string) error
 	Unregister(string) error
@@ -20,12 +23,12 @@ type Domain interface {
 }
 
 type domain struct {
-	app           *app
-	name          string
-	joined        bool
-	subscriptions map[uint64]*boundEndpoint
-	registrations map[uint64]*boundEndpoint
-	// callResponseTypes map[uint64][]interface{}
+	app               *app
+	name              string
+	joined            bool
+	subscriptions     map[uint64]*boundEndpoint
+	registrations     map[uint64]*boundEndpoint
+	callResponseTypes map[uint64][]interface{}
 }
 
 type boundEndpoint struct {
@@ -50,12 +53,12 @@ func NewDomain(name string, a *app) Domain {
 	}
 
 	d := &domain{
-		app:           a,
-		name:          name,
-		joined:        false,
-		subscriptions: make(map[uint64]*boundEndpoint),
-		registrations: make(map[uint64]*boundEndpoint),
-		// registrations: make(map[uint64]*boundEndpoint),
+		app:               a,
+		name:              name,
+		joined:            false,
+		subscriptions:     make(map[uint64]*boundEndpoint),
+		registrations:     make(map[uint64]*boundEndpoint),
+		callResponseTypes: make(map[uint64][]interface{}),
 	}
 
 	// TODO: trigger onJoin if the superdomain has joined
@@ -109,7 +112,7 @@ func (c domain) Join(conn Connection) error {
 		if !x.joined {
 			x.joined = true
 			// x.Delegate.OnJoin(x.name)
-			// Invoke the onjoin method for the domain!
+			// Invoke the onjoin method for the domain (?)
 		}
 	}
 
@@ -272,4 +275,19 @@ func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
 		// 	Warn("error sending message:", err)
 		// }
 	}
+}
+
+// Adds the types to this domains expectant calls. As written, this method is potentially
+// unsafe-- no way to check if the call really went out, which could leave the types in there forever
+func (c domain) CallExpects(id uint64, types []interface{}) {
+	c.callResponseTypes[id] = types
+}
+
+func (c domain) GetCallExpect(id uint64) ([]interface{}, bool) {
+	types, ok := c.callResponseTypes[id]
+	return types, ok
+}
+
+func (c domain) RemoveCallExpect(id uint64) {
+	delete(c.callResponseTypes, id)
 }

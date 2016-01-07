@@ -44,6 +44,12 @@ def reflect(handler):
         # and immediately err on them! Receives can only accept *args and may embed as elements
         return json.dumps(None)
 
+    return prepareSchema(types)
+
+def prepareSchema(types):
+    '''
+    Prepares a list of types for consumption by the core. Returns json
+    '''
     if types is None:
         return json.dumps(None)
     else:
