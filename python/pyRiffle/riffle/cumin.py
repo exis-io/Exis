@@ -73,7 +73,7 @@ def reflect(handler):
     return json.dumps(typeList)
 
 def marshall(args):
-    ''' Ask models to serialize themselves, if present '''
+    ''' Ask models to serialize themselves, if present. Returns JSON. '''
     return json.dumps([x._serialize() if isinstance(x, Model) else x for x in args])
 
 def unmarshall(args, types):
@@ -82,8 +82,12 @@ def unmarshall(args, types):
 
     Objects and exceptions are recreated from dictionaries if appropriate. 
     '''
+
+    # If types is None, allow all arguments
     if not types:
         return args
+
+    # return tuple([x._deserialize() if isinstance(x, Model) else y for x, y in zip(types, args)])
 
     l = list()
     for x, y in zip(args, types):

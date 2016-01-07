@@ -3,9 +3,6 @@ Top level interface into Riffle library. The crust sits atop the mantle, which s
 The mantle is imported here as pymantle. It doesn't add functionality on top of the core, just
 translates between coreRiffle and python as needed. 
 
-I made a mistake. Deferreds should only cover success/failure callbacks, while the handlers
-are only for register/subscribe
-
 Fixing the osx python version: 
     https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Common-Issues.md#python-segmentation-fault-11-on-import-some_python_module
 '''
@@ -169,6 +166,8 @@ class App(object):
                     # we cannot tell the cause of the error yet.
                     if canReturn:
                         domain.YieldError(resultID, "Exception in handler", json.dumps([str(error)]))
+                    else:
+                        print "An exception occured: ", error
                 else:
                     if canReturn:
                         ret = [] if ret is None else ret

@@ -8,10 +8,10 @@ riffle.SetLogLevelInfo()
 
 class User(riffle.Model):
     name = "John Doe"
-    email = ''
+    email = 'bil@gmail.com'
 
-    def sayHello(self, other):
-        print 'Im ' + self.name + ', how are you, ' + other + '?'
+    def sayHello(self):
+        print 'Im ' + self.name + ', email me at ' + self.email
 
 
 class Receiver(riffle.Domain):
@@ -42,6 +42,7 @@ class Receiver(riffle.Domain):
     @want(User)
     def model(self, other):
         print "Received a publish from", other
+        other.sayHello()
 
     def kill(self):
         print 'Asked to close. Leaving'
