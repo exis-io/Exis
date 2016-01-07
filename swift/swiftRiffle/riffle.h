@@ -66,9 +66,11 @@ extern void Register(void* p0, char* p1, GoUint64 p2, GoUint64 p3, GoUint64 p4, 
 
 extern void Publish(void* p0, char* p1, GoUint64 p2, GoUint64 p3, char* p4);
 
-extern void Call(void* p0, char* p1, GoUint64 p2, GoUint64 p3, char* p4, char* p5);
+extern void Call(void* p0, char* p1, GoUint64 p2, GoUint64 p3, char* p4);
 
 extern void Yield(void* p0, GoUint64 p1, char* p2);
+
+extern void CallExpects(void* p0, GoUint64 p1, char* p2);
 
 extern void Unsubscribe(void* p0, char* p1, GoUint64 p2, GoUint64 p3);
 

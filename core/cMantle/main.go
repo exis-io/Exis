@@ -81,6 +81,12 @@ func Yield(pdomain unsafe.Pointer, request uint64, args *C.char) {
 	go d.GetApp().Yield(request, core.MantleUnmarshal(C.GoString(args)))
 }
 
+//export CallExpects
+func CallExpects(pdomain unsafe.Pointer, cb uint64, types *C.char) {
+	d := *(*core.Domain)(pdomain)
+	go d.CallExpects(cb, core.MantleUnmarshal(C.GoString(types)))
+}
+
 //export Unsubscribe
 func Unsubscribe(pdomain unsafe.Pointer, endpoint *C.char, cb uint64, eb uint64) {
 	d := *(*core.Domain)(pdomain)

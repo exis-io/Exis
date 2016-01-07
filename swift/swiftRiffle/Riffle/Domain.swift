@@ -89,7 +89,8 @@ public class Domain {
     
     public func call(endpoint: String, _ args: Any...) -> HandlerDeferred {
         let d = HandlerDeferred(domain: self)
-        Call(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)), "[]".cString())
+        d.mantleDomain = self.mantleDomain
+        Call(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)))
         return d
     }
     
