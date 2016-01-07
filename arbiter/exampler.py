@@ -21,6 +21,8 @@ EX_END_RE = re.compile("^.*End Example (.*)$")
 # between the function name and (. Also dealing with lower/upper case, and trying to look for 
 # functional calls specifically so we ignore comments and stuff like that
 EXIS_CMDS_RE = re.compile(".*([Rr]egister *\(|[Cc]all *\(|[Ss]ubscribe *\(|[Pp]ublish *\().*$")
+# If they pass a command then use it
+OPT_ACTION_RE = re.compile("^.*ARBITER set action (.*)$")
 
 # Valid comments for each language
 LANG_COMMENT_CHAR = {"py": "#", "swift": "//", "js": "//", "go": "//"}
@@ -137,7 +139,7 @@ class Examples:
                 if mStart:
                     # For a START match, looks like "Example Name[ stuff] - doc"
                     n, o, d = _parseStartMatch(mStart)
-                    t.start(n, o, d, lineNum)
+                    t.start(n, o, d)
                     FSM = "EXPECT"
                 elif(mExpect or mEnd):
                     raise Exception("Malformed code sequence - got expect or end, looking for start")
@@ -147,7 +149,7 @@ class Examples:
                 if mExpect:
                     t.expect(mExpect.group(1), mExpect.group(2))
                     FSM = "END"
-                    t.feed(c)
+                    t.feed(c, lineNum)
                 # They could also not provide an expect if they don't care
                 elif(mEnd):
                     n, o = _parseEndMatch(mEnd)
@@ -158,7 +160,7 @@ class Examples:
                 elif(mStart):
                     raise Exception("Malformed code sequence - got start, looking for expect or end")
                 else:
-                    t.feed(c)
+                    t.feed(c, lineNum)
             
             elif(FSM == "END"):
                 # Found end, wrap it up and start over
@@ -170,7 +172,7 @@ class Examples:
                     FSM = "START"
                 # Looking for end, but keep adding to the code for this Task
                 else:
-                    t.feed(c)
+                    t.feed(c, lineNum)
                 if(mStart or mExpect):
                     raise Exception("Malformed code sequence - got start or expect, looking for end")
             lineNum += 1
@@ -255,7 +257,7 @@ class Task:
         self.valid = False
         self.expectType, self.expectVal = None, None
         self.expectLine = -1
-        self.lineStart, self.lineEnd = 0, 0
+        self.lineStart, self.lineEnd = None, None
         self.action = None
 
     def expect(self, eType, eVal):
@@ -277,7 +279,7 @@ class Task:
     def getLang(self):
         return LANGS_EXT[self.lang]
     
-    def start(self, name, opts, doc, lineNum):
+    def start(self, name, opts, doc):
         """
         The starting point of a task, it should be called with the results from a matched regex
         of the Example line.
@@ -285,21 +287,30 @@ class Task:
         self.name = name
         self.opts = opts
         self.doc = doc
-        self.lineStart = lineNum
 
-    def feed(self, line):
+    def feed(self, line, lineNum):
         """
         Add this line into the code, only valid if they called start at some point
         """
         if(self.name is None):
             raise Exception("Never called start!!")
-        # Look for the important commands (reg/call/pub/sub)
-        m = EXIS_CMDS_RE.match(line)
-        if(m):
-            if(self.action is not None):
-                print("!! Already have {} as type, now found {}".format(self.action, m.group(1)))
-            self.action = m.group(1)[:-1].lower()
-        
+        # If we have an action then ignore everything else
+        if not self.action:
+            # Search for the option to hardcode the action
+            m = OPT_ACTION_RE.match(line)
+            if m:
+                self.action = m.group(1)
+                # Don't save this to the code to be displayed
+                return
+            else:
+                # Look for the important commands (reg/call/pub/sub)
+                m = EXIS_CMDS_RE.match(line)
+                if m:
+                    self.action = m.group(1)[:-1].lower()
+        # Track the line number (there are cases where we would have skipped lines
+        # like if they defined options thats why we do this here rather than in start)
+        if self.lineStart is None:
+            self.lineStart = lineNum
         self.code.append(line)
 
     def end(self, name, opts, lineNum):
