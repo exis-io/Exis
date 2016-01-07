@@ -38,11 +38,12 @@ class Domain(object):
         self.app.control[cb] = self.onJoin
         self.mantleDomain.Join(cb, eb)
 
-        # Start the handler loop, send the join, then handle from there
-
-        spin = greenlet(self.app.handle)
-        self.app.green = spin
-        spin.switch(self.mantleDomain)
+        self.app.green = greenlet(self.app.handle)
+        self.app.green.switch(self.mantleDomain)
+    
+    def leave(self):
+        # TODO: Emit a deferred here (?)
+        self.mantleDomain.Leave()
 
     def onJoin(self):
         pymantle.Info("Default onJoin")
@@ -56,43 +57,38 @@ class Domain(object):
     def register(self, endpoint, handler):
         return self._setHandler(endpoint, handler, self.mantleDomain.Register, True)
 
+    def publish(self, endpoint, *args):
+        return self._invoke(endpoint, args, self.mantleDomain.Publish)
+
+    def call(self, endpoint, *args):
+        return self._invoke(endpoint, args, self.mantleDomain.Call)
+
     def _setHandler(self, endpoint, handler, coreFunction, doesReturn):
         '''
-        Invokes the method targetFunction on the core for the given endpoint and handler.
+        Register or Subscrive. Invokes targetFunction for the given endpoint and handler.
 
         :param coreFunction: the intended core function, either Subscribe or Register
         :param doesReturn: True if this handler can return a value (is a registration)
         ''' 
 
-        d = Deferred()
+        d, handlerId = Deferred(), newID()
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
+        self.app.handlers[handlerId] = handler, doesReturn
 
-        hn = newID()
-        self.app.handlers[hn] = handler, doesReturn
-
-        coreFunction(endpoint, d.cb, d.eb, hn, json.dumps(cuminReflect(handler)))
+        coreFunction(endpoint, d.cb, d.eb, handlerId, json.dumps(cuminReflect(handler)))
         return d
 
-    def publish(self, endpoint, *args):
-        d = Deferred()
-        l = list()
+    def _invoke(self, endpoint, args, coreFunction): 
+        '''
+        Publish or Call. Invokes targetFunction for the given endpoint and handler.
 
-        for arg in args:
-            l.append(arg._serialize() if isinstance(arg, Model) else arg)
-
-        self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
-        self.mantleDomain.Publish(endpoint, d.cb, d.eb, json.dumps(l))
-        return d
-
-    def call(self, endpoint, *args):
+        :param coreFunction: the intended core function, either Subscribe or Register
+        '''
         d = Deferred()
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
-        self.mantleDomain.Call(endpoint, d.cb, d.eb, json.dumps(args))
+        coreFunction(endpoint, d.cb, d.eb, json.dumps(args))
         return d
 
-    def leave(self):
-        # TODO: Emit a deferred here (?)
-        self.mantleDomain.Leave()
 
 class Deferred(object):
 
@@ -119,7 +115,11 @@ class Deferred(object):
         
         return r[0] if len(r) == 1 else r
 
-class App(greenlet):
+    def setCallback(self, handler):
+        ''' Traditional Twisted style callbacks '''
+        pass
+
+class App(object):
 
     def __init__(self):
         self.deferreds, self.handlers, self.control = {}, {}, {}
@@ -178,7 +178,7 @@ class App(greenlet):
 
                         domain.Yield(resultID, json.dumps(ret))
 
-            # Orphaned-- onJoin and other control messages should be handled with their own deferreds
+            # Control messages. These should really just be deferreds, but not implemented yet
             if i in self.control:
                 d = greenlet(self.control[i]).switch(*args)
 

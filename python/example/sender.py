@@ -4,6 +4,13 @@ import riffle
 riffle.SetFabricLocal()
 riffle.SetLogLevelInfo()
 
+class User(riffle.Model):
+    name = "John Doe"
+    email = ''
+
+    def sayHello(self, other):
+        print 'Im ' + self.name + ', how are you, ' + other + '?'
+
 class Sender(riffle.Domain):
 
     def onJoin(self):
@@ -13,6 +20,7 @@ class Sender(riffle.Domain):
         result = beta.call("reg", 1, 2).wait()
         print 'Done with result:', result
 
+        # beta.publish("model", User())
         # result = beta.call("nada").wait()
         # print 'Done with result:', result
 

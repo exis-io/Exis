@@ -25,7 +25,7 @@ class Receiver(riffle.Domain):
         # self.register("nada", self.returningNothing)
 
         # self.register("kill", self.kill)
-        # self.subscribe("handshake", self.greeting)
+        # self.subscribe("model", self.model)
 
     @want(int, int)
     def registration(self, a, b):
@@ -40,7 +40,7 @@ class Receiver(riffle.Domain):
         print "Received a publish from", name
 
     @want(User)
-    def greeting(self, other):
+    def model(self, other):
         print "Received a publish from", other
 
     def kill(self):

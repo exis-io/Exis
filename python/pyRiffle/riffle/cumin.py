@@ -1,7 +1,11 @@
+'''
+Type reflection and conversion.
+'''
 
 import inspect
 
 from riffle.model import reconstruct
+from riffle.model import Model
 
 def want(*types):
     def real_decorator(function):
