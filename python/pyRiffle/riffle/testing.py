@@ -1,4 +1,6 @@
-
+'''
+This file has nothing to do with pyRiffle. Its just here as a playground.
+'''
 from greenlet import greenlet
 
 

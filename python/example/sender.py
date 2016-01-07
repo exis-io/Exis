@@ -16,7 +16,6 @@ class Sender(riffle.Domain):
 
     def result(self, ret):
         print 'Call returned with result: ', ret
-        # beta.call("kill", None)
 
 if __name__ == '__main__':
     app = riffle.Domain("xs.damouse")

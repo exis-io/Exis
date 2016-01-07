@@ -41,9 +41,6 @@ class Receiver(riffle.Domain):
     def kill(self):
         print 'Asked to close. Leaving'
 
-        # Not ready. Leaves, but not cleanly
-        # self.leave()
-
 if __name__ == '__main__':
     app = riffle.Domain("xs.damouse")
     alpha = riffle.Domain("alpha", superdomain=app)
