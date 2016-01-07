@@ -8,11 +8,11 @@ def newID(n=1):
     ''' Returns n random unsigned integers to act as Callback Ids '''
     return random.getrandbits(53) if n == 1 else tuple([random.getrandbits(53) for x in range(n)])
 
-class RiffleError(Exception):
+class Error(Exception):
     pass
 
-class CuminError(Exception):
+class CuminError(Error):
     pass
 
-class Unimplemented(RiffleError):
+class Unimplemented(Error):
     pass

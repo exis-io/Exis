@@ -85,7 +85,6 @@ class Domain(object):
         d = Deferred()
         d.canReturn = doesReturn
         d.mantleDomain = self.mantleDomain
-        print "Setting deferred domain to ", d.mantleDomain, d
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
 
         coreFunction(endpoint, d.cb, d.eb, cumin.marshall(args))
@@ -109,9 +108,8 @@ class Deferred(object):
     def wait(self, *types):
         ''' Wait until the results of this invocation are resolved '''
 
-        # This is a call. We need to retroactively inform the core of our types
+        # if canReturn then this is a call. We need to retroactively inform the core of our types
         if self.canReturn:
-            print 'My domain', self.mantleDomain, self
             self.mantleDomain.CallExpects(self.cb, cumin.prepareSchema(types))
 
         # Get our current greenlet. If we're not running in a greenlet, someone screwed up bad
@@ -119,6 +117,10 @@ class Deferred(object):
 
         # Switch back to the parent greenlet: block until the parent has time to resolve us
         results = self.green.parent.switch(self)
+
+        if isinstance(results, Exception):
+            raise results
+
         r = cumin.unmarshall(results, types)
 
         # if isinstance(Exception), raise exception
@@ -159,6 +161,10 @@ class App(object):
                 d = self.deferreds[i]
                 del self.deferreds[d.cb]
                 del self.deferreds[d.eb]
+
+                # Special Python case-- if this is an errback construct an excepction
+                if i == d.eb:
+                    args = utils.Error(args[0])
 
                 # Deferreds are always emitted by async methods. If the user called .wait()
                 # then the deferred instantiates a greenlet as .green. Resume that greenlet.

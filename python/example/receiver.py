@@ -13,7 +13,6 @@ class User(riffle.Model):
     def sayHello(self):
         print 'Im ' + self.name + ', email me at ' + self.email
 
-
 class Receiver(riffle.Domain):
 
     def onJoin(self):
@@ -21,19 +20,12 @@ class Receiver(riffle.Domain):
 
         self.register("reg", self.registration)
         self.subscribe("sub", self.subscription)
-        
-        # self.register("nada", self.returningNothing)
-
-        # self.register("kill", self.kill)
         self.subscribe("model", self.model)
 
     @want(int, int)
     def registration(self, a, b):
         print "Received a call. Args: ", a, b
         return 42
-
-    def returningNothing(self):
-        print 'Im not giving you squat'
 
     @want(str)
     def subscription(self, name):
@@ -43,10 +35,6 @@ class Receiver(riffle.Domain):
     def model(self, other):
         print "Received a publish from", other
         other.sayHello()
-
-    def kill(self):
-        print 'Asked to close. Leaving'
-        self.leave()
 
 if __name__ == '__main__':
     app = riffle.Domain("xs.damouse")

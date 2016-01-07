@@ -20,12 +20,12 @@ class Sender(riffle.Domain):
         result = beta.call("reg", 1, 2).wait(int)
         print 'Done with result:', result
 
-        result = beta.call("reg", 1, 2).wait(str)
-        print 'I should fail:', result
+        try: 
+            result = beta.call("reg", 1, 2).wait(str)
+        except riffle.Error, e:
+            print "An error occured", e
 
         beta.publish("model", User())
-        # result = beta.call("nada").wait()
-        # print 'Done with result:', result
 
     def result(self, ret):
         print 'Call returned with result: ', ret
