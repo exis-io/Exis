@@ -17,8 +17,11 @@ class Sender(riffle.Domain):
         print "Sender Joined"
         beta.publish("sub", self.name)
 
-        result = beta.call("reg", 1, 2).wait()
+        result = beta.call("reg", 1, 2).wait(int)
         print 'Done with result:', result
+
+        result = beta.call("reg", 1, 2).wait(str)
+        print 'I should fail:', result
 
         beta.publish("model", User())
         # result = beta.call("nada").wait()

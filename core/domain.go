@@ -9,6 +9,7 @@ type Domain interface {
 	Register(string, uint64, []interface{}) error
 	Publish(string, []interface{}) error
 	Call(string, []interface{}) ([]interface{}, error)
+	// ExpectingCall(uint64, []interface{})
 
 	Unsubscribe(string) error
 	Unregister(string) error
@@ -24,6 +25,7 @@ type domain struct {
 	joined        bool
 	subscriptions map[uint64]*boundEndpoint
 	registrations map[uint64]*boundEndpoint
+	// callResponseTypes map[uint64][]interface{}
 }
 
 type boundEndpoint struct {
@@ -53,6 +55,7 @@ func NewDomain(name string, a *app) Domain {
 		joined:        false,
 		subscriptions: make(map[uint64]*boundEndpoint),
 		registrations: make(map[uint64]*boundEndpoint),
+		// registrations: make(map[uint64]*boundEndpoint),
 	}
 
 	// TODO: trigger onJoin if the superdomain has joined
@@ -186,10 +189,10 @@ func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error)
 	call := &call{Request: NewID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
 
 	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
-		Debug("Call err with results: %v", err)
+		// Debug("Call err with results: %v", err)
 		return nil, err
 	} else {
-		Debug("Call suceed with results: %v", msg)
+		// Debug("Call suceed with results: %v", msg)
 		return msg.(*result).Arguments, nil
 	}
 }

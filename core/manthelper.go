@@ -31,6 +31,7 @@ func MantleCall(d Domain, endpoint string, cb uint64, eb uint64, args []interfac
 	if results, err := d.Call(endpoint, args); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
+		// Wait for cumin set, then check it
 		d.GetApp().CallbackSend(cb, results...)
 	}
 }

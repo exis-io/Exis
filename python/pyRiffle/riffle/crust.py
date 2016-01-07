@@ -54,10 +54,10 @@ class Domain(object):
         return self._setHandler(endpoint, handler, self.mantleDomain.Register, True)
 
     def publish(self, endpoint, *args):
-        return self._invoke(endpoint, args, self.mantleDomain.Publish)
+        return self._invoke(endpoint, args, self.mantleDomain.Publish, False)
 
     def call(self, endpoint, *args):
-        return self._invoke(endpoint, args, self.mantleDomain.Call)
+        return self._invoke(endpoint, args, self.mantleDomain.Call, True)
 
     def _setHandler(self, endpoint, handler, coreFunction, doesReturn):
         '''
@@ -74,14 +74,18 @@ class Domain(object):
         coreFunction(endpoint, d.cb, d.eb, handlerId, cumin.reflect(handler))
         return d
 
-    def _invoke(self, endpoint, args, coreFunction): 
+    def _invoke(self, endpoint, args, coreFunction, doesReturn): 
         '''
         Publish or Call. Invokes targetFunction for the given endpoint and handler.
 
         :param coreFunction: the intended core function, either Subscribe or Register
+        :param doesReturn: True if this handler can receive results (is a call)
         '''
+
         d = Deferred()
+        d.canReturn = doesReturn
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
+
         coreFunction(endpoint, d.cb, d.eb, cumin.marshall(args))
         return d
 
@@ -92,9 +96,17 @@ class Deferred(object):
         self.cb, self.eb = utils.newID(2)
         self.green = None
 
+        # True if this deferred should inform the core of its types once set
+        # Only true for calls
+        self.canReturn = False
+
     def wait(self, *types):
         ''' Wait until the results of this invocation are resolved '''
 
+        # This is a call. We need to retroactively inform the core of our types
+        if self.canReturn:
+            pass
+            
         # Get our current greenlet. If we're not running in a greenlet, someone screwed up bad
         self.green = greenlet.getcurrent()
 
