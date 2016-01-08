@@ -175,8 +175,12 @@ func (d *Domain) Subscribe(endpoint string, handler *js.Object) *js.Object {
 	var p promise.Promise
 
 	go func() {
-		if err := d.coreDomain.Subscribe(endpoint, cb, make([]interface{}, 0)); err == nil {
-			d.app.subscriptions[cb] = handler
+                h := handler.Get("types")
+                tmp := h.Interface()
+                res := tmp.([]interface{})
+
+		if err := d.coreDomain.Subscribe(endpoint, cb, res); err == nil {
+			d.app.subscriptions[cb] = handler.Get("fp")
 			p.Resolve(nil)
 		} else {
 			p.Reject(err)
@@ -191,8 +195,12 @@ func (d *Domain) Register(endpoint string, handler *js.Object) *js.Object {
 	var p promise.Promise
 
 	go func() {
-		if err := d.coreDomain.Register(endpoint, cb, make([]interface{}, 0)); err == nil {
-			d.app.registrations[cb] = handler
+                h := handler.Get("types")
+                tmp := h.Interface()
+                res := tmp.([]interface{})
+
+		if err := d.coreDomain.Register(endpoint, cb, res); err == nil {
+			d.app.registrations[cb] = handler.Get("fp")
 			p.Resolve(nil)
 		} else {
 			p.Reject(err)
@@ -220,7 +228,7 @@ func (d *Domain) Call(endpoint string, args ...interface{}) *js.Object {
 	var p promise.Promise
 
 	go func() {
-		if results, err := d.coreDomain.Call(endpoint, args)); err == nil {
+		if results, err := d.coreDomain.Call(endpoint, args); err == nil {
 			p.Resolve(results)
 		} else {
 			p.Reject(err.Error())

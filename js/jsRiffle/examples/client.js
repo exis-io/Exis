@@ -7,12 +7,14 @@ var app = riffle.Domain("xs.damouse");
 var receiver = app.Subdomain("alpha");
 var me = app.Subdomain("beta");
 
+var nick = {first: "Nick", last: "Hyatt"};
+
 me.onJoin = function() {
     console.log("Sender Joined");
 
-    receiver.Publish("sub", 1, 2, 3);
+    //receiver.Publish("sub", nick);
 
-    receiver.Call("reg", 1, 2, 3).then(function(results){
+    receiver.Call("reg", nick).then(function(results){
         console.log("Results: ", results);
     }, function(error) {
         console.log("Call failed with error: ", error);

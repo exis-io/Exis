@@ -1,53 +1,12 @@
-
-require('./go.js');
-var ws = require('./transport/websocket.js');
-var pjson = require('../package.json');
-exports.version = pjson.version;
-
-// Used to counteract uint generation on seemlingly 32 bit platforms
-global.NewID = function() {
-   return Math.floor(Math.random() * 9007199254740992);
-}
-
-// Dont need any of this-- just return the conn
-var Ws = function () {
-    this.open = function(url) {
-        // Methods available on the conn: console.log, protocol, send, close, onmessage, onopen, onclose, info
-        var factory = new ws.Factory({'type': 'websocket', 'url': url});
-        this.conn = factory.create();
-        this.conn.onmessage = this.onmessage;
-        this.conn.onopen = this.onopen;
-        this.conn.onclose = this.onclose;
-    }
-}; 
-
-global.WsWrapper = new Ws();
-
-exports.Domain = global.Domain.New;
-
-exports.SetLogLevelOff = global.Config.SetLogLevelOff;
-exports.SetLogLevelApp = global.Config.SetLogLevelApp;
-exports.SetLogLevelErr = global.Config.SetLogLevelErr;
-exports.SetLogLevelWarn = global.Config.SetLogLevelWarn;
-exports.SetLogLevelInfo = global.Config.SetLogLevelInfo;
-exports.SetLogLevelDebug = global.Config.SetLogLevelDebug;
-
-exports.SetFabricDev = global.Config.SetFabricDev;
-exports.SetFabricSandbox = global.Config.SetFabricSandbox;
-exports.SetFabricProduction = global.Config.SetFabricProduction;
-exports.SetFabricLocal = global.Config.SetFabricLocal;
-exports.SetFabric = global.Config.SetFabric;
-
-exports.Application = global.Config.Application;
-exports.Debug = global.Config.Debug;
-exports.Info = global.Config.Info;
-exports.Warn = global.Config.Warn;
-exports.Error = global.Config.Error;
-
-exports.want = want;
-exports.ObjectWithKeys = ObjectWithKeys;
-exports.ObjectToClass = ObjectToClass;
-exports.ArrayWithType = ArrayWithType;
+/**
+ *
+ * want.js is a library used to wrap handlers for registered call and subscribe handlers
+ * to notify the exis node of what arguments they expect to be called with so that the 
+ * node can throw an error to a caller if the proper arguments are not provided. The 
+ * Expectation and Model classes and Subclasses are to be used to help specify the types
+ * of the arguments wanted.
+ *
+ */
 
 function want(){
   var handler = {};
@@ -84,8 +43,11 @@ Expectation.prototype.types = function(){
     }
     return argTypes;
 };
+
 Expectation.prototype.validTypes = [String, Boolean, Number, null, Array, Object];
+
 Expectation.prototype.typeNames = "String, Boolean, Number, null, Array, Object";
+
 Expectation.prototype.argType =  function(type){
   if(type instanceof Model){
     return type.type();
@@ -152,6 +114,9 @@ Expectation.prototype.addArg = function(arg, index){
 
 };
 
+
+
+
 /**
  * The upper most Model class signifies all valid jsRiffle Models
  */
@@ -165,6 +130,8 @@ Model.prototype.construct = function(){
   this.expects.validate(arguments);
 };
 
+
+
 /**
  * The ArrayWithType class validates all items existing at the specified index of the array and does any casting
  * that needs to take place.
@@ -174,8 +141,11 @@ function ArrayWithType(arg){
   Model.call(this, arg);
   this.modelName = "ArrayWithType";
 }
+
 ArrayWithType.prototype = Object.create(Model.prototype);
+
 ArrayWithType.prototype.constructor = ArrayWithType;
+
 ArrayWithType.prototype.construct = function(array){
   for(var i in array){
     var tmp = [array[i]];
@@ -184,6 +154,7 @@ ArrayWithType.prototype.construct = function(array){
   }
   return array;
 };
+
 ArrayWithType.prototype.type = function(){
   return this.expects.types();
 };
@@ -199,7 +170,9 @@ function ObjectModel(obj){
     }
     Model.call(this, obj);
 }
+
 ObjectModel.prototype = Object.create(Model.prototype);
+
 ObjectModel.prototype.constructor = ObjectModel;
 
 /**
@@ -221,8 +194,11 @@ function ObjectWithKeys(arg){
   }
   this.modelName = "ObjectWithKeys";
 }
+
 ObjectWithKeys.prototype = Object.create(ObjectModel.prototype);
+
 ObjectWithKeys.prototype.constructor = ObjectWithKeys;
+
 ObjectWithKeys.prototype.type = function(){
   var type = {};
   for(var i in this.keyToArgMap){
@@ -230,6 +206,7 @@ ObjectWithKeys.prototype.type = function(){
   }
   return type;
 };
+
 ObjectWithKeys.prototype.construct = function(obj){
   /** Uneccessary should be done in core
   for(var i in this.keyToArgMap){
@@ -255,6 +232,7 @@ ObjectWithKeys.prototype.construct = function(obj){
   return obj;
 };
 
+
 /**
  * The ObjectToClass casts an Object or ObjectModel into a new object constructed with the specified constructor
  * by iterating through the keys and dropping the key/value pair into the new object overwriting any keys with the
@@ -268,7 +246,9 @@ function ObjectToClass(constructor, arg){
 }
 
 ObjectToClass.prototype = Object.create(ObjectModel.prototype);
+
 ObjectToClass.prototype.constructor = ObjectToClass;
+
 ObjectToClass.prototype.construct = function(){
   this.expects.validate(arguments);
   var dict = arguments[0];
@@ -278,6 +258,7 @@ ObjectToClass.prototype.construct = function(){
   }
   return newObj;
 };
+
 ObjectToClass.prototype.type = function(){
   return this.expects.types()[0];
 };
