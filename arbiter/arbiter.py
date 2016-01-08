@@ -1,7 +1,5 @@
 #!/usr/bin/python
 """
-'If they came to hear me beg, they will be disappointed.'
-
 This program provides the final word of how each programming language
 should implement function calls while using Exis, so the name is actually quite fitting.
 

@@ -1,8 +1,6 @@
 package pymantle
 
 import (
-	"reflect"
-
 	"github.com/exis-io/core"
 	"github.com/exis-io/core/goRiffle"
 )
@@ -38,8 +36,6 @@ func (d *Domain) Join(cb uint64, eb uint64) {
 }
 
 func (d *Domain) Subscribe(endpoint string, cb uint64, eb uint64, fn uint64, types string) {
-	core.Info("Types is a string: %s", types == "null")
-	core.Info("Type incoming: %s, %s, unmarshall: %s", types, reflect.TypeOf(types), core.MantleUnmarshal(types))
 	go core.MantleSubscribe(d.coreDomain, endpoint, cb, eb, fn, core.MantleUnmarshal(types))
 }
 

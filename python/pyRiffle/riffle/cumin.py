@@ -42,7 +42,7 @@ def reflect(handler):
         # thus accepts any argument
         # TODO: HOWEVER-- a **kwargs function will fail here. Have to catch **kwargs functions
         # and immediately err on them! Receives can only accept *args and may embed as elements
-        return json.dumps(None)
+        return json.dumps([None])
 
     return prepareSchema(types)
 
@@ -51,7 +51,7 @@ def prepareSchema(types):
     Prepares a list of types for consumption by the core. Returns json.
     '''
     if types is None:
-        return json.dumps(None)
+        return json.dumps([None])
     else:
         typeList = []
 

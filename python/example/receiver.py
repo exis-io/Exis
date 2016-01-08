@@ -19,20 +19,21 @@ class Receiver(riffle.Domain):
     def onJoin(self):
         print "Receiver Joined"
 
-        # self.register("reg", self.registration)
+        self.subscribe("1", self.subscription)
+
+        self.register("2", self.registration)
 
         self.subscribe("none", self.none)
-        # self.subscribe("sub", self.subscription)
         # self.subscribe("model", self.model)
 
     @want(int, int)
     def registration(self, a, b):
-        print "Received a call. Args: ", a, b
+        print "1: expecting 1, 2\t ", a, b
         return 42
 
     @want(str)
     def subscription(self, name):
-        print "Received a publish from", name
+        print "1: expecting 1\t", name
 
     @want(User)
     def model(self, other):

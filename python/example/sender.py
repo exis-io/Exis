@@ -17,10 +17,11 @@ class Sender(riffle.Domain):
 
     def onJoin(self):
         print "Sender Joined"
-        # beta.publish("sub", self.name)
 
-        # result = beta.call("reg", 1, 2).wait(int)
-        # print 'Done with result:', result
+        beta.publish("1", "1")
+
+        result = beta.call("2", 1, 2).wait(int)
+        print '\n1: expecting 42:', result
 
         # try:
         #     result = beta.call("reg", 1, 2).wait(str)
@@ -28,10 +29,10 @@ class Sender(riffle.Domain):
         #     print "Call.wait threw an exception:", e
 
         # Note: exact same call as above, but with a different .wait type
-        try: 
-            result = beta.call("reg", 1, 2).wait(str)
-        except riffle.Error, e:
-            print "Call.wait threw an exception:", e
+        # try: 
+        #     result = beta.call("reg", 1, 2).wait(str)
+        # except riffle.Error, e:
+        #     print "Call.wait threw an exception:", e
         # beta.publish("model", User())
 
         beta.publish("none", 'some guy')

@@ -116,12 +116,10 @@ func (c domain) Join(conn Connection) error {
 	// This is super dumb, and the reason its in here was fixed. Please revert
 	go c.app.receiveLoop()
 
-	// old contents of app.join
+	// old contents of app.join. This functionality isn't needed anymore
 	for _, x := range c.app.domains {
 		if !x.joined {
 			x.joined = true
-			// x.Delegate.OnJoin(x.name)
-			// Invoke the onjoin method for the domain (?)
 		}
 	}
 
@@ -150,7 +148,6 @@ func (c *domain) Leave() error {
 	}
 
 	// Trigger closing callbacks
-
 	return nil
 }
 
@@ -187,6 +184,7 @@ func (c domain) Register(endpoint string, requestId uint64, types []interface{})
 }
 
 func (c domain) Publish(endpoint string, args []interface{}) error {
+	Info("Publish %s %v", endpoint, args)
 	return c.app.Send(&publish{
 		Request:   NewID(),
 		Options:   make(map[string]interface{}),
@@ -196,15 +194,13 @@ func (c domain) Publish(endpoint string, args []interface{}) error {
 }
 
 func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error) {
-	// TODO: Most likely have to pass in a requestID here to catch type assertions on the outbound
 	endpoint = makeEndpoint(c.name, endpoint)
 	call := &call{Request: NewID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
+	Info("Calling %s %v", endpoint, args)
 
 	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
-		// Debug("Call err with results: %v", err)
 		return nil, err
 	} else {
-		// Debug("Call suceed with results: %v", msg)
 		return msg.(*result).Arguments, nil
 	}
 }

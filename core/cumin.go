@@ -65,7 +65,12 @@ Version from swift:
 
 // Checks the types of the provided positional arguments and the receiver.
 func softCumin(types []interface{}, args []interface{}) error {
-	fmt.Printf("SOFTCUMIN: %v against %v\n", types, args)
+	//fmt.Printf("SOFTCUMIN: %v against %v\n", types, args)
+
+	// Special case-- allow any arguments
+	if len(types) == 1 && types[0] == nil {
+		return nil
+	}
 
 	// Description to print on every failure
 	description := fmt.Sprintf("Types: %v, Arguments: %v", types, args)

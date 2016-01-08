@@ -67,8 +67,6 @@ class Domain(object):
         :param doesReturn: True if this handler can return a value (is a registration)
         '''
 
-        print 'Reflecting: ', cumin.reflect(handler)
-
         d, handlerId = Deferred(), utils.newID()
         self.app.deferreds[d.cb], self.app.deferreds[d.eb] = d, d
         self.app.handlers[handlerId] = handler, doesReturn
