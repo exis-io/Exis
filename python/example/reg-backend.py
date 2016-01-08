@@ -5,7 +5,7 @@ from riffle import want
 riffle.SetFabricLocal()
 riffle.SetLogLevelDebug()
 
-class Recv(riffle.Domain):
+class GenericDomain(riffle.Domain):
 
     def onJoin(self):
         # End Template Setup
@@ -29,8 +29,15 @@ class Recv(riffle.Domain):
             return "{} World".format(s)
         self.register("basicReg2", basicReg2)
         # End Example Reg/Call Basic 2
+        
+        print "___SETUPCOMPLETE___"
+        
 
 # Template Setup
 app = riffle.Domain("xs.demo.test")
-Recv("recv", superdomain=app).join()
+
+client = riffle.Domain("client", superdomain=app)
+backend = riffle.Domain("backend", superdomain=app)
+
+GenericDomain("backend", superdomain=app).join()
 # End Template Setup
