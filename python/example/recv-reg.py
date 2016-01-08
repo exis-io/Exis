@@ -1,14 +1,14 @@
-
+# Template Setup
 import riffle
 from riffle import want
 
 riffle.SetFabricLocal()
 riffle.SetLogLevelDebug()
 
-
 class Recv(riffle.Domain):
 
     def onJoin(self):
+        # End Template Setup
         # Example Reg/Call - This is a basic reg/call, with no response
         @want(str)
         def reg(s):
@@ -30,8 +30,7 @@ class Recv(riffle.Domain):
         self.register("basicReg2", basicReg2)
         # End Example Reg/Call Basic 2
 
-
-if __name__ == '__main__':
-    app = riffle.Domain("xs.demo.test")
-    Recv("example", superdomain=app).join()
-    exit()
+# Template Setup
+app = riffle.Domain("xs.demo.test")
+Recv("recv", superdomain=app).join()
+# End Template Setup
