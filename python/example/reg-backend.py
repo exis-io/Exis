@@ -19,7 +19,7 @@ class GenericDomain(riffle.Domain):
         # Example Reg/Call Basic 1 - This is a basic reg/call
         def basicReg1(s):
             print(s)  # Expects a string, like "Hello"
-            return "{} World".format(s)
+            return "{} World".format(s), 3
         self.register("basicReg1", basicReg1)
         # End Example Reg/Call Basic 1
 

@@ -45,6 +45,7 @@ exports.Warn = global.Config.Warn;
 exports.Error = global.Config.Error;
 
 exports.want = want;
+exports.wait = wait;
 exports.ObjectWithKeys = ObjectWithKeys;
 exports.ObjectToClass = ObjectToClass;
 exports.ArrayWithType = ArrayWithType;
@@ -59,13 +60,36 @@ function want(){
   }
 
   function wrap(){
-    fp.apply(this, expect.validate(arguments));
+    // If this is associated with a reg then we must return whatever they give us
+    return fp.apply(this, expect.validate(arguments));
   }
   handler.fp = wrap;
   handler.types = expect.types();
 
   return handler;
+}
 
+function wait(){
+  var handler = {};
+  var fp = arguments[0];
+  var expect = new Expectation();
+  var len = arguments.length;
+  for(var i = 1; i < len; i++){
+    expect.addArg(arguments[i], i-1);
+  }
+
+  function wrap(){
+    // Note that we have to do arg[0] here because it returns to us differently
+    // than the values passed back by want() above (this is because it is the result
+    // of a yield message and is handled differently by the core).
+    fp.apply(this, expect.validate(arguments)[0]);
+  }
+  handler.fp = wrap;
+  handler.types = expect.types();
+
+  // This is part of a promise response from the core, so we can't pass back a handler
+  // we must pass back a function pointer instead
+  return handler.fp;
 }
 
 /**
@@ -139,9 +163,7 @@ Expectation.prototype.validate = function(args){
     }
     */
   }
-  // Not sure if this is the perminent solution but args always comes as a list, so we
-  // can splat it here
-  return args[0];
+  return args;
 };
 
 Expectation.prototype.addArg = function(arg, index){

@@ -126,11 +126,18 @@ func (a *App) Receive() {
 		}
 
 		if fn, ok := a.subscriptions[cb.Id]; ok {
-			fn.Invoke(cb.Args)
+			core.Debug("Subscription: %v", cb.Args)
+			// Call the JS function (via invoke), pass args as ... so they show
+			// up in JS as a list, we can deal with splatting up there...
+			fn.Invoke(cb.Args...)
 		}
 
 		if fn, ok := a.registrations[cb.Id]; ok {
-			core.Debug("Invocation: %v", cb.Args)
+			core.Debug("Invocation: %v", cb.Args[1:])
+			// We need to stip out the first arg, its the yield id so we can return
+			// with some results (since this is a reg)
+			// Call the JS function (via invoke), pass args as ... so they show
+			// up in JS as a list, we can deal with splatting up there...
 			ret := fn.Invoke(cb.Args[1:]...)
 
 			a.conn.app.Yield(cb.Args[0].(uint64), []interface{}{ret.Interface()})

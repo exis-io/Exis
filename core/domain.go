@@ -198,6 +198,7 @@ func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error)
 	call := &call{Request: NewID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
 	Info("Calling %s %v", endpoint, args)
 
+	// This is a call, so setup to listen for a yield message with our return values
 	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
 		return nil, err
 	} else {
