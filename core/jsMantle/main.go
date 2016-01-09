@@ -175,11 +175,13 @@ func (d *Domain) Subscribe(endpoint string, handler *js.Object) *js.Object {
 	var p promise.Promise
 
 	go func() {
-                h := handler.Get("types")
-                tmp := h.Interface()
-                res := tmp.([]interface{})
+		// From the want wrapper pull out the types they defined,
+		// and pass them down into the core.
+		h := handler.Get("types")
+		tmp := h.Interface()
+		types := tmp.([]interface{})
 
-		if err := d.coreDomain.Subscribe(endpoint, cb, res); err == nil {
+		if err := d.coreDomain.Subscribe(endpoint, cb, types); err == nil {
 			d.app.subscriptions[cb] = handler.Get("fp")
 			p.Resolve(nil)
 		} else {
@@ -195,11 +197,13 @@ func (d *Domain) Register(endpoint string, handler *js.Object) *js.Object {
 	var p promise.Promise
 
 	go func() {
-                h := handler.Get("types")
-                tmp := h.Interface()
-                res := tmp.([]interface{})
+		// From the want wrapper pull out the types they defined,
+		// and pass them down into the core.
+		h := handler.Get("types")
+		tmp := h.Interface()
+		types := tmp.([]interface{})
 
-		if err := d.coreDomain.Register(endpoint, cb, res); err == nil {
+		if err := d.coreDomain.Register(endpoint, cb, types); err == nil {
 			d.app.registrations[cb] = handler.Get("fp")
 			p.Resolve(nil)
 		} else {

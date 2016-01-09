@@ -13,17 +13,16 @@ class Recv(riffle.Domain):
         # Example Pub/Sub Basic - This is a basic version of a pub/sub
         @want(str)
         def basicSub(s):
-            print s  # Expects a string, like "Hello"
+            print s  # Expects a str, like "Hello"
         self.subscribe("basicSub", basicSub)
         # End Example Pub/Sub Basic
 
         # Example Pub/Sub Objects - This sub expects an object
         class Stuff(riffle.Model):
             name = ""
-
         @want(Stuff)
         def objectSub(o):
-            print "[objectSub] Got: {}".format(repr(o))  # Expects an object, like Stuff
+            print o  # Expects an object, like Stuff
 
         self.subscribe("objectSub", objectSub)
         # End Example Pub/Sub Objects

@@ -34,3 +34,5 @@ swift/swiftRiffle/ModuleCache/
 cumin.txt
 
 *.class
+
+node_modules

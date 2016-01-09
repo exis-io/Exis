@@ -139,7 +139,9 @@ Expectation.prototype.validate = function(args){
     }
     */
   }
-  return args;
+  // Not sure if this is the perminent solution but args always comes as a list, so we
+  // can splat it here
+  return args[0];
 };
 
 Expectation.prototype.addArg = function(arg, index){

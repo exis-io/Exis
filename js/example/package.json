@@ -4,7 +4,10 @@
   "description": "Tester scripts for jsRiffle",
   "main": "client.js",
   "dependencies": {
-    "jsriffle": "latest"
+    "jsriffle": "latest",
+    "crypto-js": ">= 3.1.5",
+    "when": ">= 3.7.3",
+    "ws": ">= 0.8.0"
   },
   "devDependencies": {},
   "scripts": {
