@@ -27,6 +27,9 @@ from utils import utils
 
 import exampler, repl
 
+def dale():
+    examples = exampler.Examples.find(EXISPATH, "python", target="generated-client.py")
+    
 
 def findTasks(lang=None, task=None, verbose=False):
     """

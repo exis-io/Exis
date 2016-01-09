@@ -12,20 +12,32 @@ from collections import defaultdict as ddict
 LANGS = {"python": "py", "swift": "swift", "js": "js", "go": "go"}
 # We found a file with extension "py" and need to know its "python"
 LANGS_EXT = {"py": "python", "swift": "swift", "js": "js", "go": "go"}
-
-# Match to the start of an example, pull out the name of the example, and the docs for it
-EX_START_RE = re.compile("^.*Example (.*)? - (.*)$")
-# Match to the end of an example, and pull out the name of the example
-EX_END_RE = re.compile("^.*End Example (.*)$")
-# Trying to match specifically on calls to the 4 primary function calls, with an optional space
-# between the function name and (. Also dealing with lower/upper case, and trying to look for 
-# functional calls specifically so we ignore comments and stuff like that
-EXIS_CMDS_RE = re.compile(".*([Rr]egister *\(|[Cc]all *\(|[Ss]ubscribe *\(|[Pp]ublish *\().*$")
-# If they pass a command then use it
-OPT_ACTION_RE = re.compile("^.*ARBITER set action (.*)$")
-
 # Valid comments for each language
 LANG_COMMENT_CHAR = {"py": "#", "swift": "//", "js": "//", "go": "//"}
+
+# regex's
+# Match start of Task
+EX_START_RE = re.compile("^.*Example (.*)? - (.*)$")
+# Match end of Task
+EX_END_RE = re.compile("^.*End Example (.*)$")
+# Find an action
+EXIS_CMDS_RE = re.compile(".*([Rr]egister *\(|[Cc]all *\(|[Ss]ubscribe *\(|[Pp]ublish *\().*$")
+# Other arbiter commands
+OPT_ACTION_RE = re.compile("^.*ARBITER set action (.*)$")
+
+def arbiterReplaces(line, match, thing):
+    print match.groups()
+    # TODO thing.replaces.add(
+    l = line[:len(match.group(1))]
+    return l
+
+# A list of tuple(REGEX, function(line, regex, codeLineNum, task) that returns line)
+ARBITER_OPTIONS = [
+    (
+        re.compile("^(.*)? [#/{2}] ARBITER (.*)? replaces (.*)$"),
+        arbiterReplaces
+    )
+]
 
 def _parseStartMatch(m):
     tmpName = m.group(1)
@@ -52,6 +64,36 @@ def _parseEndMatch(m):
         opts = " ".join(tmpName[1:])
     return name, opts
 
+def findArbiterOptions(line, examples=None, task=None):
+    """
+    Searches for matching arbiter options depending on the @thing provided which should be a class
+    some lines will add data to the @thing, some will replace stuff, or strip out content.
+    Returns:
+        True if it found a match
+        False if it found nothing
+    """
+    if examples:
+        for r, f in ARBITER_OPTIONS:
+            m = r.match(line)
+            if m:
+                line = f(line, m, examples, task)
+    elif task:
+        m = OPT_ACTION_RE.match(line)
+        if m:
+            task.action = m.group(1)
+            return True
+
+class Parser:
+    """
+    Helps with the FSM aspects of this task.
+    """
+    def __init__(self, state):
+        self.state = state
+
+    def start(self, cl):
+        pass
+
+
 
 class Examples:
     """
@@ -61,9 +103,10 @@ class Examples:
     def __init__(self):
         self.tasks = {k: ddict(lambda: TaskSet()) for k in LANGS.values()}
         self.mylang = None
+        self.templates = ddict(lambda: dict(before=list(), after=list()))
 
     @classmethod
-    def find(cls, EXISPATH, lang=None):
+    def find(cls, EXISPATH, lang=None, target=None):
         c = cls()
         if lang:
             c.mylang = lang
@@ -76,9 +119,9 @@ class Examples:
                     walker(f)
                 elif os.path.isfile(f):
                     if LANGS_EXT.get(f.split('.')[-1], None) is not None:
-                        allFiles.append(f)
+                        if target is None or target in f:
+                            allFiles.append(f)
         walker(EXISPATH)
-        #print(allFiles)
 
         for f in allFiles:
             c._parse(f)
@@ -124,12 +167,19 @@ class Examples:
         expect_re = _getExpectRe(ftype)
         
         # Run through the file
+        #FSM = Parser("START")
         FSM = "START"
         t = Task(fileName)
         lineNum = 1
         for c in lst:
             # Remove only right side whitespace
             c = c.rstrip()
+
+            # Search for examples
+            found = findArbiterOptions(c, examples=self, task=t)
+            if found:
+                print c
+            
             # Depending on the mode, check for matches
             #print(FSM, c)
             mStart = EX_START_RE.match(c)
@@ -297,10 +347,8 @@ class Task:
         # If we have an action then ignore everything else
         if not self.action:
             # Search for the option to hardcode the action
-            m = OPT_ACTION_RE.match(line)
-            if m:
-                self.action = m.group(1)
-                # Don't save this to the code to be displayed
+            cont = findArbiterOptions(line, task=self)
+            if cont:
                 return
             else:
                 # Look for the important commands (reg/call/pub/sub)

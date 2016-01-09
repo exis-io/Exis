@@ -1,4 +1,4 @@
-# Template Setup
+# Template Before
 import riffle
 from riffle import want
 
@@ -8,7 +8,7 @@ riffle.SetLogLevelDebug()
 class GenericDomain(riffle.Domain):
 
     def onJoin(self):
-        # End Template Setup
+        # End Template Before
         
         # Example Reg/Call - This is a basic reg/call
         backend.call("reg", "Hi").wait()
@@ -26,11 +26,11 @@ class GenericDomain(riffle.Domain):
 
         print "___SETUPCOMPLETE___"
 
-# Template Setup
+# Template After
 app = riffle.Domain("xs.demo.test") # ARBITER $DOMAIN replaces "xs.demo.test"
 
 client = riffle.Domain("client", superdomain=app)
 backend = riffle.Domain("backend", superdomain=app)
 
 GenericDomain("client", superdomain=app).join() # ARBITER $SUBDOMAIN replaces "client"
-# End Template Setup
+# End Template After
