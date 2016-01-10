@@ -128,17 +128,22 @@ function Python(request) {
     c = new Coder(this.req);
     this.req.setup(c, this);
     
+    // This coder represents a context-free grammar style definition
+    // of how to render JS code based on the Request provided.
+    
     // Every coder must contain a start function
+    // start: want func exisLine
     c.start = function() {
         return this.wantStr() + this.func() + this.exisLine();
     }
-    // How to display the want in this lang
+    // want: @want(WANT.types)
     c.wantStr = function() {
         if(this.want !== null)
             return "@want(" + lang.renderTypes(this.want.types) + ")" + newline();
         else
             return "";
     }
+    // beforeExis: arg0, arg1, ... = exisLine
     c.beforeExisLine = function() {
         if(this.isCall()) {
             return this.wait.names + " = ";
@@ -146,11 +151,13 @@ function Python(request) {
             return "";
         }
     }
+    // exisLine: beforeExisLine self.ACTION(ENDPOINT, exisArgs) afterExisLine
     c.exisLine = function() {
         return this.beforeExisLine() + lang.getActionVar() + "." + this.action + "(" + 
                 quotes(this.endpoint) + ", " + 
                 this.exisArgs() + ")" + this.afterExisLine()
     }
+    // exisArgs: ARGS | ENDPOINT
     c.exisArgs = function() {
         if(this.isPubCall()) {
             return lang.renderArgs(this.args);
@@ -159,6 +166,7 @@ function Python(request) {
         }
 
     }
+    // afterExisLine: wait(WAIT.types) \n print WAIT.names
     c.afterExisLine = function() {
         if(this.isCall()) {
             return ".wait(" + lang.renderTypes(this.wait.types) + ")" + newline() +
@@ -167,6 +175,7 @@ function Python(request) {
             return "";
         }
     }
+    // func: def body returnStr
     c.func = function() {
         if(this.isRegSub()) {
             return this.def() +
@@ -176,12 +185,15 @@ function Python(request) {
             return "";
         }
     }
+    // def: def ENDPOINT(WANT.names):
     c.def = function() {
         return "def " + this.endpoint + "(" + lang.renderArgs(this.want.names) + "):" + newline();
     }
+    // body: print WANT.names
     c.body = function() {
         return tabs() + "print " + lang.renderArgs(this.want.names) + newline();
     }
+    // returnStr: return RETURNS
     c.returnStr = function() {
         if(this.returns === null) {
             return "";
@@ -249,14 +261,20 @@ function JS(request) {
     var lang = this;
     c = new Coder(this.req);
     this.req.setup(c, this);
+
+    // This coder represents a context-free grammar style definition
+    // of how to render JS code based on the Request provided.
     
+    // Always a starting function
     c.start = function() {
         return this.exisLine();
     }
+    // exisLine: this.ACTION(ENDPOINT, exisArgs) afterExis;
     c.exisLine = function() {
         return lang.getActionVar() + "." + capitalize(this.action) + "(" + 
-            quotes(this.endpoint) + ", " + this.exisArgs() + ");";
+            quotes(this.endpoint) + ", " + this.exisArgs() + ")" + this.afterExis() + ";";
     }
+    // exisArgs: ARGS | func
     c.exisArgs = function() {
         if(this.isPubCall()) {
             return lang.renderArgs(this.args);
@@ -264,20 +282,37 @@ function JS(request) {
             return this.func();
         }
     }
+    // func: riffle.want(... ( WANT.names ) { \n body }, WANT.types )
     c.func = function() {
         return "riffle.want(function (" + lang.renderArgs(this.want.names) + ") {" + newline() + 
             this.body() + "}, " + lang.renderTypes(this.want.types) + ")";
     }
+    // body: console.log(WANT.names); \n returnStr
     c.body = function() {
         return tabs() + "console.log(" + lang.renderArgs(this.want.names) + ");" + newline() +
             this.returnStr();
     }
+    // returnStr: return RETURNS;
     c.returnStr = function() {
         if(this.returns !== null) {
             return tabs() + "return " + lang.renderArgs(this.returns) + ";" + newline();
         } else {
             return "";
         }
+    }
+    // afterExis: .then(riffle.wait(function(WAIT.names) { console.log(WAIT.names); }, WAIT.types, afterExisErr
+    c.afterExis = function() {
+        if(this.isCall()) {
+            return ".then(riffle.wait(function(" + lang.renderArgs(this.wait.names) + ") {" + newline() +
+                    tabs() + "console.log(" + lang.renderArgs(this.wait.names) + ");" + newline() +
+                    "}, " + lang.renderTypes(this.wait.types) + "), " + this.afterExisErr() + ")";
+        } else {
+            return "";
+        }
+    }
+    c.afterExisErr = function() {
+        return "function(err) {" + newline() +
+                tabs() + 'console.log("ERROR: " + err);' + newline() + "}";
     }
 
     this.coder = c;
