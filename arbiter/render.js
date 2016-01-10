@@ -35,6 +35,17 @@ function Request() {
 
 Request.prototype = {
     /**
+     * Parses the args provided and adds them to this request object
+     */
+    addRequirement: function(k, v) {
+        if(k == "action" || k == "endpoint") {
+            this[k] = v;
+        } else {
+            // Interpret as JSON
+            this[k] = JSON.parse(v);
+        }
+    },
+    /**
      * Perform some setup on the request object so we can render with
      * less work below (stuff like pull out the names and the types from
      * the want object, etc..)
@@ -71,6 +82,9 @@ Request.prototype = {
         c.exceptions = this.exceptions;
         return c;
     },
+    /**
+     * Quick and dirty way to stuff all the prototype objects from this into the arg provided
+     */
     inherit: function(t) {
         for(var p in Request.prototype) {
             t[p] = Request.prototype[p];
