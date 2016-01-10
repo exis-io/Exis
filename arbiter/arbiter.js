@@ -7,50 +7,58 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+var render = require("./render");
 var g = require("./generator");
+
+var lang = g.JS;
+//var lang = g.Python;
 
 ////////////////////////////////////////////////////////////
 // Register
-var reqReg = new g.Request();
+var reqReg = new render.Request();
 reqReg.action = "register";
 reqReg.endpoint = "basicReg";
 reqReg.want = ["str:s", "int:i"];
 reqReg.returns = ["Hello World", 0.1];
-reqReg.setup();
 
-g.Render(reqReg);
+var l = new lang(reqReg);
+console.log(l.generate());
+
+//render.Render(reqReg);
 console.log('---------------------------------------------------------');
 
 ////////////////////////////////////////////////////////////
 // Subscribe
-var reqSub = new g.Request();
+var reqSub = new render.Request();
 reqSub.action = "subscribe";
 reqSub.endpoint = "basicSub";
 reqSub.want = ["str:s", "int:i"];
-reqSub.setup();
 
-g.Render(reqSub);
+var l = new lang(reqSub);
+console.log(l.generate());
+
 console.log('---------------------------------------------------------');
 
 ////////////////////////////////////////////////////////////
 // Publish
-var reqPub = new g.Request();
+var reqPub = new render.Request();
 reqPub.action = "publish";
 reqPub.endpoint = "basicSub";
 reqPub.args = ["Hello World", 0];
-reqPub.setup();
 
-g.Render(reqPub);
+var l = new lang(reqPub);
+console.log(l.generate());
 console.log('---------------------------------------------------------');
 
 ////////////////////////////////////////////////////////////
 // Call
-var reqCall = new g.Request();
+var reqCall = new render.Request();
 reqCall.action = "call";
 reqCall.endpoint = "basicReg";
 reqCall.args = ["Hi", 3];
 reqCall.wait = ["str:s", "int:i"];
-reqCall.setup();
 
-g.Render(reqCall);
+var l = new lang(reqCall);
+console.log(l.generate());
+
 console.log('---------------------------------------------------------');

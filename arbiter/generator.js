@@ -7,6 +7,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+
 function Languages() {
     this.ext2name = {
         py: "python",
@@ -22,22 +23,7 @@ function Languages() {
     }
 }
 
-/**
- * Request objects contain all info needed to Render the code
- * Members:
- *  action     - one of "subscribe", "publish", "register", "call"
- *  endpoint   - the endpoint string
- *      The endpoint to call
- *  wait       - ["str:s", "int:i", "$Student:stu", ...]
- *      "type:name" - type is what type to expect, name is what to call it in the function
- *  want       - ["str:s", "int:i", "$Student:stu", ...]
- *      same as wait above
- *  returns    - ["Hi", 3, 3.2, "$Student:stu"]
- *      What to return back when required
- *  exceptions - true/false
- *      Add the exception handling code or not?
- */
-function Request() {
+function Coder(req) {
     this.action = null;
     this.endpoint = null;
     this.args = null;
@@ -45,85 +31,9 @@ function Request() {
     this.want = null;
     this.returns = null;
     this.exceptions = false;
-    this.setupComplete = false;
+    req.inherit(this);
 }
 
-/**
- * Perform some setup on the request object so we can render with
- * less work below (stuff like pull out the names and the types from
- * the want object, etc..)
- */
-Request.prototype.setup = function() {
-    if(this.setupComplete === true) {
-        return;
-    }
-    var pullNameTypes = function(obj) {
-        var names = [];
-        var types = [];
-        for(var i = 0; i < obj.length; i++) {
-            var w = obj[i];
-            var sp = w.split(":");
-            types[types.length] = sp[0];
-            names[names.length] = sp[1];
-        }
-        obj.names = names;
-        obj.types = types;
-    }
-    function codeFormat(obj) {
-        var s = [];
-        for(var i = 0; i < obj.length; i++) {
-            var r = obj[i];
-            if(typeof(r) == "string") {
-                s[s.length] = '"' + r + '"';
-            }
-            else if(typeof(r) == "number") {
-                s[s.length] = r;
-            }
-        }
-        return s;
-    }
-    if(this.want !== null) {
-        pullNameTypes(this.want);
-    }
-    if(this.wait !== null) {
-        pullNameTypes(this.wait);
-    }
-    if(this.returns !== null) {
-        this.returns = codeFormat(this.returns);
-    }
-    if(this.args !== null) {
-        this.args = codeFormat(this.args);
-    }
-    
-    this.setupComplete = true;
-}
-
-function Coder(req) {
-    this.request = req;
-}
-
-function isPubCall(a) {
-    if(a == "publish" || a == "call")
-        return true;
-    return false;
-}
-
-function isRegSub(a) {
-    return !isPubCall(a);
-}
-
-function isPub(a) {
-    return a == "publish";
-}
-function isSub(a) {
-    return a == "subscribe";
-}
-function isReg(a) {
-    return a == "register";
-}
-function isCall(a) {
-    return a == "call";
-}
 
 function quotes(obj) {
     return '"' + obj + '"';
@@ -140,12 +50,46 @@ function tabs(num) {
 function capitalize(s) {
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
-function langRenderTypes(t) {
-    return t.join(", ");
+
+/**
+ * Generic language class with a bunch of functions
+ * that might need to be overloaded depending on the lang chosen.
+ */
+function Language(lang) {
+    this.typeStringMap = {
+        str: "str",
+        int: "int",
+        float: "float",
+        list: "list",
+        bool: "bool",
+        dict: "dict"
+    };
+    
+    
+    for(var p in Language.prototype) {
+        lang[p] = Language.prototype[p];
+    }
 }
-function langRenderArgs(r) {
-    return r.join(", ");
-}
+Language.prototype = {
+    getActionVar: function() {
+        return this.actionVars[this.req.action];
+    },
+    renderTypes: function(t) {
+        return t.join(", ");
+    },
+    renderArgs: function(r) {
+        return r.join(", ");
+    },
+    /**
+     * Actual function that creates the code snippet
+     */
+    generate: function() {
+        return this.coder.start();
+    },
+    properTypeStr: function(t) {
+        return this.typeStringMap[t];
+    }
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 // For each language we will define a tree as to how the code should be
@@ -167,73 +111,88 @@ print WAIT.names
 backend.ACTION("ENDPOINT", ARGS)
 */
 function Python(request) {
+    Language(this);
+    
     this.name = "python";
-    this.request = request;
-    var actionVar = {
+    this.req = request.copy();
+    
+    this.actionVars = {
         publish: "backend",
         call: "backend",
         register: "self",
         subscribe: "self"
     }
+
+    // Use our prototype functions to setup things for the Request
+    var lang = this;
+    c = new Coder(this.req);
+    this.req.setup(c, this);
     
-    c = new Coder(request);
+    // Every coder must contain a start function
     c.start = function() {
-        var w = (this.request.want !== null) ? this.want() : "";
-        var f = (isRegSub(this.request.action)) ? this.func() : "";
-        return w + f + this.exisLine();
+        return this.wantStr() + this.func() + this.exisLine();
     }
-    c.want = function() {
-        return "@want(" + langRenderTypes(this.request.want.types) + ")" + newline();
+    // How to display the want in this lang
+    c.wantStr = function() {
+        if(this.want !== null)
+            return "@want(" + lang.renderTypes(this.want.types) + ")" + newline();
+        else
+            return "";
     }
     c.beforeExisLine = function() {
-        if(this.request.action == "call") {
-            return this.request.wait.names + " = ";
+        if(this.isCall()) {
+            return this.wait.names + " = ";
         } else {
             return "";
         }
     }
     c.exisLine = function() {
-        return this.beforeExisLine() + actionVar[this.request.action] + "." + this.request.action + "(" + 
-                quotes(this.request.endpoint) + ", " + 
+        return this.beforeExisLine() + lang.getActionVar() + "." + this.action + "(" + 
+                quotes(this.endpoint) + ", " + 
                 this.exisArgs() + ")" + this.afterExisLine()
     }
     c.exisArgs = function() {
-        if(isPubCall(this.request.action)) {
-            return langRenderArgs(this.request.args);
+        if(this.isPubCall()) {
+            return lang.renderArgs(this.args);
         } else {
-            return this.request.endpoint;
+            return this.endpoint;
         }
 
     }
     c.afterExisLine = function() {
-        if(isCall(this.request.action)) {
-            return ".wait(" + langRenderTypes(this.request.wait.types) + ")" + newline() +
-            "print " + langRenderArgs(this.request.wait.names);
+        if(this.isCall()) {
+            return ".wait(" + lang.renderTypes(this.wait.types) + ")" + newline() +
+            "print " + lang.renderArgs(this.wait.names);
         } else {
             return "";
         }
     }
     c.func = function() {
-        return this.def() +
-                this.body() +
-                this.returns();
+        if(this.isRegSub()) {
+            return this.def() +
+                    this.body() +
+                    this.returnStr();
+        } else {
+            return "";
+        }
     }
     c.def = function() {
-        return "def " + this.request.endpoint + "(" + this.request.want.names + "):" + newline();
+        return "def " + this.endpoint + "(" + lang.renderArgs(this.want.names) + "):" + newline();
     }
     c.body = function() {
-        return tabs() + "print " + this.request.want.names + newline();
+        return tabs() + "print " + lang.renderArgs(this.want.names) + newline();
     }
-    c.returns = function() {
-        if(this.request.returns === null) {
+    c.returnStr = function() {
+        if(this.returns === null) {
             return "";
         } else {
-            return tabs() + "return " + langRenderArgs(this.request.returns) + newline();
+            return tabs() + "return " + lang.renderArgs(this.returns) + newline();
         }
     }
 
     this.coder = c;
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////
 /* What the functions look like in JS
@@ -265,47 +224,57 @@ function (err) {
 });
 */
 function JS(request) {
+    Language(this);
+    
     this.name = "js";
-    this.request = request;
-    var actionVar = {
+    this.req = request.copy();
+    
+    this.typeStringMap = {
+        str: "String",
+        int: "Number",
+        float: "Number",
+        list: "Array",
+        bool: "Boolean",
+        dict: "Object"
+    };
+    
+    this.actionVars = {
         publish: "backend",
         call: "backend",
         register: "this",
         subscribe: "this"
     }
-    function langRenderTypes(t) {
 
-    }
-    function langRenderArgs(r) {
-
-    }
+    // Use our prototype functions to setup things for the Request
+    var lang = this;
+    c = new Coder(this.req);
+    this.req.setup(c, this);
     
-    c = new Coder(request);
     c.start = function() {
         return this.exisLine();
     }
     c.exisLine = function() {
-        return actionVar[this.request.action] + "." + capitalize(this.request.action) + "(" + 
-            quotes(this.request.endpoint) + ", " + this.exisArgs() + ");";
+        return lang.getActionVar() + "." + capitalize(this.action) + "(" + 
+            quotes(this.endpoint) + ", " + this.exisArgs() + ");";
     }
     c.exisArgs = function() {
-        if(isPubCall(this.request.action)) {
-            return this.request.args;
+        if(this.isPubCall()) {
+            return lang.renderArgs(this.args);
         } else {
             return this.func();
         }
     }
     c.func = function() {
-        return "riffle.want(function (" + this.request.want.names + ") {" + newline() + 
-            this.body() + "}, " + langRenderTypes(this.request.want.types) + ")";
+        return "riffle.want(function (" + lang.renderArgs(this.want.names) + ") {" + newline() + 
+            this.body() + "}, " + lang.renderTypes(this.want.types) + ")";
     }
     c.body = function() {
-        return tabs() + "console.log(" + this.request.want.names + ");" + newline() +
-            this.returns();
+        return tabs() + "console.log(" + lang.renderArgs(this.want.names) + ");" + newline() +
+            this.returnStr();
     }
-    c.returns = function() {
-        if(this.request.returns !== null) {
-            return tabs() + "return " + langRenderReturns(this.request.returns) + ";" + newline();
+    c.returnStr = function() {
+        if(this.returns !== null) {
+            return tabs() + "return " + lang.renderArgs(this.returns) + ";" + newline();
         } else {
             return "";
         }
@@ -314,17 +283,5 @@ function JS(request) {
     this.coder = c;
 }
 
-/**
- * Renders the proper code snippets in each language based on the Request object provided.
- * Returns:
- *  Code object with code in each language specified as Code.lang
- */
-function Render(request) {
-    py = new Python(request);
-    js = new JS(request);
-    console.log(py.coder.start());
-    //console.log(js.coder.start());
-}
-
-exports.Render = Render;
-exports.Request = Request;
+exports.Python = Python;
+exports.JS = JS;
