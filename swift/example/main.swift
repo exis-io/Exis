@@ -7,9 +7,9 @@ Riffle.FabricLocal()
 
 // Set an environment variable to launch either the sender or the receiver
 if NSProcessInfo.processInfo().environment["CLIENT"] != nil {
-    Client(name: "xs.demo.test.backend").join()
+    TourRegClient(name: "xs.demo.test.backend").join()
 } else {
-    Backend(name: "xs.demo.test.backend").join()
+    TourRegBackend(name: "xs.demo.test.backend").join()
 }
 
 
