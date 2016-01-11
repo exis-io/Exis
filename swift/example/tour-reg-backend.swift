@@ -36,7 +36,7 @@ class TourRegBackend: Riffle.Domain, Riffle.Delegate {
             print(s) // Expects an [String], like ["This", "is", "cool"]
             return "Thanks for \(s.count) strings!"
         }
-        // End Example Tour Reg/Call Lesson 2 Fails
+        // End Example Tour Reg/Call Lesson 3 Works
         
         // Example Tour Reg/Call Lesson 3 Fails - collections of types
         register("iWantManyInts") { (i: [Int]) -> String in
