@@ -91,7 +91,7 @@ func (c app) Send(m message) error {
 func (c app) Close(reason string) {
 	Info("Closing internally: ", reason)
 
-	if err := c.Send(&goodbye{Details: map[string]interface{}{}, Reason: ErrCloseRealm}); err != nil {
+	if err := c.Send(&goodbye{Details: map[string]interface{}{}, Reason: ErrCloseSession}); err != nil {
 		Warn("Error sending goodbye: %v", err)
 	}
 
@@ -179,7 +179,12 @@ func (c app) handle(msg message) {
 		s := fmt.Sprintf("no handler for registration: %v", msg.Registration)
 		Warn(s)
 
-		m := &errorMessage{Type: iNVOCATION, Request: msg.Request, Details: make(map[string]interface{}), Error: s}
+		m := &errorMessage{
+			Type: iNVOCATION,
+			Request: msg.Request,
+			Details: make(map[string]interface{}),
+			Error: ErrNoSuchRegistration,
+		}
 
 		if err := c.Send(m); err != nil {
 			Warn("error sending message:", err)
