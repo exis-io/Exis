@@ -165,10 +165,8 @@ func (d *Domain) Join() {
 // The actual join method
 func (d *Domain) FinishJoin(c *Conn) {
 	if err := d.coreDomain.Join(c); err != nil {
-		fmt.Println("Cant join: ", err)
+		fmt.Println("Join failed: ", err)
 	} else {
-		fmt.Println("Joined!")
-
 		go d.app.Receive()
 
 		if j := d.wrapped.Get("onJoin"); j != js.Undefined {
