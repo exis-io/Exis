@@ -9,26 +9,29 @@ class GenericDomain(riffle.Domain):
 
     def onJoin(self):
         # End Template Setup
-        # Example Reg/Call - This is a basic reg/call, with no response
+        # Example Reg/Call str str - Basic reg expects string, returns string
         @want(str)
-        def reg(s):
-            print(s)  # Expects a string, like "Hi"
-        self.register("reg", reg)
-        # End Example Reg/Call
-
-        # Example Reg/Call Basic 1 - This is a basic reg/call
-        def basicReg1(s):
-            print(s)  # Expects a string, like "Hello"
-            return "{} World".format(s), 3
-        self.register("basicReg1", basicReg1)
-        # End Example Reg/Call Basic 1
-
-        # Example Reg/Call Basic 2 - This is a basic reg/call
-        def basicReg2(s):
-            print(s)  # Expects a string, like "Hello"
-            return "{} World".format(s)
-        self.register("basicReg2", basicReg2)
-        # End Example Reg/Call Basic 2
+        def regStrStr(s):
+            print(s)  # Expects a str, like "Hello"
+            return "Hello World"
+        self.register("regStrStr", regStrStr)
+        # End Example Reg/Call str str
+        
+        # Example Reg/Call str int - Basic reg expects string, returns int
+        @want(str)
+        def regStrInt(s):
+            print(s)  # Expects a str, like "Hello"
+            return 42
+        self.register("regStrInt", regStrInt)
+        # End Example Reg/Call str int
+        
+        # Example Reg/Call int str - Basic reg expects int, returns str
+        @want(int)
+        def regIntStr(i):
+            print(i)  # Expects an int, like 42
+            return "Hello World"
+        self.register("regIntStr", regIntStr)
+        # End Example Reg/Call int str
         
         print "___SETUPCOMPLETE___"
         
