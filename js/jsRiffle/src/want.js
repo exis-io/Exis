@@ -1,3 +1,12 @@
+module.exports = {};
+var exports = module.exports;
+exports.want = want;
+exports.wait = wait;
+exports.ObjectWithKeys = ObjectWithKeys;
+exports.ObjectToClass = ObjectToClass;
+exports.ArrayWithType = ArrayWithType;
+
+
 /**
  *
  * want.js is a library used to wrap handlers for registered call and subscribe handlers
@@ -18,13 +27,36 @@ function want(){
   }
 
   function wrap(){
-    fp.apply(this, expect.validate(arguments));
+    // If this is associated with a reg then we must return whatever they give us
+    return fp.apply(this, expect.validate(arguments));
   }
   handler.fp = wrap;
   handler.types = expect.types();
 
   return handler;
+}
 
+function wait(){
+  var handler = {};
+  var fp = arguments[0];
+  var expect = new Expectation();
+  var len = arguments.length;
+  for(var i = 1; i < len; i++){
+    expect.addArg(arguments[i], i-1);
+  }
+
+  function wrap(){
+    // Note that we have to do arg[0] here because it returns to us differently
+    // than the values passed back by want() above (this is because it is the result
+    // of a yield message and is handled differently by the core).
+    fp.apply(this, expect.validate(arguments)[0]);
+  }
+  handler.fp = wrap;
+  handler.types = expect.types();
+
+  // This is part of a promise response from the core, so we can't pass back a handler
+  // we must pass back a function pointer instead
+  return handler.fp;
 }
 
 /**
@@ -115,8 +147,6 @@ Expectation.prototype.addArg = function(arg, index){
 };
 
 
-
-
 /**
  * The upper most Model class signifies all valid jsRiffle Models
  */
@@ -129,8 +159,6 @@ function Model(arg){
 Model.prototype.construct = function(){
   this.expects.validate(arguments);
 };
-
-
 
 /**
  * The ArrayWithType class validates all items existing at the specified index of the array and does any casting
@@ -166,7 +194,7 @@ ArrayWithType.prototype.type = function(){
 
 function ObjectModel(obj){
     if(obj !== Object && !(obj instanceof ObjectModel)){
-      throw "Error: Must be the expected arg must be either a Object or a valid jsRiffle ObjectModel type.";
+      throw "Error: The expected arg must be either a Object or a valid jsRiffle ObjectModel type.";
     }
     Model.call(this, obj);
 }
@@ -174,6 +202,7 @@ function ObjectModel(obj){
 ObjectModel.prototype = Object.create(Model.prototype);
 
 ObjectModel.prototype.constructor = ObjectModel;
+
 
 /**
  * The ObjectWithKeys class validates the all keys exist within the object and that any casting
