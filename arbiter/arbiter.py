@@ -32,9 +32,9 @@ def findTasks(lang=None, task=None, verbose=False):
     """
     Searches for all example files in the Exis repo.
     Args:
-        OPTIONAL lang : One of {python, go, js, swift} or None which means get all.
-        OPTIONAL task : Matching task with wildcard support (ie. "Pub/Sub*")
-        OPTIONAL verbose : T/F on verbose printing
+        lang : One of {python, go, js, swift} or None which means get all.
+        task : Matching task with wildcard support (ie. "Pub/Sub*")
+        verbose : T/F on verbose printing
     """
     examples = exampler.Examples.find(EXISPATH, lang)
     for t in examples.getTasks(lang, task):
@@ -46,6 +46,9 @@ def findTasks(lang=None, task=None, verbose=False):
 def findTask(lang, task):
     """
     Finds and prints reference to a specific task in a specific language.
+    Args:
+        lang : lang to search for
+        task : Task name
     """
     examples = exampler.Examples.find(EXISPATH, lang)
     ts = examples.getTask(task)
@@ -104,11 +107,22 @@ def test(*tasks):
 def testAll(lang):
     """
     Executes all found tests for the language provided.
+    Args:
+        lang : language to test
     """
     examples = exampler.Examples.find(EXISPATH, lang)
     for t in examples.getTasks(lang):
         repl.executeTaskSet(t)
         print('-'*80)
+
+def genTemplate(langs=["python", "swift", "js"], actions=["Pub/Sub", "Reg/Call"]):
+    """
+    Use the generator.js code to generate basic templates and print to stdout.
+    Args:
+        langs   : LIST of langs ["python", "swift", "js"]
+        actions : LIST of actions ["Pub/Sub", "Reg/Call"]
+    """
+    print langs
 
 def cleanup():
     """

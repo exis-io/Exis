@@ -72,7 +72,20 @@ function JS(request) {
     
     // Always a starting function
     c.start = function() {
+        //return this.commentBefore() + this.exisLine() + lang.newline() + this.commentAfter();
         return this.exisLine();
+    }
+    // commentBefore: // comment
+    c.commentBefore = function() {
+        return "// " + this.comment();
+    }
+    c.comment = function() {
+        // TODO need to get it to print out str not String here
+        return "Example Template " + this.endpoint + " " + lang.req.want.types + " " + this.returns + lang.newline();
+    }
+    // commentAfter: // End comment
+    c.commentAfter = function() {
+        return "// End " + this.comment();
     }
     // exisLine: this.ACTION(ENDPOINT, exisArgs) afterExis;
     c.exisLine = function() {

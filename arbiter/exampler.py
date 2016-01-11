@@ -141,7 +141,8 @@ class Examples:
                     n, o, d = _parseStartMatch(mStart)
                     t.start(n, o, d)
                     FSM = "EXPECT"
-                elif(mExpect or mEnd):
+                elif(mEnd):
+                    print "Found error @ line {} in {}".format(lineNum, fileName)
                     raise Exception("Malformed code sequence - got expect or end, looking for start")
             
             elif(FSM == "EXPECT"):
@@ -158,6 +159,7 @@ class Examples:
                     t = Task(fileName)
                     FSM = "START"
                 elif(mStart):
+                    print "Found error @ line {} in {}".format(lineNum, fileName)
                     raise Exception("Malformed code sequence - got start, looking for expect or end")
                 else:
                     t.feed(c, lineNum)
@@ -174,6 +176,7 @@ class Examples:
                 else:
                     t.feed(c, lineNum)
                 if(mStart or mExpect):
+                    print "Found error @ line {} in {}".format(lineNum, fileName)
                     raise Exception("Malformed code sequence - got start or expect, looking for end")
             lineNum += 1
 

@@ -6,10 +6,10 @@ Riffle.LogLevelDebug()
 Riffle.FabricLocal()
 
 // Set an environment variable to launch either the sender or the receiver
-if NSProcessInfo.processInfo().environment["SENDER"] != nil {
-    Sender(name: "xs.test.example").join()
+if NSProcessInfo.processInfo().environment["CLIENT"] != nil {
+    Client(name: "xs.demo.test.backend").join()
 } else {
-    Receiver(name: "xs.test.example").join()
+    Backend(name: "xs.demo.test.backend").join()
 }
 
 

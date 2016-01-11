@@ -1,4 +1,4 @@
-import sys, argparse, traceback
+import sys, argparse, traceback, json
 
 """
     This module helps allow any python script to be called from the command line
@@ -18,16 +18,13 @@ def _parseValue(key):
         Returns:
             The parsed value. If no parsing options are available it just returns the same string.
     """
-    # Is it a boolean?
-    if(key == 'True'):
-        return True
-    if(key == 'False'):
-        return False
+    # Is it an int?
+    try:
+        i = int(key)
+        return i
+    except:
+        pass
     
-    # Is it None?
-    if(key == 'None'):
-        return None
-
     # Is it a float?
     if('.' in key):
         try:
@@ -36,10 +33,20 @@ def _parseValue(key):
         except:
             pass
     
-    # Is it an int?
+    # Is it a boolean?
+    if(key == 'True' or key == 'true'):
+        return True
+    if(key == 'False' or key == 'false'):
+        return False
+    
+    # Is it None?
+    if(key == 'None' or key == 'null'):
+        return None
+
+    # Is it JSON?
     try:
-        i = int(key)
-        return i
+        j = json.loads(key)
+        return j
     except:
         pass
 
@@ -59,6 +66,7 @@ def init(arg):
     arg.add_argument('-ls', '--list', help='List functions: Takes "all", "partialName*", "exactName"', type=str)
     arg.add_argument('-f', '--func', help='Function to call', type=str)
     arg.add_argument('-a', '--args', help='Argument list for the function', action='append', type=str)
+    arg.add_argument('-kw', '--kwargs', help='Keyword arg list, like "-kw k=b" or "-kw k=JSON"', action='append', type=str)
     arg.add_argument('-q', help='Quiet, use if calling from a script', action='store_true')
     arg.add_argument('-?', dest="helpme", help='Print help for function', action='store_true')
     arg.add_argument('--printResult', help='Print the return value, format if needed', choices=['str', 'json'], type=str, default=None)
@@ -124,14 +132,20 @@ def performFunctionalize(args, modName, modSearch="__main__", preArgs=(), postAr
             print('No %s function found' % args.func)
             return
         
-        # Get any args they want used
         func = args.func
-        if(args.args):
-            fargs = tuple([_parseValue(a) for a in args.args])
-        else:
-            fargs = None
-        
         rfunc = getattr(mod, func)
+        
+        # Get any args they want used
+        fargs = None
+        if(args.args):
+            fargs = [_parseValue(a) for a in args.args]
+        
+        # Deal with kwargs
+        kwargs = dict()
+        if(args.kwargs):
+            for kw in args.kwargs:
+                k, w = kw.split('=', 1)
+                kwargs[k] = _parseValue(w)
         
         # Print out the docs about the function
         if(args.helpme):
@@ -140,7 +154,7 @@ def performFunctionalize(args, modName, modSearch="__main__", preArgs=(), postAr
         
         try:
             # Build arguments to send them
-            theArgs = []
+            theArgs = list()
             if(preArgs):
                 theArgs += list(preArgs)
             if(fargs):
@@ -149,19 +163,25 @@ def performFunctionalize(args, modName, modSearch="__main__", preArgs=(), postAr
                 theArgs += list(postArgs)
             
             # Call the function, if no args make special call (couldn't figure out another way)
-            if(theArgs):
-                tup = tuple(theArgs)
-                if(not args.q):
-                    print('Calling %s(%s)' % (func, tup))
-                res = rfunc(*tup)
+            if(theArgs and kwargs):
+                res = rfunc(*theArgs, **kwargs)
+            elif(theArgs and not kwargs):
+                res = rfunc(*theArgs)
+            elif(not theArgs and kwargs):
+                res = rfunc(**kwargs)
             else:
                 res = rfunc()
+            
+            # Print results
             if(args.printResult == 'str'):
                 print(res)
             elif(args.printResult == 'json'):
                 print(_jsonPretty(res))
         except Exception as e:
-            print(e, str(theArgs))
+            t = ", ".join(theArgs) + ", " if theArgs else ""
+            t += ", ".join(["{}={}".format(k, v) for k, v in kwargs.iteritems()])
+            print "Exception when calling {}({})".format(args.func, t)
+            print e
             _printHelp(mod, func)
             traceback.print_exc()
     else:
