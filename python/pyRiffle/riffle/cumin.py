@@ -103,7 +103,13 @@ def unmarshall(args, types):
 
     l = list()
     for x, y in zip(args, types):
-        if issubclass(y, model.Model):
+        # Try to check if y is a Model, but if y is a list this will throw an exception
+        # so deal with that properly
+        try:
+            b = issubclass(y, model.Model)
+        except:
+            b = False
+        if b:
             l.append(y._deserialize(x))
         else:
             l.append(x)

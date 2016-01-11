@@ -23,6 +23,27 @@ class TourRegBackend: Riffle.Domain, Riffle.Delegate {
             return "Thanks for sending int \(i)"
         }
         // End Example Tour Reg/Call Lesson 2 Fails
+        
+        // Example Tour Reg/Call Lesson 2 Wait Check - type enforcement on wait
+        register("iGiveInts") { (s: String) -> Int in
+            print(s) // Expects a String, like "Hi"
+            return 42
+        }
+        // End Example Tour Reg/Call Lesson 2 Wait Check
+        
+        // Example Tour Reg/Call Lesson 3 Works - collections of types
+        register("iWantManyStrings") { (s: [String]) -> String in
+            print(s) // Expects an [String], like ["This", "is", "cool"]
+            return "Thanks for \(s.count) strings!"
+        }
+        // End Example Tour Reg/Call Lesson 2 Fails
+        
+        // Example Tour Reg/Call Lesson 3 Fails - collections of types
+        register("iWantManyInts") { (i: [Int]) -> String in
+            print(i) // Expects an [Int], like [0, 1, 2]
+            return "Thanks for \(i.count) ints!"
+        }
+        // End Example Tour Reg/Call Lesson 3 Fails
     
         print("___SETUPCOMPLETE___")
     }
