@@ -246,12 +246,15 @@ func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 	if err := softCumin(binding.expectedTypes, msg.Arguments); err == nil {
 		c.app.CallbackSend(binding.callback, append([]interface{}{msg.Request}, msg.Arguments...)...)
 	} else {
+		errorArguments := make([]interface{}, 0)
+		errorArguments = append(errorArguments, err.Error())
+
 		tosend := &errorMessage{
 			Type:      iNVOCATION,
 			Request:   msg.Request,
 			Details:   make(map[string]interface{}),
-			Arguments: msg.Arguments,
-			Error:     err.Error(),
+			Arguments: errorArguments,
+			Error:     ErrInvalidArgument,
 		}
 
 		if err := c.app.Send(tosend); err != nil {

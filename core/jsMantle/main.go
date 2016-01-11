@@ -165,10 +165,8 @@ func (d *Domain) Join() {
 // The actual join method
 func (d *Domain) FinishJoin(c *Conn) {
 	if err := d.coreDomain.Join(c); err != nil {
-		fmt.Println("Cant join: ", err)
+		fmt.Println("Join failed: ", err)
 	} else {
-		fmt.Println("Joined!")
-
 		go d.app.Receive()
 
 		if j := d.wrapped.Get("onJoin"); j != js.Undefined {
@@ -186,10 +184,21 @@ func (d *Domain) Subscribe(endpoint string, handler *js.Object) *js.Object {
 		// and pass them down into the core.
 		h := handler.Get("types")
 		tmp := h.Interface()
-		types := tmp.([]interface{})
+		types, hasTypes := tmp.([]interface{})
 
-		if err := d.coreDomain.Subscribe(endpoint, cb, types); err == nil {
-			d.app.subscriptions[cb] = handler.Get("fp")
+		// handler can either be:
+		// 1. an object that contains "types" and "fp" attributes.
+		// 2. a naked function, in which case we tell the core that it doesn't
+		// care about types.
+		handlerFunction := handler
+		handlerTypes := []interface{}{nil}
+		if hasTypes {
+			handlerFunction = handler.Get("fp")
+			handlerTypes = types
+		}
+
+		if err := d.coreDomain.Subscribe(endpoint, cb, handlerTypes); err == nil {
+			d.app.subscriptions[cb] = handlerFunction
 			p.Resolve(nil)
 		} else {
 			p.Reject(err)
@@ -208,10 +217,21 @@ func (d *Domain) Register(endpoint string, handler *js.Object) *js.Object {
 		// and pass them down into the core.
 		h := handler.Get("types")
 		tmp := h.Interface()
-		types := tmp.([]interface{})
+		types, hasTypes := tmp.([]interface{})
 
-		if err := d.coreDomain.Register(endpoint, cb, types); err == nil {
-			d.app.registrations[cb] = handler.Get("fp")
+		// handler can either be:
+		// 1. an object that contains "types" and "fp" attributes.
+		// 2. a naked function, in which case we tell the core that it doesn't
+		// care about types.
+		handlerFunction := handler
+		handlerTypes := []interface{}{nil}
+		if hasTypes {
+			handlerFunction = handler.Get("fp")
+			handlerTypes = types
+		}
+
+		if err := d.coreDomain.Register(endpoint, cb, handlerTypes); err == nil {
+			d.app.registrations[cb] = handlerFunction
 			p.Resolve(nil)
 		} else {
 			p.Reject(err)
