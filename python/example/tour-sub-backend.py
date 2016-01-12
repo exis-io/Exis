@@ -18,29 +18,20 @@ class GenericDomain(riffle.Domain):
         # End Example Tour Pub/Sub Lesson 1
         
         ######################################################################################
-        # xample Tour Reg/Call Lesson 2 Works - type enforcement good
+        # Example Tour Pub/Sub Lesson 2 Works - type enforcement good
         @want(str)
         def iWantStrings(s):
             print(s)  # Expects a str, like "Hi"
-            return "Thanks for saying {}".format(s)
-        self.register("iWantStrings", iWantStrings)
-        # nd Example Tour Reg/Call Lesson 2 Works
+        self.subscribe("iWantStrings", iWantStrings)
+        # End Example Tour Pub/Sub Lesson 2 Works
         
-        # xample Tour Reg/Call Lesson 2 Fails - type enforcement bad
+        # Example Tour Pub/Sub Lesson 2 Fails - type enforcement bad
         @want(int)
         def iWantInts(i):
+            # This function isn't called
             print(i)  # Expects an int, like 42
-            return "Thanks for sending int {}".format(i)
-        self.register("iWantInts", iWantInts)
-        # nd Example Tour Reg/Call Lesson 2 Fails
-    
-        # xample Tour Reg/Call Lesson 2 Wait Check - type enforcement on wait
-        @want(str)
-        def iGiveInts(s):
-            print(s)  # Expects a str, like "Hi"
-            return 42
-        self.register("iGiveInts", iGiveInts)
-        # nd Example Tour Reg/Call Lesson 2 Wait Check
+        self.subscribe("iWantInts", iWantInts)
+        # End Example Tour Pub/Sub Lesson 2 Fails
         
         ######################################################################################
         # xample Tour Reg/Call Lesson 3 Works - collections of types

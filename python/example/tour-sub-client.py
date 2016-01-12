@@ -16,18 +16,13 @@ class GenericDomain(riffle.Domain):
         # End Example Tour Pub/Sub Lesson 1
 
         ######################################################################################
-        # xample Tour Reg/Call Lesson 2 Works - type enforcement good
-        s = backend.call("iWantStrings", "Hi").wait(str)
-        print s # Expects a str, like "Thanks for saying Hi"
-        # nd Example Tour Reg/Call Lesson 2 Works
+        # Example Tour Pub/Sub Lesson 2 Works - type enforcement good
+        backend.publish("iWantStrings", "Hi")
+        # End Example Tour Pub/Sub Lesson 2 Works
         
-        # xample Tour Reg/Call Lesson 2 Fails - type enforcement bad
-        try:
-            s = backend.call("iWantInts", "Hi").wait(str)
-            print s # Expects a str, like "Thanks for sending int 42"
-        except riffle.Error as e:
-            print e # Errors with "Cumin: expecting primitive int, got string"
-        # nd Example Tour Reg/Call Lesson 2 Fails
+        # Example Tour Pub/Sub Lesson 2 Fails - type enforcement bad
+        backend.publish("iWantInts", "Hi")
+        # End Example Tour Pub/Sub Lesson 2 Fails
         
         # xample Tour Reg/Call Lesson 2 Wait Check - type enforcement on wait
         try:
