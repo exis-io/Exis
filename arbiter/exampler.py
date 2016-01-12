@@ -280,7 +280,7 @@ class Task:
         return "{}{}".format(self.name, " " + self.opts if self.opts else "")
 
     def getLang(self):
-        return LANGS_EXT[self.lang]
+        return LANGS_EXT.get(self.lang, "Unknown")
     
     def start(self, name, opts, doc):
         """
@@ -321,6 +321,7 @@ class Task:
         Ending call for a sequence of code, if this doesn't match the beginning call I will RAISE
         """
         if(self.name != name or self.opts != opts):
+            print "{} @ line {}: {} != {}".format(self.fileName, lineNum, self.name, name)
             raise Exception("Incorrect ending sequence")
         self.valid = True
         self.lineEnd = lineNum

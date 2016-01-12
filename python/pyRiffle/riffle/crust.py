@@ -185,11 +185,8 @@ class App(object):
                 except Exception as error:
                     # TODO: Differentiate Riffle errors vs. other exceptions,
                     # maybe reraise other exceptions.
-                    #
-                    # I hard-coded "wamp.error.internal_error" for now because
-                    # we cannot tell the cause of the error yet.
                     if canReturn:
-                        domain.YieldError(resultID, "Exception in handler", json.dumps([str(error)]))
+                        domain.YieldError(resultID, "wamp.error.runtime_error", json.dumps([str(error)]))
                     else:
                         print "An exception occured: ", error
                 else:
@@ -198,7 +195,7 @@ class App(object):
                         if not isinstance(ret, (list, tuple)):
                             ret = [ret]
 
-                        domain.Yield(resultID, json.dumps(ret))
+                        domain.Yield(resultID, cumin.marshall(ret))
 
             # Control messages. These should really just be deferreds, but not implemented yet
             if i in self.control:

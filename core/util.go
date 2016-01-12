@@ -24,13 +24,6 @@ const (
 	maxId          int64         = 1 << 53
 	MessageTimeout time.Duration = 3 * time.Second
 
-	ErrInvalidArgument     = "ERR-- Invalid Arguments, check your receiver!"
-	ErrSystemShutdown      = "ERR-- Connection collapsed. It wasn't pretty."
-	ErrCloseRealm          = "ERR-- Im leaving and taking the dog."
-	ErrGoodbyeAndOut       = "ERR-- Goodbye and go away."
-	ErrNotAuthorized       = "ERR-- Not Authorized. Ask nicely."
-	ErrAuthorizationFailed = "ERR-- Unable to Authorize. Try harder."
-
 	FabricLocal      = "ws://localhost:8000/ws"
 	FabricDev        = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
 	FabricSandbox    = "ws://sandbox.exis.io/ws"
