@@ -44,7 +44,18 @@ class TourRegClient: Riffle.Domain, Riffle.Delegate  {
         // End Example Tour Reg/Call Lesson 3 Fails
         
         /////////////////////////////////////////////////////////////////////////////////////
-        // TODO need to add the lesson 4 code
+        // xample Tour Reg/Call Lesson 4 Basic Student - intro to classes
+        class Student: Model {
+            var name: String = "Student Name"
+            var age: Int = 20
+            var studentID: Int = 0
+        }
+        let s = Student()
+        s.name = "John Smith"
+        s.age = 18
+        s.studentID = 1234
+        call("sendStudent", s)
+        // nd Example Tour Reg/Call Lesson 4 Basic Student
         
         print("___SETUPCOMPLETE___")
     }

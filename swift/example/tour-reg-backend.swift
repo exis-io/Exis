@@ -1,4 +1,10 @@
 import Riffle
+        
+class Student: Model {
+    var name = "Student Name"
+    var age = 20
+    var studentID = 0
+}
 
 class TourRegBackend: Riffle.Domain, Riffle.Delegate {
 
@@ -49,7 +55,13 @@ class TourRegBackend: Riffle.Domain, Riffle.Delegate {
         // End Example Tour Reg/Call Lesson 3 Fails
         
         /////////////////////////////////////////////////////////////////////////////////////
-        // TODO need to add the lesson 4 code
+        // TODO - this doesn't work right now because the Student var members don't get passed
+        //        down into the core.
+        // xample Tour Reg/Call Lesson 4 Basic Student - intro to classes
+        register("sendStudent") { (s: Student) in
+            print("\(s.name), Age: \(s.age), ID: \(s.studentID)")
+        }
+        // nd Example Tour Reg/Call Lesson 4 Basic Student
     
         print("___SETUPCOMPLETE___")
     }

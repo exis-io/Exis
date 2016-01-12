@@ -63,16 +63,17 @@ backend.onJoin = function() {
     Student.prototype.toString = function() {
         return this.name + ", Age: " + this.age + ", ID: " + this.studentID;
     }
+    var STU = new riffle.ObjectWithKeys({name: String, age: Number, studentID: Number});
     var s = new Student();
     s.name = "John Smith"
     s.age = 18
     s.studentID = 1234
     this.Register("sendStudent", riffle.want(function(s) {
         console.log(s.toString()); // Expects a Student, like "John Smith, Age: 18, ID: 1234"
-    }, new riffle.ObjectToClass(Student, Object)));
+    }, new riffle.ObjectToClass(Student, STU)));
     // End Example Tour Reg/Call Lesson 4 Basic Student
     console.log("___SETUPCOMPLETE___");
-
+    
 };
 
 backend.Join()

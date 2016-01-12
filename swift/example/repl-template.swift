@@ -1,3 +1,4 @@
+/*
 // Example REPL Template - The REPL code
 // ARBITER set action template
 import Foundation
@@ -20,3 +21,4 @@ class ExisBackend: Riffle.Domain, Riffle.Delegate  {
 ExisBackend(name: "xs.demo.test.backend").join()
 
 // End Example REPL Template
+*/
