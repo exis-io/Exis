@@ -11,7 +11,11 @@ backend.onJoin = function() {
     /////////////////////////////////////////////////////////////////////////////////////
     // Example Tour Pub/Sub Lesson 1 - our first basic example
     this.Subscribe("myFirstSub", riffle.want(function(s) {
-        console.log(s); // Expects a String, like "Hello"
+        console.log("I got " + s); // Expects a String, like "I got Hello"
+    }, String));
+    // Somewhere in another file or program...
+    this.Subscribe("myFirstSub", riffle.want(function(s) {
+        console.log("I got " + s + ", too!"); // Expects a String, like "I got Hello, too!"
     }, String));
     // End Example Tour Pub/Sub Lesson 1
         
@@ -42,14 +46,14 @@ backend.onJoin = function() {
     this.Register("iWantManyStrings", riffle.want(function(s) {
         console.log(s); // Expects a new riffle.ArrayWithType(String), like ["This", "is", "cool"]
         return "Thanks for " + s.length + " strings!"
-    }, new riffle.ArrayWithType(String)));
+    }, [String]));
     // nd Example Tour Reg/Call Lesson 3 Works
     
     // xample Tour Reg/Call Lesson 3 Fails - collections of types
     this.Register("iWantManyInts", riffle.want(function(s) {
         console.log(s); // Expects a new riffle.ArrayWithType(Number), like [0, 1, 2]
         return "Thanks for " + s.length + " ints!"
-    }, new riffle.ArrayWithType(Number)));
+    }, [Number]));
     // nd Example Tour Reg/Call Lesson 3 Fails
         
     /////////////////////////////////////////////////////////////////////////////////////
@@ -62,13 +66,9 @@ backend.onJoin = function() {
     Student.prototype.toString = function() {
         return this.name + ", Age: " + this.age + ", ID: " + this.studentID;
     }
-    var s = new Student();
-    s.name = "John Smith"
-    s.age = 18
-    s.studentID = 1234
     this.Register("sendStudent", riffle.want(function(s) {
         console.log(s.toString()); // Expects a Student, like "John Smith, Age: 18, ID: 1234"
-    }, new riffle.ObjectToClass(Student, Object)));
+    }, riffle.ModelObject(Student)));
     // nd Example Tour Reg/Call Lesson 4 Basic Student
     console.log("___SETUPCOMPLETE___");
 

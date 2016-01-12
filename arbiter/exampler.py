@@ -175,7 +175,7 @@ class Examples:
                 # Looking for end, but keep adding to the code for this Task
                 else:
                     t.feed(c, lineNum)
-                if(mStart or mExpect):
+                if(mStart):
                     print "Found error @ line {} in {}".format(lineNum, fileName)
                     raise Exception("Malformed code sequence - got start or expect, looking for end")
             lineNum += 1

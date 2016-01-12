@@ -12,9 +12,14 @@ class GenericDomain(riffle.Domain):
         ######################################################################################
         # Example Tour Pub/Sub Lesson 1 - our first basic example
         @want(str)
-        def myFirstSub(s):
-            print(s)  # Expects a str, like "Hello"
-        self.subscribe("myFirstSub", myFirstSub)
+        def myFirstSub1(s):
+            print("I got {}".format(s))  # Expects a str, like "I got Hello"
+        self.subscribe("myFirstSub", myFirstSub1)
+        # Somewhere in another file or program...
+        @want(str)
+        def myFirstSub2(s):
+            print("I got {}, too!".format(s))  # Expects a str, like "I got Hello, too!"
+        self.subscribe("myFirstSub", myFirstSub2)
         # End Example Tour Pub/Sub Lesson 1
         
         ######################################################################################
