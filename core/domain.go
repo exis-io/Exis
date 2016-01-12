@@ -4,6 +4,7 @@ import "fmt"
 
 type Domain interface {
 	Subdomain(string) Domain
+	LinkDomain(string) Domain
 
 	Subscribe(string, uint64, []interface{}) error
 	Register(string, uint64, []interface{}) error
@@ -63,6 +64,10 @@ func NewDomain(name string, a *app) Domain {
 
 func (d domain) Subdomain(name string) Domain {
 	return NewDomain(d.name+"."+name, d.app)
+}
+
+func (d domain) LinkDomain(name string) Domain {
+	return NewDomain(name, d.app)
 }
 
 func (d domain) GetApp() App {

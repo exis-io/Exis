@@ -18,15 +18,18 @@ from riffle import cumin, utils
 
 class Domain(object):
 
-    def __init__(self, name, superdomain=None):
+    def __init__(self, name, superdomain=None, sibling=None):
         self.name = name
 
-        if superdomain is None:
-            self.mantleDomain = pymantle.NewDomain(name)
-            self.app = App()
-        else:
+        if superdomain is not None:
             self.mantleDomain = superdomain.mantleDomain.Subdomain(name)
             self.app = superdomain.app
+        elif sibling is not None:
+            self.mantleDomain = sibling.mantleDomain.LinkDomain(name)
+            self.app = sibling.app
+        else:
+            self.mantleDomain = pymantle.NewDomain(name)
+            self.app = App()
 
     def join(self):
         # TODO: convert the "control plane" to use deferreds using Twisted style callbacks
@@ -89,6 +92,15 @@ class Domain(object):
 
         coreFunction(endpoint, d.cb, d.eb, cumin.marshall(args))
         return d
+
+    def link(self, name):
+        """
+        Access another domain.
+
+        Returns a new Domain object with the given name, which should
+        be fully-qualified (e.g. "xs.demo.user.app.Storage").
+        """
+        return Domain(name, sibling=self)
 
 
 class Deferred(object):
