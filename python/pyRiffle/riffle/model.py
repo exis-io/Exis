@@ -68,13 +68,16 @@ class Model(object):
             # Update with values that were set as arguments.
             values.update(kwargs)
 
-            # Now set their dict to include these values (translates the Class
-            # variables back into instance vars)
-            self.__attrs = attrs
-            self.__values = values
+        # Need to set their __dict__ so they are visible as inst.varName
+        self.__dict__.update(kwargs)
+        
+        # Now set their dict to include these values (translates the Class
+        # variables back into instance vars)
+        self.__attrs = attrs
+        self.__values = values
 
-            # Every object that is in the storage will have an _id field.
-            self.__id = None
+        # Every object that is in the storage will have an _id field.
+        self.__id = None
 
     def __getattr__(self, name):
         if name.startswith("_"):

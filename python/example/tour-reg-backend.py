@@ -9,6 +9,7 @@ class GenericDomain(riffle.Domain):
 
     def onJoin(self):
         # End Template Setup
+        ######################################################################################
         # Example Tour Reg/Call Lesson 1 - our first basic example
         @want(str)
         def regStrStr(s):
@@ -17,6 +18,7 @@ class GenericDomain(riffle.Domain):
         self.register("myFirstCall", regStrStr)
         # End Example Tour Reg/Call Lesson 1
         
+        ######################################################################################
         # Example Tour Reg/Call Lesson 2 Works - type enforcement good
         @want(str)
         def iWantStrings(s):
@@ -41,6 +43,7 @@ class GenericDomain(riffle.Domain):
         self.register("iGiveInts", iGiveInts)
         # End Example Tour Reg/Call Lesson 2 Wait Check
         
+        ######################################################################################
         # Example Tour Reg/Call Lesson 3 Works - collections of types
         @want([str])
         def iWantManyStrings(s):
@@ -56,6 +59,33 @@ class GenericDomain(riffle.Domain):
             return "Thanks for {} ints!".format(len(i))
         self.register("iWantManyInts", iWantManyInts)
         # End Example Tour Reg/Call Lesson 3 Fails
+        
+        ######################################################################################
+        # Example Tour Reg/Call Lesson 4 Basic Student - intro to classes
+        class Student(riffle.Model):
+            name = "Student Name"
+            age = 20
+            studentID = 0
+            def __str__(self):
+                return "{}, Age: {}, ID: {}".format(self.name, self.age, self.studentID)
+        @want(Student)
+        def sendStudent(s):
+            print s # Expects a Student, like "John Smith, Age: 18, ID: 1234"
+        self.register("sendStudent", sendStudent)
+        # End Example Tour Reg/Call Lesson 4 Basic Student
+        
+        # Example Tour Reg/Call Lesson 4 Student Functions - intro to class functions
+        class Student(riffle.Model):
+            name, age, studentID = "Student Name", 20, 0
+            def changeID(self, newID):
+                self.studentID = 5678
+        @want(Student)
+        def changeStudentID(s):
+            print s.studentID # Expects an int, like 1234
+            s.changeID(5678)
+            return s
+        self.register("changeStudentID", changeStudentID)
+        # End Example Tour Reg/Call Lesson 4 Student Functions
         
         print "___SETUPCOMPLETE___"
         

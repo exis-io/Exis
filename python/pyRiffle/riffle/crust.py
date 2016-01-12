@@ -195,7 +195,7 @@ class App(object):
                         if not isinstance(ret, (list, tuple)):
                             ret = [ret]
 
-                        domain.Yield(resultID, json.dumps(ret))
+                        domain.Yield(resultID, cumin.marshall(ret))
 
             # Control messages. These should really just be deferreds, but not implemented yet
             if i in self.control:
