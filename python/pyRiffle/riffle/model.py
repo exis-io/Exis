@@ -84,7 +84,7 @@ class ModelObject(object):
             super(ModelObject, self).__setattr__(name, value)
         else:
             if name not in self.__values:
-                raise AttributeError("Model class {} does not have an attribute {}"
+                raise AttributeError("Class {} does not have an attribute {}"
                         .format(self.__class__.__name__, name))
             elif not isinstance(value, self.__attrs[name]):
                 raise TypeError("For attribute {} expected type {}, received {}"
@@ -111,36 +111,41 @@ class ModelObject(object):
     #
 
     @classmethod
-    def attachStorage(klass, storage, collection=None):
+    def bind(klass, owner, collection=None, appliance=None):
         """
-        Attach this model to a storage domain for persistence.
+        Bind this model to a storage domain for persistence.
 
         If collection is not specified, the default behavior is to use the
         class name as the collection.
 
-        storage: instance of a riffle.Domain
-        collection: name of collection to use
+        owner: instance of a riffle.Domain
+        collection: name of collection
+        appliance: fully-qualified domain of Storage appliance if it differs
+                   from the 'owner' object
         """
         if klass.__storage is not None:
-            raise Exception("Model {} already attached to storage".
+            raise Exception("Model {} already bound".
                     format(klass.__name__))
         if collection is None:
             collection = klass.__name__
         klass.__collection = collection
-        klass.__storage = storage
+        if appliance:
+            klass.__storage = owner.link(appliance)
+        else:
+            klass.__storage = owner
 
     @classmethod
-    def assertAttached(klass):
+    def assertBound(klass):
         if klass.__storage is None:
-            raise Exception("Model {model} is not attached to storage; "
-                    "you should call {model}.attachStorage first"
+            raise Exception("{model} is not bound; "
+                    "you should call {model}.bind first"
                     .format(model=klass.__name__))
 
     def save(self):
         """
         Write the object back to storage.
         """
-        self.assertAttached()
+        self.assertBound()
         if self.__id is None:
             d = self.__storage.call("collection/insert_one",
                     self.__collection,
@@ -166,7 +171,7 @@ class ModelObject(object):
         Example:
         Users.find({name="Dale"})
         """
-        klass.assertAttached()
+        klass.assertBound()
         d = klass.__storage.call("collection/find",
                 klass.__collection, query)
         return d.wait([klass])
@@ -181,7 +186,7 @@ class ModelObject(object):
         Example:
         Users.find({name="Dale"})
         """
-        klass.assertAttached()
+        klass.assertBound()
         d = klass.__storage.call("collection/find_one",
                 klass.__collection, query)
         return d.wait(klass)
