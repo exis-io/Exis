@@ -46,6 +46,35 @@ def reflect(handler):
 
     return prepareSchema(types)
 
+
+def _prepareSchema(t):
+    if t is None:
+        return None
+
+    elif t in [int, float, bool, str, list, dict]:
+        return t.__name__
+
+    elif isinstance(t, list):
+        if len(t) > 1:
+            raise utils.SyntaxError("Lists can only have one internal type.")
+        return [_prepareSchema(t[0])]
+
+    elif isinstance(t, dict):
+        tmp = dict()
+        for k, v in t.iteritems():
+            if not isinstance(k, basestring):
+                raise utils.SyntaxError("Dictionary keys must be strings.")
+            tmp[k] = _prepareSchema(v)
+        return tmp
+
+    elif issubclass(t, model.ModelObject):
+        return t.reflect()
+
+    else:
+        raise utils.SyntaxError("Type {} is not natively serializible!"
+                .format(str(t)))
+
+
 def prepareSchema(types):
     '''
     Prepares a list of types for consumption by the core. Returns json.
@@ -53,40 +82,12 @@ def prepareSchema(types):
     if types is None:
         return json.dumps([None])
     else:
-        typeList = []
-
-        for t in types:
-
-            # If primitive type, continue
-            if t in [int, float, bool, str, list, dict]:
-                typeList.append(t.__name__)
-
-            # Format passed in should be [bool]. Internal types should be homogenous
-            # Output should be [bool]
-            elif type(t) is list:
-                if len(t) > 1:
-                    raise utils.SyntaxError("Lists can only have one internal type.")
-
-                if t[0] in [int, float, bool, str, list, dict]:
-                    typeList.append([t[0].__name__])
-                else: 
-                    raise utils.SyntaxError("Unknown type ", t[0])
-
-            # Same as above-- homogenous key:value pairs, OR just the dict itself
-            elif t is dict:
-                typelist.append({k: v.reflect() if isinstance(v, Model) else v for k, v in t})
-
-            elif issubclass(t, model.Model):
-                typeList.append(t.reflect())
-
-            else:
-                print 'Type ' + str(t) + ' is not natively serializible!'
-
-    return json.dumps(typeList)
+        typeList = [_prepareSchema(t) for t in types]
+        return json.dumps(typeList)
 
 def marshall(args):
     ''' Ask models to serialize themselves, if present. Returns JSON. '''
-    return json.dumps([x._serialize() if isinstance(x, model.Model) else x for x in args])
+    return json.dumps([x._serialize() if isinstance(x, model.ModelObject) else x for x in args])
 
 def unmarshall(args, types):
     '''
@@ -106,7 +107,7 @@ def unmarshall(args, types):
         # Try to check if y is a Model, but if y is a list this will throw an exception
         # so deal with that properly
         try:
-            b = issubclass(y, model.Model)
+            b = issubclass(y, model.ModelObject)
         except:
             b = False
         if b:
