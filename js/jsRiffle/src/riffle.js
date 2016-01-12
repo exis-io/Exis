@@ -47,6 +47,4 @@ exports.Error = global.Config.Error;
 //want.js exports
 exports.want = want.want;
 exports.wait = want.wait;
-exports.ObjectWithKeys = want.ObjectWithKeys;
-exports.ObjectToClass = want.ObjectToClass;
-exports.ArrayWithType = want.ArrayWithType;
+exports.ModelObject = want.ModelObject;

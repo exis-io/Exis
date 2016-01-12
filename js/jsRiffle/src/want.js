@@ -2,9 +2,7 @@ module.exports = {};
 var exports = module.exports;
 exports.want = want;
 exports.wait = wait;
-exports.ObjectWithKeys = ObjectWithKeys;
-exports.ObjectToClass = ObjectToClass;
-exports.ArrayWithType = ArrayWithType;
+exports.ModelObject = newModelObject;
 
 
 /**
@@ -16,6 +14,7 @@ exports.ArrayWithType = ArrayWithType;
  * of the arguments wanted.
  *
  */
+var validTypes = [String, Boolean, Number, null, Array, Object];
 
 function want(){
   var handler = {};
@@ -23,7 +22,22 @@ function want(){
   var expect = new Expectation();
   var len = arguments.length;
   for(var i = 1; i < len; i++){
-    expect.addArg(arguments[i], i-1);
+    if(validTypes.indexOf(arguments[i]) > -1 || arguments[i] instanceof ModelObject){
+      expect.addArg(arguments[i], i-1);
+    }else{
+      try{
+        var c = arguments[i].constructor;
+        if(c === Array){
+          expect.addArg(new ArrayWithType(arguments[i][0]), i-1);
+        }else if(c === Object){
+          expect.addArg(new ObjectWithKeys(arguments[i]), i-1);
+        }else{
+          throw "Error";
+        }
+      }catch(e){
+        throw "Error: Inproperly formatted want statement. Argument " + (i+1) + " is invalid.";
+      }
+    }
   }
 
   function wrap(){
@@ -42,7 +56,22 @@ function wait(){
   var expect = new Expectation();
   var len = arguments.length;
   for(var i = 1; i < len; i++){
-    expect.addArg(arguments[i], i-1);
+    if(validTypes.indexOf(arguments[i]) > -1 || arguments[i] instanceof ModelObject){
+      expect.addArg(arguments[i], i-1);
+    }else{
+      try{
+        var c = arguments[i].constructor;
+        if(c === Array){
+          expect.addArg(new ArrayWithType(arguments[i][0]), i-1);
+        }else if(c === Object){
+          expect.addArg(new ObjectWithKeys(arguments[i]), i-1);
+        }else{
+          throw "Error";
+        }
+      }catch(e){
+        throw "Error: Inproperly formatted want statement. Argument " + (i+1) + " is invalid.";
+      }
+    }
   }
 
   function wrap(){
@@ -189,31 +218,18 @@ ArrayWithType.prototype.type = function(){
 
 
 /**
- * The ObjectModel class signifies all models that are constructed from Objects
- */
-
-function ObjectModel(obj){
-    if(obj !== Object && !(obj instanceof ObjectModel)){
-      throw "Error: The expected arg must be either a Object or a valid jsRiffle ObjectModel type.";
-    }
-    Model.call(this, obj);
-}
-
-ObjectModel.prototype = Object.create(Model.prototype);
-
-ObjectModel.prototype.constructor = ObjectModel;
-
-
-/**
  * The ObjectWithKeys class validates the all keys exist within the object and that any casting
  * that needs to take place does.
  */
 
 function ObjectWithKeys(arg){
   try{
-    ObjectModel.call(this, arg.constructor);
+    if(arg.constructor !== Object){
+      throw "Error: The expected arg must be an Object.";
+    }
+    Model.call(this, Object);
   }catch(e){
-    throw "Error: ObjectWithKeys requires a valid object template to be passed in.";
+    throw "Error: Expecting a valid object template to be passed in. i.e. {key: String}";
   }
   this.expects = new Expectation();
   this.keyToArgMap = [];
@@ -224,7 +240,7 @@ function ObjectWithKeys(arg){
   this.modelName = "ObjectWithKeys";
 }
 
-ObjectWithKeys.prototype = Object.create(ObjectModel.prototype);
+ObjectWithKeys.prototype = Object.create(Model.prototype);
 
 ObjectWithKeys.prototype.constructor = ObjectWithKeys;
 
@@ -263,22 +279,29 @@ ObjectWithKeys.prototype.construct = function(obj){
 
 
 /**
- * The ObjectToClass casts an Object or ObjectModel into a new object constructed with the specified constructor
+ * The ModelObject casts an Object into a new object constructed with the specified constructor
  * by iterating through the keys and dropping the key/value pair into the new object overwriting any keys with the
  * same name already created via the constructor.
  */
 
-function ObjectToClass(constructor, arg){
+function ModelObject(constructor){
     this.myConstructor = constructor;
-    this.modelName = "ObjectToClass";
-    ObjectModel.call(this, arg);
+    this.modelName = "ModelObject";
+    var expectedTypes = {};
+    var cls = new constructor();
+    for(var key in cls){
+      if(validTypes.indexOf(cls[key]) > -1 || cls[key] instanceof Model){
+        expectedTypes[key] = cls[key];
+      }
+    }
+    ObjectWithKeys.call(this, expectedTypes);
 }
 
-ObjectToClass.prototype = Object.create(ObjectModel.prototype);
+ModelObject.prototype = Object.create(ObjectWithKeys.prototype);
 
-ObjectToClass.prototype.constructor = ObjectToClass;
+ModelObject.prototype.constructor = ModelObject;
 
-ObjectToClass.prototype.construct = function(){
+ModelObject.prototype.construct = function(){
   this.expects.validate(arguments);
   var dict = arguments[0];
   var newObj = new this.myConstructor();
@@ -288,6 +311,6 @@ ObjectToClass.prototype.construct = function(){
   return newObj;
 };
 
-ObjectToClass.prototype.type = function(){
-  return this.expects.types()[0];
-};
+function newModelObject(constructor){
+  return new ModelObject(constructor);
+}
