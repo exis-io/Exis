@@ -3,6 +3,7 @@ import Riffle
 class TourRegBackend: Riffle.Domain, Riffle.Delegate {
 
     override func onJoin() {
+        /////////////////////////////////////////////////////////////////////////////////////
         // Example Tour Reg/Call Lesson 1 - our first basic example
         register("myFirstCall") { (s: String) -> String in
             print(s) // Expects a String, like "Hello"
@@ -10,6 +11,7 @@ class TourRegBackend: Riffle.Domain, Riffle.Delegate {
         }
         // End Example Tour Reg/Call Lesson 1
 
+        /////////////////////////////////////////////////////////////////////////////////////
         // Example Tour Reg/Call Lesson 2 Works - type enforcement good
         register("iWantStrings") { (s: String) -> String in
             print(s) // Expects a String, like "Hi"
@@ -31,6 +33,7 @@ class TourRegBackend: Riffle.Domain, Riffle.Delegate {
         }
         // End Example Tour Reg/Call Lesson 2 Wait Check
         
+        /////////////////////////////////////////////////////////////////////////////////////
         // Example Tour Reg/Call Lesson 3 Works - collections of types
         register("iWantManyStrings") { (s: [String]) -> String in
             print(s) // Expects an [String], like ["This", "is", "cool"]
@@ -44,6 +47,9 @@ class TourRegBackend: Riffle.Domain, Riffle.Delegate {
             return "Thanks for \(i.count) ints!"
         }
         // End Example Tour Reg/Call Lesson 3 Fails
+        
+        /////////////////////////////////////////////////////////////////////////////////////
+        // TODO need to add the lesson 4 code
     
         print("___SETUPCOMPLETE___")
     }
