@@ -129,15 +129,19 @@ class ModelObject(object):
         klass.__collection = collection
         klass.__storage = storage
 
+    @classmethod
+    def assertAttached(klass):
+        if klass.__storage is None:
+            raise Exception("Model {model} is not attached to storage; "
+                    "you should call {model}.attachStorage first"
+                    .format(model=klass.__name__))
+
     def save(self):
         """
         Write the object back to storage.
         """
-        if self.__storage is None:
-            raise Exception("Model {model} is not attached to storage; "
-                    "you should call {model}.attachStorage first"
-                    .format(model=self.__class__.__name__))
-        elif self.__id is None:
+        self.assertAttached()
+        if self.__id is None:
             d = self.__storage.call("collection/insert_one",
                     self.__collection,
                     self._serialize())
@@ -151,6 +155,36 @@ class ModelObject(object):
                     {'_id': self.__id},
                     self._serialize(),
                     True).wait()
+
+    @classmethod
+    def find(klass, query):
+        """
+        Find objects that match the query.
+
+        Currently, supports equality checking only.
+
+        Example:
+        Users.find({name="Dale"})
+        """
+        klass.assertAttached()
+        d = klass.__storage.call("collection/find",
+                klass.__collection, query)
+        return d.wait([klass])
+
+    @classmethod
+    def find_one(klass, query):
+        """
+        Find a single object that matches the query.
+
+        Currently, supports equality checking only.
+
+        Example:
+        Users.find({name="Dale"})
+        """
+        klass.assertAttached()
+        d = klass.__storage.call("collection/find_one",
+                klass.__collection, query)
+        return d.wait(klass)
 
 
 # Model is deprecated.

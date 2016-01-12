@@ -191,8 +191,11 @@ class App(object):
                         print "An exception occured: ", error
                 else:
                     if canReturn:
-                        ret = [] if ret is None else ret
-                        if not isinstance(ret, (list, tuple)):
+                        if ret is None:
+                            ret = []
+                        elif isinstance(ret, tuple):
+                            ret = list(ret)
+                        else:
                             ret = [ret]
 
                         domain.Yield(resultID, cumin.marshall(ret))
