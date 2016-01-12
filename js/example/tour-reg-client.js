@@ -8,6 +8,7 @@ var backend = app.Subdomain("backend");
 var client = app.Subdomain("client");
 
 client.onJoin = function() {
+    /////////////////////////////////////////////////////////////////////////////////////
     // Example Tour Reg/Call Lesson 1 - our first basic example
     backend.Call("myFirstCall", "Hello").then(riffle.wait(function (s) {
         console.log(s); // Expects a String, like "Hello World"
@@ -17,6 +18,7 @@ client.onJoin = function() {
     });
     // End Example Tour Reg/Call Lesson 1
         
+    /////////////////////////////////////////////////////////////////////////////////////
     // Example Tour Reg/Call Lesson 2 Works - type enforcement good
     backend.Call("iWantStrings", "Hi").then(riffle.wait(function (s) {
         console.log(s); // Expects a String, like "Thanks for saying Hi"
@@ -44,6 +46,7 @@ client.onJoin = function() {
     });
     // End Example Tour Reg/Call Lesson 2 Wait Check
     
+    /////////////////////////////////////////////////////////////////////////////////////
     // Example Tour Reg/Call Lesson 3 Works - collections of types
     backend.Call("iWantManyStrings", ["This", "is", "cool"]).then(riffle.wait(function (s) {
         console.log(s); // Expects a String, like "Thanks for 3 strings!"
@@ -61,6 +64,23 @@ client.onJoin = function() {
         console.log("ERROR: ", err); // Errors with "Cumin: expecting primitive float, got string"
     });
     // End Example Tour Reg/Call Lesson 3 Fails
+    
+    /////////////////////////////////////////////////////////////////////////////////////
+    // Example Tour Reg/Call Lesson 4 Basic Student - intro to classes
+    function Student() {
+        this.name = "Student Name";
+        this.age = 20;
+        this.studentID = 0;
+    }
+    var s = new Student();
+    s.name = "John Smith"
+    s.age = 18
+    s.studentID = 1234
+    backend.Call("sendStudent", s);
+    // End Example Tour Reg/Call Lesson 4 Basic Student
+    
+    
+    //var student = new riffle.ObjectModel(Student);
     
     console.log("___SETUPCOMPLETE___");
 

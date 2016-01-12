@@ -8,6 +8,7 @@ var backend = app.Subdomain("backend");
 var client = app.Subdomain("client");
 
 backend.onJoin = function() {
+    /////////////////////////////////////////////////////////////////////////////////////
     // Example Tour Reg/Call Lesson 1 - our first basic example
     this.Register("myFirstCall", riffle.want(function(s) {
         console.log(s); // Expects a String, like "Hello"
@@ -15,6 +16,7 @@ backend.onJoin = function() {
     }, String));
     // End Example Tour Reg/Call Lesson 1
         
+    /////////////////////////////////////////////////////////////////////////////////////
     // Example Tour Reg/Call Lesson 2 Works - type enforcement good
     this.Register("iWantStrings", riffle.want(function(s) {
         console.log(s); // Expects a String, like "Hi"
@@ -36,6 +38,7 @@ backend.onJoin = function() {
     }, String));
     // End Example Tour Reg/Call Lesson 2 Wait Check
     
+    /////////////////////////////////////////////////////////////////////////////////////
     // Example Tour Reg/Call Lesson 3 Works - collections of types
     this.Register("iWantManyStrings", riffle.want(function(s) {
         console.log(s); // Expects a new riffle.ArrayWithType(String), like ["This", "is", "cool"]
@@ -50,6 +53,24 @@ backend.onJoin = function() {
     }, new riffle.ArrayWithType(Number)));
     // End Example Tour Reg/Call Lesson 3 Fails
         
+    /////////////////////////////////////////////////////////////////////////////////////
+    // Example Tour Reg/Call Lesson 4 Basic Student - intro to classes
+    function Student() {
+        this.name = "Student Name";
+        this.age = 20;
+        this.studentID = 0;
+    }
+    Student.prototype.toString = function() {
+        return this.name + ", Age: " + this.age + ", ID: " + this.studentID;
+    }
+    var s = new Student();
+    s.name = "John Smith"
+    s.age = 18
+    s.studentID = 1234
+    this.Register("sendStudent", riffle.want(function(s) {
+        console.log(s.toString()); // Expects a Student, like "John Smith, Age: 18, ID: 1234"
+    }, new riffle.ObjectToClass(Student, Object)));
+    // End Example Tour Reg/Call Lesson 4 Basic Student
     console.log("___SETUPCOMPLETE___");
 
 };
