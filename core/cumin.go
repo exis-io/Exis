@@ -79,46 +79,51 @@ func softCumin(types []interface{}, args []interface{}) error {
 		return fmt.Errorf("Cumin: Invalid number of arguments, expected %d, receieved %d. %v", len(types), len(args), description)
 	}
 
-	for i, x := range args {
-		argument := reflect.ValueOf(x)
-		expected := types[i]
+	for i := range args {
+		if e := _softCumin(types[i], args[i], i, description); e != nil {
+			return e
+		}
+	}
 
-		// Debug("Expected: %v expected type: %v, Argument: %v", expected, reflect.TypeOf(expected), x)
-		//fmt.Printf("Expected: %v expected type: %v, Argument: %v\n", expected, reflect.TypeOf(expected), x)
+	return nil
+}
 
-		// If the expected type is a string, we're looking for a primitive
-		if s, ok := expected.(string); ok {
-			if e := primitiveCheck(s, argument.Kind()); e != nil {
-				return e
-			}
+// Recursive worker function for softCumin.
+func _softCumin(expected interface{}, x interface{}, i int, description string) error {
+	argument := reflect.ValueOf(x)
 
-		} else if nestedSlice, ok := expected.([]interface{}); ok {
-			if len(nestedSlice) != 1 {
-				return fmt.Errorf("Cumin: array expected at position #%d is not homogenous. %s", i, expected)
-			}
+	// If the expected type is a string, we're looking for a primitive
+	if s, ok := expected.(string); ok {
+		if e := primitiveCheck(s, argument.Kind()); e != nil {
+			return e
+		}
 
-			if argumentList, ok := x.([]interface{}); !ok {
-				return fmt.Errorf("Cant read interface list %v at position %d", x, i)
-			} else {
-				for _, v := range argumentList {
-					if e := primitiveCheck(nestedSlice[0].(string), reflect.TypeOf(v).Kind()); e != nil {
-						return e
-					}
-				}
-			}
+	} else if nestedSlice, ok := expected.([]interface{}); ok {
+		if len(nestedSlice) != 1 {
+			return fmt.Errorf("Cumin: array expected at position #%d is not homogenous. %s", i, expected)
+		}
 
-		} else if nestedMap, ok := expected.(map[string]interface{}); ok {
-
-			if argumentMap, ok := x.(map[string]interface{}); !ok {
-				return fmt.Errorf("Cumin: expected dictionary at position %d, got %v", i, reflect.TypeOf(x))
-			} else {
-				if e := mapCheck(nestedMap, argumentMap); e != nil {
+		if argumentList, ok := x.([]interface{}); !ok {
+			return fmt.Errorf("Cant read interface list %v at position %d", x, i)
+		} else {
+			for i := range argumentList {
+				if e := _softCumin(nestedSlice[0], argumentList[i], i, description); e != nil {
 					return e
 				}
 			}
-		} else {
-			return fmt.Errorf("Cumin: couldnt find primitive, list, or dictionary at #%d. %v", i, description)
 		}
+
+	} else if nestedMap, ok := expected.(map[string]interface{}); ok {
+
+		if argumentMap, ok := x.(map[string]interface{}); !ok {
+			return fmt.Errorf("Cumin: expected dictionary at position %d, got %v", i, reflect.TypeOf(x))
+		} else {
+			if e := mapCheck(nestedMap, argumentMap); e != nil {
+				return e
+			}
+		}
+	} else {
+		return fmt.Errorf("Cumin: couldnt find primitive, list, or dictionary at #%d. %v", i, description)
 	}
 
 	return nil

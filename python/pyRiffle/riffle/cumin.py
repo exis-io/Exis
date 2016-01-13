@@ -91,27 +91,32 @@ def marshall(args):
 
 def unmarshall(args, types):
     '''
-    Prepares arguments from the core for user level code. 
+    Prepares arguments from the core for user level code.
 
-    Objects and exceptions are recreated from dictionaries if appropriate. 
+    Objects and exceptions are recreated from dictionaries if appropriate.
     '''
 
+    l = _unmarshall(args, types)
+    return tuple(l)
+
+def _unmarshall(args, types):
     # If types is None, allow all arguments
     if not types:
         return args
 
-    # return tuple([x._deserialize() if isinstance(x, Model) else y for x, y in zip(types, args)])
-
     l = list()
     for x, y in zip(args, types):
-        # Try to check if y is a Model, but if y is a list this will throw an exception
-        # so deal with that properly
-        try:
-            b = issubclass(y, model.ModelObject)
-        except:
-            b = False
-        if b:
+        if isinstance(y, list):
+            if len(y) == 1 and len(x) > 1:
+                # e.g. x = [dale, mickey, lance] and y = [Person]
+                l.append(_unmarshall(x, y * len(x)))
+            else:
+                l.append(_unmarshall(x, y))
+
+        elif isinstance(y, type) and issubclass(y, model.ModelObject):
             l.append(y._deserialize(x))
+
         else:
             l.append(x)
-    return tuple(l)
+
+    return l
