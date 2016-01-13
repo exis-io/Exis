@@ -93,6 +93,14 @@ class ModelObject(object):
             else:
                 self.__values[name] = value
 
+    def __eq__(self, other):
+        if isinstance(other, ModelObject):
+            return other.__values == self.__values
+        elif isinstance(other, dict):
+            return other == self.__values
+        else:
+            return False
+
     def __repr__(self):
         return str(self.__class__.__name__) + repr(self.__values)
 

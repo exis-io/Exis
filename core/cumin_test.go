@@ -90,21 +90,34 @@ func TestSoftCumin(t *testing.T) {
 		})
 	})
 
-	// Convey("Lists of objects", t, func() {
-	//     Convey("Should succeed on simple collections", func() {
-	//         incoming := []byte(`[[{"a":"alpha","b":1},{"a":"beta","b":2}]]`)
-	//         expected := []byte(`[[{"a":"str","b":"int"}]]`)
+	Convey("Lists of objects", t, func() {
+		expected := `[[{"name": "str"}]]`
 
-	//         So(softCumin(unmarshal(expected), unmarshal(incoming)), ShouldBeNil)
-	//     })
+		Convey("Should succeed for simple objects", func() {
+			incoming := `[[{"name": "Dale"}, {"name": "Lance"}]]`
+			So(softCumin(unmarshal(expected), unmarshal(incoming)), ShouldBeNil)
+		})
 
-	//     // Convey("Should fail on bad keys", func() {
-	//     //     incoming := []byte(`[[{"a":"alpha","b":1},{"a":"beta","b":true}]]`)
-	//     //     expected := []byte(`[[{"a":"str","b":"bool"}]]`)
+		Convey("Should succeed for empty objects", func() {
+			incoming := `[[]]`
+			So(softCumin(unmarshal(expected), unmarshal(incoming)), ShouldBeNil)
+		})
 
-	//     //     So(softCumin(unmarshal(expected), unmarshal(incoming)), ShouldNotBeNil)
-	//     // })
-	// })
+		Convey("Should not accept heterogeneous lists", func() {
+			incoming := `[[{"name": "Dale"}, 5]]`
+			So(softCumin(unmarshal(expected), unmarshal(incoming)), ShouldNotBeNil)
+		})
+
+		Convey("Should not accept bad types", func() {
+			incoming := `[[{"name": "Dale"}, {"name": 3.14}]]`
+			So(softCumin(unmarshal(expected), unmarshal(incoming)), ShouldNotBeNil)
+		})
+
+		Convey("Should not accept extraneous keys", func() {
+			incoming := `[[{"name": "Dale", "cool": true}]]`
+			So(softCumin(unmarshal(expected), unmarshal(incoming)), ShouldNotBeNil)
+		})
+	})
 }
 
 // Functions for cuminication
