@@ -1,6 +1,6 @@
 
 from crust import Domain
-from model import Model
+from model import ModelObject
 from cumin import want
 from utils import Error, CuminError
 

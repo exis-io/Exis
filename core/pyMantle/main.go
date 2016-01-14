@@ -17,6 +17,10 @@ func (d *Domain) Subdomain(name string) Domain {
 	return Domain{coreDomain: d.coreDomain.Subdomain(name)}
 }
 
+func (d *Domain) LinkDomain(name string) Domain {
+	return Domain{coreDomain: d.coreDomain.LinkDomain(name)}
+}
+
 // Blocks on callbacks from the core
 func (d *Domain) Receive() string {
 	return core.MantleMarshall(d.coreDomain.GetApp().CallbackListen())

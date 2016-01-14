@@ -12,7 +12,7 @@ class GenericDomain(riffle.Domain):
         
         ######################################################################################
         # Example Tour Reg/Call Lesson 1 - our first basic example
-        s = backend.call("myFirstCall", "Hello").wait(str)
+        s = backend.call("myFirstFunc", "Hello").wait(str)
         print s # Expects a str, like "Hello World"
         # End Example Tour Reg/Call Lesson 1
 

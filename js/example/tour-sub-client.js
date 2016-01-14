@@ -14,68 +14,24 @@ client.onJoin = function() {
     // End Example Tour Pub/Sub Lesson 1
         
     /////////////////////////////////////////////////////////////////////////////////////
-    // xample Tour Reg/Call Lesson 2 Works - type enforcement good
-    backend.Call("iWantStrings", "Hi").then(riffle.wait(function (s) {
-        console.log(s); // Expects a String, like "Thanks for saying Hi"
-    }, String),
+    // Example Tour Pub/Sub Lesson 2 Works - type enforcement good
+    backend.Publish("iWantStrings", "Hi").then(function() {
+        console.log("Publish to iWantStrings complete");
+    },
     function (err) {
         console.log("ERROR: ", err);
     });
-    // nd Example Tour Reg/Call Lesson 2 Works
+    // End Example Tour Pub/Sub Lesson 2 Works
         
-    // xample Tour Reg/Call Lesson 2 Fails - type enforcement bad
-    backend.Call("iWantInts", "Hi").then(riffle.wait(function (s) {
-        console.log(s); // Expects a String, like "Thanks for saying Hi"
-    }, String),
-    function (err) {
-        console.log("ERROR: ", err); // Errors with "Cumin: expecting primitive float, got string"
-    });
-    // nd Example Tour Reg/Call Lesson 2 Fails
-    
-    // xample Tour Reg/Call Lesson 2 Wait Check - type enforcement on wait
-    backend.Call("iGiveInts", "Hi").then(riffle.wait(function (s) {
-        console.log(s); // Expects a String, like "Hello"
-    }, String),
-    function (err) {
-        console.log("ERROR: ", err); // Errors with "Cumin: expecting primitive float, got string"
-    });
-    // nd Example Tour Reg/Call Lesson 2 Wait Check
-    
-    /////////////////////////////////////////////////////////////////////////////////////
-    // xample Tour Reg/Call Lesson 3 Works - collections of types
-    backend.Call("iWantManyStrings", ["This", "is", "cool"]).then(riffle.wait(function (s) {
-        console.log(s); // Expects a String, like "Thanks for 3 strings!"
-    }, String),
+    // Example Tour Pub/Sub Lesson 2 Fails - type enforcement bad
+    backend.Publish("iWantInts", "Hi").then(function () {
+        console.log("Publish to iWantInts complete");
+    },
     function (err) {
         console.log("ERROR: ", err);
     });
-    // nd Example Tour Reg/Call Lesson 3 Works
+    // End Example Tour Pub/Sub Lesson 2 Fails
     
-    // xample Tour Reg/Call Lesson 3 Fails - collections of types
-    backend.Call("iWantManyInts", [0, 1, "two"]).then(riffle.wait(function (s) {
-        console.log(s); // Expects a String, like "Thanks for 3 ints!"
-    }, String),
-    function (err) {
-        console.log("ERROR: ", err); // Errors with "Cumin: expecting primitive float, got string"
-    });
-    // nd Example Tour Reg/Call Lesson 3 Fails
-    
-    /////////////////////////////////////////////////////////////////////////////////////
-    // xample Tour Reg/Call Lesson 4 Basic Student - intro to classes
-    function Student() {
-        this.name = "Student Name";
-        this.age = 20;
-        this.studentID = 0;
-    }
-    var s = new Student();
-    s.name = "John Smith"
-    s.age = 18
-    s.studentID = 1234
-    backend.Call("sendStudent", s);
-    // nd Example Tour Reg/Call Lesson 4 Basic Student
-    
-    
-    //var student = new riffle.ObjectModel(Student);
     
     console.log("___SETUPCOMPLETE___");
 
