@@ -27,7 +27,7 @@ class GenericDomain(riffle.Domain):
             s = backend.call("iWantInts", "Hi").wait(str)
             print s # Expects a str, like "Thanks for sending int 42"
         except riffle.Error as e:
-            print e # Errors with "Cumin: expecting primitive int, got string"
+            print "ERROR due to bad argument type" # Errors with "ERROR due to bad argument type"
         # End Example Tour Reg/Call Lesson 2 Fails
         
         # Example Tour Reg/Call Lesson 2 Wait Check - type enforcement on wait

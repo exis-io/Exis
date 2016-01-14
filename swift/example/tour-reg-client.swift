@@ -20,6 +20,8 @@ class TourRegClient: Riffle.Domain, Riffle.Delegate  {
         // Example Tour Reg/Call Lesson 2 Fails - type enforcement bad
         call("iWantInts", "Hi").then { (s: String) in
             print(s) // Expects a String, like "Thanks for sending int 42"
+        }.error { reason in
+            print("ERROR due to bad argument type")
         }
         // End Example Tour Reg/Call Lesson 2 Fails
         

@@ -21,7 +21,7 @@ backend.onJoin = function() {
     
     // Example Tour Basics 2 - async NOTE this code won't run since pub/sub is in line
     for(var i = 0; i < 10; i++) {
-        this.Publish("async", i);
+        backend.Publish("async", i);
     }
     // End Example Tour Basics 2
         

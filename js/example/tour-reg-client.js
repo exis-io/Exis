@@ -33,7 +33,7 @@ client.onJoin = function() {
         console.log(s); // Expects a String, like "Thanks for saying Hi"
     }, String),
     function (err) {
-        console.log("ERROR: ", err); // Errors with "Cumin: expecting primitive float, got string"
+        console.log("ERROR due to bad argument type") // Errors with "ERROR due to bad argument type"
     });
     // End Example Tour Reg/Call Lesson 2 Fails
     
