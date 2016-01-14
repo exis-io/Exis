@@ -180,10 +180,10 @@ func (c app) handle(msg message) {
 		Warn(s)
 
 		m := &errorMessage{
-			Type: iNVOCATION,
+			Type:    iNVOCATION,
 			Request: msg.Request,
 			Details: make(map[string]interface{}),
-			Error: ErrNoSuchRegistration,
+			Error:   ErrNoSuchRegistration,
 		}
 
 		if err := c.Send(m); err != nil {
@@ -227,12 +227,12 @@ func (c app) ReceiveBytes(byt []byte) {
 	var dat []interface{}
 
 	if err := json.Unmarshal(byt, &dat); err != nil {
-		Info("Unable to unmarshal json! Message: ", dat)
+		Info("Unable to unmarshal json! Message: %v", string(byt))
 	} else {
 		if m, err := c.serializer.deserializeString(dat); err == nil {
 			c.in <- m
 		} else {
-			Info("Unable to unmarshal json string! Message: ", m)
+			Info("Unable to unmarshal json string! Message: %v", m)
 		}
 	}
 }
@@ -281,17 +281,17 @@ func (c app) getMessageTimeout() (message, error) {
 }
 
 func DecodePrivateKey(data []byte) (*rsa.PrivateKey, error) {
-    // Decode the PEM public key
-    block, _ := pem.Decode(data)
-    if block == nil {
-        return nil, fmt.Errorf("Error decoding PEM file")
-    }
+	// Decode the PEM public key
+	block, _ := pem.Decode(data)
+	if block == nil {
+		return nil, fmt.Errorf("Error decoding PEM file")
+	}
 
-    // Parse the private key.
-    priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
-    if err != nil {
-        return nil, err
-    }
+	// Parse the private key.
+	priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	if err != nil {
+		return nil, err
+	}
 
 	return priv, nil
 }
@@ -322,7 +322,7 @@ func (c app) handleChallenge(msg *challenge) error {
 
 		response.Signature = base64.StdEncoding.EncodeToString(sig)
 
-	// TODO: warn on unrecognized auth method
+		// TODO: warn on unrecognized auth method
 	}
 
 	c.Send(response)

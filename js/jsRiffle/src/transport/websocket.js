@@ -83,6 +83,7 @@ Factory.prototype.create = function () {
          }
 
          transport.send = function (msg) {
+            console.log(msg);
             websocket.send(msg, {binary: false});
          };
 
@@ -100,6 +101,7 @@ Factory.prototype.create = function () {
             } else {
                 // console.log("Node WS receive: ", data)
                // var msg = JSON.parse(data);
+               console.log(data);
                transport.onmessage(data);
             }
          });
@@ -159,7 +161,10 @@ Factory.prototype.create = function () {
          websocket.onmessage = function (evt) {
             log.debug("WebSocket transport receive", evt.data);
 
-            var msg = JSON.parse(evt.data);
+            var msg = evt.data;
+            // DFW: This was messing up browser support - the data is unmarshalled in Go
+            // so it shouldn't be done here too
+            //var msg = JSON.parse(evt.data);
             transport.onmessage(msg);
          }
 
@@ -183,7 +188,10 @@ Factory.prototype.create = function () {
          //websocket.onerror = websocket.onclose;
 
          transport.send = function (msg) {
-            // var payload = JSON.stringify(msg);
+            var payload = msg;
+            // DFW: This was messing up browser support - the data is serialized in Go
+            // so it shouldn't be done here too
+            //var payload = JSON.stringify(msg);
             log.debug("WebSocket transport send", payload);
             websocket.send(msg);
          }
