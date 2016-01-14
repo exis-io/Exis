@@ -10,7 +10,7 @@ var client = app.Subdomain("client");
 backend.onJoin = function() {
     /////////////////////////////////////////////////////////////////////////////////////
     // Example Tour Reg/Call Lesson 1 - our first basic example
-    this.Register("myFirstCall", riffle.want(function(s) {
+    this.Register("myFirstFunc", riffle.want(function(s) {
         console.log(s); // Expects a String, like "Hello"
         return s + " World";
     }, String));

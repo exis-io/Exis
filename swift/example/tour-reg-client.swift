@@ -5,7 +5,7 @@ class TourRegClient: Riffle.Domain, Riffle.Delegate  {
     override func onJoin() {
         /////////////////////////////////////////////////////////////////////////////////////
         // Example Tour Reg/Call Lesson 1 - our first basic example
-        call("myFirstCall", "Hello").then { (s: String) in
+        call("myFirstFunc", "Hello").then { (s: String) in
             print(s) // Expects a String, like "Hello World"
         }
         // End Example Tour Reg/Call Lesson 1

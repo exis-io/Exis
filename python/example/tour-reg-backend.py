@@ -12,10 +12,10 @@ class GenericDomain(riffle.Domain):
         ######################################################################################
         # Example Tour Reg/Call Lesson 1 - our first basic example
         @want(str)
-        def myFirstCall(s):
+        def myFirstFunc(s):
             print(s)  # Expects a str, like "Hello"
             return "{} World".format(s)
-        self.register("myFirstCall", myFirstCall)
+        self.register("myFirstFunc", myFirstFunc)
         # End Example Tour Reg/Call Lesson 1
         
         ######################################################################################
