@@ -48,6 +48,11 @@ func TestExtractAction(t *testing.T) {
 		s, _ := extractActions("pd/alpha")
 		So(s, ShouldEqual, "alpha")
 	})
+
+	Convey("Invalid endpoints produce an error", t, func() {
+		_, err := extractActions("xs.test")
+		So(err, ShouldNotBeNil)
+	})
 }
 
 func TestExtractBoth(t *testing.T) {
@@ -112,6 +117,10 @@ func TestDownwardAction(t *testing.T) {
 
 		Convey("Can have spaces at the start", func() {
 			So(subdomain(" pd.damouse", "pd.damouse.a.b.c"), ShouldBeFalse)
+		})
+
+		Convey("Can be longer", func() {
+			So(subdomain("xs.demo.lance", "xs.demo"), ShouldBeFalse)
 		})
 	})
 }

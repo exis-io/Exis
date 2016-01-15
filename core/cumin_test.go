@@ -23,6 +23,12 @@ func TestCuminXNone(t *testing.T) {
 }
 
 func TestSoftCumin(t *testing.T) {
+	Convey("When expecting anything", t, func() {
+		Convey("Should accept ints", func() {
+			So(softCumin(unmarshal(`[null]`), unmarshal(`[1]`)), ShouldBeNil)
+		})
+	})
+
 	Convey("When checking number of arguments", t, func() {
 		Convey("Should fail with insufficient arguments", func() {
 			So(softCumin(unmarshal(`["float"]`), unmarshal(`[]`)), ShouldNotBeNil)
@@ -51,6 +57,14 @@ func TestSoftCumin(t *testing.T) {
 		Convey("Should not accept booleans as ints", func() {
 			So(softCumin(unmarshal(`[["int"]]`), unmarshal(`[[false, true, true]]`)), ShouldNotBeNil)
 
+		})
+
+		Convey("Should not accept heterogeneous array definitions", func() {
+			So(softCumin(unmarshal(`[["int", "str"]]`), unmarshal(`[[1, "a"]]`)), ShouldNotBeNil)
+		})
+
+		Convey("Should not accept a map", func() {
+			So(softCumin(unmarshal(`[["int", "str"]]`), unmarshal(`[{"a": 1}]`)), ShouldNotBeNil)
 		})
 
 		Convey("Should not accept non homogenous arrays", func() {
