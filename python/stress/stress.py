@@ -1,5 +1,4 @@
 import riffle
-from riffle import want
 
 import time
 
@@ -7,46 +6,65 @@ import time
 #riffle.SetFabricLocal()
 
 # How to connect
-def CreateDomains(url):
+def CreateDomains(url, suffix="", domain="xs.demo.stress"):
     riffle.SetFabric(url)
-    s = riffle.Domain("xs.demo.stress")
-    client = Stressor("client", superdomain=s)
-    backend = Stressor("backend", superdomain=s)
+    s = riffle.Domain(domain)
+    client = Stressor("client" + suffix, superdomain=s)
+    backend = Stressor("backend" + suffix, superdomain=s)
     return client, backend
 
 
 class Stressor(riffle.Domain):
-    def addAction(self, action, number, endpoint, payload=None):
+    def addAction(self, d):
         actions = self.__dict__.get("actions", [])
-        actions.append(dict(action=action, number=number, endpoint=endpoint, payload=payload))
+        actions.append(d)
         self.actions = actions
     
     def start(self, backend=None):
         self.backend = backend
         self.join()
     
-    def sub(self, num, ep, pyld):
-        def privSub(myep, ts):
+    def sub(self, d):
+        def privSub(myep, ts, pyld):
             tsEnd = time.time()
-            print "{}: {} - {} = {}".format(myep, ts, tsEnd, tsEnd - ts)
-        for i in range(num):
-            self.subscribe("{}{}".format(ep, i), privSub)
+            print "Pub/Sub  {}: {} - {} = {}".format(myep, ts, tsEnd, tsEnd - ts)
+        for i in range(d.get('repeat', 1)):
+            for j in range(d.get('num', 1)):
+                self.subscribe("{}{}".format(d['ep'], i), privSub)
     
-    def pub(self, num, ep, pyld):
-        for i in range(num):
-            myep = "{}{}".format(ep, i)
-            self.backend.publish(myep, myep, time.time())
+    def pub(self, d):
+        for i in range(d.get('repeat', 1)):
+            myep = "{}{}".format(d['ep'], i)
+            for j in range(d.get('num', 1)):
+                self.backend.publish(myep, myep, time.time(), d['pyld'])
+    
+    def reg(self, d):
+        def privReg(myep, ts, pyld):
+            return time.time()
+        for i in range(d.get('repeat', 1)):
+            self.register("{}{}".format(d['ep'], i), privReg)
+    
+    def call(self, d):
+        for i in range(d.get('repeat', 1)):
+            myep = "{}{}".format(d['ep'], i)
+            for j in range(d.get('num', 1)):
+                tsStart = time.time()
+                tsMid = self.backend.call(myep, myep, tsStart, d['pyld']).wait()
+                tsEnd = time.time()
+                print "Reg/Call {}: {}, {}, {} = {} ({})".format(myep, tsStart, tsMid, tsEnd, tsEnd - tsStart, (tsMid - tsStart) / (tsEnd - tsStart))
         
     def onJoin(self):
         self.actionDict = {
             "subscribe": self.sub,
-            "publish": self.pub
+            "publish": self.pub,
+            "call": self.call,
+            "register": self.reg
         }
         print "{} Starting".format(self.name)
 
         for a in self.actions:
-            action, num, ep, pyld = a['action'], a['number'], a['endpoint'], a['payload']
+            action = a['action']
             
-            self.actionDict[action](num, ep, pyld)
+            self.actionDict[action](a)
 
 
