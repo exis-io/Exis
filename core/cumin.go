@@ -15,7 +15,7 @@ func Cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 	}
 
 	if reciever.NumIn() != len(args) {
-		return ret, fmt.Errorf("Cumin: expected %s args for function %s, got %s", reciever.NumIn(), reciever, len(args))
+		return ret, fmt.Errorf("Cumin: expected %d args for function %s, got %d", reciever.NumIn(), reciever, len(args))
 	}
 
 	// Iterate over the params listed in the method and try their casts
@@ -145,7 +145,7 @@ func primitiveCheck(expected string, argument reflect.Kind) error {
 // Recursively check an object. Return nil if the object matches the expected types
 func mapCheck(expected map[string]interface{}, argument map[string]interface{}) error {
 	if len(expected) != len(argument) {
-		return fmt.Errorf("Cumin: object invalid number of keys, expected %d, receieved %s", len(expected), len(argument))
+		return fmt.Errorf("Cumin: object invalid number of keys, expected %d, receieved %d", len(expected), len(argument))
 	}
 
 	// TODO: nested collections and objects

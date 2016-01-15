@@ -296,6 +296,18 @@ func DecodePrivateKey(data []byte) (*rsa.PrivateKey, error) {
 	return priv, nil
 }
 
+func SignString(msg string, key *rsa.PrivateKey) (string, error) {
+	hashed := sha512.Sum512([]byte(msg))
+
+	sig, err := rsa.SignPKCS1v15(rand.Reader, key, crypto.SHA512, hashed[:])
+	if err != nil {
+		return "", err
+	}
+
+	result := base64.StdEncoding.EncodeToString(sig)
+	return result, nil
+}
+
 func (c app) handleChallenge(msg *challenge) error {
 	response := &authenticate{
 		Signature: "",
@@ -308,19 +320,16 @@ func (c app) handleChallenge(msg *challenge) error {
 
 	case "signature":
 		nonce, _ := msg.Extra["challenge"].(string)
-		hashed := sha512.Sum512([]byte(nonce))
 
 		key, err := DecodePrivateKey([]byte(c.key))
 		if err != nil {
 			return err
 		}
 
-		sig, err := rsa.SignPKCS1v15(rand.Reader, key, crypto.SHA512, hashed[:])
+		response.Signature, err = SignString(nonce, key)
 		if err != nil {
 			return err
 		}
-
-		response.Signature = base64.StdEncoding.EncodeToString(sig)
 
 		// TODO: warn on unrecognized auth method
 	}
