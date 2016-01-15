@@ -1,6 +1,9 @@
 package core
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 type Domain interface {
 	Subdomain(string) Domain
@@ -30,6 +33,8 @@ type domain struct {
 	subscriptions     map[uint64]*boundEndpoint
 	registrations     map[uint64]*boundEndpoint
 	callResponseTypes map[uint64][]interface{}
+	subLock           sync.RWMutex
+	regLock           sync.RWMutex
 }
 
 type boundEndpoint struct {
@@ -133,13 +138,17 @@ func (c domain) Join(conn Connection) error {
 }
 
 func (c *domain) Leave() error {
+	c.regLock.Lock()
 	for _, v := range c.registrations {
 		c.Unregister(v.endpoint)
 	}
+	c.regLock.Unlock()
 
+	c.subLock.Lock()
 	for _, v := range c.subscriptions {
 		c.Unsubscribe(v.endpoint)
 	}
+	c.subLock.Unlock()
 
 	if dems, ok := removeDomain(c.app.domains, c); !ok {
 		return fmt.Errorf("WARN: couldn't find %s to remove!", c)
@@ -169,7 +178,9 @@ func (c domain) Subscribe(endpoint string, requestId uint64, types []interface{}
 	} else {
 		Info("Subscribed: %s %v", endpoint, types)
 		subbed := msg.(*subscribed)
+		c.subLock.Lock()
 		c.subscriptions[subbed.Subscription] = &boundEndpoint{requestId, endpoint, types}
+		c.subLock.Unlock()
 		return nil
 	}
 }
@@ -183,7 +194,9 @@ func (c domain) Register(endpoint string, requestId uint64, types []interface{})
 	} else {
 		Info("Registered: %s %v", endpoint, types)
 		reg := msg.(*registered)
+		c.regLock.Lock()
 		c.registrations[reg.Registration] = &boundEndpoint{requestId, endpoint, types}
+		c.regLock.Unlock()
 		return nil
 	}
 }
@@ -214,16 +227,21 @@ func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error)
 func (c domain) Unsubscribe(endpoint string) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 
+	c.subLock.RLock()
 	if id, _, ok := bindingForEndpoint(c.subscriptions, endpoint); !ok {
+		c.subLock.RUnlock()
 		return fmt.Errorf("domain %s is not registered with this client.", endpoint)
 	} else {
+		c.subLock.RUnlock()
 		sub := &unsubscribe{Request: NewID(), Subscription: id}
 
 		if _, err := c.app.requestListenType(sub, "*core.unsubscribed"); err != nil {
 			return err
 		} else {
 			Info("Unsubscribed: %s", endpoint)
+			c.subLock.Lock()
 			delete(c.subscriptions, id)
+			c.subLock.Unlock()
 			return nil
 		}
 	}
@@ -232,16 +250,21 @@ func (c domain) Unsubscribe(endpoint string) error {
 func (c domain) Unregister(endpoint string) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 
+	c.regLock.RLock()
 	if id, _, ok := bindingForEndpoint(c.registrations, endpoint); !ok {
+		c.regLock.RUnlock()
 		return fmt.Errorf("domain %s is not registered with this domain.", endpoint)
 	} else {
+		c.regLock.RUnlock()
 		unregister := &unregister{Request: NewID(), Registration: id}
 
 		if _, err := c.app.requestListenType(unregister, "*core.unregistered"); err != nil {
 			return err
 		} else {
 			Info("Unregistered: %s", endpoint)
+			c.regLock.Lock()
 			delete(c.registrations, id)
+			c.regLock.Unlock()
 			return nil
 		}
 	}

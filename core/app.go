@@ -161,9 +161,13 @@ func (c app) handle(msg message) {
 
 	case *event:
 		for _, x := range c.domains {
+			x.subLock.RLock()
 			if binding, ok := x.subscriptions[msg.Subscription]; ok {
+				x.subLock.RUnlock()
 				go x.handlePublish(msg, binding)
 				return
+			} else {
+				x.subLock.RUnlock()
 			}
 		}
 
@@ -172,9 +176,13 @@ func (c app) handle(msg message) {
 
 	case *invocation:
 		for _, x := range c.domains {
+			x.regLock.RLock()
 			if binding, ok := x.registrations[msg.Registration]; ok {
+				x.regLock.RUnlock()
 				go x.handleInvocation(msg, binding)
 				return
+			} else {
+				x.regLock.RUnlock()
 			}
 		}
 
