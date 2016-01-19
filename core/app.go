@@ -39,7 +39,7 @@ type app struct {
 	in            chan message
 	up            chan Callback
 	listeners     map[uint64]chan message
-	listenersLock sync.RWMutex
+	listenersLock sync.Mutex
 
 	// authentication options
 	authid string
@@ -210,12 +210,12 @@ func (c app) handle(msg message) {
 		// Catch control messages here and replace getMessageTimeout
 
 		if ok {
-			c.listenersLock.RLock()
+			c.listenersLock.Lock()
 			if l, found := c.listeners[id]; found {
-				c.listenersLock.RUnlock()
 				l <- msg
+				c.listenersLock.Unlock()
 			} else {
-				c.listenersLock.RUnlock()
+				c.listenersLock.Unlock()
 				Error("No listener for message %v", msg)
 				// DFW: Panics are bad!! panic("Unhandled message!")
 			}
