@@ -37,7 +37,7 @@ public class Domain {
     public var delegate: Delegate?
     var mantleDomain: UnsafeMutablePointer<Void>
     var app: App
-
+    
     
     public init(name: String) {
         mantleDomain = NewDomain(name.cString())
