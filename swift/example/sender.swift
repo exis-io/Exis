@@ -7,12 +7,12 @@ class Sender: Riffle.Domain, Riffle.Delegate  {
         print("Sender joined")
 
         // Example Pub/Sub Basic - This is a basic version of a pub/sub
-        publish("xs.test.example/basicSub", "Hello")
+        //publish("xs.test.example/basicSub", "Hello")
         // End Example Pub/Sub Basic
         
         // Example Reg/Call Basic 1 - This is a basic reg/call
-        call("xs.test.example/basicReg", "Hello").then { (a: String) in
-            print("\(a)") // Expects a String, like "Hello World"
+        call("xs.demo.test.backend/basicReg", "Hello").then { (a: String) in
+            print("Yield result: \(a)") // Expects a String, like "Hello World"
         }
         // End Example Reg/Call Basic 1
     }

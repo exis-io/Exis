@@ -28,6 +28,7 @@ Very complex tests can be understood by Arbiter (these are called `Tasks`), as l
 In order to allow Arbiter to run tests and check the results the code must define what it expects to see, these are handled as special expects comments.
 
 For example, this code in python will make sure the value passed as an argument is a "Hello World" string.
+
 ```
 @want(str)
 def func(s):

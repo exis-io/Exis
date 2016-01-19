@@ -1,3 +1,4 @@
+
 var riffle = require('jsriffle');
 
 riffle.SetFabricLocal();
@@ -17,13 +18,6 @@ Person.prototype.fullname = function(){
   return this.first + " " + this.last;
 };
 
-//TODO Notes:
-//Nested Objects don't seem to work. 
-//Objects nested in arrays don't seem to work.
-//Objects with arbitrary keys don't seem to work
-//Arrays with any type of elements don't work.
-//Number types when represented to the go core as either 'float' or 'int' always succeed. So if specify Number type as 'int' but send 44.44 it still goes through.
-
 function printName(p){
   console.log(p.fullname());
 }
@@ -34,21 +28,35 @@ function log(obj, array){
   return "Success";
 }
 
-
 me.onJoin = function() {
-    console.log("Receiever Joined");
 
+    console.log("Receiever Joined");
     var wantPerson = riffle.want(printName, riffle.ModelObject(Person));
-    this.Subscribe("sub", wantPerson).then( function(args){ 
-        console.log("Success with args:", args) 
-    }, function(args){ 
-         console.log("Error with args: ", args) 
+
+    this.Subscribe("sub", wantPerson).then(function(a){
+        //me.Unsubscribe("sub")
     });
 
-    this.Register("reg", riffle.want(log, {string: String}, [Number]));
-};
+    this.Register("reg", riffle.want(log, {string: String}, [Number])).then(function(args){
+        console.log("Registration completed");
 
+        // me.Unregister("reg")
+        me.Leave()
+    });
+
+};
 
 me.Join()
 
+var a = function() {
+    me.Unregister("reg")
+}
 
+
+
+//TODO Notes:
+// Nested Objects don't seem to work. 
+// Objects nested in arrays don't seem to work.
+// Objects with arbitrary keys don't seem to work
+// Arrays with any type of elements don't work.
+// Number types when represented to the go core as either 'float' or 'int' always succeed. So if specify Number type as 'int' but send 44.44 it still goes through.

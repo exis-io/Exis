@@ -286,6 +286,7 @@ func (d *Domain) Unsubscribe(endpoint string) *js.Object {
 func (d *Domain) Unregister(endpoint string) *js.Object {
 	var p promise.Promise
 
+	Info("Trying to unregister with")
 	go func() {
 		if err := d.coreDomain.Unregister(endpoint); err == nil {
 			p.Resolve(nil)
