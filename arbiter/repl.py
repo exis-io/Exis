@@ -163,7 +163,15 @@ class SwiftCoder(Coder):
         """
         Need to copy over the proper files for swift build command (mantle/swiftRiffle).
         """
-        pass
+        # Copy Package from example
+        swift = "{}/swift".format(EXISREPO)
+        os.mkdir("{}/main".format(tmpdir))
+        shutil.copy("{}/example/Package.swift".format(swift), "{}/main".format(tmpdir))
+        shutil.copytree("{}/mantle".format(swift), "{}/mantle".format(tmpdir))
+        os.mkdir("{}/swiftRiffle".format(tmpdir))
+        shutil.copytree("{}/swiftRiffle/Riffle".format(swift), "{}/swiftRiffle/Riffle".format(tmpdir))
+        if not os.path.exists("{}/swiftRiffle/Riffle/.git".format(tmpdir)):
+            raise Exception("!! Please run 'make swift' so that swiftRiffle is git tagged properly")
 
     def setupTerminate(self, code):
         # TODO
@@ -177,7 +185,10 @@ class SwiftCoder(Coder):
         """
         Returns a properly formatted lang-specific value that we should be searching for.
         """
-        return self.task.expectVal
+        if self.task.expectType == "String":
+            return self.task.expectVal.strip("'\"")
+        else:
+            return self.task.expectVal
 
 class JSCoder(Coder):
     def setup(self, tmpdir):
