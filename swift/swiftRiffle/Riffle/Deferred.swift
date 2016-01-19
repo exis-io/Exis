@@ -33,8 +33,8 @@ public class Deferred {
         cb = CBID()
         eb = CBID()
         
-        domain.deferreds[eb] = self
-        domain.deferreds[cb] = self
+        domain.app.deferreds[eb] = self
+        domain.app.deferreds[cb] = self
     }
     
     // Final, internal implementation of addCallback

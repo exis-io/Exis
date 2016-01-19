@@ -65,6 +65,19 @@ func marshall(args: [Any]) -> UnsafeMutablePointer<Int8> {
     return jsonString.cString()
 }
 
+// Do we still need this here?
+func serializeArguments(args: [Any]) -> [Any] {
+    var ret: [Any] = []
+    
+    for a in args {
+        if let arg = a as? Property {
+            ret.append(arg.serialize())
+        }
+    }
+    
+    return ret
+}
+
 public func SetFabric(url: String) {
     MantleSetFabric(url.cString())
 }
