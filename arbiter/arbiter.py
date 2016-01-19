@@ -66,17 +66,23 @@ def findTask(lang, task):
         print("No Task found")
 
 TASK_DEF_RE = re.compile("(.*)? (.*):(.*)$")
-def _ripTaskDef(t):
+def _ripTaskDef(t, kwargs):
     """
     Internal function that rips apart a task definition like "language action:example"
     """
-    m = TASK_DEF_RE.match(t)
+    # Check for optional lang so you don't have to type it out
+    l = kwargs.get('lang', None)
+    a = "{} {}".format(l, t) if l else t
+    m = TASK_DEF_RE.match(a)
     if not m:
-        print("!! Malformed task: {}".format(t))
-        return [None] * 3
+        # Check if they used the lang, if so it can look different
+        if l:
+            return l, None, t
+        else:
+            return [None] * 3
     return m.groups()
 
-def test(*tasks):
+def test(*tasks, **kwargs):
     """
     Executes potentially many tasks provided as individual arguments.
     NOTE: Please order your tasks intelligently - this means place subs/regs before calls/pubs.
@@ -101,10 +107,15 @@ def test(*tasks):
     taskList = list()
     actionList = list()
     for t in tasks:
-        lang, action, taskName = _ripTaskDef(t)
+        lang, action, taskName = _ripTaskDef(t, kwargs)
         ts = examples.getTask(taskName, lang)
         if not ts:
             print("!! No TaskSet found")
+        elif action is None:
+            # This means we need to add each of the tasks from the taskset
+            for t in ts.getOrderedTasks():
+                taskList.append(ts)
+                actionList.append(t.action)
         else:
             taskList.append(ts)
             actionList.append(action)

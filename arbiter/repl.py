@@ -315,7 +315,7 @@ class ReplIt:
                 if line.rstrip() == "___BUILDCOMPLETE___":
                     self.buildComplete.set()
                 else:
-                    stor.append(line)
+                    stor.append(line.rstrip())
         out.close()
 
     def kill(self):
@@ -339,7 +339,8 @@ class ReplIt:
             return True
         else:
             print "{} {} : FAILURE".format(self.action, self.task.fullName())
-            print "Received: {}".format("\n".join(self.stdout))
+            print "Stdout: '{}'".format("\n".join(self.stdout))
+            print "Stderr: '{}'".format("\n".join(self.stderr))
             print "Files located at: {}".format(self.testDir)
             print "Code Executed:"
             print self.execCode
