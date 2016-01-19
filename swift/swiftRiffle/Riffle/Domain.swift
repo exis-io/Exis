@@ -32,17 +32,6 @@ public protocol Delegate {
     func onLeave()
 }
 
-func serializeArguments(args: [Any]) -> [Any] {
-    var ret: [Any] = []
-    
-    for a in args {
-        if let arg = a as? Property {
-            ret.append(arg.serialize())
-        }
-    }
-    
-    return ret
-}
 
 public class Domain {
     public var mantleDomain: UnsafeMutablePointer<Void>

@@ -5,11 +5,17 @@ import Riffle
 Riffle.LogLevelDebug()
 Riffle.FabricLocal()
 
+let app = Riffle.Domain(name: "xs.test")
+let sender = Sender(name: "sender", superdomain: app)
+let receiver = Receiver(name: "receiver", superdomain: app)
+
+print(NSProcessInfo.processInfo().environment["MANUAL"])
+
 if NSProcessInfo.processInfo().environment["MANUAL"] != nil {
     if NSProcessInfo.processInfo().environment["CLIENT"] != nil {
-        Sender(name: "xs.demo.test.backend").join()
+        sender.join()
     } else {
-        Receiver(name: "xs.demo.test.backend").join()
+        receiver.join()
     }
 } else {
     // Set an environment variable to launch either the sender or the receiver

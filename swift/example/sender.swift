@@ -11,8 +11,9 @@ class Sender: Riffle.Domain, Riffle.Delegate  {
         // End Example Pub/Sub Basic
         
         // Example Reg/Call Basic 1 - This is a basic reg/call
-        call("xs.demo.test.backend/basicReg", "Hello").then { (a: String) in
+        receiver.call("basicReg", "Hello").then { (a: String) in
             print("Yield result: \(a)") // Expects a String, like "Hello World"
+            self.publish("pubby")
         }
         // End Example Reg/Call Basic 1
     }

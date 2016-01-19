@@ -34,6 +34,10 @@ class Receiver: Riffle.Domain, Riffle.Delegate {
         register("basicReg") { (args: String) -> String in
             print("\(args)") // Expects a String, like "Hello"
             return "Hello World"
+        }.then {
+            sender.subscribe("pubby") {
+                print("Receiver-Sender publish received")
+            }
         }
         // End Example Reg/Call Basic 1
     }
@@ -42,3 +46,4 @@ class Receiver: Riffle.Domain, Riffle.Delegate {
         print("Receiver left!")
     }
 }
+
