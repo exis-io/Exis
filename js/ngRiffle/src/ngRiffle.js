@@ -1,21 +1,27 @@
 /* commonjs package manager support */
 if (typeof module !== "undefined" && typeof exports !== "undefined" && module.exports === exports){
-    var jsriffle = require('jsriffle');
+    var jsriffle = require('jsRiffle');
     module.exports = 'ngRiffle';
 }
 
 (function () {
     'use strict';
 
-    jsRiffle.setDevFabric();
 
     var ngRiffleModule = angular.module('ngRiffle', []).provider('$riffle', $RiffleProvider);
 
     function $RiffleProvider() {
-        var options;
 
-        this.init = function (initOptions) {
-            options = initOptions || {};
+        var id = undefined;
+        var providerAPIExcludes = ['Application', 'Domain', 'ModelObject', 'wait', 'want'];
+        for(var key in jsRiffle){
+          if(providerAPIExcludes.indexOf(key) === -1){
+            this[key] = jsRiffle[key];
+          }
+        }
+
+        this.SetDomain = function(domain){
+          id = domain;
         };
 
 
@@ -46,82 +52,31 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
              */
             function digestWrapper(func) {
 
-                // if (options.disable_digest && options.disable_digest === true) {
-                //     return func;
-                // }
-
                 return function () {
                     var cb = func.apply(this, arguments);
                     $rootScope.$apply();
                     return cb;
                 };
             }
-
-            // options = angular.extend({onchallenge: digestWrapper(onchallenge), use_deferred: $q.defer}, options);
-
-            connection = new jsRiffle.Domain(options);
-
-            connection.onJoin = digestWrapper(function () {
+            
+            var joinFnc = digestWrapper(function () {
                 $rootScope.$broadcast("$riffle.open");
                 sessionDeferred.resolve();
             });
 
-            connection.onLeave = digestWrapper(function (reason, details) {
+            var leaveFnc = digestWrapper(function (reason, details) {
                 $log.debug("Connection Closed: ", reason, details);
                 sessionDeferred = $q.defer();
                 sessionPromise = sessionDeferred.promise;
-                $rootScope.$broadcast("$riffle.close", {reason: reason, details: details});
+                $rootScope.$broadcast("$riffle.leave", {reason: reason, details: details});
             });
 
 
-            /**
-             * Subscription object which self manages reconnections
-             * @param topic
-             * @param handler
-             * @param options
-             * @param subscribedCallback
-             * @returns {{}}
-             * @constructor
-             */
-            var Subscription = function (topic, handler, options, subscribedCallback) {
-
-                var subscription = {}, unregister, onOpen, deferred = $q.defer();
-
-                handler = digestWrapper(handler);
-
-                onOpen = function () {
-                    var p = connection.session.subscribe(topic, handler, options).then(
-                        function (s) {
-                            if (subscription.hasOwnProperty('id')) {
-                                delete subscription.id;
-                            }
-
-                            subscription = angular.extend(s, subscription);
-                            deferred.resolve(subscription);
-                            return s;
-                        }
-                    );
-                    if (subscribedCallback) {
-                        subscribedCallback(p);
-                    }
-
-                };
-
-                if (connection.isOpen) {
-                    onOpen();
-                }
-
-                unregister = $rootScope.$on("$riffle.open", onOpen);
-
-                subscription.promise = deferred.promise;
-                subscription.unsubscribe = function () {
-                    unregister(); //Remove the event listener, so this object can get cleaned up by gc
-                    return connection.session.unsubscribe(subscription);
-                };
-
-                return subscription.promise;
-            };
-
+            connection = new Domain(id);
+            connection.want = jsRiffle.want;
+            connection.wait = jsRiffle.wait;
+            connection.ModelObject = jsRiffle.ModelObject;
+            
             /**
              * Wraps WAMP actions, so that when they're called, the defined interceptors get called before the result is returned
              *
@@ -174,70 +129,136 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                 return action;
             };
 
-            return {
-                connection: connection,
-                open: function () {
-                    connection.join();
-                },
-                // TODO
-                leave: function () {
-                    connection.leave();
-                },
-                // TODO
-                // subscribe: function (topic, handler, options, subscribedCallback) {
-                //     return interceptorWrapper('subscribe', arguments, function () {
-                //         return Subscription(topic, handler, options, subscribedCallback);
-                //     });
-                // },
-                // TODO
-                subscribeOnScope: function (scope, channel, callback) {
-                    return this.subscribe(channel, callback).then(function (subscription) {
-                        scope.$on('$destroy', function () {
-                            return subscription.unsubscribe();
-                        });
-                    });
-                },
-                // TODO
-                unsubscribe: function (subscription) {
-                    return interceptorWrapper('unsubscribe', arguments, function () {
-                        return subscription.unsubscribe();
-                    });
-                },
-                publish: function () {
-                    var a = arguments
-
-                    return interceptorWrapper('publish', arguments, function () {
-                        return connection.publish.apply(connection, a);
-                    });
-                },
-                register: function (action, handler) {
-                    handler = digestWrapper(handler);
-
-                    return interceptorWrapper('register', arguments, function () {
-                        return connection.register(action, handler);
-                    });
-                },
-                subscribe: function (action, handler) {
-                    handler = digestWrapper(handler);
-
-                    return interceptorWrapper('subscribe', arguments, function () {
-                        return connection.subscribe(action, handler);
-                    });
-                },
-                // TODO
-                unregister: function (registration) {
-                    return interceptorWrapper('unregister', arguments, function () {
-                        return registration.unregister();
-                    });
-                },
-                call: function () {
-                    var a = arguments
-
-                    return interceptorWrapper('call', arguments, function () {
-                        return connection.call.apply(connection, a);
-                    });
-                }
+            function Domain(id, subParent){
+              this.conn = subParent;
+              if(!this.conn){
+                this.conn = jsRiffle.Domain(id);
+              }else{
+                this.conn = subParent.Subdomain(id);
+              }
+              this.conn.onJoin = joinFnc;
+              this.conn.onLeave = leaveFnc;
+            }
+            Domain.prototype.subdomains = {};
+            Domain.prototype.join = function(){
+              this.conn.Join();
             };
+            Domain.prototype.leave = function(){
+              this.conn.Leave();
+            };
+            Domain.prototype.subscribeOnScope = function(scope, channel, callback){
+              var self = this;
+              return this.subscribe(channel, callback).then(function(){
+                scope.$on('$destroy', function () {
+                  return self.unsubscribe(channel);
+                });
+              });
+            };
+            Domain.prototype.unsubscribe = function (channel) {
+              var self = this;
+              return interceptorWrapper('unsubscribe', arguments, function () {
+                return self.conn.Unsubscribe(channel);
+              });
+            };
+            Domain.prototype.publish = function(){
+              var a = arguments
+              var self = this;
+              return interceptorWrapper('publish', arguments, function(){
+                return self.conn.Publish.apply(self.conn, a);
+              });
+            };
+            Domain.prototype.register = function (action, handler) {
+              if(typeof(handler) === 'function'){
+                handler = digestWrapper(handler);
+              }else{
+                handler.fp = digestWrapper(handler.fp);
+              }
+              var self = this;
+              return interceptorWrapper('register', arguments, function () {
+                return self.conn.Register(action, handler);
+              });
+            };
+            Domain.prototype.subscribe = function (action, handler) {
+              if(typeof(handler) === 'function'){
+                handler = digestWrapper(handler);
+              }else{
+                handler.fp = digestWrapper(handler.fp);
+              }
+              var self = this;
+              return interceptorWrapper('subscribe', arguments, function () {
+                return self.conn.Subscribe(action, handler);
+              });
+            };
+            Domain.prototype.unregister = function (registration) {
+              var self = this;
+              return interceptorWrapper('unregister', arguments, function () {
+                return self.conn.Unregister(registration);
+              });
+            };
+            Domain.prototype.call = function () {
+              var a = arguments
+              var self = this;
+              return interceptorWrapper('call', arguments, function () {
+                return self.conn.Call.apply(self.conn, a);
+              });
+            };
+            Domain.prototype.subdomain = function(id) {
+              var tmp = new Domain(id, this.conn);
+              this.subdomains[id] = tmp;
+              return tmp;
+            };
+
+
+            /**
+             * Subscription object which self manages reconnections
+             * @param topic
+             * @param handler
+             * @param options
+             * @param subscribedCallback
+             * @returns {{}}
+             * @constructor
+            var Subscription = function (topic, handler, options, subscribedCallback) {
+
+                var subscription = {}, unregister, onOpen, deferred = $q.defer();
+
+                handler = digestWrapper(handler);
+
+                onOpen = function () {
+                    var p = connection.session.subscribe(topic, handler, options).then(
+                        function (s) {
+                            if (subscription.hasOwnProperty('id')) {
+                                delete subscription.id;
+                            }
+
+                            subscription = angular.extend(s, subscription);
+                            deferred.resolve(subscription);
+                            return s;
+                        }
+                    );
+                    if (subscribedCallback) {
+                        subscribedCallback(p);
+                    }
+
+                };
+
+                if (connection.isOpen) {
+                    onOpen();
+                }
+
+                unregister = $rootScope.$on("$riffle.open", onOpen);
+
+                subscription.promise = deferred.promise;
+                subscription.unsubscribe = function () {
+                    unregister(); //Remove the event listener, so this object can get cleaned up by gc
+                    return connection.session.unsubscribe(subscription);
+                };
+
+                return subscription.promise;
+            };
+             */
+
+
+            return connection;
         }];
 
         return this;
