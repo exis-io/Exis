@@ -18,24 +18,24 @@ from threading import Thread, Event
 # Make sure we know where the core appliances are
 APPLS = os.environ.get("EXIS_APPLIANCES", None)
 if(APPLS is None):
-    print("!! Need the $EXIS_APPLIANCES variable set to proceed")
-    exit(1)
+    print("!" * 50)
+    print("!! $EXIS_APPLIANCES not found, REPL may not work")
+    print("!" * 50)
+
+EXISREPO = os.environ.get("EXIS_REPO", None)
+if(EXISREPO is None):
+    print("!" * 50)
+    print("!! $EXIS_REPO not found, REPL may not work")
+    print("!" * 50)
 
 ON_POSIX = "posix" in sys.builtin_module_names
 
 SLEEP_TIME = 1
 
-from utils import utils
-
 WS_URL = os.environ.get("WS_URL", "ws://localhost:8000/ws")
 DOMAIN = os.environ.get("DOMAIN", "xs.demo.test")
 BASEPATH = "{}/repler".format(APPLS)
 TEST_PREFIX = "arbiterTask"
-
-if not os.path.exists("{}/repl-python/run2.sh".format(BASEPATH)) or not os.path.exists("{}/repl-swift/run2.sh".format(BASEPATH)):
-    print "Please checkout proper version of core appliances."
-    print "You must have the {core}/repler/repl-{lang}/run2.sh commands for arbiter to work!"
-    exit(1)
 
 
 class Coder:
@@ -49,6 +49,9 @@ class Coder:
         self.task = task
         self.action = action
 
+    def setup(self, tmpdir):
+        print "!! Not implemented"
+    
     def setupTerminate(self, code):
         print "!! Not implemented"
 
@@ -63,8 +66,8 @@ class Coder:
             String matching the output that led to the successful result,
             or None if a failure or no match
         """
-        #print(out, err)
         ev = self.getExpect()
+        #print(ev, out, err)
 
         good = None
         # Sometimes we shouldn't expect anything and thats ok
@@ -89,6 +92,11 @@ class Coder:
 
 
 class PythonCoder(Coder):
+    def setup(self, tmpdir):
+        """
+        We shouldn't have to do anything here, assume they have run 'sudo pip install -e .' in pyRiffle.
+        """
+        pass
 
     def setupTerminate(self, code):
         """
@@ -110,7 +118,7 @@ class PythonCoder(Coder):
         """
         Returns a properly formatted lang-specific value that we should be searching for.
         """
-        if self.task.expectType == "string":
+        if self.task.expectType == "str":
             return self.task.expectVal.strip("'\"")
         else:
             return self.task.expectVal
@@ -123,8 +131,8 @@ class PythonCoder(Coder):
             String matching the output that led to the successful result,
             or None if a failure or no match
         """
-        #print(out, err)
         ev = self.getExpect()
+        #print(ev, out, err)
 
         good = None
         # Sometimes we shouldn't expect anything and thats ok
@@ -151,6 +159,19 @@ class PythonCoder(Coder):
 
 
 class SwiftCoder(Coder):
+    def setup(self, tmpdir):
+        """
+        Need to copy over the proper files for swift build command (mantle/swiftRiffle).
+        """
+        # Copy Package from example
+        swift = "{}/swift".format(EXISREPO)
+        os.mkdir("{}/main".format(tmpdir))
+        shutil.copy("{}/example/Package.swift".format(swift), "{}/main".format(tmpdir))
+        shutil.copytree("{}/mantle".format(swift), "{}/mantle".format(tmpdir))
+        os.mkdir("{}/swiftRiffle".format(tmpdir))
+        shutil.copytree("{}/swiftRiffle/Riffle".format(swift), "{}/swiftRiffle/Riffle".format(tmpdir))
+        if not os.path.exists("{}/swiftRiffle/Riffle/.git".format(tmpdir)):
+            raise Exception("!! Please run 'make swift' so that swiftRiffle is git tagged properly")
 
     def setupTerminate(self, code):
         # TODO
@@ -164,20 +185,51 @@ class SwiftCoder(Coder):
         """
         Returns a properly formatted lang-specific value that we should be searching for.
         """
-        return self.task.expectVal
+        if self.task.expectType == "String":
+            return self.task.expectVal.strip("'\"")
+        else:
+            return self.task.expectVal
+
+class JSCoder(Coder):
+    def setup(self, tmpdir):
+        """
+        Need to run 'npm install BASEPATH/js/jsRiffle' in the tmp dir.
+        """
+        proc = subprocess.Popen(["npm", "install", "{}/js/jsRiffle/".format(EXISREPO)], cwd=tmpdir,
+                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output, errors = proc.communicate()
+        
+        if proc.returncode:
+            raise Exception("Unable to setup for JS: {}".format(errors))
+
+    def setupTerminate(self, code):
+        # TODO
+        pass
+
+    def expect2assert(self):
+        # TODO
+        return None
+
+    def getExpect(self):
+        """
+        Returns a properly formatted lang-specific value that we should be searching for.
+        """
+        if self.task.expectType == "String":
+            return self.task.expectVal.strip("'\"")
+        else:
+            return self.task.expectVal
 
 
 coders = {
     "py": PythonCoder,
-    "swift": SwiftCoder
+    "swift": SwiftCoder,
+    "js": JSCoder
 }
-
 
 def getCoder(task, action):
     """Returns an instance of the proper class or None"""
     c = coders.get(task.lang, None)
     return c(task, action) if c else None
-
 
 class ReplIt:
 
@@ -198,10 +250,10 @@ class ReplIt:
         self.executing = False
         self.coder = None
         self.buildComplete = Event()
+        self.runScript = None
 
-        self._setup()
 
-    def _setup(self):
+    def setup(self):
         """
         Sets up a temp directory for this task and copies the proper code over (like a fake docker)
         """
@@ -211,20 +263,35 @@ class ReplIt:
             raise Exception("Couldn't find the Coder for this lang")
 
         # Where is the repl code we need?
-        self.basepath = "{}/repl-{}/".format(BASEPATH, self.lang)
+        if(self.lang == "js"):
+            self.basepath = "{}/repl-nodejs".format(BASEPATH)
+        else:
+            self.basepath = "{}/repl-{}".format(BASEPATH, self.lang)
+
+        # Find the run script, use run2 if it exists
+        if os.path.exists("{}/run2.sh".format(self.basepath)):
+            self.runScript = "run2.sh"
+        elif os.path.exists("{}/run.sh".format(self.basepath)):
+            self.runScript = "run.sh"
+        else:
+            print "!! Unable to find the run.sh command from EXIS_APPLIANCES"
+            raise Exception()
 
         # Setup a temp dir for this test
         self.testDir = tempfile.mkdtemp(prefix=TEST_PREFIX)
 
         # Copy over everything into this new dir
-        src = os.listdir(self.basepath)
+        src = os.listdir(self.basepath + "/")
         for f in src:
-            ff = os.path.join(self.basepath, f)
+            ff = os.path.join(self.basepath + "/", f)
             if(os.path.isfile(ff)):
                 shutil.copy(ff, self.testDir)
             elif(os.path.isdir(ff)):
                 shutil.copytree(ff, "{}/{}".format(self.testDir, f))
 
+        # Now that the dir is setup, allow the coder to setup anything it needs for the lang
+        self.coder.setup(self.testDir)
+        
         # Setup env vars
         self.env = {
             "WS_URL": WS_URL,
@@ -294,7 +361,7 @@ class ReplIt:
         self.executing = True
         print "EXEC {} : {} @ {}".format(self.action, self.task.fullName(), self.testDir)
 
-        self.proc = subprocess.Popen(["./run2.sh"], cwd=self.testDir, env=self.env,
+        self.proc = subprocess.Popen(["./{}".format(self.runScript)], cwd=self.testDir, env=self.env,
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
                                      close_fds=ON_POSIX, preexec_fn=os.setsid)
 
@@ -333,6 +400,7 @@ def executeAll(taskList, actionList):
     procs = list()
     for ts, a in zip(taskList, actionList):
         r = ReplIt(ts, a)
+        r.setup()
         r.execute()
         a = r.buildComplete.wait(5)
         if a is False:
