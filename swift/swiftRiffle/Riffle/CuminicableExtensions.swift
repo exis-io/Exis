@@ -174,6 +174,10 @@ extension Float: Property, Convertible {
             return x
         }
         
+        if let x = from as? Double {
+            return Float(x)
+        }
+        
         if let x = from as? Int {
             return Float(x)
         }

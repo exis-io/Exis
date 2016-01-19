@@ -83,7 +83,6 @@ Factory.prototype.create = function () {
          }
 
          transport.send = function (msg) {
-            console.log(msg);
             websocket.send(msg, {binary: false});
          };
 
@@ -101,7 +100,6 @@ Factory.prototype.create = function () {
             } else {
                 // console.log("Node WS receive: ", data)
                // var msg = JSON.parse(data);
-               console.log(data);
                transport.onmessage(data);
             }
          });
