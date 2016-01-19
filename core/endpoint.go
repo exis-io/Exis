@@ -13,17 +13,9 @@ func (e InvalidURIError) Error() string {
 
 // Check out the golang tester for more info:
 // https://regex-golang.appspot.com/assets/html/index.html
-func validEndpoint(s string) bool {
+func validDomain(s string) bool {
 	r, _ := regexp.Compile("(^([a-z]+)(.[a-z]+)*$)")
 	return r.MatchString(s)
-}
-
-func validDomain(s string) bool {
-	return true
-}
-
-func validAction(s string) bool {
-	return true
 }
 
 func makeEndpoint(d string, a string) string {
@@ -127,17 +119,10 @@ func subdomain(agent, target string) bool {
 
 // breaks down an endpoint into domain and action, or returns an error
 func breakdownEndpoint(s string) (string, string, error) {
-	d, errDomain := extractDomain(s)
-
-	if errDomain != nil {
+	i := strings.Index(s, "/")
+	if i == -1 {
 		return "", "", InvalidURIError(s)
 	}
 
-	a, errAction := extractActions(s)
-
-	if errAction != nil {
-		return "", "", InvalidURIError(s)
-	}
-
-	return d, a, nil
+	return s[:i], s[i+1:], nil
 }

@@ -151,7 +151,7 @@ func (c *domain) Leave() error {
 	c.subLock.Unlock()
 
 	if dems, ok := removeDomain(c.app.domains, c); !ok {
-		return fmt.Errorf("WARN: couldn't find %s to remove!", c)
+		return fmt.Errorf("WARN: couldn't find %v to remove!", c)
 	} else {
 		c.app.domains = dems
 	}
