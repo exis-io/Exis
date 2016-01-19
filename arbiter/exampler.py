@@ -219,6 +219,18 @@ class TaskSet:
             if action == t.action:
                 return t
         return None
+
+    def getOrderedTasks(self):
+        """
+        Returns a list of the tasks in order to be called on properly.
+        ie. Reg before Call, and Sub before Pub
+        """
+        lst = list()
+        for i in ["register", "subscribe", "publish", "call"]:
+            t = self.getTask(i)
+            if t:
+                lst.append(t)
+        return lst
     
     def getLang(self):
         for t in self.tasks:

@@ -8,19 +8,27 @@ It can document and test real live examples of how to use Exis for every languga
 Please run '$0 -ls all' for more info.
 
 Environment Variables:
-    EXISPATH - the path to the Exis repo
+    EXIS_REPO - the path to the Exis repo
+    EXIS_APPLIANCES - the path to the Exis coreappliances repo (for REPL)
 
 TODO:
     - Implement Object checking for Python
     - Implement other languages
 """
-
 import sys, os, time, glob, argparse, re
-
 from collections import defaultdict as ddict
 
-EXISPATH = os.environ.get("EXISPATH", "..")
-sys.path.append(EXISPATH)
+EXISREPO = os.environ.get("EXIS_REPO", None)
+if EXISREPO is None:
+    print("!" * 50)
+    print("!! $EXIS_REPO not found, this may not work")
+    print("!" * 50)
+    sys.path.append("..")
+else:
+    sys.path.append(EXISREPO)
+
+
+
 
 from utils import functionizer as funcizer
 from utils import utils
@@ -36,7 +44,7 @@ def findTasks(lang=None, task=None, verbose=False):
         task : Matching task with wildcard support (ie. "Pub/Sub*")
         verbose : T/F on verbose printing
     """
-    examples = exampler.Examples.find(EXISPATH, lang)
+    examples = exampler.Examples.find(EXISREPO, lang)
     for t in examples.getTasks(lang, task):
         if(verbose):
             print(t.details())
@@ -50,7 +58,7 @@ def findTask(lang, task):
         lang : lang to search for
         task : Task name
     """
-    examples = exampler.Examples.find(EXISPATH, lang)
+    examples = exampler.Examples.find(EXISREPO, lang)
     ts = examples.getTask(task)
     if(ts):
         print(ts.details())
@@ -58,17 +66,23 @@ def findTask(lang, task):
         print("No Task found")
 
 TASK_DEF_RE = re.compile("(.*)? (.*):(.*)$")
-def _ripTaskDef(t):
+def _ripTaskDef(t, kwargs):
     """
     Internal function that rips apart a task definition like "language action:example"
     """
-    m = TASK_DEF_RE.match(t)
+    # Check for optional lang so you don't have to type it out
+    l = kwargs.get('lang', None)
+    a = "{} {}".format(l, t) if l else t
+    m = TASK_DEF_RE.match(a)
     if not m:
-        print("!! Malformed task: {}".format(t))
-        return [None] * 3
+        # Check if they used the lang, if so it can look different
+        if l:
+            return l, None, t
+        else:
+            return [None] * 3
     return m.groups()
 
-def test(*tasks):
+def test(*tasks, **kwargs):
     """
     Executes potentially many tasks provided as individual arguments.
     NOTE: Please order your tasks intelligently - this means place subs/regs before calls/pubs.
@@ -88,15 +102,20 @@ def test(*tasks):
     if(tasks[-1] == "-v"):
         tasks = tasks[:-1]
         verbose = True
-    examples = exampler.Examples.find(EXISPATH)
+    examples = exampler.Examples.find(EXISREPO)
     
     taskList = list()
     actionList = list()
     for t in tasks:
-        lang, action, taskName = _ripTaskDef(t)
+        lang, action, taskName = _ripTaskDef(t, kwargs)
         ts = examples.getTask(taskName, lang)
         if not ts:
             print("!! No TaskSet found")
+        elif action is None:
+            # This means we need to add each of the tasks from the taskset
+            for t in ts.getOrderedTasks():
+                taskList.append(ts)
+                actionList.append(t.action)
         else:
             taskList.append(ts)
             actionList.append(action)
@@ -110,7 +129,7 @@ def testAll(lang):
     Args:
         lang : language to test
     """
-    examples = exampler.Examples.find(EXISPATH, lang)
+    examples = exampler.Examples.find(EXISREPO, lang)
     for t in examples.getTasks(lang):
         repl.executeTaskSet(t)
         print('-'*80)
@@ -150,7 +169,7 @@ def genDocs():
                 }
             }
     """
-    examples = exampler.Examples.find(EXISPATH)
+    examples = exampler.Examples.find(EXISREPO)
 
     docs = ddict(lambda: {k: dict() for k in exampler.LANGS.keys()})
     for t in examples.getTasks():

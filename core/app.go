@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"os"
 	"reflect"
+	"sync"
 	"time"
 )
 
@@ -34,10 +35,11 @@ type app struct {
 	domains []*domain
 	Connection
 	serializer
-	agent     string
-	in        chan message
-	up        chan Callback
-	listeners map[uint64]chan message
+	agent         string
+	in            chan message
+	up            chan Callback
+	listeners     map[uint64]chan message
+	listenersLock sync.Mutex
 
 	// authentication options
 	authid string
@@ -159,9 +161,13 @@ func (c app) handle(msg message) {
 
 	case *event:
 		for _, x := range c.domains {
+			x.subLock.RLock()
 			if binding, ok := x.subscriptions[msg.Subscription]; ok {
+				x.subLock.RUnlock()
 				go x.handlePublish(msg, binding)
 				return
+			} else {
+				x.subLock.RUnlock()
 			}
 		}
 
@@ -170,9 +176,13 @@ func (c app) handle(msg message) {
 
 	case *invocation:
 		for _, x := range c.domains {
+			x.regLock.RLock()
 			if binding, ok := x.registrations[msg.Registration]; ok {
+				x.regLock.RUnlock()
 				go x.handleInvocation(msg, binding)
 				return
+			} else {
+				x.regLock.RUnlock()
 			}
 		}
 
@@ -200,11 +210,14 @@ func (c app) handle(msg message) {
 		// Catch control messages here and replace getMessageTimeout
 
 		if ok {
+			c.listenersLock.Lock()
 			if l, found := c.listeners[id]; found {
 				l <- msg
+				c.listenersLock.Unlock()
 			} else {
-				Warn("no listener for message %v", msg)
-				panic("Unhandled message!")
+				c.listenersLock.Unlock()
+				Error("No listener for message %v", msg)
+				// DFW: Panics are bad!! panic("Unhandled message!")
 			}
 		} else {
 			panic("Bad handler picking up requestID!")
@@ -247,8 +260,15 @@ func (c *app) requestListenType(outgoing message, expecting string) (message, er
 	wait := make(chan message, 1)
 	id, _ := requestID(outgoing)
 
+	c.listenersLock.Lock()
 	c.listeners[id] = wait
-	defer delete(c.listeners, id)
+	c.listenersLock.Unlock()
+
+	defer func() {
+		c.listenersLock.Lock()
+		delete(c.listeners, id)
+		c.listenersLock.Unlock()
+	}()
 
 	select {
 	case msg := <-wait:
