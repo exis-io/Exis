@@ -34,27 +34,24 @@ public protocol Delegate {
 
 
 public class Domain {
-    public var mantleDomain: UnsafeMutablePointer<Void>
     public var delegate: Delegate?
-    
-    public var invocations: [UInt64: [Any] -> ()] = [:]
-    public var registrations: [UInt64: [Any] -> Any?] = [:]
-    
-    var deferreds: [UInt64: Deferred] = [:]
-    var handlers: [UInt64: [Any] -> ()] = [:]
-    
+    var mantleDomain: UnsafeMutablePointer<Void>
+    var app: App
+
     
     public init(name: String) {
         mantleDomain = NewDomain(name.cString())
+        app = App(domain: mantleDomain)
     }
     
     public init(name: String, superdomain: Domain) {
         mantleDomain = Subdomain(superdomain.mantleDomain, name.cString())
+        app = superdomain.app
     }
     
     public func _subscribe(endpoint: String, _ types: [Any], fn: [Any] -> ()) -> Deferred {
         let hn = CBID()
-        handlers[hn] = fn
+        app.handlers[hn] = fn
 
         let d = Deferred(domain: self)
         Subscribe(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(serializeArguments(types)))
@@ -63,7 +60,7 @@ public class Domain {
     
     public func _register(endpoint: String, _ types: [Any], fn: [Any] -> Any) -> Deferred {
         let hn = CBID()
-        registrations[hn] = fn
+        app.registrations[hn] = fn
 
         let d = Deferred(domain: self)
         Register(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(types))
@@ -83,9 +80,58 @@ public class Domain {
         return d
     }
     
-    public func receive() {
+    public func join() {
+        let cb = CBID()
+        let eb = CBID()
+        
+        Join(mantleDomain, cb, eb)
+        
+        app.handlers[cb] = { a in
+            if let d = self.delegate {
+                d.onJoin()
+            } else {
+                self.onJoin()
+            }
+        }
+
+        app.handlers[eb] = { a in
+            if let d = self.delegate {
+                d.onLeave()
+            } else {
+                self.onLeave()
+            }
+        }
+        
+        app.handlers[eb] = { (a: Any) in
+            print("Unable to join!")
+        }
+        
+        app.receive()
+    }
+    
+    
+    // MARK: Delegate methods
+    public func onJoin() { }
+    public func onLeave() { }
+}
+
+
+
+class App {
+    var mantleDomain: UnsafeMutablePointer<Void>
+    
+    var deferreds: [UInt64: Deferred] = [:]
+    var handlers: [UInt64: [Any] -> ()] = [:]
+    var registrations: [UInt64: [Any] -> Any?] = [:]
+
+
+    init(domain: UnsafeMutablePointer<Void>) {
+        mantleDomain = domain
+    }
+    
+    func receive() {
         while true {
-            var (i, args) = decode(Receive(self.mantleDomain))
+            var (i, args) = decode(Receive(mantleDomain))
             
             if let d = deferreds[i] {
                 // remove the deferred (should this ever be optional?)
@@ -101,8 +147,6 @@ public class Domain {
                 }
             } else if let fn = handlers[i] {
                 fn(args)
-            } else if let fn = invocations[i] {
-                fn(args)
             } else if let fn = registrations[i] {
                 let resultId = args.removeAtIndex(0) as! Double
                 
@@ -117,38 +161,4 @@ public class Domain {
             }
         }
     }
-    
-    public func join() {
-        let cb = CBID()
-        let eb = CBID()
-        
-        Join(mantleDomain, cb, eb)
-        
-        handlers[cb] = { a in
-            if let d = self.delegate {
-                d.onJoin()
-            } else {
-                self.onJoin()
-            }
-        }
-
-        handlers[eb] = { a in
-            if let d = self.delegate {
-                d.onLeave()
-            } else {
-                self.onLeave()
-            }
-        }
-        
-        handlers[eb] = { (a: Any) in
-            print("Unable to join!")
-        }
-        
-        receive()
-    }
-    
-    
-    // MARK: Delegate methods
-    public func onJoin() { }
-    public func onLeave() { }
 }
