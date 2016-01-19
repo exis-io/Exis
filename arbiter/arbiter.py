@@ -8,19 +8,27 @@ It can document and test real live examples of how to use Exis for every languga
 Please run '$0 -ls all' for more info.
 
 Environment Variables:
-    EXISPATH - the path to the Exis repo
+    EXIS_REPO - the path to the Exis repo
+    EXIS_APPLIANCES - the path to the Exis coreappliances repo (for REPL)
 
 TODO:
     - Implement Object checking for Python
     - Implement other languages
 """
-
 import sys, os, time, glob, argparse, re
-
 from collections import defaultdict as ddict
 
-EXISPATH = os.environ.get("EXISPATH", "..")
-sys.path.append(EXISPATH)
+EXISREPO = os.environ.get("EXIS_REPO", None)
+if EXISREPO is None:
+    print("!" * 50)
+    print("!! $EXIS_REPO not found, this may not work")
+    print("!" * 50)
+    sys.path.append("..")
+else:
+    sys.path.append(EXISREPO)
+
+
+
 
 from utils import functionizer as funcizer
 from utils import utils
@@ -36,7 +44,7 @@ def findTasks(lang=None, task=None, verbose=False):
         task : Matching task with wildcard support (ie. "Pub/Sub*")
         verbose : T/F on verbose printing
     """
-    examples = exampler.Examples.find(EXISPATH, lang)
+    examples = exampler.Examples.find(EXISREPO, lang)
     for t in examples.getTasks(lang, task):
         if(verbose):
             print(t.details())
@@ -50,7 +58,7 @@ def findTask(lang, task):
         lang : lang to search for
         task : Task name
     """
-    examples = exampler.Examples.find(EXISPATH, lang)
+    examples = exampler.Examples.find(EXISREPO, lang)
     ts = examples.getTask(task)
     if(ts):
         print(ts.details())
@@ -88,7 +96,7 @@ def test(*tasks):
     if(tasks[-1] == "-v"):
         tasks = tasks[:-1]
         verbose = True
-    examples = exampler.Examples.find(EXISPATH)
+    examples = exampler.Examples.find(EXISREPO)
     
     taskList = list()
     actionList = list()
@@ -110,7 +118,7 @@ def testAll(lang):
     Args:
         lang : language to test
     """
-    examples = exampler.Examples.find(EXISPATH, lang)
+    examples = exampler.Examples.find(EXISREPO, lang)
     for t in examples.getTasks(lang):
         repl.executeTaskSet(t)
         print('-'*80)
@@ -150,7 +158,7 @@ def genDocs():
                 }
             }
     """
-    examples = exampler.Examples.find(EXISPATH)
+    examples = exampler.Examples.find(EXISREPO)
 
     docs = ddict(lambda: {k: dict() for k in exampler.LANGS.keys()})
     for t in examples.getTasks():
