@@ -175,7 +175,7 @@ class App(object):
 
                 # Special Python case-- if this is an errback construct an excepction
                 if i == d.eb:
-                    args = utils.Error(args[0])
+                    args = utils.Error(*args)
 
                 # Deferreds are always emitted by async methods. If the user called .wait()
                 # then the deferred instantiates a greenlet as .green. Resume that greenlet.

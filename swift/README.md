@@ -24,3 +24,15 @@ Starting Xcode with 2.2 toolchain:
 ```
 xcrun launch-with-toolchain /Library/Developer/Toolchains/swift-latest.xctoolchain
 ```
+
+## Troubleshooting
+
+### "/usr/bin/ld: cannot find -lstdc++"
+
+If you see this error message while running `make swift` on Ubuntu 14.04, try the following command.
+
+```
+sudo ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/lib/x86_64-linux-gnu/libstdc++.so
+```
+
+Then run `make clean` and try `make swift` again.

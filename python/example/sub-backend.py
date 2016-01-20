@@ -18,7 +18,7 @@ class Recv(riffle.Domain):
         # End Example Pub/Sub Basic
 
         # Example Pub/Sub Objects - This sub expects an object
-        class Stuff(riffle.Model):
+        class Stuff(riffle.ModelObject):
             name = ""
         @want(Stuff)
         def objectSub(o):

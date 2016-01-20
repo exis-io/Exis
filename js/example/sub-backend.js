@@ -27,7 +27,7 @@ backend.onJoin = function() {
     
     // Example Pub/Sub Basic Two - a basic pub/sub example
     this.Subscribe("basicSubTwo", riffle.want(function(s, i) {
-        console.log(s, i); // Expects a String, Number, like "Hello", 3.0
+        console.log(s, i); // Expects a String, like "Hello 3"
     }, String, Number));
     // End Example Pub/Sub Basic Two
 
