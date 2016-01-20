@@ -36,3 +36,5 @@ cumin.txt
 *.class
 
 node_modules
+
+js/release
