@@ -19,7 +19,7 @@ class Backend: Riffle.Domain, Riffle.Delegate {
             
         // Example Reg/Call int str - Basic reg expects int, returns str
         register("regIntStr") { (i: Int) -> String in
-            print(i) // Expects an Int, like 42
+            print("\(i)") // Expects a String, like "42"
             return "Hello World"
         }
         // End Example Reg/Call int str

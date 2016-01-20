@@ -35,7 +35,7 @@ class Receiver: Riffle.Domain, Riffle.Delegate {
             print("\(args)") // Expects a String, like "Hello"
             return "Hello World"
         }.then {
-            sender.subscribe("pubby") {
+            self.subscribe("pubby") {
                 print("Receiver-Sender publish received")
             }
         }

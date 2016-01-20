@@ -27,7 +27,7 @@ class TourRegBackend: Riffle.Domain, Riffle.Delegate {
             
         // Example Tour Reg/Call Lesson 2 Fails - type enforcement bad
         register("iWantInts") { (i: Int) -> String in
-            print(i) // Expects an Int, like 42
+            print(i)
             return "Thanks for sending int \(i)"
         }
         // End Example Tour Reg/Call Lesson 2 Fails
@@ -42,14 +42,14 @@ class TourRegBackend: Riffle.Domain, Riffle.Delegate {
         /////////////////////////////////////////////////////////////////////////////////////
         // Example Tour Reg/Call Lesson 3 Works - collections of types
         register("iWantManyStrings") { (s: [String]) -> String in
-            print(s) // Expects an [String], like ["This", "is", "cool"]
+            print(s.joinWithSeparator(" ")) // Expects a String, like "This is cool"
             return "Thanks for \(s.count) strings!"
         }
         // End Example Tour Reg/Call Lesson 3 Works
         
         // Example Tour Reg/Call Lesson 3 Fails - collections of types
         register("iWantManyInts") { (i: [Int]) -> String in
-            print(i) // Expects an [Int], like [0, 1, 2]
+            print(i)
             return "Thanks for \(i.count) ints!"
         }
         // End Example Tour Reg/Call Lesson 3 Fails
