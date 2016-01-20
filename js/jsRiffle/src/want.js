@@ -286,6 +286,21 @@ ObjectWithKeys.prototype.construct = function(obj){
 
 function ModelObject(constructor){
     this.myConstructor = constructor;
+    var self = this;
+
+    constructor.prototype.save = function(){
+      self.assertBound();
+      if(!this.__id){
+        function helper(result){
+          this.__id = result.inserted_id;
+          return result;
+        }
+        return self.__storage.Call("collection/insert_one", self.__collection, this).then(wait(helper, Object));
+      }else{
+        return self.__storage.Call("collection/replace_one", self.__collection, {'_id': this.__id}, this, true);
+      }
+    };
+
     this.modelName = "ModelObject";
     var expectedTypes = {};
     var cls = new constructor();
@@ -310,6 +325,59 @@ ModelObject.prototype.construct = function(){
   }
   return newObj;
 };
+
+ModelObject.prototype.bind = function(owner, collection, appliance){
+  if(typeof(collection) !== 'string' && collection !== undefined){
+    throw Error("collection must be a string");
+  }
+  if(!owner){
+    throw Error("A domain must be passed in to the the model to.");
+  }
+  if(this.__storage !== undefined){
+    throw Error("Model already bound."); 
+  }
+  var inst = new this.myConstructor();
+  if(!collection){
+    collection = inst.constructor.name;
+  }
+  if(collection.length === 0){
+    throw Error("No class name for this model's constructor could be found. Call bind with the model name as the second argument to set the name manually.");
+  }
+  this.__collection = collection;
+  if(appliance){
+    this.__storage = owner.LinkDomain(appliance);
+  }else{
+    this.__storage = owner;
+  }
+  this.__bound = true;
+};
+
+ModelObject.prototype.assertBound = function(){
+  if(!this.__bound){
+    throw Error("Model not bound.");
+  }
+};
+
+ModelObject.prototype.find = function(query){
+  if(query === undefined){
+    query = {};
+  }
+  this.assertBound();
+  function passer(args){
+    console.log(args);
+    return args;
+  }
+  return this.__storage.Call("collection/find", this.__collection, query).then(passer);
+};
+
+ModelObject.prototype.find_one = function(query){
+  this.assertBound();
+  function passer(args){
+    return args;
+  }
+  return this.__storage.Call("collection/find_one", this.__collection, query).then(wait(passer, this));
+};
+
 
 function newModelObject(constructor){
   return new ModelObject(constructor);

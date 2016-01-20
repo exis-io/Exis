@@ -56,6 +56,8 @@ js:
 	gopherjs build -mv core/jsMantle/main.go
 	mv main.js js/jsRiffle/src/go.js
 	mv main.js.map js/jsRiffle/src/go.js.map
+	browserify js/jsRiffle/index.js --standalone jsRiffle -o js/jsRiffle/release/jsRiffle.js
+	browserify js/jsRiffle/index.js --standalone jsRiffle | uglifyjs > js/jsRiffle/release/jsRiffle.min.js
 
 libriffmantle.so: 
 	@echo "Building core..."
