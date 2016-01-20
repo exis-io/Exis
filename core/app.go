@@ -227,7 +227,10 @@ func (c app) handle(msg message) {
 
 // All incoming messages end up here one way or another
 func (c app) ReceiveMessage(msg message) {
-	c.in <- msg
+	Info("Received message, in channel: ", c.in == nil)
+	if c.in != nil {
+		c.in <- msg
+	}
 }
 
 // Do we really want to throw errors back into the connection here?
@@ -243,7 +246,7 @@ func (c app) ReceiveBytes(byt []byte) {
 		Info("Unable to unmarshal json! Message: %v", string(byt))
 	} else {
 		if m, err := c.serializer.deserializeString(dat); err == nil {
-			c.in <- m
+			c.ReceiveMessage(m)
 		} else {
 			Info("Unable to unmarshal json string! Message: %v", m)
 		}

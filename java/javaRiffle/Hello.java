@@ -56,6 +56,7 @@ public class Hello {
 
     public static void main(String[] args) {
         LibC libc = LibraryLoader.create(LibC.class).load("math");
+        
         System.out.println(libc.Multiply(12345, 67890));
         // output: 838102050
 
