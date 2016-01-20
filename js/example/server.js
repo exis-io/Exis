@@ -33,9 +33,7 @@ me.onJoin = function() {
     console.log("Receiever Joined");
     var wantPerson = riffle.want(printName, riffle.ModelObject(Person));
 
-    this.Subscribe("sub", wantPerson).then(function(a){
-        //me.Unsubscribe("sub")
-    });
+    this.Subscribe("sub", wantPerson)
 
     this.Register("reg", riffle.want(log, {string: String}, [Number])).then(function(args){
         console.log("Registration completed");
@@ -51,8 +49,6 @@ me.Join()
 var a = function() {
     me.Unregister("reg")
 }
-
-
 
 //TODO Notes:
 // Nested Objects don't seem to work. 

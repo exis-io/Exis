@@ -9,6 +9,9 @@ import (
 )
 
 func main() {
+	// Do not print the log line number in javascript
+	core.ShouldLogLineNumber = false
+
 	js.Global.Set("Domain", map[string]interface{}{
 		"New": New,
 	})
@@ -120,7 +123,7 @@ func (a *App) Receive() {
 		core.Debug("Have callback: %v", cb)
 
 		if cb.Id == 0 {
-			// Trigger onLeave for all domains
+			// TODO: Trigger onLeave for all domains
 			core.Info("Terminating receive loop")
 			return
 		}
@@ -303,8 +306,10 @@ func (d *Domain) Leave() *js.Object {
 
 	go func() {
 		if err := d.coreDomain.Leave(); err == nil {
+			Info("Leaving")
 			p.Resolve(nil)
 		} else {
+			core.Info("Leaving", err)
 			p.Reject(err)
 		}
 	}()

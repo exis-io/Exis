@@ -138,17 +138,13 @@ func (c domain) Join(conn Connection) error {
 }
 
 func (c *domain) Leave() error {
-	c.regLock.Lock()
 	for _, v := range c.registrations {
 		c.Unregister(v.endpoint)
 	}
-	c.regLock.Unlock()
 
-	c.subLock.Lock()
 	for _, v := range c.subscriptions {
 		c.Unsubscribe(v.endpoint)
 	}
-	c.subLock.Unlock()
 
 	if dems, ok := removeDomain(c.app.domains, c); !ok {
 		return fmt.Errorf("WARN: couldn't find %v to remove!", c)
