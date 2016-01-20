@@ -123,16 +123,23 @@ def test(*tasks, **kwargs):
     # Exec all of them
     repl.executeAll(taskList, actionList)
 
-def testAll(lang):
+def testAll(lang, stopOnFail=False):
     """
     Executes all found tests for the language provided.
     Args:
-        lang : language to test
+        lang       : language to test
+        stopOnFail : If true, we stop testing when a failure is found, default False
     """
     examples = exampler.Examples.find(EXISREPO, lang)
     for t in examples.getTasks(lang):
-        repl.executeTaskSet(t)
-        print('-'*80)
+        res = repl.executeTaskSet(t)
+        if res is True:
+            print('-'*80)
+        elif res is False:
+            if stopOnFail:
+                exit()
+            else:
+                print('-'*80)
 
 def genTemplate(langs=["python", "swift", "js"], actions=["Pub/Sub", "Reg/Call"]):
     """

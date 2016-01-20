@@ -71,9 +71,8 @@ class Coder:
 
         good = None
         # Sometimes we shouldn't expect anything and thats ok
-        if ev is None and len(out) == 0:
+        if ev is None:
             good = "no expect required"
-
         else:
             for o in out:
                 if ev in o:
@@ -136,12 +135,12 @@ class PythonCoder(Coder):
 
         good = None
         # Sometimes we shouldn't expect anything and thats ok
-        if ev is None and len(out) == 0:
+        if ev is None:
             good = "no expect required"
-
-        for o in out:
-            if ev in o:
-                good = ev
+        else:
+            for o in out:
+                if ev in o:
+                    good = ev
 
         if err:
             # Look at the error to see whats up
@@ -195,11 +194,13 @@ class JSCoder(Coder):
         """
         Need to run 'npm install BASEPATH/js/jsRiffle' in the tmp dir.
         """
-        proc = subprocess.Popen(["npm", "install", "{}/js/jsRiffle/".format(EXISREPO)], cwd=tmpdir,
+        #proc = subprocess.Popen(["npm", "install", "{}/js/jsRiffle/".format(EXISREPO)], cwd=tmpdir,
+        proc = subprocess.Popen(["npm", "link", "jsriffle"], cwd=tmpdir,
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, errors = proc.communicate()
         
         if proc.returncode:
+            print "!! We expect that you have run 'sudo npm link' in the jsRiffle dir"
             raise Exception("Unable to setup for JS: {}".format(errors))
 
     def setupTerminate(self, code):
@@ -339,9 +340,11 @@ class ReplIt:
             return True
         else:
             print "{} {} : FAILURE".format(self.action, self.task.fullName())
-            print "Stdout: '{}'".format("\n".join(self.stdout))
-            print "Stderr: '{}'".format("\n".join(self.stderr))
-            print "Files located at: {}".format(self.testDir)
+            print "Expected : '{}'".format(self.coder.getExpect())
+            print "Stdout   : '{}'".format("\n".join(self.stdout))
+            print "Stderr   : '{}'".format("\n".join(self.stderr))
+            print "Code     : {}".format(self.task.fileName)
+            print "Test dir : {}".format(self.testDir)
             print "Code Executed:"
             print self.execCode
             return False
@@ -426,6 +429,10 @@ def executeAll(taskList, actionList):
 def executeTaskSet(taskSet):
     """
     Given one specific TaskSet it will execute the corresponding components of that (pub/sub or reg/call).
+    Returns:
+        None if nothing happened
+        True if it worked
+        False if it didn't
     """
     procs = list()
 
@@ -434,12 +441,12 @@ def executeTaskSet(taskSet):
     send = taskSet.getTask("publish") or taskSet.getTask("call")
 
     if None in (recv, send):
-        print "!! Missing send/recv for {}".format(taskSet.getName())
-        return
+        return None
 
     # Startup the actions
     for r in recv, send:
         rr = ReplIt(taskSet, r.action)
+        rr.setup()
         rr.execute()
         a = rr.buildComplete.wait(5)
         if a is False:
@@ -458,6 +465,9 @@ def executeTaskSet(taskSet):
     if ok:
         for p in procs:
             p.cleanup()
+        return True
+    else:
+        return False
 
 
 def cleanupTests():

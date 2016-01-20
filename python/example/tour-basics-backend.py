@@ -10,21 +10,11 @@ class GenericDomain(riffle.Domain):
     def onJoin(self):
         # End Template Setup
         
-        # Example Tour Basics 1 - simple print
-        # ARBITER set action simple
-        print "Hello World"
-        # End Example Tour Basics 1
-        
         # Example Tour Basics 2 - async NOTE this code won't run since pub/sub is in line
         @want(int)
         def async(i):
             print i
         self.subscribe("async", async)
-        # End Example Tour Basics 2
-        
-        # Example Tour Basics 2 - async NOTE this code won't run since pub/sub is in line
-        for i in range(0, 10):
-            backend.publish("async", i)
         # End Example Tour Basics 2
         
         
