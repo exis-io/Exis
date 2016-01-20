@@ -11,7 +11,7 @@ client.onJoin = function() {
 
     // Example Reg/Call str str - Basic reg expects string, returns string
     backend.Call("regStrStr", "Hello").then(riffle.wait(function (s) {
-        console.log(s); // Expects a str, like "Hello World"
+        console.log(s); // Expects a String, like "Hello World"
     }, String),
     function (err) {
         console.log("ERROR: ", err);
@@ -29,7 +29,7 @@ client.onJoin = function() {
     
     // Example Reg/Call int str - Basic reg expects int, returns str
     backend.Call("regIntStr", 42).then(riffle.wait(function (s) {
-        console.log(s); // Expects a str, like "Hello World"
+        console.log(s); // Expects a String, like "Hello World"
     }, String),
     function (err) {
         console.log("ERROR: ", err);
