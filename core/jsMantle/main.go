@@ -110,6 +110,16 @@ func (d *Domain) Subdomain(name string) *js.Object {
 	return n.wrapped
 }
 
+func (d *Domain) LinkDomain(name string) *js.Object {
+	n := Domain{
+		coreDomain: d.coreDomain.LinkDomain(name),
+		app:		d.app,
+	}
+
+	n.wrapped = js.MakeWrapper(&n)
+	return n.wrapped
+}
+
 // Blocks on callbacks from the core.
 // TODO: trigger a close meta callback when connection is lost
 func (a *App) Receive() {
