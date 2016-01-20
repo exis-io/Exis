@@ -1,4 +1,6 @@
-'''Riffle maintenance and management.
+#!/usr/bin/python
+
+helpstr = '''Riffle maintenance and management.
 
 Usage:
   stump init
@@ -6,7 +8,7 @@ Usage:
   stump push (all | REPOS...)
   stump pull (all | REPOS...)
   stump add-subtree DIRECTORY NAME URL
-  stump test (all | REPOS...)           
+  stump test (all | LANGUAGES...)           
   stump deploy (all | REPOS...)         
 
 Options:
@@ -14,6 +16,7 @@ Options:
 '''
 
 import os
+import sys
 import docopt
 from subprocess import call
 import shutil
@@ -24,18 +27,23 @@ SUBTREES = [
     ("ios/appBackendSeed", "iosAppBackendSeed", "git@github.com:exis-io/iosAppBackendSeed.git"),
     ("ios/appSeed", "iosAppSeed", "git@github.com:exis-io/iosAppSeed.git"),
     ("ios/example", "iosExample", "git@github.com:exis-io/iOSExample.git"),
+
     ("js/jsRiffle", "jsRiffle", "git@github.com:exis-io/jsRiffle.git"),
     ("js/ngRiffle", "ngRiffle", "git@github.com:exis-io/ngRiffle.git"),
     ("js/angularSeed", "ngSeed", "git@github.com:exis-io/ngSeed.git"),
+
     ("core", "core", "git@github.com:exis-io/core.git"),
+
     ("python/pyRiffle", "pyRiffle", "git@github.com:exis-io/pyRiffle.git"),
+
     ("CardsAgainstHumanityDemo/swiftCardsAgainst", "iosCAH", "git@github.com:exis-io/CardsAgainst.git"),
     ("CardsAgainstHumanityDemo/ngCardsAgainst", "ngCAH", "git@github.com:exis-io/ionicCardsAgainstEXIStence.git")
 ]
 
 
 if __name__ == '__main__':
-    args = docopt.docopt(__doc__, options_first=True, help=True)
+    args = docopt.docopt(helpstr, options_first=True, help=True)
+    allLanguages = ['swift', 'js', 'python']
 
     if args['init']:
         print "Adding remotes"
@@ -76,7 +84,6 @@ if __name__ == '__main__':
         print "Pushing: ", repos
 
         for p, r, u in repos:
-            # print "git subtree push --prefix %s %s %s" % (p, r, b,)
             call("git subtree push --prefix %s %s %s" % (p, r, b,), shell=True)
 
     elif args['pull']:
@@ -93,7 +100,12 @@ if __name__ == '__main__':
         print 'Subtree added. Please edit the SUBTREES field in this script: \n("%s", "%s", "%s")' % (args['DIRECTORY'], args['NAME'], args['URL'])
 
     elif args['test']:
-        print "Not implemented"
+        # TODO: unit tests
+        # TODO: integrate a little more tightly with unit and end to end tests
+         
+        langs = allLanguages if args['all'] else sys.argv[2:]
+
+        call("python arbiter/arbiter.py -f testAll %s" % " ".join(["-a {}".format(x) for x in langs]), shell=True)
 
     elif args['deploy']:
         print "Not implemented"
