@@ -23,7 +23,7 @@ func Cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 
 	for i := 0; i < reciever.NumIn(); i++ {
 		param := reciever.In(i)
-		arg := reflect.ValueOf(args[i])
+		arg := GetValueOf(args[i])
 
 		if param == arg.Type() {
 			values[i] = arg
@@ -88,9 +88,25 @@ func softCumin(types []interface{}, args []interface{}) error {
 	return nil
 }
 
+// Wraps reflect.ValueOf to handle the case where an integer value is stored as
+// a float64, as JSON unmarshal does.
+func GetValueOf(x interface{}) reflect.Value {
+	value := reflect.ValueOf(x)
+
+	if value.Kind() == reflect.Float64 {
+		asfloat := value.Float()
+		asint := int(asfloat)
+		if float64(asint) == asfloat {
+			value = reflect.ValueOf(asint)
+		}
+	}
+
+	return value
+}
+
 // Recursive worker function for softCumin.
 func _softCumin(expected interface{}, x interface{}, i int, description string) error {
-	argument := reflect.ValueOf(x)
+	argument := GetValueOf(x)
 
 	// If the expected type is a string, we're looking for a primitive
 	if s, ok := expected.(string); ok {
@@ -150,7 +166,7 @@ func mapCheck(expected map[string]interface{}, argument map[string]interface{}) 
 
 	// TODO: nested collections and objects
 	for k, v := range argument {
-		if e := primitiveCheck(expected[k].(string), reflect.ValueOf(v).Kind()); e != nil {
+		if e := primitiveCheck(expected[k].(string), GetValueOf(v).Kind()); e != nil {
 			return e
 		}
 	}

@@ -25,17 +25,17 @@ class GenericDomain(riffle.Domain):
         # Example Tour Reg/Call Lesson 2 Fails - type enforcement bad
         try:
             s = backend.call("iWantInts", "Hi").wait(str)
-            print s # Expects a str, like "Thanks for sending int 42"
+            print s
         except riffle.Error as e:
-            print "ERROR due to bad argument type" # Errors with "ERROR due to bad argument type"
+            print e # Expects a str, like "ERROR due to bad argument type"
         # End Example Tour Reg/Call Lesson 2 Fails
         
         # Example Tour Reg/Call Lesson 2 Wait Check - type enforcement on wait
         try:
             s = backend.call("iGiveInts", "Hi").wait(str)
-            print s # Expects a str, like "Hello"
+            print s
         except riffle.Error as e:
-            print e # Errors with "Cumin: expecting primitive int, got string"
+            print e # Expects a str, like "Cumin: expecting primitive str, got int"
         # End Example Tour Reg/Call Lesson 2 Wait Check
         
         ######################################################################################
@@ -54,7 +54,7 @@ class GenericDomain(riffle.Domain):
         
         ######################################################################################
         # Example Tour Reg/Call Lesson 4 Basic Student - intro to classes
-        class Student(riffle.Model):
+        class Student(riffle.ModelObject):
             name = "Student Name"
             age = 20
             studentID = 0
@@ -66,7 +66,7 @@ class GenericDomain(riffle.Domain):
         # End Example Tour Reg/Call Lesson 4 Basic Student
         
         # Example Tour Reg/Call Lesson 4 Student Functions - intro to class functions
-        class Student(riffle.Model):
+        class Student(riffle.ModelObject):
             name, age, studentID = "Student Name", 20, 0
         s = Student()
         s.name, s.age, s.studentID = "John Smith", 18, 1234

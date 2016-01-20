@@ -30,7 +30,7 @@ class GenericDomain(riffle.Domain):
         # Example Tour Reg/Call Lesson 2 Fails - type enforcement bad
         @want(int)
         def iWantInts(i):
-            print(i)  # Expects an int, like 42
+            print(i)
             return "Thanks for sending int {}".format(i)
         self.register("iWantInts", iWantInts)
         # End Example Tour Reg/Call Lesson 2 Fails
@@ -47,7 +47,7 @@ class GenericDomain(riffle.Domain):
         # Example Tour Reg/Call Lesson 3 Works - collections of types
         @want([str])
         def iWantManyStrings(s):
-            print(s)  # Expects a [str], like ["This", "is", "cool"]
+            print ":".join(s) # Expects a str, like "This:is:cool"
             return "Thanks for {} strings!".format(len(s))
         self.register("iWantManyStrings", iWantManyStrings)
         # End Example Tour Reg/Call Lesson 3 Works
@@ -55,14 +55,14 @@ class GenericDomain(riffle.Domain):
         # Example Tour Reg/Call Lesson 3 Fails - collections of types
         @want([int])
         def iWantManyInts(i):
-            print(i)  # Expects a [int], like [0, 1, 2]
+            print(i)
             return "Thanks for {} ints!".format(len(i))
         self.register("iWantManyInts", iWantManyInts)
         # End Example Tour Reg/Call Lesson 3 Fails
         
         ######################################################################################
         # Example Tour Reg/Call Lesson 4 Basic Student - intro to classes
-        class Student(riffle.Model):
+        class Student(riffle.ModelObject):
             name = "Student Name"
             age = 20
             studentID = 0
@@ -70,12 +70,12 @@ class GenericDomain(riffle.Domain):
                 return "{}, Age: {}, ID: {}".format(self.name, self.age, self.studentID)
         @want(Student)
         def sendStudent(s):
-            print s # Expects a Student, like "John Smith, Age: 18, ID: 1234"
+            print s # Expects a str, like "John Smith, Age: 18, ID: 1234"
         self.register("sendStudent", sendStudent)
         # End Example Tour Reg/Call Lesson 4 Basic Student
         
         # Example Tour Reg/Call Lesson 4 Student Functions - intro to class functions
-        class Student(riffle.Model):
+        class Student(riffle.ModelObject):
             name, age, studentID = "Student Name", 20, 0
             def changeID(self, newID):
                 self.studentID = 5678
