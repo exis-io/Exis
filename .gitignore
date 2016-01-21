@@ -37,4 +37,4 @@ cumin.txt
 
 node_modules
 
-js/release
+js/release/*

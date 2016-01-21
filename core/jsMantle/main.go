@@ -61,7 +61,7 @@ func (i idGenerator) NewID() uint64 {
 }
 
 func (c Conn) OnMessage(msg *js.Object) {
-	c.app.ReceiveString(msg.String())
+	c.app.ReceiveBytes([]byte(msg.String()))
 }
 
 func (c Conn) OnOpen(msg *js.Object) {
@@ -116,7 +116,7 @@ func (d *Domain) Subdomain(name string) *js.Object {
 func (d *Domain) LinkDomain(name string) *js.Object {
 	n := Domain{
 		coreDomain: d.coreDomain.LinkDomain(name),
-		app:		d.app,
+		app:        d.app,
 	}
 
 	n.wrapped = js.MakeWrapper(&n)

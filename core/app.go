@@ -18,7 +18,6 @@ import (
 
 type App interface {
 	ReceiveBytes([]byte)
-	ReceiveString(string)
 	ReceiveMessage(message)
 
 	Yield(uint64, []interface{})
@@ -35,13 +34,16 @@ type app struct {
 	domains []*domain
 	Connection
 	serializer
-	agent         string
-	in            chan message
-	up            chan Callback
+
+	in   chan message
+	up   chan Callback
+	open bool
+
 	listeners     map[uint64]chan message
 	listenersLock sync.Mutex
 
 	// authentication options
+	agent  string
 	authid string
 	token  string
 	key    string
@@ -57,6 +59,7 @@ func NewApp() *app {
 	a := &app{
 		domains:    make([]*domain, 0),
 		serializer: new(jSONSerializer),
+		open:       false,
 		in:         make(chan message, 10),
 		up:         make(chan Callback, 10),
 		listeners:  make(map[uint64]chan message),
@@ -97,6 +100,7 @@ func (c app) Close(reason string) {
 		Warn("Error sending goodbye: %v", err)
 	}
 
+	c.open = false
 	close(c.in)
 	close(c.up)
 
@@ -107,6 +111,8 @@ func (c app) Close(reason string) {
 
 func (c app) ConnectionClosed(reason string) {
 	Info("Connection was closed: ", reason)
+
+	c.open = false
 	close(c.in)
 	close(c.up)
 }
@@ -227,15 +233,11 @@ func (c app) handle(msg message) {
 
 // All incoming messages end up here one way or another
 func (c app) ReceiveMessage(msg message) {
-	Info("Received message, in channel: ", c.in == nil)
-	if c.in != nil {
-		c.in <- msg
-	}
-}
+	Info("Received message, App Connected: %s", c.open)
 
-// Do we really want to throw errors back into the connection here?
-func (c app) ReceiveString(msg string) {
-	c.ReceiveBytes([]byte(msg))
+	// if c.open {
+	c.in <- msg
+	// }
 }
 
 // Theres a method on the serializer that does this exact thing. Is this specific to JS?

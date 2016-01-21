@@ -126,7 +126,7 @@ func (c domain) Join(conn Connection) error {
 	// This is super dumb, and the reason its in here was fixed. Please revert
 	go c.app.receiveLoop()
 
-	// old contents of app.join. This functionality isn't needed anymore
+	// old contents of app.join. This functionality isn't needed anymore. Please revert
 	for _, x := range c.app.domains {
 		if !x.joined {
 			x.joined = true
@@ -134,6 +134,8 @@ func (c domain) Join(conn Connection) error {
 	}
 
 	Info("Domain joined")
+	c.app.open = true
+
 	return nil
 }
 
@@ -157,7 +159,9 @@ func (c *domain) Leave() error {
 		c.app.Close("No domains connected")
 	}
 
-	// Trigger closing callbacks
+	// TODO: If the domain representing the agent name leaves, should the entire conection be taken down?
+
+	// TODO: Trigger closing callbacks in the crust as needed
 	return nil
 }
 

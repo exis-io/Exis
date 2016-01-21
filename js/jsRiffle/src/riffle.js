@@ -1,3 +1,4 @@
+
 require('./go.js');
 var want = require('./want.js');
 var ws = require('./transport/websocket.js');
