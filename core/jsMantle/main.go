@@ -9,9 +9,6 @@ import (
 )
 
 func main() {
-	// Do not print the log line number in javascript
-	core.ShouldLogLineNumber = false
-
 	js.Global.Set("Domain", map[string]interface{}{
 		"New": New,
 	})
@@ -34,6 +31,9 @@ func main() {
 		"Warn":                Warn,
 		"Error":               Error,
 	})
+
+	// Do not print the log line number in js
+	core.ShouldLogLineNumber = false
 }
 
 type Domain struct {
@@ -77,7 +77,7 @@ func (c Conn) Send(data []byte) {
 }
 
 func (c Conn) Close(reason string) error {
-	fmt.Println("Asked to close: ", reason)
+	core.Debug("Asked to close: ", reason)
 	c.wrapper.Get("conn").Call("close", 1001, reason)
 	return nil
 }
@@ -126,11 +126,8 @@ func (d *Domain) LinkDomain(name string) *js.Object {
 // Blocks on callbacks from the core.
 // TODO: trigger a close meta callback when connection is lost
 func (a *App) Receive() {
-	Debug("Starting receive")
-
 	for {
 		cb := a.conn.app.CallbackListen()
-		core.Debug("Have callback: %v", cb)
 
 		if cb.Id == 0 {
 			// TODO: Trigger onLeave for all domains
@@ -139,25 +136,17 @@ func (a *App) Receive() {
 		}
 
 		if fn, ok := a.subscriptions[cb.Id]; ok {
-			core.Debug("Subscription: %v", cb.Args)
-			// Call the JS function (via invoke), pass args as ... so they show
-			// up in JS as a list, we can deal with splatting up there...
 			fn.Invoke(cb.Args...)
 		}
 
 		if fn, ok := a.registrations[cb.Id]; ok {
-			core.Debug("Invocation: %v", cb.Args[1:])
-			// We need to stip out the first arg, its the yield id so we can return
-			// with some results (since this is a reg)
-			// Call the JS function (via invoke), pass args as ... so they show
-			// up in JS as a list, we can deal with splatting up there...
 			ret := fn.Invoke(cb.Args[1:]...)
-
 			a.conn.app.Yield(cb.Args[0].(uint64), []interface{}{ret.Interface()})
 		}
 	}
 }
 
+// Part 1 of the join-- start the join
 func (d *Domain) Join() {
 	w := js.Global.Get("WsWrapper")
 
@@ -175,7 +164,7 @@ func (d *Domain) Join() {
 	w.Call("open", core.Fabric)
 }
 
-// The actual join method
+// Part 2 of the join method-- complete the join
 func (d *Domain) FinishJoin(c *Conn) {
 	if err := d.coreDomain.Join(c); err != nil {
 		fmt.Println("Join failed: ", err)
@@ -255,72 +244,35 @@ func (d *Domain) Register(endpoint string, handler *js.Object) *js.Object {
 }
 
 func (d *Domain) Publish(endpoint string, args ...interface{}) *js.Object {
-	var p promise.Promise
-
-	go func() {
-		if err := d.coreDomain.Publish(endpoint, args); err == nil {
-			p.Resolve(nil)
-		} else {
-			p.Reject(err)
-		}
-	}()
-
-	return p.Js()
+	return promisify(func() (interface{}, error) { return nil, d.coreDomain.Publish(endpoint, args) })
 }
 
 func (d *Domain) Call(endpoint string, args ...interface{}) *js.Object {
-	var p promise.Promise
-
-	go func() {
-		if results, err := d.coreDomain.Call(endpoint, args); err == nil {
-			p.Resolve(results)
-		} else {
-			p.Reject(err.Error())
-		}
-	}()
-
-	return p.Js()
+	return promisify(func() (interface{}, error) { return d.coreDomain.Call(endpoint, args) })
 }
 
 func (d *Domain) Unsubscribe(endpoint string) *js.Object {
-	var p promise.Promise
-
-	go func() {
-		if err := d.coreDomain.Unsubscribe(endpoint); err == nil {
-			p.Resolve(nil)
-		} else {
-			p.Reject(err)
-		}
-	}()
-
-	return p.Js()
+	return promisify(func() (interface{}, error) { return nil, d.coreDomain.Unsubscribe(endpoint) })
 }
 
 func (d *Domain) Unregister(endpoint string) *js.Object {
-	var p promise.Promise
-
-	Info("Trying to unregister with")
-	go func() {
-		if err := d.coreDomain.Unregister(endpoint); err == nil {
-			p.Resolve(nil)
-		} else {
-			p.Reject(err)
-		}
-	}()
-
-	return p.Js()
+	return promisify(func() (interface{}, error) { return nil, d.coreDomain.Unregister(endpoint) })
 }
 
 func (d *Domain) Leave() *js.Object {
+	return promisify(func() (interface{}, error) { return nil, d.coreDomain.Leave() })
+}
+
+// Turn the given invocation into a JS promise. If the function returns an error, return the error,
+// else return the results of the function
+func promisify(fn func() (interface{}, error)) *js.Object {
 	var p promise.Promise
 
 	go func() {
-		if err := d.coreDomain.Leave(); err == nil {
-			Info("Leaving")
-			p.Resolve(nil)
+		if results, err := fn(); err == nil {
+			p.Resolve(results)
 		} else {
-			core.Info("Leaving", err)
-			p.Reject(err)
+			p.Reject(err.Error())
 		}
 	}()
 

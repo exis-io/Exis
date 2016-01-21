@@ -81,7 +81,7 @@ func (a *app) CallbackSend(id uint64, args ...interface{}) {
 	a.up <- Callback{id, args}
 }
 
-func (c app) Send(m message) error {
+func (c *app) Send(m message) error {
 	Debug("Sending %s: %v", m.messageType(), m)
 
 	// There's going to have to be a better way of handling these errors
@@ -93,8 +93,17 @@ func (c app) Send(m message) error {
 	}
 }
 
-func (c app) Close(reason string) {
-	Info("Closing internally: ", reason)
+func (c *app) Close(reason string) {
+	if !c.open {
+		// TODO: JS calls close one to many times. Please stop it.
+		Warn("JS specific bandaid triggered!")
+		return
+	} else {
+		Info("Closing internally: ", reason)
+	}
+
+	// goodbye := &goodbye{Details: map[string]interface{}{}, Reason: ErrCloseSession}
+	// if msg, err := c.app.requestListenType(goodbye, "*core.subscribed"); err != nil {
 
 	if err := c.Send(&goodbye{Details: map[string]interface{}{}, Reason: ErrCloseSession}); err != nil {
 		Warn("Error sending goodbye: %v", err)
@@ -104,21 +113,25 @@ func (c app) Close(reason string) {
 	close(c.in)
 	close(c.up)
 
+	Info("Closing channels in CLOSE, %v", c.open)
+
 	// Theres some missing logic here when it comes to closing the external connection,
 	// especially when either end could call and trigger a close
 	c.Connection.Close(reason)
 }
 
-func (c app) ConnectionClosed(reason string) {
+func (c *app) ConnectionClosed(reason string) {
 	Info("Connection was closed: ", reason)
 
 	c.open = false
 	close(c.in)
 	close(c.up)
+
+	Info("Closing channels in ConnectionCLOSED, %v", c.open)
 }
 
 // Represents the result of an invokation in the crust
-func (a app) Yield(request uint64, args []interface{}) {
+func (a *app) Yield(request uint64, args []interface{}) {
 	m := &yield{
 		Request:   request,
 		Options:   make(map[string]interface{}),
@@ -131,7 +144,7 @@ func (a app) Yield(request uint64, args []interface{}) {
 }
 
 // Represents an error that ocurred during an invocation in the crust
-func (a app) YieldError(request uint64, etype string, args []interface{}) {
+func (a *app) YieldError(request uint64, etype string, args []interface{}) {
 	m := &errorMessage{
 		Type:      iNVOCATION,
 		Request:   request,
@@ -145,7 +158,7 @@ func (a app) YieldError(request uint64, etype string, args []interface{}) {
 	}
 }
 
-func (c app) receiveLoop() {
+func (c *app) receiveLoop() {
 	for {
 		if msg, open := <-c.in; !open {
 			Debug("Receive loop close")
@@ -158,7 +171,7 @@ func (c app) receiveLoop() {
 }
 
 // Handles an incoming message appropriately
-func (c app) handle(msg message) {
+func (c *app) handle(msg message) {
 	switch msg := msg.(type) {
 
 	case *challenge:
@@ -223,7 +236,6 @@ func (c app) handle(msg message) {
 			} else {
 				c.listenersLock.Unlock()
 				Error("No listener for message %v", msg)
-				// DFW: Panics are bad!! panic("Unhandled message!")
 			}
 		} else {
 			panic("Bad handler picking up requestID!")
@@ -232,16 +244,14 @@ func (c app) handle(msg message) {
 }
 
 // All incoming messages end up here one way or another
-func (c app) ReceiveMessage(msg message) {
-	Info("Received message, App Connected: %s", c.open)
-
-	// if c.open {
-	c.in <- msg
-	// }
+func (c *app) ReceiveMessage(msg message) {
+	if c.open {
+		c.in <- msg
+	}
 }
 
 // Theres a method on the serializer that does this exact thing. Is this specific to JS?
-func (c app) ReceiveBytes(byt []byte) {
+func (c *app) ReceiveBytes(byt []byte) {
 	var dat []interface{}
 
 	if err := json.Unmarshal(byt, &dat); err != nil {
@@ -292,7 +302,7 @@ func (c *app) requestListenType(outgoing message, expecting string) (message, er
 // Blocks on a message from the connection. Don't use this while the run loop is active,
 // since it will compete for messages with the run loop. Bad things will happen.
 // This is largely an orphan, and should be replaced.
-func (c app) getMessageTimeout() (message, error) {
+func (c *app) getMessageTimeout() (message, error) {
 	select {
 	case msg, open := <-c.in:
 		if !open {
@@ -333,7 +343,7 @@ func SignString(msg string, key *rsa.PrivateKey) (string, error) {
 	return result, nil
 }
 
-func (c app) handleChallenge(msg *challenge) error {
+func (c *app) handleChallenge(msg *challenge) error {
 	response := &authenticate{
 		Signature: "",
 		Extra:     make(map[string]interface{}),
@@ -363,7 +373,7 @@ func (c app) handleChallenge(msg *challenge) error {
 	return nil
 }
 
-func (c app) getAuthID() string {
+func (c *app) getAuthID() string {
 	if c.authid == "" {
 		return c.agent
 	} else {
@@ -373,7 +383,7 @@ func (c app) getAuthID() string {
 
 // Return a list of authentication methods that we support,
 // which depends on what credentials were passed.
-func (c app) getAuthMethods() []string {
+func (c *app) getAuthMethods() []string {
 	authmethods := make([]string, 0)
 
 	if c.key != "" {

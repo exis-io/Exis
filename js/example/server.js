@@ -19,10 +19,11 @@ Person.prototype.fullname = function(){
 };
 
 function printName(p){
-  console.log(p.fullname());
+  console.log("NAME: ", p.fullname());
 }
 
-function log(obj, array){
+function log(obj, array) {
+    console.log("LOGGING")
   console.log(obj);
   console.log(array);
   return "Success";
@@ -39,16 +40,13 @@ me.onJoin = function() {
         console.log("Registration completed");
 
         // me.Unregister("reg")
-        me.Leave()
+        // me.Leave()
     });
 
 };
 
 me.Join()
 
-var a = function() {
-    me.Unregister("reg")
-}
 
 //TODO Notes:
 // Nested Objects don't seem to work. 

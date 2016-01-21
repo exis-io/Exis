@@ -90,6 +90,8 @@ func (c domain) Join(conn Connection) error {
 	c.app.Connection = conn
 	conn.SetApp(c.app)
 
+	c.app.open = true
+
 	// Set the agent string, or who WE are. When this domain leaves, termintate the connection
 	c.app.agent = c.name
 
@@ -134,7 +136,6 @@ func (c domain) Join(conn Connection) error {
 	}
 
 	Info("Domain joined")
-	c.app.open = true
 
 	return nil
 }

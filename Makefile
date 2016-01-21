@@ -57,7 +57,7 @@ js:
 	mv main.js js/jsRiffle/src/go.js
 	mv main.js.map js/jsRiffle/src/go.js.map
 
-	# Damouse: I think this should be in deployment-- Much slower when I just want to build
+	# This should get its own deployment section-- makes rebuilding for tests much slower
 	# browserify js/jsRiffle/index.js --standalone jsRiffle -o js/jsRiffle/release/jsRiffle.js
 	# browserify js/jsRiffle/index.js --standalone jsRiffle | uglifyjs > js/jsRiffle/release/jsRiffle.min.js
 
