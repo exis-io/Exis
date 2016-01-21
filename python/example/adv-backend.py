@@ -48,7 +48,6 @@ class GenericDomain(riffle.Domain):
 
 # Template Setup
 app = riffle.Domain("xs.demo.test")
-
 client = riffle.Domain("client", superdomain=app)
 backend = riffle.Domain("backend", superdomain=app)
 

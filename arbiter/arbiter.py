@@ -17,6 +17,7 @@ TODO:
 """
 import sys, os, time, glob, argparse, re
 from collections import defaultdict as ddict
+from multiprocessing import Process
 
 EXISREPO = os.environ.get("EXIS_REPO", None)
 if EXISREPO is None:
@@ -130,11 +131,33 @@ def testAll(lang, stopOnFail=False):
         lang       : language to test, or "all"
         stopOnFail : If true, we stop testing when a failure is found, default False
     """
+
     if lang == "all":
         langs = ["python", "js", "swift"]
     else:
         langs = [lang]
-    
+
+    # Damouse: testing multiproc version-- would work, except that each testing domain 
+    # gets the same name, so node gets confused
+    # def runner(taskset):
+    #     res = repl.executeTaskSet(taskset)
+    #     if res is True:
+    #         print('-'*80)
+    #     elif res is False:
+    #         if stopOnFail:
+    #             exit()
+    #         else:
+    #             print('-'*80)
+
+    # for lang in langs:
+    #     examples = exampler.Examples.find(EXISREPO, lang)
+    #     tasks = examples.getTasks(lang)
+
+    #     processes = [Process(target=runner, args=(x,)) for x in tasks]
+    #     [x.start() for x in processes]
+    #     [x.join() for x in processes]
+    # End multiproc testing
+
     for lang in langs:
         examples = exampler.Examples.find(EXISREPO, lang)
         for t in examples.getTasks(lang):
