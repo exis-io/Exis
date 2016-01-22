@@ -36,3 +36,20 @@ Feel free to check out the examples directory where you can find Xcode projects 
 
 ### More Information
 For more information on the how to incorporate Exis with your projects , please visit [exis.io](http://exis.io) or visit our [documentation page](http://docs.exis.io/#/pages/general/Home.md) to see more in depth tutorials.
+
+<!-- 
+Notes on setting up environment from scratch
+
+Cloning 
+	- Install pip
+		- Install docopt (make a requirements.txt?)
+	- Install Go (use GVM or godeps?)
+
+	- Set GOPATH
+	- Get gopy
+	- Get gopherjs
+
+Building
+	- Install gopy
+-->
+
