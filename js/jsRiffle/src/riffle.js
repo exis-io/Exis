@@ -8,7 +8,7 @@ exports.version = pjson.version;
 // Used to counteract uint generation on seemlingly 32 bit platforms
 global.NewID = function() {
    return Math.floor(Math.random() * 9007199254740992);
-}
+};
 
 // Dont need any of this-- just return the conn
 var Ws = function () {
