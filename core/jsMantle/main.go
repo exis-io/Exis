@@ -150,7 +150,7 @@ func (a *App) Receive() {
 
 // Part 1 of the join-- start the join
 func (d *Domain) Join() {
-	w := js.Global.Get("WsWrapper")
+	w := js.Global.Get("WsWrapper").New()
 
 	conn := Conn{
 		wrapper: w,

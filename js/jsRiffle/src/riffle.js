@@ -22,7 +22,7 @@ var Ws = function () {
     }
 }; 
 
-global.WsWrapper = new Ws();
+global.WsWrapper = Ws;
 
 exports.Domain = global.Domain.New;
 
