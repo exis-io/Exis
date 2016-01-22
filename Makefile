@@ -57,9 +57,9 @@ js:
 	mv main.js js/jsRiffle/src/go.js
 	mv main.js.map js/jsRiffle/src/go.js.map
 
-	# This should get its own deployment section-- makes rebuilding for tests much slower
-	# browserify js/jsRiffle/index.js --standalone jsRiffle -o js/jsRiffle/release/jsRiffle.js
-	# browserify js/jsRiffle/index.js --standalone jsRiffle | uglifyjs > js/jsRiffle/release/jsRiffle.min.js
+jsbrowser: js
+	browserify js/jsRiffle/index.js --standalone jsRiffle -o js/jsRiffle/release/jsRiffle.js
+	browserify js/jsRiffle/index.js --standalone jsRiffle | uglifyjs > js/jsRiffle/release/jsRiffle.min.js
 
 libriffmantle.so: 
 	@echo "Building core..."

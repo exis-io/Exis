@@ -157,7 +157,7 @@ Factory.prototype.create = function () {
          }
 
          websocket.onmessage = function (evt) {
-            log.debug("WebSocket transport receive", evt.data);
+            //log.debug("WebSocket transport receive", evt.data);
 
             var msg = evt.data;
             // DFW: This was messing up browser support - the data is unmarshalled in Go
@@ -186,15 +186,24 @@ Factory.prototype.create = function () {
          //websocket.onerror = websocket.onclose;
 
          transport.send = function (msg) {
-            var payload = msg;
+            //var payload = msg;
             // DFW: This was messing up browser support - the data is serialized in Go
             // so it shouldn't be done here too
             //var payload = JSON.stringify(msg);
-            log.debug("WebSocket transport send", payload);
-            websocket.send(msg);
+            //log.debug("WebSocket transport send", payload);
+            if(websocket.readyState === 1){
+              log.debug("Websocket ready sending msg.");
+              websocket.send(msg);
+            }else{
+              log.debug("Waiting for Websocket to be ready.");
+              setTimeout(function(){ 
+                transport.send(msg);
+              }, 200);
+            }
          }
 
          transport.close = function (code, reason) {
+            log.debug("close code: ", code);
             websocket.close(code, reason);
          };
 

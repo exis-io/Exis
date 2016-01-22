@@ -78,7 +78,10 @@ function wait(){
     // Note that we have to do arg[0] here because it returns to us differently
     // than the values passed back by want() above (this is because it is the result
     // of a yield message and is handled differently by the core).
-    fp.apply(this, expect.validate(arguments)[0]);
+    for(var arg in arguments){
+      arguments[arg] = arguments[arg][0];
+    }
+    return fp.apply(this, expect.validate(arguments));
   }
   handler.fp = wrap;
   handler.types = expect.types();
@@ -290,14 +293,23 @@ function ModelObject(constructor){
 
     constructor.prototype.save = function(){
       self.assertBound();
-      if(!this.__id){
+      if(!this._id){
         function helper(result){
-          this.__id = result.inserted_id;
+          this._id = result.inserted_id;
           return result;
         }
         return self.__storage.Call("collection/insert_one", self.__collection, this).then(wait(helper, Object));
       }else{
-        return self.__storage.Call("collection/replace_one", self.__collection, {'_id': this.__id}, this, true);
+        return self.__storage.Call("collection/replace_one", self.__collection, {'_id': this._id}, this, true);
+      }
+    };
+
+    constructor.prototype.delete = function(){
+      self.assertBound();
+      if(!this._id){
+        throw Error("No ID associated with this object model. Failed to delete object from storage.");
+      }else{
+        return self.__storage.Call("collection/delete_one", self.__collection, {'_id': this._id});
       }
     };
 
@@ -326,7 +338,7 @@ ModelObject.prototype.construct = function(){
   return newObj;
 };
 
-ModelObject.prototype.bind = function(owner, collection, appliance){
+ModelObject.prototype.bind = function(owner, appliance, collection){
   if(typeof(collection) !== 'string' && collection !== undefined){
     throw Error("collection must be a string");
   }
@@ -363,14 +375,17 @@ ModelObject.prototype.find = function(query){
     query = {};
   }
   this.assertBound();
+  var self = this;
   function passer(args){
-    console.log(args);
     return args;
   }
-  return this.__storage.Call("collection/find", this.__collection, query).then(passer);
+  return this.__storage.Call("collection/find", this.__collection, query).then(wait(passer, [this]));
 };
 
 ModelObject.prototype.find_one = function(query){
+  if(query === undefined){
+    query = {};
+  }
   this.assertBound();
   function passer(args){
     return args;
