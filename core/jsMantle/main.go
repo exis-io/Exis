@@ -78,7 +78,7 @@ func (c Conn) Send(data []byte) {
 
 func (c Conn) Close(reason string) error {
 	core.Debug("Asked to close: ", reason)
-	
+
 	//TODO: Use appropriate error codes
 	c.wrapper.Get("conn").Call("close", 1000, reason)
 	return nil
@@ -150,7 +150,8 @@ func (a *App) Receive() {
 
 // Part 1 of the join-- start the join
 func (d *Domain) Join() {
-	w := js.Global.Get("WsWrapper")
+	// w := js.Global.Get("WsWrapper")
+    w := js.Global.New("WsWrapper")
 
 	conn := Conn{
 		wrapper: w,
