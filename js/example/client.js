@@ -41,8 +41,6 @@
 
 // Testing auth methods 
 var riffle = require('jsriffle');
-riffle.SetLogLevelDebug();
-
 var app = riffle.Domain("xs.demo.deemouse.jstest");
 var me = app.Subdomain("alpha");
 
