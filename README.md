@@ -42,14 +42,20 @@ Notes on setting up environment from scratch
 
 Cloning 
 	- Install pip
-		- Install docopt (make a requirements.txt?)
+		- Requirements.txt: docopt, virtualenv
 	- Install Go (use GVM or godeps?)
+		- Set GOPATH, GOBIN
 
-	- Set GOPATH
-	- Get gopy
-	- Get gopherjs
-
-Building
+Python
 	- Install gopy
+	- Install riffle OR virtualenv (latter is vastly preferred!)
+
+Js
+	- Install node, npm, nvm
+	- npm link 
+
+Swift
+	- 
+
 -->
 
