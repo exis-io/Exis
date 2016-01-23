@@ -102,3 +102,39 @@ func (c *app) getAuthMethods() []string {
 func (a *app) SetToken(token string) {
 	a.token = token
 }
+
+// Sample on getting tokens the good ole fashioned way
+// package main
+
+// import (
+//     "bytes"
+//     "fmt"
+//     "io/ioutil"
+//     "net/http"
+// )
+
+// func main() {
+
+//     //panic: Post https://node.exis.io:8880/register: x509: certificate signed by unknown authority
+//     url := "https://node.exis.io:8880/register"
+//     fmt.Println("URL:>", url)
+
+//     var jsonStr = []byte(`{"domain":"beta","requestingdomain":"xs.demo.deemouse.jstest"}`)
+//     req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+
+//     //req.Header.Set("X-Custom-Header", "myvalue")
+//     req.Header.Set("Content-Type", "application/json")
+//     req.Header.Set("Accept", "application/json")
+
+//     client := &http.Client{}
+//     resp, err := client.Do(req)
+//     if err != nil {
+//         panic(err)
+//     }
+//     defer resp.Body.Close()
+
+//     fmt.Println("response Status:", resp.Status)
+//     fmt.Println("response Headers:", resp.Header)
+//     body, _ := ioutil.ReadAll(resp.Body)
+//     fmt.Println("response Body:", string(body))
+// }
