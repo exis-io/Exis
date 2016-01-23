@@ -93,7 +93,7 @@ func (c *app) Send(m message) error {
 func (c *app) Close(reason string) {
 	if !c.open {
 		// TODO: JS calls close one to many times. Please stop it.
-		Warn("JS specific bandaid triggered!")
+		// Warn("JS specific bandaid triggered!")
 		return
 	} else {
 		Info("Closing internally: ", reason)

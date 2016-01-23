@@ -26,8 +26,16 @@ Build shared:
     go build -buildmode=c-shared -o libmath.so math.go
 
 Compile and run: 
-    javac -classpath jnr-ffi.jar Hello.java MathLib.java
+    javac -classpath jnr-ffi.jar Hello.java
     java -classpath jnr-ffi.jar:. Hello
+
+
+/usr/local/java/jdk1.8.0_66/bin/javac -classpath jnr-ffi.jar Hello.java
+/usr/local/java/jdk1.8.0_66/bin/java -classpath jnr-ffi.jar:. Hello
+
+sudo update-alternatives --install "/usr/bin/java" "java" "/usr/local/java/jdk1.8.0_66/bin/java" 1
+sudo update-alternatives --install "/usr/bin/javac" "javac" "/usr/local/java/jdk1.8.0_66/bin/javac" 1
+sudo update-alternatives --install "/usr/bin/javaws" "javaws" "/usr/local/java/jdk1.8.0_66/bin/javaws" 1
 
 */
 
@@ -50,16 +58,16 @@ Compile and run:
 import jnr.ffi.LibraryLoader;
 
 public class Hello {
-    public static interface LibC {
+    public static interface MathLib {
         long Multiply(long x, long y);
     }
 
     public static void main(String[] args) {
-        LibC libc = LibraryLoader.create(LibC.class).load("math");
+        MathLib libc = LibraryLoader.create(MathLib.class).load("math");
         
         System.out.println(libc.Multiply(12345, 67890));
+        
         // output: 838102050
-
         //libc.puts("Hello, World");
     }
 }
