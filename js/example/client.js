@@ -44,11 +44,11 @@ var riffle = require('jsriffle');
 riffle.SetLogLevelDebug();
 
 var app = riffle.Domain("xs.demo.deemouse.jstest");
-var me = app.Subdomain("alphaa");
+var me = app.Subdomain("alpha");
 
 me.onJoin = function() {
     console.log("Client Joined");
 };
 
-//me.SetToken("zdyiG7Gl9ur0rJV7GtwHMHFaEMvDaqnyjbg0K65aCwuuISLBJg3FGCtMc30WOwacH8MbGH.WRZsjJVNh4n9DXh8RZbRwoy2VuigTblczPK0jejtP6uuTCXuj2yYjGiXThhjfYiJnRCALsu79AHO7dtjOfgyzJ8hGccKtpbYNH5o_")
+me.SetToken("zdyiG7Gl9ur0rJV7GtwHMHFaEMvDaqnyjbg0K65aCwuuISLBJg3FGCtMc30WOwacH8MbGH.WRZsjJVNh4n9DXh8RZbRwoy2VuigTblczPK0jejtP6uuTCXuj2yYjGiXThhjfYiJnRCALsu79AHO7dtjOfgyzJ8hGccKtpbYNH5o_")
 me.Join()
