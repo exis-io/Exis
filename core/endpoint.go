@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -57,6 +58,17 @@ func extractDomain(s string) (string, error) {
 func topLevelDomain(subdomain string) string {
 	parts := strings.Split(subdomain, ".")
 	return parts[0]
+}
+
+// Return the ancestor domain if possible
+func getSuperdomain(domain string) (string, error) {
+	parts := strings.Split(domain, ".")
+
+	if len(parts) < 2 {
+		return "", fmt.Errorf("Unable to retreive superdomain. Domain %s either has no superdomains or is poorly constructed", domain)
+	}
+
+	return parts[len(parts)-1], nil
 }
 
 // Generate list of ancestors up to the top level.

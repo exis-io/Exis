@@ -59,6 +59,7 @@ func NewApp() *app {
 		in:         make(chan message, 10),
 		up:         make(chan Callback, 10),
 		listeners:  make(map[uint64]chan message),
+		token:      "",
 	}
 
 	a.authid = os.Getenv("EXIS_AUTHID")

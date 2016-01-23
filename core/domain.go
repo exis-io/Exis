@@ -82,7 +82,6 @@ func (d domain) GetApp() App {
 // Accepts a connection that has just been opened. This method should only
 // be called once, to initialize the fabric
 func (c domain) Join(conn Connection) error {
-	Debug("Starting join")
 
 	if c.joined {
 		return fmt.Errorf("Domain %s is already joined", c.name)
@@ -99,6 +98,17 @@ func (c domain) Join(conn Connection) error {
 	helloDetails := make(map[string]interface{})
 	helloDetails["authid"] = c.app.getAuthID()
 	helloDetails["authmethods"] = c.app.getAuthMethods()
+
+	// Duct tape for js demo
+	// if Fabric == FabricProduction && c.app.token == "" {
+	// 	Info("No token found on production. Attempting to auth from scratch")
+
+	// 	if token, err := tokenLogin(c.app.agent); err != nil {
+	// 		return err
+	// 	} else {
+	// 		c.app.token = token
+	// 	}
+	// }
 
 	// Should we hard close on conn.Close()? The App may be interested in knowing about the close
 	if err := c.app.Send(&hello{Realm: c.name, Details: helloDetails}); err != nil {

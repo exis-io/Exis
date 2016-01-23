@@ -1,14 +1,19 @@
 package core
 
 import (
+	"bytes"
 	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha512"
+	"crypto/tls"
 	"crypto/x509"
 	"encoding/base64"
+	"encoding/json"
 	"encoding/pem"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 )
 
 // All security operations are wrapped up here
@@ -103,38 +108,55 @@ func (a *app) SetToken(token string) {
 	a.token = token
 }
 
-// Sample on getting tokens the good ole fashioned way
-// package main
+// Attempt a token login. Expects the app domain to be the next domain up (temporary)
+// TODO: intelligently parse the superdomain from the given domain
+func tokenLogin(domain string) (string, error) {
+	Info("Attempting to obtain a token")
+	url := "https://node.exis.io:8880/login"
 
-// import (
-//     "bytes"
-//     "fmt"
-//     "io/ioutil"
-//     "net/http"
-// )
+	// Damouse's Ubuntu 14.10 would not accept the certificate. This is dangerous and must be removed
+	tr := &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
 
-// func main() {
+	superdomain, err := getSuperdomain(domain)
 
-//     //panic: Post https://node.exis.io:8880/register: x509: certificate signed by unknown authority
-//     url := "https://node.exis.io:8880/register"
-//     fmt.Println("URL:>", url)
+	if err != nil {
+		return "", err
+	}
 
-//     var jsonStr = []byte(`{"domain":"beta","requestingdomain":"xs.demo.deemouse.jstest"}`)
-//     req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	payload := map[string]interface{}{"domain": domain, "requestingdomain": superdomain}
+	jsonString, err := json.Marshal(payload)
 
-//     //req.Header.Set("X-Custom-Header", "myvalue")
-//     req.Header.Set("Content-Type", "application/json")
-//     req.Header.Set("Accept", "application/json")
+	if err != nil {
+		return "", err
+	}
 
-//     client := &http.Client{}
-//     resp, err := client.Do(req)
-//     if err != nil {
-//         panic(err)
-//     }
-//     defer resp.Body.Close()
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonString))
 
-//     fmt.Println("response Status:", resp.Status)
-//     fmt.Println("response Headers:", resp.Header)
-//     body, _ := ioutil.ReadAll(resp.Body)
-//     fmt.Println("response Body:", string(body))
-// }
+	if err != nil {
+		return "", err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	client := &http.Client{Transport: tr}
+
+	if resp, err := client.Do(req); err != nil {
+		return "", err
+	} else {
+		defer resp.Body.Close()
+		body, _ := ioutil.ReadAll(resp.Body)
+
+		var result map[string]interface{}
+
+		if err := json.Unmarshal(body, &result); err != nil {
+			return "", err
+		} else {
+			if token, ok := result["login_token"]; !ok {
+				return "", fmt.Errorf("Server error: could not find login_token key in reply")
+			} else {
+				return token.(string), nil
+			}
+		}
+	}
+
+	return "", nil
+}
