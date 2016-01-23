@@ -82,6 +82,8 @@ func (d domain) GetApp() App {
 // Accepts a connection that has just been opened. This method should only
 // be called once, to initialize the fabric
 func (c domain) Join(conn Connection) error {
+	Debug("Starting join")
+
 	if c.joined {
 		return fmt.Errorf("Domain %s is already joined", c.name)
 	}
@@ -89,7 +91,6 @@ func (c domain) Join(conn Connection) error {
 	// Handshake between the connection and the app
 	c.app.Connection = conn
 	conn.SetApp(c.app)
-
 	c.app.open = true
 
 	// Set the agent string, or who WE are. When this domain leaves, termintate the connection
@@ -136,7 +137,6 @@ func (c domain) Join(conn Connection) error {
 	}
 
 	Info("Domain joined")
-
 	return nil
 }
 

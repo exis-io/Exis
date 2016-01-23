@@ -1,14 +1,7 @@
 package core
 
 import (
-	"crypto"
-	"crypto/rand"
-	"crypto/rsa"
-	"crypto/sha512"
-	"crypto/x509"
-	"encoding/base64"
 	"encoding/json"
-	"encoding/pem"
 	"fmt"
 	"os"
 	"reflect"
@@ -28,6 +21,9 @@ type App interface {
 
 	CallbackListen() Callback
 	CallbackSend(uint64, ...interface{})
+
+	// Temporary location, will move to security
+	SetToken(string)
 }
 
 type app struct {
@@ -102,9 +98,6 @@ func (c *app) Close(reason string) {
 		Info("Closing internally: ", reason)
 	}
 
-	// goodbye := &goodbye{Details: map[string]interface{}{}, Reason: ErrCloseSession}
-	// if msg, err := c.app.requestListenType(goodbye, "*core.subscribed"); err != nil {
-
 	if err := c.Send(&goodbye{Details: map[string]interface{}{}, Reason: ErrCloseSession}); err != nil {
 		Warn("Error sending goodbye: %v", err)
 	}
@@ -112,8 +105,6 @@ func (c *app) Close(reason string) {
 	c.open = false
 	close(c.in)
 	close(c.up)
-
-	Info("Closing channels in CLOSE, %v", c.open)
 
 	// Theres some missing logic here when it comes to closing the external connection,
 	// especially when either end could call and trigger a close
@@ -313,86 +304,4 @@ func (c *app) getMessageTimeout() (message, error) {
 	case <-time.After(MessageTimeout):
 		return nil, fmt.Errorf("timeout waiting for message")
 	}
-}
-
-func DecodePrivateKey(data []byte) (*rsa.PrivateKey, error) {
-	// Decode the PEM public key
-	block, _ := pem.Decode(data)
-	if block == nil {
-		return nil, fmt.Errorf("Error decoding PEM file")
-	}
-
-	// Parse the private key.
-	priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
-	if err != nil {
-		return nil, err
-	}
-
-	return priv, nil
-}
-
-func SignString(msg string, key *rsa.PrivateKey) (string, error) {
-	hashed := sha512.Sum512([]byte(msg))
-
-	sig, err := rsa.SignPKCS1v15(rand.Reader, key, crypto.SHA512, hashed[:])
-	if err != nil {
-		return "", err
-	}
-
-	result := base64.StdEncoding.EncodeToString(sig)
-	return result, nil
-}
-
-func (c *app) handleChallenge(msg *challenge) error {
-	response := &authenticate{
-		Signature: "",
-		Extra:     make(map[string]interface{}),
-	}
-
-	switch msg.AuthMethod {
-	case "token":
-		response.Signature = c.token
-
-	case "signature":
-		nonce, _ := msg.Extra["challenge"].(string)
-
-		key, err := DecodePrivateKey([]byte(c.key))
-		if err != nil {
-			return err
-		}
-
-		response.Signature, err = SignString(nonce, key)
-		if err != nil {
-			return err
-		}
-
-		// TODO: warn on unrecognized auth method
-	}
-
-	c.Send(response)
-	return nil
-}
-
-func (c *app) getAuthID() string {
-	if c.authid == "" {
-		return c.agent
-	} else {
-		return c.authid
-	}
-}
-
-// Return a list of authentication methods that we support,
-// which depends on what credentials were passed.
-func (c *app) getAuthMethods() []string {
-	authmethods := make([]string, 0)
-
-	if c.key != "" {
-		authmethods = append(authmethods, "signature")
-	}
-
-	if c.token != "" {
-		authmethods = append(authmethods, "token")
-	}
-
-	return authmethods
 }

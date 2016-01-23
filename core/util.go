@@ -27,7 +27,7 @@ const (
 	FabricLocal      = "ws://localhost:8000/ws"
 	FabricDev        = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
 	FabricSandbox    = "ws://sandbox.exis.io/ws"
-	FabricProduction = "wss://node.exis.io/wss"
+	FabricProduction = "wss://node.exis.io:8000/wss"
 )
 
 var (
