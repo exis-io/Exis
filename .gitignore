@@ -37,4 +37,5 @@ cumin.txt
 
 node_modules
 
-js/release/*
+js/jsRiffle/release/*
+js/ngRiffle/release/*
