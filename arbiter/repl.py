@@ -347,14 +347,6 @@ class ReplIt:
             self.success = True
             return True
         else:
-            # print "{} {} : FAILURE".format(self.action, self.task.fullName())
-            # print "Expected : '{}'".format(self.coder.getExpect())
-            # print "Stdout   : '{}'".format("\n".join(self.stdout))
-            # print "Stderr   : '{}'".format("\n".join(self.stderr))
-            # print "Code     : {}".format(self.task.fileName)
-            # print "Test dir : {}".format(self.testDir)
-            # print "Code Executed:"
-            # print self.execCode
             self.success = False
             return False
 
@@ -497,7 +489,11 @@ def printSetup(taskSet):
     print " #" + str(taskSet.index) + " - " + taskSet.getName() + "\t",
 
 def printResult(tasks):
-    ''' Pretty print the results of test '''
+    ''' Pretty print the results of test
+
+    TODO: make a verbose mode to output the old output
+
+    '''
 
     somethingFailed = False
     for t in tasks: 
@@ -511,5 +507,14 @@ def printResult(tasks):
         if not t.success:
             print "\n\t" + Fore.YELLOW + t.action + ' expected: ' + Fore.WHITE + str(t.coder.getExpect()) + Fore.YELLOW + ", output: " + Fore.WHITE + str(t.stdout)
             print Style.RESET_ALL + "" + t.execCode
+
+            # print "{} {} : FAILURE".format(self.action, self.task.fullName())
+            # print "Expected : '{}'".format(self.coder.getExpect())
+            # print "Stdout   : '{}'".format("\n".join(self.stdout))
+            # print "Stderr   : '{}'".format("\n".join(self.stderr))
+            # print "Code     : {}".format(self.task.fileName)
+            # print "Test dir : {}".format(self.testDir)
+            # print "Code Executed:"
+            # print self.execCode
 
     print Style.RESET_ALL
