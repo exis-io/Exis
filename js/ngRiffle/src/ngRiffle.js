@@ -154,6 +154,9 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                 });
               });
             };
+            Domain.prototype.setToken = function(tok) {
+                this.conn.SetToken(tok);
+            };
             Domain.prototype.unsubscribe = function (channel) {
               var self = this;
               return interceptorWrapper('unsubscribe', arguments, function () {
