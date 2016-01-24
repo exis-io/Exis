@@ -59,8 +59,9 @@ class Examples:
     representing a discrete test to REPL around.
     """
     def __init__(self):
-        self.tasks = {k: ddict(lambda: TaskSet()) for k in LANGS.values()}
+        self.tasks = {k: ddict() for k in LANGS.values()}
         self.mylang = None
+        self.index = 1
 
     @classmethod
     def find(cls, EXISPATH, lang=None):
@@ -95,6 +96,8 @@ class Examples:
     def getTasks(self, lang=None, task=None):
         """
         Return generator for all matching tasks by language.
+
+        TODO: retain relative ordering based on the file they came from 
         """
         baseName = task.split('*')[0] if task else None
         for l, tasks in self.tasks.iteritems():
@@ -107,6 +110,11 @@ class Examples:
         """
         Adds this task to the proper places.
         """
+        if t.fullName() not in self.tasks[t.lang]:
+            self.tasks[t.lang][t.fullName()] = TaskSet()
+            self.tasks[t.lang][t.fullName()].index = self.index
+            self.index += 1
+
         self.tasks[t.lang][t.fullName()].add(t)
 
 
@@ -126,6 +134,7 @@ class Examples:
         # Run through the file
         FSM = "START"
         t = Task(fileName)
+
         lineNum = 1
         for c in lst:
             # Remove only right side whitespace

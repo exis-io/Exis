@@ -8,7 +8,7 @@ Usage:
   stump push (all | REPOS...)
   stump pull (all | REPOS...)
   stump add-subtree DIRECTORY NAME URL
-  stump test (all | LANGUAGES...)           
+  stump [--list] test (all | LANGUAGES...) 
   stump deploy (all | REPOS...)         
 
 Options:
@@ -20,6 +20,7 @@ import sys
 import docopt
 from subprocess import call
 import shutil
+import arbiter
 
 # Format: (prefix: remote, url)
 SUBTREES = [
@@ -101,12 +102,21 @@ if __name__ == '__main__':
 
     elif args['test']:
         os.environ["EXIS_REPO"] = os.getcwd()
+
         # TODO: unit tests
         # TODO: integrate a little more tightly with unit and end to end tests
-         
-        langs = allLanguages if args['all'] else sys.argv[2:]
 
-        call("python arbiter/arbiter.py -f testAll %s" % " ".join(["-a {}".format(x) for x in langs]), shell=True)
+        # List the tests indexed in the order they were found 
+        if args['--list']:
+            tasks = arbiter.arbiter.findTasks(shouldPrint=False)
+            tasks = [x for x in tasks]
+
+            for i, task in enumerate(tasks): 
+                print " " + str(task.index) + "\t" + task.getName()
+
+        else: 
+            langs = allLanguages if args['all'] else sys.argv[2:]
+            call("python arbiter/arbiter.py -f testAll %s" % " ".join(["-a {}".format(x) for x in langs]), shell=True)
 
     elif args['deploy']:
         print "Not implemented"
