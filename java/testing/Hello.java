@@ -24,6 +24,13 @@ Download jar, rename it to jnr-ffi.jar:
 
 Build shared: 
     go build -buildmode=c-shared -o libmath.so math.go
+    
+    CGO_ENABLED=1 GOARCH=arm GOARM=7 go build -buildmode=c-shared -o libmath.so math.go
+
+    CGO_ENABLED=0 GOARCH=arm GOOS=linux go build -buildmode=c-shared -o libmath.so math.go
+
+    GOOS=android GOARCH=arm GOARM=7 go build -buildmode=c-shared -o libmath.so math.go
+
 
 Compile and run: 
     javac -classpath jnr-ffi.jar Hello.java

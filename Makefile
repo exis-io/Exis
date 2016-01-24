@@ -1,7 +1,7 @@
 
 all: swift osx ios python js
 
-.PHONY: python js clean osx ios java
+.PHONY: python js clean osx ios java android
 
 LOG="./build.log"
 
@@ -43,6 +43,11 @@ ios:
 
 	# cp assets/riffmantle.a swift/twopointone/Pod/Classes/riffmantle.a
 	# cp assets/riffmantle.h swift/twopointone/Pod/Classes/riffmantle.h
+
+android:
+	@echo "Building core..."
+	@gomobile bind -target=android github.com/exis-io/core/androidMantle
+	@mv mantle.aar java/droidRiffle/mantle/mantle.aar
 
 java: 
 	@echo "Building core..."
