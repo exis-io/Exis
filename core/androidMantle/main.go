@@ -2,100 +2,89 @@ package mantle
 
 import (
 	"fmt"
-	// "github.com/exis-io/core"
-	// "github.com/exis-io/core/goRiffle"
+
+	"github.com/exis-io/core"
+	"github.com/exis-io/core/goRiffle"
 )
 
 func Hello() {
 	fmt.Println("Hello!")
 }
 
-/*
-// By default always connect to the production fabric at node.exis.io
-var fabric string = core.FabricProduction
+var domains []*core.Domain
 
 type Domain struct {
-    coreDomain core.Domain
+	coreDomain core.Domain
 }
 
 func NewDomain(name string) Domain {
-    return Domain{
-        coreDomain: core.NewDomain(name, nil),
-    }
+	return Domain{coreDomain: core.NewDomain(name, nil)}
 }
 
-
-func (d *Domain) Subdomain(name string) Domain {
-    return Domain{
-        coreDomain: d.coreDomain.Subdomain(name),
-    }
+func (d *Domain) Subdomain(name string) int {
+	return Domain{coreDomain: d.coreDomain.Subdomain(name)}
 }
 
-// Blocks on callbacks from the core.
-// TODO: trigger a close meta callback when connection is lost
+func (d *Domain) LinkDomain(name string) int {
+	return Domain{coreDomain: d.coreDomain.LinkDomain(name)}
+}
+
+// Blocks on callbacks from the core
 func (d *Domain) Receive() string {
-    return core.MantleMarshall(d.coreDomain.GetApp().CallbackListen())
+	return core.MantleMarshall(d.coreDomain.GetApp().CallbackListen())
 }
 
-func (d *Domain) Join(cb uint64, eb uint64) {
-    if c, err := goRiffle.Open(fabric); err != nil {
-        d.coreDomain.GetApp().CallbackSend(eb, err.Error())
-    } else {
-        if err := d.coreDomain.Join(c); err != nil {
-            d.coreDomain.GetApp().CallbackSend(eb, err.Error())
-        } else {
-            d.coreDomain.GetApp().CallbackSend(cb)
-        }
-    }
+// TODO: Move this to the mantle helper
+func (d *Domain) Join(cb int, eb int) {
+	if c, err := goRiffle.Open(core.Fabric); err != nil {
+		d.coreDomain.GetApp().CallbackSend(uint64(eb), err.Error())
+	} else {
+		if err := d.coreDomain.Join(c); err != nil {
+			d.coreDomain.GetApp().CallbackSend(uint64(eb), err.Error())
+		} else {
+			d.coreDomain.GetApp().CallbackSend(uint64(cb))
+		}
+	}
 }
 
-func (d *Domain) Subscribe(cb uint64, endpoint string) {
-    go func() {
-        d.coreDomain.Subscribe(endpoint, cb, make([]interface{}, 0))
-    }()
+func (d *Domain) Subscribe(endpoint string, cb int, eb int, fn int, types string) {
+	go core.MantleSubscribe(d.coreDomain, endpoint, uint64(cb), uint64(eb), uint64(fn), core.MantleUnmarshal(types))
 }
 
-func (d *Domain) Register(cb uint64, endpoint string) {
-    go func() {
-        d.coreDomain.Register(endpoint, cb, make([]interface{}, 0))
-    }()
+func (d *Domain) Register(endpoint string, cb int, eb int, fn int, types string) {
+	go core.MantleRegister(d.coreDomain, endpoint, uint64(cb), uint64(eb), uint64(fn), core.MantleUnmarshal(types))
 }
 
-// Args are string encoded json
-func (d *Domain) Publish(cb uint64, endpoint string, args string) {
-    go func() {
-        d.coreDomain.Publish(endpoint, cb, core.MantleUnmarshal(args))
-    }()
+func (d *Domain) Publish(endpoint string, cb int, eb int, args string) {
+	go core.MantlePublish(d.coreDomain, endpoint, uint64(cb), uint64(eb), core.MantleUnmarshal(args))
 }
 
-func (d *Domain) Call(cb uint64, endpoint string, args string) {
-    go func() {
-        d.coreDomain.Call(endpoint, cb, core.MantleUnmarshal(args))
-    }()
+func (d *Domain) Call(endpoint string, cb int, eb int, args string) {
+	go core.MantleCall(d.coreDomain, endpoint, uint64(cb), uint64(eb), core.MantleUnmarshal(args))
 }
 
-func (d *Domain) Yield(request uint64, args string) {
-    go func() {
-        d.coreDomain.GetApp().Yield(request, core.MantleUnmarshal(args))
-    }()
+func (d *Domain) CallExpects(cb int, types string) {
+	go d.coreDomain.CallExpects(uint64(cb), core.MantleUnmarshal(types))
 }
 
-func (d *Domain) Unsubscribe(endpoint string) {
-    go func() {
-        d.coreDomain.Unsubscribe(endpoint)
-    }()
+func (d *Domain) Unsubscribe(endpoint string, cb int, eb int) {
+	go core.MantleUnsubscribe(d.coreDomain, endpoint, uint64(cb), uint64(eb))
 }
 
-func (d *Domain) Unregister(endpoint string) {
-    go func() {
-        d.coreDomain.Unregister(endpoint)
-    }()
+func (d *Domain) Unregister(endpoint string, cb int, eb int) {
+	go core.MantleUnregister(d.coreDomain, endpoint, uint64(cb), uint64(eb))
+}
+
+func (d *Domain) Yield(request int, args string) {
+	go d.coreDomain.GetApp().Yield(uint64(request), core.MantleUnmarshal(args))
+}
+
+func (d *Domain) YieldError(request int, etype string, args string) {
+	go d.coreDomain.GetApp().YieldError(uint64(request), etype, core.MantleUnmarshal(args))
 }
 
 func (d *Domain) Leave() {
-    go func() {
-        d.coreDomain.Leave()
-    }()
+	go d.coreDomain.Leave()
 }
 
 func SetLogLevelOff()   { core.LogLevel = core.LogLevelOff }
@@ -105,15 +94,14 @@ func SetLogLevelWarn()  { core.LogLevel = core.LogLevelWarn }
 func SetLogLevelInfo()  { core.LogLevel = core.LogLevelInfo }
 func SetLogLevelDebug() { core.LogLevel = core.LogLevelDebug }
 
-func SetFabricDev()        { fabric = core.FabricDev }
-func SetFabricSandbox()    { fabric = core.FabricSandbox }
-func SetFabricProduction() { fabric = core.FabricProduction }
-func SetFabricLocal()      { fabric = core.FabricLocal }
-func SetFabric(url string) { fabric = url }
+func SetFabricDev()        { core.Fabric = core.FabricDev }
+func SetFabricSandbox()    { core.Fabric = core.FabricSandbox }
+func SetFabricProduction() { core.Fabric = core.FabricProduction }
+func SetFabricLocal()      { core.Fabric = core.FabricLocal }
+func SetFabric(url string) { core.Fabric = url }
 
 func Application(s string) { core.Application("%s", s) }
 func Debug(s string)       { core.Debug("%s", s) }
 func Info(s string)        { core.Info("%s", s) }
 func Warn(s string)        { core.Warn("%s", s) }
 func Error(s string)       { core.Error("%s", s) }
-*/
