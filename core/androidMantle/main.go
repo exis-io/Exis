@@ -11,22 +11,20 @@ func Hello() {
 	fmt.Println("Hello!")
 }
 
-var domains []*core.Domain
-
 type Domain struct {
 	coreDomain core.Domain
 }
 
-func NewDomain(name string) Domain {
-	return Domain{coreDomain: core.NewDomain(name, nil)}
+func NewDomain(name string) *Domain {
+	return &Domain{coreDomain: core.NewDomain(name, nil)}
 }
 
-func (d *Domain) Subdomain(name string) int {
-	return Domain{coreDomain: d.coreDomain.Subdomain(name)}
+func (d *Domain) Subdomain(name string) *Domain {
+	return &Domain{coreDomain: d.coreDomain.Subdomain(name)}
 }
 
-func (d *Domain) LinkDomain(name string) int {
-	return Domain{coreDomain: d.coreDomain.LinkDomain(name)}
+func (d *Domain) LinkDomain(name string) *Domain {
+	return &Domain{coreDomain: d.coreDomain.LinkDomain(name)}
 }
 
 // Blocks on callbacks from the core
