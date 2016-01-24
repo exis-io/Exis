@@ -164,13 +164,9 @@ def testAll(lang, stopOnFail=False):
         examples = exampler.Examples.find(EXISREPO, lang)
         for t in examples.getTasks(lang):
             res = repl.executeTaskSet(t)
-            if res is True:
-                print('-'*80)
-            elif res is False:
+            if res is False:
                 if stopOnFail:
                     exit()
-                else:
-                    print('-'*80)
 
 def genTemplate(langs=["python", "swift", "js"], actions=["Pub/Sub", "Reg/Call"]):
     """
