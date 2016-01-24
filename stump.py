@@ -4,18 +4,21 @@ helpstr = '''Riffle maintenance and management.
 
 Usage:
   stump init
-  stump list
   stump push (all | REPOS...)
   stump pull (all | REPOS...)
   stump add-subtree DIRECTORY NAME URL
-  stump [--list | -n <testNumber>] test (all | LANGUAGE) 
+  stump test (list | all | <languageOrTestNumber>)
   stump deploy (all | REPOS...)         
 
 Options:
   -h --help     Show this screen.
 
 
-asdfasdfasdf
+Testing Examples: 
+    ./stump test list       List all tests
+    ./stump test all        Run all tests
+    ./stump test python     Run all tests in language 
+    ./stump test 15         Run the given test number
 '''
 
 import os
@@ -73,10 +76,6 @@ if __name__ == '__main__':
 
             os.symlink(os.path.abspath("core"), corePath)
 
-    elif args['list']:
-        for p, r, u in SUBTREES:
-            print "Remote: ", r
-
     elif args['push']:
         if args['all']:
             repos = SUBTREES
@@ -124,23 +123,30 @@ if __name__ == '__main__':
         # TODO: integrate a little more tightly with unit and end to end tests
 
         # List the tests indexed in the order they were found 
-        if args['--list']:
+        if args['list']:
             print " #\tTest Name"
-            for task in orderedTasks(args['LANGUAGE']):
+            for task in orderedTasks(None):
                 print " " + str(task.index) + "\t" + task.getName()
 
-        elif args['-n']:
-            tasks = orderedTasks(args['LANGUAGE'])
-            target = next((x for x in tasks if x.index == int(args['<testNumber>'])), None)
+                #TODO: seperate by language
 
-            if target is None: 
-                print "Unable to find test #" + str(args['<testNumber>'])
-                sys.exit(0)
+        elif args['all']: 
+            call("python arbiter/arbiter.py -f testAll %s" % " ".join(["-a {}".format(x) for x in allLanguages]), shell=True)
 
-            arbiter.repl.executeTaskSet(target)
-        else: 
-            langs = allLanguages if args['all'] else sys.argv[2:]
-            call("python arbiter/arbiter.py -f testAll %s" % " ".join(["-a {}".format(x) for x in langs]), shell=True)
+        elif args['<languageOrTestNumber>']:
+            target = args['<languageOrTestNumber>']
+
+            if target.isdigit():
+                tasks = orderedTasks('all')
+                target = next((x for x in tasks if x.index == int(target)), None)
+
+                if target is None: 
+                    print "Unable to find test #" + str(target)
+                    sys.exit(0)
+
+                arbiter.repl.executeTaskSet(target)
+            else: 
+                call("python arbiter/arbiter.py -f testAll -a " + args['<languageOrTestNumber>'], shell=True)
 
     elif args['deploy']:
         print "Not implemented"
