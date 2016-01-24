@@ -505,7 +505,10 @@ def printResult(tasks):
 
     for t in tasks: 
         if not t.success:
-            print "\n\t" + Fore.YELLOW + t.action + ' expected: ' + Fore.WHITE + str(t.coder.getExpect()) + Fore.YELLOW + ", output: " + Fore.WHITE + str(t.stdout)
+            print "\n\t" + Fore.YELLOW + t.action + ' expected: ' + Fore.WHITE \
+                + str(t.coder.getExpect()) + Fore.YELLOW + ", output: " + Fore.WHITE \
+                + str(t.stdout) + Fore.YELLOW + ", file: " + t.task.fileName.split('/')[-1]
+
             print Style.RESET_ALL + "" + t.execCode
 
             # print "{} {} : FAILURE".format(self.action, self.task.fullName())
