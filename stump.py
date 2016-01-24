@@ -8,7 +8,7 @@ Usage:
   stump push (all | REPOS...)
   stump pull (all | REPOS...)
   stump add-subtree DIRECTORY NAME URL
-  stump [--list] test (all | LANGUAGES...) 
+  stump [--list | -n <testNumber>] test (all | LANGUAGE) 
   stump deploy (all | REPOS...)         
 
 Options:
@@ -103,23 +103,46 @@ if __name__ == '__main__':
     elif args['test']:
         os.environ["EXIS_REPO"] = os.getcwd()
 
+        def orderedTasks(lang):
+            '''
+            Returns an orderd list of tasks from the arbiter 
+            
+            TODO:
+                move the relative sorting down into the arbiter-- no need to repeat these steps all the time here
+                Also jesus find another home for this method
+            '''
+            lang = None if lang == 'all' else lang
+            tasks = [x for x in arbiter.arbiter.findTasks(shouldPrint=False, lang=lang)]
+            tasks.sort(key=lambda x: x.index)
+
+            return tasks
+
         # TODO: unit tests
         # TODO: integrate a little more tightly with unit and end to end tests
 
         # List the tests indexed in the order they were found 
         if args['--list']:
-            tasks = arbiter.arbiter.findTasks(shouldPrint=False)
-            tasks = [x for x in tasks]
-
-            for i, task in enumerate(tasks): 
+            print " #\tTest Name"
+            for task in orderedTasks(args['LANGUAGE']):
                 print " " + str(task.index) + "\t" + task.getName()
 
+        elif args['-n']:
+            tasks = orderedTasks(args['LANGUAGE'])
+            target = next((x for x in tasks if x.index == int(args['<testNumber>'])), None)
+
+            if target is None: 
+                print "Unable to find test #" + str(args['<testNumber>'])
+                sys.exit(0)
+
+            arbiter.repl.executeTaskSet(target)
         else: 
             langs = allLanguages if args['all'] else sys.argv[2:]
             call("python arbiter/arbiter.py -f testAll %s" % " ".join(["-a {}".format(x) for x in langs]), shell=True)
 
     elif args['deploy']:
         print "Not implemented"
+
+
 
 
 '''
