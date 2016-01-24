@@ -1,4 +1,4 @@
-package com.exis.androidriffle;
+package com.exis.riffle;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

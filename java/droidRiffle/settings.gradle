@@ -1,1 +1,1 @@
-include ':app', ':androidriffle', ':mantle'
+include ':app', ':riffle', ':mantle'

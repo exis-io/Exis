@@ -1,4 +1,4 @@
-package com.exis.androidriffle;
+package com.exis.riffle;
 
 import org.junit.Test;
 

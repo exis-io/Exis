@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.exis.androidriffle.Domain;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         TextView textview = (TextView) findViewById(R.id.mytextview);
-        textview.setText(Domain.hello());
+        textview.setText("Reeefle");
     }
 
     @Override

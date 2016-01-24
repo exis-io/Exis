@@ -1,15 +1,9 @@
 package mantle
 
 import (
-	"fmt"
-
 	"github.com/exis-io/core"
 	"github.com/exis-io/core/goRiffle"
 )
-
-func Hello() {
-	fmt.Println("Hello!")
-}
 
 type Domain struct {
 	coreDomain core.Domain
