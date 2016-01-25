@@ -5,7 +5,6 @@ from riffle import want
 riffle.SetFabricLocal()
 riffle.SetLogLevelDebug()
 
-
 class Recv(riffle.Domain):
 
     def onJoin(self):
@@ -14,12 +13,14 @@ class Recv(riffle.Domain):
         @want(str)
         def basicSub(s):
             print s  # Expects a str, like "Hello"
+
         self.subscribe("basicSub", basicSub)
         # End Example Pub/Sub Basic
 
         # Example Pub/Sub Objects - This sub expects an object
         class Stuff(riffle.ModelObject):
             name = ""
+
         @want(Stuff)
         def objectSub(o):
             print o  # Expects an object, like Stuff

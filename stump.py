@@ -129,9 +129,10 @@ if __name__ == '__main__':
                 print " " + str(task.index) + "\t" + task.getName()
 
                 #TODO: seperate by language
+                #TODO: seperate by file, and use the files for some reasonable ordering
 
         elif args['all']: 
-            call("python arbiter/arbiter.py -f testAll %s" % " ".join(["-a {}".format(x) for x in allLanguages]), shell=True)
+            arbiter.arbiter.testAll('all')
 
         elif args['<languageOrTestNumber>']:
             target = args['<languageOrTestNumber>']
@@ -146,7 +147,7 @@ if __name__ == '__main__':
 
                 arbiter.repl.executeTaskSet(target)
             else: 
-                call("python arbiter/arbiter.py -f testAll -a " + args['<languageOrTestNumber>'], shell=True)
+                arbiter.arbiter.testAll(args['<languageOrTestNumber>'])
 
     elif args['deploy']:
         print "Not implemented"

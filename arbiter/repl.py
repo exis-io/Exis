@@ -509,7 +509,7 @@ def printResult(tasks):
                 + str(t.coder.getExpect()) + Fore.YELLOW + ", output: " + Fore.WHITE \
                 + str(t.stdout) + Fore.YELLOW + ", file: " + t.task.fileName.split('/')[-1]
 
-            print Style.RESET_ALL + "" + t.execCode
+            print Style.RESET_ALL + "" + Fore.CYAN + t.execCode
 
             # print "{} {} : FAILURE".format(self.action, self.task.fullName())
             # print "Expected : '{}'".format(self.coder.getExpect())
