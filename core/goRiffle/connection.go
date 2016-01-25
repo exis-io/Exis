@@ -15,7 +15,13 @@ type WebsocketConnection struct {
 	app         core.App
 	payloadType int
 	closed      bool
+	url         string
 }
+
+const (
+	minRetryDelay = 1  * time.Second
+	maxRetryDelay = 30 * time.Second
+)
 
 func Open(url string) (*WebsocketConnection, error) {
 	core.Debug("Opening ws connection to %s", url)
@@ -29,6 +35,7 @@ func Open(url string) (*WebsocketConnection, error) {
 			conn:        conn,
 			lock:        &sync.Mutex{},
 			payloadType: websocket.TextMessage,
+			url:         url,
 		}
 
 		go connection.run()
@@ -71,6 +78,41 @@ func (ep *WebsocketConnection) Close(reason string) error {
 	return ep.conn.Close()
 }
 
+func (ep *WebsocketConnection) Reconnect() error {
+	delay := minRetryDelay
+
+	for {
+		core.Debug("Opening connection to %s", ep.url)
+		dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
+
+		if conn, _, err := dialer.Dial(ep.url, nil); err != nil {
+			core.Debug("Connection failed: %e", err)
+		} else {
+			// Set pointer to new websocket connection.
+			ep.lock.Lock()
+			ep.conn = conn
+			ep.lock.Unlock()
+
+			if err := ep.app.SendHello(); err != nil {
+				core.Debug("Sending HELLO failed: %e", err)
+				ep.conn.Close()
+			} else {
+				return nil
+			}
+		}
+
+		core.Debug("Retry in %v", delay)
+
+		time.Sleep(delay)
+
+		// Exponential backoff up to maxRetryDelay.
+		delay *= 2
+		if delay > maxRetryDelay {
+			delay = maxRetryDelay
+		}
+	}
+}
+
 func (ep *WebsocketConnection) run() {
 	// Theres some missing logic here when it comes to dealing with closes, including whats
 	// actually returned from those closes
@@ -84,13 +126,14 @@ func (ep *WebsocketConnection) run() {
 				ep.conn.Close()
 			}
 
-			// ep.App.Close()
-			break
+			ep.app.ConnectionClosed("Peer connection closed")
+			ep.Reconnect()
+			//ep.app.ConnectionClosed("error reading from peer")
 		} else if msgType == websocket.CloseMessage {
 			core.Info("Close message recieved")
 			ep.conn.Close()
 
-			// ep.App.Close()
+			ep.app.ConnectionClosed("Close message received")
 			break
 		} else {
 			ep.app.ReceiveBytes(bytes)

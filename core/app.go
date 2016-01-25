@@ -22,6 +22,8 @@ type App interface {
 	CallbackListen() Callback
 	CallbackSend(uint64, ...interface{})
 
+	SendHello() error
+
 	// Temporary location, will move to security
 	SetToken(string)
 }
@@ -78,7 +80,7 @@ func (a *app) CallbackSend(id uint64, args ...interface{}) {
 	a.up <- Callback{id, args}
 }
 
-func (c *app) Send(m message) error {
+func (c *app) send_nocheck(m message) error {
 	Debug("Sending %s: %v", m.messageType(), m)
 
 	// There's going to have to be a better way of handling these errors
@@ -88,6 +90,14 @@ func (c *app) Send(m message) error {
 		c.Connection.Send(b)
 		return nil
 	}
+}
+
+func (c *app) Send(m message) error {
+	if !c.open {
+		return fmt.Errorf("Cannot send; connection not open")
+	}
+
+	return c.send_nocheck(m)
 }
 
 func (c *app) Close(reason string) {
@@ -114,12 +124,33 @@ func (c *app) Close(reason string) {
 
 func (c *app) ConnectionClosed(reason string) {
 	Info("Connection was closed: ", reason)
-
 	c.open = false
-	close(c.in)
-	close(c.up)
+}
 
-	Info("Closing channels in ConnectionCLOSED, %v", c.open)
+// Send a Hello message to join the fabric.
+// Assumes a.agent has been set appropriately.
+func (a *app) SendHello() error {
+	helloDetails := make(map[string]interface{})
+	helloDetails["authid"] = a.getAuthID()
+    helloDetails["authmethods"] = a.getAuthMethods()
+
+    // Duct tape for js demo
+    // if Fabric == FabricProduction && c.app.token == "" {
+    //  Info("No token found on production. Attempting to auth from scratch")
+
+    //  if token, err := tokenLogin(c.app.agent); err != nil {
+    //      return err
+    //  } else {
+    //      c.app.token = token
+    //  }
+    // }
+
+	msg := hello{
+		Realm: a.agent,
+		Details: helloDetails,
+	}
+
+	return a.send_nocheck(&msg)
 }
 
 // Represents the result of an invokation in the crust
@@ -211,8 +242,15 @@ func (c *app) handle(msg message) {
 			Warn("error sending message:", err)
 		}
 
+	case *welcome:
+		Debug("Received WELCOME, reestablishing state with the fabric")
+		c.open = true
+		go c.replayRegistrations()
+		go c.replaySubscriptions()
+
 	case *goodbye:
 		c.Close("Fabric said goodbye. Closing connection")
+		// TODO: no panics, please
 		panic("Not implemented!")
 
 	default:
@@ -237,9 +275,7 @@ func (c *app) handle(msg message) {
 
 // All incoming messages end up here one way or another
 func (c *app) ReceiveMessage(msg message) {
-	if c.open {
-		c.in <- msg
-	}
+	c.in <- msg
 }
 
 // Theres a method on the serializer that does this exact thing. Is this specific to JS?
@@ -289,6 +325,60 @@ func (c *app) requestListenType(outgoing message, expecting string) (message, er
 	case <-time.After(MessageTimeout):
 		return nil, fmt.Errorf("Timeout while waiting for message")
 	}
+}
+
+func (c *app) replayRegistrations() error {
+	for _, dom := range c.domains {
+		for oldregid, boundep := range dom.registrations {
+			register := &register{
+				Request: boundep.callback,
+				Options: make(map[string]interface{}),
+				Name: boundep.endpoint,
+			}
+
+			if msg, err := c.requestListenType(register, "*core.registered"); err != nil {
+				return err
+			} else {
+				reg := msg.(*registered)
+
+				Info("Registered: %s %v", boundep.endpoint, boundep.expectedTypes)
+
+				dom.regLock.Lock()
+				delete(dom.registrations, oldregid)
+				dom.registrations[reg.Registration] = boundep
+				dom.regLock.Unlock()
+			}
+		}
+	}
+
+	return nil
+}
+
+func (c *app) replaySubscriptions() error {
+	for _, dom := range c.domains {
+		for oldsubid, boundep := range dom.subscriptions {
+			subscribe := &subscribe{
+				Request: boundep.callback,
+				Options: make(map[string]interface{}),
+				Name: boundep.endpoint,
+			}
+
+			if msg, err := c.requestListenType(subscribe, "*core.subscribed"); err != nil {
+				return err
+			} else {
+				sub := msg.(*subscribed)
+
+				Info("Subscribed: %s %v", boundep.endpoint, boundep.expectedTypes)
+
+				dom.subLock.Lock()
+				delete(dom.subscriptions, oldsubid)
+				dom.subscriptions[sub.Subscription] = boundep
+				dom.subLock.Unlock()
+			}
+		}
+	}
+
+	return nil
 }
 
 // Blocks on a message from the connection. Don't use this while the run loop is active,

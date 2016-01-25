@@ -95,23 +95,8 @@ func (c domain) Join(conn Connection) error {
 	// Set the agent string, or who WE are. When this domain leaves, termintate the connection
 	c.app.agent = c.name
 
-	helloDetails := make(map[string]interface{})
-	helloDetails["authid"] = c.app.getAuthID()
-	helloDetails["authmethods"] = c.app.getAuthMethods()
-
-	// Duct tape for js demo
-	// if Fabric == FabricProduction && c.app.token == "" {
-	// 	Info("No token found on production. Attempting to auth from scratch")
-
-	// 	if token, err := tokenLogin(c.app.agent); err != nil {
-	// 		return err
-	// 	} else {
-	// 		c.app.token = token
-	// 	}
-	// }
-
-	// Should we hard close on conn.Close()? The App may be interested in knowing about the close
-	if err := c.app.Send(&hello{Realm: c.name, Details: helloDetails}); err != nil {
+	err := c.app.SendHello()
+	if err != nil {
 		c.app.Close("ERR: could not send a hello message")
 		return err
 	}
