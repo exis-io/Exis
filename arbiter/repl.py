@@ -18,6 +18,13 @@ from colorama import Fore, Back, Style
 
 from threading import Thread, Event
 
+try:
+    import selenium
+    NO_BROWSER_TESTS = False
+except:
+    NO_BROWSER_TESTS = True
+    print "!! Unable to find selenium, run pip install selenium to perform browser testing"
+
 colorama.init()
 
 # Make sure we know where the core appliances are
@@ -35,7 +42,7 @@ if(EXISREPO is None):
 
 ON_POSIX = "posix" in sys.builtin_module_names
 
-SLEEP_TIME = 1
+SLEEP_TIME = 10
 
 WS_URL = os.environ.get("WS_URL", "ws://localhost:8000/ws")
 DOMAIN = os.environ.get("DOMAIN", "xs.demo.test")
@@ -53,26 +60,64 @@ class Coder:
     def __init__(self, task, action):
         self.task = task
         self.action = action
+        self.tmpdir = None
+    
+    def copyFromBasePath(self, testDir):
+        """Copy over everything into this new dir"""
+        bp = self.getBasePath()
+        src = os.listdir(bp + "/")
+        for f in src:
+            ff = os.path.join(bp + "/", f)
+            if(os.path.isfile(ff)):
+                shutil.copy(ff, testDir)
+            elif(os.path.isdir(ff)):
+                shutil.copytree(ff, "{}/{}".format(testDir, f))
 
     def setup(self, tmpdir):
-        print "!! Not implemented"
+        self.tmpdir = tmpdir
+        #self.copyFromBasePath(tmpdir)
+        shutil.copy("{}/arbiter/repler/{}".format(EXISREPO, self.getRunScript()), tmpdir)
+        self._setup(tmpdir)
     
-    def setupTerminate(self, code):
-        print "!! Not implemented"
+    def setupRunComplete(self, code):
+        pass
+    
+    def setupEnv(self, env):
+        pass
 
     def expect2assert(self):
         print "!! Not implemented"
 
-    def checkExecution(self, out, err):
+    def getBasePath(self):
+        return "{}/arbiter/repler/".format(EXISREPO)
+    #def getBasePath(self):
+    #    return "{}/repl-{}".format(BASEPATH, self.task.getLangName())
+    
+    def getRunScript(self):
+        # Find the run script, use run2 if it exists
+        return "{}-run.sh".format(self.task.getLangName())
+        #if os.path.exists("{}/run2.sh".format(self.getBasePath())):
+        #    return "run2.sh"
+        #elif os.path.exists("{}/run.sh".format(self.getBasePath())):
+        #    return "run.sh"
+        #else:
+        #    print "!! Unable to find the run.sh command from EXIS_APPLIANCES"
+        #    raise Exception()
+    
+    def getTestingCode(self):
         """
-        Take the stderr and stdout arrays and check if execute was ok or not.
-        Also check the output for any expect data.
-        Returns:
-            String matching the output that led to the successful result,
-            or None if a failure or no match
+        This function returns the properly formatted code needed to make the repl calls work.
+        This means two things: 1) On call/pub examples it adds the proper leave() at the end
+        and 2) it replaces the # Expect code with the proper assert.
         """
+        code = [a for a in self.task.code]
+        if self.action in ("call", "publish"):
+            self.setupRunComplete(code)
+
+        return "\n".join(code)
+
+    def checkStdout(self, out):
         ev = self.getExpect()
-        #print(ev, out, err)
 
         good = None
         # Sometimes we shouldn't expect anything and thats ok
@@ -82,7 +127,9 @@ class Coder:
             for o in out:
                 if ev in o:
                     good = ev
-
+        return good
+        
+    def checkStderr(self, err):
         if err:
             # Look at the error to see whats up
             errOk = False
@@ -91,25 +138,40 @@ class Coder:
             if not errOk:
                 print "!! Found error:"
                 print "\n".join(err)
-                return None
-        return good
+                return True
+        return False
+
+    def checkExecution(self, out, err):
+        """
+        Take the stderr and stdout arrays and check if execute was ok or not.
+        Also check the output for any expect data.
+        Returns:
+            String matching the output that led to the successful result,
+            or None if a failure or no match
+        """
+        res = self.checkStdout(out)
+        e = self.checkStderr(err)
+        if e == True:
+            return None
+
+        return res
 
 
 class PythonCoder(Coder):
-    def setup(self, tmpdir):
+    def _setup(self, tmpdir):
         """
         We shouldn't have to do anything here, assume they have run 'sudo pip install -e .' in pyRiffle.
         """
         pass
+    
+    def setupRunComplete(self, code):
+        code.append('{}print "___RUNCOMPLETE___"'.format(" " * self.getWhitespace(code[-1])))
 
-    def setupTerminate(self, code):
-        """
-        Assume the last line of the code is enough info to judge indenting
-        Also assume they didn't use TABS!!!!!
-        """
-        if self.task.action in ("publish", "call"):
-            c = self.task.code[-1]
-            code.append("{}exit()".format(" " * (len(c) - len(c.lstrip(' ')))))
+    def getWhitespace(self, line):
+        return len(line) - len(line.lstrip(' '))
+    
+    def setupEnv(self, env):
+        env["PYTHONPATH"] = self.tmpdir
 
     def expect2assert(self):
         if self.task.expectLine >= 0:
@@ -127,26 +189,7 @@ class PythonCoder(Coder):
         else:
             return self.task.expectVal
 
-    def checkExecution(self, out, err):
-        """
-        Take the stderr and stdout arrays and check if execute was ok or not.
-        Also check the output for any expect data.
-        Returns:
-            String matching the output that led to the successful result,
-            or None if a failure or no match
-        """
-        ev = self.getExpect()
-        #print(ev, out, err)
-
-        good = None
-        # Sometimes we shouldn't expect anything and thats ok
-        if ev is None:
-            good = "no expect required"
-        else:
-            for o in out:
-                if ev in o:
-                    good = ev
-
+    def checkStderr(self, err):
         if err:
             # Look at the error to see whats up
             errOk = False
@@ -158,12 +201,12 @@ class PythonCoder(Coder):
             if not errOk:
                 print "!! Found error:"
                 print "".join(err)
-                return None
-        return good
+                return True
+        return False
 
 
 class SwiftCoder(Coder):
-    def setup(self, tmpdir):
+    def _setup(self, tmpdir):
         """
         Need to copy over the proper files for swift build command (mantle/swiftRiffle).
         """
@@ -176,10 +219,9 @@ class SwiftCoder(Coder):
         shutil.copytree("{}/swiftRiffle/Riffle".format(swift), "{}/swiftRiffle/Riffle".format(tmpdir))
         if not os.path.exists("{}/swiftRiffle/Riffle/.git".format(tmpdir)):
             raise Exception("!! Please run 'make swift' so that swiftRiffle is git tagged properly")
-
-    def setupTerminate(self, code):
-        # TODO
-        pass
+    
+    def setupRunComplete(self, code):
+        code.append('print("___RUNCOMPLETE___")')
 
     def expect2assert(self):
         # TODO
@@ -194,8 +236,8 @@ class SwiftCoder(Coder):
         else:
             return self.task.expectVal
 
-class JSCoder(Coder):
-    def setup(self, tmpdir):
+class NodeJSCoder(Coder):
+    def _setup(self, tmpdir):
         """
         Need to run 'npm install BASEPATH/js/jsRiffle' in the tmp dir.
         """
@@ -207,10 +249,9 @@ class JSCoder(Coder):
         if proc.returncode:
             print "!! We expect that you have run 'sudo npm link' in the jsRiffle dir"
             raise Exception("Unable to setup for JS: {}".format(errors))
-
-    def setupTerminate(self, code):
-        # TODO
-        pass
+    
+    def setupRunComplete(self, code):
+        code.append('console.log("___RUNCOMPLETE___");')
 
     def expect2assert(self):
         # TODO
@@ -225,16 +266,66 @@ class JSCoder(Coder):
         else:
             return self.task.expectVal
 
+class BrowserCoder(Coder):
+    def getBasePath(self):
+        return "{}/arbiter/repler/".format(EXISREPO)
+    
+    def getRunScript(self):
+        return "browser-run.sh"
+    
+    def setupEnv(self, env):
+        env["PYTHONPATH"] = self.tmpdir
+        env["REPL_BROWSER_EXPECT"] = self.getExpect()
+        # NOTE need to specify the DISPLAY for FireFox to open up in otherwise shit hits the fan
+        env["DISPLAY"] = os.environ['DISPLAY']
+    
+    def setup(self, tmpdir):
+        """
+        OVERWRITES the Coder class setup file!
+        Find jsRiffle and setup the browser html
+        """
+        self.tmpdir = tmpdir
+        shutil.copy("{}/arbiter/repler/browser-run.sh".format(EXISREPO), tmpdir)
+        shutil.copy("{}/arbiter/repler/browser-generate.sh".format(EXISREPO), tmpdir)
+        shutil.copy("{}/js/jsRiffle/release/jsRiffle.js".format(EXISREPO), tmpdir)
+
+    def expect2assert(self):
+        # TODO
+        return None
+
+    def getExpect(self):
+        """
+        Returns a properly formatted lang-specific value that we should be searching for.
+        """
+        if self.task.expectType == "String":
+            return self.task.expectVal.strip("'\"")
+        else:
+            return self.task.expectVal
+    
+    def checkStdout(self, out):
+        ev = self.getExpect()
+
+        good = None
+        # Sometimes we shouldn't expect anything and thats ok
+        if ev is None:
+            good = "no expect required"
+        else:
+            for o in out:
+                if "___RUNCOMPLETE___" in o:
+                    good = ev
+        return good
+
 
 coders = {
-    "py": PythonCoder,
+    "python": PythonCoder,
     "swift": SwiftCoder,
-    "js": JSCoder
+    "nodejs": NodeJSCoder,
+    "browser": BrowserCoder
 }
 
 def getCoder(task, action):
     """Returns an instance of the proper class or None"""
-    c = coders.get(task.lang, None)
+    c = coders.get(task.getLangName(), None)
     return c(task, action) if c else None
 
 class ReplIt:
@@ -248,7 +339,7 @@ class ReplIt:
         self.task = taskSet.getTask(action)
         if self.task is None:
             raise Exception("No Task found")
-        self.lang = taskSet.getFullLang()
+        self.lang = taskSet.getLangName()
         self.proc = None
         self.stdout = list()
         self.stderr = list()
@@ -256,6 +347,11 @@ class ReplIt:
         self.executing = False
         self.coder = None
         self.buildComplete = Event()
+        self.setupComplete = Event()
+        if action in ("call", "publish"):
+            self.runComplete = Event()
+        else:
+            self.runComplete = None
         self.runScript = None
 
         self.success = None
@@ -269,50 +365,29 @@ class ReplIt:
         self.coder = getCoder(self.task, self.action)
         if not self.coder:
             raise Exception("Couldn't find the Coder for this lang")
-
+        
         # Where is the repl code we need?
-        if(self.lang == "js"):
-            self.basepath = "{}/repl-nodejs".format(BASEPATH)
-        else:
-            self.basepath = "{}/repl-{}".format(BASEPATH, self.lang)
-
-        # Find the run script, use run2 if it exists
-        if os.path.exists("{}/run2.sh".format(self.basepath)):
-            self.runScript = "run2.sh"
-        elif os.path.exists("{}/run.sh".format(self.basepath)):
-            self.runScript = "run.sh"
-        else:
-            print "!! Unable to find the run.sh command from EXIS_APPLIANCES"
-            raise Exception()
+        self.runScript = self.coder.getRunScript()
 
         # Setup a temp dir for this test
         self.testDir = tempfile.mkdtemp(prefix=TEST_PREFIX)
 
-        # Copy over everything into this new dir
-        src = os.listdir(self.basepath + "/")
-        for f in src:
-            ff = os.path.join(self.basepath + "/", f)
-            if(os.path.isfile(ff)):
-                shutil.copy(ff, self.testDir)
-            elif(os.path.isdir(ff)):
-                shutil.copytree(ff, "{}/{}".format(self.testDir, f))
-
         # Now that the dir is setup, allow the coder to setup anything it needs for the lang
         self.coder.setup(self.testDir)
+        
+        # Get the code pulled and formatted
+        self.execCode = self.coder.getTestingCode()
         
         # Setup env vars
         self.env = {
             "WS_URL": WS_URL,
             "DOMAIN": DOMAIN,
-            "PATH": os.environ["PATH"]
+            "PATH": os.environ["PATH"],
+            "EXIS_REPL_CODE": self.execCode
         }
-
-        # Language specific things
-        self.env["PYTHONPATH"] = self.testDir
-
-        # Get the code pulled and formatted
-        self.execCode = self.getTestingCode()
-        self.env["EXIS_REPL_CODE"] = self.execCode
+        
+        self.coder.setupEnv(self.env)
+        
 
     def _read(self, out, stor):
         """
@@ -320,10 +395,16 @@ class ReplIt:
         """
         while(self.executing):
             for line in iter(out.readline, b''):
-                if line.rstrip() == "___BUILDCOMPLETE___":
+                l = line.rstrip()
+                if l == "___BUILDCOMPLETE___":
                     self.buildComplete.set()
+                elif l == "___SETUPCOMPLETE___":
+                    self.setupComplete.set()
+                elif l == "___RUNCOMPLETE___" and self.runComplete:
+                    stor.append(l)
+                    self.runComplete.set()
                 else:
-                    stor.append(line.rstrip())
+                    stor.append(l)
         out.close()
 
     def kill(self):
@@ -338,8 +419,6 @@ class ReplIt:
         # so we first set the process group to a unique value (using preexec_fn below), then we kill that
         # unique process group with the command here:
         os.killpg(os.getpgid(self.proc.pid), signal.SIGTERM)
-        # self.proc.kill()
-        # self.proc.wait()
 
         res = self.coder.checkExecution(self.stdout, self.stderr)
         if res is not None:
@@ -365,9 +444,9 @@ class ReplIt:
         """
         self.executing = True
 
-        # print "EXEC {} : {} @ {}".format(self.action, self.task.fullName(), self.testDir)
+        #print "EXEC {} : {} @ {}".format(self.action, self.task.fullName(), self.testDir)
 
-        self.proc = subprocess.Popen(["./{}".format(self.runScript)], cwd=self.testDir, env=self.env,
+        self.proc = subprocess.Popen(["./{}".format(self.runScript)], shell=True, cwd=self.testDir, env=self.env,
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
                                      close_fds=ON_POSIX, preexec_fn=os.setsid)
 
@@ -380,92 +459,45 @@ class ReplIt:
         self.readOut.start()
         self.readErr.start()
 
-    def getAssertedCode(self):
-        """
-        Returns the assert added code so that this code segment will not complete properly if
-        the return type is not correct (because we replace the "print" with an "assert").
-        """
-        # TODO
-
-    def getTestingCode(self):
-        """
-        This function returns the properly formatted code needed to make the repl calls work.
-        This means two things: 1) On call/pub examples it adds the proper leave() at the end
-        and 2) it replaces the # Expect code with the proper assert.
-        """
-        code = [a for a in self.task.code]
-        self.coder.setupTerminate(code)
-
-        return "\n".join(code)
-
-
-def executeAll(taskList, actionList):
+def executeList(taskList, actionList):
     """
     Given a list of tasks and an action it will zip them together and then execute them properly.
     """
     procs = list()
+    print taskList[0].getName() + "\t",
+    
     for ts, a in zip(taskList, actionList):
         r = ReplIt(ts, a)
         r.setup()
         r.execute()
-        a = r.buildComplete.wait(5)
+        a = r.buildComplete.wait(10)
         if a is False:
             print "!! {} never completed setup process (BUILDCOMPLETE never found)".format(ts)
+        
+        a = r.setupComplete.wait(10)
+        if a is False:
+            print "!! {} never completed setup process (SETUPCOMPLETE never found)".format(ts)
 
         procs.append(r)
 
-    # Now let the system do its thing
-    time.sleep(SLEEP_TIME)
+    # Trying to speed up things, if the proc has a setupComplete flag then wait on it, it should
+    # catch rather than sleeping for a crazy long time
+    for p in procs:
+        if p.runComplete:
+            a = p.runComplete.wait(10)
+            if a is False:
+                print "!! {} never found setup complete, timeout hit".format(p.task)
+                break
+            else:
+                # Not super happy about this but we still have a race condition where we need to wait before just
+                # killing everything so any messages can get through quick, hopefully 0.5 sec is enough for now... :(
+                time.sleep(0.5)
 
     # Go back through and terminate in reverse order
     ok = True
     for p in procs[::-1]:
         ok &= p.kill()
-
-    # If everything was ok then cleanup the temp dirs
-    if ok:
-        for p in procs:
-            p.cleanup()
-
-
-def executeTaskSet(taskSet):
-    """
-    Given one specific TaskSet it will execute the corresponding components of that (pub/sub or reg/call).
-    Returns:
-        None if nothing happened
-        True if it worked
-        False if it didn't
-    """
-    procs = list()
-
-    # Pull the proper actions from the task
-    recv = taskSet.getTask("register") or taskSet.getTask("subscribe")
-    send = taskSet.getTask("publish") or taskSet.getTask("call")
-
-    if None in (recv, send):
-        return None
-
-    printSetup(taskSet)
-    results = []
-
-    # Startup the actions
-    for r in recv, send:
-        rr = ReplIt(taskSet, r.action)
-        rr.setup()
-        rr.execute()
-        a = rr.buildComplete.wait(5)
-        if a is False:
-            print "!! {} never completed setup process (BUILDCOMPLETE never found)".format(r)
-        procs.append(rr)
-
-    # Now let the system do its thing
-    time.sleep(SLEEP_TIME)
-
-    # Go back through and terminate in reverse order
-    ok = True
-    for p in procs[::-1]:
-        ok &= p.kill()
-
+    
     printResult(procs)
 
     # If everything was ok then cleanup the temp dirs
@@ -477,6 +509,27 @@ def executeTaskSet(taskSet):
         return False
 
 
+def executeTaskSet(taskSet):
+    """
+    Given one specific TaskSet it will execute the corresponding components of that (pub/sub or reg/call).
+    Returns:
+        None if nothing happened
+        True if it worked
+        False if it didn't
+    """
+    taskList, actionList = list(), list()
+    # Pull the proper actions from the task
+    
+    lst = taskSet.getOrderedTasks()
+    if len(lst) != 2:
+        return None
+    
+    print " #" + str(taskSet.index) + " - " + taskSet.getName() + "\t",
+
+    return executeList(lst, [l.action for l in lst])
+
+
+
 def cleanupTests():
     # NOTE: This only works on linux flavored systems right now
     dirs = glob.glob("/tmp/{}*".format(TEST_PREFIX))
@@ -486,7 +539,6 @@ def cleanupTests():
 
 def printSetup(taskSet):
     ''' Pretty print for the setup of a test '''
-    print " #" + str(taskSet.index) + " - " + taskSet.getName() + "\t",
 
 def printResult(tasks):
     ''' Pretty print the results of test
@@ -509,6 +561,8 @@ def printResult(tasks):
                 + str(t.coder.getExpect()) + Fore.YELLOW + ", output: " + Fore.WHITE \
                 + str(t.stdout) + Fore.YELLOW + ", file: " + t.task.fileName.split('/')[-1]
 
+            print Style.RESET_ALL + "" + Fore.WHITE + str(t.stderr)
+            
             print Style.RESET_ALL + "" + Fore.CYAN + t.execCode
 
             # print "{} {} : FAILURE".format(self.action, self.task.fullName())

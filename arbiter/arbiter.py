@@ -124,7 +124,7 @@ def test(*tasks, **kwargs):
             actionList.append(action)
     
     # Exec all of them
-    repl.executeAll(taskList, actionList)
+    repl.executeList(taskList, actionList)
 
 def testAll(lang, stopOnFail=False):
     """
@@ -135,7 +135,7 @@ def testAll(lang, stopOnFail=False):
     """
 
     if lang == "all":
-        langs = ["python", "js", "swift"]
+        langs = exampler.LANGS.keys()
     else:
         langs = [lang]
 
@@ -168,7 +168,7 @@ def testAll(lang, stopOnFail=False):
                 if stopOnFail:
                     exit()
 
-def genTemplate(langs=["python", "swift", "js"], actions=["Pub/Sub", "Reg/Call"]):
+def genTemplate(langs=exampler.LANGS.keys(), actions=["Pub/Sub", "Reg/Call"]):
     """
     Use the generator.js code to generate basic templates and print to stdout.
     Args:
@@ -210,7 +210,7 @@ def genDocs():
         for tt in t.tasks:
             d = dict(file=tt.fileName, lineStart=tt.lineStart, lineEnd=tt.lineEnd, code=tt.code, 
                     expectType=tt.expectType, expectVal=tt.expectVal)
-            docs[t.getName()][t.getFullLang()][tt.action] = d
+            docs[t.getName()][t.getLangName()][tt.action] = d
 
     # Strip out anything that isn't populated
     for k, v in docs.iteritems():
