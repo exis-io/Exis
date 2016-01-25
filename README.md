@@ -1,6 +1,6 @@
 
 <div align="center">
-  <img src ="assets/exis-logo.png" height="200" width="150" /> <br>
+  <img src ="utils/assets/exis-logo.png" height="200" width="150" /> <br>
   <h3>Stop writing network code. Seriously.</h3>
 
 </div>
@@ -20,8 +20,8 @@ No more needing to worry about learning several languages to create the backend 
 <table align="center" border="0">
 
 <tr>
-<td> <img src="assets/containerAgent.png"> </td>
-<td> <img src="assets/riffleAgent.png"> </td>
+<td> <img src="utils/assets/containerAgent.png"> </td>
+<td> <img src="utils/assets/riffleAgent.png"> </td>
 </tr>
 
 </table>

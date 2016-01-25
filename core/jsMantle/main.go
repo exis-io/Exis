@@ -40,6 +40,7 @@ type Domain struct {
 	coreDomain core.Domain
 	wrapped    *js.Object
 	app        *App
+	token      string // TEMPORARY
 }
 
 type Conn struct {
@@ -99,6 +100,7 @@ func New(name string) *js.Object {
 	d := Domain{
 		coreDomain: core.NewDomain(name, nil),
 		app:        a,
+		token:      "",
 	}
 
 	d.wrapped = js.MakeWrapper(&d)
@@ -160,6 +162,11 @@ func (d *Domain) Join() {
 
 	d.app.conn = conn
 
+	// temporary-- pass any tokens down to the core
+	if d.token != "" {
+		conn.app.SetToken(d.token)
+	}
+
 	w.Set("onmessage", conn.OnMessage)
 	w.Set("onopen", conn.OnOpen)
 	w.Set("onclose", conn.OnClose)
@@ -177,6 +184,11 @@ func (d *Domain) FinishJoin(c *Conn) {
 			d.wrapped.Call("onJoin")
 		}
 	}
+}
+
+// Temporary-- pass a token through to the core for authentication
+func (d *Domain) SetToken(token string) {
+	d.token = token
 }
 
 func (d *Domain) Subscribe(endpoint string, handler *js.Object) *js.Object {

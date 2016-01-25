@@ -13,7 +13,12 @@ import subprocess
 import time
 import signal
 import glob
+import colorama
+from colorama import Fore, Back, Style
+
 from threading import Thread, Event
+
+colorama.init()
 
 # Make sure we know where the core appliances are
 APPLS = os.environ.get("EXIS_APPLIANCES", None)
@@ -253,6 +258,8 @@ class ReplIt:
         self.buildComplete = Event()
         self.runScript = None
 
+        self.success = None
+
 
     def setup(self):
         """
@@ -336,17 +343,11 @@ class ReplIt:
 
         res = self.coder.checkExecution(self.stdout, self.stderr)
         if res is not None:
-            print "{} {} : SUCCESS (Found {})".format(self.action, self.task.fullName(), res)
+            # print "{} {} : SUCCESS (Found {})".format(self.action, self.task.fullName(), res)
+            self.success = True
             return True
         else:
-            print "{} {} : FAILURE".format(self.action, self.task.fullName())
-            print "Expected : '{}'".format(self.coder.getExpect())
-            print "Stdout   : '{}'".format("\n".join(self.stdout))
-            print "Stderr   : '{}'".format("\n".join(self.stderr))
-            print "Code     : {}".format(self.task.fileName)
-            print "Test dir : {}".format(self.testDir)
-            print "Code Executed:"
-            print self.execCode
+            self.success = False
             return False
 
     def cleanup(self):
@@ -363,7 +364,8 @@ class ReplIt:
         ReplIt.execute function since there are race conditions between building of different langs.
         """
         self.executing = True
-        print "EXEC {} : {} @ {}".format(self.action, self.task.fullName(), self.testDir)
+
+        # print "EXEC {} : {} @ {}".format(self.action, self.task.fullName(), self.testDir)
 
         self.proc = subprocess.Popen(["./{}".format(self.runScript)], cwd=self.testDir, env=self.env,
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
@@ -443,6 +445,9 @@ def executeTaskSet(taskSet):
     if None in (recv, send):
         return None
 
+    printSetup(taskSet)
+    results = []
+
     # Startup the actions
     for r in recv, send:
         rr = ReplIt(taskSet, r.action)
@@ -461,6 +466,8 @@ def executeTaskSet(taskSet):
     for p in procs[::-1]:
         ok &= p.kill()
 
+    printResult(procs)
+
     # If everything was ok then cleanup the temp dirs
     if ok:
         for p in procs:
@@ -476,3 +483,41 @@ def cleanupTests():
     for d in dirs:
         print d
         shutil.rmtree(d)
+
+def printSetup(taskSet):
+    ''' Pretty print for the setup of a test '''
+    print " #" + str(taskSet.index) + " - " + taskSet.getName() + "\t",
+
+def printResult(tasks):
+    ''' Pretty print the results of test
+
+    TODO: make a verbose mode to output the old output
+
+    '''
+
+    somethingFailed = False
+    for t in tasks: 
+        if t.success:
+            print Fore.GREEN + t.action + " ",
+        else:
+            somethingFailed = True
+            print Fore.RED + t.action + Style.RESET_ALL,
+
+    for t in tasks: 
+        if not t.success:
+            print "\n\t" + Fore.YELLOW + t.action + ' expected: ' + Fore.WHITE \
+                + str(t.coder.getExpect()) + Fore.YELLOW + ", output: " + Fore.WHITE \
+                + str(t.stdout) + Fore.YELLOW + ", file: " + t.task.fileName.split('/')[-1]
+
+            print Style.RESET_ALL + "" + Fore.CYAN + t.execCode
+
+            # print "{} {} : FAILURE".format(self.action, self.task.fullName())
+            # print "Expected : '{}'".format(self.coder.getExpect())
+            # print "Stdout   : '{}'".format("\n".join(self.stdout))
+            # print "Stderr   : '{}'".format("\n".join(self.stderr))
+            # print "Code     : {}".format(self.task.fileName)
+            # print "Test dir : {}".format(self.testDir)
+            # print "Code Executed:"
+            # print self.execCode
+
+    print Style.RESET_ALL

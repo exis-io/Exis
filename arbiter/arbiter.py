@@ -28,16 +28,13 @@ if EXISREPO is None:
 else:
     sys.path.append(EXISREPO)
 
-
-
-
 from utils import functionizer as funcizer
 from utils import utils
 
 import exampler, repl
 
 
-def findTasks(lang=None, task=None, verbose=False):
+def findTasks(lang=None, task=None, verbose=False, shouldPrint=True):
     """
     Searches for all example files in the Exis repo.
     Args:
@@ -46,11 +43,16 @@ def findTasks(lang=None, task=None, verbose=False):
         verbose : T/F on verbose printing
     """
     examples = exampler.Examples.find(EXISREPO, lang)
-    for t in examples.getTasks(lang, task):
-        if(verbose):
-            print(t.details())
-        else:
-            print(t)
+    allTasks = examples.getTasks(lang, task)
+
+    if shouldPrint:
+        for t in allTasks:
+            if(verbose):
+                print(t.details())
+            else:
+                print(t)
+
+    return allTasks
     
 def findTask(lang, task):
     """
@@ -162,13 +164,9 @@ def testAll(lang, stopOnFail=False):
         examples = exampler.Examples.find(EXISREPO, lang)
         for t in examples.getTasks(lang):
             res = repl.executeTaskSet(t)
-            if res is True:
-                print('-'*80)
-            elif res is False:
+            if res is False:
                 if stopOnFail:
                     exit()
-                else:
-                    print('-'*80)
 
 def genTemplate(langs=["python", "swift", "js"], actions=["Pub/Sub", "Reg/Call"]):
     """
