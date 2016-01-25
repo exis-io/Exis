@@ -45,15 +45,26 @@ sudo update-alternatives --install "/usr/bin/javac" "javac" "/usr/local/java/jdk
 sudo update-alternatives --install "/usr/bin/javaws" "javaws" "/usr/local/java/jdk1.8.0_66/bin/javaws" 1
 
 */
+/* Attempt 1- Close, but jnr is unable to link
+
+go build -buildmode=c-shared -o libmeth.so meth.go
+javac -classpath jnr-ffi.jar Hello.java
+java -classpath jnr-ffi.jar:. Hello
+
+*/
 
 // import jnr.ffi.LibraryLoader;
+ 
+// interface MathLib {
+//     long Multiply(long x, long y);
+// }
 
 // public class Hello {
 
 //     private static final MathLib MATH_LIB;
 
 //     static {
-//         MATH_LIB = LibraryLoader.create(MathLib.class).load("math");
+//         MATH_LIB = LibraryLoader.create(MathLib.class).load("meth");
 //     }
 
 //     public static void main(String[] args) {
@@ -62,19 +73,46 @@ sudo update-alternatives --install "/usr/bin/javaws" "javaws" "/usr/local/java/j
 //     }
 // }
 
-import jnr.ffi.LibraryLoader;
+/* Attempt 2-- sorta
 
-public class Hello {
-    public static interface MathLib {
-        long Multiply(long x, long y);
-    }
+*/
 
-    public static void main(String[] args) {
-        MathLib libc = LibraryLoader.create(MathLib.class).load("math");
+// import jnr.ffi.LibraryLoader;
+
+// public class Hello {
+//     public static native long multiply(long x, long y);
+
+//     // public static interface MathLib {
+//     //     long Multiply(long x, long y);
+//     // }
+
+//     // public static void main(String[] args) {
+//     //     // MathLib libc = LibraryLoader.create(MathLib.class).load("math");
         
-        System.out.println(libc.Multiply(12345, 67890));
+//     //     // System.out.println(libc.Multiply(12345, 67890));
         
-        // output: 838102050
-        //libc.puts("Hello, World");
-    }
-}
+//     //     // output: 838102050
+//     //     //libc.puts("Hello, World");
+//     // }
+// }
+
+
+/* Attempt 3 -- works, but boy is the jni interface
+
+javac Hello.java
+javah -cp . Hello
+go build -buildmode=c-shared -o libmath.so math.go
+java -cp . Hello
+
+
+*/
+// package io.dogan.whiteboard.jni;
+
+// public class Hello {
+//     public static native long multiply(long x, long y);
+
+//     public static void main(String[] args) {
+//         System.load("/home/damouse/code/merged/riffle/java/testing/libmath.so");
+//         System.out.println(multiply(12345, 67890));
+//     }
+// }

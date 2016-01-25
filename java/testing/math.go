@@ -1,9 +1,14 @@
-// math.go
+//math.go
 
 package main
 
-//export Multiply
-func Multiply(x int64, y int64) int64 {
+// #cgo CFLAGS: -I/usr/local/java/jdk1.8.0_66/include
+// #cgo CFLAGS: -I/usr/local/java/jdk1.8.0_66/include/linux
+// #include <jni.h>
+import "C"
+
+//export Java_Hello_multiply
+func Java_Hello_multiply(env *C.JNIEnv, clazz C.jclass, x C.jlong, y C.jlong) C.jlong {
 	return x * y
 }
 

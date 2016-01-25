@@ -35,7 +35,6 @@ public class Riffle {
 
     public static void setLogLevelDebug() {
         Mantle.SetLogLevelDebug();
-        ;
     }
 
     public static void setFabricDev() {

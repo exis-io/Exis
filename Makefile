@@ -50,15 +50,18 @@ ios:
 # 	[GOOS=android GOARCH=arm GOARM=7 CC=/home/damouse/code/go/pkg/gomobile/android-ndk-r10e/arm/bin/arm-linux-androideabi-gcc CXX=/home/damouse/code/go/pkg/gomobile/android-ndk-r10e/arm/bin/arm-linux-androideabi-g++ CGO_ENABLED=1]
 #
 # We can a) switch out native ubuntu params and b) put the library in an x86 location pretty easily. 
+# Also, check this out: 
+# 	gobind -lang=java github.com/exis-io/core/androidMantle
+# Language bindings between java and go
 android:
 	@echo "Building core..."
-	@gomobile bind -target=android github.com/exis-io/core/androidMantle
+	@gomobile bind --work -target=android github.com/exis-io/core/androidMantle
 	@echo "Moving mantle"
 	@mv mantle.aar java/droidRiffle/mantle/mantle.aar
 
 java: 
 	@echo "Building core..."
-	@go build -buildmode=c-shared -o java/javaRiffle/libmantle.so core/javaMantle/main.go
+	@go build -buildmode=c-shared -o libgojni.so core/androidMantle/main.go
 
 python: 
 	gopy bind github.com/exis-io/core/pyMantle
