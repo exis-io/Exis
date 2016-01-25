@@ -41,3 +41,4 @@ js/jsRiffle/release/*
 js/ngRiffle/release/*
 java/droidRiffle/mantle/mantle.aar
 java/droidRiffle/local.properties
+*.bin
