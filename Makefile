@@ -44,6 +44,12 @@ ios:
 	# cp assets/riffmantle.a swift/twopointone/Pod/Classes/riffmantle.a
 	# cp assets/riffmantle.h swift/twopointone/Pod/Classes/riffmantle.h
 
+# It seems very, very possible to get non-arm jni auto-bindings out of gomobile.
+# golang.org/x/mobile/cmd/gomobile/bind_androidapp.go builds the library with the following env params: 
+#
+# 	[GOOS=android GOARCH=arm GOARM=7 CC=/home/damouse/code/go/pkg/gomobile/android-ndk-r10e/arm/bin/arm-linux-androideabi-gcc CXX=/home/damouse/code/go/pkg/gomobile/android-ndk-r10e/arm/bin/arm-linux-androideabi-g++ CGO_ENABLED=1]
+#
+# We can a) switch out native ubuntu params and b) put the library in an x86 location pretty easily. 
 android:
 	@echo "Building core..."
 	@gomobile bind -target=android github.com/exis-io/core/androidMantle
