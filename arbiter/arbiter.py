@@ -9,7 +9,6 @@ Please run '$0 -ls all' for more info.
 
 Environment Variables:
     EXIS_REPO - the path to the Exis repo
-    EXIS_APPLIANCES - the path to the Exis coreappliances repo (for REPL)
 
 TODO:
     - Implement Object checking for Python

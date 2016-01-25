@@ -27,12 +27,6 @@ except:
 
 colorama.init()
 
-# Make sure we know where the core appliances are
-APPLS = os.environ.get("EXIS_APPLIANCES", None)
-if(APPLS is None):
-    print("!" * 50)
-    print("!! $EXIS_APPLIANCES not found, REPL may not work")
-    print("!" * 50)
 
 EXISREPO = os.environ.get("EXIS_REPO", None)
 if(EXISREPO is None):
@@ -90,19 +84,10 @@ class Coder:
 
     def getBasePath(self):
         return "{}/arbiter/repler/".format(EXISREPO)
-    #def getBasePath(self):
-    #    return "{}/repl-{}".format(BASEPATH, self.task.getLangName())
     
     def getRunScript(self):
         # Find the run script, use run2 if it exists
         return "{}-run.sh".format(self.task.getLangName())
-        #if os.path.exists("{}/run2.sh".format(self.getBasePath())):
-        #    return "run2.sh"
-        #elif os.path.exists("{}/run.sh".format(self.getBasePath())):
-        #    return "run.sh"
-        #else:
-        #    print "!! Unable to find the run.sh command from EXIS_APPLIANCES"
-        #    raise Exception()
     
     def getTestingCode(self):
         """
