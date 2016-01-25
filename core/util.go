@@ -26,13 +26,18 @@ const (
 
 	FabricLocal      = "ws://localhost:8000/ws"
 	FabricDev        = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
-	FabricSandbox    = "ws://sandbox.exis.io/ws"
+	FabricSandbox    = "ws://sandbox.exis.io:8000/ws"
 	FabricProduction = "wss://node.exis.io:8000/wss"
+
+	CuminStrict = 2
+	CuminLoose = 1
+	CuminOff = 0
 )
 
 var (
 	LogLevel int    = 1
 	Fabric   string = FabricProduction
+	CuminLevel int = CuminLoose
 )
 
 func NewID() uint64 {

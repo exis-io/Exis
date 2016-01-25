@@ -1,71 +1,33 @@
 package com.exis.riffle;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.util.List;
+import java.util.Random;
+
 import go.mantle.Mantle;
 
 public class Utils {
-    public static void SetLogLevelOff() {
-        Mantle.SetLogLevelOff();
+    private static Random generator = new Random();
+    private static Gson gson = new GsonBuilder().create();
+
+
+    /* Generate a random positive integer */
+    static int newID() {
+        return generator.nextInt(Integer.MAX_VALUE);
     }
 
-    public static void SetLogLevelApp() {
-        Mantle.SetLogLevelApp();
+    /**
+     * Marshall the given arguments, preparing them for transmission to the core.
+     * @return
+     */
+    static String marshall(Object[] args) {
+        return gson.toJson(args);
     }
 
-    public static void SetLogLevelErr() {
-        Mantle.SetLogLevelErr();
-    }
-
-    public static void SetLogLevelWarn() {
-        Mantle.SetLogLevelWarn();
-    }
-
-    public static void SetLogLevelInfo() {
-        Mantle.SetLogLevelInfo();
-    }
-
-    public static void SetLogLevelDebug() {
-        Mantle.SetLogLevelDebug();
-        ;
-    }
-
-    public static void SetFabricDev() {
-        Mantle.SetFabricDev();
-    }
-
-    public static void SetFabricSandbox() {
-        Mantle.SetFabricSandbox();
-    }
-
-    public static void SetFabricProduction() {
-        Mantle.SetFabricProduction();
-    }
-
-    public static void SetFabricLocal() {
-        Mantle.SetFabricLocal();
-    }
-
-    public static void SetFabric(String url) {
-        Mantle.SetFabric(url);
-    }
-
-    public static void Application(String message) {
-        Mantle.Application(message);
-    }
-
-    public static void Debug(String message) {
-        Mantle.Debug(message);
-    }
-
-    public static void Info(String message) {
-        Mantle.Info(message);
-    }
-
-    public static void Warn(String message) {
-        Mantle.Warn(message);
-    }
-
-    public static void Error(String message) {
-        Mantle.Error(message);
+    static Object[] unmarshall(String json) {
+        return gson.fromJson(json, Object[].class);
     }
 }
 

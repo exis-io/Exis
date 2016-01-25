@@ -92,6 +92,10 @@ func SetFabricProduction() { core.Fabric = core.FabricProduction }
 func SetFabricLocal()      { core.Fabric = core.FabricLocal }
 func SetFabric(url string) { core.Fabric = url }
 
+func SetCuminStrict() { core.CuminLevel = core.CuminStrict }
+func SetCuminLoose() { core.CuminLevel = core.CuminLoose }
+func SetCuminOff() { core.CuminLevel = core.CuminOff }
+
 func Application(s string) { core.Application("%s", s) }
 func Debug(s string)       { core.Debug("%s", s) }
 func Info(s string)        { core.Info("%s", s) }
