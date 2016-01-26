@@ -121,6 +121,8 @@ func (c domain) Join(conn Connection) error {
 		}
 	}
 
+	c.app.setState(Ready)
+
 	// This is super dumb, and the reason its in here was fixed. Please revert
 	go c.app.receiveLoop()
 
@@ -199,12 +201,13 @@ func (c domain) Register(endpoint string, requestId uint64, types []interface{})
 
 func (c domain) Publish(endpoint string, args []interface{}) error {
 	Info("Publish %s %v", endpoint, args)
-	return c.app.Send(&publish{
+	c.app.Queue(&publish{
 		Request:   NewID(),
 		Options:   make(map[string]interface{}),
 		Name:      makeEndpoint(c.name, endpoint),
 		Arguments: args,
 	})
+	return nil
 }
 
 func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error) {
@@ -281,10 +284,7 @@ func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 			Error:     ErrInvalidArgument,
 		}
 
-		if err := c.app.Send(tosend); err != nil {
-			//TODO: Warn the application
-			Warn("error sending message:", err)
-		}
+		c.app.Queue(tosend)
 	}
 }
 

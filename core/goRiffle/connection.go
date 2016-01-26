@@ -43,17 +43,20 @@ func Open(url string) (*WebsocketConnection, error) {
 	}
 }
 
-func (ep *WebsocketConnection) Send(data []byte) {
+func (ep *WebsocketConnection) Send(data []byte) error {
 	// core.Debug("Writing data")
 	// Does the lock block? The locks should be faster than working off the channel,
 	// but the comments in the other code imply that the lock blocks on the send?
+	// Yes, locks can block.  Not sure about faster.
 
 	ep.lock.Lock()
-	if err := ep.conn.WriteMessage(ep.payloadType, data); err != nil {
-		core.Warn("No one is dealing with my errors! Cant write to socket. Eror: %s", err)
-		panic("Unrecoverable error")
+	defer ep.lock.Unlock()
+
+	err := ep.conn.WriteMessage(ep.payloadType, data)
+	if err != nil {
+		core.Warn("Error writing to socket: %s", err)
 	}
-	ep.lock.Unlock()
+	return err
 }
 
 func (ep *WebsocketConnection) SetApp(app core.App) {
@@ -72,7 +75,6 @@ func (ep *WebsocketConnection) Close(reason string) error {
 		log.Println("error sending close message:", err)
 	}
 
-	ep.lock = nil
 	ep.closed = true
 
 	return ep.conn.Close()
@@ -128,13 +130,12 @@ func (ep *WebsocketConnection) run() {
 
 			ep.app.ConnectionClosed("Peer connection closed")
 			ep.Reconnect()
-			//ep.app.ConnectionClosed("error reading from peer")
 		} else if msgType == websocket.CloseMessage {
 			core.Info("Close message recieved")
 			ep.conn.Close()
 
 			ep.app.ConnectionClosed("Close message received")
-			break
+			ep.Reconnect()
 		} else {
 			ep.app.ReceiveBytes(bytes)
 		}
