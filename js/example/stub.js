@@ -7,6 +7,7 @@ console.log("Registering"); // Expects a String, like "Registering"
 // Example Stub - stuff
 // ARBITER set action call
 console.log("Call start");
+console.log("___NODERESTART___,in:0.5,wait:0.5");
 setTimeout(function (){
     console.log("Call then"); // Expects a String, like "Call then"
 }, 1000);

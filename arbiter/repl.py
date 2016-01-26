@@ -414,8 +414,8 @@ class ReplIt:
                     elif l == "___RUNCOMPLETE___" and self.runComplete:
                         stor.append(l)
                         self.runComplete.set()
-                    elif l == "___NODERESTART___" and node:
-                        node.restart()
+                    elif "___NODERESTART___" in l and node:
+                        node.restart(l)
                 else:
                     if expect is not None and expect in l:
                         #print Fore.GREEN + "Found Expect value" + Style.RESET_ALL

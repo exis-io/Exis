@@ -64,6 +64,7 @@ class Node:
         self.proc = None
         self.stdout, self.stderr = list(), list()
         self.restartEvent = Event()
+        self.restartOpts = dict()
     
     def kill(self):
         print Fore.GREEN + "-- {} Killing the node".format(timestr()) + Style.RESET_ALL
@@ -77,7 +78,18 @@ class Node:
             print Fore.YELLOW + "Unable to kill node" + Style.RESET_ALL
             print "Stderr: " + "\n".join(self.stderr)
 
-    def restart(self):
+    def restart(self, line):
+        # See if we need to look for options
+        self.restartOpts = dict()
+        if "," in line:
+            try:
+                for kw in line.split(',')[1:]:
+                    k, w = kw.split(':')
+                    self.restartOpts[k] = float(w)
+            except:
+                self.restartOpts = dict()
+                print Fore.YELLOW + "Bad args to NODERESTART command found, looking for <FLAG>,in:#,wait:#" + Style.RESET_ALL
+
         print Fore.GREEN + "-- {} Performing restart".format(timestr()) + Style.RESET_ALL
         
         self.restartEvent.set()
@@ -85,7 +97,13 @@ class Node:
     def _watchRestart(self):
         while(True):
             self.restartEvent.wait()
+            optIn = self.restartOpts.get('in', None)
+            optWait = self.restartOpts.get('wait', None)
+            if optIn:
+                time.sleep(optIn)
             self.kill()
+            if optWait:
+                time.sleep(optWait)
             self.start()
             self.restartEvent.clear()
 

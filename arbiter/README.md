@@ -125,9 +125,15 @@ backend.Join()
 
 ```
 
+### Timing options
 
+For testing we should be able to make the node restart more async and less deterministic, to deal with this I have added 2 options, like this `___NODERESTART___,opt:#,opt:#`
 
+* `in:#` - specify to restart a node in X sec after this restart command is seen
+* `wait:#` - after killing the node, wait X sec before restarting it
 
-
+```
+console.log("___NODERESTART___,in:0.5,wait:0.5");
+```
 
 
