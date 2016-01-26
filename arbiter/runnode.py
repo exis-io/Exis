@@ -80,7 +80,6 @@ class Node:
     def _watchRestart(self):
         while(True):
             self.restartEvent.wait()
-            print Fore.GREEN + "-- {} Performing restart 2".format(time.time()) + Style.RESET_ALL
             self.kill()
             self.start()
             self.restartEvent.clear()
@@ -94,7 +93,6 @@ class Node:
         self.running = True
 
         print Fore.GREEN + "-- {} Starting the node".format(time.time()) + Style.RESET_ALL
-        print self.cwd
         self.proc = subprocess.Popen(["go", "run", "runner/main.go"], cwd=self.cwd, env=self.env,
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
                                      close_fds=ON_POSIX, preexec_fn=os.setsid)
@@ -115,8 +113,7 @@ class Node:
         while(self.running):
             for line in iter(out.readline, b''):
                 l = line.rstrip()
-                print l
-                #stor.append(l)
+                stor.append(l)
         out.close()
 
 if __name__ == "__main__":

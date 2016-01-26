@@ -19,6 +19,8 @@ from colorama import Fore, Back, Style
 from threading import Thread, Event
 from runnode import Node
 
+WAIT_TIME = 5
+
 try:
     import selenium
     NO_BROWSER_TESTS = False
@@ -155,7 +157,7 @@ class PythonCoder(Coder):
         pass
     
     def setupRunComplete(self, code):
-        code.append('{}print "___RUNCOMPLETE___"'.format(" " * self.getWhitespace(code[-1])))
+        pass #code.append('{}print "___RUNCOMPLETE___"'.format(" " * self.getWhitespace(code[-1])))
 
     def getWhitespace(self, line):
         return len(line) - len(line.lstrip(' '))
@@ -211,7 +213,7 @@ class SwiftCoder(Coder):
             raise Exception("!! Please run 'make swift' so that swiftRiffle is git tagged properly")
     
     def setupRunComplete(self, code):
-        code.append('print("___RUNCOMPLETE___")')
+        pass #code.append('print("___RUNCOMPLETE___")')
 
     def expect2assert(self):
         # TODO
@@ -241,7 +243,7 @@ class NodeJSCoder(Coder):
             raise Exception("Unable to setup for JS: {}".format(errors))
     
     def setupRunComplete(self, code):
-        code.append('setTimeout(function() { console.log("___RUNCOMPLETE___"); }, 3000);')
+        pass #code.append('setTimeout(function() { console.log("___RUNCOMPLETE___"); }, 3000);')
 
     def expect2assert(self):
         # TODO
@@ -275,9 +277,13 @@ class BrowserCoder(Coder):
         Find jsRiffle and setup the browser html
         """
         self.tmpdir = tmpdir
-        shutil.copy("{}/arbiter/repler/browser-run.sh".format(EXISREPO), tmpdir)
-        shutil.copy("{}/arbiter/repler/browser-generate.sh".format(EXISREPO), tmpdir)
-        shutil.copy("{}/js/jsRiffle/release/jsRiffle.js".format(EXISREPO), tmpdir)
+        try:
+            shutil.copy("{}/arbiter/repler/browser-run.sh".format(EXISREPO), tmpdir)
+            shutil.copy("{}/arbiter/repler/browser-generate.sh".format(EXISREPO), tmpdir)
+            shutil.copy("{}/js/jsRiffle/release/jsRiffle.js".format(EXISREPO), tmpdir)
+        except:
+            print Fore.RED + "Unable to find proper libraries for browser (did you compile js and browserify it?)" + Style.RESET_ALL
+            raise Exception("Missing JS libs")
 
     def expect2assert(self):
         # TODO
@@ -384,24 +390,28 @@ class ReplIt:
         self.coder.setupEnv(self.env)
         
 
-    def _read(self, out, stor):
+    def _read(self, out, stor, expect):
         """
         Threaded function that spins and reads the output from the executing process.
         """
         while(self.executing):
             for line in iter(out.readline, b''):
                 l = line.rstrip()
-                print l
-                if l == "___BUILDCOMPLETE___":
-                    self.buildComplete.set()
-                elif l == "___SETUPCOMPLETE___":
-                    self.setupComplete.set()
-                elif l == "___RUNCOMPLETE___" and self.runComplete:
-                    stor.append(l)
-                    self.runComplete.set()
-                elif l == "___NODERESTART___" and node:
-                    node.restart()
+                if l.startswith("___"):
+                    if l == "___BUILDCOMPLETE___":
+                        self.buildComplete.set()
+                    elif l == "___SETUPCOMPLETE___":
+                        self.setupComplete.set()
+                    elif l == "___RUNCOMPLETE___" and self.runComplete:
+                        stor.append(l)
+                        self.runComplete.set()
+                    elif l == "___NODERESTART___" and node:
+                        node.restart()
                 else:
+                    if expect is not None and expect in l:
+                        #print Fore.GREEN + "Found Expect value" + Style.RESET_ALL
+                        if self.runComplete:
+                            self.runComplete.set()
                     stor.append(l)
         out.close()
 
@@ -442,16 +452,17 @@ class ReplIt:
         """
         self.executing = True
 
-        print "EXEC {} : {} @ {}".format(self.action, self.task.fullName(), self.testDir)
+        #print "EXEC {} : {} @ {}".format(self.action, self.task.fullName(), self.testDir)
 
         self.proc = subprocess.Popen(["./{}".format(self.runScript)], shell=True, cwd=self.testDir, env=self.env,
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
                                      close_fds=ON_POSIX, preexec_fn=os.setsid)
 
-        self.readOut = Thread(target=self._read, args=(self.proc.stdout, self.stdout))
+        ev = self.coder.getExpect()
+        self.readOut = Thread(target=self._read, args=(self.proc.stdout, self.stdout, ev))
         self.readOut.daemon = True
 
-        self.readErr = Thread(target=self._read, args=(self.proc.stderr, self.stderr))
+        self.readErr = Thread(target=self._read, args=(self.proc.stderr, self.stderr, None))
         self.readErr.daemon = True
 
         self.readOut.start()
@@ -468,11 +479,11 @@ def executeList(taskList, actionList):
         r = ReplIt(ts, a)
         r.setup()
         r.execute()
-        a = r.buildComplete.wait(10)
+        a = r.buildComplete.wait(WAIT_TIME)
         if a is False:
             print "!! {} never completed setup process (BUILDCOMPLETE never found)".format(ts)
         
-        a = r.setupComplete.wait(10)
+        a = r.setupComplete.wait(WAIT_TIME)
         if a is False:
             print "!! {} never completed setup process (SETUPCOMPLETE never found)".format(ts)
 
@@ -482,7 +493,7 @@ def executeList(taskList, actionList):
     # catch rather than sleeping for a crazy long time
     for p in procs:
         if p.runComplete:
-            a = p.runComplete.wait(10)
+            a = p.runComplete.wait(WAIT_TIME)
             if a is False:
                 print "!! {} never found setup complete, timeout hit".format(p.task)
                 break
