@@ -19,13 +19,24 @@ from colorama import Fore, Back, Style
 from threading import Thread, Event
 from runnode import Node
 
+
+def f(*args):
+    pass
+verbose = f
+
+colorama.init()
+
+# Allow fake versions of the repl functions for quick testing
+STUB_REPL = False
+
+# This is the time that we will wait for a process to complete (using the ___*COMPLETE___ tags)
 WAIT_TIME = 5
 
 try:
     import selenium
-    NO_BROWSER_TESTS = False
+    BROWSER_TESTS = True
 except:
-    NO_BROWSER_TESTS = True
+    BROWSER_TESTS = False
     print "!! Unable to find selenium, run pip install selenium to perform browser testing"
 
 node = None
@@ -35,8 +46,6 @@ def launchNode():
     node.setup()
     node.start()
 
-colorama.init()
-
 EXISREPO = os.environ.get("EXIS_REPO", None)
 if(EXISREPO is None):
     print("!" * 50)
@@ -44,8 +53,6 @@ if(EXISREPO is None):
     print("!" * 50)
 
 ON_POSIX = "posix" in sys.builtin_module_names
-
-SLEEP_TIME = 10
 
 WS_URL = os.environ.get("WS_URL", "ws://localhost:8000/ws")
 DOMAIN = os.environ.get("DOMAIN", "xs.demo.test")
@@ -94,7 +101,10 @@ class Coder:
     
     def getRunScript(self):
         # Find the run script, use run2 if it exists
-        return "{}-run.sh".format(self.task.getLangName())
+        if STUB_REPL:
+            return "{}-stub.sh".format(self.task.getLangName())
+        else:
+            return "{}-run.sh".format(self.task.getLangName())
     
     def getTestingCode(self):
         """
@@ -262,9 +272,6 @@ class BrowserCoder(Coder):
     def getBasePath(self):
         return "{}/arbiter/repler/".format(EXISREPO)
     
-    def getRunScript(self):
-        return "browser-run.sh"
-    
     def setupEnv(self, env):
         env["PYTHONPATH"] = self.tmpdir
         env["REPL_BROWSER_EXPECT"] = self.getExpect()
@@ -277,13 +284,15 @@ class BrowserCoder(Coder):
         Find jsRiffle and setup the browser html
         """
         self.tmpdir = tmpdir
+        shutil.copy("{}/arbiter/repler/browser-run.sh".format(EXISREPO), tmpdir)
+        shutil.copy("{}/arbiter/repler/browser-generate.sh".format(EXISREPO), tmpdir)
         try:
-            shutil.copy("{}/arbiter/repler/browser-run.sh".format(EXISREPO), tmpdir)
-            shutil.copy("{}/arbiter/repler/browser-generate.sh".format(EXISREPO), tmpdir)
             shutil.copy("{}/js/jsRiffle/release/jsRiffle.js".format(EXISREPO), tmpdir)
         except:
-            print Fore.RED + "Unable to find proper libraries for browser (did you compile js and browserify it?)" + Style.RESET_ALL
-            raise Exception("Missing JS libs")
+            # If we are stubbing then don't care about missing libs here
+            if not STUB_REPL:
+                print Fore.RED + "Unable to find proper libraries for browser (did you compile js and browserify it?)" + Style.RESET_ALL
+                raise Exception("Missing JS libs")
 
     def expect2assert(self):
         # TODO
@@ -322,7 +331,7 @@ coders = {
 def getCoder(task, action):
     """Returns an instance of the proper class or None"""
     lang = task.getLangName()
-    if lang == "browser" and NO_BROWSER_TESTS:
+    if lang == "browser" and BROWSER_TESTS == False:
         print "!! Warning cannot run browser tests without selenium, reverting to nodejs instead"
         c = coders.get("nodejs", None)
     else:
@@ -426,7 +435,10 @@ class ReplIt:
         # Need to bring out the big guns to stop the proc, this is because it launches separate children
         # so we first set the process group to a unique value (using preexec_fn below), then we kill that
         # unique process group with the command here:
-        os.killpg(os.getpgid(self.proc.pid), signal.SIGTERM)
+        try:
+            os.killpg(os.getpgid(self.proc.pid), signal.SIGTERM)
+        except:
+            print Fore.RED + "Unable to kill process {}".format(self.task.fullName()) + Style.RESET_ALL
 
         res = self.coder.checkExecution(self.stdout, self.stderr)
         if res is not None:
@@ -452,7 +464,7 @@ class ReplIt:
         """
         self.executing = True
 
-        #print "EXEC {} : {} @ {}".format(self.action, self.task.fullName(), self.testDir)
+        verbose("EXEC {} : {} @ {}".format(self.action, self.task.fullName(), self.testDir))
 
         self.proc = subprocess.Popen(["./{}".format(self.runScript)], shell=True, cwd=self.testDir, env=self.env,
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
@@ -481,11 +493,11 @@ def executeList(taskList, actionList):
         r.execute()
         a = r.buildComplete.wait(WAIT_TIME)
         if a is False:
-            print "!! {} never completed setup process (BUILDCOMPLETE never found)".format(ts)
+            print Fore.YELLOW + "!! {} never completed setup process (BUILDCOMPLETE never found)".format(ts) + Style.RESET_ALL
         
         a = r.setupComplete.wait(WAIT_TIME)
         if a is False:
-            print "!! {} never completed setup process (SETUPCOMPLETE never found)".format(ts)
+            print Fore.YELLOW + "!! {} never completed setup process (SETUPCOMPLETE never found)".format(ts) + Style.RESET_ALL
 
         procs.append(r)
 
@@ -495,7 +507,7 @@ def executeList(taskList, actionList):
         if p.runComplete:
             a = p.runComplete.wait(WAIT_TIME)
             if a is False:
-                print "!! {} never found setup complete, timeout hit".format(p.task)
+                print Fore.YELLOW + "!! {} never found setup complete, timeout hit".format(p.task) + Style.RESET_ALL
                 break
             else:
                 # Not super happy about this but we still have a race condition where we need to wait before just
@@ -569,14 +581,15 @@ def printResult(tasks):
             print Fore.RED + t.action + Style.RESET_ALL,
 
     for t in tasks: 
-        if not t.success:
+        if not t.success or verbose != f:
             print "\n\t" + Fore.YELLOW + t.action + ' expected: ' + Fore.WHITE \
                 + str(t.coder.getExpect()) + Fore.YELLOW + ", output: " + Fore.WHITE \
-                + str(t.stdout) + Fore.YELLOW + ", file: " + t.task.fileName.split('/')[-1]
+                + str(t.stdout) + Fore.YELLOW + ", file: " + t.task.fileName.split('/')[-1] \
+                + " lines ({}, {})".format(t.task.lineStart, t.task.lineEnd)
 
-            print Style.RESET_ALL + "" + Fore.WHITE + str(t.stderr)
+            print Fore.RED + "\n".join(t.stderr) + Style.RESET_ALL
             
-            print Style.RESET_ALL + "" + Fore.CYAN + t.execCode
+            print Fore.CYAN + t.execCode + Style.RESET_ALL
 
             # print "{} {} : FAILURE".format(self.action, self.task.fullName())
             # print "Expected : '{}'".format(self.coder.getExpect())

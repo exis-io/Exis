@@ -15,6 +15,7 @@ TODO:
     - Implement other languages
 """
 import sys, os, time, glob, argparse, re
+import platform
 from collections import defaultdict as ddict
 from multiprocessing import Process
 
@@ -31,6 +32,12 @@ from utils import functionizer as funcizer
 from utils import utils
 
 import exampler, repl
+
+if platform.system() == "Darwin":
+    repl.STUB_REPL = True
+    print "Warning: Darwin detected, switching REPL scripts to stub"
+else:
+    repl.STUB_REPL = False
 
 
 def findTasks(lang=None, task=None, verbose=False, shouldPrint=True):
@@ -225,8 +232,8 @@ def genDocs():
 def _getArgs():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('-node', help='Launch a node to test on', action='store_true')
+    parser.add_argument('-v', '--verbose', help='Verbose mode', action='store_true')
     return parser
-
 
 if __name__ == "__main__":
     parser = _getArgs()
@@ -236,6 +243,10 @@ if __name__ == "__main__":
     # Startup a node upon request
     if args.node:
         repl.launchNode()
+    if args.verbose:
+        def f(args):
+            print args
+        repl.verbose = f
     
     # Now make the call that decides which of our functions to run
     funcizer.performFunctionalize(args, __name__, modSearch="__main__")

@@ -19,4 +19,9 @@ EOF
 
 echo "___BUILDCOMPLETE___"
 
-nodejs main.js
+which nodejs
+if [ $? -ne 0 ]; then
+    node main.js
+else
+    nodejs main.js
+fi

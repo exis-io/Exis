@@ -14,6 +14,7 @@ import colorama
 from colorama import Fore, Back, Style
 
 from threading import Thread, Event
+from utils.utils import timestr
 
 colorama.init()
 
@@ -65,15 +66,19 @@ class Node:
         self.restartEvent = Event()
     
     def kill(self):
-        print Fore.GREEN + "-- {} Killing the node".format(time.time()) + Style.RESET_ALL
+        print Fore.GREEN + "-- {} Killing the node".format(timestr()) + Style.RESET_ALL
         self.running = False
         # Need to bring out the big guns to stop the proc, this is because it launches separate children
         # so we first set the process group to a unique value (using preexec_fn below), then we kill that
         # unique process group with the command here:
-        os.killpg(os.getpgid(self.proc.pid), signal.SIGTERM)
+        try:
+            os.killpg(os.getpgid(self.proc.pid), signal.SIGTERM)
+        except:
+            print Fore.YELLOW + "Unable to kill node" + Style.RESET_ALL
+            print "Stderr: " + "\n".join(self.stderr)
 
     def restart(self):
-        print Fore.GREEN + "-- {} Performing restart".format(time.time()) + Style.RESET_ALL
+        print Fore.GREEN + "-- {} Performing restart".format(timestr()) + Style.RESET_ALL
         
         self.restartEvent.set()
 
@@ -88,12 +93,21 @@ class Node:
         self.watchThd = Thread(target=self._watchRestart)
         self.watchThd.daemon = True
         self.watchThd.start()
+        # Build the main script, it performs better than doing "go run" (especially if you need to restart it)
+        if not os.path.exists("{}/main".format(self.cwd)):
+            proc = subprocess.Popen(["go", "build", "runner/main.go"], cwd=self.cwd,
+                                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            output, errors = proc.communicate()
+            
+            if proc.returncode:
+                print Fore.RED + "!! Unable to build node" + Style.RESET_ALL
+                raise Exception("Unable to build node: {}".format(errors))
     
     def start(self):
         self.running = True
 
-        print Fore.GREEN + "-- {} Starting the node".format(time.time()) + Style.RESET_ALL
-        self.proc = subprocess.Popen(["go", "run", "runner/main.go"], cwd=self.cwd, env=self.env,
+        print Fore.GREEN + "-- {} Starting the node".format(timestr()) + Style.RESET_ALL
+        self.proc = subprocess.Popen(["./main"], cwd=self.cwd, env=self.env,
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
                                      close_fds=ON_POSIX, preexec_fn=os.setsid)
 
