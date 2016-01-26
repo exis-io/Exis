@@ -224,6 +224,7 @@ def genDocs():
 
 def _getArgs():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('-node', help='Launch a node to test on', action='store_true')
     return parser
 
 
@@ -231,6 +232,10 @@ if __name__ == "__main__":
     parser = _getArgs()
     funcizer.init(parser)
     args = parser.parse_args()
+
+    # Startup a node upon request
+    if args.node:
+        repl.launchNode()
     
     # Now make the call that decides which of our functions to run
     funcizer.performFunctionalize(args, __name__, modSearch="__main__")

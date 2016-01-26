@@ -17,6 +17,7 @@ import colorama
 from colorama import Fore, Back, Style
 
 from threading import Thread, Event
+from runnode import Node
 
 try:
     import selenium
@@ -25,8 +26,14 @@ except:
     NO_BROWSER_TESTS = True
     print "!! Unable to find selenium, run pip install selenium to perform browser testing"
 
-colorama.init()
+node = None
+def launchNode():
+    global node
+    node = Node()
+    node.setup()
+    node.start()
 
+colorama.init()
 
 EXISREPO = os.environ.get("EXIS_REPO", None)
 if(EXISREPO is None):
@@ -41,7 +48,6 @@ SLEEP_TIME = 10
 WS_URL = os.environ.get("WS_URL", "ws://localhost:8000/ws")
 DOMAIN = os.environ.get("DOMAIN", "xs.demo.test")
 TEST_PREFIX = "arbiterTask"
-
 
 class Coder:
 
@@ -235,7 +241,7 @@ class NodeJSCoder(Coder):
             raise Exception("Unable to setup for JS: {}".format(errors))
     
     def setupRunComplete(self, code):
-        code.append('console.log("___RUNCOMPLETE___");')
+        code.append('setTimeout(function() { console.log("___RUNCOMPLETE___"); }, 3000);')
 
     def expect2assert(self):
         # TODO
@@ -309,7 +315,12 @@ coders = {
 
 def getCoder(task, action):
     """Returns an instance of the proper class or None"""
-    c = coders.get(task.getLangName(), None)
+    lang = task.getLangName()
+    if lang == "browser" and NO_BROWSER_TESTS:
+        print "!! Warning cannot run browser tests without selenium, reverting to nodejs instead"
+        c = coders.get("nodejs", None)
+    else:
+        c = coders.get(lang, None)
     return c(task, action) if c else None
 
 class ReplIt:
@@ -380,6 +391,7 @@ class ReplIt:
         while(self.executing):
             for line in iter(out.readline, b''):
                 l = line.rstrip()
+                print l
                 if l == "___BUILDCOMPLETE___":
                     self.buildComplete.set()
                 elif l == "___SETUPCOMPLETE___":
@@ -387,6 +399,8 @@ class ReplIt:
                 elif l == "___RUNCOMPLETE___" and self.runComplete:
                     stor.append(l)
                     self.runComplete.set()
+                elif l == "___NODERESTART___" and node:
+                    node.restart()
                 else:
                     stor.append(l)
         out.close()
@@ -428,7 +442,7 @@ class ReplIt:
         """
         self.executing = True
 
-        #print "EXEC {} : {} @ {}".format(self.action, self.task.fullName(), self.testDir)
+        print "EXEC {} : {} @ {}".format(self.action, self.task.fullName(), self.testDir)
 
         self.proc = subprocess.Popen(["./{}".format(self.runScript)], shell=True, cwd=self.testDir, env=self.env,
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
@@ -481,6 +495,10 @@ def executeList(taskList, actionList):
     ok = True
     for p in procs[::-1]:
         ok &= p.kill()
+
+    # Take down the node
+    if node:
+        node.kill()
     
     printResult(procs)
 
