@@ -40,7 +40,6 @@ SLEEP_TIME = 10
 
 WS_URL = os.environ.get("WS_URL", "ws://localhost:8000/ws")
 DOMAIN = os.environ.get("DOMAIN", "xs.demo.test")
-BASEPATH = "{}/repler".format(APPLS)
 TEST_PREFIX = "arbiterTask"
 
 
