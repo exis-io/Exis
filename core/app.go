@@ -1,19 +1,19 @@
 package core
 
 import (
-	"crypto"
-	"crypto/rand"
-	"crypto/rsa"
-	"crypto/sha512"
-	"crypto/x509"
-	"encoding/base64"
 	"encoding/json"
-	"encoding/pem"
 	"fmt"
 	"os"
 	"reflect"
 	"sync"
 	"time"
+)
+
+const (
+	Disconnected = iota
+	Connected
+	Ready
+	Leaving
 )
 
 type App interface {
@@ -28,6 +28,11 @@ type App interface {
 
 	CallbackListen() Callback
 	CallbackSend(uint64, ...interface{})
+
+	SendHello() error
+
+	// Temporary location, will move to security
+	SetToken(string)
 }
 
 type app struct {
@@ -36,8 +41,13 @@ type app struct {
 	serializer
 
 	in   chan message
+	out  chan message
 	up   chan Callback
 	open bool
+
+	state int
+	stateMutex sync.Mutex
+	stateChange *sync.Cond
 
 	listeners     map[uint64]chan message
 	listenersLock sync.Mutex
@@ -60,10 +70,17 @@ func NewApp() *app {
 		domains:    make([]*domain, 0),
 		serializer: new(jSONSerializer),
 		open:       false,
+		state:      Disconnected,
 		in:         make(chan message, 10),
+		out:        make(chan message, 10),
 		up:         make(chan Callback, 10),
 		listeners:  make(map[uint64]chan message),
+		token:      "",
 	}
+
+	a.stateChange = sync.NewCond(&a.stateMutex)
+
+	go a.serviceOutgoingQueue()
 
 	a.authid = os.Getenv("EXIS_AUTHID")
 	a.token = os.Getenv("EXIS_TOKEN")
@@ -88,22 +105,27 @@ func (c *app) Send(m message) error {
 	if b, err := c.serializer.serialize(m); err != nil {
 		return err
 	} else {
-		c.Connection.Send(b)
-		return nil
+		return c.Connection.Send(b)
 	}
+}
+
+// Most messages should use this instead of Send.  It puts the message in an
+// outgoing channel where they can wait until the underlying connection is able
+// to deliver them.
+//
+// Control messages that should not be queued can be sent directly via Send.
+func (c *app) Queue(m message) {
+	c.out <- m
 }
 
 func (c *app) Close(reason string) {
 	if !c.open {
 		// TODO: JS calls close one to many times. Please stop it.
-		Warn("JS specific bandaid triggered!")
+		// Warn("JS specific bandaid triggered!")
 		return
 	} else {
 		Info("Closing internally: ", reason)
 	}
-
-	// goodbye := &goodbye{Details: map[string]interface{}{}, Reason: ErrCloseSession}
-	// if msg, err := c.app.requestListenType(goodbye, "*core.subscribed"); err != nil {
 
 	if err := c.Send(&goodbye{Details: map[string]interface{}{}, Reason: ErrCloseSession}); err != nil {
 		Warn("Error sending goodbye: %v", err)
@@ -113,21 +135,44 @@ func (c *app) Close(reason string) {
 	close(c.in)
 	close(c.up)
 
-	Info("Closing channels in CLOSE, %v", c.open)
-
 	// Theres some missing logic here when it comes to closing the external connection,
 	// especially when either end could call and trigger a close
 	c.Connection.Close(reason)
+
+	c.setState(Leaving)
 }
 
 func (c *app) ConnectionClosed(reason string) {
 	Info("Connection was closed: ", reason)
-
 	c.open = false
-	close(c.in)
-	close(c.up)
 
-	Info("Closing channels in ConnectionCLOSED, %v", c.open)
+	c.setState(Disconnected)
+}
+
+// Send a Hello message to join the fabric.
+// Assumes a.agent has been set appropriately.
+func (a *app) SendHello() error {
+	helloDetails := make(map[string]interface{})
+	helloDetails["authid"] = a.getAuthID()
+    helloDetails["authmethods"] = a.getAuthMethods()
+
+    // Duct tape for js demo
+    // if Fabric == FabricProduction && c.app.token == "" {
+    //  Info("No token found on production. Attempting to auth from scratch")
+
+    //  if token, err := tokenLogin(c.app.agent); err != nil {
+    //      return err
+    //  } else {
+    //      c.app.token = token
+    //  }
+    // }
+
+	msg := hello{
+		Realm: a.agent,
+		Details: helloDetails,
+	}
+
+	return a.Send(&msg)
 }
 
 // Represents the result of an invokation in the crust
@@ -138,9 +183,7 @@ func (a *app) Yield(request uint64, args []interface{}) {
 		Arguments: args,
 	}
 
-	if err := a.Send(m); err != nil {
-		Warn("Could not send yield")
-	}
+	a.Queue(m)
 }
 
 // Represents an error that ocurred during an invocation in the crust
@@ -153,9 +196,7 @@ func (a *app) YieldError(request uint64, etype string, args []interface{}) {
 		Error:     etype,
 	}
 
-	if err := a.Send(m); err != nil {
-		Warn("Could not send yield error")
-	}
+	a.Queue(m)
 }
 
 func (c *app) receiveLoop() {
@@ -215,13 +256,18 @@ func (c *app) handle(msg message) {
 			Error:   ErrNoSuchRegistration,
 		}
 
-		if err := c.Send(m); err != nil {
-			Warn("error sending message:", err)
-		}
+		c.Queue(m)
+
+	case *welcome:
+		Debug("Received WELCOME, reestablishing state with the fabric")
+		c.open = true
+		c.setState(Ready)
+
+		go c.replayRegistrations()
+		go c.replaySubscriptions()
 
 	case *goodbye:
-		c.Close("Fabric said goodbye. Closing connection")
-		panic("Not implemented!")
+		c.Connection.Close("Fabric said goodbye. Closing connection")
 
 	default:
 		id, ok := requestID(msg)
@@ -245,9 +291,7 @@ func (c *app) handle(msg message) {
 
 // All incoming messages end up here one way or another
 func (c *app) ReceiveMessage(msg message) {
-	if c.open {
-		c.in <- msg
-	}
+	c.in <- msg
 }
 
 // Theres a method on the serializer that does this exact thing. Is this specific to JS?
@@ -268,9 +312,7 @@ func (c *app) ReceiveBytes(byt []byte) {
 // Send a message and blocks until the expected type of message is returned
 // String check on the type... pretty bad. Come back to this and figure out how to reflect the interface
 func (c *app) requestListenType(outgoing message, expecting string) (message, error) {
-	if err := c.Send(outgoing); err != nil {
-		return nil, err
-	}
+	c.Queue(outgoing)
 
 	wait := make(chan message, 1)
 	id, _ := requestID(outgoing)
@@ -299,6 +341,91 @@ func (c *app) requestListenType(outgoing message, expecting string) (message, er
 	}
 }
 
+func (c *app) replayRegistrations() error {
+	for _, dom := range c.domains {
+		for oldregid, boundep := range dom.registrations {
+			register := &register{
+				Request: boundep.callback,
+				Options: make(map[string]interface{}),
+				Name: boundep.endpoint,
+			}
+
+			if msg, err := c.requestListenType(register, "*core.registered"); err != nil {
+				return err
+			} else {
+				reg := msg.(*registered)
+
+				Info("Registered: %s %v", boundep.endpoint, boundep.expectedTypes)
+
+				dom.regLock.Lock()
+				delete(dom.registrations, oldregid)
+				dom.registrations[reg.Registration] = boundep
+				dom.regLock.Unlock()
+			}
+		}
+	}
+
+	return nil
+}
+
+func (c *app) replaySubscriptions() error {
+	for _, dom := range c.domains {
+		for oldsubid, boundep := range dom.subscriptions {
+			subscribe := &subscribe{
+				Request: boundep.callback,
+				Options: make(map[string]interface{}),
+				Name: boundep.endpoint,
+			}
+
+			if msg, err := c.requestListenType(subscribe, "*core.subscribed"); err != nil {
+				return err
+			} else {
+				sub := msg.(*subscribed)
+
+				Info("Subscribed: %s %v", boundep.endpoint, boundep.expectedTypes)
+
+				dom.subLock.Lock()
+				delete(dom.subscriptions, oldsubid)
+				dom.subscriptions[sub.Subscription] = boundep
+				dom.subLock.Unlock()
+			}
+		}
+	}
+
+	return nil
+}
+
+// Send messages that were queued with the Queue method.
+//
+// This method is aware of the state of the underlying websocket connection, so
+// it holds messages until sending is possible.
+func (app *app) serviceOutgoingQueue() {
+	for {
+		msg, open := <-app.out
+		if !open {
+			Debug("Send loop closed")
+			break
+		} else {
+			// Fast path: send the message and move on.
+			err := app.Send(msg)
+			for err != nil {
+				Debug("Error sending message: %e", err)
+
+				// Slow path: send failed, which probably means we are not
+				// connected.  Sit and wait for the state of the underlying
+				// connection to change.
+				app.stateChange.L.Lock()
+				for app.state != Ready {
+					app.stateChange.Wait()
+				}
+				app.stateChange.L.Unlock()
+
+				err = app.Send(msg)
+			}
+		}
+	}
+}
+
 // Blocks on a message from the connection. Don't use this while the run loop is active,
 // since it will compete for messages with the run loop. Bad things will happen.
 // This is largely an orphan, and should be replaced.
@@ -315,84 +442,9 @@ func (c *app) getMessageTimeout() (message, error) {
 	}
 }
 
-func DecodePrivateKey(data []byte) (*rsa.PrivateKey, error) {
-	// Decode the PEM public key
-	block, _ := pem.Decode(data)
-	if block == nil {
-		return nil, fmt.Errorf("Error decoding PEM file")
-	}
-
-	// Parse the private key.
-	priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
-	if err != nil {
-		return nil, err
-	}
-
-	return priv, nil
-}
-
-func SignString(msg string, key *rsa.PrivateKey) (string, error) {
-	hashed := sha512.Sum512([]byte(msg))
-
-	sig, err := rsa.SignPKCS1v15(rand.Reader, key, crypto.SHA512, hashed[:])
-	if err != nil {
-		return "", err
-	}
-
-	result := base64.StdEncoding.EncodeToString(sig)
-	return result, nil
-}
-
-func (c *app) handleChallenge(msg *challenge) error {
-	response := &authenticate{
-		Signature: "",
-		Extra:     make(map[string]interface{}),
-	}
-
-	switch msg.AuthMethod {
-	case "token":
-		response.Signature = c.token
-
-	case "signature":
-		nonce, _ := msg.Extra["challenge"].(string)
-
-		key, err := DecodePrivateKey([]byte(c.key))
-		if err != nil {
-			return err
-		}
-
-		response.Signature, err = SignString(nonce, key)
-		if err != nil {
-			return err
-		}
-
-		// TODO: warn on unrecognized auth method
-	}
-
-	c.Send(response)
-	return nil
-}
-
-func (c *app) getAuthID() string {
-	if c.authid == "" {
-		return c.agent
-	} else {
-		return c.authid
-	}
-}
-
-// Return a list of authentication methods that we support,
-// which depends on what credentials were passed.
-func (c *app) getAuthMethods() []string {
-	authmethods := make([]string, 0)
-
-	if c.key != "" {
-		authmethods = append(authmethods, "signature")
-	}
-
-	if c.token != "" {
-		authmethods = append(authmethods, "token")
-	}
-
-	return authmethods
+func (c *app) setState(state int) {
+	c.stateMutex.Lock()
+	c.state = state
+	c.stateChange.Broadcast()
+	c.stateMutex.Unlock()
 }

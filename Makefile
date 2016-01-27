@@ -1,7 +1,7 @@
 
 all: swift osx ios python js
 
-.PHONY: python js clean osx ios java
+.PHONY: python js clean osx ios java android
 
 LOG="./build.log"
 
@@ -44,9 +44,24 @@ ios:
 	# cp assets/riffmantle.a swift/twopointone/Pod/Classes/riffmantle.a
 	# cp assets/riffmantle.h swift/twopointone/Pod/Classes/riffmantle.h
 
+# It seems very, very possible to get non-arm jni auto-bindings out of gomobile.
+# golang.org/x/mobile/cmd/gomobile/bind_androidapp.go builds the library with the following env params: 
+#
+# 	[GOOS=android GOARCH=arm GOARM=7 CC=/home/damouse/code/go/pkg/gomobile/android-ndk-r10e/arm/bin/arm-linux-androideabi-gcc CXX=/home/damouse/code/go/pkg/gomobile/android-ndk-r10e/arm/bin/arm-linux-androideabi-g++ CGO_ENABLED=1]
+#
+# We can a) switch out native ubuntu params and b) put the library in an x86 location pretty easily. 
+# Also, check this out: 
+# 	gobind -lang=java github.com/exis-io/core/androidMantle
+# Language bindings between java and go
+android:
+	@echo "Building core..."
+	@gomobile bind --work -target=android github.com/exis-io/core/androidMantle
+	@echo "Moving mantle"
+	@mv mantle.aar java/droidRiffle/mantle/mantle.aar
+
 java: 
 	@echo "Building core..."
-	@go build -buildmode=c-shared -o java/javaRiffle/libmantle.so core/javaMantle/main.go
+	@go build -buildmode=c-shared -o libgojni.so core/androidMantle/main.go
 
 python: 
 	gopy bind github.com/exis-io/core/pyMantle

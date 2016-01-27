@@ -67,6 +67,10 @@ Version from swift:
 func softCumin(types []interface{}, args []interface{}) error {
 	//fmt.Printf("SOFTCUMIN: %v against %v\n", types, args)
 
+	if CuminLevel == CuminOff {
+		return nil 
+	}
+
 	// Special case-- allow any arguments
 	if len(types) == 1 && types[0] == nil {
 		return nil

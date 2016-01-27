@@ -4,15 +4,21 @@ helpstr = '''Riffle maintenance and management.
 
 Usage:
   stump init
-  stump list
   stump push (all | REPOS...)
   stump pull (all | REPOS...)
   stump add-subtree DIRECTORY NAME URL
-  stump test (all | LANGUAGES...)           
+  stump test (list | all | <languageOrTestNumber>)
   stump deploy (all | REPOS...)         
 
 Options:
   -h --help     Show this screen.
+
+
+Testing Examples: 
+    ./stump test list       List all tests
+    ./stump test all        Run all tests
+    ./stump test python     Run all tests in language 
+    ./stump test 15         Run the given test number
 '''
 
 import os
@@ -20,6 +26,7 @@ import sys
 import docopt
 from subprocess import call
 import shutil
+import arbiter
 
 # Format: (prefix: remote, url)
 SUBTREES = [
@@ -69,10 +76,6 @@ if __name__ == '__main__':
 
             os.symlink(os.path.abspath("core"), corePath)
 
-    elif args['list']:
-        for p, r, u in SUBTREES:
-            print "Remote: ", r
-
     elif args['push']:
         if args['all']:
             repos = SUBTREES
@@ -101,15 +104,55 @@ if __name__ == '__main__':
 
     elif args['test']:
         os.environ["EXIS_REPO"] = os.getcwd()
+
+        def orderedTasks(lang):
+            '''
+            Returns an orderd list of tasks from the arbiter 
+            
+            TODO:
+                move the relative sorting down into the arbiter-- no need to repeat these steps all the time here
+                Also jesus find another home for this method
+            '''
+            lang = None if lang == 'all' else lang
+            tasks = [x for x in arbiter.arbiter.findTasks(shouldPrint=False, lang=lang)]
+            tasks.sort(key=lambda x: x.index)
+
+            return tasks
+
         # TODO: unit tests
         # TODO: integrate a little more tightly with unit and end to end tests
-         
-        langs = allLanguages if args['all'] else sys.argv[2:]
 
-        call("python arbiter/arbiter.py -f testAll %s" % " ".join(["-a {}".format(x) for x in langs]), shell=True)
+        # List the tests indexed in the order they were found 
+        if args['list']:
+            print " #\tTest Name"
+            for task in orderedTasks(None):
+                print " " + str(task.index) + "\t" + task.getName()
+
+                #TODO: seperate by language
+                #TODO: seperate by file, and use the files for some reasonable ordering
+
+        elif args['all']: 
+            arbiter.arbiter.testAll('all')
+
+        elif args['<languageOrTestNumber>']:
+            target = args['<languageOrTestNumber>']
+
+            if target.isdigit():
+                tasks = orderedTasks('all')
+                target = next((x for x in tasks if x.index == int(target)), None)
+
+                if target is None: 
+                    print "Unable to find test #" + str(target)
+                    sys.exit(0)
+
+                arbiter.repl.executeTaskSet(target)
+            else: 
+                arbiter.arbiter.testAll(args['<languageOrTestNumber>'])
 
     elif args['deploy']:
         print "Not implemented"
+
+
 
 
 '''

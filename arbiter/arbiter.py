@@ -9,13 +9,13 @@ Please run '$0 -ls all' for more info.
 
 Environment Variables:
     EXIS_REPO - the path to the Exis repo
-    EXIS_APPLIANCES - the path to the Exis coreappliances repo (for REPL)
 
 TODO:
     - Implement Object checking for Python
     - Implement other languages
 """
 import sys, os, time, glob, argparse, re
+import platform
 from collections import defaultdict as ddict
 from multiprocessing import Process
 
@@ -28,16 +28,19 @@ if EXISREPO is None:
 else:
     sys.path.append(EXISREPO)
 
-
-
-
 from utils import functionizer as funcizer
 from utils import utils
 
 import exampler, repl
 
+if platform.system() == "Darwin":
+    repl.STUB_REPL = True
+    print "Warning: Darwin detected, switching REPL scripts to stub"
+else:
+    repl.STUB_REPL = False
 
-def findTasks(lang=None, task=None, verbose=False):
+
+def findTasks(lang=None, task=None, verbose=False, shouldPrint=True):
     """
     Searches for all example files in the Exis repo.
     Args:
@@ -46,11 +49,16 @@ def findTasks(lang=None, task=None, verbose=False):
         verbose : T/F on verbose printing
     """
     examples = exampler.Examples.find(EXISREPO, lang)
-    for t in examples.getTasks(lang, task):
-        if(verbose):
-            print(t.details())
-        else:
-            print(t)
+    allTasks = examples.getTasks(lang, task)
+
+    if shouldPrint:
+        for t in allTasks:
+            if(verbose):
+                print(t.details())
+            else:
+                print(t)
+
+    return allTasks
     
 def findTask(lang, task):
     """
@@ -122,7 +130,7 @@ def test(*tasks, **kwargs):
             actionList.append(action)
     
     # Exec all of them
-    repl.executeAll(taskList, actionList)
+    repl.executeList(taskList, actionList)
 
 def testAll(lang, stopOnFail=False):
     """
@@ -133,7 +141,7 @@ def testAll(lang, stopOnFail=False):
     """
 
     if lang == "all":
-        langs = ["python", "js", "swift"]
+        langs = exampler.LANGS.keys()
     else:
         langs = [lang]
 
@@ -162,15 +170,11 @@ def testAll(lang, stopOnFail=False):
         examples = exampler.Examples.find(EXISREPO, lang)
         for t in examples.getTasks(lang):
             res = repl.executeTaskSet(t)
-            if res is True:
-                print('-'*80)
-            elif res is False:
+            if res is False:
                 if stopOnFail:
                     exit()
-                else:
-                    print('-'*80)
 
-def genTemplate(langs=["python", "swift", "js"], actions=["Pub/Sub", "Reg/Call"]):
+def genTemplate(langs=exampler.LANGS.keys(), actions=["Pub/Sub", "Reg/Call"]):
     """
     Use the generator.js code to generate basic templates and print to stdout.
     Args:
@@ -212,7 +216,7 @@ def genDocs():
         for tt in t.tasks:
             d = dict(file=tt.fileName, lineStart=tt.lineStart, lineEnd=tt.lineEnd, code=tt.code, 
                     expectType=tt.expectType, expectVal=tt.expectVal)
-            docs[t.getName()][t.getFullLang()][tt.action] = d
+            docs[t.getName()][t.getLangName()][tt.action] = d
 
     # Strip out anything that isn't populated
     for k, v in docs.iteritems():
@@ -227,13 +231,22 @@ def genDocs():
 
 def _getArgs():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('-node', help='Launch a node to test on', action='store_true')
+    parser.add_argument('-v', '--verbose', help='Verbose mode', action='store_true')
     return parser
-
 
 if __name__ == "__main__":
     parser = _getArgs()
     funcizer.init(parser)
     args = parser.parse_args()
+
+    # Startup a node upon request
+    if args.node:
+        repl.launchNode()
+    if args.verbose:
+        def f(args):
+            print args
+        repl.verbose = f
     
     # Now make the call that decides which of our functions to run
     funcizer.performFunctionalize(args, __name__, modSearch="__main__")
