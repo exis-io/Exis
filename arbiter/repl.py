@@ -344,12 +344,12 @@ class ReplIt:
     This class holds onto all the components required to take a task and execute it.
     """
 
-    def __init__(self, taskSet, action):
+    def __init__(self, task, action):
         self.action = action
-        self.task = taskSet.getTask(action)
+        self.task = task
         if self.task is None:
             raise Exception("No Task found")
-        self.lang = taskSet.getLangName()
+        self.lang = task.getLangName()
         self.proc = None
         self.stdout = list()
         self.stderr = list()
@@ -485,7 +485,6 @@ def executeList(taskList, actionList):
     Given a list of tasks and an action it will zip them together and then execute them properly.
     """
     procs = list()
-    print taskList[0].getName() + "\t",
     
     for ts, a in zip(taskList, actionList):
         r = ReplIt(ts, a)
