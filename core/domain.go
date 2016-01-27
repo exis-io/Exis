@@ -68,7 +68,11 @@ func NewDomain(name string, a *app) Domain {
 }
 
 func (d domain) Subdomain(name string) Domain {
-	return NewDomain(d.name+"."+name, d.app)
+	if name == "" {
+		return NewDomain(d.name, d.app)
+	} else {
+		return NewDomain(d.name+"."+name, d.app)
+	}
 }
 
 func (d domain) LinkDomain(name string) Domain {
