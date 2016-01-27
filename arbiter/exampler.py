@@ -9,9 +9,9 @@ import glob, re, os
 from collections import defaultdict as ddict
 
 # They provide "python" but we need to know the extension is "py"
-LANGS = {"python": "py", "swift": "swift", "js": "js", "go": "go"}
+LANGS = {"python": "py", "swift": "swift", "nodejs": "js", "browser": "js", "go": "go"}
 # We found a file with extension "py" and need to know its "python"
-LANGS_EXT = {"py": "python", "swift": "swift", "js": "js", "go": "go"}
+LANGS_EXT = {"py": "python", "swift": "swift", "js": "js", "go": "go", "browser": "js"}
 
 # Match to the start of an example, pull out the name of the example, and the docs for it
 EX_START_RE = re.compile("^.*Example (.*)? - (.*)$")
@@ -59,7 +59,7 @@ class Examples:
     representing a discrete test to REPL around.
     """
     def __init__(self):
-        self.tasks = {k: ddict() for k in LANGS.values()}
+        self.tasks = {k: ddict() for k in LANGS.keys()}
         self.mylang = None
         self.index = 1
 
@@ -90,8 +90,7 @@ class Examples:
         Return specific task for a specific language or None
         """
         l = lang or self.mylang
-        t = self.tasks.get(LANGS[l])
-        return self.tasks.get(LANGS[l]).get(task, None)
+        return self.tasks.get(l).get(task, None)
 
     def getTasks(self, lang=None, task=None):
         """
@@ -110,12 +109,25 @@ class Examples:
         """
         Adds this task to the proper places.
         """
-        if t.fullName() not in self.tasks[t.lang]:
-            self.tasks[t.lang][t.fullName()] = TaskSet()
-            self.tasks[t.lang][t.fullName()].index = self.index
-            self.index += 1
+        # Deal with js special (need browser and nodejs copies of the task)
+        if t.langExt == "js":
+            lang = ["nodejs", "browser"]
+            for l in lang:
+                if t.fullName() not in self.tasks[l]:
+                    self.tasks[l][t.fullName()] = TaskSet()
+                    self.tasks[l][t.fullName()].index = self.index
+                    self.index += 1
+                tcopy = Task.copy(t)
+                tcopy.langName = l
+                self.tasks[l][t.fullName()].add(tcopy)
+        else:
+            l = t.getLangName()
+            if t.fullName() not in self.tasks[l]:
+                self.tasks[l][t.fullName()] = TaskSet()
+                self.tasks[l][t.fullName()].index = self.index
+                self.index += 1
 
-        self.tasks[t.lang][t.fullName()].add(t)
+            self.tasks[l][t.fullName()].add(t)
 
 
     def _parse(self, fileName):
@@ -209,7 +221,7 @@ class TaskSet:
 
     def details(self):
         name = self.getName()
-        lang = LANGS_EXT[self.getLang()]
+        lang = LANGS_EXT[self.getLangExt()]
         if(self.isValid()):
             s = "TaskSet {} - {}\n".format(lang, name)
             for t in self.tasks:
@@ -241,14 +253,17 @@ class TaskSet:
                 lst.append(t)
         return lst
     
-    def getLang(self):
+    def getLangExt(self):
         for t in self.tasks:
             if t.valid:
-                return t.lang
+                return t.langExt
         return ""
 
-    def getFullLang(self):
-        return LANGS_EXT.get(self.getLang(), None)
+    def getLangName(self):
+        for t in self.tasks:
+            if t.valid:
+                return t.getLangName()
+        return ""
 
     def getName(self):
         for t in self.tasks:
@@ -261,18 +276,19 @@ class TaskSet:
 
     def __str__(self):
         name = self.getName()
-        lang = LANGS_EXT[self.getLang()]
+        lang = self.getLangName()
         if(self.isValid()):
-            return "TaskSet {} - {}".format(lang, name)
+            return "{} - {}".format(lang, name)
         else:
-            return "TaskSet {} - {} (INCOMPLETE)".format(lang, name)
+            return "{} - {} (INCOMPLETE)".format(lang, name)
 
 class Task:
     """
     Represents an individual Task that can be executed or documented
     """
     def __init__(self, fileName):
-        self.lang = fileName.split(".")[-1]
+        self.langExt = fileName.split(".")[-1]
+        self.langName = None
         self.fileName = fileName
         self.code = list()
         self.name = None
@@ -283,6 +299,15 @@ class Task:
         self.expectLine = -1
         self.lineStart, self.lineEnd = None, None
         self.action = None
+
+    @classmethod
+    def copy(cls, task):
+        """
+        Return a full copy of this Task.
+        """
+        c = cls(task.fileName)
+        c.__dict__.update(task.__dict__)
+        return c
 
     def expect(self, eType, eVal):
         """
@@ -300,8 +325,12 @@ class Task:
             raise Exception("Not a valid Task")
         return "{}{}".format(self.name, " " + self.opts if self.opts else "")
 
-    def getLang(self):
-        return LANGS_EXT.get(self.lang, "Unknown")
+    def getLangName(self):
+        """For js/nodejs/browser support need to allow langName to be set in certain cases"""
+        if self.langName is None:
+            return LANGS_EXT.get(self.langExt, "Unknown")
+        else:
+            return self.langName
     
     def start(self, name, opts, doc):
         """

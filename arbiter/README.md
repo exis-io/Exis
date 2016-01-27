@@ -7,8 +7,7 @@ Arbiter scans all code files (based on extensions `*.py`, `*.swift`, etc..) and 
 **Notes:**
 
 1. Multi-line comments or comment blocks `denoted by /* and */` are not supported yet.
-2. You must have our (private) coreappliances repo setup, and point to it with `EXIS_APPLIANCES` env var.
-
+2. Race conditions are very possible here, I tried the best I could to mitigate them but if something is acting funny (say lang to lang testing) then try the same test within the same language. For example I ran a test registering in nodejs and calling in python - the setup process for nodejs is much slower than python so the call happened too quickly, adding a very short delay seemed to fix this issue for the time being.
 
 ## In-code specification
 
@@ -58,6 +57,7 @@ In this example, we could view the documentation with the following tag in our d
 <exis-code name="Want Definitions" action="defs"></exis-code>
 ```
 
+**Advanced code snippets** The `set actions` option helps arbiter when your snippets contain multiple actions together, otherwise arbiter won't know what to focus on.
 
 ## Command line usage
 
@@ -65,6 +65,7 @@ In this example, we could view the documentation with the following tag in our d
 
 * `python arbiter.py -f findTasks` : shows you all tasks
 * `python arbiter.py -f findTasks -a python` : shows you all python tasks
+* `python arbiter.py -f findTask -a python -a "Task Name"` : shows you the task, along with the actual code printed
 
 ### Documentation
 
@@ -74,8 +75,65 @@ Calling `python arbiter.py -f genDocs > exisdocs.json` will create a JSON object
 
 **Usage:**
 ```
--f test -a <TASK> -a <TASK2> ...
-Where TASK is: "language action:Test Name"
+-f test -a <TASK> -a <TASK2> ...        : Execute TASKS in order, fully specified (see below)
+-f test -kw lang=<LANG> -a "Test Name"  : Specify the lang, then all you need to do is name the test (don't need to specify the action, etc..)
+```
+* TASK : "language action:Test Name"
+
+#### Browser testing
+
+If you have python selenium installed, you can run browser testing via FireFox.
+**NOTE** that because we have to launch (at least) one browser, this test takes much longer than regular testing.
+
+* `python arbiter.py -f test -a "python subscribe:Pub/Sub Basic" -a "browser publish:Pub/Sub Basic"`
+
+#### Examples
+
+Both of these examples run the same test:
+* `python arbiter.py -f test -a "python subscribe:Pub/Sub Basic" -a "python publish:Pub/Sub Basic"`
+* `python arbiter.py -f test -kw lang=python -a "Pub/Sub Basic"`
+
+## Node
+
+The arbiter can start a `node` to provide special types of local testing.
+
+Usage: `python arbiter.py -node ...`
+
+When this happens, you can actually restart the node from within the task. This helps us test specific cases to validate our reconnecting logic.
+
+To do this, simply print `___NODERESTART___` from within the test code:
+
+```
+// register a function somewhere:
+console.log("___NODERESTART___"); // Restart before a register??
+this.Register("someEndpoint", function(a) {
+    console.log("___NODERESTART___"); // Restart while responding with a register?
+    return a;
+});
+
+//... somewhere else in the code
+
+console.log("___NODERESTART___"); // Restart before making a call?
+backend.Call("someEndpoint", "arg1").then(function(s) {
+    console.log(s);
+}, function(err) {
+    console.log(err);
+});
+
+console.log("___NODERESTART___"); // Restart just before a join?
+backend.Join()
+
 ```
 
-Calling `python arbiter.py -f test -a "python subscribe:Pub/Sub Basic" -a "python publish:Pub/Sub Basic"` will execute the `Pub/Sub Basic` test
+### Timing options
+
+For testing we should be able to make the node restart more async and less deterministic, to deal with this I have added 2 options, like this `___NODERESTART___,opt:#,opt:#`
+
+* `in:#` - specify to restart a node in X sec after this restart command is seen
+* `wait:#` - after killing the node, wait X sec before restarting it
+
+```
+console.log("___NODERESTART___,in:0.5,wait:0.5");
+```
+
+

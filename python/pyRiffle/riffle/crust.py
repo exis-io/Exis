@@ -3,8 +3,6 @@ Top level interface into Riffle library. The crust sits atop the mantle, which s
 The mantle is imported here as pymantle. It doesn't add functionality on top of the core, just
 translates between coreRiffle and python as needed. 
 
-Fixing the osx python version: 
-    https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Common-Issues.md#python-segmentation-fault-11-on-import-some_python_module
 '''
 
 import os

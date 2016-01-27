@@ -95,23 +95,8 @@ func (c domain) Join(conn Connection) error {
 	// Set the agent string, or who WE are. When this domain leaves, termintate the connection
 	c.app.agent = c.name
 
-	helloDetails := make(map[string]interface{})
-	helloDetails["authid"] = c.app.getAuthID()
-	helloDetails["authmethods"] = c.app.getAuthMethods()
-
-	// Duct tape for js demo
-	// if Fabric == FabricProduction && c.app.token == "" {
-	// 	Info("No token found on production. Attempting to auth from scratch")
-
-	// 	if token, err := tokenLogin(c.app.agent); err != nil {
-	// 		return err
-	// 	} else {
-	// 		c.app.token = token
-	// 	}
-	// }
-
-	// Should we hard close on conn.Close()? The App may be interested in knowing about the close
-	if err := c.app.Send(&hello{Realm: c.name, Details: helloDetails}); err != nil {
+	err := c.app.SendHello()
+	if err != nil {
 		c.app.Close("ERR: could not send a hello message")
 		return err
 	}
@@ -135,6 +120,8 @@ func (c domain) Join(conn Connection) error {
 			return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME.String()))
 		}
 	}
+
+	c.app.setState(Ready)
 
 	// This is super dumb, and the reason its in here was fixed. Please revert
 	go c.app.receiveLoop()
@@ -214,12 +201,13 @@ func (c domain) Register(endpoint string, requestId uint64, types []interface{})
 
 func (c domain) Publish(endpoint string, args []interface{}) error {
 	Info("Publish %s %v", endpoint, args)
-	return c.app.Send(&publish{
+	c.app.Queue(&publish{
 		Request:   NewID(),
 		Options:   make(map[string]interface{}),
 		Name:      makeEndpoint(c.name, endpoint),
 		Arguments: args,
 	})
+	return nil
 }
 
 func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error) {
@@ -296,10 +284,7 @@ func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 			Error:     ErrInvalidArgument,
 		}
 
-		if err := c.app.Send(tosend); err != nil {
-			//TODO: Warn the application
-			Warn("error sending message:", err)
-		}
+		c.app.Queue(tosend)
 	}
 }
 
