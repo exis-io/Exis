@@ -7,7 +7,7 @@ import (
 )
 
 type Connection interface {
-	Send([]byte)
+	Send([]byte) error
 	Close(string) error
 	SetApp(App)
 }

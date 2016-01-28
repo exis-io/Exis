@@ -5,7 +5,7 @@ import riffle
 from riffle import want
 
 # Declare a User class
-class User(riffle.Model):
+class User(riffle.ModelObject):
     name = "default"
 # define a function that is only called
 # if a User is passed:
@@ -20,7 +20,7 @@ u = example.call("get_user").wait(User)
 # below, we removed them for clarity
 
 # A basic model of a Student
-class Student(riffle.Model):
+class Student(riffle.ModelObject):
     first = "firstName"
     last = "lastName"
     grade = 0
@@ -29,11 +29,11 @@ class Student(riffle.Model):
 s = example.call("get_student").wait(Student)
 
 # A model that contains a collection of models
-class Student(riffle.Model):
+class Student(riffle.ModelObject):
     first = "firstName"
     last = "lastName"
     grade = 0
-class Classroom(riffle.Model):
+class Classroom(riffle.ModelObject):
     students = list(Student)
     roomNumber = 0
 @want(Classroom) # Decorate expecting a Classroom class
@@ -42,7 +42,7 @@ c = example.call("get_classroom").wait(Classroom)
 
 # You could also define the object directly, but it
 # wouldn't contain any functions defined in the class
-class User(riffle.Model):
+class User(riffle.ModelObject):
     first = "firstName"
     def setFirst(self, name):
         self.first = name

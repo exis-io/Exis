@@ -19,6 +19,11 @@ sudo pip install -e .
 
 ## Known issues
 
+```
+Mac OSX issues
+https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Common-Issues.md#python-segmentation-fault-11-on-import-some_python_module
+```
+
 You may have a problem using this with Mac OS X. This happens most often because of an issue
 between Apple's Python release and what most people use which would be like homebrew...
 

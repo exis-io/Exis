@@ -2,7 +2,7 @@ from setuptools import setup, Extension
 
 setup(
     name="pyRiffle",
-    version="0.2.0",
+    version="0.2.1",
     description="Riffle client libraries for interacting over a fabric",
     author="Exis",
     url="http://www.exis.io",
