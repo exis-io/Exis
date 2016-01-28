@@ -72,8 +72,12 @@ func (c Conn) OnClose(msg *js.Object) {
 	c.app.Close(msg.String())
 }
 
-func (c Conn) Send(data []byte) {
+func (c Conn) Send(data []byte) error {
 	c.wrapper.Get("conn").Call("send", string(data))
+
+	// Added a nil error return 
+	// TOOD: the js connection can return its error for tranmission to the core as appropriate
+	return nil 
 }
 
 func (c Conn) Close(reason string) error {

@@ -108,7 +108,7 @@ func (a *app) SetToken(token string) {
 }
 
 // Gets the current token
-func (a *app) GetToken() (string){
+func (a *app) GetToken() (string) {
 	return a.token
 }
 
@@ -116,20 +116,21 @@ func (a *app) GetToken() (string){
 func (a *app) Login(d Domain, args ...string) (Domain, error){
     username := ""
     password := ""
+
     if len(args) == 2 {
-	username = args[0]
-	password = args[1]
+		username = args[0]
+		password = args[1]
     } else if len(args) == 1 {
-	username = args[0]
+		username = args[0]
     } else if len(args) != 0 {
-	return nil, fmt.Errorf("Login must be called with 0,1 or 2 args. ([username [, password]]).")
+		return nil, fmt.Errorf("Login must be called with 0,1 or 2 args. ([username [, password]]).")
     }
 
     if token, domain, err := tokenLogin(d.GetName(), username, password ); err != nil{
-	return nil, err
-    }else {
-	a.SetToken(token)
-	return d.LinkDomain(domain), nil
+		return nil, err
+    } else {
+		a.SetToken(token)
+		return d.LinkDomain(domain), nil
     }
     return nil, nil
 }
@@ -154,7 +155,7 @@ func (a *app) RegisterAccount(d Domain, username string, password string, email 
 		defer resp.Body.Close()
 		if resp.StatusCode != 200 {
 		    return false, fmt.Errorf(resp.Status)
-		}else{
+		} else {
 		    return true, nil
 		}
 	}

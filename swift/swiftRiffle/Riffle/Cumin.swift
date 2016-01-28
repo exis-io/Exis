@@ -116,26 +116,32 @@ public extension Domain {
 public extension HandlerDeferred {
 
 	public func then<A: PR>(fn: (A) -> ()) -> Deferred {
+		print("COME ONE CUMIN")
 		return _then([A.representation()]) { a in return fn(A.self <- a[0]) }
 	}
 
 	public func then<A: PR, B: PR>(fn: (A, B) -> ()) -> Deferred {
+		print("COME ONE CUMIN")
 		return _then([A.representation(), B.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1]) }
 	}
 
 	public func then<A: PR, B: PR, C: PR>(fn: (A, B, C) -> ()) -> Deferred {
+		print("COME ONE CUMIN")
 		return _then([A.representation(), B.representation(), C.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
 	}
 
 	public func then<A: PR, B: PR, C: PR, D: PR>(fn: (A, B, C, D) -> ()) -> Deferred {
+		print("COME ONE CUMIN")
 		return _then([A.representation(), B.representation(), C.representation(), D.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3]) }
 	}
 
 	public func then<A: PR, B: PR, C: PR, D: PR, E: PR>(fn: (A, B, C, D, E) -> ()) -> Deferred {
+		print("COME ONE CUMIN")
 		return _then([A.representation(), B.representation(), C.representation(), D.representation(), E.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4]) }
 	}
 
 	public func then<A: PR, B: PR, C: PR, D: PR, E: PR, F: PR>(fn: (A, B, C, D, E, F) -> ()) -> Deferred {
+		print("COME ONE CUMIN")
 		return _then([A.representation(), B.representation(), C.representation(), D.representation(), E.representation(), F.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5]) }
 	}
 
