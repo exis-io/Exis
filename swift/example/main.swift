@@ -2,7 +2,7 @@
 import Foundation
 import Riffle
 
-Riffle.LogLevelInfo()
+Riffle.LogLevelDebug()
 Riffle.FabricLocal()
 
 let app = Riffle.Domain(name: "xs.test")

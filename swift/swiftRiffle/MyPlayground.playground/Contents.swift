@@ -249,29 +249,50 @@ init that produces a valid model.
 ... otoh, if a no-args constructor is requried, why not just instantiate the class and read it with the mirr
 */
 
-class Dog: NSObject {
-    var name = "Fido"
+//class Dog: NSObject {
+//    var name = "Fido"
+//}
+//
+//let d = Dog()
+//
+//d.setValue("Bill", forKey: "name")
+//
+//print(d.name)
+//
+//
+//let subject = "[\"hello\"]"
+//let data = subject.dataUsingEncoding(NSUTF8StringEncoding)
+//let result = try NSJSONSerialization.JSONObjectWithData(data!, options: []) as? [String]
+//print(result!)
+//
+//
+//let recombined = try! NSJSONSerialization.dataWithJSONObject(result!, options: .PrettyPrinted)
+//let finalString = NSString(data: recombined, encoding: NSUTF8StringEncoding)
+//print(finalString!)
+//
+//
+
+
+func alpha() {
+    print("Func")
+    return
 }
 
-let d = Dog()
+let z = alpha()
 
-d.setValue("Bill", forKey: "name")
+if let y = z as? Void {
+    print("is Void")
+}
 
-print(d.name)
+func beta() -> Int {
+    return 2
+}
 
+if let y = beta() as? Void {
+    print("Is Void")
+}
 
-let subject = "[\"hello\"]"
-let data = subject.dataUsingEncoding(NSUTF8StringEncoding)
-let result = try NSJSONSerialization.JSONObjectWithData(data!, options: []) as? [String]
-print(result!)
-
-
-let recombined = try! NSJSONSerialization.dataWithJSONObject(result!, options: .PrettyPrinted)
-let finalString = NSString(data: recombined, encoding: NSUTF8StringEncoding)
-print(finalString!)
-
-
-
+//print(z == ())
 
 
 

@@ -153,8 +153,11 @@ class App {
                 // Optional serialization has some problems. This unwraps the result to avoid that particular issue
                 if let ret = fn(args) {
                     // TODO: handle tuple returns
-                    print("Returning: \(ret)")
-                    Yield(mantleDomain, UInt64(resultId), marshall([ret]))
+                    if let _ = ret as? Void {
+                        Yield(mantleDomain, UInt64(resultId), marshall([]))
+                    } else {
+                        Yield(mantleDomain, UInt64(resultId), marshall([ret]))
+                    }
                 } else {
                     let empty: [Any] = []
                     Yield(mantleDomain, UInt64(resultId), marshall(empty))

@@ -9,7 +9,9 @@ class Sender: Riffle.Domain, Riffle.Delegate  {
         receiver.publish("noargsSubscribe")
 
         // FAIL
-        receiver.call("noargsRegister").then { 
+        let d = receiver.call("noargsRegister")
+        print(d)
+        d.then { 
             assert(true)
         }
 
