@@ -24,6 +24,7 @@ type Domain interface {
 	Join(Connection) error
 	Leave() error
 	GetApp() App
+	GetName() string
 }
 
 type domain struct {
@@ -81,6 +82,10 @@ func (d domain) LinkDomain(name string) Domain {
 
 func (d domain) GetApp() App {
 	return d.app
+}
+
+func (d domain) GetName() string {
+	return d.name
 }
 
 // Accepts a connection that has just been opened. This method should only

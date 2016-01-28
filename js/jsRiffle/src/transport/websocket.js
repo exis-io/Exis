@@ -191,14 +191,7 @@ Factory.prototype.create = function () {
             // so it shouldn't be done here too
             //var payload = JSON.stringify(msg);
             //log.debug("WebSocket transport send", payload);
-            if(websocket.readyState === 1){
-              websocket.send(msg);
-            }else{
-              log.debug("Waiting for Websocket to be ready.");
-              setTimeout(function(){ 
-                transport.send(msg);
-              }, 500);
-            }
+            websocket.send(msg);
          }
 
          transport.close = function (code, reason) {
