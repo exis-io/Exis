@@ -86,6 +86,7 @@ public class HandlerDeferred: Deferred {
     public var mantleDomain: UnsafeMutablePointer<Void>!
     
     public func _then(types: [Any], _ fn: [Any] -> ()) -> Deferred {
+        print("Setting cumin types to core: \(types)")
         next = Deferred()
         CallExpects(mantleDomain, self.cb, marshall(types))
         callbackFuntion = { a in return fn(a) }
