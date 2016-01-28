@@ -28,20 +28,127 @@ class Dog: Model {
 class Receiver: Riffle.Domain, Riffle.Delegate {
 
     override func onJoin() {
-        // print("Receiver joined!")
+        // Pub Sub Success Cases
 
-        subscribe("noargsSubscribe") { 
+        // No arguments
+        subscribe("subscribeNothing") { 
             print("Publish success")
         }
 
-        register("noargsRegister") {
+        // Primitive Types
+        subscribe("subscribePrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
+            //print("1 : Sub receiving single types:", a, b, c, d, e)
+            
+            assert(a == 1)
+            assert(b == 2.2)
+            assert(c == 3.3)
+            assert(d == "4")
+            assert(e == true)
+        }
+
+        // Arrys of simple types 
+        subscribe("subscribeArrays") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
+            //print("Received: \(a) \(b) \(c) \(d) \(e), expecting 1 2.2 3.3 4 true")
+            
+            assert(a == [1, 2])
+            assert(b == [2.2, 3.3])
+            assert(c == [4.4, 5.5])
+            assert(d == ["6", "7"])
+            assert(e == [true, false])
+        }
+    
+
+        // TODO: subscribe with model object
+
+        // TODO: Dictionaries of simple types
+
+        // TODO: Any
+
+
+        // Reg/Call Success Cases
+        // No arguments
+        register("registerNothing") {
             return
         }
 
-        register("intRegsiter") { (a: Int) in 
+
+        // Simple Types
+        register("registerPrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) -> AnyObject in
+            //print("Received: \(a) \(b) \(c) \(d) \(e), expecting 1 2.2 3.3 4 true")
+            
             assert(a == 1)
-            return
+            assert(b == 2.2)
+            assert(c == 3.3)
+            assert(d == "4")
+            assert(e == true)
+            
+            return [a, b, c, d, e]
         }
+        
+        // Collections of simple types
+        register("registerArrays") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
+            //print("Received: \(a) \(b) \(c) \(d) \(e), expecting 1 2.2 3.3 4 true")
+            
+            assert(a == [1, 2])
+            assert(b == [2.2, 3.3])
+            assert(c == [4.4, 5.5])
+            assert(d == ["6", "7"])
+            assert(e == [true, false])
+        }
+
+
+        // Riffle Model objects with returns
+        register("registerModel") { (d: Dog) -> Dog in
+            //print("Recieved:\(d), expecting: \(dog)")
+            assert(d == dog)
+            return d
+        }
+        
+        receiver.call("asdf", dog).then { (d: Dog) in
+            //print("\(t) Recieved\(d), expecting \(dog)")
+            assert(d == dog)
+        })
+
+
+        // Collections of Riffle Model Objects
+        let dogs = [Dog(1, "1"), Dog(1, "1"), Dog(1, "1")]
+        
+        // Test both sending and receiving types
+        // Test receiving collections in invocation
+        register("registerModelArrays") { (d: [Dog]) -> AnyObject in
+            print("\(t) : Register receiving model object:", d.count)
+            print("                          expecting: \(dogs.count)\n")
+            return d
+        }
+        
+        // WARNING: cant receive 5 elements in return
+        receiver.call("registerModelArrays", [Dog(), Dog(), Dog()]).then { (dogs: [Dog]) in
+            print("\(t) : Call receiving object collection:", dogs)
+            print("                      expecting: 1 2.0 3.0 4\n")
+        })
+
+
+        // Leave
+        self.leave()
+
+
+        // Unsub
+
+
+        // Unreg
+
+
+        // Test call doesnt exist
+
+
+        // Test Receiver Cumin Error
+
+
+        // Test Caller Cumin Error
+
+
+
+
 
         // Example Pub/Sub Basic - This is a basic version of a pub/sub
         // subscribe("sub") { (a: Int, b: [String], c: Dog) in

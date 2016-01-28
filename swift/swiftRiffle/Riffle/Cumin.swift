@@ -108,7 +108,6 @@ public extension Domain {
 	public func subscribe<A: PR, B: PR, C: PR, D: PR, E: PR, F: PR>(endpoint: String, _ fn: (A, B, C, D, E, F) -> ()) -> Deferred {
 		return _subscribe(endpoint, [A.representation(), B.representation(), C.representation(), D.representation(), E.representation(), F.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5]) }
 	}
-
 }
 
 
