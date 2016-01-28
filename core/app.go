@@ -24,6 +24,9 @@ type App interface {
 
 	// Temporary location, will move to security
 	SetToken(string)
+	GetToken() (string)
+	Login(Domain, ...string) (Domain, error)
+        RegisterAccount(Domain, string, string, string, string ) (bool, error)
 }
 
 type app struct {
