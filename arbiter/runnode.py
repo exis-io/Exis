@@ -18,7 +18,7 @@ from utils.utils import timestr
 
 colorama.init()
 
-NODE_SUFFIX = "src/github.com/ParadropLabs/node"
+NODE_SUFFIX = "src/github.com/exis-io/node"
 GOPATH = os.environ.get("GOPATH", None)
 if(GOPATH is None):
     print("!" * 50)
