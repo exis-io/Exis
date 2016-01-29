@@ -193,6 +193,8 @@ class PythonCoder(Coder):
     
     def setupEnv(self, env):
         env["PYTHONPATH"] = self.tmpdir
+        if os.environ.get("LOG_DEBUG", None):
+            env["LOG_DEBUG"] = "riffle.SetLogLevelDebug()"
 
     def expect2assert(self):
         if self.task.expectLine >= 0:
@@ -434,8 +436,11 @@ class ReplIt:
                     elif l == "___RUNCOMPLETE___" and self.runComplete:
                         stor.append(l)
                         self.runComplete.set()
-                    elif "___NODERESTART___" in l and node != None:
-                        node.restart(l)
+                    elif "___NODERESTART___" in l:
+                        if node != None:
+                            node.restart(l)
+                        else:
+                            self.msgs += "-- Node restart found but not running a node\n"
                 else:
                     if expect is not None and expect in l:
                         #print Fore.GREEN + "Found Expect value" + Style.RESET_ALL
