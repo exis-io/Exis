@@ -68,7 +68,7 @@ class Examples:
         c = cls()
         if lang:
             c.mylang = lang
-            langExt = LANGS_EXT.get(lang)
+            langExt = LANGS.get(lang)
         skipDirs = ["arbiter", "node_modules"]
         allFiles = list()
         def walker(path):
@@ -77,7 +77,7 @@ class Examples:
                 if os.path.isdir(f) and fDirName not in skipDirs:
                     walker(f)
                 elif os.path.isfile(f):
-                    ext = LANGS_EXT.get(f.split('.')[-1], None)
+                    ext = f.split('.')[-1] if "." in f else None
                     if (lang != None and langExt == ext) or (lang == None and ext):
                         allFiles.append(f)
         walker(EXISPATH)
