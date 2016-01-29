@@ -484,6 +484,9 @@ class ReplIt:
 def executeTasks(taskList, actionList):
     """
     Given a list of tasks and an action it will zip them together and then execute them properly.
+    Returns:
+        True if the tests worked
+        False if something went wrong
     """
     procs = list()
     

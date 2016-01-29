@@ -130,7 +130,10 @@ def test(*tasks, **kwargs):
             actionList.append(action)
     
     # Exec all of them
-    repl.executeTasks(taskList, actionList)
+    if repl.executeTasks(taskList, actionList):
+        exit(0)
+    else:
+        exit(1)
 
 def testAll(lang, stopOnFail=False):
     """
@@ -166,13 +169,20 @@ def testAll(lang, stopOnFail=False):
     #     [x.join() for x in processes]
     # End multiproc testing
 
+    hasFailed = False
     for lang in langs:
         examples = exampler.Examples.find(EXISREPO, lang)
         for t in examples.getTasks(lang):
             res = repl.executeTaskSet(t)
             if res is False:
+                hasFailed = True
                 if stopOnFail:
-                    exit()
+                    break
+    
+    if hasFailed:
+        exit(1)
+    else:
+        exit(0)
 
 def genTemplate(langs=exampler.LANGS.keys(), actions=["Pub/Sub", "Reg/Call"]):
     """
