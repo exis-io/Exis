@@ -123,14 +123,14 @@ def test(*tasks, **kwargs):
         elif action is None:
             # This means we need to add each of the tasks from the taskset
             for t in ts.getOrderedTasks():
-                taskList.append(ts)
+                taskList.append(t)
                 actionList.append(t.action)
         else:
-            taskList.append(ts)
+            taskList.append(ts.getTask(action))
             actionList.append(action)
     
     # Exec all of them
-    repl.executeList(taskList, actionList)
+    repl.executeTasks(taskList, actionList)
 
 def testAll(lang, stopOnFail=False):
     """

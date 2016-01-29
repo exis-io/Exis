@@ -11,7 +11,7 @@ from collections import defaultdict as ddict
 # They provide "python" but we need to know the extension is "py"
 LANGS = {"python": "py", "swift": "swift", "nodejs": "js", "browser": "js", "go": "go"}
 # We found a file with extension "py" and need to know its "python"
-LANGS_EXT = {"py": "python", "swift": "swift", "js": "js", "go": "go", "browser": "js"}
+LANGS_EXT = {"py": "python", "swift": "swift", "js": "js", "go": "go", "browser": "js", "nodejs": "js"}
 
 # Match to the start of an example, pull out the name of the example, and the docs for it
 EX_START_RE = re.compile("^.*Example (.*)? - (.*)$")
@@ -68,18 +68,19 @@ class Examples:
         c = cls()
         if lang:
             c.mylang = lang
-        thepath = lang or "*"
-        
+            langExt = LANGS_EXT.get(lang)
+        skipDirs = ["arbiter", "node_modules"]
         allFiles = list()
         def walker(path):
             for f in glob.glob("{}/*".format(path)):
-                if os.path.isdir(f) and "arbiter" not in f:
+                fDirName = f.split('/')[-1]
+                if os.path.isdir(f) and fDirName not in skipDirs:
                     walker(f)
                 elif os.path.isfile(f):
-                    if LANGS_EXT.get(f.split('.')[-1], None) is not None:
+                    ext = LANGS_EXT.get(f.split('.')[-1], None)
+                    if (lang != None and langExt == ext) or (lang == None and ext):
                         allFiles.append(f)
         walker(EXISPATH)
-        #print(allFiles)
 
         for f in allFiles:
             c._parse(f)
@@ -100,7 +101,7 @@ class Examples:
         """
         baseName = task.split('*')[0] if task else None
         for l, tasks in self.tasks.iteritems():
-            if(lang is None or LANGS.get(lang, None) == l):
+            if lang is None or lang == l:
                 for name, t in tasks.iteritems():
                     if(baseName is None or name.startswith(baseName)):
                         yield t

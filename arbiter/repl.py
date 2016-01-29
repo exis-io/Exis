@@ -414,7 +414,7 @@ class ReplIt:
                     elif l == "___RUNCOMPLETE___" and self.runComplete:
                         stor.append(l)
                         self.runComplete.set()
-                    elif "___NODERESTART___" in l and node:
+                    elif "___NODERESTART___" in l and node != None:
                         node.restart(l)
                 else:
                     if expect is not None and expect in l:
@@ -480,7 +480,7 @@ class ReplIt:
         self.readOut.start()
         self.readErr.start()
 
-def executeList(taskList, actionList):
+def executeTasks(taskList, actionList):
     """
     Given a list of tasks and an action it will zip them together and then execute them properly.
     """
@@ -550,7 +550,7 @@ def executeTaskSet(taskSet):
     
     print " #" + str(taskSet.index) + " - " + taskSet.getName() + "\t",
 
-    return executeList(lst, [l.action for l in lst])
+    return executeTasks(lst, [l.action for l in lst])
 
 
 
