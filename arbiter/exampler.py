@@ -93,16 +93,20 @@ class Examples:
         l = lang or self.mylang
         return self.tasks.get(l).get(task, None)
 
-    def getTasks(self, lang=None, task=None):
+    def getTasks(self, lang=None, task=None, ordered=True):
         """
         Return generator for all matching tasks by language.
+        Args:
+            lang    : OPTIONAL, what language, None for all
+            task    : OPTIONAL, provide a wildcard for task names
+            ordered : OPTIONAL, Get them in index order
 
-        TODO: retain relative ordering based on the file they came from 
+        TODO: retain relative ordering based on the file they came from?
         """
         baseName = task.split('*')[0] if task else None
         for l, tasks in self.tasks.iteritems():
             if lang is None or lang == l:
-                for name, t in tasks.iteritems():
+                for name, t in sorted(tasks.iteritems(), key=lambda x: x[1].index):
                     if(baseName is None or name.startswith(baseName)):
                         yield t
 
@@ -213,6 +217,7 @@ class TaskSet:
     """
     def __init__(self):
         self.tasks = list()
+        self.index = None
 
     def isValid(self):
         for t in self.tasks:
@@ -279,9 +284,9 @@ class TaskSet:
         name = self.getName()
         lang = self.getLangName()
         if(self.isValid()):
-            return "{} - {}".format(lang, name)
+            return "# {:3d} {} - {}".format(self.index, lang, name)
         else:
-            return "{} - {} (INCOMPLETE)".format(lang, name)
+            return "# {:3d} {} - {} (INCOMPLETE)".format(self.index, lang, name)
 
 class Task:
     """
