@@ -261,4 +261,6 @@ if __name__ == "__main__":
     # Now make the call that decides which of our functions to run
     funcizer.performFunctionalize(args, __name__, modSearch="__main__")
     
+    if args.node:
+        repl.killNode()
     

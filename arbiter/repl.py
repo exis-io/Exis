@@ -14,11 +14,11 @@ import time
 import signal
 import glob
 import colorama
+import atexit
 from colorama import Fore, Back, Style
 
 from threading import Thread, Event
 from runnode import Node
-
 
 def f(*args):
     pass
@@ -32,6 +32,7 @@ STUB_REPL = False
 # This is the time that we will wait for a process to complete (using the ___*COMPLETE___ tags)
 WAIT_TIME = 5
 
+# Browser testing support???
 try:
     import selenium
     BROWSER_TESTS = True
@@ -39,12 +40,30 @@ except:
     BROWSER_TESTS = False
     print "!! Unable to find selenium, run pip install selenium to perform browser testing"
 
+# atexit functionality to clean up our mess
+pidKillList = []
+def onexit():
+    for pid in pidKillList:
+        try:
+            print "On exit, killing {}".format(pid)
+            os.killpg(os.getpgid(pid), signal.SIGTERM)
+        except:
+            print Fore.RED + "Unable to kill {}".format(pid) + Style.RESET_ALL
+    # Also kill the node
+    killNode()
+atexit.register(onexit)
+
+# Handle node launching stuff here
 node = None
 def launchNode():
     global node
     node = Node()
     node.setup()
     node.start()
+
+def killNode():
+    if node:
+        node.kill()
 
 EXISREPO = os.environ.get("EXIS_REPO", None)
 if(EXISREPO is None):
@@ -438,6 +457,7 @@ class ReplIt:
         # unique process group with the command here:
         try:
             os.killpg(os.getpgid(self.proc.pid), signal.SIGTERM)
+            pidKillList.remove(self.proc.pid)
         except:
             print Fore.RED + "Unable to kill process {}".format(self.task.fullName()) + Style.RESET_ALL
 
@@ -470,6 +490,7 @@ class ReplIt:
         self.proc = subprocess.Popen(["./{}".format(self.runScript)], shell=True, cwd=self.testDir, env=self.env,
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
                                      close_fds=ON_POSIX, preexec_fn=os.setsid)
+        pidKillList.append(self.proc.pid)
 
         ev = self.coder.getExpect()
         self.readOut = Thread(target=self._read, args=(self.proc.stdout, self.stdout, ev))
@@ -521,10 +542,6 @@ def executeTasks(taskList, actionList):
     ok = True
     for p in procs[::-1]:
         ok &= p.kill()
-
-    # Take down the node
-    if node:
-        node.kill()
     
     printResult(procs)
 
