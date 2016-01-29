@@ -66,9 +66,12 @@ class Examples:
     @classmethod
     def find(cls, EXISPATH, lang=None):
         c = cls()
-        if lang:
+        if lang and lang != "all":
             c.mylang = lang
             langExt = LANGS.get(lang)
+        else:
+            lang = None
+            langExt = None
         skipDirs = ["arbiter", "node_modules"]
         allFiles = list()
         def walker(path):
@@ -78,8 +81,14 @@ class Examples:
                     walker(f)
                 elif os.path.isfile(f):
                     ext = f.split('.')[-1] if "." in f else None
-                    if (lang != None and langExt == ext) or (lang == None and ext):
-                        allFiles.append(f)
+                    if ext is None:
+                        continue
+                    if lang != None:
+                        if langExt == ext:
+                            allFiles.append(f)
+                    else:
+                        if LANGS_EXT.get(ext, None):
+                            allFiles.append(f)
         walker(EXISPATH)
 
         for f in allFiles:
@@ -91,7 +100,7 @@ class Examples:
         Return specific task for a specific language or None
         """
         l = lang or self.mylang
-        return self.tasks.get(l).get(task, None)
+        return self.tasks.get(l, {}).get(task, None)
 
     def getTasks(self, lang=None, task=None, ordered=True):
         """
