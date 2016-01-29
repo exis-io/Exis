@@ -5,6 +5,8 @@ class Sender: Riffle.Domain, Riffle.Delegate  {
     
     override func onJoin() {
         // Pub Sub Success Cases
+
+        /*
         // No args
         receiver.publish("subscribeNothing")
 
@@ -38,6 +40,8 @@ class Sender: Riffle.Domain, Riffle.Delegate  {
             assert(d == ["6", "7"])
             assert(e == [true, false])
         })
+
+        */
 
         // Example Pub/Sub Basic - This is a basic version of a pub/sub
         //publish("xs.test.example/basicSub", "Hello")

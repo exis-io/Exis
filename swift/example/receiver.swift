@@ -30,6 +30,7 @@ class Receiver: Riffle.Domain, Riffle.Delegate {
     override func onJoin() {
         // Pub Sub Success Cases
 
+        /*
         // No arguments
         subscribe("subscribeNothing") { 
             print("Publish success")
@@ -130,7 +131,7 @@ class Receiver: Riffle.Domain, Riffle.Delegate {
 
         // Leave
         self.leave()
-
+        */
 
         // Unsub
 
