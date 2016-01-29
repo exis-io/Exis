@@ -64,7 +64,6 @@
 			isa = PBXGroup;
 			children = (
 				5077CE401C335EE700152D00 /* Silver.swift */,
-				5077CE421C3460F000152D00 /* CuminicableExtensions.swift */,
 			);
 			name = Silver;
 			sourceTree = "<group>";
@@ -92,6 +91,7 @@
 			children = (
 				503ACCA31C339E090090DB6C /* Silver */,
 				504D0A1E1C333FC9009F5A7B /* Cumin.swift */,
+				5077CE421C3460F000152D00 /* CuminicableExtensions.swift */,
 				504D0A1F1C333FC9009F5A7B /* Deferred.swift */,
 				504D0A201C333FC9009F5A7B /* Domain.swift */,
 				504D0A141C332FA8009F5A7B /* Json.swift */,

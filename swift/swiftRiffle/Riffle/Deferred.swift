@@ -85,6 +85,11 @@ public class Deferred {
 public class HandlerDeferred: Deferred {
     public var mantleDomain: UnsafeMutablePointer<Void>!
     
+    public override func then(fn: () -> ()) -> Deferred {
+        // this override is a special case. It overrides the base then, but cant go in the extension
+        return _then([]) { a in return fn() }
+    }
+    
     public func _then(types: [Any], _ fn: [Any] -> ()) -> Deferred {
         next = Deferred()
         CallExpects(mantleDomain, self.cb, marshall(types))
