@@ -358,6 +358,7 @@ class ReplIt:
         self.coder = None
         self.buildComplete = Event()
         self.setupComplete = Event()
+        self.msgs = ""
         if action in ("call", "publish"):
             self.runComplete = Event()
         else:
@@ -486,17 +487,17 @@ def executeTasks(taskList, actionList):
     """
     procs = list()
     
-    for ts, a in zip(taskList, actionList):
-        r = ReplIt(ts, a)
+    for t, a in zip(taskList, actionList):
+        r = ReplIt(t, a)
         r.setup()
         r.execute()
         a = r.buildComplete.wait(WAIT_TIME)
         if a is False:
-            print Fore.YELLOW + "!! {} never completed setup process (BUILDCOMPLETE never found)".format(ts) + Style.RESET_ALL
+            r.msgs += Fore.YELLOW + "!! {} never completed setup process (BUILDCOMPLETE never found)".format(t.fullName()) + Style.RESET_ALL
         
         a = r.setupComplete.wait(WAIT_TIME)
         if a is False:
-            print Fore.YELLOW + "!! {} never completed setup process (SETUPCOMPLETE never found)".format(ts) + Style.RESET_ALL
+            r.msgs += Fore.YELLOW + "!! {} never completed setup process (SETUPCOMPLETE never found)".format(t.fullName()) + Style.RESET_ALL
 
         procs.append(r)
 
@@ -506,7 +507,7 @@ def executeTasks(taskList, actionList):
         if p.runComplete:
             a = p.runComplete.wait(WAIT_TIME)
             if a is False:
-                print Fore.YELLOW + "!! {} never found setup complete, timeout hit".format(p.task) + Style.RESET_ALL
+                r.msgs += Fore.YELLOW + "!! {} never found setup complete, timeout hit".format(p.task.fullName()) + Style.RESET_ALL
                 break
             else:
                 # Not super happy about this but we still have a race condition where we need to wait before just
@@ -548,7 +549,7 @@ def executeTaskSet(taskSet):
     if len(lst) != 2:
         return None
     
-    print " #" + str(taskSet.index) + " - " + taskSet.getName() + "\t",
+    print "# {:3d} - {}\t".format(taskSet.index, taskSet.getName()), 
 
     return executeTasks(lst, [l.action for l in lst])
 
@@ -583,9 +584,14 @@ def printResult(tasks):
         if not t.success or verbose != f:
             print "\n\t" + Fore.YELLOW + t.action + ' expected: ' + Fore.WHITE \
                 + str(t.coder.getExpect()) + Fore.YELLOW + ", output: " + Fore.WHITE \
-                + str(t.stdout) + Fore.YELLOW + ", file: " + t.task.fileName.split('/')[-1] \
-                + " lines ({}, {})".format(t.task.lineStart, t.task.lineEnd)
+                + str(t.stdout),
+            print "\n\t" + Fore.YELLOW + "file: " + t.task.fileName.split('/')[-1] \
+                + " lines {}-{}".format(t.task.lineStart, t.task.lineEnd)
 
+            if t.msgs:
+                print "\tMessages: "
+                print "\t\t" + t.msgs.replace("\n", "\n\t\t")
+            
             print Fore.RED + "\n".join(t.stderr) + Style.RESET_ALL
             
             print Fore.CYAN + t.execCode + Style.RESET_ALL
