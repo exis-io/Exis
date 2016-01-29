@@ -3,8 +3,8 @@
 
 import Foundation
 
-//SetLogLevelDebug()
-SetLogLevelInfo()
+SetLogLevelDebug()
+//SetLogLevelInfo()
 SetFabricLocal()
 
 class Dog: Model {
@@ -76,7 +76,9 @@ class Receiver: Domain {
         
         
         // Simple Types
-        register("registerPrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) -> AnyObject in
+        // FAIL when returning the types back to the client 
+        // FAIL with no cumin enforcement present
+        register("registerPrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool)  in
             print("SUCCESS --- 2-2")
             //print("Received: \(a) \(b) \(c) \(d) \(e), expecting 1 2.2 3.3 4 true")
             
@@ -86,7 +88,7 @@ class Receiver: Domain {
             assert(d == "4")
             assert(e == true)
             
-            return [a, b, c, d, e]
+//            return [a, b, c, d, e]
         }
         
         // Collections of simple types
@@ -224,15 +226,18 @@ class Sender: Domain {
 //        }
 
         // Collections of simple types
-        receiver.call("registerPrimitives", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
-//            .then { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
-//            assert(a == [1, 2])
-//            assert(b == [2.2, 3.3])
-//            assert(c == [4.4, 5.5])
-//            assert(d == ["6", "7"])
-//            assert(e == [true, false])
-//        }
-//        
+        receiver.call("registerPrimitives", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false]).then { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
+            assert(a == [1, 2])
+            assert(b == [2.2, 3.3])
+            assert(c == [4.4, 5.5])
+            assert(d == ["6", "7"])
+            assert(e == [true, false])
+        }.error { reason in
+            // TODO: the reason itself is not given, instead its the class of argument
+            print("FAILURE ON CALL --- 2-2")
+            print("\tREASON: \(reason)")
+        }
+
         // Example Pub/Sub Basic - This is a basic version of a pub/sub
         //publish("xs.test.example/basicSub", "Hello")
         // End Example Pub/Sub Basic
