@@ -7,7 +7,7 @@ from riffle import want
 
 riffle.SetFabric("$WS_URL")
 riffle.SetLogLevelApp()
-$LOG_DEBUG
+$EXIS_SETUP
 
 class Test(riffle.Domain):
     def onJoin(self):

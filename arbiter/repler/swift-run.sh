@@ -4,6 +4,7 @@ cat >./main/main.swift <<EOF
 import Riffle
 
 Riffle.SetFabric("$WS_URL")
+$EXIS_SETUP
 
 func print(msg: String) {
     Riffle.ApplicationLog(msg)

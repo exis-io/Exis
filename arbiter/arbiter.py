@@ -242,6 +242,7 @@ def genDocs():
 def _getArgs():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('-node', help='Launch a node to test on', action='store_true')
+    parser.add_argument('-debug', help='Debug mode', action='store_true')
     parser.add_argument('-v', '--verbose', help='Verbose mode', action='store_true')
     return parser
 
@@ -253,6 +254,8 @@ if __name__ == "__main__":
     # Startup a node upon request
     if args.node:
         repl.launchNode()
+    if args.debug:
+        repl.debugMode()
     if args.verbose:
         def f(args):
             print args

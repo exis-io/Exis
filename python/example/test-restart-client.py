@@ -11,7 +11,10 @@ class GenericDomain(riffle.Domain):
         # End Template Setup
         ######################################################################################
         # Example Test Restart before call - Does restarting before a call work?
+        import time
+        # Trying to restart the node before the call happens, but need to insert artificial delay to make this happen!
         print "___NODERESTART___"
+        time.sleep(0.5)
         s = backend.call("restartBeforeC", "Restart before call").wait(str)
         print(s) # Expects a str, like "Restart before call works"
         # End Example Test Restart before call

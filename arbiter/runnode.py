@@ -18,6 +18,7 @@ from utils.utils import timestr
 
 colorama.init()
 
+NODEPATH = None
 NODE_SUFFIX = "src/github.com/exis-io/node"
 GOPATH = os.environ.get("GOPATH", None)
 if(GOPATH is None):
@@ -41,6 +42,10 @@ else:
         np = "{}/{}".format(GOPATH, NODE_SUFFIX)
         if os.path.exists(np):
             NODEPATH = np
+
+if NODEPATH is None:
+    print "!! Cannot find the node, should be at $GOPATH/{}".format(NODE_SUFFIX)
+    exit(1)
 
 ON_POSIX = "posix" in sys.builtin_module_names
 
@@ -145,7 +150,7 @@ class Node:
         while(self.running):
             for line in iter(out.readline, b''):
                 l = line.rstrip()
-                stor.append(l)
+                stor.append((time.time(), l))
         out.close()
 
 if __name__ == "__main__":
