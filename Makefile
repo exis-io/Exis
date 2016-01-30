@@ -19,6 +19,9 @@ swift: printcheck libriffmantle.so
 	@echo "Installing crust..."
 	@$(MAKE) -C swift/swiftRiffle/Riffle all >>$(LOG)
 
+	@echo "To build the example, run make swift_example"
+
+swift_example: printcheck libriffmantle.so
 	@echo "Building example..."
 	@swift build --chdir swift/example
 	@echo "Now 'cd swift/example' and run './.build/debug/Example', 'SENDER=true ./.build/debug/Example'"
