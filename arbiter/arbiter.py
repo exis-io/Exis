@@ -35,7 +35,7 @@ import exampler, repl
 
 if platform.system() == "Darwin":
     repl.STUB_REPL = True
-    print "Warning: Darwin detected, switching REPL scripts to stub"
+    sys.stderr.write("Warning: Darwin detected, switching REPL scripts to stub\n")
 else:
     repl.STUB_REPL = False
 
@@ -232,10 +232,13 @@ def genDocs():
     for k, v in docs.iteritems():
         l = list()
         for kk, vv in v.iteritems():
-            if not vv:
+            if not vv or kk == "browser":
                 l.append(kk)
         for ll in l:
             v.pop(ll)
+        p = v.pop('nodejs', None)
+        if p:
+            v['js'] = p
     
     print utils.jsonPretty(docs)
 

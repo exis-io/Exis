@@ -157,26 +157,6 @@ class Receiver: Domain {
         
         
         
-        // Example Pub/Sub Basic - This is a basic version of a pub/sub
-        // subscribe("sub") { (a: Int, b: [String], c: Dog) in
-        //     print("Received publish: \(a), with list: \(b), and pup: \(c.description)")
-        // }.then {
-        //     print("Subscription succeeded")
-        // }.error { reason in
-        //     print("An error occured", reason)
-        // }
-        // End Example Pub/Sub Basic
-        
-        // Example Reg/Call Basic 1 - This is a basic reg/call
-        // register("basicReg") { (args: String) -> String in
-        //     print("\(args)") // Expects a String, like "Hello"
-        //     return "Hello World"
-        // }.then {
-        //     self.subscribe("pubby") {
-        //         print("Receiver-Sender publish received")
-        //     }
-        // }
-        // End Example Reg/Call Basic 1
     }
     
     override func onLeave() {
@@ -238,16 +218,6 @@ class Sender: Domain {
             print("\tREASON: \(reason)")
         }
 
-        // Example Pub/Sub Basic - This is a basic version of a pub/sub
-        //publish("xs.test.example/basicSub", "Hello")
-        // End Example Pub/Sub Basic
-        
-        // Example Reg/Call Basic 1 - This is a basic reg/call
-        // call("basicReg", "Hello").then { (a: String) in
-        //     print(a) // Expects a String, like "Hello World"
-        //     self.publish("pubby")
-        // }
-        // End Example Reg/Call Basic 1
     }
     
     override func onLeave() {

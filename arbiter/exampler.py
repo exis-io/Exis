@@ -340,12 +340,17 @@ class Task:
             raise Exception("Not a valid Task")
         return "{}{}".format(self.name, " " + self.opts if self.opts else "")
 
-    def getLangName(self):
-        """For js/nodejs/browser support need to allow langName to be set in certain cases"""
+    def getLangName(self, wantJs=False):
+        """For js/nodejs/browser support need to allow langName to be set in certain cases.
+            if wantJs is True, then we will change browser and nodejs to js - this is for genDocs
+        """
         if self.langName is None:
-            return LANGS_EXT.get(self.langExt, "Unknown")
+            l = LANGS_EXT.get(self.langExt, "Unknown")
         else:
-            return self.langName
+            l = self.langName
+        if wantJs and l in ("nodejs", "browser"):
+            l = "js"
+        return l
     
     def start(self, name, opts, doc):
         """

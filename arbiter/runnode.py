@@ -35,17 +35,13 @@ else:
                 found = True
                 NODEPATH = np
                 break
-        if not found:
-            print "!! Cannot find node!"
-            exit()
     else:
         np = "{}/{}".format(GOPATH, NODE_SUFFIX)
         if os.path.exists(np):
             NODEPATH = np
 
 if NODEPATH is None:
-    print "!! Cannot find the node, should be at $GOPATH/{}".format(NODE_SUFFIX)
-    exit(1)
+    sys.stderr.write("!! Cannot find the node, should be at $GOPATH/{}\n".format(NODE_SUFFIX))
 
 ON_POSIX = "posix" in sys.builtin_module_names
 
