@@ -16,7 +16,7 @@ class TourBasics: Riffle.Domain, Riffle.Delegate {
         
         // Example Tour Basics 2 - async NOTE this code won't run since pub/sub is in line
         for i in 0...10 {
-            publish("async", i)
+            backend.publish("async", i)
         }
         // End Example Tour Basics 2
     
