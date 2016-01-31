@@ -272,15 +272,20 @@ init that produces a valid model.
 //
 //
 
+protocol Thing {}
 
-var a = (1, 2, 3)
+extension Int: Thing {}
 
-//a is (Int, Int, Int)
+var a: Any? = (1, 2, 3)
 
-//if let z = as ? (Any, Any, Any).self {
+//if let z = a as? (Any, Any, Any).self {
 //    print("Tuple Recognized")
 //}
 //
+
+
+
+
 
 
 
