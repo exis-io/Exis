@@ -105,7 +105,6 @@ func (a *app) CallbackSend(id uint64, args ...interface{}) {
 func (c *app) Send(m message) error {
 	Debug("Sending %s: %v", m.messageType(), m)
 
-	// There's going to have to be a better way of handling these errors
 	if b, err := c.serializer.serialize(m); err != nil {
 		return err
 	} else {

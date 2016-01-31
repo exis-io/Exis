@@ -11,12 +11,16 @@ SetFabricLocal()
 Allow any
 Allow call returns
 Properly formatted errors
-
 */
 class Dog: Model {
     var name = "Fido"
     var age = 43
 }
+
+// Create an object
+let dog = Dog()
+dog.name = "Billiam"
+dog.age = 88
 
 
 class Receiver: Domain {
@@ -101,12 +105,12 @@ class Receiver: Domain {
 //
         
         // Riffle Model objects with returns
-//            register("registerModel") { (d: Dog) -> Dog in
-//                //print("Recieved:\(d), expecting: \(dog)")
-//                assert(d == dog)
-//                return d
-//            }
-//            
+            register("registerModel") { (d: Dog) -> Dog in
+                //print("Recieved:\(d), expecting: \(dog)")
+                assert(d == dog)
+                return d
+            }
+//
 //            receiver.call("asdf", dog).then { (d: Dog) in
 //                //print("\(t) Recieved\(d), expecting \(dog)")
 //                assert(d == dog)
@@ -166,11 +170,6 @@ var receiver: Receiver!
 class Sender: Domain {
     override func onJoin() {
         print("Sender joined")
-        
-        // Create an object
-        let dog = Dog()
-        dog.name = "Billiam"
-        dog.age = 88
 
         
         // Pub Sub Success Cases
@@ -202,7 +201,7 @@ class Sender: Domain {
 //        }
 
         // Collections of simple types
-        receiver.call("registerArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false]).then { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
+        receiver.call("registerPrimitives", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false]).then { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
             assert(a == [1, 2])
             assert(b == [2.2, 3.3])
             assert(c == [4.4, 5.5])
