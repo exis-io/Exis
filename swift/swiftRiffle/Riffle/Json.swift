@@ -112,7 +112,8 @@ public class DefaultJSONSerializer: JSONSerializer {
     func serializeArray(a: [JSON]) -> String {
         var s = "["
 
-        for var i = 0; i < a.count; i++ {
+        for (i, _) in a.enumerate() {
+        // for var i = 0; i < a.count; i += 1 {
             s += a[i].serialize(self)
 
             if i != (a.count - 1) {
@@ -129,7 +130,9 @@ public class DefaultJSONSerializer: JSONSerializer {
 
         for entry in o {
             s += "\(escapeAsJSONString(entry.0)):\(entry.1.serialize(self))"
-            if i++ != (o.count - 1) {
+            i += 1
+
+            if i != (o.count - 1) {
                 s += ","
             }
         }
@@ -143,9 +146,10 @@ public final class PrettyJSONSerializer: DefaultJSONSerializer {
 
     override public func serializeArray(a: [JSON]) -> String {
         var s = "["
-        indentLevel++
+        indentLevel += 1
 
-        for var i = 0; i < a.count; i++ {
+        for (i, _) in a.enumerate() {
+        // for var i = 0; i < a.count; i += 1 {
             s += "\n"
             s += indent()
             s += a[i].serialize(self)
@@ -155,13 +159,13 @@ public final class PrettyJSONSerializer: DefaultJSONSerializer {
             }
         }
 
-        indentLevel--
+        indentLevel -= 1
         return s + "\n" + indent() + "]"
     }
 
     override public func serializeObject(o: [String: JSON]) -> String {
         var s = "{"
-        indentLevel++
+        indentLevel += 1
         var i = 0
 
         var keys = Array(o.keys)
@@ -172,20 +176,24 @@ public final class PrettyJSONSerializer: DefaultJSONSerializer {
             s += indent()
             s += "\(escapeAsJSONString(key)): \(o[key]!.serialize(self))"
 
-            if i++ != (o.count - 1) {
+            i += 1
+            if i != (o.count - 1) {
                 s += ","
             }
         }
 
-        indentLevel--
+        indentLevel -= 1
         return s + "\n" + indent() + "}"
     }
 
     func indent() -> String {
         var s = ""
 
-        for var i = 0; i < indentLevel; i++ {
+        var i = 0
+        while i < indentLevel {
+        // for var i = 0; i < indentLevel; i += 1 {
             s += "    "
+            i += 1
         }
 
         return s
@@ -688,7 +696,10 @@ extension GenericJSONParser {
         advance()
         var buffer: [CChar] = []
 
-        LOOP: for ; cur != end; advance() {
+        while cur != end {
+        // LOOP: for ; cur != end; advance() {
+            var breakLoop = false
+
             switch currentChar {
             case Char(ascii: "\\"):
                 advance()
@@ -711,9 +722,17 @@ extension GenericJSONParser {
                         columnNumber: columnNumber
                     )
                 }
-            case Char(ascii: "\""): break LOOP
+            case Char(ascii: "\""): 
+                breakLoop = true
+                // break LOOP
             default: buffer.append(CChar(bitPattern: currentChar))
             }
+
+            if breakLoop {
+                break
+            }
+
+            advance()
         }
 
         if !expect("\"") {
@@ -738,7 +757,7 @@ extension GenericJSONParser {
 
             while let d = hexToDigit(nextChar) {
                 advance()
-                length++
+                length += 1
 
                 if length > 8 {
                     break
@@ -765,12 +784,14 @@ extension GenericJSONParser {
         switch currentChar {
         case Char(ascii: "0"): advance()
         case Char(ascii: "1") ... Char(ascii: "9"):
-            for ; cur != end; advance() {
+            while cur != end {
                 if let value = digitToInt(currentChar) {
                     integer = (integer * 10) + Int64(value)
                 } else {
                     break
                 }
+
+                advance()
             }
         default:
             throw JSONParseError.InvalidStringError(
@@ -794,14 +815,16 @@ extension GenericJSONParser {
             var factor = 0.1
             var fractionLength = 0
 
-            for ; cur != end; advance() {
+            while cur != end {
                 if let value = digitToInt(currentChar) {
                     fraction += (Double(value) * factor)
                     factor /= 10
-                    fractionLength++
+                    fractionLength += 1
                 } else {
                     break
                 }
+
+                advance()
             }
 
             if fractionLength == 0 {
@@ -825,13 +848,15 @@ extension GenericJSONParser {
             exponent = 0
             var exponentLength = 0
 
-            for ; cur != end; advance() {
+            while cur != end {
                 if let value = digitToInt(currentChar) {
                     exponent = (exponent * 10) + Int64(value)
-                    exponentLength++
+                    exponentLength += 1
                 } else {
                     break
                 }
+
+                advance()
             }
 
             if exponentLength == 0 {
@@ -903,6 +928,7 @@ extension GenericJSONParser {
 
         var array: [Any] = []
 
+        // Another example of the loop break 
         LOOP: while cur != end && !expect("]") {
             let JSON = try parseValue()
             skipWhitespaces()
@@ -946,13 +972,16 @@ extension GenericJSONParser {
         var p = target.utf8Start
         let endp = p.advancedBy(Int(target.byteSize))
         
-        for ; p != endp; p++, advance() {
+        while p != endp {
             if p.memory != currentChar {
                 cur = start
                 lineNumber = l
                 columnNumber = c
                 return false
             }
+
+            p += 1
+            advance()
         }
         
         return true
@@ -972,28 +1001,29 @@ extension GenericJSONParser {
         assert(cur != end, "out of range")
         cur++
 
-        
         if cur != end {
             switch currentChar {
                 
             case Char(ascii: "\n"):
-                lineNumber++
+                lineNumber += 1
                 columnNumber = 1
                 
             default:
-                columnNumber++
+                columnNumber += 1
             }
         }
     }
     
     private func skipWhitespaces() {
-        for ; cur != end; advance() {
+        while cur != end {
             switch currentChar {
             case Char(ascii: " "), Char(ascii: "\t"), Char(ascii: "\r"), Char(ascii: "\n"):
                 break
             default:
                 return
             }
+
+            advance()
         }
     }
 }

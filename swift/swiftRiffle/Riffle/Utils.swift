@@ -43,7 +43,7 @@ func decode(p: GoSlice) -> (UInt64, [Any]) {
     // If the length of the slice is the same as the cap, the string conversion always fails
     let dataString = String.fromCString(int8Ptr)!
     
-    guard var data = try! JSONParser.parse(dataString) as? [Any] else {
+    guard let data = try! JSONParser.parse(dataString) as? [Any] else {
         print("DID NOT RECEIVE ARRAY BACK!")
         return (UInt64(0), [])
     }

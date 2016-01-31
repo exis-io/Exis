@@ -10,8 +10,8 @@ printcheck:
 	@echo "Check $(LOG) for warnings and errors"
 
 swift: printcheck libriffmantle.so
-	@cp assets/libriffmantle.so swift/mantle/libriffmantle.so
-	@cp assets/libriffmantle.h swift/mantle/libriffmantle.h
+	@cp utils/assets/libriffmantle.so swift/mantle/libriffmantle.so
+	@cp utils/assets/libriffmantle.h swift/mantle/libriffmantle.h
 
 	@echo "Installing mantle..."
 	@$(MAKE) -C swift/mantle all >>$(LOG)
@@ -54,13 +54,13 @@ jsbrowser: js
 
 libriffmantle.so: 
 	@echo "Building core..."
-	@go build -buildmode=c-shared -o assets/libriffmantle.so core/cMantle/main.go
+	@go build -buildmode=c-shared -o utils/assets/libriffmantle.so core/cMantle/main.go
 
 clean: 
-	@-rm -f assets/libriffmantle.so assets/libriffmantle.h
+	@-rm -f utils/assets/libriffmantle.so utils/assets/libriffmantle.h
 	@-rm -f swift/osxCrust/RiffleTest/riffle.a  swift/osxCrust/RiffleTest/riffle.h
 
-	@-rm -f assets/libriffmantle.so assets/libriffmantle.h >$(LOG) ||:
+	@-rm -f utils/assets/libriffmantle.so utils/assets/libriffmantle.h >$(LOG) ||:
 	@$(MAKE) -C swift/mantle clean >$(LOG) ||:
 	@$(MAKE) -C swift/swiftRiffle/Riffle clean >$(LOG) ||:
 	@rm -rf swift/example/Packages >$(LOG) ||:
@@ -93,8 +93,8 @@ ios:
 	mv IosMantle.framework swift/iosCrust/RiffleTesterIos/IosMantle.framework
 
 	# Attempt to build a static library cross compiled for ARM. Currently not functional
-	# GOARM=7 CGO_ENABLED=1 GOARCH=arm CC_FOR_TARGET=`pwd`/swift/clangwrap.sh CXX_FOR_TARGET=`pwd`/swift/clangwrap.sh go build -buildmode=c-archive -o assets/riffmantle.a core/cMantle/main.go
-	# GOARM=7 CGO_ENABLED=1 GOARCH=arm go build -buildmode=c-archive -o assets/riffmantle.a core/cMantle/main.go
+	# GOARM=7 CGO_ENABLED=1 GOARCH=arm CC_FOR_TARGET=`pwd`/swift/clangwrap.sh CXX_FOR_TARGET=`pwd`/swift/clangwrap.sh go build -buildmode=c-archive -o utils/assets/riffmantle.a core/cMantle/main.go
+	# GOARM=7 CGO_ENABLED=1 GOARCH=arm go build -buildmode=c-archive -o utils/assets/riffmantle.a core/cMantle/main.go
 
-	# cp assets/riffmantle.a swift/twopointone/Pod/Classes/riffmantle.a
-	# cp assets/riffmantle.h swift/twopointone/Pod/Classes/riffmantle.h
+	# cp utils/assets/riffmantle.a swift/twopointone/Pod/Classes/riffmantle.a
+	# cp utils/assets/riffmantle.h swift/twopointone/Pod/Classes/riffmantle.h
