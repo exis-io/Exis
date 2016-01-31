@@ -273,28 +273,14 @@ init that produces a valid model.
 //
 
 
-func alpha() {
-    print("Func")
-    return
-}
+var a = (1, 2, 3)
 
-let z = alpha()
+//a is (Int, Int, Int)
 
-if let y = z as? Void {
-    print("is Void")
-}
-
-func beta() -> Int {
-    return 2
-}
-
-if let y = beta() as? Void {
-    print("Is Void")
-}
-
-//print(z == ())
-
-
+//if let z = as ? (Any, Any, Any).self {
+//    print("Tuple Recognized")
+//}
+//
 
 
 
