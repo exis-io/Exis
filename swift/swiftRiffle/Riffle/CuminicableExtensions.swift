@@ -217,14 +217,24 @@ extension Array : Property, BaseConvertible {
     
     public static func deserialize(from: Any) -> Any {
         if let arr = from as? [Any] {
-            return arr.map { $0 as! Element }
+            var ret: [Element] = []
+            
+            // Reconstruct values within the array
+            for element in arr {
+                if let child = Generator.Element.self as? Convertible.Type {
+                    ret.append(child.deserialize(element) as! Element)
+                }
+            }
+
+            return ret
         }
         
+        // TOOD: This is a silent error case!
         return from
     }
     
     public func serialize() -> Any {
-        // Apply recursive serialization here
+        // TODO: Apply recursive serialization here
         return self
     }
     
