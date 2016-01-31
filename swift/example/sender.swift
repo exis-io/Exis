@@ -8,23 +8,23 @@ class Sender: Riffle.Domain, Riffle.Delegate  {
 
         /*
         // No args
-        receiver.publish("subscribeNothing")
+        backend.publish("subscribeNothing")
 
         // Primitive Types
-        receiver.publish("subscribePrimitives", 1, 2.2, 3.3, "4", true)
+        backend.publish("subscribePrimitives", 1, 2.2, 3.3, "4", true)
 
         // Arrys of simple types 
-        receiver.publish("subscribeArays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
+        backend.publish("subscribeArays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
 
 
         // Reg/Call Success Cases
         // No arguments
-        receiver.call("registerNothing").then { 
+        backend.call("registerNothing").then { 
             assert(true)
         }
 
         // Primitive Types
-        receiver.call("registerPrimitives", 1, 2.2, 3.3, "4", true) { (a: Int, b: Float, c: Double, d: String) in
+        backend.call("registerPrimitives", 1, 2.2, 3.3, "4", true) { (a: Int, b: Float, c: Double, d: String) in
             assert(a == 1)
             assert(b == 2.2)
             assert(c == 3.3)
@@ -33,7 +33,7 @@ class Sender: Riffle.Domain, Riffle.Delegate  {
         })
     
         // Collections of simple types
-        receiver.call("registerPrimitives", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false]).then { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
+        backend.call("registerPrimitives", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false]).then { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
             assert(a == [1, 2])
             assert(b == [2.2, 3.3])
             assert(c == [4.4, 5.5])
