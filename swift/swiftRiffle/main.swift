@@ -120,7 +120,6 @@ class Receiver: Domain {
 //                assert(d == dog)
 //            })
 //            
-//            
 //            // Collections of Riffle Model Objects
 //            let dogs = [Dog(1, "1"), Dog(1, "1"), Dog(1, "1")]
 //            
