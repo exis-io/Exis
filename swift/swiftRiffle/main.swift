@@ -199,7 +199,7 @@ class Sender: Domain {
 //        }
 
         // Collections of simple types
-        receiver.call("registerPrimitives", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false]).then { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
+        receiver.call("registerArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false]).then { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
             assert(a == [1, 2])
             assert(b == [2.2, 3.3])
             assert(c == [4.4, 5.5])

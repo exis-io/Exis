@@ -333,7 +333,13 @@ func (c *app) requestListenType(outgoing message, expecting string) (message, er
 	select {
 	case msg := <-wait:
 		if e, ok := msg.(*errorMessage); ok {
-			return nil, fmt.Errorf(e.Error)
+
+            // If only one argument is passed through, format it nicely for transmission to the crust
+            if len(e.Arguments) >= 1 {
+                return nil, fmt.Errorf("%v: %v", e.Error, e.Arguments[0])
+            } else {
+		        return nil, fmt.Errorf("%v: %v", e.Error, e.Arguments)
+            }
 		} else if reflect.TypeOf(msg).String() != expecting {
 			return nil, fmt.Errorf(formatUnexpectedMessage(msg, expecting))
 		} else {
@@ -451,3 +457,11 @@ func (c *app) setState(state int) {
 	c.stateChange.Broadcast()
 	c.stateMutex.Unlock()
 }
+
+
+
+
+
+
+
+
