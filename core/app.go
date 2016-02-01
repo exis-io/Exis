@@ -34,9 +34,11 @@ type App interface {
 	// Temporary location, will move to security
 	SetToken(string)
 	GetToken() (string)
-	
+
 	Login(Domain, ...string) (Domain, error)
     RegisterAccount(Domain, string, string, string, string ) (bool, error)
+
+	ShouldReconnect() bool
 }
 
 type app struct {
@@ -48,6 +50,10 @@ type app struct {
 	out  chan message
 	up   chan Callback
 	open bool
+
+	// Set to true if we are leaving.
+	// It tells the lower layer not to try to reconnect.
+	leaving bool
 
 	state int
 	stateMutex sync.Mutex
@@ -123,6 +129,9 @@ func (c *app) Queue(m message) {
 }
 
 func (c *app) Close(reason string) {
+	c.setState(Leaving)
+	c.leaving = true
+
 	if !c.open {
 		// TODO: JS calls close one to many times. Please stop it.
 		// Warn("JS specific bandaid triggered!")
@@ -142,8 +151,6 @@ func (c *app) Close(reason string) {
 	// Theres some missing logic here when it comes to closing the external connection,
 	// especially when either end could call and trigger a close
 	c.Connection.Close(reason)
-
-	c.setState(Leaving)
 }
 
 func (c *app) ConnectionClosed(reason string) {
@@ -451,4 +458,8 @@ func (c *app) setState(state int) {
 	c.state = state
 	c.stateChange.Broadcast()
 	c.stateMutex.Unlock()
+}
+
+func (c *app) ShouldReconnect() bool {
+	return !c.leaving
 }
