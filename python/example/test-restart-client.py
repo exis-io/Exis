@@ -14,10 +14,17 @@ class GenericDomain(riffle.Domain):
         import time
         # Trying to restart the node before the call happens, but need to insert artificial delay to make this happen!
         print "___NODERESTART___"
-        time.sleep(0.5)
+        time.sleep(4.0)
         s = backend.call("restartBeforeC", "Restart before call").wait(str)
         print(s) # Expects a str, like "Restart before call works"
         # End Example Test Restart before call
+        
+        # Example Test Restart after reg - Does restarting after a register work
+        import time
+        time.sleep(2.0)
+        s = backend.call("restartAfterR", "Restart after reg").wait(str)
+        print(s) # Expects a str, like "Restart after reg works"
+        # End Example Test Restart after reg
 
         print "___SETUPCOMPLETE___"
 
