@@ -2,14 +2,15 @@
 Issue calls into the Exis fabric.
 
 Usage:
-    exis [-dq] call <endpoint> [ARGS ...]
-    exis [-dq] publish <endpoint> [ARGS ...]
-    exis [-dq] register <endpoint>
-    exis [-dq] subscribe <endpoint>
+    exis [-djq] call <endpoint> [ARGS ...]
+    exis [-djq] publish <endpoint> [ARGS ...]
+    exis [-djq] register <endpoint>
+    exis [-djq] subscribe <endpoint>
 
 Options:
     -h --help    Show this information.
     -d --debug   Enable riffle debug output.
+    -j --json    Format output as JSON.
     -q --quiet   Suppress output other than command results.
 
 Environment Variables:
@@ -22,6 +23,7 @@ Environment Variables:
 from __future__ import print_function
 
 import docopt
+import json
 import os
 import time
 import uuid
@@ -67,7 +69,10 @@ class ExisSession(riffle.Domain):
 
             if not self.args['--quiet']:
                 print("Return value:")
-            pprint(result)
+            if self.args['--json']:
+                print(json.dumps(result))
+            else:
+                pprint(result)
             if not self.args['--quiet']:
                 print("---")
 
