@@ -6,7 +6,6 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha512"
-	"crypto/tls"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
@@ -108,55 +107,99 @@ func (a *app) SetToken(token string) {
 	a.token = token
 }
 
-// Attempt a token login. Expects the app domain to be the next domain up (temporary)
-// TODO: intelligently parse the superdomain from the given domain
-func tokenLogin(domain string) (string, error) {
-	Info("Attempting to obtain a token")
-	url := "https://node.exis.io:8880/login"
+// Gets the current token
+func (a *app) GetToken() (string) {
+	return a.token
+}
 
-	// Damouse's Ubuntu 14.10 would not accept the certificate. This is dangerous and must be removed
-	tr := &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
+//takes the domain that login was called on and then 0-2 strings which correspond to username and password
+func (a *app) Login(d Domain, args ...string) (Domain, error){
+    username := ""
+    password := ""
 
-	superdomain, err := getSuperdomain(domain)
+    if len(args) == 2 {
+		username = args[0]
+		password = args[1]
+    } else if len(args) == 1 {
+		username = args[0]
+    } else if len(args) != 0 {
+		return nil, fmt.Errorf("Login must be called with 0,1 or 2 args. ([username [, password]]).")
+    }
 
-	if err != nil {
-		return "", err
-	}
+    if token, domain, err := tokenLogin(d.GetName(), username, password ); err != nil{
+		return nil, err
+    } else {
+		a.SetToken(token)
+		return d.LinkDomain(domain), nil
+    }
+    return nil, nil
+}
 
-	payload := map[string]interface{}{"domain": domain, "requestingdomain": superdomain}
+//takes the domain that register was called on and registration info required by Auth
+func (a *app) RegisterAccount(d Domain, username string, password string, email string, name string ) (bool, error){
+	Info("Attempting to register")
+	url := "https://node.exis.io:8880/register"
+
+	payload := map[string]interface{}{"domain": username, "domain-password": password, "requestingdomain": d.GetName(), "domain-email": email, "Name": name }
 	jsonString, err := json.Marshal(payload)
 
 	if err != nil {
-		return "", err
+		return false, err
 	}
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonString))
+	resp, err := http.Post(url, "application/x-www-form-urlencoded", bytes.NewBuffer(jsonString))
 
 	if err != nil {
-		return "", err
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	client := &http.Client{Transport: tr}
-
-	if resp, err := client.Do(req); err != nil {
-		return "", err
+	    return false, err
 	} else {
 		defer resp.Body.Close()
+		if resp.StatusCode != 200 {
+		    return false, fmt.Errorf(resp.Status)
+		} else {
+		    return true, nil
+		}
+	}
+
+	return false, nil
+}
+
+// Attempt a token login.
+func tokenLogin(domain string, username string, password string) (string, string, error) {
+	Info("Attempting to obtain a token")
+	url := "https://node.exis.io:8880/login"
+
+	payload := map[string]interface{}{"domain": username, "password": password, "requestingdomain": domain}
+	jsonString, err := json.Marshal(payload)
+
+	if err != nil {
+		return "", "", err
+	}
+
+	if resp, err := http.Post(url, "application/x-www-form-urlencoded", bytes.NewBuffer(jsonString)); err != nil {
+		return "", "", err
+	} else {
+		defer resp.Body.Close()
+		if resp.StatusCode != 200 {
+		    return "", "", fmt.Errorf(resp.Status)
+		}
 		body, _ := ioutil.ReadAll(resp.Body)
 
 		var result map[string]interface{}
 
 		if err := json.Unmarshal(body, &result); err != nil {
-			return "", err
+			return "", "", err
 		} else {
+		        name, ok := result["domain"]
+			if !ok {
+			    return "", "", fmt.Errorf("no domain returned")
+			}
 			if token, ok := result["login_token"]; !ok {
-				return "", fmt.Errorf("Server error: could not find login_token key in reply")
+				return "", "", fmt.Errorf("Server error: could not find login_token key in reply")
 			} else {
-				return token.(string), nil
+				return token.(string), name.(string), nil
 			}
 		}
 	}
 
-	return "", nil
+	return "", "", nil
 }

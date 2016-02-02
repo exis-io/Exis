@@ -136,4 +136,59 @@ For testing we should be able to make the node restart more async and less deter
 console.log("___NODERESTART___,in:0.5,wait:0.5");
 ```
 
+### Debug
+
+Timing issues between these tasks are very difficult, to deal with this I added a `-debug` flag, this will print a summary of events ordered by time between the caller/callee and node if one was running.
+
+Here is some example output:
+
+```
+dale@dale-desktop:~/exis/Exis$ python arbiter/arbiter.py -f test -kw lang=nodejs -a "Tour Reg/Call Lesson 1" -debug -node
+-- Fri Jan 29 18:34:39 2016 Starting the node
+register  call  
+1454114079.9743190 out        node : Environment: EXIS_KEY= (DEFAULT)
+1454114079.9743221 out        node : Environment: EXIS_PERMISSIONS=off (SET)
+1454114079.9743230 out        node : Environment: EXIS_AUTHENTICATION=off (SET)
+1454114079.9743240 out        node : Environment: EXIS_CERT= (DEFAULT)
+1454114079.9744380 out        node : [2016-01-29 18:34:39.974 LoadConfig] Loaded configuration file: config.json
+1454114079.9744780 out        node : [2016-01-29 18:34:39.974 (*node).Handshake] Session open: xs.node
+1454114079.9745409 out        node : [2016-01-29 18:34:39.974 (*node).Listen] Request rate limit for xs.node: 1000/s
+1454114079.9745800 out        node : [2016-01-29 18:34:39.974 (*node).LogMessage] REGISTER xs.node/getUsage from xs.node
+1454114079.9745829 out        node : [2016-01-29 18:34:39.974 (*node).LogMessage] REGISTER xs.node/evictDomain from xs.node
+1454114079.9746101 out        node : [2016-01-29 18:34:39.974 (*node).LogMessage] REGISTER xs.node/unregisterAll from xs.node
+1454114080.5112591 out    register : ___BUILDCOMPLETE___
+1454114080.5117581 out    register : /usr/bin/nodejs
+1454114081.0783939 out    register : Creating domain xs.demo.test
+1454114081.0795760 out    register : Creating domain xs.demo.test.example
+1454114081.0798769 out    register : Creating domain xs.demo.test.example
+1454114081.1079111 out    register : Sending HELLO: &{xs.demo.test.example map[authid:xs.demo.test.example authmethods:[]]}
+1454114081.1117570 out        node : [2016-01-29 18:34:41.111 (*node).Handshake] Session open: xs.demo.test.example
+1454114081.1119101 out        node : [2016-01-29 18:34:41.111 (*node).Listen] Request rate limit for xs.demo.test.example: 20/s
+1454114081.1209941 out    register : Domain joined
+1454114081.1214671 out    register : ___SETUPCOMPLETE___
+1454114081.1229241 out    register : Sending REGISTER: &{8273074849841152 map[] xs.demo.test.example/myFirstFunc}
+1454114081.1234491 out        node : [2016-01-29 18:34:41.123 (*node).LogMessage] REGISTER xs.demo.test.example/myFirstFunc from xs.demo.test.example
+1454114081.1264949 out    register : Received REGISTERED: &{8273074849841152 3680082426551572}
+1454114081.1271360 out    register : Registered: xs.demo.test.example/myFirstFunc [str]
+1454114081.2714961 out        call : ___BUILDCOMPLETE___
+1454114081.2719350 out        call : /usr/bin/nodejs
+1454114081.8311751 out        call : Creating domain xs.demo.test
+1454114081.8324130 out        call : Creating domain xs.demo.test.example
+1454114081.8327291 out        call : Creating domain xs.demo.test.example
+1454114081.8602190 out        call : Sending HELLO: &{xs.demo.test.example map[authid:xs.demo.test.example authmethods:[]]}
+1454114081.8640950 out        node : [2016-01-29 18:34:41.864 (*node).Handshake] Session open: xs.demo.test.example
+1454114081.8641980 out        node : [2016-01-29 18:34:41.864 (*node).Listen] Request rate limit for xs.demo.test.example: 20/s
+1454114081.8734250 out        call : Domain joined
+1454114081.8741789 out        call : ___SETUPCOMPLETE___
+1454114081.8750360 out        call : Calling xs.demo.test.example/myFirstFunc [Hello]
+1454114081.8760190 out        call : Sending CALL: &{379302929498112 map[] xs.demo.test.example/myFirstFunc [Hello] map[]}
+1454114081.8768699 out        node : [2016-01-29 18:34:41.876 (*node).LogMessage] CALL xs.demo.test.example/myFirstFunc from xs.demo.test.example
+1454114081.8814471 out    register : Received INVOCATION: &{1357629075020686 3680082426551572 map[] [Hello] map[]}
+1454114081.8825200 out    register : Hello
+1454114081.8830991 out    register : Sending YIELD: &{1357629075020686 map[] [Hello World] map[]}
+1454114081.8841391 out        node : [2016-01-29 18:34:41.884 (*node).LogMessage] YIELD from xs.demo.test.example
+1454114081.8876929 out        call : Received RESULT: &{379302929498112 map[] [Hello World] map[]}
+1454114081.8884699 out        call : Hello World
+-- Fri Jan 29 18:34:42 2016 Killing the node
+```
 

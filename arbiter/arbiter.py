@@ -35,7 +35,7 @@ import exampler, repl
 
 if platform.system() == "Darwin":
     repl.STUB_REPL = True
-    print "Warning: Darwin detected, switching REPL scripts to stub"
+    sys.stderr.write("Warning: Darwin detected, switching REPL scripts to stub\n")
 else:
     repl.STUB_REPL = False
 
@@ -123,14 +123,17 @@ def test(*tasks, **kwargs):
         elif action is None:
             # This means we need to add each of the tasks from the taskset
             for t in ts.getOrderedTasks():
-                taskList.append(ts)
+                taskList.append(t)
                 actionList.append(t.action)
         else:
-            taskList.append(ts)
+            taskList.append(ts.getTask(action))
             actionList.append(action)
     
     # Exec all of them
-    repl.executeList(taskList, actionList)
+    if repl.executeTasks(taskList, actionList):
+        exit(0)
+    else:
+        exit(1)
 
 def testAll(lang, stopOnFail=False):
     """
@@ -166,13 +169,20 @@ def testAll(lang, stopOnFail=False):
     #     [x.join() for x in processes]
     # End multiproc testing
 
+    hasFailed = False
     for lang in langs:
         examples = exampler.Examples.find(EXISREPO, lang)
         for t in examples.getTasks(lang):
             res = repl.executeTaskSet(t)
             if res is False:
+                hasFailed = True
                 if stopOnFail:
-                    exit()
+                    break
+    
+    if hasFailed:
+        exit(1)
+    else:
+        exit(0)
 
 def genTemplate(langs=exampler.LANGS.keys(), actions=["Pub/Sub", "Reg/Call"]):
     """
@@ -222,16 +232,20 @@ def genDocs():
     for k, v in docs.iteritems():
         l = list()
         for kk, vv in v.iteritems():
-            if not vv:
+            if not vv or kk == "browser":
                 l.append(kk)
         for ll in l:
             v.pop(ll)
+        p = v.pop('nodejs', None)
+        if p:
+            v['js'] = p
     
     print utils.jsonPretty(docs)
 
 def _getArgs():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('-node', help='Launch a node to test on', action='store_true')
+    parser.add_argument('-debug', help='Debug mode', action='store_true')
     parser.add_argument('-v', '--verbose', help='Verbose mode', action='store_true')
     return parser
 
@@ -243,6 +257,8 @@ if __name__ == "__main__":
     # Startup a node upon request
     if args.node:
         repl.launchNode()
+    if args.debug:
+        repl.debugMode()
     if args.verbose:
         def f(args):
             print args
@@ -251,4 +267,6 @@ if __name__ == "__main__":
     # Now make the call that decides which of our functions to run
     funcizer.performFunctionalize(args, __name__, modSearch="__main__")
     
+    if args.node:
+        repl.killNode()
     

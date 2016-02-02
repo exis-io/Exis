@@ -40,7 +40,6 @@ type Domain struct {
 	coreDomain core.Domain
 	wrapped    *js.Object
 	app        *App
-	token      string // TEMPORARY
 }
 
 type Conn struct {
@@ -73,8 +72,12 @@ func (c Conn) OnClose(msg *js.Object) {
 	c.app.Close(msg.String())
 }
 
-func (c Conn) Send(data []byte) {
+func (c Conn) Send(data []byte) error {
 	c.wrapper.Get("conn").Call("send", string(data))
+
+	// Added a nil error return 
+	// TOOD: the js connection can return its error for tranmission to the core as appropriate
+	return nil 
 }
 
 func (c Conn) Close(reason string) error {
@@ -100,7 +103,6 @@ func New(name string) *js.Object {
 	d := Domain{
 		coreDomain: core.NewDomain(name, nil),
 		app:        a,
-		token:      "",
 	}
 
 	d.wrapped = js.MakeWrapper(&d)
@@ -162,11 +164,6 @@ func (d *Domain) Join() {
 
 	d.app.conn = conn
 
-	// temporary-- pass any tokens down to the core
-	if d.token != "" {
-		conn.app.SetToken(d.token)
-	}
-
 	w.Set("onmessage", conn.OnMessage)
 	w.Set("onopen", conn.OnOpen)
 	w.Set("onclose", conn.OnClose)
@@ -186,9 +183,56 @@ func (d *Domain) FinishJoin(c *Conn) {
 	}
 }
 
-// Temporary-- pass a token through to the core for authentication
+//pass a token through to the core for authentication
 func (d *Domain) SetToken(token string) {
-	d.token = token
+	d.coreDomain.GetApp().SetToken(token)
+}
+func (d *Domain) GetToken() (string) {
+	return d.coreDomain.GetApp().GetToken()
+}
+
+func (d *Domain) Login(args ...string) *js.Object {
+    var p promise.Promise
+
+    go func() {
+
+	app := d.coreDomain.GetApp()
+
+	if domain, err := app.Login(d.coreDomain, args...); err != nil {
+	    p.Reject(err.Error())
+	}else{
+	    n := Domain{
+		    coreDomain: domain,
+		    app:        d.app,
+	    }
+
+	    n.wrapped = js.MakeWrapper(&n)
+	    p.Resolve(n.wrapped)
+	}
+    }()
+
+    return p.Js()
+}
+
+func (d *Domain) RegisterAccount(username string, password string, email string, name string) *js.Object {
+    var p promise.Promise
+
+    go func() {
+
+	app := d.coreDomain.GetApp()
+
+	if success, err := app.RegisterAccount(d.coreDomain, username, password, email, name); err != nil {
+	    p.Reject(err.Error())
+	}else{
+	    if success {
+		p.Resolve(nil)
+	    } else {
+		p.Reject("Register Failed")
+	    }
+	}
+    }()
+
+    return p.Js()
 }
 
 func (d *Domain) Subscribe(endpoint string, handler *js.Object) *js.Object {

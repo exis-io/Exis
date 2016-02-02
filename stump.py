@@ -103,7 +103,7 @@ if __name__ == '__main__':
         print 'Subtree added. Please edit the SUBTREES field in this script: \n("%s", "%s", "%s")' % (args['DIRECTORY'], args['NAME'], args['URL'])
 
     elif args['test']:
-        os.environ["EXIS_REPO"] = os.getcwd()
+        # os.environ["EXIS_REPO"] = os.getcwd()
 
         def orderedTasks(lang):
             '''

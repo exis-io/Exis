@@ -23,10 +23,6 @@ var Ws = function () {
 }; 
 
 global.WsWrapper = Ws;
-for(var i in global) {
-    console.log(i);
-
-}
 exports.Domain = global.Domain.New;
 
 exports.SetLogLevelOff = global.Config.SetLogLevelOff;

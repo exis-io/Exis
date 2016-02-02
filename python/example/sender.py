@@ -5,7 +5,7 @@ riffle.SetFabricLocal()
 riffle.SetLogLevelInfo()
 
 
-class User(riffle.Model):
+class User(riffle.ModelObject):
     name = "John Doe"
     email = ''
 

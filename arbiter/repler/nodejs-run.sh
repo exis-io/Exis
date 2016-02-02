@@ -4,6 +4,7 @@ cat >main.js <<EOF
 var riffle = require('jsriffle');
 
 riffle.SetFabric(process.env.WS_URL);
+$EXIS_SETUP
 
 var app = riffle.Domain(process.env.DOMAIN);
 var backend = app.Subdomain("example");

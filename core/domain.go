@@ -24,6 +24,7 @@ type Domain interface {
 	Join(Connection) error
 	Leave() error
 	GetApp() App
+	GetName() string
 }
 
 type domain struct {
@@ -68,7 +69,11 @@ func NewDomain(name string, a *app) Domain {
 }
 
 func (d domain) Subdomain(name string) Domain {
-	return NewDomain(d.name+"."+name, d.app)
+	if name == "" {
+		return NewDomain(d.name, d.app)
+	} else {
+		return NewDomain(d.name+"."+name, d.app)
+	}
 }
 
 func (d domain) LinkDomain(name string) Domain {
@@ -77,6 +82,10 @@ func (d domain) LinkDomain(name string) Domain {
 
 func (d domain) GetApp() App {
 	return d.app
+}
+
+func (d domain) GetName() string {
+	return d.name
 }
 
 // Accepts a connection that has just been opened. This method should only
@@ -292,21 +301,8 @@ func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
 	if err := softCumin(binding.expectedTypes, msg.Arguments); err == nil {
 		c.app.CallbackSend(binding.callback, msg.Arguments...)
 	} else {
+        // TODO: warn application level code at some well-known location
 		Warn("%v", err)
-
-		// Errors are not emitted back to the publisher. Because its dangerous.
-		// tosend := &errorMessage{
-		//           Type: pUBLISH,
-		//           Request: msg.Publication,
-		//           Details: make(map[string]interface{}),
-		//           Arguments: msg.Arguments,
-		//           Error: err.Error(),
-		//       }
-
-		// if err := c.app.Send(tosend); err != nil {
-		//           //TODO: Warn the application
-		// 	Warn("error sending message:", err)
-		// }
 	}
 }
 

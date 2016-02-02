@@ -73,9 +73,9 @@ client.onJoin = function() {
         this.studentID = 0;
     }
     var s = new Student();
-    s.name = "John Smith"
-    s.age = 18
-    s.studentID = 1234
+    s.name = "John Smith";
+    s.age = 18;
+    s.studentID = 1234;
     backend.Call("sendStudent", s);
     // End Example Tour Reg/Call Lesson 4 Basic Student
     

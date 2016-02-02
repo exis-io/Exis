@@ -249,27 +249,39 @@ init that produces a valid model.
 ... otoh, if a no-args constructor is requried, why not just instantiate the class and read it with the mirr
 */
 
-class Dog: NSObject {
-    var name = "Fido"
-}
+//class Dog: NSObject {
+//    var name = "Fido"
+//}
+//
+//let d = Dog()
+//
+//d.setValue("Bill", forKey: "name")
+//
+//print(d.name)
+//
+//
+//let subject = "[\"hello\"]"
+//let data = subject.dataUsingEncoding(NSUTF8StringEncoding)
+//let result = try NSJSONSerialization.JSONObjectWithData(data!, options: []) as? [String]
+//print(result!)
+//
+//
+//let recombined = try! NSJSONSerialization.dataWithJSONObject(result!, options: .PrettyPrinted)
+//let finalString = NSString(data: recombined, encoding: NSUTF8StringEncoding)
+//print(finalString!)
+//
+//
 
-let d = Dog()
+protocol Thing {}
 
-d.setValue("Bill", forKey: "name")
+extension Int: Thing {}
 
-print(d.name)
+var a: Any? = (1, 2, 3)
 
-
-let subject = "[\"hello\"]"
-let data = subject.dataUsingEncoding(NSUTF8StringEncoding)
-let result = try NSJSONSerialization.JSONObjectWithData(data!, options: []) as? [String]
-print(result!)
-
-
-let recombined = try! NSJSONSerialization.dataWithJSONObject(result!, options: .PrettyPrinted)
-let finalString = NSString(data: recombined, encoding: NSUTF8StringEncoding)
-print(finalString!)
-
+//if let z = a as? (Any, Any, Any).self {
+//    print("Tuple Recognized")
+//}
+//
 
 
 

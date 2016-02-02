@@ -14,11 +14,11 @@ import time
 import signal
 import glob
 import colorama
+import atexit
 from colorama import Fore, Back, Style
 
 from threading import Thread, Event
 from runnode import Node
-
 
 def f(*args):
     pass
@@ -32,6 +32,7 @@ STUB_REPL = False
 # This is the time that we will wait for a process to complete (using the ___*COMPLETE___ tags)
 WAIT_TIME = 5
 
+# Browser testing support???
 try:
     import selenium
     BROWSER_TESTS = True
@@ -39,12 +40,35 @@ except:
     BROWSER_TESTS = False
     print "!! Unable to find selenium, run pip install selenium to perform browser testing"
 
+# atexit functionality to clean up our mess
+pidKillList = []
+def onexit():
+    for pid in pidKillList:
+        try:
+            print "On exit, killing {}".format(pid)
+            os.killpg(os.getpgid(pid), signal.SIGTERM)
+        except:
+            print Fore.RED + "Unable to kill {}".format(pid) + Style.RESET_ALL
+    # Also kill the node
+    killNode()
+atexit.register(onexit)
+
+# Handle node launching stuff here
 node = None
 def launchNode():
     global node
     node = Node()
     node.setup()
     node.start()
+
+def killNode():
+    if node:
+        node.kill()
+
+DEBUG = False
+def debugMode():
+    global DEBUG
+    DEBUG = True
 
 EXISREPO = os.environ.get("EXIS_REPO", None)
 if(EXISREPO is None):
@@ -126,21 +150,14 @@ class Coder:
         if ev is None:
             good = "no expect required"
         else:
-            for o in out:
+            for t, o in out:
                 if ev in o:
                     good = ev
         return good
         
     def checkStderr(self, err):
         if err:
-            # Look at the error to see whats up
-            errOk = False
-            for e in err:
-                pass
-            if not errOk:
-                print "!! Found error:"
-                print "\n".join(err)
-                return True
+            return True
         return False
 
     def checkExecution(self, out, err):
@@ -174,6 +191,8 @@ class PythonCoder(Coder):
     
     def setupEnv(self, env):
         env["PYTHONPATH"] = self.tmpdir
+        if DEBUG:
+            env["EXIS_SETUP"] = "riffle.SetLogLevelDebug()"
 
     def expect2assert(self):
         if self.task.expectLine >= 0:
@@ -195,14 +214,12 @@ class PythonCoder(Coder):
         if err:
             # Look at the error to see whats up
             errOk = False
-            for e in err:
+            for t, e in err:
                 # This needs to be fixed, its a gocore->python specific error that will go away!
                 if "_shutdown" in e:
                     errOk = True
                     break
             if not errOk:
-                print "!! Found error:"
-                print "".join(err)
                 return True
         return False
 
@@ -224,6 +241,10 @@ class SwiftCoder(Coder):
     
     def setupRunComplete(self, code):
         pass #code.append('print("___RUNCOMPLETE___")')
+    
+    def setupEnv(self, env):
+        if DEBUG:
+            env["EXIS_SETUP"] = "Riffle.LogLevelDebug()"
 
     def expect2assert(self):
         # TODO
@@ -254,6 +275,10 @@ class NodeJSCoder(Coder):
     
     def setupRunComplete(self, code):
         pass #code.append('setTimeout(function() { console.log("___RUNCOMPLETE___"); }, 3000);')
+    
+    def setupEnv(self, env):
+        if DEBUG:
+            env["EXIS_SETUP"] = "riffle.SetLogLevelDebug();"
 
     def expect2assert(self):
         # TODO
@@ -315,7 +340,7 @@ class BrowserCoder(Coder):
         if ev is None:
             good = "no expect required"
         else:
-            for o in out:
+            for t, o in out:
                 if "___RUNCOMPLETE___" in o:
                     good = ev
         return good
@@ -344,13 +369,14 @@ class ReplIt:
     This class holds onto all the components required to take a task and execute it.
     """
 
-    def __init__(self, taskSet, action):
+    def __init__(self, task, action):
         self.action = action
-        self.task = taskSet.getTask(action)
+        self.task = task
         if self.task is None:
             raise Exception("No Task found")
-        self.lang = taskSet.getLangName()
+        self.lang = task.getLangName()
         self.proc = None
+        self.testDir = None
         self.stdout = list()
         self.stderr = list()
         self.readThd = None
@@ -358,6 +384,7 @@ class ReplIt:
         self.coder = None
         self.buildComplete = Event()
         self.setupComplete = Event()
+        self.msgs = ""
         if action in ("call", "publish"):
             self.runComplete = Event()
         else:
@@ -408,20 +435,29 @@ class ReplIt:
                 l = line.rstrip()
                 if l.startswith("___"):
                     if l == "___BUILDCOMPLETE___":
+                        if DEBUG:
+                            stor.append((time.time(), l))
                         self.buildComplete.set()
                     elif l == "___SETUPCOMPLETE___":
+                        if DEBUG:
+                            stor.append((time.time(), l))
                         self.setupComplete.set()
                     elif l == "___RUNCOMPLETE___" and self.runComplete:
-                        stor.append(l)
+                        stor.append((time.time(), l))
                         self.runComplete.set()
-                    elif "___NODERESTART___" in l and node:
-                        node.restart(l)
+                    elif "___NODERESTART___" in l:
+                        if node != None:
+                            if DEBUG:
+                                stor.append((time.time(), l))
+                            node.restart(l)
+                        else:
+                            self.msgs += "-- Node restart found but not running a node\n"
                 else:
                     if expect is not None and expect in l:
                         #print Fore.GREEN + "Found Expect value" + Style.RESET_ALL
                         if self.runComplete:
                             self.runComplete.set()
-                    stor.append(l)
+                    stor.append((time.time(), l))
         out.close()
 
     def kill(self):
@@ -437,6 +473,7 @@ class ReplIt:
         # unique process group with the command here:
         try:
             os.killpg(os.getpgid(self.proc.pid), signal.SIGTERM)
+            pidKillList.remove(self.proc.pid)
         except:
             print Fore.RED + "Unable to kill process {}".format(self.task.fullName()) + Style.RESET_ALL
 
@@ -469,6 +506,7 @@ class ReplIt:
         self.proc = subprocess.Popen(["./{}".format(self.runScript)], shell=True, cwd=self.testDir, env=self.env,
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
                                      close_fds=ON_POSIX, preexec_fn=os.setsid)
+        pidKillList.append(self.proc.pid)
 
         ev = self.coder.getExpect()
         self.readOut = Thread(target=self._read, args=(self.proc.stdout, self.stdout, ev))
@@ -480,24 +518,26 @@ class ReplIt:
         self.readOut.start()
         self.readErr.start()
 
-def executeList(taskList, actionList):
+def executeTasks(taskList, actionList):
     """
     Given a list of tasks and an action it will zip them together and then execute them properly.
+    Returns:
+        True if the tests worked
+        False if something went wrong
     """
     procs = list()
-    print taskList[0].getName() + "\t",
     
-    for ts, a in zip(taskList, actionList):
-        r = ReplIt(ts, a)
+    for t, a in zip(taskList, actionList):
+        r = ReplIt(t, a)
         r.setup()
         r.execute()
         a = r.buildComplete.wait(WAIT_TIME)
         if a is False:
-            print Fore.YELLOW + "!! {} never completed setup process (BUILDCOMPLETE never found)".format(ts) + Style.RESET_ALL
+            r.msgs += Fore.YELLOW + "!! {} never completed setup process (BUILDCOMPLETE never found)".format(t.fullName()) + Style.RESET_ALL
         
         a = r.setupComplete.wait(WAIT_TIME)
         if a is False:
-            print Fore.YELLOW + "!! {} never completed setup process (SETUPCOMPLETE never found)".format(ts) + Style.RESET_ALL
+            r.msgs += Fore.YELLOW + "!! {} never completed setup process (SETUPCOMPLETE never found)".format(t.fullName()) + Style.RESET_ALL
 
         procs.append(r)
 
@@ -507,7 +547,7 @@ def executeList(taskList, actionList):
         if p.runComplete:
             a = p.runComplete.wait(WAIT_TIME)
             if a is False:
-                print Fore.YELLOW + "!! {} never found setup complete, timeout hit".format(p.task) + Style.RESET_ALL
+                r.msgs += Fore.YELLOW + "!! {} never found setup complete, timeout hit".format(p.task.fullName()) + Style.RESET_ALL
                 break
             else:
                 # Not super happy about this but we still have a race condition where we need to wait before just
@@ -518,10 +558,6 @@ def executeList(taskList, actionList):
     ok = True
     for p in procs[::-1]:
         ok &= p.kill()
-
-    # Take down the node
-    if node:
-        node.kill()
     
     printResult(procs)
 
@@ -549,9 +585,9 @@ def executeTaskSet(taskSet):
     if len(lst) != 2:
         return None
     
-    print " #" + str(taskSet.index) + " - " + taskSet.getName() + "\t",
+    print "# {:3d} - {}\t".format(taskSet.index, taskSet.getName()), 
 
-    return executeList(lst, [l.action for l in lst])
+    return executeTasks(lst, [l.action for l in lst])
 
 
 
@@ -565,7 +601,7 @@ def cleanupTests():
 def printSetup(taskSet):
     ''' Pretty print for the setup of a test '''
 
-def printResult(tasks):
+def printResult(procs):
     ''' Pretty print the results of test
 
     TODO: make a verbose mode to output the old output
@@ -573,31 +609,40 @@ def printResult(tasks):
     '''
 
     somethingFailed = False
-    for t in tasks: 
+    for t in procs: 
         if t.success:
             print Fore.GREEN + t.action + " ",
         else:
             somethingFailed = True
             print Fore.RED + t.action + Style.RESET_ALL,
 
-    for t in tasks: 
+    for t in procs: 
         if not t.success or verbose != f:
             print "\n\t" + Fore.YELLOW + t.action + ' expected: ' + Fore.WHITE \
                 + str(t.coder.getExpect()) + Fore.YELLOW + ", output: " + Fore.WHITE \
-                + str(t.stdout) + Fore.YELLOW + ", file: " + t.task.fileName.split('/')[-1] \
-                + " lines ({}, {})".format(t.task.lineStart, t.task.lineEnd)
+                + str([a[1] for a in t.stdout]),
+            print "\n\t" + Fore.YELLOW + "file: " + t.task.fileName.split('/')[-1] \
+                + " lines {}-{}".format(t.task.lineStart, t.task.lineEnd),
+            print "\n\t" + "test dir: " + t.testDir
 
-            print Fore.RED + "\n".join(t.stderr) + Style.RESET_ALL
+            if t.msgs:
+                print "\tMessages: "
+                print "\t\t" + t.msgs.replace("\n", "\n\t\t")
             
+            print Fore.RED + "\n".join([a[1] for a in t.stderr]) + Style.RESET_ALL
             print Fore.CYAN + t.execCode + Style.RESET_ALL
-
-            # print "{} {} : FAILURE".format(self.action, self.task.fullName())
-            # print "Expected : '{}'".format(self.coder.getExpect())
-            # print "Stdout   : '{}'".format("\n".join(self.stdout))
-            # print "Stderr   : '{}'".format("\n".join(self.stderr))
-            # print "Code     : {}".format(self.task.fileName)
-            # print "Test dir : {}".format(self.testDir)
-            # print "Code Executed:"
-            # print self.execCode
-
+    
     print Style.RESET_ALL
+
+    if DEBUG:
+        log = list()
+        if node:
+            log.extend([(t[0], t[1], "node", "out") for t in node.stdout])
+            log.extend([(t[0], t[1], "node", "err") for t in node.stderr])
+            
+        for p in procs:
+            log.extend([(t[0], t[1], p.task.action, "out") for t in p.stdout])
+            log.extend([(t[0], t[1], p.task.action, "err") for t in p.stderr])
+        log = sorted(log, key=lambda x: x[0])
+        for l in log:
+            print "{:.7f} {} {:>11s} : {}".format(l[0], l[3], l[2], l[1])

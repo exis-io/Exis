@@ -77,27 +77,27 @@ java -classpath jnr-ffi.jar:. Hello
 
 */
 
-// import jnr.ffi.LibraryLoader;
+import jnr.ffi.LibraryLoader;
 
-// public class Hello {
-//     public static native long multiply(long x, long y);
+public class Hello {
+    public static native long multiply(long x, long y);
 
-//     // public static interface MathLib {
-//     //     long Multiply(long x, long y);
-//     // }
+    public static interface MathLib {
+        long Multiply(long x, long y);
+    }
 
-//     // public static void main(String[] args) {
-//     //     // MathLib libc = LibraryLoader.create(MathLib.class).load("math");
+    public static void main(String[] args) {
+        MathLib libc = LibraryLoader.create(MathLib.class).load("math");
         
-//     //     // System.out.println(libc.Multiply(12345, 67890));
+        System.out.println(libc.Multiply(12345, 67890));
         
-//     //     // output: 838102050
-//     //     //libc.puts("Hello, World");
-//     // }
-// }
+        // output: 838102050
+        //libc.puts("Hello, World");
+    }
+}
 
 
-/* Attempt 3 -- works, but boy is the jni interface
+/* Attempt 3 -- works, but boy is the jni interface rough
 
 javac Hello.java
 javah -cp . Hello

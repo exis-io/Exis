@@ -18,7 +18,8 @@ from utils.utils import timestr
 
 colorama.init()
 
-NODE_SUFFIX = "src/github.com/ParadropLabs/node"
+NODEPATH = None
+NODE_SUFFIX = "src/github.com/exis-io/node"
 GOPATH = os.environ.get("GOPATH", None)
 if(GOPATH is None):
     print("!" * 50)
@@ -34,13 +35,13 @@ else:
                 found = True
                 NODEPATH = np
                 break
-        if not found:
-            print "!! Cannot find node!"
-            exit()
     else:
         np = "{}/{}".format(GOPATH, NODE_SUFFIX)
         if os.path.exists(np):
             NODEPATH = np
+
+if NODEPATH is None:
+    sys.stderr.write("!! Cannot find the node, should be at $GOPATH/{}\n".format(NODE_SUFFIX))
 
 ON_POSIX = "posix" in sys.builtin_module_names
 
@@ -145,7 +146,7 @@ class Node:
         while(self.running):
             for line in iter(out.readline, b''):
                 l = line.rstrip()
-                stor.append(l)
+                stor.append((time.time(), l))
         out.close()
 
 if __name__ == "__main__":

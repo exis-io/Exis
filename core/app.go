@@ -33,6 +33,10 @@ type App interface {
 
 	// Temporary location, will move to security
 	SetToken(string)
+	GetToken() (string)
+	
+	Login(Domain, ...string) (Domain, error)
+    RegisterAccount(Domain, string, string, string, string ) (bool, error)
 }
 
 type app struct {
@@ -101,7 +105,6 @@ func (a *app) CallbackSend(id uint64, args ...interface{}) {
 func (c *app) Send(m message) error {
 	Debug("Sending %s: %v", m.messageType(), m)
 
-	// There's going to have to be a better way of handling these errors
 	if b, err := c.serializer.serialize(m); err != nil {
 		return err
 	} else {
@@ -330,7 +333,13 @@ func (c *app) requestListenType(outgoing message, expecting string) (message, er
 	select {
 	case msg := <-wait:
 		if e, ok := msg.(*errorMessage); ok {
-			return nil, fmt.Errorf(e.Error)
+
+            // If only one argument is passed through, format it nicely for transmission to the crust
+            if len(e.Arguments) >= 1 {
+                return nil, fmt.Errorf("%v: %v", e.Error, e.Arguments[0])
+            } else {
+		        return nil, fmt.Errorf("%v: %v", e.Error, e.Arguments)
+            }
 		} else if reflect.TypeOf(msg).String() != expecting {
 			return nil, fmt.Errorf(formatUnexpectedMessage(msg, expecting))
 		} else {
@@ -448,3 +457,11 @@ func (c *app) setState(state int) {
 	c.stateChange.Broadcast()
 	c.stateMutex.Unlock()
 }
+
+
+
+
+
+
+
+

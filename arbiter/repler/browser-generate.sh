@@ -28,6 +28,7 @@ cat >>browser.html <<EOF
     };
     var riffle = jsRiffle;
     riffle.SetFabric("$WS_URL");
+    $EXIS_SETUP
 
     var app = riffle.Domain("$DOMAIN");
     var backend = app.Subdomain("example");
