@@ -18,11 +18,17 @@ import atexit
 from colorama import Fore, Back, Style
 
 from threading import Thread, Event
-from runnode import Node
+import runnode
 
-def f(*args):
+def f(args):
     pass
 verbose = f
+def enableVerbose():
+    runnode.enableVerbose()
+    global verbose
+    def f(args):
+        print args
+    verbose = f
 
 colorama.init()
 
@@ -57,7 +63,7 @@ atexit.register(onexit)
 node = None
 def launchNode():
     global node
-    node = Node()
+    node = runnode.Node()
     node.setup()
     node.start()
 

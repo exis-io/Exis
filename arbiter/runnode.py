@@ -16,6 +16,15 @@ from colorama import Fore, Back, Style
 from threading import Thread, Event
 from utils.utils import timestr
 
+def f(args):
+    pass
+verbose = f
+def enableVerbose():
+    global verbose
+    def f(args):
+        print args
+    verbose = f
+
 colorama.init()
 
 NODEPATH = None
@@ -68,7 +77,7 @@ class Node:
         self.restartOpts = dict()
     
     def kill(self):
-        print Fore.GREEN + "-- {} Killing the node".format(timestr()) + Style.RESET_ALL
+        verbose(Fore.GREEN + "-- {} Killing the node".format(timestr()) + Style.RESET_ALL)
         self.running = False
         # Need to bring out the big guns to stop the proc, this is because it launches separate children
         # so we first set the process group to a unique value (using preexec_fn below), then we kill that
@@ -91,7 +100,7 @@ class Node:
                 self.restartOpts = dict()
                 print Fore.YELLOW + "Bad args to NODERESTART command found, looking for <FLAG>,in:#,wait:#" + Style.RESET_ALL
 
-        print Fore.GREEN + "-- {} Performing restart".format(timestr()) + Style.RESET_ALL
+        verbose(Fore.GREEN + "-- {} Performing restart".format(timestr()) + Style.RESET_ALL)
         
         self.restartEvent.set()
 
@@ -125,7 +134,7 @@ class Node:
     def start(self):
         self.running = True
 
-        print Fore.GREEN + "-- {} Starting the node".format(timestr()) + Style.RESET_ALL
+        verbose(Fore.GREEN + "-- {} Starting the node".format(timestr()) + Style.RESET_ALL)
         self.proc = subprocess.Popen(["./main"], cwd=self.cwd, env=self.env,
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
                                      close_fds=ON_POSIX, preexec_fn=os.setsid)

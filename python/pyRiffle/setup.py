@@ -12,8 +12,16 @@ setup(
     include_package_data=True,
 
     install_requires=[
-        'greenlet'
+        'docopt>=0.6.2',
+        'greenlet>=0.4.9',
+        'PyYAML>=3.11'
     ],
+
+    entry_points={
+        'console_scripts': [
+            'exis = exis:main'
+        ]
+    },
 
     classifiers=[
         "Intended Audience :: Developers",

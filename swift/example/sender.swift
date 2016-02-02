@@ -45,13 +45,13 @@ class Sender: Riffle.Domain, Riffle.Delegate  {
 
         /*
         // Example Pub/Sub Basic - This is a basic version of a pub/sub
-        publish("xs.test.example/basicSub", "Hello")
+        backend.publish("basicSub", "Hello")
         // End Example Pub/Sub Basic
         */
         
         /*
         // Example Reg/Call Basic 1 - This is a basic reg/call
-        call("basicReg", "Hello").then { (a: String) in
+        backend.call("basicReg", "Hello").then { (a: String) in
             print(a) // Expects a String, like "Hello World"
         }
         // End Example Reg/Call Basic 1

@@ -17,6 +17,18 @@ class GenericDomain(riffle.Domain):
             return "{} works".format(s)
         self.register("restartBeforeC", restartBeforeC)
         # End Example Test Restart before call
+        
+        # Example Test Restart after reg - Does restarting after a register work
+        import time
+        @want(str)
+        def restartAfterR(s):
+            print(s) # Expects a str, like "Restart after reg"
+            return "{} works".format(s)
+        self.register("restartAfterR", restartAfterR)
+        time.sleep(1.0)
+        print "___NODERESTART___"
+        time.sleep(2.0)
+        # End Example Test Restart after reg
 
         print "___SETUPCOMPLETE___"
 

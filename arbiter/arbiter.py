@@ -260,9 +260,7 @@ if __name__ == "__main__":
     if args.debug:
         repl.debugMode()
     if args.verbose:
-        def f(args):
-            print args
-        repl.verbose = f
+        repl.enableVerbose()
     
     # Now make the call that decides which of our functions to run
     funcizer.performFunctionalize(args, __name__, modSearch="__main__")

@@ -29,10 +29,6 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
         this.$get = ["$rootScope", "$q", "$log", "$injector", function ($rootScope, $q, $log, $injector) {
 
-            var connection;
-            var sessionDeferred = $q.defer();
-            var sessionPromise = sessionDeferred.promise;
-
             /**
              * Interceptors stored in reverse order. Inner interceptors before outer interceptors.
              */
@@ -58,6 +54,10 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     return cb;
                 };
             }
+
+            var connection;
+            var sessionDeferred = $q.defer();
+            var sessionPromise = sessionDeferred.promise;
             
             var joinFnc = digestWrapper(function () {
                 $rootScope.$broadcast("$riffle.open");
@@ -72,7 +72,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
             });
 
 
-            connection = new Domain(id);
+            connection = new DomainWrapper(jsRiffle.Domain(id));
             connection.want = jsRiffle.want;
             connection.wait = jsRiffle.wait;
             connection.ModelObject = jsRiffle.ModelObject;
@@ -129,13 +129,8 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                 return action;
             };
 
-            function Domain(id, subParent){
-              this.conn = subParent;
-              if(!this.conn){
-                this.conn = jsRiffle.Domain(id);
-              }else{
-                this.conn = subParent.Subdomain(id);
-              }
+            function DomainWrapper(riffleDomain){
+              this.conn = riffleDomain;
               this.conn.onJoin = joinFnc;
               this.conn.onLeave = leaveFnc;
             }
@@ -156,6 +151,9 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
             };
             Domain.prototype.setToken = function(tok) {
                 this.conn.SetToken(tok);
+            };
+            Domain.prototype.getToken = function() {
+                return this.conn.GetToken();
             };
             Domain.prototype.unsubscribe = function (channel) {
               var self = this;
@@ -206,10 +204,37 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
               });
             };
             Domain.prototype.subdomain = function(id) {
-              var tmp = new Domain(id, this.conn);
+              var tmp = new DomainWrapper(this.conn.Subdomain(id));
               this.subdomains[id] = tmp;
               return tmp;
             };
+            Domain.prototype.linkDomain = function(id) {
+              var tmp = new DomainWrapper(this.conn.LinkDomain(id));
+              this.subdomains[id] = tmp;
+              return tmp;
+            };
+            Domain.prototype.login = function() {
+              var self = this;
+              var username = arguments[0];
+              if(!username){
+                username = "_user";
+              }
+              function success(domain){
+                var tmp = new DomainWrapper(domain);
+                self.subdomains[username] = tmp;
+                return tmp;
+              }
+              function error(err){
+                return err;
+              }
+              return this.conn.Login.apply(this.conn, arguments).then(success, error);
+            };
+            Domain.prototype.registerAccount = function() {
+              return this.conn.RegisterAccount.apply(this.conn, arguments);
+            };
+            //Need these for ModelObject compatability
+            Domain.prototype.Call = Domain.prototype.call;
+            Domain.prototype.LinkDomain = Domain.prototype.linkDomain;
 
 
             /**

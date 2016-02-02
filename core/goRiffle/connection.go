@@ -121,13 +121,21 @@ func (ep *WebsocketConnection) run() {
 			}
 
 			ep.app.ConnectionClosed("Peer connection closed")
-			ep.Reconnect()
+			if ep.app.ShouldReconnect() {
+				ep.Reconnect()
+			} else {
+				break
+			}
 		} else if msgType == websocket.CloseMessage {
 			core.Info("Close message recieved")
 			ep.conn.Close()
 
 			ep.app.ConnectionClosed("Close message received")
-			ep.Reconnect()
+			if ep.app.ShouldReconnect() {
+				ep.Reconnect()
+			} else {
+				break
+			}
 		} else {
 			ep.app.ReceiveBytes(bytes)
 		}
