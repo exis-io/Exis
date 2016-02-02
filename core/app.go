@@ -465,16 +465,6 @@ func (c *app) setState(state int) {
 	c.stateMutex.Unlock()
 }
 
-<<<<<<< HEAD
-
-
-
-
-
-
-
-=======
 func (c *app) ShouldReconnect() bool {
 	return !c.leaving
 }
->>>>>>> dev
