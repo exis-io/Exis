@@ -33,7 +33,7 @@ client.onJoin = function() {
         console.log(s);
     }, String),
     function (err) {
-        console.log(err) // Expects a String, like "ERROR due to bad argument type"
+        console.log(err) // Expects a String, like "wamp.error.invalid_argument: Cumin: expecting primitive float, got string"
     });
     // End Example Tour Reg/Call Lesson 2 Fails
     
