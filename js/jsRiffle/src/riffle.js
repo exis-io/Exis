@@ -41,6 +41,10 @@ var rename = function(domainConstructor) {
 			ret['linkDomain'] = rename(ret['linkDomain'])
 		}
 
+		if ('login' in ret) {
+			ret['login'] = rename(ret['login'])
+		}
+
 		return ret;
 	};
 };
