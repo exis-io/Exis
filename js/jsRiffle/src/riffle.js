@@ -22,35 +22,15 @@ var Ws = function () {
     }
 }; 
 
+global.Renamer = function(domain) {
+	for (var func in domain) {
+		domain[func.substr(0, 1).toLowerCase() + func.substr(1)] = domain[func];
+		delete domain[func];
+	}
+}
+
 global.WsWrapper = Ws;
-
-var rename = function(domainConstructor) {
-	return function(name) {
-		var ret = domainConstructor(name);
-
-		for (var func in ret) {
-			ret[func.substr(0, 1).toLowerCase() + func.substr(1)] = ret[func];
-			delete ret[func];
-		}
-
-		if ('subdomain' in ret) {
-			ret['subdomain'] = rename(ret['subdomain'])
-		}
-
-		if ('linkDomain' in ret) {
-			ret['linkDomain'] = rename(ret['linkDomain'])
-		}
-
-		if ('login' in ret) {
-			ret['login'] = rename(ret['login'])
-		}
-
-		return ret;
-	};
-};
-
-// Hackily rewrite method names to lowercase
-exports.Domain = rename(global.Domain.New)
+exports.Domain = global.Domain.New;
 
 exports.SetLogLevelOff = global.Config.SetLogLevelOff;
 exports.SetLogLevelApp = global.Config.SetLogLevelApp;
