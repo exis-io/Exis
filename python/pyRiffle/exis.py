@@ -2,22 +2,23 @@
 Issue calls into the Exis fabric.
 
 Usage:
-    exis [-djq] call <endpoint> [ARGS ...]
-    exis [-djq] publish <endpoint> [ARGS ...]
-    exis [-djq] register <endpoint>
-    exis [-djq] subscribe <endpoint>
+    exis [-djq] [--agent=DOMAIN] call <endpoint> [ARGS ...]
+    exis [-djq] [--agent=DOMAIN] publish <endpoint> [ARGS ...]
+    exis [-djq] [--agent=DOMAIN] register <endpoint>
+    exis [-djq] [--agent=DOMAIN] subscribe <endpoint>
 
 Options:
-    -h --help    Show this information.
-    -d --debug   Enable riffle debug output.
-    -j --json    Format output as JSON.
-    -q --quiet   Suppress output other than command results.
+    -h --help       Show this information.
+    -d --debug      Enable riffle debug output.
+    -j --json       Format output as JSON.
+    -q --quiet      Suppress output other than command results.
+    --agent=DOMAIN  Domain to use on fabric (overrides the environment variable) [default: None]
 
 Environment Variables:
-    WS_URL       Websocket URL for node [default: ws://localhost:8000/ws]
-    DOMAIN       Domain to use on fabric [default: xs]
-    EXIS_KEY     Private key for authentication (path or PEM string) [default: None]
-    EXIS_TOKEN   Token for authentication [default: None]
+    WS_URL          Websocket URL for node [default: ws://localhost:8000/ws]
+    DOMAIN          Domain to use on fabric [default: xs]
+    EXIS_KEY        Private key for authentication (path or PEM string) [default: None]
+    EXIS_TOKEN      Token for authentication [default: None]
 """
 
 from __future__ import print_function
@@ -109,6 +110,9 @@ def main():
 
     ws_url = os.environ.get("WS_URL", "ws://localhost:8000/ws")
     domain = os.environ.get("DOMAIN", "xs")
+
+    if args['--agent'] != "None":
+        domain = args['--agent']
 
     if args['--debug']:
         riffle.SetLogLevelDebug()
