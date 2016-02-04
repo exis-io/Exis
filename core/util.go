@@ -24,10 +24,13 @@ const (
 	maxId          int64         = 1 << 53
 	MessageTimeout time.Duration = 3 * time.Second
 
-	FabricLocal      = "ws://localhost:8000/ws"
-	FabricDev        = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
-	FabricSandbox    = "ws://sandbox.exis.io:8000/ws"
-	FabricProduction = "wss://node.exis.io:8000/wss"
+	FabricLocal	    = "ws://localhost:8000/ws"
+	FabricDev	    = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
+	FabricSandbox	    = "ws://sandbox.exis.io:8000/ws"
+	FabricProduction    = "wss://node.exis.io:8000/wss"
+	RegistrarLocal      = "http://localhost:8880"
+	RegistrarDev        = "http://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8880"
+	RegistrarProduction = "https://node.exis.io:8880"
 
 	CuminStrict = 2
 	CuminLoose = 1
@@ -37,6 +40,7 @@ const (
 var (
 	LogLevel int    = 1
 	Fabric   string = FabricProduction
+	Registrar string = RegistrarProduction
 	CuminLevel int = CuminLoose
 )
 

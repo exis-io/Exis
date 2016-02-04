@@ -124,19 +124,31 @@ func SetLogLevelInfo() { core.LogLevel = core.LogLevelInfo }
 func SetLogLevelDebug() { core.LogLevel = core.LogLevelDebug }
 
 //export SetFabricDev
-func SetFabricDev() { core.Fabric = core.FabricDev }
+func SetFabricDev() {
+    core.Fabric = core.FabricDev
+    core.Registrar = core.RegistrarDev
+}
 
 //export SetFabricSandbox
 func SetFabricSandbox() { core.Fabric = core.FabricSandbox }
 
 //export SetFabricProduction
-func SetFabricProduction() { core.Fabric = core.FabricProduction }
+func SetFabricProduction() {
+    core.Fabric = core.FabricProduction
+    core.Registrar = core.RegistrarProduction
+}
 
 //export SetFabricLocal
-func SetFabricLocal() { core.Fabric = core.FabricLocal }
+func SetFabricLocal() {
+    core.Fabric = core.FabricLocal
+    core.Registrar = core.RegistrarLocal
+}
 
 //export MantleSetFabric
 func MantleSetFabric(url *C.char) { core.Fabric = C.GoString(url) }
+
+//export MantleSetRegistrar
+func MantleSetRegistrar(url *C.char) { core.Registrar = C.GoString(url) }
 
 //export Application
 func Application(s *C.char) { core.Application("%s", C.GoString(s)) }

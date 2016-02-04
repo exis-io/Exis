@@ -125,6 +125,13 @@ func (a *app) Login(d Domain, args ...string) (Domain, error){
     } else if len(args) != 0 {
 		return nil, fmt.Errorf("Login must be called with 0,1 or 2 args. ([username [, password]]).")
     }
+    if Fabric == FabricSandbox {
+	if username == "" {
+	    return d, nil
+	}else {
+	    return d.Subdomain(username), nil
+	}
+    }
 
     if token, domain, err := tokenLogin(d.GetName(), username, password ); err != nil{
 		return nil, err
@@ -137,8 +144,11 @@ func (a *app) Login(d Domain, args ...string) (Domain, error){
 
 //takes the domain that register was called on and registration info required by Auth
 func (a *app) RegisterAccount(d Domain, username string, password string, email string, name string ) (bool, error){
+	if Fabric == FabricSandbox {
+	    return false, fmt.Errorf("Registration is not available on the sandbox node.")
+	}
 	Info("Attempting to register")
-	url := "https://node.exis.io:8880/register"
+	url := Registrar + "/register"
 
 	payload := map[string]interface{}{"domain": username, "domain-password": password, "requestingdomain": d.GetName(), "domain-email": email, "Name": name }
 	jsonString, err := json.Marshal(payload)
@@ -166,7 +176,7 @@ func (a *app) RegisterAccount(d Domain, username string, password string, email 
 // Attempt a token login.
 func tokenLogin(domain string, username string, password string) (string, string, error) {
 	Info("Attempting to obtain a token")
-	url := "https://node.exis.io:8880/login"
+	url := Registrar + "/login"
 
 	payload := map[string]interface{}{"domain": username, "password": password, "requestingdomain": domain}
 	jsonString, err := json.Marshal(payload)
