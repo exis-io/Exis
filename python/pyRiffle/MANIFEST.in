@@ -1,2 +1,3 @@
 include riffle/linux-386/pymantle.so
 include riffle/linux-x86_64/pymantle.so
+include exis.py
