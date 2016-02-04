@@ -40,12 +40,10 @@ extension String {
 // Decode arbitrary returns from the mantle
 func decode(p: GoSlice) -> (UInt64, [Any]) {
     let int8Ptr = unsafeBitCast(p.data, UnsafePointer<Int8>.self)
+    // If the length of the slice is the same as the cap, the string conversion always fails
     let dataString = String.fromCString(int8Ptr)!
     
-    //var scrubbed = dataString.stringByReplacingOccurrencesOfString("\"", withString: "'")
-    //print("DAAATASTRING: \(dataString)")
-    
-    guard var data = try! JSONParser.parse(dataString) as? [Any] else {
+    guard let data = try! JSONParser.parse(dataString) as? [Any] else {
         print("DID NOT RECEIVE ARRAY BACK!")
         return (UInt64(0), [])
     }

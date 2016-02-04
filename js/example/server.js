@@ -5,7 +5,7 @@ riffle.SetFabricLocal();
 riffle.SetLogLevelDebug();
 
 var app = riffle.Domain("xs.damouse");
-var me = app.Subdomain("alpha");
+var me = app.subdomain("alpha");
 
 //Example Person Class
 function Person(){
@@ -23,7 +23,7 @@ function printName(p){
 }
 
 function log(obj, array) {
-    console.log("LOGGING")
+  console.log("LOGGING")
   console.log(obj);
   console.log(array);
   return "Success";
@@ -34,18 +34,18 @@ me.onJoin = function() {
     console.log("Receiever Joined");
     var wantPerson = riffle.want(printName, riffle.ModelObject(Person));
 
-    this.Subscribe("sub", wantPerson)
+    this.subscribe("sub", wantPerson)
 
-    this.Register("reg", riffle.want(log, {string: String}, [Number])).then(function(args){
+    this.register("reg", riffle.want(log, {string: String}, [Number])).then(function(args){
         console.log("Registration completed");
 
-        // me.Unregister("reg")
-        // me.Leave()
+        // me.unregister("reg")
+        // me.leave()
     });
 
 };
 
-me.Join()
+me.join()
 
 
 //TODO Notes:

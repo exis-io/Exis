@@ -69,13 +69,15 @@ extension Silvery {
     mutating func codeValue(value: Property?, type: Any.Type, offset: Int) throws {
         let pointer = pointerAdvancedBy(offset)
         if let optionalPropertyType = type as? OptionalProperty.Type, let propertyType = optionalPropertyType.propertyType() {
-            if var optionalValue = value {
+            if let unwrap = value {
+                var optionalValue = unwrap 
                 try x(optionalValue, isY: propertyType)
                 optionalValue.codeOptionalInto(pointer)
             } else if let nilValue = type as? OptionalProperty.Type {
                 nilValue.codeNilInto(pointer)
             }
-        } else if var sureValue = value {
+        } else if let optionalValue = value {
+            var sureValue = optionalValue
             try x(sureValue, isY: type)
             sureValue.codeInto(pointer)
         }

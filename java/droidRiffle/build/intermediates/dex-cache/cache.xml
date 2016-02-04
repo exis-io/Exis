@@ -1,12 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" >
-
-    <item
-        jar="/home/damouse/code/merged/riffle/java/droidRiffle/app/build/intermediates/exploded-aar/droidRiffle/mantle/unspecified/jars/classes.jar"
-        jumboMode="false"
-        revision="23.0.2"
-        sha1="0329659e3ece7a4cd1d13e3f802b398163c590c7">
-        <dex dex="/home/damouse/code/merged/riffle/java/droidRiffle/app/build/intermediates/pre-dexed/debug/droidRiffle-mantle-unspecified_09eaceac2c429ff0067e0104784fbd81670e6ce4.jar" />
-    </item>
-
-</items>
+<items version="2" />

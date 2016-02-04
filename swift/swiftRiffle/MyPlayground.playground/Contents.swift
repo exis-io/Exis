@@ -272,27 +272,18 @@ init that produces a valid model.
 //
 //
 
+protocol Thing {}
 
-func alpha() {
-    print("Func")
-    return
-}
+extension Int: Thing {}
 
-let z = alpha()
+var a: Any? = (1, 2, 3)
 
-if let y = z as? Void {
-    print("is Void")
-}
+//if let z = a as? (Any, Any, Any).self {
+//    print("Tuple Recognized")
+//}
+//
 
-func beta() -> Int {
-    return 2
-}
 
-if let y = beta() as? Void {
-    print("Is Void")
-}
-
-//print(z == ())
 
 
 

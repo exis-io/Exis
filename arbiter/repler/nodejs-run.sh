@@ -7,15 +7,15 @@ riffle.SetFabric(process.env.WS_URL);
 $EXIS_SETUP
 
 var app = riffle.Domain(process.env.DOMAIN);
-var backend = app.Subdomain("example");
-var client = app.Subdomain("example");
+var backend = app.subdomain("example");
+var client = app.subdomain("example");
 
 backend.onJoin = function() {
     $EXIS_REPL_CODE
     console.log("___SETUPCOMPLETE___");
 };
 
-backend.Join()
+backend.join()
 EOF
 
 echo "___BUILDCOMPLETE___"

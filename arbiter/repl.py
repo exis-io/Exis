@@ -20,12 +20,16 @@ from colorama import Fore, Back, Style
 from threading import Thread, Event
 import runnode
 
+
 def f(args):
     pass
 verbose = f
+
+
 def enableVerbose():
     runnode.enableVerbose()
     global verbose
+
     def f(args):
         print args
     verbose = f
@@ -48,6 +52,8 @@ except:
 
 # atexit functionality to clean up our mess
 pidKillList = []
+
+
 def onexit():
     for pid in pidKillList:
         try:
@@ -61,17 +67,22 @@ atexit.register(onexit)
 
 # Handle node launching stuff here
 node = None
+
+
 def launchNode():
     global node
     node = runnode.Node()
     node.setup()
     node.start()
 
+
 def killNode():
     if node:
         node.kill()
 
 DEBUG = False
+
+
 def debugMode():
     global DEBUG
     DEBUG = True
@@ -88,6 +99,7 @@ WS_URL = os.environ.get("WS_URL", "ws://localhost:8000/ws")
 DOMAIN = os.environ.get("DOMAIN", "xs.demo.test")
 TEST_PREFIX = "arbiterTask"
 
+
 class Coder:
 
     """
@@ -99,7 +111,7 @@ class Coder:
         self.task = task
         self.action = action
         self.tmpdir = None
-    
+
     def copyFromBasePath(self, testDir):
         """Copy over everything into this new dir"""
         bp = self.getBasePath()
@@ -113,13 +125,13 @@ class Coder:
 
     def setup(self, tmpdir):
         self.tmpdir = tmpdir
-        #self.copyFromBasePath(tmpdir)
+        # self.copyFromBasePath(tmpdir)
         shutil.copy("{}/arbiter/repler/{}".format(EXISREPO, self.getRunScript()), tmpdir)
         self._setup(tmpdir)
-    
+
     def setupRunComplete(self, code):
         pass
-    
+
     def setupEnv(self, env):
         pass
 
@@ -128,14 +140,14 @@ class Coder:
 
     def getBasePath(self):
         return "{}/arbiter/repler/".format(EXISREPO)
-    
+
     def getRunScript(self):
         # Find the run script, use run2 if it exists
         if STUB_REPL:
             return "{}-stub.sh".format(self.task.getLangName())
         else:
             return "{}-run.sh".format(self.task.getLangName())
-    
+
     def getTestingCode(self):
         """
         This function returns the properly formatted code needed to make the repl calls work.
@@ -160,7 +172,7 @@ class Coder:
                 if ev in o:
                     good = ev
         return good
-        
+
     def checkStderr(self, err):
         if err:
             return True
@@ -183,18 +195,19 @@ class Coder:
 
 
 class PythonCoder(Coder):
+
     def _setup(self, tmpdir):
         """
         We shouldn't have to do anything here, assume they have run 'sudo pip install -e .' in pyRiffle.
         """
         pass
-    
+
     def setupRunComplete(self, code):
-        pass #code.append('{}print "___RUNCOMPLETE___"'.format(" " * self.getWhitespace(code[-1])))
+        pass  # code.append('{}print "___RUNCOMPLETE___"'.format(" " * self.getWhitespace(code[-1])))
 
     def getWhitespace(self, line):
         return len(line) - len(line.lstrip(' '))
-    
+
     def setupEnv(self, env):
         env["PYTHONPATH"] = self.tmpdir
         if DEBUG:
@@ -231,6 +244,7 @@ class PythonCoder(Coder):
 
 
 class SwiftCoder(Coder):
+
     def _setup(self, tmpdir):
         """
         Need to copy over the proper files for swift build command (mantle/swiftRiffle).
@@ -244,10 +258,10 @@ class SwiftCoder(Coder):
         shutil.copytree("{}/swiftRiffle/Riffle".format(swift), "{}/swiftRiffle/Riffle".format(tmpdir))
         if not os.path.exists("{}/swiftRiffle/Riffle/.git".format(tmpdir)):
             raise Exception("!! Please run 'make swift' so that swiftRiffle is git tagged properly")
-    
+
     def setupRunComplete(self, code):
-        pass #code.append('print("___RUNCOMPLETE___")')
-    
+        pass  # code.append('print("___RUNCOMPLETE___")')
+
     def setupEnv(self, env):
         if DEBUG:
             env["EXIS_SETUP"] = "Riffle.LogLevelDebug()"
@@ -265,23 +279,25 @@ class SwiftCoder(Coder):
         else:
             return self.task.expectVal
 
+
 class NodeJSCoder(Coder):
+
     def _setup(self, tmpdir):
         """
         Need to run 'npm install BASEPATH/js/jsRiffle' in the tmp dir.
         """
-        #proc = subprocess.Popen(["npm", "install", "{}/js/jsRiffle/".format(EXISREPO)], cwd=tmpdir,
+        # proc = subprocess.Popen(["npm", "install", "{}/js/jsRiffle/".format(EXISREPO)], cwd=tmpdir,
         proc = subprocess.Popen(["npm", "link", "jsriffle"], cwd=tmpdir,
-                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, errors = proc.communicate()
-        
+
         if proc.returncode:
             print "!! We expect that you have run 'sudo npm link' in the jsRiffle dir"
             raise Exception("Unable to setup for JS: {}".format(errors))
-    
+
     def setupRunComplete(self, code):
-        pass #code.append('setTimeout(function() { console.log("___RUNCOMPLETE___"); }, 3000);')
-    
+        pass  # code.append('setTimeout(function() { console.log("___RUNCOMPLETE___"); }, 3000);')
+
     def setupEnv(self, env):
         if DEBUG:
             env["EXIS_SETUP"] = "riffle.SetLogLevelDebug();"
@@ -299,16 +315,18 @@ class NodeJSCoder(Coder):
         else:
             return self.task.expectVal
 
+
 class BrowserCoder(Coder):
+
     def getBasePath(self):
         return "{}/arbiter/repler/".format(EXISREPO)
-    
+
     def setupEnv(self, env):
         env["PYTHONPATH"] = self.tmpdir
         env["REPL_BROWSER_EXPECT"] = self.getExpect()
         # NOTE need to specify the DISPLAY for FireFox to open up in otherwise shit hits the fan
         env["DISPLAY"] = os.environ['DISPLAY']
-    
+
     def setup(self, tmpdir):
         """
         OVERWRITES the Coder class setup file!
@@ -337,7 +355,7 @@ class BrowserCoder(Coder):
             return self.task.expectVal.strip("'\"")
         else:
             return self.task.expectVal
-    
+
     def checkStdout(self, out):
         ev = self.getExpect()
 
@@ -359,6 +377,7 @@ coders = {
     "browser": BrowserCoder
 }
 
+
 def getCoder(task, action):
     """Returns an instance of the proper class or None"""
     lang = task.getLangName()
@@ -368,6 +387,7 @@ def getCoder(task, action):
     else:
         c = coders.get(lang, None)
     return c(task, action) if c else None
+
 
 class ReplIt:
 
@@ -399,7 +419,6 @@ class ReplIt:
 
         self.success = None
 
-
     def setup(self):
         """
         Sets up a temp directory for this task and copies the proper code over (like a fake docker)
@@ -408,7 +427,7 @@ class ReplIt:
         self.coder = getCoder(self.task, self.action)
         if not self.coder:
             raise Exception("Couldn't find the Coder for this lang")
-        
+
         # Where is the repl code we need?
         self.runScript = self.coder.getRunScript()
 
@@ -417,10 +436,10 @@ class ReplIt:
 
         # Now that the dir is setup, allow the coder to setup anything it needs for the lang
         self.coder.setup(self.testDir)
-        
+
         # Get the code pulled and formatted
         self.execCode = self.coder.getTestingCode()
-        
+
         # Setup env vars
         self.env = {
             "WS_URL": WS_URL,
@@ -428,9 +447,8 @@ class ReplIt:
             "PATH": os.environ["PATH"],
             "EXIS_REPL_CODE": self.execCode
         }
-        
+
         self.coder.setupEnv(self.env)
-        
 
     def _read(self, out, stor, expect):
         """
@@ -460,7 +478,7 @@ class ReplIt:
                             self.msgs += "-- Node restart found but not running a node\n"
                 else:
                     if expect is not None and expect in l:
-                        #print Fore.GREEN + "Found Expect value" + Style.RESET_ALL
+                        # print Fore.GREEN + "Found Expect value" + Style.RESET_ALL
                         if self.runComplete:
                             self.runComplete.set()
                     stor.append((time.time(), l))
@@ -524,6 +542,7 @@ class ReplIt:
         self.readOut.start()
         self.readErr.start()
 
+
 def executeTasks(taskList, actionList):
     """
     Given a list of tasks and an action it will zip them together and then execute them properly.
@@ -532,7 +551,7 @@ def executeTasks(taskList, actionList):
         False if something went wrong
     """
     procs = list()
-    
+
     for t, a in zip(taskList, actionList):
         r = ReplIt(t, a)
         r.setup()
@@ -540,7 +559,7 @@ def executeTasks(taskList, actionList):
         a = r.buildComplete.wait(WAIT_TIME)
         if a is False:
             r.msgs += Fore.YELLOW + "!! {} never completed setup process (BUILDCOMPLETE never found)".format(t.fullName()) + Style.RESET_ALL
-        
+
         a = r.setupComplete.wait(WAIT_TIME)
         if a is False:
             r.msgs += Fore.YELLOW + "!! {} never completed setup process (SETUPCOMPLETE never found)".format(t.fullName()) + Style.RESET_ALL
@@ -564,7 +583,7 @@ def executeTasks(taskList, actionList):
     ok = True
     for p in procs[::-1]:
         ok &= p.kill()
-    
+
     printResult(procs)
 
     # If everything was ok then cleanup the temp dirs
@@ -586,15 +605,14 @@ def executeTaskSet(taskSet):
     """
     taskList, actionList = list(), list()
     # Pull the proper actions from the task
-    
+
     lst = taskSet.getOrderedTasks()
     if len(lst) != 2:
         return None
-    
-    print "# {:3d} - {}\t".format(taskSet.index, taskSet.getName()), 
+
+    print "# {:3d} - {}\t".format(taskSet.index, taskSet.getName()),
 
     return executeTasks(lst, [l.action for l in lst])
-
 
 
 def cleanupTests():
@@ -604,8 +622,10 @@ def cleanupTests():
         print d
         shutil.rmtree(d)
 
+
 def printSetup(taskSet):
     ''' Pretty print for the setup of a test '''
+
 
 def printResult(procs):
     ''' Pretty print the results of test
@@ -614,15 +634,15 @@ def printResult(procs):
 
     '''
 
-    somethingFailed = False
-    for t in procs: 
+    print " ".rjust(10) + "",
+
+    for t in procs:
         if t.success:
             print Fore.GREEN + t.action + " ",
         else:
-            somethingFailed = True
             print Fore.RED + t.action + Style.RESET_ALL,
 
-    for t in procs: 
+    for t in procs:
         if not t.success or verbose != f:
             print "\n\t" + Fore.YELLOW + t.action + ' expected: ' + Fore.WHITE \
                 + str(t.coder.getExpect()) + Fore.YELLOW + ", output: " + Fore.WHITE \
@@ -634,10 +654,10 @@ def printResult(procs):
             if t.msgs:
                 print "\tMessages: "
                 print "\t\t" + t.msgs.replace("\n", "\n\t\t")
-            
+
             print Fore.RED + "\n".join([a[1] for a in t.stderr]) + Style.RESET_ALL
             print Fore.CYAN + t.execCode + Style.RESET_ALL
-    
+
     print Style.RESET_ALL
 
     if DEBUG:
@@ -645,7 +665,7 @@ def printResult(procs):
         if node:
             log.extend([(t[0], t[1], "node", "out") for t in node.stdout])
             log.extend([(t[0], t[1], "node", "err") for t in node.stderr])
-            
+
         for p in procs:
             log.extend([(t[0], t[1], p.task.action, "out") for t in p.stdout])
             log.extend([(t[0], t[1], p.task.action, "err") for t in p.stderr])
