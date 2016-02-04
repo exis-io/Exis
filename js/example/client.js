@@ -6,8 +6,8 @@ riffle.SetFabricLocal();
 riffle.SetLogLevelDebug();
 
 var app = riffle.Domain("xs.damouse");
-var receiver = app.Subdomain("alpha");
-var me = app.Subdomain("beta");
+var receiver = app.subdomain("alpha");
+var me = app.subdomain("beta");
 
 //Example Person Class
 function Person(){
@@ -28,27 +28,27 @@ nick.age = 101;
 me.onJoin = function() {
     console.log("Sender Joined");
 
-    receiver.Publish("sub", nick);
+    receiver.publish("sub", nick);
 
-    receiver.Call("reg", {string: "this is a string!"}, [33, 22, 11]).then(function(results){
+    receiver.call("reg", {string: "this is a string!"}, [33, 22, 11]).then(function(results){
         console.log("Results: ", results);
     }, function(error) {
         console.log("Call failed with error: ", error);
     });
 };
 
-me.Join()
+me.join()
 
 // Testing auth methods 
 // var riffle = require('jsriffle');
 // riffle.SetLogLevelDebug();
 
 // var app = riffle.Domain("xs.demo.deemouse.jstest");
-// var me = app.Subdomain("alpha");
+// var me = app.subdomain("alpha");
 
 // me.onJoin = function() {
 //     console.log("Client Joined");
 // };
 
 // me.SetToken("zdyiG7Gl9ur0rJV7GtwHMHFaEMvDaqnyjbg0K65aCwuuISLBJg3FGCtMc30WOwacH8MbGH.WRZsjJVNh4n9DXh8RZbRwoy2VuigTblczPK0jejtP6uuTCXuj2yYjGiXThhjfYiJnRCALsu79AHO7dtjOfgyzJ8hGccKtpbYNH5o_")
-// me.Join()
+// me.join()

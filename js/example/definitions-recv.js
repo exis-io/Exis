@@ -6,7 +6,7 @@ var riffle = require('jsriffle');
 
 // After importing riffle, simply add types to
 // function declarations wrapped with riffle.want
-this.Register("endpoint", riffle.want(function(s) {
+this.register("endpoint", riffle.want(function(s) {
     console.log(s);
 }, String));
 // the registered endpoint will only execute
