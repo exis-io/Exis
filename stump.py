@@ -8,17 +8,20 @@ Usage:
   stump pull (all | REPOS...)
   stump add-subtree DIRECTORY NAME URL
   stump test (list | all | <languageOrTestNumber>)
-  stump deploy (all | REPOS...)         
+  stump release <remote> <version>
 
 Options:
   -h --help     Show this screen.
 
 
-Testing Examples: 
+Testing Examples:
     ./stump test list       List all tests
     ./stump test all        Run all tests
-    ./stump test python     Run all tests in language 
+    ./stump test python     Run all tests in language
     ./stump test 15         Run the given test number
+
+Release Example:
+    ./stump release pyRiffle 0.2.1
 '''
 
 import os
@@ -26,6 +29,7 @@ import sys
 import docopt
 from subprocess import call
 import shutil
+import tempfile
 import arbiter
 
 # Format: (prefix: remote, url)
@@ -149,8 +153,31 @@ if __name__ == '__main__':
             else: 
                 arbiter.arbiter.testAll(args['<languageOrTestNumber>'])
 
-    elif args['deploy']:
-        print "Not implemented"
+    elif args['release']:
+        found = False
+        for prefix, remote, url in SUBTREES:
+            if remote == args['<remote>']:
+                found = True
+                break
+
+        if not found:
+            print("Error: unrecognized remote ({})".format(args['<remote>']))
+            sys.exit(1)
+
+        print("Pushing {} to remote {} ({})...".format(prefix, remote, url))
+        call("git subtree push --prefix {} {} master".format(prefix, remote), shell=True)
+
+        tag = args['<version>']
+        if not tag.startswith("v"):
+            tag = "v" + tag
+
+        tmp = tempfile.mkdtemp()
+        call("git clone {} {}".format(url, tmp), shell=True)
+
+        print("Creating tag: {}".format(tag))
+        call('git -C {0} tag -a {1} -m "Release {1}."'.format(tmp, tag), shell=True)
+        call("git -C {} push origin master".format(tmp), shell=True)
+        shutil.rmtree(tmp)
 
 
 
