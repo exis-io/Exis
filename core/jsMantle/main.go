@@ -106,6 +106,7 @@ func New(name string) *js.Object {
 	}
 
 	d.wrapped = js.MakeWrapper(&d)
+	js.Global.Get("Renamer").Invoke(d.wrapped)
 	return d.wrapped
 }
 
@@ -116,6 +117,7 @@ func (d *Domain) Subdomain(name string) *js.Object {
 	}
 
 	n.wrapped = js.MakeWrapper(&n)
+	js.Global.Get("Renamer").Invoke(n.wrapped)
 	return n.wrapped
 }
 
@@ -126,6 +128,7 @@ func (d *Domain) LinkDomain(name string) *js.Object {
 	}
 
 	n.wrapped = js.MakeWrapper(&n)
+	js.Global.Get("Renamer").Invoke(n.wrapped)
 	return n.wrapped
 }
 
@@ -207,6 +210,7 @@ func (d *Domain) Login(args ...string) *js.Object {
 	    }
 
 	    n.wrapped = js.MakeWrapper(&n)
+	    js.Global.Get("Renamer").Invoke(n.wrapped)
 	    p.Resolve(n.wrapped)
 	}
     }()
