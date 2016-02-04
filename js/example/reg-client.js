@@ -4,13 +4,13 @@ riffle.SetFabricLocal();
 riffle.SetLogLevelDebug();
 
 var app = riffle.Domain("xs.demo.test");
-var backend = app.Subdomain("backend");
-var client = app.Subdomain("client");
+var backend = app.subdomain("backend");
+var client = app.subdomain("client");
 
 client.onJoin = function() {
 
     // Example Reg/Call str str - Basic reg expects string, returns string
-    backend.Call("regStrStr", "Hello").then(riffle.wait(function (s) {
+    backend.call("regStrStr", "Hello").then(riffle.wait(function (s) {
         console.log(s); // Expects a String, like "Hello World"
     }, String),
     function (err) {
@@ -19,7 +19,7 @@ client.onJoin = function() {
     // End Example Reg/Call str str
     
     // Example Reg/Call str int - Basic reg expects string, returns int
-    backend.Call("regStrInt", "Hello").then(riffle.wait(function (i) {
+    backend.call("regStrInt", "Hello").then(riffle.wait(function (i) {
         console.log(i); // Expects an int, like 42
     }, String),
     function (err) {
@@ -28,7 +28,7 @@ client.onJoin = function() {
     // End Example Reg/Call str int
     
     // Example Reg/Call int str - Basic reg expects int, returns str
-    backend.Call("regIntStr", 42).then(riffle.wait(function (s) {
+    backend.call("regIntStr", 42).then(riffle.wait(function (s) {
         console.log(s); // Expects a String, like "Hello World"
     }, String),
     function (err) {
@@ -37,4 +37,4 @@ client.onJoin = function() {
     // End Example Reg/Call int str
 };
 
-client.Join()
+client.join()

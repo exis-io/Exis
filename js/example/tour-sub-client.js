@@ -4,18 +4,18 @@ riffle.SetFabricLocal();
 riffle.SetLogLevelDebug();
 
 var app = riffle.Domain("xs.demo.test");
-var backend = app.Subdomain("backend");
-var client = app.Subdomain("client");
+var backend = app.subdomain("backend");
+var client = app.subdomain("client");
 
 client.onJoin = function() {
     /////////////////////////////////////////////////////////////////////////////////////
     // Example Tour Pub/Sub Lesson 1 - our first basic example
-    backend.Publish("myFirstSub", "Hello");
+    backend.publish("myFirstSub", "Hello");
     // End Example Tour Pub/Sub Lesson 1
         
     /////////////////////////////////////////////////////////////////////////////////////
     // Example Tour Pub/Sub Lesson 2 Works - type enforcement good
-    backend.Publish("iWantStrings", "Hi").then(function() {
+    backend.publish("iWantStrings", "Hi").then(function() {
         console.log("Publish to iWantStrings complete");
     },
     function (err) {
@@ -24,7 +24,7 @@ client.onJoin = function() {
     // End Example Tour Pub/Sub Lesson 2 Works
         
     // Example Tour Pub/Sub Lesson 2 Fails - type enforcement bad
-    backend.Publish("iWantInts", "Hi").then(function () {
+    backend.publish("iWantInts", "Hi").then(function () {
         console.log("Publish to iWantInts complete");
     },
     function (err) {
@@ -37,4 +37,4 @@ client.onJoin = function() {
 
 };
 
-client.Join()
+client.join()

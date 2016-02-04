@@ -7,26 +7,26 @@ SetLogLevelDebug()
 //SetLogLevelInfo()
 SetFabricLocal()
 
+/*
+Allow any
+Allow call returns
+Properly formatted errors
+*/
 class Dog: Model {
     var name = "Fido"
     var age = 43
 }
+
+// Create an object
+let dog = Dog()
+dog.name = "Billi"
+dog.age = 88
 
 
 class Receiver: Domain {
     
     override func onJoin() {
         print("Recever joined")
-        
-//        register("reg") { (first: String, second: String) -> String in
-//            print("Received call! Args: ", first, second)
-//            return "Receiver says hi!"
-//        }
-//        
-//        subscribe("sub") { (a: Int, b: [String], c: Dog) in
-//            print("Received publish: \(a), with list: \(b), and pup: \(c.description)")
-//        }
-
         
         // Pub Sub Success Cases
             
@@ -35,7 +35,7 @@ class Receiver: Domain {
             print("SUCCESS --- 1-1")
         }
         
-        // Primitive Types
+//        // Primitive Types
         subscribe("subscribePrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
             print("SUCCESS --- 1-2")
             //print("1 : Sub receiving single types:", a, b, c, d, e)
@@ -59,11 +59,14 @@ class Receiver: Domain {
             assert(e == [true, false])
         }
         
+//        subscribe("subscribeModel") { (d: Dog) in
+//            //print("Recieved:\(d), expecting: \(dog)")
+//            print("SUCESS --- 1-4")
+//            assert(d.name == dog.name && d.age == dog.age)
+//        }
         
         // TODO: subscribe with model object
-        
         // TODO: Dictionaries of simple types
-        
         // TODO: Any
         
         
@@ -73,12 +76,12 @@ class Receiver: Domain {
             print("SUCCESS --- 2-1")
             return
         }
-        
+
         
         // Simple Types
-        // FAIL when returning the types back to the client 
+        // FAIL when returning the types back to the client
         // FAIL with no cumin enforcement present
-        register("registerPrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool)  in
+        register("registerPrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
             print("SUCCESS --- 2-2")
             //print("Received: \(a) \(b) \(c) \(d) \(e), expecting 1 2.2 3.3 4 true")
             
@@ -88,9 +91,11 @@ class Receiver: Domain {
             assert(d == "4")
             assert(e == true)
             
-//            return [a, b, c, d, e]
+            // Be very careful with the return types here
+            // Cant box them into an array, since we can't differentiate between array returns and multiple value returns
+            //return [a, b, c, d, e]
         }
-        
+
         // Collections of simple types
         register("registerArrays") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
             print("SUCCESS --- 2-3")
@@ -103,19 +108,17 @@ class Receiver: Domain {
             assert(e == [true, false])
         }
         
-        
         // Riffle Model objects with returns
-//            register("registerModel") { (d: Dog) -> Dog in
-//                //print("Recieved:\(d), expecting: \(dog)")
-//                assert(d == dog)
-//                return d
-//            }
-//            
+        register("registerModel") { (d: Dog) -> Dog in
+             print("Recieved:\(d), expecting: \(dog)")
+             assert(d.name == dog.name && d.age == dog.age)
+             return d
+        }
+
 //            receiver.call("asdf", dog).then { (d: Dog) in
 //                //print("\(t) Recieved\(d), expecting \(dog)")
 //                assert(d == dog)
 //            })
-//            
 //            
 //            // Collections of Riffle Model Objects
 //            let dogs = [Dog(1, "1"), Dog(1, "1"), Dog(1, "1")]
@@ -141,22 +144,14 @@ class Receiver: Domain {
         
         // Unsub
         
-        
         // Unreg
-        
         
         // Test call doesnt exist
         
-        
         // Test Receiver Cumin Error
         
-        
         // Test Caller Cumin Error
-        
-        
-        
-        
-        
+
     }
     
     override func onLeave() {
@@ -170,32 +165,30 @@ var receiver: Receiver!
 class Sender: Domain {
     override func onJoin() {
         print("Sender joined")
-        
-        // Create an object
-        let dog = Dog()
-        dog.name = "Billiam"
-        dog.age = 88
 
         
         // Pub Sub Success Cases
         // No args
-//        print("Receiver: \(receiver)")
+        print("Receiver: \(receiver)")
         receiver.publish("subscribeNothing")
         
-//        // Primitive Types
+        // Primitive Types
         receiver.publish("subscribePrimitives", 1, 2.2, 3.3, "4", true)
-//
-//        // Arrys of simple types
-        receiver.publish("subscribeArays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
-//
-//        
-//        // Reg/Call Success Cases
-//        // No arguments
+
+        // Arrys of simple types
+        receiver.publish("subscribeArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
+
+        // Model not reconstructed well
+//        receiver.publish("subscribeModel", dog)
+
+        
+        // Reg/Call Success Cases
+        // No arguments
         receiver.call("registerNothing").then {
             assert(true)
         }
-//
-//        // Primitive Types
+
+        // Primitive Types
         receiver.call("registerPrimitives", 1, 2.2, 3.3, "4", true)
 //            .then { (a: Int, b: Float, c: Double, d: String, e: Bool) in
 //            assert(a == 1)
@@ -206,7 +199,7 @@ class Sender: Domain {
 //        }
 
         // Collections of simple types
-        receiver.call("registerPrimitives", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false]).then { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
+        receiver.call("registerArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false]).then { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
             assert(a == [1, 2])
             assert(b == [2.2, 3.3])
             assert(c == [4.4, 5.5])

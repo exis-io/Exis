@@ -44,11 +44,6 @@ func Open(url string) (*WebsocketConnection, error) {
 }
 
 func (ep *WebsocketConnection) Send(data []byte) error {
-	// core.Debug("Writing data")
-	// Does the lock block? The locks should be faster than working off the channel,
-	// but the comments in the other code imply that the lock blocks on the send?
-	// Yes, locks can block.  Not sure about faster.
-
 	ep.lock.Lock()
 	defer ep.lock.Unlock()
 
@@ -116,9 +111,6 @@ func (ep *WebsocketConnection) Reconnect() error {
 }
 
 func (ep *WebsocketConnection) run() {
-	// Theres some missing logic here when it comes to dealing with closes, including whats
-	// actually returned from those closes
-
 	for {
 		if msgType, bytes, err := ep.conn.ReadMessage(); err != nil {
 			if ep.closed {

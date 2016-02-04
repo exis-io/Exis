@@ -6,7 +6,7 @@ var riffle = require('jsriffle');
 riffle.SetFabricSandbox();
 
 var app = riffle.Domain("xs.demo.test");
-var backend = app.Subdomain("backend");
+var backend = app.subdomain("backend");
 
 backend.onJoin = function() {
 
@@ -14,5 +14,5 @@ backend.onJoin = function() {
 
 };
 
-backend.Join()
+backend.join()
 // End Example REPL Template

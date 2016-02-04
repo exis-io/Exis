@@ -1,7 +1,8 @@
 package core
 
 // Helper methods for mantles. Operate functionally on Domains, triggering success or
-// error callbacks based on the intended functionality
+// error callbacks based on the intended functionality. These functions are here to cut down 
+// on the redundancy of mantles
 
 func MantleSubscribe(d Domain, endpoint string, cb uint64, eb uint64, handler uint64, types []interface{}) {
 	if err := d.Subscribe(endpoint, handler, types); err != nil {
