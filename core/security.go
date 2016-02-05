@@ -164,7 +164,10 @@ func (a *app) RegisterAccount(d Domain, username string, password string, email 
 	} else {
 		defer resp.Body.Close()
 		if resp.StatusCode != 200 {
-		    return false, fmt.Errorf(resp.Status)
+		    body, _ := ioutil.ReadAll(resp.Body)
+		    result := string(body)
+		    fmt.Println(result)
+		    return false, fmt.Errorf(result)
 		} else {
 		    return true, nil
 		}
@@ -190,7 +193,10 @@ func tokenLogin(domain string, username string, password string) (string, string
 	} else {
 		defer resp.Body.Close()
 		if resp.StatusCode != 200 {
-		    return "", "", fmt.Errorf(resp.Status)
+		    body, _ := ioutil.ReadAll(resp.Body)
+		    result := string(body)
+		    fmt.Println(result)
+		    return "", "", fmt.Errorf(result)
 		}
 		body, _ := ioutil.ReadAll(resp.Body)
 

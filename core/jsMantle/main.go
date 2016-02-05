@@ -69,7 +69,9 @@ func (c Conn) OnOpen(msg *js.Object) {
 }
 
 func (c Conn) OnClose(msg *js.Object) {
-	c.app.Close(msg.String())
+	if j := c.domain.wrapped.Get("onLeave"); j != js.Undefined {
+		c.domain.wrapped.Call("onLeave", msg)
+	}
 }
 
 func (c Conn) Send(data []byte) error {

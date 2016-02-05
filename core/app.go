@@ -144,8 +144,10 @@ func (c *app) Close(reason string) {
 	}
 
 	c.open = false
-	close(c.in)
-	close(c.up)
+	//close(c.in)
+	//close(c.up)
+	c.in = make(chan message, 10)
+	c.up = make(chan Callback, 10)
 
 	// Theres some missing logic here when it comes to closing the external connection,
 	// especially when either end could call and trigger a close

@@ -195,7 +195,7 @@ Factory.prototype.create = function () {
          }
 
          transport.close = function (code, reason) {
-            log.debug("close code: ", code);
+            //log.debug("close code: ", code);
             websocket.close(code, reason);
          };
 
