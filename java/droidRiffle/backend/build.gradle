@@ -1,0 +1,9 @@
+apply plugin: 'application'
+
+dependencies {
+    // Cant import riffle directly, since its pure android at this point
+//    compile project(':riffle')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+mainClassName = "com.example.Backend"

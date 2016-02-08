@@ -20,11 +20,15 @@ import go.mantle.Mantle;
 
 import jnr.ffi.LibraryLoader;
 
-/**
- * Getting builds from the command line:
- *      - Make sure the gradle wrapper exists: 'gradle wrapper' at root
- *      -
- */
+/*
+Yay! Next steps:
+    - Check all type passing
+    - Verify object passing
+    - Create JAR or AAR from mantle and crust
+    - Upload jar/aar to maven or jcentral 
+*/
+
+
 
 public class Native {
     // Declare the interface for the shared library
@@ -44,14 +48,7 @@ public class Native {
         // Testing to make sure the go code runs
         libc.Hello();
 
-        /*
-        Yay! Next steps:
-            - Check all type passing
-            - Verify object passing
-            - Create JAR or AAR from mantle and crust
-            - Upload jar/aar
-            - Make sure "backend" can be created and compiled from command line
-        */
 
     }
+
 }

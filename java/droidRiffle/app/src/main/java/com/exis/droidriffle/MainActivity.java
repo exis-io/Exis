@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.exis.riffle.Domain;
+import com.exis.riffle.Model;
 import com.exis.riffle.Riffle;
 import com.exis.riffle.Utils;
 
