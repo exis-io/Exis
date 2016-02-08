@@ -20,6 +20,12 @@ import go.mantle.Mantle;
 
 import jnr.ffi.LibraryLoader;
 
+/**
+ * Getting builds from the command line:
+ *      - Make sure the gradle wrapper exists: 'gradle wrapper' at root
+ *      -
+ */
+
 public class Native {
     // Declare the interface for the shared library
     public static interface MathLib {

@@ -6,7 +6,6 @@ import (
 	"fmt"
 )
 
-
 //export Hello
 func Hello() {
 	fmt.Println("Hello from go!");
