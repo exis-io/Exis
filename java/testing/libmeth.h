@@ -5,11 +5,6 @@
 /* Start of preamble from import "C" comments.  */
 
 
-#line 5 "/home/damouse/code/merged/riffle/java/testing/math.go"
-
-
- #include <jni.h>
-
 
 
 /* End of preamble from import "C" comments.  */
@@ -55,7 +50,7 @@ extern "C" {
 #endif
 
 
-extern jlong Java_Hello_multiply(JNIEnv* p0, jclass p1, jlong p2, jlong p3);
+extern void Hello();
 
 #ifdef __cplusplus
 }

@@ -21,18 +21,31 @@ import go.mantle.Mantle;
 import jnr.ffi.LibraryLoader;
 
 public class Native {
-    public static native long multiply(long x, long y);
-
+    // Declare the interface for the shared library
     public static interface MathLib {
-        long Multiply(long x, long y);
+        void Hello();
     }
 
     public static void main(String[] args) {
-        MathLib libc = LibraryLoader.create(MathLib.class).load("meth");
+        LibraryLoader<MathLib> loader = LibraryLoader.create(MathLib.class);
 
-        System.out.println(libc.Multiply(12345, 67890));
+        // NEED THIS FOR NOW-- either the location of the library is not correct wrt
+        // android studio or jnr-ffi just doesn't understand where Android studio is holding the libs
+        loader.search("/home/damouse/code/merged/riffle/java/testing");
 
-        // output: 838102050
-        //libc.puts("Hello, World");
+        MathLib libc = loader.load("meth");
+
+        // Testing to make sure the go code runs
+        libc.Hello();
+
+        /*
+        Yay! Next steps:
+            - Check all type passing
+            - Verify object passing
+            - Create JAR or AAR from mantle and crust
+            - Upload jar/aar
+            - Make sure "backend" can be created and compiled from command line
+        */
+
     }
 }

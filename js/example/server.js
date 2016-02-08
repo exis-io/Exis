@@ -1,51 +1,51 @@
 
 var riffle = require('jsriffle');
 
-// riffle.SetFabricLocal();
-// riffle.SetLogLevelDebug();
+riffle.SetFabricLocal();
+riffle.SetLogLevelDebug();
 
-// var app = riffle.Domain("xs.damouse");
-// var me = app.subdomain("alpha");
+var app = riffle.Domain("xs.damouse");
+var me = app.subdomain("alpha");
 
-// //Example Person Class
-// function Person(){
-//   this.first = String;
-//   this.last = String;
-//   this.age = Number;
-// }
+//Example Person Class
+function Person(){
+  this.first = String;
+  this.last = String;
+  this.age = Number;
+}
 
-// Person.prototype.fullname = function(){
-//   return this.first + " " + this.last;
-// };
+Person.prototype.fullname = function(){
+  return this.first + " " + this.last;
+};
 
-// function printName(p){
-//   console.log("NAME: ", p.fullname());
-// }
+function printName(p){
+  console.log("NAME: ", p.fullname());
+}
 
-// function log(obj, array) {
-//   console.log("LOGGING")
-//   console.log(obj);
-//   console.log(array);
-//   return "Success";
-// }
+function log(obj, array) {
+  console.log("LOGGING")
+  console.log(obj);
+  console.log(array);
+  return "Success";
+}
 
-// me.onJoin = function() {
+me.onJoin = function() {
 
-//     console.log("Receiever Joined");
-//     var wantPerson = riffle.want(printName, riffle.ModelObject(Person));
+    console.log("Receiever Joined");
+    var wantPerson = riffle.want(printName, riffle.ModelObject(Person));
 
-//     this.subscribe("sub", wantPerson)
+    this.subscribe("sub", wantPerson)
 
-//     this.register("reg", riffle.want(log, {string: String}, [Number])).then(function(args){
-//         console.log("Registration completed");
+    this.register("reg", riffle.want(log, {string: String}, [Number])).then(function(args){
+        console.log("Registration completed");
 
-//         // me.unregister("reg")
-//         // me.leave()
-//     });
+        // me.unregister("reg")
+        // me.leave()
+    });
 
-// };
+};
 
-// me.join()
+me.join()
 
 
 //TODO Notes:
