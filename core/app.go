@@ -81,9 +81,9 @@ func NewApp() *app {
 		serializer: new(jSONSerializer),
 		open:       false,
 		state:      Disconnected,
-		in:         make(chan message, 10),
-		out:        make(chan message, 10),
-		up:         make(chan Callback, 10),
+		in:         make(chan message),
+		out:        make(chan message),
+		up:         make(chan Callback),
 		listeners:  make(map[uint64]chan message),
 		token:      "",
 	}
@@ -146,8 +146,8 @@ func (c *app) Close(reason string) {
 	c.open = false
 	//close(c.in)
 	//close(c.up)
-	c.in = make(chan message, 10)
-	c.up = make(chan Callback, 10)
+	c.in = make(chan message)
+	c.up = make(chan Callback)
 
 	// Theres some missing logic here when it comes to closing the external connection,
 	// especially when either end could call and trigger a close
