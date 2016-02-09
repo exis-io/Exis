@@ -21,7 +21,7 @@ client.onJoin = function() {
     // Example Reg/Call str int - Basic reg expects string, returns int
     backend.call("regStrInt", "Hello").then(riffle.wait(function (i) {
         console.log(i); // Expects an int, like 42
-    }, String),
+    }, Number),
     function (err) {
         console.log("ERROR: ", err);
     });

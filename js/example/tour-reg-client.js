@@ -42,7 +42,7 @@ client.onJoin = function() {
         console.log(s);
     }, String),
     function (err) {
-        console.log("ERROR: ", err); // Expects a String, like "Cumin: expecting primitive float, got string"
+        console.log(err); // Expects a String, like "Cumin: expecting primitive str, got int"
     });
     // End Example Tour Reg/Call Lesson 2 Wait Check
     
