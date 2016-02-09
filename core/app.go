@@ -33,10 +33,10 @@ type App interface {
 
 	// Temporary location, will move to security
 	SetToken(string)
-	GetToken() (string)
+	GetToken() string
 
 	Login(Domain, ...string) (Domain, error)
-    RegisterAccount(Domain, string, string, string, string ) (bool, error)
+	RegisterAccount(Domain, string, string, string, string) (bool, error)
 
 	ShouldReconnect() bool
 }
@@ -55,8 +55,8 @@ type app struct {
 	// It tells the lower layer not to try to reconnect.
 	leaving bool
 
-	state int
-	stateMutex sync.Mutex
+	state       int
+	stateMutex  sync.Mutex
 	stateChange *sync.Cond
 
 	listeners     map[uint64]chan message
@@ -166,21 +166,21 @@ func (c *app) ConnectionClosed(reason string) {
 func (a *app) SendHello() error {
 	helloDetails := make(map[string]interface{})
 	helloDetails["authid"] = a.getAuthID()
-    helloDetails["authmethods"] = a.getAuthMethods()
+	helloDetails["authmethods"] = a.getAuthMethods()
 
-    // Duct tape for js demo
-    // if Fabric == FabricProduction && c.app.token == "" {
-    //  Info("No token found on production. Attempting to auth from scratch")
+	// Duct tape for js demo
+	// if Fabric == FabricProduction && c.app.token == "" {
+	//  Info("No token found on production. Attempting to auth from scratch")
 
-    //  if token, err := tokenLogin(c.app.agent); err != nil {
-    //      return err
-    //  } else {
-    //      c.app.token = token
-    //  }
-    // }
+	//  if token, err := tokenLogin(c.app.agent); err != nil {
+	//      return err
+	//  } else {
+	//      c.app.token = token
+	//  }
+	// }
 
 	msg := hello{
-		Realm: a.agent,
+		Realm:   a.agent,
 		Details: helloDetails,
 	}
 
@@ -342,13 +342,18 @@ func (c *app) requestListenType(outgoing message, expecting string) (message, er
 	select {
 	case msg := <-wait:
 		if e, ok := msg.(*errorMessage); ok {
-
-            // If only one argument is passed through, format it nicely for transmission to the crust
-            if len(e.Arguments) >= 1 {
-                return nil, fmt.Errorf("%v: %v", e.Error, e.Arguments[0])
-            } else {
-		        return nil, fmt.Errorf("%v: %v", e.Error, e.Arguments)
-            }
+			// If only one argument is passed through, format it nicely for
+			// transmission to the crust
+			//
+			// TODO: Pass along multiple pieces of information (the error type
+			// and the error message, at least).  However, the whole chain of
+			// functions relying on requestListType expect a simple 'error'
+			// object.
+			if len(e.Arguments) >= 1 {
+				return nil, fmt.Errorf("%v: %v", e.Error, e.Arguments[0])
+			} else {
+				return nil, fmt.Errorf("%v", e.Error)
+			}
 		} else if reflect.TypeOf(msg).String() != expecting {
 			return nil, fmt.Errorf(formatUnexpectedMessage(msg, expecting))
 		} else {
@@ -365,7 +370,7 @@ func (c *app) replayRegistrations() error {
 			register := &register{
 				Request: boundep.callback,
 				Options: make(map[string]interface{}),
-				Name: boundep.endpoint,
+				Name:    boundep.endpoint,
 			}
 
 			if msg, err := c.requestListenType(register, "*core.registered"); err != nil {
@@ -392,7 +397,7 @@ func (c *app) replaySubscriptions() error {
 			subscribe := &subscribe{
 				Request: boundep.callback,
 				Options: make(map[string]interface{}),
-				Name: boundep.endpoint,
+				Name:    boundep.endpoint,
 			}
 
 			if msg, err := c.requestListenType(subscribe, "*core.subscribed"); err != nil {
