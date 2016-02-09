@@ -3,24 +3,14 @@ require('./go.js');
 var want = require('./want.js');
 var ws = require('./websocket.js');
 var pjson = require('../package.json');
+
+global.WsFactory = require('./websocket').Factory;
 exports.version = pjson.version;
 
 // Used to counteract uint generation on seemlingly 32 bit platforms
 global.NewID = function() {
    return Math.floor(Math.random() * 9007199254740992);
 };
-
-// Dont need any of this-- just return the conn
-global.WsWrapper = function () {
-    this.open = function(url) {
-        // Methods available on the conn: console.log, protocol, send, close, onmessage, onopen, onclose, info
-        var factory = new ws.Factory({'type': 'websocket', 'url': url});
-        this.conn = factory.create();
-        this.conn.onmessage = this.onmessage;
-        this.conn.onopen = this.onopen;
-        this.conn.onclose = this.onclose;
-    }
-}; 
 
 global.Renamer = function(domain) {
 	for (var func in domain) {
@@ -37,7 +27,6 @@ global.PromiseInterceptor = function(trueHandler, domain, cb, other) {
         trueHandler(args.fp, trueErrback)
     }
 }
-
 
 exports.Domain = global.Domain.New;
 

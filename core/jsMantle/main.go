@@ -75,7 +75,7 @@ func (c Conn) OnClose(msg *js.Object) {
 }
 
 func (c Conn) Send(data []byte) error {
-	c.wrapper.Get("conn").Call("send", string(data))
+	c.wrapper.Call("send", string(data))
 
 	// Added a nil error return 
 	// TOOD: the js connection can return its error for tranmission to the core as appropriate
@@ -159,20 +159,26 @@ func (a *App) Receive() {
 
 // Part 1 of the join-- start the join
 func (d *Domain) Join() {
-	w := js.Global.Get("WsWrapper").New()
+	factory := js.Global.Get("WsFactory").New(map[string]string{"type": "websocket", "url":core.Fabric})
+	wsConn := factory.Call("create")
 
 	conn := Conn{
-		wrapper: w,
+		wrapper: wsConn,
 		domain:  d,
 		app:     d.coreDomain.GetApp(),
 	}
 
 	d.app.conn = conn
 
-	w.Set("onmessage", conn.OnMessage)
-	w.Set("onopen", conn.OnOpen)
-	w.Set("onclose", conn.OnClose)
-	w.Call("open", core.Fabric)
+	// w.Set("onmessage", conn.OnMessage)
+	// w.Set("onopen", conn.OnOpen)
+	// w.Set("onclose", conn.OnClose)
+
+	wsConn.Set("onmessage", conn.OnMessage)
+	wsConn.Set("onopen", conn.OnOpen)
+	wsConn.Set("onclose", conn.OnClose)
+
+	// w.Call("open", core.Fabric)
 }
 
 // Part 2 of the join method-- complete the join
