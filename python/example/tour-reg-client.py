@@ -27,7 +27,7 @@ class GenericDomain(riffle.Domain):
             s = backend.call("iWantInts", "Hi").wait(str)
             print s
         except riffle.Error as e:
-            print e # Expects a str, like "ERROR due to bad argument type"
+            print e # Expects a str, like "wamp.error.invalid_argument: Cumin: expecting primitive int, got string"
         # End Example Tour Reg/Call Lesson 2 Fails
         
         # Example Tour Reg/Call Lesson 2 Wait Check - type enforcement on wait
@@ -47,9 +47,9 @@ class GenericDomain(riffle.Domain):
         # Example Tour Reg/Call Lesson 3 Fails - collections of types
         try:
             s = backend.call("iWantManyInts", [0, 1, "two"]).wait(str)
-            print s # Expects a str, like "Thanks for 3 ints!"
+            print s
         except riffle.Error as e:
-            print e # Errors with "Cumin: expecting primitive int, got string"
+            print e # Expects a str, like "wamp.error.invalid_argument: Cumin: expecting primitive int, got string"
         # End Example Tour Reg/Call Lesson 3 Fails
         
         ######################################################################################

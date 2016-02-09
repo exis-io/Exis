@@ -12,6 +12,8 @@ func print(msg: String) {
 
 class Tester: Riffle.Domain, Riffle.Delegate  {
     override func onJoin() {
+        var backend = self
+
         $EXIS_REPL_CODE
         print("___SETUPCOMPLETE___")
     }

@@ -43,9 +43,9 @@ class TourRegClient: Riffle.Domain, Riffle.Delegate  {
         // Example Tour Reg/Call Lesson 3 Fails - collections of types
         let notAllInts: [Any] = [0, 1, "two"]
         backend.call("iWantManyInts", notAllInts).then { (s: String) in
-            print(s) // Expects a String, like "Thanks for 3 ints!"
+            print(s)
         }.error { reason in
-            print(reason) // Expects a String, like "Cumin: expecting [int], got something else"
+            print(reason) // Expects a String, like "wamp.error.invalid_argument: Cumin: expecting primitive int, got string"
         }
         // End Example Tour Reg/Call Lesson 3 Fails
         

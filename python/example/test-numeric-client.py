@@ -10,10 +10,10 @@ class GenericDomain(riffle.Domain):
     def onJoin(self):
         # End Template Setup
         ######################################################################################
-        # Example Test Reg/Call Big Ints - should be big
+        # E-ample Test Reg/Call Big Ints - should be big
         i = backend.call("sendBigInt", 9223372036854775807).wait(int)
         print("{:d}".format(int(i))) # Expects a str, like "9223372036854775807"
-        # End Example Test Reg/Call Big Ints
+        # End E-ample Test Reg/Call Big Ints
 
         print "___SETUPCOMPLETE___"
 
