@@ -55,6 +55,7 @@ function wait(){
   var fp = arguments[0];
   var expect = new Expectation();
   var len = arguments.length;
+
   for(var i = 1; i < len; i++){
     if(validTypes.indexOf(arguments[i]) > -1 || arguments[i] instanceof ModelObject){
       expect.addArg(arguments[i], i-1);
@@ -69,9 +70,9 @@ function wait(){
           throw "Error";
         }
       }catch(e){
-        throw "Error: Inproperly formatted want statement. Argument " + (i+1) + " is invalid.";
+        throw "Error: Inproperly formatted want statement. Argument " + (i + 1) + " is invalid.";
       }
-    }
+    }  
   }
 
   function wrap(){
@@ -86,9 +87,12 @@ function wait(){
   handler.fp = wrap;
   handler.types = expect.types();
 
+  // Have to pass down the constraints to the core, but the call hasn't completed yet...
+  console.log("Want done: " + expect.types());
+
   // This is part of a promise response from the core, so we can't pass back a handler
   // we must pass back a function pointer instead
-  return handler.fp;
+  return handler;
 }
 
 /**

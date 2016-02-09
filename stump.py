@@ -30,6 +30,12 @@ import docopt
 from subprocess import call
 import shutil
 import tempfile
+
+# Attempt to set the directory automatically if stump is executing 
+if os.environ.get("EXIS_REPO", None) is None:
+    if 'stump.py' in next(os.walk('.'))[2]:
+        os.environ["EXIS_REPO"] = os.getcwd()
+
 import arbiter
 
 # Format: (prefix: remote, url)
@@ -112,7 +118,7 @@ if __name__ == '__main__':
         def orderedTasks(lang):
             '''
             Returns an orderd list of tasks from the arbiter 
-            
+
             TODO:
                 move the relative sorting down into the arbiter-- no need to repeat these steps all the time here
                 Also jesus find another home for this method
@@ -126,16 +132,16 @@ if __name__ == '__main__':
         # TODO: unit tests
         # TODO: integrate a little more tightly with unit and end to end tests
 
-        # List the tests indexed in the order they were found 
+        # List the tests indexed in the order they were found
         if args['list']:
             print " #\tTest Name"
             for task in orderedTasks(None):
                 print " " + str(task.index) + "\t" + task.getName()
 
-                #TODO: seperate by language
-                #TODO: seperate by file, and use the files for some reasonable ordering
+                # TODO: seperate by language
+                # TODO: seperate by file, and use the files for some reasonable ordering
 
-        elif args['all']: 
+        elif args['all']:
             arbiter.arbiter.testAll('all')
 
         elif args['<languageOrTestNumber>']:
@@ -145,12 +151,12 @@ if __name__ == '__main__':
                 tasks = orderedTasks('all')
                 target = next((x for x in tasks if x.index == int(target)), None)
 
-                if target is None: 
+                if target is None:
                     print "Unable to find test #" + str(target)
                     sys.exit(0)
 
                 arbiter.repl.executeTaskSet(target)
-            else: 
+            else:
                 arbiter.arbiter.testAll(args['<languageOrTestNumber>'])
 
     elif args['release']:
@@ -178,8 +184,6 @@ if __name__ == '__main__':
         call('git -C {0} tag -a {1} -m "Release {1}."'.format(tmp, tag), shell=True)
         call("git -C {} push --tags origin master".format(tmp), shell=True)
         shutil.rmtree(tmp)
-
-
 
 
 '''

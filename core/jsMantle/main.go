@@ -307,12 +307,46 @@ func (d *Domain) Register(endpoint string, handler *js.Object) *js.Object {
 	return p.Js()
 }
 
-func (d *Domain) Publish(endpoint string, args ...interface{}) *js.Object {
-	return promisify(func() (interface{}, error) { return nil, d.coreDomain.Publish(endpoint, args) })
+// Special, hacky case
+func (d *Domain) Call(endpoint string, args ...interface{}) *js.Object {
+	var p promise.Promise
+	cb := core.NewID()
+	// core.Info("Resolving the promise with results: %s", results)
+
+	go func() {
+		if results, err := d.coreDomain.Call(endpoint, args); err == nil {
+			if types, ok := d.coreDomain.GetCallExpect(cb); !ok {
+				// We were never asked for types. Don't do anything
+				core.Info("Call for %v received, but no cumin enforcement present.", endpoint)
+			} else {
+				d.coreDomain.RemoveCallExpect(cb)
+				if err := core.SoftCumin(types, results); err == nil {
+					Info("SOFT CUMIN SUCEEDED")
+					p.Resolve(results)
+				} else {
+					core.Info("SOFT CUMIN FAILED: ", err.Error())
+					p.Reject(err.Error())
+				}
+			}
+
+		} else {
+			d.coreDomain.RemoveCallExpect(cb)
+			p.Reject(err.Error())
+		}
+	}()
+
+	j := p.Js()
+
+	// Rewraps the existing then callback 
+	existingFunction := j.Get("then")
+	j.Set("then", js.Global.Get("PromiseInterceptor").Invoke(existingFunction, d.wrapped, cb))
+
+	return j
 }
 
-func (d *Domain) Call(endpoint string, args ...interface{}) *js.Object {
-	return promisify(func() (interface{}, error) { return d.coreDomain.Call(endpoint, args) })
+
+func (d *Domain) Publish(endpoint string, args ...interface{}) *js.Object {
+	return promisify(func() (interface{}, error) { return nil, d.coreDomain.Publish(endpoint, args) })
 }
 
 func (d *Domain) Unsubscribe(endpoint string) *js.Object {
@@ -327,6 +361,11 @@ func (d *Domain) Leave() *js.Object {
 	return promisify(func() (interface{}, error) { return nil, d.coreDomain.Leave() })
 }
 
+func (d *Domain) CallExpects(cb uint64, types []interface{}) {
+	d.coreDomain.CallExpects(cb, types)
+}
+
+
 // Turn the given invocation into a JS promise. If the function returns an error, return the error,
 // else return the results of the function
 func promisify(fn func() (interface{}, error)) *js.Object {
@@ -334,6 +373,7 @@ func promisify(fn func() (interface{}, error)) *js.Object {
 
 	go func() {
 		if results, err := fn(); err == nil {
+			core.Info("Resolving the promise with results: %s", results)
 			p.Resolve(results)
 		} else {
 			p.Reject(err.Error())
@@ -354,15 +394,18 @@ func SetFabricDev() {
     core.Fabric = core.FabricDev
     core.Registrar = core.RegistrarDev
 }
-func SetFabricSandbox() { core.Fabric = core.FabricSandbox }
+
 func SetFabricProduction() {
     core.Fabric = core.FabricProduction
     core.Registrar = core.RegistrarProduction
 }
+
 func SetFabricLocal() {
     core.Fabric = core.FabricLocal
     core.Registrar = core.RegistrarLocal
 }
+
+func SetFabricSandbox() { core.Fabric = core.FabricSandbox }
 func SetFabric(url string) { core.Fabric = url }
 func SetRegistrar(url string) { core.Registrar = url }
 

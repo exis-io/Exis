@@ -26,15 +26,16 @@ nick.last = "Hyatt";
 nick.age = 101;
 
 me.onJoin = function() {
+
     console.log("Sender Joined");
 
-    receiver.publish("sub", nick);
-
-    receiver.call("reg", {string: "this is a string!"}, [33, 22, 11]).then(function(results){
-        console.log("Results: ", results);
-    }, function(error) {
-        console.log("Call failed with error: ", error);
+    receiver.call("iGiveInts", "Hi").then(riffle.wait(function (s) {
+        console.log("INCORRECT: ", s);
+    }, String),
+    function (err) {
+        console.log("ERROR: ", err); // Expects a String, like "Cumin: expecting primitive float, got string"
     });
+
 };
 
 me.join()

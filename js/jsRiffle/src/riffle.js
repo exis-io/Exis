@@ -29,6 +29,18 @@ global.Renamer = function(domain) {
 	}
 }
 
+// Intercepts .then and sends down cumin args to the core. 
+// Should only be used by Calls, and internally at that 
+global.PromiseInterceptor = function(trueHandler, domain, cb, other) {
+    // console.log("Interceptor receiving: " + arguments);
+
+    return function(args, trueErrback) {
+        console.log("args and b: ", trueErrback)
+        domain.callExpects(cb, args.types);
+        trueHandler(args.fp, trueErrback)
+    }
+}
+
 global.WsWrapper = Ws;
 exports.Domain = global.Domain.New;
 

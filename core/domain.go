@@ -208,6 +208,7 @@ func (c domain) Register(endpoint string, requestId uint64, types []interface{})
 	}
 }
 
+// TODO: ask for a Publish Suceeded all the times, so we can trigger callbacks
 func (c domain) Publish(endpoint string, args []interface{}) error {
 	Info("Publish %s %v", endpoint, args)
 	c.app.Queue(&publish{
@@ -279,7 +280,7 @@ func (c domain) Unregister(endpoint string) error {
 }
 
 func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
-	if err := softCumin(binding.expectedTypes, msg.Arguments); err == nil {
+	if err := SoftCumin(binding.expectedTypes, msg.Arguments); err == nil {
 		c.app.CallbackSend(binding.callback, append([]interface{}{msg.Request}, msg.Arguments...)...)
 	} else {
 		errorArguments := make([]interface{}, 0)
@@ -298,7 +299,7 @@ func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 }
 
 func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
-	if err := softCumin(binding.expectedTypes, msg.Arguments); err == nil {
+	if err := SoftCumin(binding.expectedTypes, msg.Arguments); err == nil {
 		c.app.CallbackSend(binding.callback, msg.Arguments...)
 	} else {
         // TODO: warn application level code at some well-known location

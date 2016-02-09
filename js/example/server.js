@@ -30,18 +30,14 @@ function log(obj, array) {
 }
 
 me.onJoin = function() {
-
     console.log("Receiever Joined");
-    var wantPerson = riffle.want(printName, riffle.ModelObject(Person));
 
-    this.subscribe("sub", wantPerson)
-
-    this.register("reg", riffle.want(log, {string: String}, [Number])).then(function(args){
-        console.log("Registration completed");
-
-        // me.unregister("reg")
-        // me.leave()
-    });
+    // Example Tour Reg/Call Lesson 2 Wait Check - type enforcement on wait
+    this.register("iGiveInts", riffle.want(function(s) {
+        console.log(s); // Expects a String, like "Hi"
+        return 42;
+    }, String));
+    // End Example Tour Reg/Call Lesson 2 Wait Check
 
 };
 
