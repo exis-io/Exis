@@ -1,7 +1,7 @@
 
 require('./go.js');
 var want = require('./want.js');
-var ws = require('./transport/websocket.js');
+var ws = require('./websocket.js');
 var pjson = require('../package.json');
 exports.version = pjson.version;
 
@@ -11,7 +11,7 @@ global.NewID = function() {
 };
 
 // Dont need any of this-- just return the conn
-var Ws = function () {
+global.WsWrapper = function () {
     this.open = function(url) {
         // Methods available on the conn: console.log, protocol, send, close, onmessage, onopen, onclose, info
         var factory = new ws.Factory({'type': 'websocket', 'url': url});
@@ -32,16 +32,13 @@ global.Renamer = function(domain) {
 // Intercepts .then and sends down cumin args to the core. 
 // Should only be used by Calls, and internally at that 
 global.PromiseInterceptor = function(trueHandler, domain, cb, other) {
-    // console.log("Interceptor receiving: " + arguments);
-
     return function(args, trueErrback) {
-        console.log("args and b: ", trueErrback)
         domain.callExpects(cb, args.types);
         trueHandler(args.fp, trueErrback)
     }
 }
 
-global.WsWrapper = Ws;
+
 exports.Domain = global.Domain.New;
 
 exports.SetLogLevelOff = global.Config.SetLogLevelOff;
@@ -63,7 +60,6 @@ exports.Info = global.Config.Info;
 exports.Warn = global.Config.Warn;
 exports.Error = global.Config.Error;
 
-//want.js exports
 exports.want = want.want;
 exports.wait = want.wait;
 exports.ModelObject = want.ModelObject;

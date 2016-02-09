@@ -321,10 +321,8 @@ func (d *Domain) Call(endpoint string, args ...interface{}) *js.Object {
 			} else {
 				d.coreDomain.RemoveCallExpect(cb)
 				if err := core.SoftCumin(types, results); err == nil {
-					Info("SOFT CUMIN SUCEEDED")
 					p.Resolve(results)
 				} else {
-					core.Info("SOFT CUMIN FAILED: ", err.Error())
 					p.Reject(err.Error())
 				}
 			}

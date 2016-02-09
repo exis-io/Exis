@@ -11,10 +11,12 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-var log = require('./log.js');
 
 var when = require('when');
 
+var debug = function(s) {
+   global.Config.Debug(s);
+}
 
 
 var rand_normal = function (mean, sd) {
@@ -54,7 +56,7 @@ var assert = function (cond, text) {
 //
 var http_post = function (url, data, timeout) {
 
-   log.debug("new http_post request", url, data, timeout);
+   debug("new http_post request", url, data, timeout);
 
    var d = when.defer();
    var req = new XMLHttpRequest();
@@ -198,8 +200,6 @@ var defaults = function () {
    // Return the mutated base object
    return base;
 };
-
-
 
 exports.rand_normal = rand_normal;
 exports.assert = assert;
