@@ -22,9 +22,9 @@ global.Renamer = function(domain) {
 // Intercepts .then and sends down cumin args to the core. 
 // Should only be used by Calls, and internally at that 
 global.PromiseInterceptor = function(trueHandler, domain, cb, other) {
-    return function(args, trueErrback) {
-        domain.callExpects(cb, args.types);
-        trueHandler(args.fp, trueErrback)
+    return function(waitProcessor, trueErrback) {
+        domain.callExpects(cb, waitProcessor.types);
+        trueHandler(waitProcessor.fp, trueErrback)
     }
 }
 

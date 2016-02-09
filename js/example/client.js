@@ -9,29 +9,13 @@ var app = riffle.Domain("xs.damouse");
 var receiver = app.subdomain("alpha");
 var me = app.subdomain("beta");
 
-//Example Person Class
-function Person(){
-  this.first = String;
-  this.last = String;
-  this.age = Number;
-}
-
-Person.prototype.fullname = function(){
-  return this.first + " " + this.last;
-};
-
-var nick = new Person();
-nick.first = "Nick";
-nick.last = "Hyatt";
-nick.age = 101;
 
 me.onJoin = function() {
-
     console.log("Sender Joined");
 
-    receiver.call("iGiveInts", "Hi").then(riffle.wait(function (s) {
-        console.log("INCORRECT: ", s);
-    }, String),
+    receiver.call("iGiveInts", "Hi").then(riffle.wait(function(a) {
+        console.log("Result: ", a);
+    }, Number),
     function (err) {
         console.log("ERROR: ", err); // Expects a String, like "Cumin: expecting primitive float, got string"
     });

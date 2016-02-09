@@ -170,15 +170,9 @@ func (d *Domain) Join() {
 
 	d.app.conn = conn
 
-	// w.Set("onmessage", conn.OnMessage)
-	// w.Set("onopen", conn.OnOpen)
-	// w.Set("onclose", conn.OnClose)
-
 	wsConn.Set("onmessage", conn.OnMessage)
 	wsConn.Set("onopen", conn.OnOpen)
 	wsConn.Set("onclose", conn.OnClose)
-
-	// w.Call("open", core.Fabric)
 }
 
 // Part 2 of the join method-- complete the join
