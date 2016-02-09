@@ -24,7 +24,7 @@ global.Renamer = function(domain) {
 global.PromiseInterceptor = function(trueHandler, domain, cb, other) {
     return function(waitProcessor, trueErrback) {
         domain.callExpects(cb, waitProcessor.types);
-        trueHandler(waitProcessor.fp, trueErrback)
+        trueHandler(waitProcessor.fp, trueErrback);
     }
 }
 
