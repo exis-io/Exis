@@ -25,7 +25,7 @@ Yay! Next steps:
     - Check all type passing
     - Verify object passing
     - Create JAR or AAR from mantle and crust
-    - Upload jar/aar to maven or jcentral 
+    - Upload jar/aar to maven or jcentral
 */
 
 
