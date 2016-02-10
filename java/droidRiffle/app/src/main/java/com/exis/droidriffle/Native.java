@@ -21,22 +21,44 @@ import go.mantle.Mantle;
 import jnr.ffi.LibraryLoader;
 
 /*
-Yay! Next steps:
+Cross compilation next steps:
     - Check all type passing
     - Verify object passing
     - Create JAR or AAR from mantle and crust
     - Upload jar/aar to maven or jcentral
+    - Make sure jnr-ffi can import on ARM
+
+Problems
+    - 1.8 vs 1.7 incompatabilities when importing the backend
+
+Closures:
+    - Generics dont work. Object casting does.
 */
 
+interface Handler {
+    void run();
+}
 
+interface HandlerOne<T> {
+    void run(T a);
+}
 
 public class Native {
+    static void log(String s) {
+        System.out.println(s);
+    }
+
     // Declare the interface for the shared library
     public static interface MathLib {
         void Hello();
     }
 
     public static void main(String[] args) {
+//        testLibrary();
+        testClosures();
+    }
+
+    static void testLibrary() {
         LibraryLoader<MathLib> loader = LibraryLoader.create(MathLib.class);
 
         // NEED THIS FOR NOW-- either the location of the library is not correct wrt
@@ -47,8 +69,30 @@ public class Native {
 
         // Testing to make sure the go code runs
         libc.Hello();
-
-
     }
 
+    static void functionPointer() {
+        log("No args Function pointer firing");
+    }
+
+    static void testClosures() {
+        register((Handler)() -> {
+            log("No args handler firing");
+        });
+
+        register((Handler) Native::functionPointer);
+    }
+
+    static void register(Object fn) {
+        log("Class: " + fn.getClass());
+
+        //boolean isObject = fn instanceof
+        log("Is object: " + (fn instanceof Object));
+
+        Handler realFunction = (Handler) fn;
+
+        realFunction.run();
+    }
+
+//    static void registerAny(Lamb)
 }

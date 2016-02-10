@@ -30,16 +30,23 @@
     <favorites_list name="droidRiffle" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5">
+    <splitter split-orientation="horizontal" split-proportion="0.48981526">
       <split-first>
         <leaf>
           <file leaf-file-name="Native.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/com/exis/droidriffle/Native.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.114989735">
-                  <caret line="23" column="16" selection-start-line="23" selection-start-column="16" selection-end-line="23" selection-end-column="16" />
+                <state vertical-scroll-proportion="0.73396677">
+                  <caret line="75" column="5" selection-start-line="75" selection-start-column="5" selection-end-line="75" selection-end-column="5" />
                   <folding>
+                    <element signature="e#966#967#0" expanded="true" />
+                    <element signature="e#1003#1004#0" expanded="true" />
                     <element signature="method#main#0;class#Native#0" expanded="true" />
+                    <element signature="method#testLibrary#0;class#Native#0" expanded="true" />
+                    <element signature="e#1753#1754#0" expanded="true" />
+                    <element signature="e#1807#1808#0" expanded="true" />
+                    <element signature="method#testClosures#0;class#Native#0" expanded="true" />
+                    <element signature="method#register#0;class#Native#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -49,7 +56,7 @@
             <entry file="file://$PROJECT_DIR$/backend/src/main/java/com/example/Backend.java">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="4" column="23" selection-start-line="4" selection-start-column="23" selection-end-line="4" selection-end-column="23" />
+                  <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
                   <folding>
                     <element signature="method#main#0;class#Backend#0" expanded="true" />
                   </folding>
@@ -61,20 +68,11 @@
             <entry file="file://$PROJECT_DIR$/backend/src/main/java/com/example/Model.java">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="6" column="37" selection-start-line="6" selection-start-column="37" selection-end-line="6" selection-end-column="37" />
+                  <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
                   <folding>
+                    <element signature="e#120#121#0" expanded="true" />
                     <element signature="e#169#170#0" expanded="true" />
                   </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/build.gradle">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-22.068966">
-                  <caret line="40" column="4" selection-start-line="40" selection-start-column="4" selection-end-line="40" selection-end-column="30" />
-                  <folding />
                 </state>
               </provider>
             </entry>
@@ -83,26 +81,35 @@
       </split-first>
       <split-second>
         <leaf>
-          <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
+          <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/com/exis/droidriffle/MainActivity.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="84" column="30" selection-start-line="84" selection-start-column="30" selection-end-line="84" selection-end-column="30" />
+                <state vertical-scroll-proportion="0.6199525">
+                  <caret line="104" column="13" selection-start-line="104" selection-start-column="13" selection-end-line="104" selection-end-column="13" />
                   <folding>
                     <element signature="imports" expanded="true" />
+                    <element signature="method#riffleSender#0;class#MainActivity#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="build.gradle" pinned="false" current-in-tab="true">
+          <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/backend/build.gradle">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.049281314">
-                  <caret line="3" column="72" selection-start-line="3" selection-start-column="72" selection-end-line="3" selection-end-column="72" />
-                  <folding>
-                    <marker date="1454963482298" expanded="true" signature="48:149" placeholder="..." />
-                  </folding>
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="8" column="37" selection-start-line="8" selection-start-column="37" selection-end-line="8" selection-end-column="37" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/build.gradle">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="43" column="0" selection-start-line="42" selection-start-column="1" selection-end-line="43" selection-end-column="0" />
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -2340,7 +2347,7 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="8726645706536" />
+        <entry key="$PROJECT_DIR$" value="8726974890695" />
       </map>
     </option>
     <option name="projectBuildClasspath">
@@ -3047,10 +3054,10 @@
       <list>
         <option value="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/exis/droidriffle/Model.java" />
-        <option value="$PROJECT_DIR$/app/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/exis/droidriffle/MainActivity.java" />
         <option value="$PROJECT_DIR$/backend/src/main/java/com/example/Backend.java" />
         <option value="$PROJECT_DIR$/backend/build.gradle" />
+        <option value="$PROJECT_DIR$/app/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/exis/droidriffle/Native.java" />
       </list>
     </option>
@@ -3067,7 +3074,7 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="1985" />
-    <option name="y" value="24" />
+    <option name="y" value="1464" />
     <option name="width" value="2495" />
     <option name="height" value="1416" />
   </component>
@@ -3094,6 +3101,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -3206,6 +3214,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
       <pane id="AndroidView">
         <subPane>
           <PATH>
@@ -3262,11 +3271,41 @@
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="droidRiffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="droidRiffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="droidriffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="Scratches" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -3274,12 +3313,12 @@
     <property name="FullScreen" value="false" />
     <property name="android.project.structure.last.selected" value="backend" />
     <property name="android.project.structure.proportion" value="0.15" />
-    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.General" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="android.sdk.path" value="$USER_HOME$/Android/Sdk" />
     <property name="dynamic.classpath" value="false" />
   </component>
-  <component name="RunManager" selected="Application.Backend">
+  <component name="RunManager" selected="Application.Native">
     <configuration default="false" name="Native" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -3500,9 +3539,9 @@
     </list>
     <recent_temporary>
       <list size="3">
-        <item index="0" class="java.lang.String" itemvalue="Application.Backend" />
-        <item index="1" class="java.lang.String" itemvalue="Android Application.MainActivity" />
-        <item index="2" class="java.lang.String" itemvalue="Application.Native" />
+        <item index="0" class="java.lang.String" itemvalue="Application.Native" />
+        <item index="1" class="java.lang.String" itemvalue="Application.Backend" />
+        <item index="2" class="java.lang.String" itemvalue="Android Application.MainActivity" />
       </list>
     </recent_temporary>
     <configuration name="&lt;template&gt;" type="Applet" default="true" selected="false">
@@ -3532,11 +3571,11 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1985" y="24" width="2495" height="1416" extended-state="6" />
+    <frame x="1985" y="1464" width="2495" height="1416" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22351122" sideWeight="0.49857086" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22351122" sideWeight="0.49857086" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -3545,7 +3584,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32869297" sideWeight="0.49857086" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32869297" sideWeight="0.4969375" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.3217324" sideWeight="0.4969375" order="2" side_tool="false" content_ui="tabs" x="794" y="-1056" width="1126" height="1056" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32869297" sideWeight="0.49857086" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -3589,17 +3628,75 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/exis/droidriffle/Native.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="23" column="16" selection-start-line="23" selection-start-column="16" selection-end-line="23" selection-end-column="16" />
+          <folding>
+            <element signature="e#966#967#0" expanded="true" />
+            <element signature="e#1003#1004#0" expanded="true" />
+            <element signature="method#main#0;class#Native#0" expanded="true" />
+            <element signature="method#testLibrary#0;class#Native#0" expanded="true" />
+            <element signature="e#1753#1754#0" expanded="true" />
+            <element signature="e#1807#1808#0" expanded="true" />
+            <element signature="method#testClosures#0;class#Native#0" expanded="true" />
+            <element signature="method#register#0;class#Native#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backend/src/main/java/com/example/Backend.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="4" column="23" selection-start-line="4" selection-start-column="23" selection-end-line="4" selection-end-column="23" />
+          <folding>
+            <element signature="method#main#0;class#Backend#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backend/src/main/java/com/example/Model.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="6" column="37" selection-start-line="6" selection-start-column="37" selection-end-line="6" selection-end-column="37" />
+          <folding>
+            <element signature="e#120#121#0" expanded="true" />
+            <element signature="e#169#170#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="40" column="4" selection-start-line="40" selection-start-column="4" selection-end-line="40" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/exis/droidriffle/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="84" column="30" selection-start-line="84" selection-start-column="30" selection-end-line="84" selection-end-column="30" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#riffleSender#0;class#MainActivity#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backend/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/App.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="95" column="1" selection-start-line="95" selection-start-column="1" selection-end-line="95" selection-end-column="1" />
-          <folding>
-            <element signature="docComment;class#App#0" expanded="false" />
-            <element signature="docComment;method#listen#0;class#App#0" expanded="false" />
-            <element signature="class#784:2412" expanded="false" />
-            <element signature="e#1711#1729#0" expanded="false" />
-            <element signature="e#2253#2271#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3607,13 +3704,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
-          <folding>
-            <element signature="docComment;class#App#0" expanded="false" />
-            <element signature="docComment;method#listen#0;class#App#0" expanded="false" />
-            <element signature="class#784:2412" expanded="false" />
-            <element signature="e#1711#1729#0" expanded="false" />
-            <element signature="e#2253#2271#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3621,13 +3711,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="95" column="1" selection-start-line="95" selection-start-column="1" selection-end-line="95" selection-end-column="1" />
-          <folding>
-            <element signature="docComment;class#App#0" expanded="false" />
-            <element signature="docComment;method#listen#0;class#App#0" expanded="false" />
-            <element signature="class#784:2412" expanded="false" />
-            <element signature="e#1711#1729#0" expanded="false" />
-            <element signature="e#2253#2271#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3635,13 +3718,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="docComment;class#App#0" expanded="false" />
-            <element signature="docComment;method#listen#0;class#App#0" expanded="false" />
-            <element signature="class#784:2412" expanded="false" />
-            <element signature="e#1711#1729#0" expanded="false" />
-            <element signature="e#2253#2271#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3649,13 +3725,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="docComment;class#App#0" expanded="false" />
-            <element signature="docComment;method#listen#0;class#App#0" expanded="false" />
-            <element signature="class#784:2412" expanded="false" />
-            <element signature="e#1711#1729#0" expanded="false" />
-            <element signature="e#2253#2271#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3663,37 +3732,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.30403802">
           <caret line="69" column="0" selection-start-line="69" selection-start-column="0" selection-end-line="69" selection-end-column="0" />
-          <folding>
-            <element signature="method#loadNativeLibraries#0;class#NativeLibrary#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.jnr/jnr-ffi/2.0.7/164d820d7c38c14cd3675bfbf3eb6aeeedc9b0f4/jnr-ffi-2.0.7-sources.jar!/jnr/ffi/LibraryLoader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.2379183">
-          <caret line="280" column="9" selection-start-line="280" selection-start-column="9" selection-end-line="280" selection-end-column="9" />
-          <folding>
-            <element signature="docComment;class#LibraryLoader#0" expanded="false" />
-            <element signature="docComment;method#create#0;class#LibraryLoader#0" expanded="false" />
-            <element signature="docComment;method#library#0;class#LibraryLoader#0" expanded="false" />
-            <element signature="docComment;method#search#0;class#LibraryLoader#0" expanded="false" />
-            <element signature="docComment;method#option#0;class#LibraryLoader#0" expanded="false" />
-            <element signature="docComment;method#mapper#0;class#LibraryLoader#0" expanded="false" />
-            <element signature="docComment;method#mapper#1;class#LibraryLoader#0" expanded="false" />
-            <element signature="docComment;method#map#0;class#LibraryLoader#0" expanded="false" />
-            <element signature="docComment;method#map#1;class#LibraryLoader#0" expanded="false" />
-            <element signature="docComment;method#mapper#2;class#LibraryLoader#0" expanded="false" />
-            <element signature="docComment;method#map#3;class#LibraryLoader#0" expanded="false" />
-            <element signature="docComment;method#convention#0;class#LibraryLoader#0" expanded="false" />
-            <element signature="docComment;method#stdcall#0;class#LibraryLoader#0" expanded="false" />
-            <element signature="docComment;method#failImmediately#0;class#LibraryLoader#0" expanded="false" />
-            <element signature="e#9508#9509#0" expanded="true" />
-            <element signature="e#9558#9559#0" expanded="true" />
-            <element signature="docComment;method#loadLibrary#0;class#LibraryLoader#0" expanded="false" />
-            <element signature="class#StaticDataHolder#0;class#LibraryLoader#0" expanded="false" />
-            <element signature="e#13942#14035#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3701,7 +3739,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3709,7 +3746,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3717,7 +3753,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3725,7 +3760,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.076009504">
           <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3733,7 +3767,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3741,7 +3774,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.41805226">
           <caret line="33" column="0" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3757,13 +3789,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.14784394">
           <caret line="20" column="40" selection-start-line="20" selection-start-column="40" selection-end-line="20" selection-end-column="40" />
-          <folding>
-            <element signature="docComment;class#App#0" expanded="false" />
-            <element signature="docComment;method#listen#0;class#App#0" expanded="false" />
-            <element signature="class#784:2412" expanded="false" />
-            <element signature="e#1711#1729#0" expanded="false" />
-            <element signature="e#2253#2271#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3771,44 +3796,50 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/backend/src/main/java/com/example/Model.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="6" column="37" selection-start-line="6" selection-start-column="37" selection-end-line="6" selection-end-column="37" />
-          <folding>
-            <element signature="e#169#170#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/exis/droidriffle/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="84" column="30" selection-start-line="84" selection-start-column="30" selection-end-line="84" selection-end-column="30" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-22.068966">
-          <caret line="40" column="4" selection-start-line="40" selection-start-column="4" selection-end-line="40" selection-end-column="30" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/backend/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.049281314">
-          <caret line="3" column="72" selection-start-line="3" selection-start-column="72" selection-end-line="3" selection-end-column="72" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="8" column="37" selection-start-line="8" selection-start-column="37" selection-end-line="8" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="43" column="0" selection-start-line="42" selection-start-column="1" selection-end-line="43" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.jnr/jnr-ffi/2.0.7/164d820d7c38c14cd3675bfbf3eb6aeeedc9b0f4/jnr-ffi-2.0.7-sources.jar!/jnr/ffi/LibraryLoader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="72" column="32" selection-start-line="72" selection-start-column="32" selection-end-line="72" selection-end-column="32" />
           <folding>
-            <marker date="1454963482298" expanded="true" signature="48:149" placeholder="..." />
+            <element signature="imports" expanded="true" />
+            <element signature="docComment;class#LibraryLoader#0" expanded="false" />
+            <element signature="docComment;method#create#0;class#LibraryLoader#0" expanded="false" />
+            <element signature="docComment;method#library#0;class#LibraryLoader#0" expanded="false" />
+            <element signature="method#library#0;class#LibraryLoader#0" expanded="true" />
+            <element signature="docComment;method#search#0;class#LibraryLoader#0" expanded="false" />
+            <element signature="docComment;method#option#0;class#LibraryLoader#0" expanded="false" />
+            <element signature="docComment;method#mapper#1;class#LibraryLoader#0" expanded="false" />
+            <element signature="docComment;method#map#0;class#LibraryLoader#0" expanded="false" />
+            <element signature="docComment;method#map#1;class#LibraryLoader#0" expanded="false" />
+            <element signature="docComment;method#mapper#2;class#LibraryLoader#0" expanded="false" />
+            <element signature="docComment;method#map#3;class#LibraryLoader#0" expanded="false" />
+            <element signature="docComment;method#convention#0;class#LibraryLoader#0" expanded="false" />
+            <element signature="docComment;method#stdcall#0;class#LibraryLoader#0" expanded="false" />
+            <element signature="docComment;method#failImmediately#0;class#LibraryLoader#0" expanded="false" />
+            <element signature="method#load#1;class#LibraryLoader#0" expanded="true" />
+            <element signature="docComment;method#loadLibrary#0;class#LibraryLoader#0" expanded="false" />
+            <element signature="class#StaticDataHolder#0;class#LibraryLoader#0" expanded="false" />
+            <element signature="e#13942#14035#0" expanded="false" />
+            <element signature="method#getPropertyPaths#0;class#LibraryLoader#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -3816,19 +3847,61 @@
     <entry file="file://$PROJECT_DIR$/backend/src/main/java/com/example/Backend.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="4" column="23" selection-start-line="4" selection-start-column="23" selection-end-line="4" selection-end-column="23" />
+          <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
           <folding>
             <element signature="method#main#0;class#Backend#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/backend/src/main/java/com/example/Model.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <folding>
+            <element signature="e#120#121#0" expanded="true" />
+            <element signature="e#169#170#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.jnr/jnr-ffi/2.0.7/164d820d7c38c14cd3675bfbf3eb6aeeedc9b0f4/jnr-ffi-2.0.7-sources.jar!/jnr/ffi/provider/FFIProvider.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5193983">
+          <caret line="57" column="0" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
+          <folding>
+            <element signature="e#1061#1062#0" expanded="true" />
+            <element signature="e#1122#1123#0" expanded="true" />
+            <element signature="method#getInstance#0;class#SystemProviderSingletonHolder#0;class#FFIProvider#0" expanded="true" />
+            <element signature="method#newInvalidProvider#0;class#FFIProvider#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/exis/droidriffle/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6199525">
+          <caret line="104" column="13" selection-start-line="104" selection-start-column="13" selection-end-line="104" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#riffleSender#0;class#MainActivity#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/exis/droidriffle/Native.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.114989735">
-          <caret line="23" column="16" selection-start-line="23" selection-start-column="16" selection-end-line="23" selection-end-column="16" />
+        <state vertical-scroll-proportion="0.73396677">
+          <caret line="75" column="5" selection-start-line="75" selection-start-column="5" selection-end-line="75" selection-end-column="5" />
           <folding>
+            <element signature="e#966#967#0" expanded="true" />
+            <element signature="e#1003#1004#0" expanded="true" />
             <element signature="method#main#0;class#Native#0" expanded="true" />
+            <element signature="method#testLibrary#0;class#Native#0" expanded="true" />
+            <element signature="e#1753#1754#0" expanded="true" />
+            <element signature="e#1807#1808#0" expanded="true" />
+            <element signature="method#testClosures#0;class#Native#0" expanded="true" />
+            <element signature="method#register#0;class#Native#0" expanded="true" />
           </folding>
         </state>
       </provider>
