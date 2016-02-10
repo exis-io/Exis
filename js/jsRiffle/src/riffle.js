@@ -42,24 +42,24 @@ global.PromiseInterceptor = function(trueHandler, domain, cb) {
 
 exports.Domain = global.Domain.New;
 
-exports.SetLogLevelOff = global.Config.SetLogLevelOff;
-exports.SetLogLevelApp = global.Config.SetLogLevelApp;
-exports.SetLogLevelErr = global.Config.SetLogLevelErr;
-exports.SetLogLevelWarn = global.Config.SetLogLevelWarn;
-exports.SetLogLevelInfo = global.Config.SetLogLevelInfo;
-exports.SetLogLevelDebug = global.Config.SetLogLevelDebug;
+exports.setLogLevelOff = global.Config.SetLogLevelOff;
+exports.setLogLevelApp = global.Config.SetLogLevelApp;
+exports.setLogLevelErr = global.Config.SetLogLevelErr;
+exports.setLogLevelWarn = global.Config.SetLogLevelWarn;
+exports.setLogLevelInfo = global.Config.SetLogLevelInfo;
+exports.setLogLevelDebug = global.Config.SetLogLevelDebug;
 
-exports.SetFabricDev = global.Config.SetFabricDev;
-exports.SetFabricSandbox = global.Config.SetFabricSandbox;
-exports.SetFabricProduction = global.Config.SetFabricProduction;
-exports.SetFabricLocal = global.Config.SetFabricLocal;
-exports.SetFabric = global.Config.SetFabric;
+exports.setFabricDev = global.Config.SetFabricDev;
+exports.setFabricSandbox = global.Config.SetFabricSandbox;
+exports.setFabricProduction = global.Config.SetFabricProduction;
+exports.setFabricLocal = global.Config.SetFabricLocal;
+exports.setFabric = global.Config.SetFabric;
 
-exports.Application = global.Config.Application;
-exports.Debug = global.Config.Debug;
-exports.Info = global.Config.Info;
-exports.Warn = global.Config.Warn;
-exports.Error = global.Config.Error;
+exports.application = global.Config.Application;
+exports.debug = global.Config.Debug;
+exports.info = global.Config.Info;
+exports.warn = global.Config.Warn;
+exports.error = global.Config.Error;
 
 exports.want = want.want;
 exports.wait = want.wait;

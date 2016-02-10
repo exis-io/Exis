@@ -1,8 +1,8 @@
 
 var riffle = require('jsriffle');
 
-riffle.SetFabricLocal();
-riffle.SetLogLevelDebug();
+riffle.setFabricLocal();
+riffle.setLogLevelDebug();
 
 var app = riffle.Domain("xs.demo.test");
 var backend = app.subdomain("backend");

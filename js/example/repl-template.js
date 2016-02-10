@@ -3,7 +3,7 @@
 
 var riffle = require('jsriffle');
 
-riffle.SetFabricSandbox();
+riffle.setFabricSandbox();
 
 var app = riffle.Domain("xs.demo.test");
 var backend = app.subdomain("backend");
