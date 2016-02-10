@@ -299,9 +299,9 @@ function ModelObject(constructor){
           this._id = result.inserted_id;
           return result;
         }
-        return self.__storage.Call("collection/insert_one", self.__collection, this).then(wait(helper, Object));
+        return self.__storage.call("collection/insert_one", self.__collection, this).then(wait(helper, Object));
       }else{
-        return self.__storage.Call("collection/replace_one", self.__collection, {'_id': this._id}, this, true);
+        return self.__storage.call("collection/replace_one", self.__collection, {'_id': this._id}, this, true);
       }
     };
 
@@ -310,7 +310,7 @@ function ModelObject(constructor){
       if(!this._id){
         throw Error("No ID associated with this object model. Failed to delete object from storage.");
       }else{
-        return self.__storage.Call("collection/delete_one", self.__collection, {'_id': this._id});
+        return self.__storage.call("collection/delete_one", self.__collection, {'_id': this._id});
       }
     };
 
@@ -358,7 +358,7 @@ ModelObject.prototype.bind = function(owner, appliance, collection){
   }
   this.__collection = collection;
   if(appliance){
-    this.__storage = owner.LinkDomain(appliance);
+    this.__storage = owner.linkDomain(appliance);
   }else{
     this.__storage = owner;
   }
@@ -380,7 +380,7 @@ ModelObject.prototype.find = function(query){
   function passer(args){
     return args;
   }
-  return this.__storage.Call("collection/find", this.__collection, query).then(wait(passer, [this]));
+  return this.__storage.call("collection/find", this.__collection, query).then(wait(passer, [this]));
 };
 
 ModelObject.prototype.find_one = function(query){
@@ -391,7 +391,7 @@ ModelObject.prototype.find_one = function(query){
   function passer(args){
     return args;
   }
-  return this.__storage.Call("collection/find_one", this.__collection, query).then(wait(passer, this));
+  return this.__storage.call("collection/find_one", this.__collection, query).then(wait(passer, this));
 };
 
 

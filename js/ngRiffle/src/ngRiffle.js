@@ -61,11 +61,13 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
             
             var joinFnc = digestWrapper(function () {
                 $rootScope.$broadcast("$riffle.open");
+                connection.connected = true;
                 sessionDeferred.resolve();
             });
 
             var leaveFnc = digestWrapper(function (reason, details) {
-                $log.debug("Connection Closed: ", reason, details);
+                //$log.debug("Connection Closed: ", reason, details);
+                connection.connected = false;
                 sessionDeferred = $q.defer();
                 sessionPromise = sessionDeferred.promise;
                 $rootScope.$broadcast("$riffle.leave", {reason: reason, details: details});
@@ -76,6 +78,8 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
             connection.want = jsRiffle.want;
             connection.wait = jsRiffle.wait;
             connection.ModelObject = jsRiffle.ModelObject;
+            connection.connected = false;
+
             
             /**
              * Wraps WAMP actions, so that when they're called, the defined interceptors get called before the result is returned
@@ -92,7 +96,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                 };
 
                 var error = function (error) {
-                    $log.error("$riffle error", {type: type, arguments: args, error: error});
+                    //$log.error("$riffle error", {type: type, arguments: args, error: error});
                     return $q.reject({error: error, type: type, args: args});
                 };
 
@@ -134,14 +138,13 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
               this.conn.onJoin = joinFnc;
               this.conn.onLeave = leaveFnc;
             }
-            Domain.prototype.subdomains = {};
-            Domain.prototype.join = function(){
-              this.conn.Join();
+            DomainWrapper.prototype.join = function(){
+              return this.conn.join();
             };
-            Domain.prototype.leave = function(){
-              this.conn.Leave();
+            DomainWrapper.prototype.leave = function(){
+              return this.conn.leave();
             };
-            Domain.prototype.subscribeOnScope = function(scope, channel, callback){
+            DomainWrapper.prototype.subscribeOnScope = function(scope, channel, callback){
               var self = this;
               return this.subscribe(channel, callback).then(function(){
                 scope.$on('$destroy', function () {
@@ -149,26 +152,26 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                 });
               });
             };
-            Domain.prototype.setToken = function(tok) {
-                this.conn.SetToken(tok);
+            DomainWrapper.prototype.setToken = function(tok) {
+                this.conn.setToken(tok);
             };
-            Domain.prototype.getToken = function() {
-                return this.conn.GetToken();
+            DomainWrapper.prototype.getToken = function() {
+                return this.conn.getToken();
             };
-            Domain.prototype.unsubscribe = function (channel) {
+            DomainWrapper.prototype.unsubscribe = function (channel) {
               var self = this;
               return interceptorWrapper('unsubscribe', arguments, function () {
-                return self.conn.Unsubscribe(channel);
+                return self.conn.unsubscribe(channel);
               });
             };
-            Domain.prototype.publish = function(){
+            DomainWrapper.prototype.publish = function(){
               var a = arguments
               var self = this;
               return interceptorWrapper('publish', arguments, function(){
-                return self.conn.Publish.apply(self.conn, a);
+                return self.conn.publish.apply(self.conn, a);
               });
             };
-            Domain.prototype.register = function (action, handler) {
+            DomainWrapper.prototype.register = function (action, handler) {
               if(typeof(handler) === 'function'){
                 handler = digestWrapper(handler);
               }else{
@@ -176,10 +179,10 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
               }
               var self = this;
               return interceptorWrapper('register', arguments, function () {
-                return self.conn.Register(action, handler);
+                return self.conn.register(action, handler);
               });
             };
-            Domain.prototype.subscribe = function (action, handler) {
+            DomainWrapper.prototype.subscribe = function (action, handler) {
               if(typeof(handler) === 'function'){
                 handler = digestWrapper(handler);
               }else{
@@ -187,54 +190,121 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
               }
               var self = this;
               return interceptorWrapper('subscribe', arguments, function () {
-                return self.conn.Subscribe(action, handler);
+                return self.conn.subscribe(action, handler);
               });
             };
-            Domain.prototype.unregister = function (registration) {
+            DomainWrapper.prototype.unregister = function (registration) {
               var self = this;
               return interceptorWrapper('unregister', arguments, function () {
-                return self.conn.Unregister(registration);
+                return self.conn.unregister(registration);
               });
             };
-            Domain.prototype.call = function () {
+            DomainWrapper.prototype.call = function () {
               var a = arguments
               var self = this;
-              return interceptorWrapper('call', arguments, function () {
-                return self.conn.Call.apply(self.conn, a);
-              });
+              var callDeferred = $q.defer();
+              //
+              //for now we need to splat the args because the core returns them in a list
+              function splat(args){
+                callDeferred.resolve.apply(callDeferred, args);
+              }
+              interceptorWrapper('call', arguments, function () {
+                return self.conn.call.apply(self.conn, a);
+              }).then(splat, callDeferred.reject);
+              return callDeferred.promise;
             };
-            Domain.prototype.subdomain = function(id) {
-              var tmp = new DomainWrapper(this.conn.Subdomain(id));
-              this.subdomains[id] = tmp;
-              return tmp;
+            DomainWrapper.prototype.subdomain = function(id) {
+              return new DomainWrapper(this.conn.subdomain(id));
             };
-            Domain.prototype.linkDomain = function(id) {
-              var tmp = new DomainWrapper(this.conn.LinkDomain(id));
-              this.subdomains[id] = tmp;
-              return tmp;
+            DomainWrapper.prototype.linkDomain = function(id) {
+              return new DomainWrapper(this.conn.linkDomain(id));
             };
-            Domain.prototype.login = function() {
+            DomainWrapper.prototype.login = function(user) {
               var self = this;
-              var username = arguments[0];
-              if(!username){
-                username = "_user";
+              //deferred for knowing when process is done
+              var userDeferred = $q.defer();
+
+              var args = [];
+              if(user && user.username){
+                args.push(user.username);
               }
+              //figure out auth level from user object
+              var auth0 = false;
+              if(!user || !user.password || user.password === ""){
+                auth0 = true;
+              }else{
+                args.push(user.password);
+              }
+
+              
+              function resolve(){
+                userDeferred.resolve(connection.User);
+              }
+
+              //if we are auth1 load user data
+              function load(){
+                connection.User.load().then(userDeferred.resolve, userDeferred.reject);
+              }
+
+              //if we get success from the registrar on login continue depending on auth level
               function success(domain){
-                var tmp = new DomainWrapper(domain);
-                self.subdomains[username] = tmp;
-                return tmp;
+                if(auth0){
+                  //if auth0 then we don't have user storage
+                  connection.User = new DomainWrapper(domain); 
+                  connection.User.join();
+                  sessionPromise.then(resolve);
+                }else{
+                  //if auth1 use User class to wrap domain and implement user storage and load user data
+                  connection.User = new User(self, domain); 
+                  connection.User.join();
+                  sessionPromise.then(load);
+                }
               }
-              function error(err){
-                return err;
+
+              //attempt registration login and continue process on success
+              this.conn.login.apply(this.conn, args).then(success, userDeferred.reject);
+
+              //return the promise which will be resolved once the login process completes.
+              return userDeferred.promise;
+            };
+            DomainWrapper.prototype.registerAccount = function(user) {
+              return this.conn.registerAccount(user.username, user.password, user.email, user.name);
+            };
+
+            function User(app, domain) {
+              DomainWrapper.call(this, domain);
+              this.storage = app.subdomain("Auth");
+            }
+            User.prototype = Object.create(DomainWrapper.prototype);
+            User.prototype.constructor = User;
+            User.prototype.email = "";
+            User.prototype.name = "";
+            User.prototype.privateStorage = {};
+            User.prototype.publicStorage = {};
+            User.prototype.save = function(){
+              return this.storage.call('save_user_data', this.publicStorage, this.privateStorage);
+            };
+            User.prototype.load = function(){
+              var self = this;
+              var loadDeferred = $q.defer();
+              function loadUser(user){
+                self.name = user.name;
+                self.email = user.email;
+                self.gravatar = user.gravatar;
+                self.privateStorage = user.private || {};
+                self.publicStorage = user.public || {};
+                loadDeferred.resolve(self);
               }
-              return this.conn.Login.apply(this.conn, arguments).then(success, error);
+              function error(error){
+                loadDeferred.reject(error);
+              }
+              this.storage.call('get_user_data').then(loadUser, error);
+              return loadDeferred.promise;
             };
-            Domain.prototype.registerAccount = function() {
-              return this.conn.RegisterAccount.apply(this.conn, arguments);
+            User.prototype.getPublicData = function(query){
+              return this.storage.call('get_public_data', query)
             };
-            //Need these for ModelObject compatability
-            Domain.prototype.Call = Domain.prototype.call;
-            Domain.prototype.LinkDomain = Domain.prototype.linkDomain;
+
 
 
             /**
