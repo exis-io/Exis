@@ -14,22 +14,22 @@ func main() {
 	})
 
 	js.Global.Set("Config", map[string]interface{}{
-		"SetLogLevelOff":      SetLogLevelOff,
-		"SetLogLevelApp":      SetLogLevelApp,
-		"SetLogLevelErr":      SetLogLevelErr,
-		"SetLogLevelWarn":     SetLogLevelWarn,
-		"SetLogLevelInfo":     SetLogLevelInfo,
-		"SetLogLevelDebug":    SetLogLevelDebug,
-		"SetFabricDev":        SetFabricDev,
-		"SetFabricSandbox":    SetFabricSandbox,
-		"SetFabricProduction": SetFabricProduction,
-		"SetFabricLocal":      SetFabricLocal,
-		"SetFabric":           SetFabric,
-		"Application":         Application,
-		"Debug":               Debug,
-		"Info":                Info,
-		"Warn":                Warn,
-		"Error":               Error,
+		"setLogLevelOff":      SetLogLevelOff,
+		"setLogLevelApp":      SetLogLevelApp,
+		"setLogLevelErr":      SetLogLevelErr,
+		"setLogLevelWarn":     SetLogLevelWarn,
+		"setLogLevelInfo":     SetLogLevelInfo,
+		"setLogLevelDebug":    SetLogLevelDebug,
+		"setFabricDev":        SetFabricDev,
+		"setFabricSandbox":    SetFabricSandbox,
+		"setFabricProduction": SetFabricProduction,
+		"setFabricLocal":      SetFabricLocal,
+		"setFabric":           SetFabric,
+		"application":         Application,
+		"debug":               Debug,
+		"info":                Info,
+		"warn":                Warn,
+		"error":               Error,
 	})
 
 	// Do not print the log line number in js

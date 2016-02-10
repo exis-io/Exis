@@ -79,9 +79,9 @@ function wait(){
     // Note that we have to do arg[0] here because it returns to us differently
     // than the values passed back by want() above (this is because it is the result
     // of a yield message and is handled differently by the core).
-    for(var arg in arguments){
-      arguments[arg] = arguments[arg][0];
-    }
+    // for(var arg in arguments){
+    //   arguments[arg] = arguments[arg][0];
+    // }
     return fp.apply(this, expect.validate(arguments));
   }
   handler.fp = wrap;

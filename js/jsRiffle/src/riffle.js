@@ -5,7 +5,14 @@ var ws = require('./websocket.js');
 var pjson = require('../package.json');
 
 global.WsFactory = require('./websocket').Factory;
+
+exports.want = want.want;
+exports.wait = want.wait;
+exports.ModelObject = want.ModelObject;
+
+exports.Domain = global.Domain.New;
 exports.version = pjson.version;
+
 
 // Used to counteract uint generation on seemlingly 32 bit platforms
 global.NewID = function() {
@@ -23,44 +30,24 @@ global.Renamer = function(domain) {
 // Should only be used by Calls, and internally at that 
 global.PromiseInterceptor = function(trueHandler, domain, cb) {
     return function(callback, errback) {
+        // Automatically splat the arguments across the callback function 
+        var applyer = function(fn) {
+            return function(a) {  fn.apply(domain, a) }
+        };
+
         // If callback has these two properties, then its NOT a callback, its a wait
         if (callback.types == undefined && callback.fb == undefined) {
-
-            // splat the arguments across the callback function
-            var applyer = function(callbackArgs) {
-                callback.apply(domain, callbackArgs);
-            };
-
             domain.callExpects(cb, [null]);
-            trueHandler(applyer, errback)
+            trueHandler(applyer(callback), errback)
         } else {
             domain.callExpects(cb, callback.types);
-            trueHandler(callback.fp, errback);
+            trueHandler(applyer(callback.fp), errback);
         }
     }
 }
 
-exports.Domain = global.Domain.New;
+// Inject configuration functions from the mantle into the crust with the same name
+for (var e in global.Config) {
+    exports[e] = global.Config[e];
+}
 
-exports.setLogLevelOff = global.Config.SetLogLevelOff;
-exports.setLogLevelApp = global.Config.SetLogLevelApp;
-exports.setLogLevelErr = global.Config.SetLogLevelErr;
-exports.setLogLevelWarn = global.Config.SetLogLevelWarn;
-exports.setLogLevelInfo = global.Config.SetLogLevelInfo;
-exports.setLogLevelDebug = global.Config.SetLogLevelDebug;
-
-exports.setFabricDev = global.Config.SetFabricDev;
-exports.setFabricSandbox = global.Config.SetFabricSandbox;
-exports.setFabricProduction = global.Config.SetFabricProduction;
-exports.setFabricLocal = global.Config.SetFabricLocal;
-exports.setFabric = global.Config.SetFabric;
-
-exports.application = global.Config.Application;
-exports.debug = global.Config.Debug;
-exports.info = global.Config.Info;
-exports.warn = global.Config.Warn;
-exports.error = global.Config.Error;
-
-exports.want = want.want;
-exports.wait = want.wait;
-exports.ModelObject = want.ModelObject;
