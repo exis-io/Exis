@@ -21,10 +21,22 @@ global.Renamer = function(domain) {
 
 // Intercepts .then and sends down cumin args to the core. 
 // Should only be used by Calls, and internally at that 
-global.PromiseInterceptor = function(trueHandler, domain, cb, other) {
-    return function(waitProcessor, trueErrback) {
-        domain.callExpects(cb, waitProcessor.types);
-        trueHandler(waitProcessor.fp, trueErrback);
+global.PromiseInterceptor = function(trueHandler, domain, cb) {
+    return function(callback, errback) {
+        // If callback has these two properties, then its NOT a callback, its a wait
+        if (callback.types == undefined && callback.fb == undefined) {
+
+            // splat the arguments across the callback function
+            var applyer = function(callbackArgs) {
+                callback.apply(domain, callbackArgs);
+            };
+
+            domain.callExpects(cb, [null]);
+            trueHandler(applyer, errback)
+        } else {
+            domain.callExpects(cb, callback.types);
+            trueHandler(callback.fp, errback);
+        }
     }
 }
 
