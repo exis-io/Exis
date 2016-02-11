@@ -36,3 +36,7 @@ Closures
 Optional note: to import model objects to both sides, put them in the backend! Cant import
  the android app into the backend
  
+
+## Misc
+
+JNI architectures:  armeabi, armeabi-v7a, arm64-v8a, x86, x86_64, mips, mips64

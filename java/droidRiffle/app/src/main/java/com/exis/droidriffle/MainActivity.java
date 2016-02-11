@@ -105,11 +105,11 @@ class Receiver extends Domain {
     @Override
     public void onJoin() {
         Log.d(TAG, "Receiver joined!");
-
-        subscribe("sub", () -> {
-            Log.d(TAG, "I have a publish!");
-            return "Publish Received!";
-        });
+//
+//        subscribe("sub", () -> {
+//            Log.d(TAG, "I have a publish!");
+//            return "Publish Received!";
+//        });
 
         // Bootstrap the sender
         parent.sender2.join();

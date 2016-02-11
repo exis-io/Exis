@@ -23,10 +23,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    sourceSets {
-        main {
-            jni.srcDirs = ["jniLibs"]
-        }
+    sourceSets.main {
+        jni.srcDirs = []
+        jniLibs.srcDirs = ["src/main/libs"]
+
     }
 }
 

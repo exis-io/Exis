@@ -31,9 +31,19 @@ osx:
 
 android:
 	@echo "Building core..."
-	@gomobile bind --work -target=android github.com/exis-io/core/androidMantle
+	gomobile bind --work -target=android github.com/exis-io/core/androidMantle
 	@echo "Moving mantle"
 	@mv mantle.aar java/droidRiffle/mantle/mantle.aar
+
+android86:
+	@echo "Building core..."
+	@go build -buildmode=c-shared -o java/testing/libmantle.so core/cMantle/main.go
+
+javatest: 
+	@echo "Building core..."
+	@go build -buildmode=c-shared -o java/droidRiffle/app/src/main/jniLibs/x86/libmeth.so java/testing/meth.go
+	@cp java/droidRiffle/app/src/main/jniLibs/x86_64/libmeth.so java/testing/libmeth.so
+	@cp java/droidRiffle/app/src/main/jniLibs/x86_64/libmeth.h java/testing/libmeth.h
 
 java: 
 	@echo "Building core..."

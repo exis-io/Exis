@@ -91,7 +91,7 @@ public class Testing {
             log("No args handler firing");
         });
 
-        HandlerWrapper b = register((One<Integer>) Backend::functionPointerOne);
+        HandlerWrapper b = register((One<Integer>) Testing::functionPointerOne);
 
         HandlerWrapper c = register((OneOne<Boolean, Float>) (happy) -> {
             log("OneOne closure firing " + happy);
