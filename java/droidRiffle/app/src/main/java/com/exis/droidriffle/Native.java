@@ -20,25 +20,11 @@ import go.mantle.Mantle;
 
 import jnr.ffi.LibraryLoader;
 
-/*
-Cross compilation next steps:
-    - Check all type passing
-    - Verify object passing
-    - Create JAR or AAR from mantle and crust
-    - Upload jar/aar to maven or jcentral
-    - Make sure jnr-ffi can import on ARM
 
-Problems
-    - 1.8 vs 1.7 incompatabilities when importing the backend
-
-Closures:
-    - Generics dont work. Object casting does.
-*/
 
 interface Handler {
     void run();
 }
-
 interface HandlerOne<T> {
     void run(T a);
 }
@@ -54,8 +40,8 @@ public class Native {
     }
 
     public static void main(String[] args) {
-//        testLibrary();
-        testClosures();
+        testLibrary();
+//        testClosures();
     }
 
     static void testLibrary() {
