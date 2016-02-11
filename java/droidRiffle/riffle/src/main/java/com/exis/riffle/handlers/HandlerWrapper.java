@@ -1,7 +1,7 @@
 package com.exis.riffle.handlers;
 
 import com.exis.riffle.handlers.AnyHandler;
-import com.exis.riffle.handlers.HandlerNone;
+import com.exis.riffle.handlers.Handler;
 import com.exis.riffle.handlers.HandlerOne;
 import com.exis.riffle.handlers.HandlerOneOne;
 
@@ -18,8 +18,8 @@ public class HandlerWrapper {
         // Polymorphic solution is cleaner and more efficient here, but it also spreads the logic
         // across many, many files. May pursue that in the future
 
-        if (handler instanceof HandlerNone) {
-            HandlerNone fn = (HandlerNone) handler;
+        if (handler instanceof Handler) {
+            Handler fn = (Handler) handler;
             fn.run();
             return null;
         }

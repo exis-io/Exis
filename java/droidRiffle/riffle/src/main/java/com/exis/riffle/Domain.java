@@ -30,10 +30,10 @@ public class Domain {
     public void join() {
         Deferred d = new Deferred(app);
 
-        d.then(() -> {
-            this.onJoin();
-            return ""; // temp
-        });
+//        d.then(() -> {
+//            this.onJoin();
+//            return ""; // temp
+//        });
 
         mantleDomain.Join(d.cb, d.eb);
         app.listen(mantleDomain);
