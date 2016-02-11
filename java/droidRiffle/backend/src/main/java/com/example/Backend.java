@@ -4,42 +4,67 @@ package com.example;
 
 import net.jodah.typetools.TypeResolver;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
 // Attempt
 interface AnyFunction {
     default Class thisClass() { return AnyFunction.class; }
-
-    // Reflect the arguments for the handler
-    default String cumin() { return "DEFAULT"; }
-
-    //default String mapTypes() { return ""; }
+    default Object invoke(Object... args) { return null; }
 }
 
 interface Zero extends AnyFunction {
     default Class thisClass() { return Zero.class; }
-
-    default String cumin() { return "[]"; }
-
     void run();
 }
 
 interface One<A> extends AnyFunction {
     default Class thisClass() { return One.class; }
-
-//    default String cumin() { return A; }
-
     void run(A a);
 }
 
 interface OneOne<A, R> extends AnyFunction {
     default Class thisClass() { return OneOne.class; }
-
-    default String cumin() { return "DEFAULT"; }
-
     R run(A a);
 }
+
+// Wraps handlers
+class HandlerWrapper {
+    AnyFunction handler;
+    Class[] types;
+
+    HandlerWrapper (AnyFunction handler, Class[] types) {
+        this.handler = handler;
+        this.types = types;
+    }
+
+    Object invoke(Object... args) {
+        // Polymorphic solution is cleaner and more efficient here, but it also spreads the logic
+        // across many, many files. May pursue that in the future
+
+        if (handler instanceof Zero) {
+            Zero fn = (Zero) handler;
+            fn.run();
+            return null;
+        }
+        else if (handler instanceof One) {
+            One fn = (One) handler;
+            fn.run(types[0].cast(args[0]));
+            return null;
+        }
+        else if (handler instanceof OneOne) {
+            OneOne fn = (OneOne) handler;
+            return fn.run(types[0].cast(args[0]));
+        }
+        else {
+            System.out.println("WARN-- Serious fallthrough. Cannot determine type of handler");
+            return null;
+        }
+    }
+}
+
+//class Curried
 
 public class Backend {
     static void log(String s) {
@@ -61,46 +86,39 @@ public class Backend {
     }
 
     static void functionPointerOne(Integer a) {
-        log("No args Function pointer firing");
+        log("One arg Function pointer firing" + a);
     }
 
     static void testClosures() {
-        // Attempting to pass the type literals in like python and js. Type earasure means
-        // Deeply nested collections wont work
-        //AnyFunction a = want(String.class, String[].class, Integer.class).cast(Backend::functionPointer);
-
-        register((Zero) () -> {
+        HandlerWrapper a = register((Zero) () -> {
             log("No args handler firing");
         });
 
-        register((Zero) Backend::functionPointer);
+        HandlerWrapper b = register((One<Integer>) Backend::functionPointerOne);
 
-        //Zero a = Backend::functionPointer;
-        //a.cumin();
-
-        register((One<Integer>) Backend::functionPointerOne);
-
-        register((OneOne<Boolean, Float>) (a) -> {
+        HandlerWrapper c = register((OneOne<Boolean, Float>) (happy) -> {
+            log("OneOne closure firing " + happy);
             return 10.f;
         });
 
+        a.invoke();
+        b.invoke(1);
+        c.invoke(true);
     }
 
-    static void register(AnyFunction fn) {
-        log("Class: " + fn.getClass());
-        log("Dynamic: " + fn.thisClass());
+    static HandlerWrapper  register(AnyFunction fn) {
+//        log("Dynamic: " + fn.thisClass());
 
-        Class unwrappedClosure = fn.thisClass();
+        Class[] typeArgs = TypeResolver.resolveRawArguments(fn.thisClass(), fn.getClass());
 
-//        System.out.println(fn.getClass().getGenericSuperclass()); //output: GenericClass<Foo>
-//        System.out.println(((ParameterizedType) fn.getClass().getGenericSuperclass()).getActualTypeArguments()[0]); //output: class Foo
+        // TODO: drop into collections and model objects and apply recursively. Arrays dont reflect,
+        // lists have their internal types erased, and model objects will need to do this themselves :(
+//        for (Class c: typeArgs) {
+//            log("Type: " + c.toString());
+//        }
 
-//        Function<String, Integer> strToInt = s -> Integer.valueOf(s);
-        Class<?>[] typeArgs = TypeResolver.resolveRawArguments(fn.thisClass(), fn.getClass());
-
-        for (Class c: typeArgs) {
-            log("Type: " + c.toString());
-        }
+        HandlerWrapper  wrapped = new HandlerWrapper (fn, typeArgs);
+        return wrapped;
 
 //        log("TYPES: " + typeArgs.toString());
 //        assert typeArgs[0] == String.class;

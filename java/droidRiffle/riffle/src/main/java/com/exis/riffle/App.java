@@ -2,10 +2,10 @@ package com.exis.riffle;
 
 import android.util.ArrayMap;
 
+import com.exis.riffle.handlers.AnyHandler;
+
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.logging.Handler;
 
 import go.mantle.Mantle;
 
@@ -74,7 +74,8 @@ class App {
 
                         // TODO: try/catch
                         // TODO: returns
-                        t.fn.run();
+
+                        //t.fn.run();
                     }
                 }
             }
@@ -85,10 +86,10 @@ class App {
 }
 
 class HandlerTuple {
-    Function fn = null;
+    AnyHandler fn = null;
     boolean isRegistration = false;
 
-    HandlerTuple(Function function, boolean isRegistration) {
+    HandlerTuple(AnyHandler function, boolean isRegistration) {
         fn = function;
         this.isRegistration = isRegistration;
     }

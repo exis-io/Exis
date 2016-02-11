@@ -58,7 +58,7 @@ public class Native {
     }
 
     static void functionPointer() {
-        log("No args Function pointer firing");
+        log("No args AnyHandler pointer firing");
     }
 
     static void testClosures() {

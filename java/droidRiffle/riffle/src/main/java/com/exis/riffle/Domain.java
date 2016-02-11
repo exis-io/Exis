@@ -1,8 +1,9 @@
 package com.exis.riffle;
 
+import com.exis.riffle.handlers.AnyHandler;
+
 import go.mantle.Mantle;
-import me.tatarka.RetrolambdaExtension;
-//import me.tatarka.retrolambda.sample.lib.Function;
+//import me.tatarka.retrolambda.sample.lib.AnyHandler;
 
 /**
  * Created by damouse on 1/23/16.
@@ -47,7 +48,7 @@ public class Domain {
     }
 
 
-    public Deferred subscribe(String endpoint, Function handler) {
+    public Deferred subscribe(String endpoint, AnyHandler handler) {
         Deferred d = new Deferred(app);
         int fn = Utils.newID();
 

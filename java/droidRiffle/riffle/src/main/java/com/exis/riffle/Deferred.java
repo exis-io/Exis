@@ -1,5 +1,7 @@
 package com.exis.riffle;
 
+import com.exis.riffle.handlers.AnyHandler;
+
 /**
  * Created by damouse on 1/24/2016.
  *
@@ -9,8 +11,8 @@ public class Deferred {
     int cb;
     int eb;
 
-    Function _callback = null;
-    Function _errback = null;
+    AnyHandler _callback = null;
+    AnyHandler _errback = null;
 
 
     public Deferred() {
@@ -24,25 +26,25 @@ public class Deferred {
         app.deferreds.put(eb, this);
     }
 
-    public Deferred then(Function callback) {
+    public Deferred then(AnyHandler callback) {
         _callback = callback;
         return this;
     }
 
-    public Deferred error(Function errback) {
+    public Deferred error(AnyHandler errback) {
         _errback = errback;
         return this;
     }
 
     void callback() {
         if (_callback != null) {
-            _callback.run();
+//            _callback.run();
         }
     }
 
     void errback() {
         if (_errback != null) {
-            _errback.run();
+//            _errback.run();
         }
     }
 }
