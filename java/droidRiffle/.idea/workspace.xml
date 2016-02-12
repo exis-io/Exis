@@ -40,11 +40,11 @@
     <splitter split-orientation="horizontal" split-proportion="0.48964852">
       <split-first>
         <leaf>
-          <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
+          <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/com/exis/droidriffle/MainActivity.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="67" column="0" selection-start-line="67" selection-start-column="0" selection-end-line="67" selection-end-column="0" />
+                <state vertical-scroll-proportion="0.7846398">
+                  <caret line="146" column="0" selection-start-line="146" selection-start-column="0" selection-end-line="146" selection-end-column="0" />
                   <folding>
                     <element signature="imports" expanded="true" />
                     <element signature="method#onCreate#0;class#MainActivity#0" expanded="true" />
@@ -52,7 +52,6 @@
                     <element signature="e#1764#1822#0" expanded="false" />
                     <element signature="method#riffleSender#0;class#MainActivity#0" expanded="true" />
                     <element signature="method#onJoin#0;class#Receiver#0" expanded="true" />
-                    <element signature="method#onJoin#0;class#Sender#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -62,7 +61,7 @@
             <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Utils.java">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="0" column="24" selection-start-line="0" selection-start-column="24" selection-end-line="0" selection-end-column="24" />
+                  <caret line="25" column="33" selection-start-line="25" selection-start-column="33" selection-end-line="25" selection-end-column="33" />
                   <folding>
                     <element signature="e#586#587#0" expanded="true" />
                     <element signature="e#626#627#0" expanded="true" />
@@ -72,19 +71,19 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="Domain.java" pinned="false" current-in-tab="true">
+          <file leaf-file-name="Domain.java" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Domain.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.39271575">
-                  <caret line="42" column="0" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="81" column="69" selection-start-line="81" selection-start-column="69" selection-end-line="81" selection-end-column="69" />
                   <folding>
+                    <element signature="method#join#0;class#Domain#0" expanded="true" />
                     <element signature="e#1142#1143#0" expanded="true" />
                     <element signature="e#1193#1194#0" expanded="true" />
                     <element signature="e#1222#1223#0" expanded="true" />
                     <element signature="e#1274#1275#0" expanded="true" />
                     <element signature="method#_register#0;class#Domain#0" expanded="true" />
                     <element signature="method#publish#0;class#Domain#0" expanded="true" />
-                    <element signature="method#call#0;class#Domain#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -98,7 +97,7 @@
             <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Deferred.java">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="38" column="20" selection-start-line="38" selection-start-column="20" selection-end-line="38" selection-end-column="20" />
+                  <caret line="37" column="22" selection-start-line="37" selection-start-column="22" selection-end-line="37" selection-end-column="22" />
                   <folding>
                     <element signature="imports" expanded="true" />
                     <element signature="method#Deferred#0;class#Deferred#0" expanded="true" />
@@ -106,10 +105,10 @@
                     <element signature="method#_then#0;class#Deferred#0" expanded="true" />
                     <element signature="method#callback#0;class#Deferred#0" expanded="true" />
                     <element signature="method#errback#0;class#Deferred#0" expanded="true" />
-                    <element signature="e#1257#1258#0" expanded="true" />
-                    <element signature="e#1313#1314#0" expanded="true" />
-                    <element signature="e#1364#1365#0" expanded="true" />
-                    <element signature="e#1420#1421#0" expanded="true" />
+                    <element signature="e#1152#1153#0" expanded="true" />
+                    <element signature="e#1208#1209#0" expanded="true" />
+                    <element signature="e#1259#1260#0" expanded="true" />
+                    <element signature="e#1315#1316#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -118,9 +117,13 @@
           <file leaf-file-name="App.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/App.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.5700713">
-                  <caret line="55" column="20" selection-start-line="55" selection-start-column="20" selection-end-line="55" selection-end-column="20" />
-                  <folding />
+                <state vertical-scroll-proportion="0.341251">
+                  <caret line="35" column="31" selection-start-line="35" selection-start-column="31" selection-end-line="35" selection-end-column="31" />
+                  <folding>
+                    <element signature="method#App#0;class#App#0" expanded="true" />
+                    <element signature="method#run#0;class#747:2839" expanded="true" />
+                    <element signature="method#HandlerTuple#0;class#HandlerTuple#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -3114,11 +3117,11 @@
         <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/cumin/Cumin.java" />
         <option value="$PROJECT_DIR$/backend/src/main/java/com/example/Testing.java" />
         <option value="$PROJECT_DIR$/app/build.gradle" />
-        <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Utils.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/exis/droidriffle/MainActivity.java" />
-        <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Deferred.java" />
         <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Domain.java" />
+        <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Deferred.java" />
+        <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Utils.java" />
         <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/App.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/exis/droidriffle/MainActivity.java" />
       </list>
     </option>
   </component>
@@ -3472,28 +3475,6 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="riffle" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="droidRiffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="riffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="riffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="App.java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -3928,7 +3909,6 @@
             <element signature="e#1764#1822#0" expanded="false" />
             <element signature="method#riffleSender#0;class#MainActivity#0" expanded="true" />
             <element signature="method#onJoin#0;class#Receiver#0" expanded="true" />
-            <element signature="method#onJoin#0;class#Sender#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -3938,13 +3918,13 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="65" column="21" selection-start-line="65" selection-start-column="21" selection-end-line="65" selection-end-column="21" />
           <folding>
+            <element signature="method#join#0;class#Domain#0" expanded="true" />
             <element signature="e#1142#1143#0" expanded="true" />
             <element signature="e#1193#1194#0" expanded="true" />
             <element signature="e#1222#1223#0" expanded="true" />
             <element signature="e#1274#1275#0" expanded="true" />
             <element signature="method#_register#0;class#Domain#0" expanded="true" />
             <element signature="method#publish#0;class#Domain#0" expanded="true" />
-            <element signature="method#call#0;class#Domain#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -3953,7 +3933,11 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="13" column="2" selection-start-line="13" selection-start-column="2" selection-end-line="13" selection-end-column="2" />
-          <folding />
+          <folding>
+            <element signature="method#App#0;class#App#0" expanded="true" />
+            <element signature="method#run#0;class#747:2839" expanded="true" />
+            <element signature="method#HandlerTuple#0;class#HandlerTuple#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -3998,10 +3982,10 @@
             <element signature="method#_then#0;class#Deferred#0" expanded="true" />
             <element signature="method#callback#0;class#Deferred#0" expanded="true" />
             <element signature="method#errback#0;class#Deferred#0" expanded="true" />
-            <element signature="e#1257#1258#0" expanded="true" />
-            <element signature="e#1313#1314#0" expanded="true" />
-            <element signature="e#1364#1365#0" expanded="true" />
-            <element signature="e#1420#1421#0" expanded="true" />
+            <element signature="e#1152#1153#0" expanded="true" />
+            <element signature="e#1208#1209#0" expanded="true" />
+            <element signature="e#1259#1260#0" expanded="true" />
+            <element signature="e#1315#1316#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -4215,49 +4199,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/cumin/Handler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Deferred.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="38" column="20" selection-start-line="38" selection-start-column="20" selection-end-line="38" selection-end-column="20" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#Deferred#0;class#Deferred#0" expanded="true" />
-            <element signature="method#Deferred#1;class#Deferred#0" expanded="true" />
-            <element signature="method#_then#0;class#Deferred#0" expanded="true" />
-            <element signature="method#callback#0;class#Deferred#0" expanded="true" />
-            <element signature="method#errback#0;class#Deferred#0" expanded="true" />
-            <element signature="e#1257#1258#0" expanded="true" />
-            <element signature="e#1313#1314#0" expanded="true" />
-            <element signature="e#1364#1365#0" expanded="true" />
-            <element signature="e#1420#1421#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/exis/droidriffle/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="67" column="0" selection-start-line="67" selection-start-column="0" selection-end-line="67" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#onCreate#0;class#MainActivity#0" expanded="true" />
-            <element signature="class#982:1246" expanded="false" />
-            <element signature="e#1764#1822#0" expanded="false" />
-            <element signature="method#riffleSender#0;class#MainActivity#0" expanded="true" />
-            <element signature="method#onJoin#0;class#Receiver#0" expanded="true" />
-            <element signature="method#onJoin#0;class#Sender#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Riffle.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.50673">
@@ -4269,10 +4210,37 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/cumin/Handler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Deferred.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="37" column="22" selection-start-line="37" selection-start-column="22" selection-end-line="37" selection-end-column="22" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#Deferred#0;class#Deferred#0" expanded="true" />
+            <element signature="method#Deferred#1;class#Deferred#0" expanded="true" />
+            <element signature="method#_then#0;class#Deferred#0" expanded="true" />
+            <element signature="method#callback#0;class#Deferred#0" expanded="true" />
+            <element signature="method#errback#0;class#Deferred#0" expanded="true" />
+            <element signature="e#1152#1153#0" expanded="true" />
+            <element signature="e#1208#1209#0" expanded="true" />
+            <element signature="e#1259#1260#0" expanded="true" />
+            <element signature="e#1315#1316#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Utils.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="24" selection-start-line="0" selection-start-column="24" selection-end-line="0" selection-end-column="24" />
+          <caret line="25" column="33" selection-start-line="25" selection-start-column="33" selection-end-line="25" selection-end-column="33" />
           <folding>
             <element signature="e#586#587#0" expanded="true" />
             <element signature="e#626#627#0" expanded="true" />
@@ -4283,25 +4251,44 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Domain.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.39271575">
-          <caret line="42" column="0" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="81" column="69" selection-start-line="81" selection-start-column="69" selection-end-line="81" selection-end-column="69" />
           <folding>
+            <element signature="method#join#0;class#Domain#0" expanded="true" />
             <element signature="e#1142#1143#0" expanded="true" />
             <element signature="e#1193#1194#0" expanded="true" />
             <element signature="e#1222#1223#0" expanded="true" />
             <element signature="e#1274#1275#0" expanded="true" />
             <element signature="method#_register#0;class#Domain#0" expanded="true" />
             <element signature="method#publish#0;class#Domain#0" expanded="true" />
-            <element signature="method#call#0;class#Domain#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/exis/droidriffle/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7846398">
+          <caret line="146" column="0" selection-start-line="146" selection-start-column="0" selection-end-line="146" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#onCreate#0;class#MainActivity#0" expanded="true" />
+            <element signature="class#982:1246" expanded="false" />
+            <element signature="e#1764#1822#0" expanded="false" />
+            <element signature="method#riffleSender#0;class#MainActivity#0" expanded="true" />
+            <element signature="method#onJoin#0;class#Receiver#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/App.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5700713">
-          <caret line="55" column="20" selection-start-line="55" selection-start-column="20" selection-end-line="55" selection-end-column="20" />
-          <folding />
+        <state vertical-scroll-proportion="0.341251">
+          <caret line="35" column="31" selection-start-line="35" selection-start-column="31" selection-end-line="35" selection-end-column="31" />
+          <folding>
+            <element signature="method#App#0;class#App#0" expanded="true" />
+            <element signature="method#run#0;class#747:2839" expanded="true" />
+            <element signature="method#HandlerTuple#0;class#HandlerTuple#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

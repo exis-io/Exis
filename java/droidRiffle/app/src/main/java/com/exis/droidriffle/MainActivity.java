@@ -144,6 +144,7 @@ class Sender extends Domain {
         Log.d(TAG, "Sender joined!");
 
         parent.receiver2.publish("sub", 1, 2, 3);
+
         parent.receiver2.call("reg", "Johnathan");
     }
 }

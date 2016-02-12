@@ -40,14 +40,12 @@ public class Deferred {
     }
 
     void callback(Object[] args) {
-        Riffle.debug("Attempting to fire callback");
         if (_callback != null) {
             _callback.invoke(args);
         }
     }
 
     void errback(Object[] args) {
-        Riffle.debug("Attempting to fire errback");
         if (_errback != null) {
             _errback.invoke(args);
         }

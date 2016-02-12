@@ -30,14 +30,11 @@ func (d *Domain) Receive() string {
 func (d *Domain) Join(cb int, eb int) {
 	go func() {
 		if c, err := goRiffle.Open(core.Fabric); err != nil {
-			core.Debug("Opening connection")
 			d.coreDomain.GetApp().CallbackSend(uint64(eb), err.Error())
 		} else {
 			if err := d.coreDomain.Join(c); err != nil {
-				core.Debug("Join failed: %v", err.Error())
 				d.coreDomain.GetApp().CallbackSend(uint64(eb), err.Error())
 			} else {
-				core.Debug("Join succeeded, triggering callback: %d", cb)
 				d.coreDomain.GetApp().CallbackSend(uint64(cb))
 			}
 		}
