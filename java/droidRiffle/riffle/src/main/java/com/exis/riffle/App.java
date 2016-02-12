@@ -2,8 +2,7 @@ package com.exis.riffle;
 
 import android.util.ArrayMap;
 
-import com.exis.riffle.handlers.AnyHandler;
-import com.exis.riffle.handlers.HandlerWrapper;
+import com.exis.riffle.cumin.Cumin;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -87,10 +86,10 @@ class App {
 
 // Simple class that stores a little metadata with the handler
 class HandlerTuple {
-    HandlerWrapper fn = null;
+    Cumin.Wrapped fn = null;
     boolean isRegistration = false;
 
-    HandlerTuple(HandlerWrapper function, boolean isRegistration) {
+    HandlerTuple(Cumin.Wrapped function, boolean isRegistration) {
         fn = function;
         this.isRegistration = isRegistration;
     }

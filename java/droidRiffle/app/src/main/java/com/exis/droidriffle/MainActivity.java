@@ -12,10 +12,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.exis.riffle.Domain;
-
 import com.exis.riffle.Riffle;
-import com.exis.riffle.handlers.Handler;
-import com.exis.riffle.handlers.HandlerOne;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -112,11 +109,11 @@ class Receiver extends Domain {
     public void onJoin() {
         Log.d(TAG, "Receiver joined!");
 
-        subscribe("sub", (Handler) () -> {
-            Log.d(TAG, "I have a publish!");
+        subscribe("sub", Integer.class, (a) -> {
+            Log.d(TAG, "I have a publish: " + a);
         });
 
-        register("reg", (HandlerOne<String>) (name) -> {
+        register("reg", String.class, (name) -> {
             Log.d(TAG, "I have a call from: " + name);
         });
 

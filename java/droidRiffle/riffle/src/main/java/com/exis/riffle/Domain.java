@@ -1,8 +1,7 @@
 package com.exis.riffle;
 
-import com.exis.riffle.handlers.AnyHandler;
-import com.exis.riffle.handlers.Handler;
-import com.exis.riffle.handlers.HandlerWrapper;
+import com.exis.riffle.cumin.Cumin;
+import com.exis.riffle.cumin.Handler;
 
 import go.mantle.Mantle;
 //import me.tatarka.retrolambda.sample.lib.AnyHandler;
@@ -34,7 +33,7 @@ public class Domain {
     public void join() {
         Deferred d = new Deferred(app);
 
-        d.then( (Handler) () -> {
+        d.then(() -> {
             this.onJoin();
         });
 
@@ -51,20 +50,20 @@ public class Domain {
     }
 
 
-    public Deferred subscribe(String endpoint, AnyHandler handler) {
+    Deferred _subscribe(String endpoint, Cumin.Wrapped handler) {
         Deferred d = new Deferred(app);
         int fn = Utils.newID();
 
-        app.handlers.put(fn, new HandlerTuple(new HandlerWrapper(handler), false));
-        mantleDomain.Subscribe(endpoint,d.cb, d.eb, fn, "");
+        app.handlers.put(fn, new HandlerTuple(handler, false));
+        mantleDomain.Subscribe(endpoint, d.cb, d.eb, fn, "");
         return d;
     }
 
-    public Deferred register(String endpoint, AnyHandler handler) {
+    Deferred _register(String endpoint, Cumin.Wrapped handler) {
         Deferred d = new Deferred(app);
         int fn = Utils.newID();
 
-        app.handlers.put(fn, new HandlerTuple(new HandlerWrapper(handler), true));
+        app.handlers.put(fn, new HandlerTuple(handler, true));
         mantleDomain.Register(endpoint, d.cb, d.eb, fn, "");
         return d;
     }
@@ -100,4 +99,17 @@ public class Domain {
     public void leave() {
         mantleDomain.Leave();
     }
+
+
+    //
+    // Wrapper methods
+    //
+    public <A> Deferred subscribe(String endpoint, Class<A> a, Handler.One<A> handler) {
+        return _subscribe(endpoint, Cumin.cuminicate(a, handler));
+    }
+
+    public <A> Deferred register(String endpoint, Class<A> a, Handler.One<A> handler) {
+        return _register(endpoint, Cumin.cuminicate(a, handler));
+    }
 }
+

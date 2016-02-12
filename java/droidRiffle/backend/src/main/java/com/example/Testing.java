@@ -51,6 +51,12 @@ public class Testing {
         return (args) -> { fn.run(); return null; };
     }
 
+    static void cuminicate(Class[] classes, Handler fn) {
+        if (fn instanceof Handler.Zero) {
+
+        }
+    }
+
     static <A> Cuminicated register(Class<A> a, Handler.One<A> fn) {
         return cuminicate(a, fn);
     }
