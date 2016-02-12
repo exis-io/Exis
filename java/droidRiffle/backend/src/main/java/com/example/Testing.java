@@ -1,114 +1,20 @@
 package com.example;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.AbstractSequentialList;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
+interface Handler {
+    interface Zero { void run(); }
+    interface One<A> { void run(A a); }
+    interface Two<A, B> { void run(A a, B b); }
 
-// Attempt
-interface AnyFunction {
-    default Object invoke(Object... args) { return null; }
+    interface OneOne<A, R> { R run(A a); }
 }
 
-interface Zero extends AnyFunction {
-    void run();
-}
-
-interface One<A> extends AnyFunction {
-    void run(A a);
-}
-
-
-interface Two<A, B> extends AnyFunction {
-    void run(A a, B b);
-}
-
-interface OneOne<A, R> extends AnyFunction {
-    R run(A a);
-}
-
-class HandlerCarrier<A> {
-    Class<A> internal = null;
-
-    HandlerCarrier(One<A> fn) {
-//        Testing.log("Class of carrier generic: " + Class<A>);
-//        HandlerCarrier.<Integer>receiver(1);
-
-//        internal = (Class<A>)
-//                ((ParameterizedType)getClass()
-//                        .getGenericSuperclass())
-//                        .getActualTypeArguments()[0];
-    }
-
-    static <T> void receiver(T t) {
-
-    }
-
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        Class<?> thisClass = null;
-        try {
-            thisClass = Class.forName(this.getClass().getName());
-
-            Field[] aClassFields = thisClass.getDeclaredFields();
-            sb.append(this.getClass().getSimpleName() + " [ ");
-            for(Field f : aClassFields){
-                String fName = f.getName();
-                sb.append("(" + f.getType() + ") " + fName + " = " + f.get(this) + ", ");
-            }
-            sb.append("]");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return sb.toString();
-    }
-}
-
-// Wraps handlers
-class HandlerWrapper {
-    AnyFunction handler;
-    Class[] types;
-
-    HandlerWrapper (AnyFunction handler, Class[] types) {
-        this.handler = handler;
-        this.types = types;
-    }
-
-    Object invoke(Object... args) {
-        // Polymorphic solution is cleaner and more efficient here, but it also spreads the logic
-        // across many, many files. May pursue that in the future
-
-        if (handler instanceof Zero) {
-            Zero fn = (Zero) handler;
-            fn.run();
-            return null;
-        }
-        else if (handler instanceof One) {
-            One fn = (One) handler;
-            fn.run(types[0].cast(args[0]));
-            return null;
-        }
-        else if (handler instanceof OneOne) {
-            OneOne fn = (OneOne) handler;
-            return fn.run(types[0].cast(args[0]));
-        }
-        else {
-            System.out.println("WARN-- Serious fallthrough. Cannot determine type of handler");
-            return null;
-        }
-    }
+interface Cuminicated {
+    Object invoke(Object... args);
 }
 
 public class Testing {
@@ -120,14 +26,9 @@ public class Testing {
         testClosures();
     }
 
-    static void functionPointer() {
-        log("No args Function pointer firing");
-    }
-
     static void functionPointerOne(Integer a) {
         log("One arg Function pointer firing" + a);
     }
-
 
     static void testClosures() {
         Cuminicated a = register(() -> {
@@ -145,23 +46,23 @@ public class Testing {
         c.invoke(true);
     }
 
-    static Cuminicated register(Zero fn) {
-        return (args) -> {
-            fn.run();
-            return null;
-        };
+    // Since we'll need duplicates for all the handlers, it may be easier to consolidate
+    static Cuminicated register(Handler.Zero fn) {
+        return (args) -> { fn.run(); return null; };
     }
 
-    static <A> Cuminicated register(Class<A> a, One<A> fn) {
-        return (args) -> {
-            fn.run(a.cast(args[0]));
-            return null;
-        };
+    static <A> Cuminicated register(Class<A> a, Handler.One<A> fn) {
+        return cuminicate(a, fn);
     }
-}
 
-interface Cuminicated {
-    Object invoke(Object... args);
+    static <A> Cuminicated cuminicate(Class<A> a, Handler.One<A> fn) {
+        return (args) -> { fn.run(convert(a, args[0])); return null; };
+    }
+
+    // Converts arbitrary object b to be of type A. Constructs the type if needed
+    static <A> A convert(Class<A> a, Object b) {
+        return a.cast(b);
+    }
 }
 
 
