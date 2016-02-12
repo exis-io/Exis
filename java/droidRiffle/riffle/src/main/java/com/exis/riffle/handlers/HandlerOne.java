@@ -5,6 +5,5 @@ package com.exis.riffle.handlers;
  */
 
 public interface HandlerOne<A> extends AnyHandler {
-    default Class thisClass() { return HandlerOne.class; }
     void run(A a);
 }

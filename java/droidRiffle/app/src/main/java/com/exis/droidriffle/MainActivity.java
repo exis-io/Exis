@@ -12,9 +12,10 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.exis.riffle.Domain;
-import com.exis.riffle.Model;
+
 import com.exis.riffle.Riffle;
-import com.exis.riffle.Utils;
+import com.exis.riffle.handlers.Handler;
+import com.exis.riffle.handlers.HandlerOne;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -42,6 +43,11 @@ public class MainActivity extends AppCompatActivity {
 
         TextView textview = (TextView) findViewById(R.id.mytextview);
         textview.setText("Reeefle");
+
+        // I cant believe I've written this line.
+        // TypeResolver
+        System.setProperty("java.version", "1.8");
+        Log.d(TAG, "Java version: " + System.getProperty("java.version"));
     }
 
     @Override
@@ -105,11 +111,14 @@ class Receiver extends Domain {
     @Override
     public void onJoin() {
         Log.d(TAG, "Receiver joined!");
-//
-//        subscribe("sub", () -> {
-//            Log.d(TAG, "I have a publish!");
-//            return "Publish Received!";
-//        });
+
+        subscribe("sub", (Handler) () -> {
+            Log.d(TAG, "I have a publish!");
+        });
+
+        register("reg", (HandlerOne<String>) (name) -> {
+            Log.d(TAG, "I have a call from: " + name);
+        });
 
         // Bootstrap the sender
         parent.sender2.join();
@@ -134,6 +143,7 @@ class Sender extends Domain {
         Log.d(TAG, "Sender joined!");
 
         parent.receiver2.publish("sub", 1, 2, 3);
+        parent.receiver2.call("reg", "Johnathan");
     }
 }
 

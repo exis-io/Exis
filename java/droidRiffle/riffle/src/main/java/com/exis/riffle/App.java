@@ -3,6 +3,7 @@ package com.exis.riffle;
 import android.util.ArrayMap;
 
 import com.exis.riffle.handlers.AnyHandler;
+import com.exis.riffle.handlers.HandlerWrapper;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -22,8 +23,8 @@ class App {
     Map<Integer, Deferred> deferreds;
 
     App() {
-        handlers = new ArrayMap<Integer, HandlerTuple>();
-        deferreds = new ArrayMap<Integer, Deferred>();
+        handlers = new ArrayMap();
+        deferreds = new ArrayMap();
     }
 
     /**
@@ -53,7 +54,6 @@ class App {
                         args = a.toArray();
                     }
 
-                    //Riffle.debug("Crust invocation: " + id + " " + args);
 
                     if (deferreds.containsKey(id)) {
                         Deferred d = deferreds.remove(id);
@@ -62,10 +62,10 @@ class App {
                         // Remove the deferred and trigger it appropriately
                         if (id == d.cb) {
                             deferreds.remove(d.eb);
-                            d.callback();
+                            d.callback(args);
                         } else {
                             deferreds.remove(d.cb);
-                            d.errback();
+                            d.errback(args);
                         }
                     }
 
@@ -75,7 +75,7 @@ class App {
                         // TODO: try/catch
                         // TODO: returns
 
-                        //t.fn.run();
+                        t.fn.invoke(args);
                     }
                 }
             }
@@ -85,13 +85,13 @@ class App {
     }
 }
 
+// Simple class that stores a little metadata with the handler
 class HandlerTuple {
-    AnyHandler fn = null;
+    HandlerWrapper fn = null;
     boolean isRegistration = false;
 
-    HandlerTuple(AnyHandler function, boolean isRegistration) {
+    HandlerTuple(HandlerWrapper function, boolean isRegistration) {
         fn = function;
         this.isRegistration = isRegistration;
     }
-
 }

@@ -1,6 +1,8 @@
 package com.exis.riffle;
 
 import com.exis.riffle.handlers.AnyHandler;
+import com.exis.riffle.handlers.Handler;
+import com.exis.riffle.handlers.HandlerWrapper;
 
 import go.mantle.Mantle;
 //import me.tatarka.retrolambda.sample.lib.AnyHandler;
@@ -9,6 +11,8 @@ import go.mantle.Mantle;
  * Created by damouse on 1/23/16.
  *
  * See here for distribution: http://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en
+ *
+ * TODO: emit different kinds of deferreds based on handlers
  */
 public class Domain {
     private Mantle.Domain mantleDomain;
@@ -30,10 +34,9 @@ public class Domain {
     public void join() {
         Deferred d = new Deferred(app);
 
-//        d.then(() -> {
-//            this.onJoin();
-//            return ""; // temp
-//        });
+        d.then( (Handler) () -> {
+            this.onJoin();
+        });
 
         mantleDomain.Join(d.cb, d.eb);
         app.listen(mantleDomain);
@@ -52,13 +55,18 @@ public class Domain {
         Deferred d = new Deferred(app);
         int fn = Utils.newID();
 
-        app.handlers.put(fn, new HandlerTuple(handler, false));
+        app.handlers.put(fn, new HandlerTuple(new HandlerWrapper(handler), false));
         mantleDomain.Subscribe(endpoint,d.cb, d.eb, fn, "");
         return d;
     }
 
-    public void register(String endpoint) {
-//        mantleDomain.Register(endpoint);
+    public Deferred register(String endpoint, AnyHandler handler) {
+        Deferred d = new Deferred(app);
+        int fn = Utils.newID();
+
+        app.handlers.put(fn, new HandlerTuple(new HandlerWrapper(handler), true));
+        mantleDomain.Register(endpoint, d.cb, d.eb, fn, "");
+        return d;
     }
 
     public Deferred publish(String endpoint, Object... arguments) {
@@ -67,19 +75,29 @@ public class Domain {
         return d;
     }
 
-    public void call(String endpoint) {
-//        mantleDomain.Call(endpoint);
+    public Deferred call(String endpoint, Object... arguments) {
+        Deferred d = new Deferred();
+        mantleDomain.Call(endpoint, d.cb, d.eb, Utils.marshall(arguments));
+        return d;
     }
 
-    public void unsubscribe(String endpoint) {
-//        mantleDomain.Unsubscribe(endpoint);
+    public Deferred unsubscribe(String endpoint) {
+        // TODO: remove handler
+
+        Deferred d = new Deferred();
+        mantleDomain.Unsubscribe(endpoint, d.cb, d.eb);
+        return d;
     }
 
-    public void unregister(String endpoint) {
-//        mantleDomain.Unregister(endpoint);
+    public Deferred unregister(String endpoint) {
+        // TODO: remove handler
+
+        Deferred d = new Deferred();
+        mantleDomain.Unregister(endpoint, d.cb, d.eb);
+        return d;
     }
 
-    public void Leave() {
+    public void leave() {
         mantleDomain.Leave();
     }
 }

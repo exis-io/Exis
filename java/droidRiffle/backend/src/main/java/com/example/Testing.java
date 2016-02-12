@@ -4,27 +4,24 @@ import net.jodah.typetools.TypeResolver;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 
 
 // Attempt
 interface AnyFunction {
-    default Class thisClass() { return AnyFunction.class; }
     default Object invoke(Object... args) { return null; }
 }
 
 interface Zero extends AnyFunction {
-    default Class thisClass() { return Zero.class; }
     void run();
 }
 
 interface One<A> extends AnyFunction {
-    default Class thisClass() { return One.class; }
     void run(A a);
 }
 
 interface OneOne<A, R> extends AnyFunction {
-    default Class thisClass() { return OneOne.class; }
     R run(A a);
 }
 
@@ -68,13 +65,7 @@ public class Testing {
         System.out.println(s);
     }
 
-    // Declare the interface for the shared library
-    public static interface MathLib {
-        void Hello();
-    }
-
     public static void main(String[] args) {
-//        testLibrary();
         testClosures();
     }
 
@@ -87,9 +78,9 @@ public class Testing {
     }
 
     static void testClosures() {
-        HandlerWrapper a = register((Zero) () -> {
-            log("No args handler firing");
-        });
+//        HandlerWrapper a = register((Zero) () -> {
+//            log("No args handler firing");
+//        });
 
         HandlerWrapper b = register((One<Integer>) Testing::functionPointerOne);
 
@@ -98,15 +89,34 @@ public class Testing {
             return 10.f;
         });
 
-        a.invoke();
-        b.invoke(1);
-        c.invoke(true);
+//        a.invoke();
+//        b.invoke(1);
+//        c.invoke(true);
     }
 
     static HandlerWrapper  register(AnyFunction fn) {
 //        log("Dynamic: " + fn.thisClass());
 
-        Class[] typeArgs = TypeResolver.resolveRawArguments(fn.thisClass(), fn.getClass());
+        Class target = null;
+
+        if (fn instanceof Zero)
+            target = Zero.class;
+
+        if (fn instanceof One)
+            target = One.class;
+
+        if (fn instanceof OneOne)
+            target = OneOne.class;
+
+        log("Target class: " + target.toString() + " getClass: " + fn.getClass().getName());
+
+        Type t = ((ParameterizedType)fn.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+
+        log("Interface: " + fn.getClass().getGenericInterfaces());
+        log("Superclass: " + fn.getClass().getGenericSuperclass());
+
+        log("Type ARgs: " + t.toString());
+        // Class[] typeArgs = TypeResolver.resolveRawArguments(target, fn.getClass());
 
         // TODO: drop into collections and model objects and apply recursively. Arrays dont reflect,
         // lists have their internal types erased, and model objects will need to do this themselves :(
@@ -114,8 +124,9 @@ public class Testing {
 //            log("Type: " + c.toString());
 //        }
 
-        HandlerWrapper  wrapped = new HandlerWrapper (fn, typeArgs);
-        return wrapped;
+//        HandlerWrapper  wrapped = new HandlerWrapper (fn, typeArgs);
+//        return wrapped;
+        return null;
 
 //        log("TYPES: " + typeArgs.toString());
 //        assert typeArgs[0] == String.class;

@@ -31,7 +31,7 @@ osx:
 
 android:
 	@echo "Building core..."
-	gomobile bind --work -target=android github.com/exis-io/core/androidMantle
+	@gomobile bind --work -target=android github.com/exis-io/core/androidMantle
 	@echo "Moving mantle"
 	@mv mantle.aar java/droidRiffle/mantle/mantle.aar
 
