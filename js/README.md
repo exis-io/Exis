@@ -15,7 +15,7 @@ All our docs live at [docs.exis.io](http://docs.exis.io).
 * Run `npm install` to make sure you can find dependencies
 * Run `sudo npm link` to make the `jsriffle` package globally available on your machine
 * `cd ../examples/`
-* Run `npm install ../jsRiffle/`
+* Run `sudo npm link jsriffle/`
 * Run `node server.js` and `node client.js`
 
 
