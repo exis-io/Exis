@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.exis.riffle.Domain;
 import com.exis.riffle.Riffle;
 
+import java.lang.reflect.Type;
+
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -117,8 +119,15 @@ class Receiver extends Domain {
             Log.d(TAG, "I have a call from: " + name);
         });
 
+        // Cool. I guess? It would be really nice to do away with the ".class" here
+        subscribe("vich", Boolean.class, this::someHandler);
+
         // Bootstrap the sender
         parent.sender2.join();
+    }
+
+    void someHandler(Boolean c) {
+        Log.d(TAG, "These are cool jeans: " + c);
     }
 }
 

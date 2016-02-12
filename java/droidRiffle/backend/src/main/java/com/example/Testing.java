@@ -1,5 +1,6 @@
 package com.example;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.AbstractSequentialList;
@@ -23,7 +24,9 @@ public class Testing {
     }
 
     public static void main(String[] args) {
-        testClosures();
+        Curry c = new Curry();
+        c.test();
+//        testClosures();
     }
 
     static void functionPointerOne(Integer a) {
@@ -51,6 +54,7 @@ public class Testing {
         return (args) -> { fn.run(); return null; };
     }
 
+    // Playing with a consolidated version
     static void cuminicate(Class[] classes, Handler fn) {
         if (fn instanceof Handler.Zero) {
 
@@ -75,25 +79,37 @@ public class Testing {
 
 
 
-/* Experiments. Some of them almost worked!
-    static <T> MyClass<T> goat() {
+class Curry {
+// Experiments. Some of them almost worked!
+    <T> MyClass<T> goat() {
         MyClass<T> myClass2 = new MyClass<T>() { };
         return myClass2;
     }
 
-         So close, but easure takes over when the generics are recaptured :(
-        MyClass<Double> myClass2 = new MyClass<Double>() { };         // only sorcerers do this
-        MyClass c = Testing.<Boolean>goat();
-
-        TypeTokenTree z = new TypeTokenTree(c.getClass());
-        log("Come now: " + z.getRoot().children);
+    void test() {
+        AnotherHolder h = new AnotherHolder<Integer>(Testing::functionPointerOne);
+        Testing.log("Holder contents: " + h.handler);
 
 
-*/
+        // Ok. At this point I'm starting to doubt this can be done.
+        // On the other hand, I can stick a knife into retrolambda and see what comes out
+        // Evil and possibly dangerous, but I'll be damned if I don't whip java into shape.
+        // Look for public static final Pattern LAMBDA_CLASS when you go down this dark road.
+
+//        Method m = (Method) h.handler;
+
+        //So close, but easure takes over when the generics are recaptured :(
+//        MyClass<Double> myClass2 = new MyClass<Double>() {};         // only sorcerers do this
+//        MyClass c = this.<Boolean>goat();
+//
+//        TypeTokenTree z = new TypeTokenTree(c.getClass());
+//        Testing.log("Come now: " + z.getRoot().children);
+    }
+}
 
 
 class MyClass<T> {
-     final Class<?> typeT;
+    final Class<?> typeT;
 
     public MyClass() {
         this.typeT = new TypeTokenTree(this.getClass()).getElement(0);
@@ -101,6 +117,13 @@ class MyClass<T> {
     }
 }
 
+class AnotherHolder<T> {
+    Handler.One<T> handler = null;
+
+    AnotherHolder(Handler.One<T> fn) {
+        handler = fn;
+    }
+}
 
 class TypeTokenTree {
     final TypeNode root;
