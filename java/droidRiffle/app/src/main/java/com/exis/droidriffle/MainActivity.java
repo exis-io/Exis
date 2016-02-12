@@ -42,11 +42,6 @@ public class MainActivity extends AppCompatActivity {
 
         TextView textview = (TextView) findViewById(R.id.mytextview);
         textview.setText("Reeefle");
-
-        // I cant believe I've written this line.
-        // TypeResolver
-        System.setProperty("java.version", "1.8");
-        Log.d(TAG, "Java version: " + System.getProperty("java.version"));
     }
 
     @Override

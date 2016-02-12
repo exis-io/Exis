@@ -2,11 +2,11 @@
 <items version="2" >
 
     <item
-        jar="C:\Users\damouse\Documents\code\merged\Exis\java\droidRiffle\app\build\intermediates\exploded-aar\droidRiffle\riffle\unspecified\jars\classes.jar"
+        jar="/home/damouse/code/merged/riffle/java/droidRiffle/app/build/intermediates/exploded-aar/droidRiffle/riffle/unspecified/jars/classes.jar"
         jumboMode="false"
         revision="23.0.2"
-        sha1="9742efbde227ceeb6d397c73b3b63d1a104e3d47">
-        <dex dex="C:\Users\damouse\Documents\code\merged\Exis\java\droidRiffle\app\build\intermediates\pre-dexed\debug\droidRiffle-riffle-unspecified_10b7b40554612af3161b7a123b1aec16f2e129b0.jar" />
+        sha1="1807de9f0ba025be4ac60c7798b12df9125ac4b4">
+        <dex dex="/home/damouse/code/merged/riffle/java/droidRiffle/app/build/intermediates/pre-dexed/debug/droidRiffle-riffle-unspecified_55c5f9f8307c72ad2f5730550c0feb0b00039d34.jar" />
     </item>
 
 </items>

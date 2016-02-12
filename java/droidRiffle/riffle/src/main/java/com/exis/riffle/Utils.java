@@ -27,6 +27,7 @@ public class Utils {
     }
 
     static Object[] unmarshall(String json) {
+        Riffle.debug("Json from core: " + json);
         return gson.fromJson(json, Object[].class);
     }
 }

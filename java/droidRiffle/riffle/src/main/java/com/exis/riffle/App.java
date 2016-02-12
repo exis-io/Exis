@@ -34,8 +34,7 @@ class App {
 
         thread = new Thread() {
             public void run() {
-                Riffle.debug("App thread starting");
-                
+
                 while (true) {
                     Object[] invocation = Utils.unmarshall(mantleDomain.Receive());
                     Object[] args = {};
@@ -53,7 +52,8 @@ class App {
                         args = a.toArray();
                     }
 
-
+                    Riffle.debug("Crust received invocation: " + id + " args: " + args.toString());
+                    
                     if (deferreds.containsKey(id)) {
                         Deferred d = deferreds.remove(id);
 
