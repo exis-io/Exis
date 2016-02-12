@@ -39,6 +39,15 @@ android86:
 	@echo "Building core..."
 	@go build -buildmode=c-shared -o java/testing/libmantle.so core/cMantle/main.go
 
+androidtestarm:
+	GOOS=android \
+	GOARCH=arm \
+	GOARM=7 \
+	CC=/home/damouse/code/go/pkg/gomobile/android-ndk-r10e/arm/bin/arm-linux-androideabi-gcc \
+	CXX=/home/damouse/code/go/pkg/gomobile/android-ndk-r10e/arm/bin/arm-linux-androideabi-g++ \
+	CGO_ENABLED=1 \
+	go build -buildmode=c-shared -o java/droidRiffle/app/src/main/jniLibs/armeabi-v7a/libmeth.so java/testing/meth.go
+
 javatest: 
 	@echo "Building core..."
 	@go build -buildmode=c-shared -o java/droidRiffle/app/src/main/jniLibs/x86/libmeth.so java/testing/meth.go
