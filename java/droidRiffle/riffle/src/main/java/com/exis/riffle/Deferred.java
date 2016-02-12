@@ -1,5 +1,8 @@
 package com.exis.riffle;
 
+import com.exis.riffle.cumin.Cumin;
+import com.exis.riffle.cumin.Handler;
+
 /**
  * Created by damouse on 1/24/2016.
  *
@@ -9,14 +12,15 @@ public class Deferred {
     int cb;
     int eb;
 
-    Function _callback = null;
-    Function _errback = null;
+    Cumin.Wrapped _callback = null;
+    Cumin.Wrapped _errback = null;
 
 
     public Deferred() {
         cb = Utils.newID();
         eb = Utils.newID();
     }
+
     public Deferred(App app) {
         this();
 
@@ -24,25 +28,39 @@ public class Deferred {
         app.deferreds.put(eb, this);
     }
 
-    public Deferred then(Function callback) {
-        _callback = callback;
+    // We will need to override cuminicable methods here again, much like swift
+    Deferred _then(Cumin.Wrapped fn) {
+        _callback = fn;
         return this;
     }
 
-    public Deferred error(Function errback) {
-        _errback = errback;
+    Deferred _error(Cumin.Wrapped fn) {
+        _errback = fn;
         return this;
     }
 
-    void callback() {
+    void callback(Object[] args) {
         if (_callback != null) {
-            _callback.run();
+            _callback.invoke(args);
         }
     }
 
-    void errback() {
+    void errback(Object[] args) {
         if (_errback != null) {
-            _errback.run();
+            _errback.invoke(args);
         }
+    }
+
+    //
+    // Generic Shotgun
+    //
+
+    // No args
+    public Deferred then(Handler.Zero handler) {
+        return _then (Cumin.cuminicate(handler));
+    }
+
+    public Deferred error(Handler.Zero handler) {
+        return _error(Cumin.cuminicate(handler));
     }
 }

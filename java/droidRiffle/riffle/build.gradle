@@ -26,8 +26,15 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
+
     compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'me.tatarka:gradle-retrolambda:3.2.0'
+    compile 'me.tatarka:gradle-retrolambda:3.2.5'
     compile 'org.immutables:gson:2.1.8'
+
     compile project(':mantle')
+    compile 'net.jodah:typetools:0.4.4'
+}
+
+retrolambda {
+    defaultMethods true
 }

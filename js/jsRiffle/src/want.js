@@ -55,6 +55,7 @@ function wait(){
   var fp = arguments[0];
   var expect = new Expectation();
   var len = arguments.length;
+
   for(var i = 1; i < len; i++){
     if(validTypes.indexOf(arguments[i]) > -1 || arguments[i] instanceof ModelObject){
       expect.addArg(arguments[i], i-1);
@@ -69,26 +70,26 @@ function wait(){
           throw "Error";
         }
       }catch(e){
-        throw "Error: Inproperly formatted want statement. Argument " + (i+1) + " is invalid.";
+        throw "Error: Inproperly formatted want statement. Argument " + (i + 1) + " is invalid.";
       }
-    }
+    }  
   }
 
   function wrap(){
     // Note that we have to do arg[0] here because it returns to us differently
     // than the values passed back by want() above (this is because it is the result
     // of a yield message and is handled differently by the core).
-    for(var arg in arguments){
-      arguments[arg] = arguments[arg][0];
-    }
+    // for(var arg in arguments){
+    //   arguments[arg] = arguments[arg][0];
+    // }
     return fp.apply(this, expect.validate(arguments));
   }
   handler.fp = wrap;
   handler.types = expect.types();
-
+  
   // This is part of a promise response from the core, so we can't pass back a handler
   // we must pass back a function pointer instead
-  return handler.fp;
+  return handler;
 }
 
 /**

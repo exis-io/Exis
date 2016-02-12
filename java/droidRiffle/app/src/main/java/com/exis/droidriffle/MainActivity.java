@@ -13,7 +13,8 @@ import android.widget.TextView;
 
 import com.exis.riffle.Domain;
 import com.exis.riffle.Riffle;
-import com.exis.riffle.Utils;
+
+import java.lang.reflect.Type;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -41,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
 
         TextView textview = (TextView) findViewById(R.id.mytextview);
         textview.setText("Reeefle");
+
+        Log.d(TAG, "LOADING LIBRARY");
+        Native.testLibrary();
     }
 
     @Override
@@ -105,13 +109,23 @@ class Receiver extends Domain {
     public void onJoin() {
         Log.d(TAG, "Receiver joined!");
 
-        subscribe("sub", () -> {
-            Log.d(TAG, "I have a publish!");
-            return "Publish Received!";
+        subscribe("sub", Integer.class, (a) -> {
+            Log.d(TAG, "I have a publish: " + a);
         });
+
+        register("reg", String.class, (name) -> {
+            Log.d(TAG, "I have a call from: " + name);
+        });
+
+        // Cool. I guess? It would be really nice to do away with the ".class" here
+        subscribe("vich", Boolean.class, this::someHandler);
 
         // Bootstrap the sender
         parent.sender2.join();
+    }
+
+    void someHandler(Boolean c) {
+        Log.d(TAG, "These are cool jeans: " + c);
     }
 }
 
@@ -133,6 +147,8 @@ class Sender extends Domain {
         Log.d(TAG, "Sender joined!");
 
         parent.receiver2.publish("sub", 1, 2, 3);
+
+        parent.receiver2.call("reg", "Johnathan");
     }
 }
 

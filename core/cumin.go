@@ -46,7 +46,7 @@ func Cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 }
 
 /*
-   There are four cases softCumin can hit.
+   There are four cases SoftCumin can hit.
        - Initial case: positional array of heterogenous elements (starting condition)
        - Lists: array of homogenous elements checked against one type
        - Dictionaries: dictionary of key/value pairs. Check key, value, and recursive
@@ -64,7 +64,7 @@ Version from swift:
 */
 
 // Checks the types of the provided positional arguments and the receiver.
-func softCumin(types []interface{}, args []interface{}) error {
+func SoftCumin(types []interface{}, args []interface{}) error {
 	//fmt.Printf("SOFTCUMIN: %v against %v\n", types, args)
 
 	if CuminLevel == CuminOff {
@@ -108,7 +108,7 @@ func GetValueOf(x interface{}) reflect.Value {
 	return value
 }
 
-// Recursive worker function for softCumin.
+// Recursive worker function for SoftCumin.
 func _softCumin(expected interface{}, x interface{}, i int, description string) error {
 	argument := GetValueOf(x)
 

@@ -1,10 +1,14 @@
-// math.go
-
+// package name: met
 package main
 
-func main() {} // a dummy function
+import (
+	"C"
+	"fmt"
+)
 
-//export Multiply
-func Multiply(x int64, y int64) int64 {
-	return x * y
+//export Hello
+func Hello() {
+	fmt.Println("Hello from go!")
 }
+
+func main() {} 

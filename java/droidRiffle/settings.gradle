@@ -1,1 +1,1 @@
-include ':app', ':riffle', ':mantle'
+include ':app', ':riffle', ':mantle', ':backend'

@@ -14,12 +14,18 @@ TODO:
     - Implement Object checking for Python
     - Implement other languages
 """
-import sys, os, time, glob, argparse, re
+import sys
+import os
+import time
+import glob
+import argparse
+import re
 import platform
 from collections import defaultdict as ddict
 from multiprocessing import Process
 
 EXISREPO = os.environ.get("EXIS_REPO", None)
+
 if EXISREPO is None:
     print("!" * 50)
     print("!! $EXIS_REPO not found, this may not work")
@@ -31,7 +37,8 @@ else:
 from utils import functionizer as funcizer
 from utils import utils
 
-import exampler, repl
+import exampler
+import repl
 
 if platform.system() == "Darwin":
     repl.STUB_REPL = True
@@ -59,7 +66,8 @@ def findTasks(lang=None, task=None, verbose=False, shouldPrint=True):
                 print(t)
 
     return allTasks
-    
+
+
 def findTask(lang, task):
     """
     Finds and prints reference to a specific task in a specific language.
@@ -75,6 +83,8 @@ def findTask(lang, task):
         print("No Task found")
 
 TASK_DEF_RE = re.compile("(.*)? (.*):(.*)$")
+
+
 def _ripTaskDef(t, kwargs):
     """
     Internal function that rips apart a task definition like "language action:example"
@@ -90,6 +100,7 @@ def _ripTaskDef(t, kwargs):
         else:
             return [None] * 3
     return m.groups()
+
 
 def test(*tasks, **kwargs):
     """
@@ -112,7 +123,7 @@ def test(*tasks, **kwargs):
         tasks = tasks[:-1]
         verbose = True
     examples = exampler.Examples.find(EXISREPO)
-    
+
     taskList = list()
     actionList = list()
     for t in tasks:
@@ -128,12 +139,13 @@ def test(*tasks, **kwargs):
         else:
             taskList.append(ts.getTask(action))
             actionList.append(action)
-    
+
     # Exec all of them
     if repl.executeTasks(taskList, actionList):
         exit(0)
     else:
         exit(1)
+
 
 def testAll(lang, stopOnFail=False):
     """
@@ -148,7 +160,7 @@ def testAll(lang, stopOnFail=False):
     else:
         langs = [lang]
 
-    # Damouse: testing multiproc version-- would work, except that each testing domain 
+    # Damouse: testing multiproc version-- would work, except that each testing domain
     # gets the same name, so node gets confused
     # def runner(taskset):
     #     res = repl.executeTaskSet(taskset)
@@ -178,11 +190,12 @@ def testAll(lang, stopOnFail=False):
                 hasFailed = True
                 if stopOnFail:
                     break
-    
+
     if hasFailed:
         exit(1)
     else:
         exit(0)
+
 
 def genTemplate(langs=exampler.LANGS.keys(), actions=["Pub/Sub", "Reg/Call"]):
     """
@@ -193,6 +206,7 @@ def genTemplate(langs=exampler.LANGS.keys(), actions=["Pub/Sub", "Reg/Call"]):
     """
     print langs
 
+
 def cleanup():
     """
     Cleans up all tmp test folders.
@@ -200,6 +214,7 @@ def cleanup():
     print "Cleaning up tmp directories:"
     repl.cleanupTests()
     print "DONE"
+
 
 def genDocs():
     """
@@ -224,8 +239,8 @@ def genDocs():
     docs = ddict(lambda: {k: dict() for k in exampler.LANGS.keys()})
     for t in examples.getTasks():
         for tt in t.tasks:
-            d = dict(file=tt.fileName, lineStart=tt.lineStart, lineEnd=tt.lineEnd, code=tt.code, 
-                    expectType=tt.expectType, expectVal=tt.expectVal)
+            d = dict(file=tt.fileName, lineStart=tt.lineStart, lineEnd=tt.lineEnd, code=tt.code,
+                     expectType=tt.expectType, expectVal=tt.expectVal)
             docs[t.getName()][t.getLangName()][tt.action] = d
 
     # Strip out anything that isn't populated
@@ -239,8 +254,9 @@ def genDocs():
         p = v.pop('nodejs', None)
         if p:
             v['js'] = p
-    
+
     print utils.jsonPretty(docs)
+
 
 def _getArgs():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -261,10 +277,9 @@ if __name__ == "__main__":
         repl.debugMode()
     if args.verbose:
         repl.enableVerbose()
-    
+
     # Now make the call that decides which of our functions to run
     funcizer.performFunctionalize(args, __name__, modSearch="__main__")
-    
+
     if args.node:
         repl.killNode()
-    

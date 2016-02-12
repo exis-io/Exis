@@ -14,22 +14,22 @@ func main() {
 	})
 
 	js.Global.Set("Config", map[string]interface{}{
-		"SetLogLevelOff":      SetLogLevelOff,
-		"SetLogLevelApp":      SetLogLevelApp,
-		"SetLogLevelErr":      SetLogLevelErr,
-		"SetLogLevelWarn":     SetLogLevelWarn,
-		"SetLogLevelInfo":     SetLogLevelInfo,
-		"SetLogLevelDebug":    SetLogLevelDebug,
-		"SetFabricDev":        SetFabricDev,
-		"SetFabricSandbox":    SetFabricSandbox,
-		"SetFabricProduction": SetFabricProduction,
-		"SetFabricLocal":      SetFabricLocal,
-		"SetFabric":           SetFabric,
-		"Application":         Application,
-		"Debug":               Debug,
-		"Info":                Info,
-		"Warn":                Warn,
-		"Error":               Error,
+		"setLogLevelOff":      SetLogLevelOff,
+		"setLogLevelApp":      SetLogLevelApp,
+		"setLogLevelErr":      SetLogLevelErr,
+		"setLogLevelWarn":     SetLogLevelWarn,
+		"setLogLevelInfo":     SetLogLevelInfo,
+		"setLogLevelDebug":    SetLogLevelDebug,
+		"setFabricDev":        SetFabricDev,
+		"setFabricSandbox":    SetFabricSandbox,
+		"setFabricProduction": SetFabricProduction,
+		"setFabricLocal":      SetFabricLocal,
+		"setFabric":           SetFabric,
+		"application":         Application,
+		"debug":               Debug,
+		"info":                Info,
+		"warn":                Warn,
+		"error":               Error,
 	})
 
 	// Do not print the log line number in js
@@ -61,7 +61,7 @@ func (i idGenerator) NewID() uint64 {
 }
 
 func (c Conn) OnMessage(msg *js.Object) {
-	c.app.ReceiveBytes([]byte(msg.String()))
+	go c.app.ReceiveBytes([]byte(msg.String()))
 }
 
 func (c Conn) OnOpen(msg *js.Object) {
@@ -75,7 +75,7 @@ func (c Conn) OnClose(msg *js.Object) {
 }
 
 func (c Conn) Send(data []byte) error {
-	c.wrapper.Get("conn").Call("send", string(data))
+	c.wrapper.Call("send", string(data))
 
 	// Added a nil error return 
 	// TOOD: the js connection can return its error for tranmission to the core as appropriate
@@ -159,20 +159,20 @@ func (a *App) Receive() {
 
 // Part 1 of the join-- start the join
 func (d *Domain) Join() {
-	w := js.Global.Get("WsWrapper").New()
+	factory := js.Global.Get("WsFactory").New(map[string]string{"type": "websocket", "url":core.Fabric})
+	wsConn := factory.Call("create")
 
 	conn := Conn{
-		wrapper: w,
+		wrapper: wsConn,
 		domain:  d,
 		app:     d.coreDomain.GetApp(),
 	}
 
 	d.app.conn = conn
 
-	w.Set("onmessage", conn.OnMessage)
-	w.Set("onopen", conn.OnOpen)
-	w.Set("onclose", conn.OnClose)
-	w.Call("open", core.Fabric)
+	wsConn.Set("onmessage", conn.OnMessage)
+	wsConn.Set("onopen", conn.OnOpen)
+	wsConn.Set("onclose", conn.OnClose)
 }
 
 // Part 2 of the join method-- complete the join
@@ -307,12 +307,44 @@ func (d *Domain) Register(endpoint string, handler *js.Object) *js.Object {
 	return p.Js()
 }
 
-func (d *Domain) Publish(endpoint string, args ...interface{}) *js.Object {
-	return promisify(func() (interface{}, error) { return nil, d.coreDomain.Publish(endpoint, args) })
+// Special, hacky case
+func (d *Domain) Call(endpoint string, args ...interface{}) *js.Object {
+	var p promise.Promise
+	cb := core.NewID()
+	// core.Info("Resolving the promise with results: %s", results)
+
+	go func() {
+		if results, err := d.coreDomain.Call(endpoint, args); err == nil {
+			if types, ok := d.coreDomain.GetCallExpect(cb); !ok {
+				// We were never asked for types. Don't do anything
+				core.Info("Call for %v received, but no cumin enforcement present.", endpoint)
+			} else {
+				d.coreDomain.RemoveCallExpect(cb)
+				if err := core.SoftCumin(types, results); err == nil {
+					p.Resolve(results)
+				} else {
+					p.Reject(err.Error())
+				}
+			}
+
+		} else {
+			d.coreDomain.RemoveCallExpect(cb)
+			p.Reject(err.Error())
+		}
+	}()
+
+	j := p.Js()
+
+	// Rewraps the existing then callback 
+	existingFunction := j.Get("then")
+	j.Set("then", js.Global.Get("PromiseInterceptor").Invoke(existingFunction, d.wrapped, cb))
+
+	return j
 }
 
-func (d *Domain) Call(endpoint string, args ...interface{}) *js.Object {
-	return promisify(func() (interface{}, error) { return d.coreDomain.Call(endpoint, args) })
+
+func (d *Domain) Publish(endpoint string, args ...interface{}) *js.Object {
+	return promisify(func() (interface{}, error) { return nil, d.coreDomain.Publish(endpoint, args) })
 }
 
 func (d *Domain) Unsubscribe(endpoint string) *js.Object {
@@ -327,6 +359,11 @@ func (d *Domain) Leave() *js.Object {
 	return promisify(func() (interface{}, error) { return nil, d.coreDomain.Leave() })
 }
 
+func (d *Domain) CallExpects(cb uint64, types []interface{}) {
+	d.coreDomain.CallExpects(cb, types)
+}
+
+
 // Turn the given invocation into a JS promise. If the function returns an error, return the error,
 // else return the results of the function
 func promisify(fn func() (interface{}, error)) *js.Object {
@@ -334,6 +371,7 @@ func promisify(fn func() (interface{}, error)) *js.Object {
 
 	go func() {
 		if results, err := fn(); err == nil {
+			core.Info("Resolving the promise with results: %s", results)
 			p.Resolve(results)
 		} else {
 			p.Reject(err.Error())
@@ -354,15 +392,18 @@ func SetFabricDev() {
     core.Fabric = core.FabricDev
     core.Registrar = core.RegistrarDev
 }
-func SetFabricSandbox() { core.Fabric = core.FabricSandbox }
+
 func SetFabricProduction() {
     core.Fabric = core.FabricProduction
     core.Registrar = core.RegistrarProduction
 }
+
 func SetFabricLocal() {
     core.Fabric = core.FabricLocal
     core.Registrar = core.RegistrarLocal
 }
+
+func SetFabricSandbox() { core.Fabric = core.FabricSandbox }
 func SetFabric(url string) { core.Fabric = url }
 func SetRegistrar(url string) { core.Registrar = url }
 

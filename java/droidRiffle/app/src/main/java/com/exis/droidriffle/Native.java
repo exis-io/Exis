@@ -21,18 +21,32 @@ import go.mantle.Mantle;
 import jnr.ffi.LibraryLoader;
 
 public class Native {
-    public static native long multiply(long x, long y);
+    static void log(String s) {
+        System.out.println(s);
+    }
 
-    public static interface MathLib {
-        long Multiply(long x, long y);
+    // Declare the interface for the shared library
+    public static interface Mantle {
+        void Hello();
     }
 
     public static void main(String[] args) {
-        MathLib libc = LibraryLoader.create(MathLib.class).load("meth");
+        testLibrary();
+    }
 
-        System.out.println(libc.Multiply(12345, 67890));
+    static void testLibrary() {
+        System.out.println("Working Directory = " + System.getProperty("user.dir"));
+        System.out.println("Operating system: " + System.getProperty("os.name"));
 
-        // output: 838102050
-        //libc.puts("Hello, World");
+        LibraryLoader<Mantle> loader = LibraryLoader.create(Mantle.class);
+
+        // NEED THIS FOR NOW-- either the location of the library is not correct wrt
+        // android studio or jnr-ffi just doesn't understand where Android studio is holding the libs
+//        loader.search("/home/damouse/code/merged/riffle/java/testing");
+
+        Mantle mantle = loader.load("meth");
+
+        // Testing to make sure the go code runs
+        mantle.Hello();
     }
 }

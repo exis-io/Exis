@@ -5,11 +5,6 @@
 /* Start of preamble from import "C" comments.  */
 
 
-#line 5 "/home/damouse/code/merged/riffle/java/testing/math.go"
-
-
- #include <jni.h>
-
 
 
 /* End of preamble from import "C" comments.  */
@@ -28,8 +23,8 @@ typedef int GoInt32;
 typedef unsigned int GoUint32;
 typedef long long GoInt64;
 typedef unsigned long long GoUint64;
-typedef GoInt64 GoInt;
-typedef GoUint64 GoUint;
+typedef GoInt32 GoInt;
+typedef GoUint32 GoUint;
 typedef __SIZE_TYPE__ GoUintptr;
 typedef float GoFloat32;
 typedef double GoFloat64;
@@ -38,7 +33,7 @@ typedef __complex double GoComplex128;
 
 // static assertion to make sure the file is being used on architecture
 // at least with matching size of GoInt.
-typedef char _check_for_64_bit_pointer_matching_GoInt[sizeof(void*)==64/8 ? 1:-1];
+typedef char _check_for_32_bit_pointer_matching_GoInt[sizeof(void*)==32/8 ? 1:-1];
 
 typedef struct { char *p; GoInt n; } GoString;
 typedef void *GoMap;
@@ -55,7 +50,7 @@ extern "C" {
 #endif
 
 
-extern jlong Java_Hello_multiply(JNIEnv* p0, jclass p1, jlong p2, jlong p3);
+extern void Hello();
 
 #ifdef __cplusplus
 }

@@ -1,7 +1,8 @@
+
 var riffle = require('jsriffle');
 
-riffle.SetFabricLocal();
-riffle.SetLogLevelDebug();
+riffle.setFabricLocal();
+riffle.setLogLevelDebug();
 
 var app = riffle.Domain("xs.demo.test");
 var backend = app.subdomain("backend");
@@ -60,9 +61,11 @@ backend.onJoin = function() {
         this.age = Number;
         this.studentID = Number;
     }
+
     Student.prototype.toString = function() {
         return this.name + ", Age: " + this.age + ", ID: " + this.studentID;
     };
+
     this.register("sendStudent", riffle.want(function(s) {
         console.log(s.toString()); // Expects a String, like "John Smith, Age: 18, ID: 1234"
     }, riffle.ModelObject(Student)));

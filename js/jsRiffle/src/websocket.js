@@ -12,8 +12,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
-var util = require('../util.js');
-var log = require('../log.js');
+var util = require('./util.js');
 
 
 function Factory (options) {
@@ -157,7 +156,7 @@ Factory.prototype.create = function () {
          }
 
          websocket.onmessage = function (evt) {
-            //log.debug("WebSocket transport receive", evt.data);
+            //utils.debug("WebSocket transport receive", evt.data);
 
             var msg = evt.data;
             // DFW: This was messing up browser support - the data is unmarshalled in Go
@@ -190,12 +189,12 @@ Factory.prototype.create = function () {
             // DFW: This was messing up browser support - the data is serialized in Go
             // so it shouldn't be done here too
             //var payload = JSON.stringify(msg);
-            //log.debug("WebSocket transport send", payload);
+            //utils.debug("WebSocket transport send", payload);
             websocket.send(msg);
          }
 
          transport.close = function (code, reason) {
-            //log.debug("close code: ", code);
+            //utils.debug("close code: ", code);
             websocket.close(code, reason);
          };
 

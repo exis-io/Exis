@@ -23,6 +23,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    sourceSets.main {
+        jni.srcDirs = []
+        jniLibs.srcDirs = ["src/main/libs"]
+    }
 }
 
 dependencies {
@@ -33,4 +37,5 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
 
     compile project(':riffle')
+//    compile project(':backend')
 }

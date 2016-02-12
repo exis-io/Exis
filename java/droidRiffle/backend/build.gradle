@@ -1,0 +1,11 @@
+apply plugin: 'application'
+
+dependencies {
+    // Cant import riffle directly, since its pure android at this point
+//    compile project(':riffle')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile 'net.jodah:typetools:0.4.4'
+}
+
+mainClassName = "com.example.Backend"

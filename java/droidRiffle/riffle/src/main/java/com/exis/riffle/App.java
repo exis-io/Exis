@@ -2,10 +2,11 @@ package com.exis.riffle;
 
 import android.util.ArrayMap;
 
+import com.exis.riffle.cumin.Cumin;
+
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
-import java.util.logging.Handler;
 
 import go.mantle.Mantle;
 
@@ -22,8 +23,8 @@ class App {
     Map<Integer, Deferred> deferreds;
 
     App() {
-        handlers = new ArrayMap<Integer, HandlerTuple>();
-        deferreds = new ArrayMap<Integer, Deferred>();
+        handlers = new ArrayMap();
+        deferreds = new ArrayMap();
     }
 
     /**
@@ -34,8 +35,7 @@ class App {
 
         thread = new Thread() {
             public void run() {
-                Riffle.debug("App thread starting");
-                
+
                 while (true) {
                     Object[] invocation = Utils.unmarshall(mantleDomain.Receive());
                     Object[] args = {};
@@ -53,19 +53,21 @@ class App {
                         args = a.toArray();
                     }
 
-                    //Riffle.debug("Crust invocation: " + id + " " + args);
+                    //Riffle.debug("Crust received invocation: " + id + " args: " + args.toString());
 
                     if (deferreds.containsKey(id)) {
                         Deferred d = deferreds.remove(id);
 
                         // TODO: try/catch
+
                         // Remove the deferred and trigger it appropriately
                         if (id == d.cb) {
                             deferreds.remove(d.eb);
-                            d.callback();
+
+                            d.callback(args);
                         } else {
                             deferreds.remove(d.cb);
-                            d.errback();
+                            d.errback(args);
                         }
                     }
 
@@ -73,8 +75,17 @@ class App {
                         HandlerTuple t = handlers.get(id);
 
                         // TODO: try/catch
-                        // TODO: returns
-                        t.fn.run();
+
+                        if (t.isRegistration) {
+                            // CAREFUL-- this isn't going to work if the mantle is still dealing in longs!
+                            Double yieldId = (Double) args[0];
+                            Object result = t.fn.invoke(Arrays.copyOfRange(args, 1, args.length));
+
+                            Object[] packed = {result};
+                            mantleDomain.Yield(yieldId.longValue(), Utils.marshall(packed));
+                        } else {
+                            t.fn.invoke(args);
+                        }
                     }
                 }
             }
@@ -84,13 +95,13 @@ class App {
     }
 }
 
+// Simple class that stores a little metadata with the handler
 class HandlerTuple {
-    Function fn = null;
+    Cumin.Wrapped fn = null;
     boolean isRegistration = false;
 
-    HandlerTuple(Function function, boolean isRegistration) {
+    HandlerTuple(Cumin.Wrapped function, boolean isRegistration) {
         fn = function;
         this.isRegistration = isRegistration;
     }
-
 }

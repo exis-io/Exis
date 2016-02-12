@@ -1,7 +1,7 @@
 var riffle = require('jsriffle');
 
-riffle.SetFabricLocal();
-riffle.SetLogLevelDebug();
+riffle.setFabricLocal();
+riffle.setLogLevelDebug();
 
 var app = riffle.Domain("xs.demo.test");
 var backend = app.subdomain("backend");
@@ -42,7 +42,7 @@ client.onJoin = function() {
         console.log(s);
     }, String),
     function (err) {
-        console.log("ERROR: ", err); // Expects a String, like "Cumin: expecting primitive float, got string"
+        console.log(err); // Expects a String, like "Cumin: expecting primitive str, got int"
     });
     // End Example Tour Reg/Call Lesson 2 Wait Check
     

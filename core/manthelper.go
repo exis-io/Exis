@@ -38,7 +38,7 @@ func MantleCall(d Domain, endpoint string, cb uint64, eb uint64, args []interfac
 			Info("Call for %v received, but no cumin enforcement present.", endpoint)
 		} else {
 			d.RemoveCallExpect(cb)
-			if err := softCumin(types, results); err == nil {
+			if err := SoftCumin(types, results); err == nil {
 				d.GetApp().CallbackSend(cb, results...)
 			} else {
 				d.GetApp().CallbackSend(eb, err.Error())
