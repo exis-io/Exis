@@ -36,14 +36,14 @@
     <favorites_list name="droidRiffle" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5">
+    <splitter split-orientation="horizontal" split-proportion="0.48964852">
       <split-first>
         <leaf>
           <file leaf-file-name="Testing.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/backend/src/main/java/com/example/Testing.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.7711864">
-                  <caret line="193" column="31" selection-start-line="193" selection-start-column="31" selection-end-line="193" selection-end-column="31" />
+                <state vertical-scroll-proportion="0.41243863">
+                  <caret line="139" column="50" selection-start-line="139" selection-start-column="50" selection-end-line="139" selection-end-column="50" />
                   <folding>
                     <element signature="imports" expanded="true" />
                     <element signature="method#invoke#0;class#AnyFunction#0" expanded="true" />
@@ -52,40 +52,33 @@
                     <element signature="method#toString#0;class#HandlerCarrier#0" expanded="true" />
                     <element signature="method#HandlerWrapper#0;class#HandlerWrapper#0" expanded="true" />
                     <element signature="method#invoke#0;class#HandlerWrapper#0" expanded="true" />
-                    <element signature="e#2974#2975#0" expanded="true" />
-                    <element signature="e#3011#3012#0" expanded="true" />
-                    <element signature="e#3057#3058#0" expanded="true" />
-                    <element signature="e#3087#3088#0" expanded="true" />
-                    <element signature="e#3124#3125#0" expanded="true" />
-                    <element signature="e#3178#3179#0" expanded="true" />
-                    <element signature="e#3227#3228#0" expanded="true" />
-                    <element signature="e#3285#3286#0" expanded="true" />
-                    <element signature="method#testClosures#0;class#Testing#0" expanded="true" />
-                    <element signature="method#subscribe#0;class#Testing#0" expanded="true" />
-                    <element signature="method#subscribe#1;class#Testing#0" expanded="true" />
+                    <element signature="e#2954#2955#0" expanded="true" />
+                    <element signature="e#2991#2992#0" expanded="true" />
+                    <element signature="e#3037#3038#0" expanded="true" />
+                    <element signature="e#3067#3068#0" expanded="true" />
+                    <element signature="e#3104#3105#0" expanded="true" />
+                    <element signature="e#3158#3159#0" expanded="true" />
+                    <element signature="e#3207#3208#0" expanded="true" />
+                    <element signature="e#3265#3266#0" expanded="true" />
+                    <element signature="method#register#0;class#Testing#0" expanded="true" />
+                    <element signature="method#register#1;class#Testing#0" expanded="true" />
                     <element signature="method#MyClass#0;class#MyClass#0" expanded="true" />
-                    <element signature="e#6582#6583#0" expanded="true" />
-                    <element signature="e#6622#6623#0" expanded="true" />
-                    <element signature="method#getType#1;class#TypeToken#0" expanded="true" />
-                    <element signature="e#7176#7177#0" expanded="true" />
-                    <element signature="e#7217#7218#0" expanded="true" />
-                    <element signature="method#getClazz#1;class#TypeToken#0" expanded="true" />
-                    <element signature="e#7826#7827#0" expanded="true" />
-                    <element signature="e#7874#7875#0" expanded="true" />
-                    <element signature="e#7924#7925#0" expanded="true" />
-                    <element signature="e#7967#7968#0" expanded="true" />
+                    <element signature="e#4815#4816#0" expanded="true" />
+                    <element signature="e#4863#4864#0" expanded="true" />
+                    <element signature="e#4913#4914#0" expanded="true" />
+                    <element signature="e#4956#4957#0" expanded="true" />
                     <element signature="method#getElement#0;class#TypeTokenTree#0" expanded="true" />
-                    <element signature="e#8494#8495#0" expanded="true" />
-                    <element signature="e#8521#8522#0" expanded="true" />
+                    <element signature="e#5257#5258#0" expanded="true" />
+                    <element signature="e#5284#5285#0" expanded="true" />
                     <element signature="method#retrieve#0;class#TypeTokenTree#0" expanded="true" />
                     <element signature="method#retrieve#1;class#TypeTokenTree#0" expanded="true" />
                     <element signature="method#TypeNode#0;class#TypeNode#0" expanded="true" />
-                    <element signature="e#10779#10780#0" expanded="true" />
-                    <element signature="e#10809#10810#0" expanded="true" />
-                    <element signature="e#10853#10854#0" expanded="true" />
-                    <element signature="e#10895#10896#0" expanded="true" />
-                    <element signature="e#10939#10940#0" expanded="true" />
-                    <element signature="e#10970#10971#0" expanded="true" />
+                    <element signature="e#7292#7293#0" expanded="true" />
+                    <element signature="e#7322#7323#0" expanded="true" />
+                    <element signature="e#7366#7367#0" expanded="true" />
+                    <element signature="e#7408#7409#0" expanded="true" />
+                    <element signature="e#7452#7453#0" expanded="true" />
+                    <element signature="e#7483#7484#0" expanded="true" />
                     <element signature="method#add#0;class#TypeNode#0" expanded="true" />
                     <element signature="method#add#1;class#TypeNode#0" expanded="true" />
                   </folding>
@@ -100,8 +93,8 @@
           <file leaf-file-name="Deferred.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Deferred.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.5148305">
-                  <caret line="27" column="5" selection-start-line="27" selection-start-column="5" selection-end-line="27" selection-end-column="5" />
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="0" column="9" selection-start-line="0" selection-start-column="9" selection-end-line="0" selection-end-column="9" />
                   <folding>
                     <element signature="imports" expanded="true" />
                     <element signature="method#Deferred#0;class#Deferred#0" expanded="true" />
@@ -3164,6 +3157,28 @@
               <option name="myItemId" value="example" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Testing.java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="droidRiffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="backend" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.NonAndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.NonAndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="example" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -3289,6 +3304,8 @@
     <property name="dynamic.classpath" value="false" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="FA38WS902258" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="Nexus_5_API_23" />
+    <property name="OverrideImplement.combined" value="true" />
+    <property name="OverrideImplement.overriding.sorted" value="false" />
   </component>
   <component name="RunManager" selected="Application.Testing">
     <configuration default="false" name="Native" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
@@ -3588,10 +3605,10 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1031" y="0" width="2416" height="1407" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2224" sideWeight="0.4947569" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2224" sideWeight="0.4947569" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -3599,7 +3616,7 @@
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.2776" sideWeight="0.4969375" order="2" side_tool="false" content_ui="tabs" x="7" y="757" width="1275" height="595" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.2776" sideWeight="0.4969375" order="2" side_tool="false" content_ui="tabs" x="7" y="757" width="1275" height="595" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.328" sideWeight="0.49666348" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2224" sideWeight="0.50524306" order="7" side_tool="true" content_ui="tabs" />
@@ -3609,7 +3626,7 @@
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24989791" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.4" sideWeight="0.49809343" order="3" side_tool="false" content_ui="tabs" x="5" y="651" width="1292" height="738" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.4" sideWeight="0.49809343" order="3" side_tool="false" content_ui="tabs" x="473" y="545" width="1292" height="738" />
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -3620,6 +3637,37 @@
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
     </layout>
+    <layout-to-restore>
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2224" sideWeight="0.5033365" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.328" sideWeight="0.49857086" order="8" side_tool="false" content_ui="tabs" x="9" y="188" width="1286" height="1198" />
+      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24989791" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.4" sideWeight="0.49809343" order="3" side_tool="false" content_ui="tabs" x="5" y="651" width="1292" height="738" />
+      <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2224" sideWeight="0.4947569" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.2776" sideWeight="0.4969375" order="2" side_tool="false" content_ui="tabs" x="7" y="757" width="1275" height="595" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.328" sideWeight="0.49666348" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2224" sideWeight="0.50524306" order="12" side_tool="true" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.118421055" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3296" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="true" content_ui="tabs" />
+    </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
@@ -3639,7 +3687,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="3" />
+      <option name="time" value="4" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -4002,22 +4050,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Deferred.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5148305">
-          <caret line="27" column="5" selection-start-line="27" selection-start-column="5" selection-end-line="27" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#Deferred#0;class#Deferred#0" expanded="true" />
-            <element signature="method#Deferred#1;class#Deferred#0" expanded="true" />
-            <element signature="method#then#0;class#Deferred#0" expanded="true" />
-            <element signature="method#error#0;class#Deferred#0" expanded="true" />
-            <element signature="method#callback#0;class#Deferred#0" expanded="true" />
-            <element signature="method#errback#0;class#Deferred#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -4034,10 +4066,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Deferred.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="9" selection-start-line="0" selection-start-column="9" selection-end-line="0" selection-end-column="9" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#Deferred#0;class#Deferred#0" expanded="true" />
+            <element signature="method#Deferred#1;class#Deferred#0" expanded="true" />
+            <element signature="method#then#0;class#Deferred#0" expanded="true" />
+            <element signature="method#error#0;class#Deferred#0" expanded="true" />
+            <element signature="method#callback#0;class#Deferred#0" expanded="true" />
+            <element signature="method#errback#0;class#Deferred#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/backend/src/main/java/com/example/Testing.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7711864">
-          <caret line="193" column="31" selection-start-line="193" selection-start-column="31" selection-end-line="193" selection-end-column="31" />
+        <state vertical-scroll-proportion="0.41243863">
+          <caret line="139" column="50" selection-start-line="139" selection-start-column="50" selection-end-line="139" selection-end-column="50" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#invoke#0;class#AnyFunction#0" expanded="true" />
@@ -4046,40 +4094,33 @@
             <element signature="method#toString#0;class#HandlerCarrier#0" expanded="true" />
             <element signature="method#HandlerWrapper#0;class#HandlerWrapper#0" expanded="true" />
             <element signature="method#invoke#0;class#HandlerWrapper#0" expanded="true" />
-            <element signature="e#2974#2975#0" expanded="true" />
-            <element signature="e#3011#3012#0" expanded="true" />
-            <element signature="e#3057#3058#0" expanded="true" />
-            <element signature="e#3087#3088#0" expanded="true" />
-            <element signature="e#3124#3125#0" expanded="true" />
-            <element signature="e#3178#3179#0" expanded="true" />
-            <element signature="e#3227#3228#0" expanded="true" />
-            <element signature="e#3285#3286#0" expanded="true" />
-            <element signature="method#testClosures#0;class#Testing#0" expanded="true" />
-            <element signature="method#subscribe#0;class#Testing#0" expanded="true" />
-            <element signature="method#subscribe#1;class#Testing#0" expanded="true" />
+            <element signature="e#2954#2955#0" expanded="true" />
+            <element signature="e#2991#2992#0" expanded="true" />
+            <element signature="e#3037#3038#0" expanded="true" />
+            <element signature="e#3067#3068#0" expanded="true" />
+            <element signature="e#3104#3105#0" expanded="true" />
+            <element signature="e#3158#3159#0" expanded="true" />
+            <element signature="e#3207#3208#0" expanded="true" />
+            <element signature="e#3265#3266#0" expanded="true" />
+            <element signature="method#register#0;class#Testing#0" expanded="true" />
+            <element signature="method#register#1;class#Testing#0" expanded="true" />
             <element signature="method#MyClass#0;class#MyClass#0" expanded="true" />
-            <element signature="e#6582#6583#0" expanded="true" />
-            <element signature="e#6622#6623#0" expanded="true" />
-            <element signature="method#getType#1;class#TypeToken#0" expanded="true" />
-            <element signature="e#7176#7177#0" expanded="true" />
-            <element signature="e#7217#7218#0" expanded="true" />
-            <element signature="method#getClazz#1;class#TypeToken#0" expanded="true" />
-            <element signature="e#7826#7827#0" expanded="true" />
-            <element signature="e#7874#7875#0" expanded="true" />
-            <element signature="e#7924#7925#0" expanded="true" />
-            <element signature="e#7967#7968#0" expanded="true" />
+            <element signature="e#4815#4816#0" expanded="true" />
+            <element signature="e#4863#4864#0" expanded="true" />
+            <element signature="e#4913#4914#0" expanded="true" />
+            <element signature="e#4956#4957#0" expanded="true" />
             <element signature="method#getElement#0;class#TypeTokenTree#0" expanded="true" />
-            <element signature="e#8494#8495#0" expanded="true" />
-            <element signature="e#8521#8522#0" expanded="true" />
+            <element signature="e#5257#5258#0" expanded="true" />
+            <element signature="e#5284#5285#0" expanded="true" />
             <element signature="method#retrieve#0;class#TypeTokenTree#0" expanded="true" />
             <element signature="method#retrieve#1;class#TypeTokenTree#0" expanded="true" />
             <element signature="method#TypeNode#0;class#TypeNode#0" expanded="true" />
-            <element signature="e#10779#10780#0" expanded="true" />
-            <element signature="e#10809#10810#0" expanded="true" />
-            <element signature="e#10853#10854#0" expanded="true" />
-            <element signature="e#10895#10896#0" expanded="true" />
-            <element signature="e#10939#10940#0" expanded="true" />
-            <element signature="e#10970#10971#0" expanded="true" />
+            <element signature="e#7292#7293#0" expanded="true" />
+            <element signature="e#7322#7323#0" expanded="true" />
+            <element signature="e#7366#7367#0" expanded="true" />
+            <element signature="e#7408#7409#0" expanded="true" />
+            <element signature="e#7452#7453#0" expanded="true" />
+            <element signature="e#7483#7484#0" expanded="true" />
             <element signature="method#add#0;class#TypeNode#0" expanded="true" />
             <element signature="method#add#1;class#TypeNode#0" expanded="true" />
           </folding>

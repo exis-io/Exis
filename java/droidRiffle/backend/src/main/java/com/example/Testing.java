@@ -76,10 +76,6 @@ class HandlerCarrier<A> {
     }
 }
 
-class Handler {
-
-}
-
 // Wraps handlers
 class HandlerWrapper {
     AnyFunction handler;
@@ -132,107 +128,65 @@ public class Testing {
         log("One arg Function pointer firing" + a);
     }
 
+
     static void testClosures() {
-//        MyClass<Integer> a = new MyClass<Integer>() {};
-        MyClass<Double> myClass2 = new MyClass<Double>() { };         // only sorcerers do this
+        Cuminicated a = register(() -> {
+            log("No args handler firing");
+        });
 
+        Cuminicated b = register(Integer.class, Testing::functionPointerOne);
 
+        Cuminicated c = register(Boolean.class, (happy) -> {
+            log("OneOne closure firing " + happy);
+        });
 
-//        HandlerWrapper a = register((Zero) () -> {
-//            log("No args handler firing");
-//        });
-
-//        new HandlerCarrier<Integer>(Testing::functionPointerOne);
-//
-//        HandlerWrapper b = register((One<Integer>) Testing::functionPointerOne);
-//
-//        Testing.<Integer>subscribe(Testing::functionPointerOne);
-//        Testing.<Boolean, String>subscribe((a, c) -> {
-//
-//        });
-
-//        HandlerWrapper c = register((OneOne<Boolean, Float>) (happy) -> {
-//            log("OneOne closure firing " + happy);
-//            return 10.f;
-//        });
-
-//        a.invoke();
-//        b.invoke(1);
-//        c.invoke(true);
+        a.invoke();
+        b.invoke(1);
+        c.invoke(true);
     }
 
-    static <T> HandlerWrapper subscribe(One<T> fn) {
-
-        HandlerCarrier<T> please = new HandlerCarrier<T>(fn) {};
-//        log(((Class<T>) ((ParameterizedType) please.getClass().getGenericSuperclass()).getActualTypeArguments()[0]).getSimpleName());
-//        Class<T> whatami = new Class<T>();
-//        log("" + please.internal.getClass());
-
-//        ParameterizedType type = (ParameterizedType) please.getClass().getGenericSuperclass();
-//        log("HELL: " + please.toString());
-
-//        log("" + getTypeArguments(HandlerCarrier.class, please.getClass()));
-//        log("Class: " + whatami);
-        return null;
+    static Cuminicated register(Zero fn) {
+        return (args) -> {
+            fn.run();
+            return null;
+        };
     }
 
-    static <T, S> HandlerWrapper subscribe(Two<T, S> fn) {
-
-        return null;
+    static <A> Cuminicated register(Class<A> a, One<A> fn) {
+        return (args) -> {
+            fn.run(a.cast(args[0]));
+            return null;
+        };
     }
+}
 
-
-    static HandlerWrapper  register(AnyFunction fn) {
-        log("Dynamic: " + fn.getClass());
-
-        Class target = null;
-
-        if (fn instanceof Zero)
-            target = Zero.class;
-
-        if (fn instanceof One)
-            target = One.class;
-
-        if (fn instanceof OneOne)
-            target = OneOne.class;
-
-//        log("Target class: " + target.toString() + " getClass: " + fn.getClass().getName());
-
-        Method[] m = fn.getClass().getMethods();
-//
-//        for (Class c: m[0].getParameterTypes()) {
-//            System.out.println("Class: " + c.toString());
-//        }
-//
-//        for (Type c: m[0].getGenericParameterTypes()) {
-//            System.out.println("Generic: " + c.getTypeName());
-//        }
-
-//        log("Types: " + getParameterizedTypes(fn));
-
-//        log("\tParams: " + m[0].getParameterTypes());
-//        log("\tGenerics:: " + m[0].getGenericParameterTypes());
-
-
-        return null;
-//        Class[] typeArgs = Silver.resolveRawArguments(target, fn.getClass());
-//
-//        // TODO: drop into collections and model objects and apply recursively. Arrays dont reflect,
-//        // lists have their internal types erased, and model objects will need to do this themselves :(
-////        for (Class c: typeArgs) {
-////            log("Type: " + c.toString());
-////        }
-//
-//        HandlerWrapper  wrapped = new HandlerWrapper (fn, typeArgs);
-//        return wrapped;
-
-    }
+interface Cuminicated {
+    Object invoke(Object... args);
 }
 
 
 
+
+
+/* Experiments. Some of them almost worked!
+    static <T> MyClass<T> goat() {
+        MyClass<T> myClass2 = new MyClass<T>() { };
+        return myClass2;
+    }
+
+         So close, but easure takes over when the generics are recaptured :(
+        MyClass<Double> myClass2 = new MyClass<Double>() { };         // only sorcerers do this
+        MyClass c = Testing.<Boolean>goat();
+
+        TypeTokenTree z = new TypeTokenTree(c.getClass());
+        log("Come now: " + z.getRoot().children);
+
+
+*/
+
+
 class MyClass<T> {
-    private final Class<?> typeT;
+     final Class<?> typeT;
 
     public MyClass() {
         this.typeT = new TypeTokenTree(this.getClass()).getElement(0);
@@ -241,53 +195,8 @@ class MyClass<T> {
 }
 
 
-
-
-
-
-class TypeToken {
-
-    static public Type getType(final Class<?> klass) {
-        return getType(klass, 0);
-    }
-
-    static public Type getType(final Class<?> klass, final int pos) {
-        final Type superclass = klass.getGenericSuperclass();
-//        QL.require(!(superclass instanceof Class) , ReflectConstants.SHOULD_BE_ANONYMOUS_OR_EXTENDED); // QA:[RG]::verified
-        final Type[] types = ((ParameterizedType) superclass).getActualTypeArguments();
-//        QL.require(pos < types.length , ReflectConstants.MISSING_GENERIC_PARAMETER_TYPE); // QA:[RG]::verified
-        return types[pos];
-    }
-
-    static public Class<?> getClazz(final Class<?> klass) {
-        return getClazz(klass, 0);
-    }
-
-    static public Class<?> getClazz(final Class<?> klass, final int pos) {
-        final Type type = getType(klass, pos);
-        final Class<?> clazz = (type instanceof Class<?>) ? (Class<?>) type : (Class<?>) ((ParameterizedType) type).getRawType();
-//        QL.require(((clazz.getModifiers() & Modifier.ABSTRACT) == 0) , ReflectConstants.GENERIC_PARAMETER_MUST_BE_CONCRETE_CLASS); // QA:[RG]::verified
-        return clazz;
-    }
-
-}
-
-
-
-
-
 class TypeTokenTree {
-
-    //
-    // private fields
-    //
-
-    private final TypeNode root;
-
-
-    //
-    // public constructors
-    //
+    final TypeNode root;
 
     public TypeTokenTree() {
         this.root = retrieve(getClass());
@@ -297,12 +206,6 @@ class TypeTokenTree {
         this.root = retrieve(klass);
     }
 
-    /**
-     * Returns the Class of a generic parameter
-     *
-     * @param pos represents the position of parameter, first is zero
-     * @return the Class of a generic parameter
-     */
     public Class<?> getElement(final int pos) {
         if (root==null) {
             return null;
@@ -314,20 +217,11 @@ class TypeTokenTree {
         return typeNode.getElement();
     }
 
-    //
-    // public methods
-    //
-
     public TypeNode getRoot() {
         return root;
     }
 
-
-    //
-    // private methods
-    //
-
-    private TypeNode retrieve(final Class<?> klass) {
+     TypeNode retrieve(final Class<?> klass) {
         final Type superclass = klass.getGenericSuperclass();
 //        QL.require(!(superclass instanceof Class) , ReflectConstants.SHOULD_BE_ANONYMOUS_OR_EXTENDED); // QA:[RG]::verified
         final TypeNode node = new TypeNode(klass);
@@ -337,7 +231,7 @@ class TypeTokenTree {
         return node;
     }
 
-    private TypeNode retrieve(final Type type) {
+     TypeNode retrieve(final Type type) {
         final TypeNode node;
         if (type instanceof Class<?>) {
             node = new TypeNode((Class<?>)type);
@@ -368,37 +262,16 @@ class TypeTokenTree {
     }
 }
 
-
-
-
-
 class TypeNode {
 
-    //
-    // private fields
-    //
-
-    private final Class<?> element;
-    private final AbstractSequentialList<TypeNode> children;
-
-
-    //
-    // public constructors
-    //
+     final Class<?> element;
+     final AbstractSequentialList<TypeNode> children;
 
     public TypeNode(final Class<?> klass) {
         this.element = klass;
         this.children = new LinkedList<TypeNode>();
     }
 
-
-    //
-    // public methods
-    //
-
-    /**
-     * @return the contents of this TypeNode
-     */
     public Class<?> getElement() {
         return element;
     }
@@ -411,11 +284,6 @@ class TypeNode {
         return children;
     }
 
-
-    //
-    // package protected methods
-    //
-
     TypeNode add(final Class<?> klass) {
         final TypeNode node = new TypeNode(klass);
         children.add(node);
@@ -426,5 +294,4 @@ class TypeNode {
         children.add(node);
         return node;
     }
-
 }
