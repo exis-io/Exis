@@ -15,9 +15,6 @@ me.onJoin = function() {
 
     this.register("iGiveInts", riffle.want(function(s) {
         console.log(s); // Expects a String, like "Hi"
-
-        console.log("LEAVEING")
-        self.leave();
         return [1, 2];
     }, String));
 
