@@ -79,8 +79,8 @@ public class Domain {
         return d;
     }
 
-    public Deferred call(String endpoint, Object... arguments) {
-        Deferred d = new Deferred();
+    public CallDeferred call(String endpoint, Object... arguments) {
+        CallDeferred d = new CallDeferred();
         mantleDomain.Call(endpoint, d.cb.toString(), d.eb.toString(), Utils.marshall(arguments));
         return d;
     }

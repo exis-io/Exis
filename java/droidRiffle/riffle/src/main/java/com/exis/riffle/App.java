@@ -56,18 +56,15 @@ class App {
 
                     if (deferreds.containsKey(id)) {
                         Deferred d = deferreds.remove(id);
-                        Riffle.debug("KEY FOUND " + id.toString() + " compared to : " + d.cb.toString());
 
                         // TODO: try/catch
 
                         // Remove the deferred and trigger it appropriately
                         if (id.compareTo(d.cb) == 0) {
-                            Riffle.debug("CALLING A CALLBACK");
                             deferreds.remove(d.eb);
 
                             d.callback(args);
                         } else {
-                            Riffle.debug("CALLING AN ERRBACK");
                             deferreds.remove(d.cb);
                             d.errback(args);
                         }

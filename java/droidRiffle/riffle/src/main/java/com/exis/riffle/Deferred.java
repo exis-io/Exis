@@ -21,8 +21,6 @@ public class Deferred {
     public Deferred() {
         cb = Utils.newID();
         eb = Utils.newID();
-
-        Riffle.debug("Created callbacks: " + cb.toString() + " " + eb.toString());
     }
 
     public Deferred(App app) {
@@ -68,3 +66,4 @@ public class Deferred {
         return _error(Cumin.cuminicate(handler));
     }
 }
+

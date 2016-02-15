@@ -33,7 +33,7 @@ func MantleCall(d Domain, endpoint string, cb uint64, eb uint64, args []interfac
 		d.RemoveCallExpect(cb)
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
-		if types, ok := d.GetCallExpect(cb); !ok {
+		if types, ok := d.GetCallExpect(cb); (!ok && CuminLevel != CuminOff) {
 			// We were never asked for types. Don't do anything
 			Info("Call for %v received, but no cumin enforcement present.", endpoint)
 		} else {

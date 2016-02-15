@@ -5,7 +5,7 @@
         jar="/home/damouse/code/merged/riffle/java/droidRiffle/app/build/intermediates/exploded-aar/droidRiffle/riffle/unspecified/jars/classes.jar"
         jumboMode="false"
         revision="23.0.2"
-        sha1="629db8ae0f6148da8f2a6cd606507005451e7622">
+        sha1="53b9908da0352ce68e0da45383d731acc6293d90">
         <dex dex="/home/damouse/code/merged/riffle/java/droidRiffle/app/build/intermediates/pre-dexed/debug/droidRiffle-riffle-unspecified_55c5f9f8307c72ad2f5730550c0feb0b00039d34.jar" />
     </item>
 
