@@ -13,25 +13,8 @@ public class Utils {
     private static Random generator = new Random();
     private static Gson gson = new GsonBuilder().create();
 
-    static final char[] source = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
-            .toCharArray();
-
-    static Random seed = new Random();
-
-    /* Generate a random positive integer */
-//    static int newID() {
-//        return generator.nextInt(Integer.MAX_VALUE);
-//    }
-
     static BigInteger newID() {
-        char[] buffer = new char[8];
-
-        for (int i = 0; i < 8; i++) {
-            buffer[i] = source[seed.nextInt(source.length)];
-        }
-
-        String s = new String(buffer);
-        return new BigInteger(s);
+        return new BigInteger(53, generator);
     }
 
     /**
@@ -49,9 +32,7 @@ public class Utils {
     }
 
     static BigInteger convertCoreInt64(Object o) {
-        Double t = (Double) o;
-        Riffle.debug("Converting object: " + o.toString() + " Cast as double: " + t + " long value: " + t.longValue() + " BigInt: " + BigInteger.valueOf(t.longValue()).toString());
-
+        //Riffle.debug("Converting object: " + o.toString() + " Cast as double: " + t + " long value: " + t.longValue() + " BigInt: " + BigInteger.valueOf(t.longValue()).toString());
         BigInteger id = BigInteger.valueOf(((Double) o).longValue());
         return id;
     }
