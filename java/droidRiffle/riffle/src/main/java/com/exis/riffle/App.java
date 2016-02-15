@@ -4,8 +4,10 @@ import android.util.ArrayMap;
 
 import com.exis.riffle.cumin.Cumin;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Map;
 
 import go.mantle.Mantle;
@@ -19,8 +21,8 @@ class App {
     Mantle.Domain mantleDomain;
     Thread thread;
 
-    Map<Integer, HandlerTuple> handlers;
-    Map<Integer, Deferred> deferreds;
+    Map<BigInteger, HandlerTuple> handlers;
+    Map<BigInteger, Deferred> deferreds;
 
     App() {
         handlers = new ArrayMap();
@@ -40,10 +42,9 @@ class App {
                     Object[] invocation = Utils.unmarshall(mantleDomain.Receive());
                     Object[] args = {};
 
-                    Double temp = (Double) invocation[0];
-                    int id = temp.intValue();
+                    BigInteger id = Utils.convertCoreInt64(invocation[0]);
 
-                    if (id == 0) {
+                    if (id == BigInteger.valueOf(0)) {
                         Riffle.debug("App listen loop terminating");
                         break;
                     }
@@ -78,11 +79,11 @@ class App {
 
                         if (t.isRegistration) {
                             // CAREFUL-- this isn't going to work if the mantle is still dealing in longs!
-                            Double yieldId = (Double) args[0];
+                            BigInteger yieldId = Utils.convertCoreInt64(args[0]);
                             Object result = t.fn.invoke(Arrays.copyOfRange(args, 1, args.length));
 
                             Object[] packed = {result};
-                            mantleDomain.Yield(yieldId.longValue(), Utils.marshall(packed));
+                            mantleDomain.Yield(yieldId.toString(), Utils.marshall(packed));
                         } else {
                             t.fn.invoke(args);
                         }

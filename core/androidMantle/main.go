@@ -1,6 +1,7 @@
 package mantle
 
 import (
+	"encoding/json"
 	"github.com/exis-io/core"
 	"github.com/exis-io/core/goRiffle"
 )
@@ -27,54 +28,54 @@ func (d *Domain) Receive() string {
 }
 
 // TODO: Move this to the mantle helper
-func (d *Domain) Join(cb int, eb int) {
+func (d *Domain) Join(cb string, eb string) {
 	go func() {
 		if c, err := goRiffle.Open(core.Fabric); err != nil {
-			d.coreDomain.GetApp().CallbackSend(uint64(eb), err.Error())
+			d.coreDomain.GetApp().CallbackSend(idUnmarshal(eb), err.Error())
 		} else {
 			if err := d.coreDomain.Join(c); err != nil {
-				d.coreDomain.GetApp().CallbackSend(uint64(eb), err.Error())
+				d.coreDomain.GetApp().CallbackSend(idUnmarshal(eb), err.Error())
 			} else {
-				d.coreDomain.GetApp().CallbackSend(uint64(cb))
+				d.coreDomain.GetApp().CallbackSend(idUnmarshal(cb))
 			}
 		}
 	}()
 }
 
-func (d *Domain) Subscribe(endpoint string, cb int, eb int, fn int, types string) {
-	go core.MantleSubscribe(d.coreDomain, endpoint, uint64(cb), uint64(eb), uint64(fn), core.MantleUnmarshal(types))
+func (d *Domain) Subscribe(endpoint string, cb string, eb string, fn string, types string) {
+	go core.MantleSubscribe(d.coreDomain, endpoint, idUnmarshal(cb), idUnmarshal(eb), idUnmarshal(fn), core.MantleUnmarshal(types))
 }
 
-func (d *Domain) Register(endpoint string, cb int, eb int, fn int, types string) {
-	go core.MantleRegister(d.coreDomain, endpoint, uint64(cb), uint64(eb), uint64(fn), core.MantleUnmarshal(types))
+func (d *Domain) Register(endpoint string, cb string, eb string, fn string, types string) {
+	go core.MantleRegister(d.coreDomain, endpoint, idUnmarshal(cb), idUnmarshal(eb), idUnmarshal(fn), core.MantleUnmarshal(types))
 }
 
-func (d *Domain) Publish(endpoint string, cb int, eb int, args string) {
-	go core.MantlePublish(d.coreDomain, endpoint, uint64(cb), uint64(eb), core.MantleUnmarshal(args))
+func (d *Domain) Publish(endpoint string, cb string, eb string, args string) {
+	go core.MantlePublish(d.coreDomain, endpoint, idUnmarshal(cb), idUnmarshal(eb), core.MantleUnmarshal(args))
 }
 
-func (d *Domain) Call(endpoint string, cb int, eb int, args string) {
-	go core.MantleCall(d.coreDomain, endpoint, uint64(cb), uint64(eb), core.MantleUnmarshal(args))
+func (d *Domain) Call(endpoint string, cb string, eb string, args string) {
+	go core.MantleCall(d.coreDomain, endpoint, idUnmarshal(cb), idUnmarshal(eb), core.MantleUnmarshal(args))
 }
 
-func (d *Domain) CallExpects(cb int, types string) {
-	go d.coreDomain.CallExpects(uint64(cb), core.MantleUnmarshal(types))
+func (d *Domain) CallExpects(cb string, types string) {
+	go d.coreDomain.CallExpects(idUnmarshal(cb), core.MantleUnmarshal(types))
 }
 
-func (d *Domain) Unsubscribe(endpoint string, cb int, eb int) {
-	go core.MantleUnsubscribe(d.coreDomain, endpoint, uint64(cb), uint64(eb))
+func (d *Domain) Unsubscribe(endpoint string, cb string, eb string) {
+	go core.MantleUnsubscribe(d.coreDomain, endpoint, idUnmarshal(cb), idUnmarshal(eb))
 }
 
-func (d *Domain) Unregister(endpoint string, cb int, eb int) {
-	go core.MantleUnregister(d.coreDomain, endpoint, uint64(cb), uint64(eb))
+func (d *Domain) Unregister(endpoint string, cb string, eb string) {
+	go core.MantleUnregister(d.coreDomain, endpoint, idUnmarshal(cb), idUnmarshal(eb))
 }
 
-func (d *Domain) Yield(request int, args string) {
-	go d.coreDomain.GetApp().Yield(uint64(request), core.MantleUnmarshal(args))
+func (d *Domain) Yield(request string, args string) {
+	go d.coreDomain.GetApp().Yield(idUnmarshal(request), core.MantleUnmarshal(args))
 }
 
-func (d *Domain) YieldError(request int, etype string, args string) {
-	go d.coreDomain.GetApp().YieldError(uint64(request), etype, core.MantleUnmarshal(args))
+func (d *Domain) YieldError(request string, etype string, args string) {
+	go d.coreDomain.GetApp().YieldError(idUnmarshal(request), etype, core.MantleUnmarshal(args))
 }
 
 func (d *Domain) Leave() {
@@ -113,3 +114,13 @@ func Debug(s string)       { core.Debug("%s", s) }
 func Info(s string)        { core.Info("%s", s) }
 func Warn(s string)        { core.Warn("%s", s) }
 func Error(s string)       { core.Error("%s", s) }
+
+func idUnmarshal(a string) uint64 {
+	var d uint64
+	if e := json.Unmarshal([]byte(a), &d); e == nil {
+		return d
+	} else {
+		core.Warn("Unable to unmarshall id: %s", e)
+		return 0
+	}
+}

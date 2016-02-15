@@ -3,14 +3,16 @@ package com.exis.riffle;
 import com.exis.riffle.cumin.Cumin;
 import com.exis.riffle.cumin.Handler;
 
+import java.math.BigInteger;
+
 /**
  * Created by damouse on 1/24/2016.
  *
  * Used to implement callbacks for almost all riffle operations.
  */
 public class Deferred {
-    int cb;
-    int eb;
+    BigInteger cb;
+    BigInteger eb;
 
     Cumin.Wrapped _callback = null;
     Cumin.Wrapped _errback = null;

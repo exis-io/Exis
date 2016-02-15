@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         textview.setText("Reeefle");
 
         Log.d(TAG, "LOADING LIBRARY");
-        Native.testLibrary();
+//        Native.testLibrary();
     }
 
     @Override

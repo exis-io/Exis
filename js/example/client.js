@@ -20,12 +20,12 @@ me.onJoin = function() {
         console.log("ERROR: ", err); 
     });
 
-    receiver.call("iGiveInts", "Hi").then(function(a) {
-        console.log("Result: ", a);
-    },
-    function (err) {
-        console.log("ERROR: ", err); 
-    });
+    // receiver.call("iGiveInts", "Hi").then(function(a) {
+    //     console.log("Result: ", a);
+    // },
+    // function (err) {
+    //     console.log("ERROR: ", err); 
+    // });
 
 };
 

@@ -3,6 +3,7 @@ package com.exis.riffle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Random;
 
@@ -12,10 +13,25 @@ public class Utils {
     private static Random generator = new Random();
     private static Gson gson = new GsonBuilder().create();
 
+    static final char[] source = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
+            .toCharArray();
+
+    static Random seed = new Random();
 
     /* Generate a random positive integer */
-    static int newID() {
-        return generator.nextInt(Integer.MAX_VALUE);
+//    static int newID() {
+//        return generator.nextInt(Integer.MAX_VALUE);
+//    }
+
+    static BigInteger newID() {
+        char[] buffer = new char[8];
+
+        for (int i = 0; i < 8; i++) {
+            buffer[i] = source[seed.nextInt(source.length)];
+        }
+
+        String s = new String(buffer);
+        return new BigInteger(s);
     }
 
     /**
@@ -30,6 +46,14 @@ public class Utils {
 //        Object[] result = gson.fromJson(json, Object[].class);
 //        Riffle.debug("Json from core: " + json + " after: " + result.toString());
         return gson.fromJson(json, Object[].class);
+    }
+
+    static BigInteger convertCoreInt64(Object o) {
+        Double t = (Double) o;
+        Riffle.debug("Converting object: " + o.toString() + " Cast as double: " + t + " long value: " + t.longValue() + " BigInt: " + BigInteger.valueOf(t.longValue()).toString());
+
+        BigInteger id = BigInteger.valueOf(((Double) o).longValue());
+        return id;
     }
 }
 

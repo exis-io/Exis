@@ -86,7 +86,7 @@ func (c Conn) Close(reason string) error {
 	core.Debug("Asked to close: ", reason)
 
 	//TODO: Use appropriate error codes
-	c.wrapper.Get("conn").Call("close", 1000, reason)
+	c.wrapper.Call("close", 1000, reason)
 	return nil
 }
 
