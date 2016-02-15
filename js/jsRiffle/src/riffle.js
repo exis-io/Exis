@@ -7,8 +7,7 @@ var pjson = require('../package.json');
 global.WsFactory = require('./websocket').Factory;
 
 exports.want = want.want;
-exports.wait = want.wait;
-exports.ModelObject = want.ModelObject;
+exports.modelObject = want.ModelObject;
 
 exports.Domain = global.Domain.New;
 exports.version = pjson.version;
@@ -44,6 +43,34 @@ global.PromiseInterceptor = function(trueHandler, domain, cb) {
             trueHandler(applyer(callback.fp), errback);
         }
     }
+}
+
+global.WaitInterceptor = function(trueHandler, domain, cb) {
+
+    var t = global.PromiseInterceptor(trueHandler, domain, cb);
+
+    return function(){
+        var types = [];
+        for(var arg in arguments){
+          types.push(arguments[arg]);
+        }
+
+        function then(){
+          var args = [];
+          for(var i in arguments){
+            args.push(arguments[i]);
+          }
+          types.unshift(arguments[0]);
+          console.log(types);
+          args[0] = want.want.apply(this, types);
+          console.log(args)
+          t.apply(this, args);
+        }
+    
+        return {
+          then: then
+        };
+    };
 }
 
 // Inject configuration functions from the mantle into the crust with the same name

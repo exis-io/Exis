@@ -9,13 +9,12 @@ var app = riffle.Domain("xs.damouse");
 var receiver = app.subdomain("alpha");
 var me = app.subdomain("beta");
 
-
 me.onJoin = function() {
     console.log("Sender Joined");
 
-    receiver.call("iGiveInts", "Hi").then(riffle.wait(function(a) {
+    receiver.call("iGiveInts", "Hi").wait([Number]).then(function(a) {
         console.log("Result: ", a);
-    }, [Number]),
+    },
     function (err) {
         console.log("ERROR: ", err); 
     });

@@ -13,14 +13,14 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
     function $RiffleProvider() {
 
         var id = undefined;
-        var providerAPIExcludes = ['Application', 'Domain', 'ModelObject', 'wait', 'want'];
+        var providerAPIExcludes = ['Application', 'Domain', 'modelObject', 'want'];
         for(var key in jsRiffle){
           if(providerAPIExcludes.indexOf(key) === -1){
             this[key] = jsRiffle[key];
           }
         }
 
-        this.SetDomain = function(domain){
+        this.setDomain = function(domain){
           id = domain;
         };
 
@@ -60,13 +60,14 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
             var sessionPromise = sessionDeferred.promise;
             
             var joinFnc = digestWrapper(function () {
+                $log.debug("Connection Opened: ");
                 $rootScope.$broadcast("$riffle.open");
                 connection.connected = true;
                 sessionDeferred.resolve();
             });
 
             var leaveFnc = digestWrapper(function (reason, details) {
-                //$log.debug("Connection Closed: ", reason, details);
+                $log.debug("Connection Closed: ", reason, details);
                 connection.connected = false;
                 sessionDeferred = $q.defer();
                 sessionPromise = sessionDeferred.promise;
@@ -76,8 +77,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
             connection = new DomainWrapper(jsRiffle.Domain(id));
             connection.want = jsRiffle.want;
-            connection.wait = jsRiffle.wait;
-            connection.ModelObject = jsRiffle.ModelObject;
+            connection.modelObject = jsRiffle.modelObject;
             connection.connected = false;
 
             
@@ -202,16 +202,10 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
             DomainWrapper.prototype.call = function () {
               var a = arguments
               var self = this;
-              var callDeferred = $q.defer();
-              //
-              //for now we need to splat the args because the core returns them in a list
-              function splat(args){
-                callDeferred.resolve.apply(callDeferred, args);
-              }
-              interceptorWrapper('call', arguments, function () {
+              
+              return interceptorWrapper('call', arguments, function () {
                 return self.conn.call.apply(self.conn, a);
-              }).then(splat, callDeferred.reject);
-              return callDeferred.promise;
+              });
             };
             DomainWrapper.prototype.subdomain = function(id) {
               return new DomainWrapper(this.conn.subdomain(id));
@@ -238,25 +232,25 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
               
               function resolve(){
-                userDeferred.resolve(connection.User);
+                userDeferred.resolve(connection.user);
               }
 
               //if we are auth1 load user data
               function load(){
-                connection.User.load().then(userDeferred.resolve, userDeferred.reject);
+                connection.user.load().then(userDeferred.resolve, userDeferred.reject);
               }
 
               //if we get success from the registrar on login continue depending on auth level
               function success(domain){
                 if(auth0){
                   //if auth0 then we don't have user storage
-                  connection.User = new DomainWrapper(domain); 
-                  connection.User.join();
+                  connection.user = new DomainWrapper(domain); 
+                  connection.user.join();
                   sessionPromise.then(resolve);
                 }else{
-                  //if auth1 use User class to wrap domain and implement user storage and load user data
-                  connection.User = new User(self, domain); 
-                  connection.User.join();
+                  //if auth1 use user class to wrap domain and implement user storage and load user data
+                  connection.user = new User(self, domain); 
+                  connection.user.join();
                   sessionPromise.then(load);
                 }
               }

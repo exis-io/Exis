@@ -32,12 +32,12 @@ backend.onJoin = function() {
     }, Number));
     // End Example Tour Reg/Call Lesson 2 Fails
     
-    // Example Tour Reg/Call Lesson 2 Wait Check - type enforcement on wait
+    // Example Tour Reg/Call Lesson 2 Want Check - type enforcement on want
     this.register("iGiveInts", riffle.want(function(s) {
         console.log(s); // Expects a String, like "Hi"
         return 42;
     }, String));
-    // End Example Tour Reg/Call Lesson 2 Wait Check
+    // End Example Tour Reg/Call Lesson 2 Want Check
     
     /////////////////////////////////////////////////////////////////////////////////////
     // Example Tour Reg/Call Lesson 3 Works - collections of types
@@ -68,7 +68,7 @@ backend.onJoin = function() {
 
     this.register("sendStudent", riffle.want(function(s) {
         console.log(s.toString()); // Expects a String, like "John Smith, Age: 18, ID: 1234"
-    }, riffle.ModelObject(Student)));
+    }, riffle.modelObject(Student)));
     // End Example Tour Reg/Call Lesson 4 Basic Student
     console.log("___SETUPCOMPLETE___");
     
