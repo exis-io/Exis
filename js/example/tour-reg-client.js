@@ -44,7 +44,7 @@ client.onJoin = function() {
     function (err) {
         console.log(err); // Expects a String, like "Cumin: expecting primitive str, got int"
     });
-    // End Example Tour Reg/Call Lesson 2 want Check
+    // End Example Tour Reg/Call Lesson 2 Want Check
     
     /////////////////////////////////////////////////////////////////////////////////////
     // Example Tour Reg/Call Lesson 3 Works - collections of types
