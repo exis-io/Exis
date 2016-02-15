@@ -1,8 +1,8 @@
 {
   "name": "ngriffle",
   "description": "Angular library for jsRiffle",
-  "version": "0.1.15",
-  "author": "Damouse <damouse007@gmail.com>",
+  "version": "0.3.0",
+  "author": "Exis <developers@exis.io>",
   "homepage": "https://github.com/exis-io/ngRiffle",
   "repository": {
     "type": "git",
