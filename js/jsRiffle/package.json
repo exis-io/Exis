@@ -1,6 +1,6 @@
 {
   "name": "jsriffle",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Riffle allows applications to connect over a fabric",
   "main": "index.js",
   "browser": {

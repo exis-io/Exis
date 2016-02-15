@@ -21,6 +21,6 @@
     ],
     "dependencies": {
         "angular": "^1.2.0",
-        "jsriffle": "latest"
+        "jsRiffle": "latest"
     }
 }
