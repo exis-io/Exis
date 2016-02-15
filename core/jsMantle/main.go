@@ -61,7 +61,7 @@ func (i idGenerator) NewID() uint64 {
 }
 
 func (c Conn) OnMessage(msg *js.Object) {
-	go c.app.ReceiveBytes([]byte(msg.String()))
+	c.app.ReceiveBytes([]byte(msg.String()))
 }
 
 func (c Conn) OnOpen(msg *js.Object) {

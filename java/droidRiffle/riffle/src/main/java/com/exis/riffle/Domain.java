@@ -1,5 +1,7 @@
 package com.exis.riffle;
 
+import android.util.Log;
+
 import com.exis.riffle.cumin.Cumin;
 import com.exis.riffle.cumin.Handler;
 
@@ -34,6 +36,7 @@ public class Domain {
         Deferred d = new Deferred(app);
 
         d.then(() -> {
+            Riffle.debug("Triggering onJoin method");
             this.onJoin();
         });
 

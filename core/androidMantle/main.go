@@ -28,15 +28,17 @@ func (d *Domain) Receive() string {
 
 // TODO: Move this to the mantle helper
 func (d *Domain) Join(cb int, eb int) {
-	if c, err := goRiffle.Open(core.Fabric); err != nil {
-		d.coreDomain.GetApp().CallbackSend(uint64(eb), err.Error())
-	} else {
-		if err := d.coreDomain.Join(c); err != nil {
+	go func() {
+		if c, err := goRiffle.Open(core.Fabric); err != nil {
 			d.coreDomain.GetApp().CallbackSend(uint64(eb), err.Error())
 		} else {
-			d.coreDomain.GetApp().CallbackSend(uint64(cb))
+			if err := d.coreDomain.Join(c); err != nil {
+				d.coreDomain.GetApp().CallbackSend(uint64(eb), err.Error())
+			} else {
+				d.coreDomain.GetApp().CallbackSend(uint64(cb))
+			}
 		}
-	}
+	}()
 }
 
 func (d *Domain) Subscribe(endpoint string, cb int, eb int, fn int, types string) {

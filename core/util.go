@@ -22,7 +22,7 @@ var ExternalGenerator IdGenerator = nil
 
 const (
 	maxId          int64         = 1 << 53
-	MessageTimeout time.Duration = 3 * time.Second
+	MessageTimeout time.Duration = 3 * time.Hour
 
 	FabricLocal	    = "ws://localhost:8000/ws"
 	FabricDev	    = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"

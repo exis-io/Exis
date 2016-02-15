@@ -5,6 +5,7 @@ import android.util.ArrayMap;
 import com.exis.riffle.cumin.Cumin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 import go.mantle.Mantle;
@@ -34,8 +35,7 @@ class App {
 
         thread = new Thread() {
             public void run() {
-                Riffle.debug("App thread starting");
-                
+
                 while (true) {
                     Object[] invocation = Utils.unmarshall(mantleDomain.Receive());
                     Object[] args = {};
@@ -53,14 +53,17 @@ class App {
                         args = a.toArray();
                     }
 
+                    //Riffle.debug("Crust received invocation: " + id + " args: " + args.toString());
 
                     if (deferreds.containsKey(id)) {
                         Deferred d = deferreds.remove(id);
 
                         // TODO: try/catch
+
                         // Remove the deferred and trigger it appropriately
                         if (id == d.cb) {
                             deferreds.remove(d.eb);
+
                             d.callback(args);
                         } else {
                             deferreds.remove(d.cb);
@@ -72,9 +75,17 @@ class App {
                         HandlerTuple t = handlers.get(id);
 
                         // TODO: try/catch
-                        // TODO: returns
 
-                        t.fn.invoke(args);
+                        if (t.isRegistration) {
+                            // CAREFUL-- this isn't going to work if the mantle is still dealing in longs!
+                            Double yieldId = (Double) args[0];
+                            Object result = t.fn.invoke(Arrays.copyOfRange(args, 1, args.length));
+
+                            Object[] packed = {result};
+                            mantleDomain.Yield(yieldId.longValue(), Utils.marshall(packed));
+                        } else {
+                            t.fn.invoke(args);
+                        }
                     }
                 }
             }
