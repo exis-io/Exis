@@ -10,9 +10,9 @@ var client = app.subdomain("client");
 client.onJoin = function() {
     /////////////////////////////////////////////////////////////////////////////////////
     // Example Tour Reg/Call Lesson 1 - our first basic example
-    backend.call("myFirstFunc", "Hello").then(riffle.wait(function (s) {
+    backend.call("myFirstFunc", "Hello").want(String).then(function (s) {
         console.log(s); // Expects a String, like "Hello World"
-    }, String),
+    },
     function (err) {
         console.log("ERROR: ", err);
     });
@@ -20,46 +20,46 @@ client.onJoin = function() {
         
     /////////////////////////////////////////////////////////////////////////////////////
     // Example Tour Reg/Call Lesson 2 Works - type enforcement good
-    backend.call("iWantStrings", "Hi").then(riffle.wait(function (s) {
+    backend.call("iWantStrings", "Hi").want(String).then(function (s) {
         console.log(s); // Expects a String, like "Thanks for saying Hi"
-    }, String),
+    },
     function (err) {
         console.log("ERROR: ", err);
     });
     // End Example Tour Reg/Call Lesson 2 Works
         
     // Example Tour Reg/Call Lesson 2 Fails - type enforcement bad
-    backend.call("iWantInts", "Hi").then(riffle.wait(function (s) {
+    backend.call("iWantInts", "Hi").want(String).then(function (s) {
         console.log(s);
-    }, String),
+    },
     function (err) {
         console.log(err) // Expects a String, like "wamp.error.invalid_argument: Cumin: expecting primitive float, got string"
     });
     // End Example Tour Reg/Call Lesson 2 Fails
     
-    // Example Tour Reg/Call Lesson 2 Wait Check - type enforcement on wait
-    backend.call("iGiveInts", "Hi").then(riffle.wait(function (s) {
+    // Example Tour Reg/Call Lesson 2 Want Check - type enforcement on want
+    backend.call("iGiveInts", "Hi").want(String).then(function (s) {
         console.log(s);
-    }, String),
+    },
     function (err) {
         console.log(err); // Expects a String, like "Cumin: expecting primitive str, got int"
     });
-    // End Example Tour Reg/Call Lesson 2 Wait Check
+    // End Example Tour Reg/Call Lesson 2 want Check
     
     /////////////////////////////////////////////////////////////////////////////////////
     // Example Tour Reg/Call Lesson 3 Works - collections of types
-    backend.call("iWantManyStrings", ["This", "is", "cool"]).then(riffle.wait(function (s) {
+    backend.call("iWantManyStrings", ["This", "is", "cool"]).want(String).then(function (s) {
         console.log(s); // Expects a String, like "Thanks for 3 strings!"
-    }, String),
+    },
     function (err) {
         console.log("ERROR: ", err);
     });
     // End Example Tour Reg/Call Lesson 3 Works
     
     // Example Tour Reg/Call Lesson 3 Fails - collections of types
-    backend.call("iWantManyInts", [0, 1, "two"]).then(riffle.wait(function (s) {
+    backend.call("iWantManyInts", [0, 1, "two"]).want(String).then(function (s) {
         console.log(s);
-    }, String),
+    },
     function (err) {
         console.log("ERROR: ", err); // Expects a String, like "Cumin: expecting primitive float, got string"
     });

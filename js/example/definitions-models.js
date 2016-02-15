@@ -11,13 +11,13 @@ function User() {
 // define a function that is only called
 // if a User is passed:
 this.register("endpoint",
-    riffle.want(function(u) {...}, riffle.ModelObject(User))
+    riffle.want(function(u) {...}, riffle.modelObject(User))
 );
 // call a function, send a User, expect a User back
 var u = new User();
 u.name = "This guy";
-backend.call("get_user", u).then(
-    riffle.wait(function(otherU) {...}, riffle.ModelObject(User))
+backend.call("get_user", u).want(riffle.modelObject(User)).then(
+    function(otherU) {...}
 );
 
 // A basic model of a Student
@@ -27,7 +27,7 @@ function Student() {
     this.grade = 0;
 }
 // Expect a Student
-riffle.want(function (s) {...}, riffle.ModelObject(Student));
+riffle.want(function (s) {...}, riffle.modelObject(Student));
 // Send a Student
 var s = new Student();
 s.first = "John";
@@ -35,7 +35,7 @@ s.last = "Smith";
 s.grade = 90;
 backend.call("send_student", s);
 // Require a Student is returned
-riffle.wait(function (s) {...}, riffle.ModelObject(Student));
+backend.call("send_student", s).want(riffle.modelObject(Student)).then(function(s){ ...});
 
 // A model that contains a collection of models
 function Student() {
@@ -48,7 +48,7 @@ function Classroom() {
     this.roomNumber = 0;
 }
 // Expect a Classroom
-riffle.want(function (s) {...}, riffle.ModelObject(Classroom));
+riffle.want(function (s) {...}, riffle.modelObject(Classroom));
 // Send a Classroom
 var s = new Student();
 s.first = "John";
@@ -59,7 +59,7 @@ c.roomNumber = 100;
 c.students[c.students.length] = s;
 backend.call("send_classroom", c);
 // Require a Classroom is returned
-riffle.wait(function (c) {...}, riffle.ModelObject(Classroom));
+backend.call("send_classroom", c).want(riffle.modelObject(Classroom)).then(function(c){ ...});
 
 
 // End Example Want Definitions Models

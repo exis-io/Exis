@@ -338,6 +338,7 @@ func (d *Domain) Call(endpoint string, args ...interface{}) *js.Object {
 	// Rewraps the existing then callback 
 	existingFunction := j.Get("then")
 	j.Set("then", js.Global.Get("PromiseInterceptor").Invoke(existingFunction, d.wrapped, cb))
+	j.Set("want", js.Global.Get("WaitInterceptor").Invoke(existingFunction, d.wrapped, cb))
 
 	return j
 }
