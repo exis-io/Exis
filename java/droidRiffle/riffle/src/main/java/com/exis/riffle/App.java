@@ -44,7 +44,7 @@ class App {
 
                     BigInteger id = Utils.convertCoreInt64(invocation[0]);
 
-                    if (id == BigInteger.valueOf(0)) {
+                    if (id.compareTo(BigInteger.valueOf(0)) == 0) {
                         Riffle.debug("App listen loop terminating");
                         break;
                     }
@@ -54,25 +54,26 @@ class App {
                         args = a.toArray();
                     }
 
-                    //Riffle.debug("Crust received invocation: " + id + " args: " + args.toString());
-
                     if (deferreds.containsKey(id)) {
                         Deferred d = deferreds.remove(id);
+                        Riffle.debug("KEY FOUND " + id.toString() + " compared to : " + d.cb.toString());
 
                         // TODO: try/catch
 
                         // Remove the deferred and trigger it appropriately
-                        if (id == d.cb) {
+                        if (id.compareTo(d.cb) == 0) {
+                            Riffle.debug("CALLING A CALLBACK");
                             deferreds.remove(d.eb);
 
                             d.callback(args);
                         } else {
+                            Riffle.debug("CALLING AN ERRBACK");
                             deferreds.remove(d.cb);
                             d.errback(args);
                         }
                     }
 
-                    if (handlers.containsKey(id)) {
+                    else if (handlers.containsKey(id)) {
                         HandlerTuple t = handlers.get(id);
 
                         // TODO: try/catch
