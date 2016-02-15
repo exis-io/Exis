@@ -18,6 +18,7 @@ EX_START_RE = re.compile("^.*Example (.*)? - (.*)$")
 # Match to the end of an example, and pull out the name of the example
 EX_END_RE = re.compile("^.*End Example (.*)$")
 SKIP_FILE_RE = re.compile("^.*ARBITER skip file.*$")
+SKIP_TEST_RE = re.compile("^.*ARBITER skip test.*$")
 # Trying to match specifically on calls to the 4 primary function calls, with an optional space
 # between the function name and (. Also dealing with lower/upper case, and trying to look for 
 # functional calls specifically so we ignore comments and stuff like that
@@ -161,6 +162,7 @@ class Examples:
         # Run through the file
         FSM = "START"
         t = Task(fileName)
+        skipTest = False
 
         lineNum = 1
         for c in lst:
@@ -172,6 +174,15 @@ class Examples:
             mExpect = expect_re.match(c)
             mEnd = EX_END_RE.match(c)
             mSkipFile = SKIP_FILE_RE.match(c)
+            skipTest |= SKIP_TEST_RE.match(c) != None
+            # If skiptest is now enabled, keep rolling until another start is found
+            if skipTest:
+                FSM = "START"
+                if mStart:
+                    skipTest = False
+                else:
+                    continue
+            
             if mSkipFile:
                 break
             elif(FSM == "START"):
