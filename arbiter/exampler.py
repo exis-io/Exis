@@ -17,6 +17,7 @@ LANGS_EXT = {"py": "python", "swift": "swift", "js": "js", "go": "go", "browser"
 EX_START_RE = re.compile("^.*Example (.*)? - (.*)$")
 # Match to the end of an example, and pull out the name of the example
 EX_END_RE = re.compile("^.*End Example (.*)$")
+SKIP_FILE_RE = re.compile("^.*ARBITER skip file.*$")
 # Trying to match specifically on calls to the 4 primary function calls, with an optional space
 # between the function name and (. Also dealing with lower/upper case, and trying to look for 
 # functional calls specifically so we ignore comments and stuff like that
@@ -170,7 +171,10 @@ class Examples:
             mStart = EX_START_RE.match(c)
             mExpect = expect_re.match(c)
             mEnd = EX_END_RE.match(c)
-            if(FSM == "START"):
+            mSkipFile = SKIP_FILE_RE.match(c)
+            if mSkipFile:
+                break
+            elif(FSM == "START"):
                 if mStart:
                     # For a START match, looks like "Example Name[ stuff] - doc"
                     n, o, d = _parseStartMatch(mStart)

@@ -300,7 +300,7 @@ class NodeJSCoder(Coder):
 
     def setupEnv(self, env):
         if DEBUG:
-            env["EXIS_SETUP"] = "riffle.SetLogLevelDebug();"
+            env["EXIS_SETUP"] = "riffle.setLogLevelDebug();"
 
     def expect2assert(self):
         # TODO
