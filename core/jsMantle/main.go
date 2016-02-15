@@ -60,18 +60,40 @@ func (i idGenerator) NewID() uint64 {
 	return js.Global.Get("NewID").Invoke().Uint64()
 }
 
-func (c Conn) OnMessage(msg *js.Object) {
+func (c *Conn) OnMessage(msg *js.Object) {
 	c.app.ReceiveBytes([]byte(msg.String()))
 }
 
-func (c Conn) OnOpen(msg *js.Object) {
-	go c.domain.FinishJoin(&c)
+func (c *Conn) OnOpen(msg *js.Object) {
+	go c.domain.FinishJoin(c)
 }
 
-func (c Conn) OnClose(msg *js.Object) {
-	if j := c.domain.wrapped.Get("onLeave"); j != js.Undefined {
-		c.domain.wrapped.Call("onLeave", msg)
+func (c *Conn) OnReopen(msg *js.Object) {
+	c.app.SetState(core.Connected)
+	c.app.SendHello()
+}
+
+func (c *Conn) OnClose(msg *js.Object) {
+	c.app.ConnectionClosed("JS websocket closed")
+
+	if c.app.ShouldReconnect() {
+		c.Reconnect()
+	} else {
+		if j := c.domain.wrapped.Get("onLeave"); j != js.Undefined {
+			c.domain.wrapped.Call("onLeave", msg)
+		}
 	}
+}
+
+func (c *Conn) Reconnect() {
+	factory := js.Global.Get("WsFactory").New(map[string]string{"type": "websocket", "url":core.Fabric})
+
+	wsConn := factory.Call("create")
+	c.wrapper = wsConn
+
+	wsConn.Set("onmessage", c.OnMessage)
+	wsConn.Set("onopen", c.OnReopen)
+	wsConn.Set("onclose", c.OnClose)
 }
 
 func (c Conn) Send(data []byte) error {

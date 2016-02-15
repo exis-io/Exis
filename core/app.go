@@ -38,6 +38,7 @@ type App interface {
 	Login(Domain, ...string) (Domain, error)
 	RegisterAccount(Domain, string, string, string, string) (bool, error)
 
+	SetState(int)
 	ShouldReconnect() bool
 }
 
@@ -111,6 +112,10 @@ func (a *app) CallbackSend(id uint64, args ...interface{}) {
 func (c *app) Send(m message) error {
 	Debug("Sending %s: %v", m.messageType(), m)
 
+	if !c.open {
+		return fmt.Errorf("Could not send on closed connection")
+	}
+
 	if b, err := c.serializer.serialize(m); err != nil {
 		return err
 	} else {
@@ -128,7 +133,7 @@ func (c *app) Queue(m message) {
 }
 
 func (c *app) Close(reason string) {
-	c.setState(Leaving)
+	c.SetState(Leaving)
 	c.leaving = true
 
 	if !c.open {
@@ -158,7 +163,7 @@ func (c *app) ConnectionClosed(reason string) {
 	Info("Connection was closed: ", reason)
 	c.open = false
 
-	c.setState(Disconnected)
+	c.SetState(Disconnected)
 }
 
 // Send a Hello message to join the fabric.
@@ -273,7 +278,7 @@ func (c *app) handle(msg message) {
 	case *welcome:
 		Debug("Received WELCOME, reestablishing state with the fabric")
 		c.open = true
-		c.setState(Ready)
+		c.SetState(Ready)
 
 		go c.replayRegistrations()
 		go c.replaySubscriptions()
@@ -465,8 +470,11 @@ func (c *app) getMessageTimeout() (message, error) {
 	}
 }
 
-func (c *app) setState(state int) {
+func (c *app) SetState(state int) {
 	c.stateMutex.Lock()
+	if state == Connected {
+		c.open = true
+	}
 	c.state = state
 	c.stateChange.Broadcast()
 	c.stateMutex.Unlock()
