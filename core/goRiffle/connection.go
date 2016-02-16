@@ -83,6 +83,8 @@ func (ep *WebsocketConnection) Reconnect() error {
 			ep.conn = conn
 			ep.lock.Unlock()
 
+			ep.app.SetState(core.Connected)
+
 			if err := ep.app.SendHello(); err != nil {
 				core.Debug("Sending HELLO failed: %e", err)
 				ep.conn.Close()
