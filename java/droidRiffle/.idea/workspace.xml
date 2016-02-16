@@ -37,18 +37,16 @@
     <favorites_list name="droidRiffle" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.48964852">
+    <splitter split-orientation="horizontal" split-proportion="0.48978624">
       <split-first>
         <leaf>
-          <file leaf-file-name="CallDeferred.java" pinned="false" current-in-tab="true">
+          <file leaf-file-name="CallDeferred.java" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/CallDeferred.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.24069676">
-                  <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="45" column="1" selection-start-line="45" selection-start-column="1" selection-end-line="45" selection-end-column="1" />
                   <folding>
                     <element signature="imports" expanded="true" />
-                    <element signature="e#346#347#0" expanded="true" />
-                    <element signature="e#402#403#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -89,20 +87,16 @@
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
                   <caret line="32" column="5" selection-start-line="32" selection-start-column="5" selection-end-line="32" selection-end-column="5" />
-                  <folding>
-                    <element signature="imports" expanded="false" />
-                    <element signature="e#291#292#0" expanded="false" />
-                    <element signature="e#328#329#0" expanded="false" />
-                  </folding>
+                  <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="Domain.java" pinned="false" current-in-tab="false">
+          <file leaf-file-name="Domain.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Domain.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="107" column="0" selection-start-line="107" selection-start-column="0" selection-end-line="107" selection-end-column="0" />
+                <state vertical-scroll-proportion="0.40459225">
+                  <caret line="65" column="0" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
                   <folding>
                     <element signature="method#join#0;class#Domain#0" expanded="true" />
                     <element signature="method#_subscribe#0;class#Domain#0" expanded="true" />
@@ -112,7 +106,26 @@
                     <element signature="method#unsubscribe#0;class#Domain#0" expanded="true" />
                     <element signature="method#unregister#0;class#Domain#0" expanded="true" />
                     <element signature="method#subscribe#0;class#Domain#0" expanded="true" />
+                    <element signature="method#subscribe#1;class#Domain#0" expanded="true" />
+                    <element signature="method#subscribe#2;class#Domain#0" expanded="true" />
+                    <element signature="method#subscribe#3;class#Domain#0" expanded="true" />
+                    <element signature="method#subscribe#4;class#Domain#0" expanded="true" />
+                    <element signature="method#subscribe#5;class#Domain#0" expanded="true" />
+                    <element signature="method#subscribe#6;class#Domain#0" expanded="true" />
                     <element signature="method#register#0;class#Domain#0" expanded="true" />
+                    <element signature="method#register#1;class#Domain#0" expanded="true" />
+                    <element signature="method#register#2;class#Domain#0" expanded="true" />
+                    <element signature="method#register#3;class#Domain#0" expanded="true" />
+                    <element signature="method#register#4;class#Domain#0" expanded="true" />
+                    <element signature="method#register#5;class#Domain#0" expanded="true" />
+                    <element signature="method#register#6;class#Domain#0" expanded="true" />
+                    <element signature="method#register#7;class#Domain#0" expanded="true" />
+                    <element signature="method#register#8;class#Domain#0" expanded="true" />
+                    <element signature="method#register#9;class#Domain#0" expanded="true" />
+                    <element signature="method#register#10;class#Domain#0" expanded="true" />
+                    <element signature="method#register#11;class#Domain#0" expanded="true" />
+                    <element signature="method#register#12;class#Domain#0" expanded="true" />
+                    <element signature="method#register#13;class#Domain#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -159,13 +172,7 @@
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
                   <caret line="50" column="5" selection-start-line="50" selection-start-column="5" selection-end-line="50" selection-end-column="5" />
-                  <folding>
-                    <element signature="imports" expanded="false" />
-                    <element signature="e#525#526#0" expanded="false" />
-                    <element signature="e#562#563#0" expanded="false" />
-                    <element signature="e#726#727#0" expanded="false" />
-                    <element signature="e#755#756#0" expanded="false" />
-                  </folding>
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -174,7 +181,7 @@
             <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/cumin/Handler.java">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="16" column="42" selection-start-line="16" selection-start-column="42" selection-end-line="16" selection-end-column="42" />
+                  <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -183,11 +190,23 @@
           <file leaf-file-name="Cumin.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/cumin/Cumin.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.2280285">
-                  <caret line="20" column="5" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
+                <state vertical-scroll-proportion="0.5447348">
+                  <caret line="43" column="20" selection-start-line="43" selection-start-column="20" selection-end-line="43" selection-end-column="20" />
                   <folding>
+                    <element signature="method#cuminicate#0;class#Cumin#0" expanded="true" />
                     <element signature="method#cuminicate#1;class#Cumin#0" expanded="true" />
-                    <element signature="method#convert#0;class#Cumin#0" expanded="true" />
+                    <element signature="method#cuminicate#2;class#Cumin#0" expanded="true" />
+                    <element signature="method#cuminicate#3;class#Cumin#0" expanded="true" />
+                    <element signature="method#cuminicate#4;class#Cumin#0" expanded="true" />
+                    <element signature="method#cuminicate#5;class#Cumin#0" expanded="true" />
+                    <element signature="method#cuminicate#6;class#Cumin#0" expanded="true" />
+                    <element signature="method#cuminicate#7;class#Cumin#0" expanded="true" />
+                    <element signature="method#cuminicate#8;class#Cumin#0" expanded="true" />
+                    <element signature="method#cuminicate#9;class#Cumin#0" expanded="true" />
+                    <element signature="method#cuminicate#10;class#Cumin#0" expanded="true" />
+                    <element signature="method#cuminicate#11;class#Cumin#0" expanded="true" />
+                    <element signature="method#cuminicate#12;class#Cumin#0" expanded="true" />
+                    <element signature="method#cuminicate#13;class#Cumin#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -3157,8 +3176,6 @@
         <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/TypeResolver.java" />
         <option value="$PROJECT_DIR$/backend/src/main/java/com/example/handlers/Handler.java" />
         <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Handler.java" />
-        <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/cumin/Handler.java" />
-        <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/cumin/Cumin.java" />
         <option value="$PROJECT_DIR$/backend/src/main/java/com/example/Testing.java" />
         <option value="$PROJECT_DIR$/app/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/exis/droidriffle/Native.java" />
@@ -3166,7 +3183,9 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/exis/droidriffle/MainActivity.java" />
         <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Deferred.java" />
         <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/App.java" />
+        <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/cumin/Cumin.java" />
         <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/CallDeferred.java" />
+        <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/cumin/Handler.java" />
         <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Domain.java" />
       </list>
     </option>
@@ -3183,9 +3202,9 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="1985" />
-    <option name="y" value="24" />
+    <option name="y" value="-4" />
     <option name="width" value="2495" />
-    <option name="height" value="1416" />
+    <option name="height" value="1444" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -3210,185 +3229,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="AndroidView">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="droidRiffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="droidRiffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="riffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="droidRiffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="riffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="droidRiffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="riffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="riffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="droidRiffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="riffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="riffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="App.java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="droidRiffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="riffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="riffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="cumin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="droidRiffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="backend" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.NonAndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.NonAndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="example" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="droidRiffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="droidRiffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="droidRiffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="droidriffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="droidRiffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="droidriffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="MainActivity.java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -3650,6 +3490,185 @@
         </subPane>
       </pane>
       <pane id="PackagesPane" />
+      <pane id="AndroidView">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="droidRiffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="droidRiffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="riffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="droidRiffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="riffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="droidRiffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="riffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="riffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="droidRiffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="riffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="riffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="App.java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="droidRiffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="riffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="riffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cumin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="droidRiffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="backend" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.NonAndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.NonAndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="example" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="droidRiffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="droidRiffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="droidRiffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="droidriffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="droidRiffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="droidriffle" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MainActivity.java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope" />
       <pane id="Scratches" />
     </panes>
   </component>
@@ -3973,7 +3992,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1985" y="24" width="2495" height="1416" extended-state="6" />
+    <frame x="1985" y="-4" width="2495" height="1444" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3296" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -3986,25 +4005,25 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.328" sideWeight="0.49857086" order="7" side_tool="false" content_ui="tabs" x="946" y="384" width="967" height="1056" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.2776" sideWeight="0.4969375" order="2" side_tool="false" content_ui="tabs" x="6685" y="956" width="1148" height="468" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.328" sideWeight="0.49666348" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2224" sideWeight="0.50524306" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1404655" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32946634" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24989791" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32979625" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.49809343" order="3" side_tool="false" content_ui="tabs" x="473" y="545" width="1292" height="738" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.49809343" order="3" side_tool="false" content_ui="tabs" x="473" y="545" width="1292" height="738" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.2776" sideWeight="0.4969375" order="2" side_tool="false" content_ui="tabs" x="6685" y="956" width="1148" height="468" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32946634" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -4091,11 +4110,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="32" column="5" selection-start-line="32" selection-start-column="5" selection-end-line="32" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#291#292#0" expanded="false" />
-            <element signature="e#328#329#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -4112,7 +4127,26 @@
             <element signature="method#unsubscribe#0;class#Domain#0" expanded="true" />
             <element signature="method#unregister#0;class#Domain#0" expanded="true" />
             <element signature="method#subscribe#0;class#Domain#0" expanded="true" />
+            <element signature="method#subscribe#1;class#Domain#0" expanded="true" />
+            <element signature="method#subscribe#2;class#Domain#0" expanded="true" />
+            <element signature="method#subscribe#3;class#Domain#0" expanded="true" />
+            <element signature="method#subscribe#4;class#Domain#0" expanded="true" />
+            <element signature="method#subscribe#5;class#Domain#0" expanded="true" />
+            <element signature="method#subscribe#6;class#Domain#0" expanded="true" />
             <element signature="method#register#0;class#Domain#0" expanded="true" />
+            <element signature="method#register#1;class#Domain#0" expanded="true" />
+            <element signature="method#register#2;class#Domain#0" expanded="true" />
+            <element signature="method#register#3;class#Domain#0" expanded="true" />
+            <element signature="method#register#4;class#Domain#0" expanded="true" />
+            <element signature="method#register#5;class#Domain#0" expanded="true" />
+            <element signature="method#register#6;class#Domain#0" expanded="true" />
+            <element signature="method#register#7;class#Domain#0" expanded="true" />
+            <element signature="method#register#8;class#Domain#0" expanded="true" />
+            <element signature="method#register#9;class#Domain#0" expanded="true" />
+            <element signature="method#register#10;class#Domain#0" expanded="true" />
+            <element signature="method#register#11;class#Domain#0" expanded="true" />
+            <element signature="method#register#12;class#Domain#0" expanded="true" />
+            <element signature="method#register#13;class#Domain#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -4149,13 +4183,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="50" column="5" selection-start-line="50" selection-start-column="5" selection-end-line="50" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#525#526#0" expanded="false" />
-            <element signature="e#562#563#0" expanded="false" />
-            <element signature="e#726#727#0" expanded="false" />
-            <element signature="e#755#756#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -4172,8 +4200,20 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="47" column="0" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
           <folding>
+            <element signature="method#cuminicate#0;class#Cumin#0" expanded="true" />
             <element signature="method#cuminicate#1;class#Cumin#0" expanded="true" />
-            <element signature="method#convert#0;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#2;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#3;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#4;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#5;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#6;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#7;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#8;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#9;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#10;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#11;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#12;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#13;class#Cumin#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -4213,7 +4253,26 @@
             <element signature="method#unsubscribe#0;class#Domain#0" expanded="true" />
             <element signature="method#unregister#0;class#Domain#0" expanded="true" />
             <element signature="method#subscribe#0;class#Domain#0" expanded="true" />
+            <element signature="method#subscribe#1;class#Domain#0" expanded="true" />
+            <element signature="method#subscribe#2;class#Domain#0" expanded="true" />
+            <element signature="method#subscribe#3;class#Domain#0" expanded="true" />
+            <element signature="method#subscribe#4;class#Domain#0" expanded="true" />
+            <element signature="method#subscribe#5;class#Domain#0" expanded="true" />
+            <element signature="method#subscribe#6;class#Domain#0" expanded="true" />
             <element signature="method#register#0;class#Domain#0" expanded="true" />
+            <element signature="method#register#1;class#Domain#0" expanded="true" />
+            <element signature="method#register#2;class#Domain#0" expanded="true" />
+            <element signature="method#register#3;class#Domain#0" expanded="true" />
+            <element signature="method#register#4;class#Domain#0" expanded="true" />
+            <element signature="method#register#5;class#Domain#0" expanded="true" />
+            <element signature="method#register#6;class#Domain#0" expanded="true" />
+            <element signature="method#register#7;class#Domain#0" expanded="true" />
+            <element signature="method#register#8;class#Domain#0" expanded="true" />
+            <element signature="method#register#9;class#Domain#0" expanded="true" />
+            <element signature="method#register#10;class#Domain#0" expanded="true" />
+            <element signature="method#register#11;class#Domain#0" expanded="true" />
+            <element signature="method#register#12;class#Domain#0" expanded="true" />
+            <element signature="method#register#13;class#Domain#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -4437,11 +4496,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="32" column="5" selection-start-line="32" selection-start-column="5" selection-end-line="32" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#291#292#0" expanded="false" />
-            <element signature="e#328#329#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -4449,20 +4504,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.3460016">
           <caret line="253" column="49" selection-start-line="253" selection-start-column="49" selection-end-line="253" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/exis/droidriffle/Native.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="50" column="5" selection-start-line="50" selection-start-column="5" selection-end-line="50" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#525#526#0" expanded="false" />
-            <element signature="e#562#563#0" expanded="false" />
-            <element signature="e#726#727#0" expanded="false" />
-            <element signature="e#755#756#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -4504,6 +4545,22 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/cumin/Handler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/exis/droidriffle/Native.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="50" column="5" selection-start-line="50" selection-start-column="5" selection-end-line="50" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Deferred.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -4520,29 +4577,43 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/cumin/Handler.java">
+    <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/CallDeferred.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="16" column="42" selection-start-line="16" selection-start-column="42" selection-end-line="16" selection-end-column="42" />
-          <folding />
+          <caret line="45" column="1" selection-start-line="45" selection-start-column="1" selection-end-line="45" selection-end-column="1" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/cumin/Cumin.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.2280285">
-          <caret line="20" column="5" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
+        <state vertical-scroll-proportion="0.5447348">
+          <caret line="43" column="20" selection-start-line="43" selection-start-column="20" selection-end-line="43" selection-end-column="20" />
           <folding>
+            <element signature="method#cuminicate#0;class#Cumin#0" expanded="true" />
             <element signature="method#cuminicate#1;class#Cumin#0" expanded="true" />
-            <element signature="method#convert#0;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#2;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#3;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#4;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#5;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#6;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#7;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#8;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#9;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#10;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#11;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#12;class#Cumin#0" expanded="true" />
+            <element signature="method#cuminicate#13;class#Cumin#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Domain.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="107" column="0" selection-start-line="107" selection-start-column="0" selection-end-line="107" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.40459225">
+          <caret line="65" column="0" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
           <folding>
             <element signature="method#join#0;class#Domain#0" expanded="true" />
             <element signature="method#_subscribe#0;class#Domain#0" expanded="true" />
@@ -4552,19 +4623,26 @@
             <element signature="method#unsubscribe#0;class#Domain#0" expanded="true" />
             <element signature="method#unregister#0;class#Domain#0" expanded="true" />
             <element signature="method#subscribe#0;class#Domain#0" expanded="true" />
+            <element signature="method#subscribe#1;class#Domain#0" expanded="true" />
+            <element signature="method#subscribe#2;class#Domain#0" expanded="true" />
+            <element signature="method#subscribe#3;class#Domain#0" expanded="true" />
+            <element signature="method#subscribe#4;class#Domain#0" expanded="true" />
+            <element signature="method#subscribe#5;class#Domain#0" expanded="true" />
+            <element signature="method#subscribe#6;class#Domain#0" expanded="true" />
             <element signature="method#register#0;class#Domain#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/CallDeferred.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.24069676">
-          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#346#347#0" expanded="true" />
-            <element signature="e#402#403#0" expanded="true" />
+            <element signature="method#register#1;class#Domain#0" expanded="true" />
+            <element signature="method#register#2;class#Domain#0" expanded="true" />
+            <element signature="method#register#3;class#Domain#0" expanded="true" />
+            <element signature="method#register#4;class#Domain#0" expanded="true" />
+            <element signature="method#register#5;class#Domain#0" expanded="true" />
+            <element signature="method#register#6;class#Domain#0" expanded="true" />
+            <element signature="method#register#7;class#Domain#0" expanded="true" />
+            <element signature="method#register#8;class#Domain#0" expanded="true" />
+            <element signature="method#register#9;class#Domain#0" expanded="true" />
+            <element signature="method#register#10;class#Domain#0" expanded="true" />
+            <element signature="method#register#11;class#Domain#0" expanded="true" />
+            <element signature="method#register#12;class#Domain#0" expanded="true" />
+            <element signature="method#register#13;class#Domain#0" expanded="true" />
           </folding>
         </state>
       </provider>
