@@ -16,6 +16,19 @@ const (
 	Leaving
 )
 
+// Exponential backoff settings
+//
+// initialRetryDelay is used for the first reconnection after startup and after
+// a successful connection (0 means try again immediately).
+//
+// Subsequent retries will use delays that grow exponentially between
+// minRetryDelay and maxRetryDelay.
+const (
+	initialRetryDelay = 0 * time.Second
+    minRetryDelay = 1  * time.Second
+    maxRetryDelay = 30 * time.Second
+)
+
 type App interface {
 	ReceiveBytes([]byte)
 	ReceiveMessage(message)
@@ -40,6 +53,7 @@ type App interface {
 
 	SetState(int)
 	ShouldReconnect() bool
+	NextRetryDelay() time.Duration
 }
 
 type app struct {
@@ -68,6 +82,8 @@ type app struct {
 	authid string
 	token  string
 	key    string
+
+	retryDelay time.Duration
 }
 
 // Sent up to the mantle and then the crust as callbacks are triggered
@@ -87,6 +103,7 @@ func NewApp() *app {
 		up:         make(chan Callback, 10),
 		listeners:  make(map[uint64]chan message),
 		token:      "",
+		retryDelay: initialRetryDelay,
 	}
 
 	a.stateChange = sync.NewCond(&a.stateMutex)
@@ -279,6 +296,9 @@ func (c *app) handle(msg message) {
 		Debug("Received WELCOME, reestablishing state with the fabric")
 		c.open = true
 		c.SetState(Ready)
+
+		// Reset retry delay after successful connection.
+		c.retryDelay = initialRetryDelay
 
 		go c.replayRegistrations()
 		go c.replaySubscriptions()
@@ -482,4 +502,17 @@ func (c *app) SetState(state int) {
 
 func (c *app) ShouldReconnect() bool {
 	return !c.leaving
+}
+
+func (c *app) NextRetryDelay() time.Duration {
+	delay := c.retryDelay
+
+	c.retryDelay *= 2
+	if c.retryDelay < minRetryDelay {
+		c.retryDelay = minRetryDelay
+	} else if c.retryDelay > maxRetryDelay {
+		c.retryDelay = maxRetryDelay
+	}
+
+	return delay
 }

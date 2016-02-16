@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/augustoroman/promise"
 	"github.com/exis-io/core"
@@ -77,7 +78,7 @@ func (c *Conn) OnClose(msg *js.Object) {
 	c.app.ConnectionClosed("JS websocket closed")
 
 	if c.app.ShouldReconnect() {
-		c.Reconnect()
+		go c.Reconnect()
 	} else {
 		if j := c.domain.wrapped.Get("onLeave"); j != js.Undefined {
 			c.domain.wrapped.Call("onLeave", msg)
@@ -86,6 +87,9 @@ func (c *Conn) OnClose(msg *js.Object) {
 }
 
 func (c *Conn) Reconnect() {
+	delay := c.app.NextRetryDelay()
+	time.Sleep(delay)
+
 	factory := js.Global.Get("WsFactory").New(map[string]string{"type": "websocket", "url":core.Fabric})
 
 	wsConn := factory.Call("create")
@@ -96,7 +100,7 @@ func (c *Conn) Reconnect() {
 	wsConn.Set("onclose", c.OnClose)
 }
 
-func (c Conn) Send(data []byte) error {
+func (c *Conn) Send(data []byte) error {
 	c.wrapper.Call("send", string(data))
 
 	// Added a nil error return 
@@ -104,7 +108,7 @@ func (c Conn) Send(data []byte) error {
 	return nil 
 }
 
-func (c Conn) Close(reason string) error {
+func (c *Conn) Close(reason string) error {
 	core.Debug("Asked to close: ", reason)
 
 	//TODO: Use appropriate error codes
@@ -112,7 +116,7 @@ func (c Conn) Close(reason string) error {
 	return nil
 }
 
-func (c Conn) SetApp(app core.App) {
+func (c *Conn) SetApp(app core.App) {
 	c.app = app
 }
 
