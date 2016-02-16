@@ -130,7 +130,7 @@ func (c domain) Join(conn Connection) error {
 		}
 	}
 
-	c.app.setState(Ready)
+	c.app.SetState(Ready)
 
 	// This is super dumb, and the reason its in here was fixed. Please revert
 	go c.app.receiveLoop()

@@ -16,6 +16,19 @@ const (
 	Leaving
 )
 
+// Exponential backoff settings
+//
+// initialRetryDelay is used for the first reconnection after startup and after
+// a successful connection (0 means try again immediately).
+//
+// Subsequent retries will use delays that grow exponentially between
+// minRetryDelay and maxRetryDelay.
+const (
+	initialRetryDelay = 0 * time.Second
+    minRetryDelay = 1  * time.Second
+    maxRetryDelay = 30 * time.Second
+)
+
 type App interface {
 	ReceiveBytes([]byte)
 	ReceiveMessage(message)
@@ -38,7 +51,9 @@ type App interface {
 	Login(Domain, ...string) (Domain, error)
 	RegisterAccount(Domain, string, string, string, string) (bool, error)
 
+	SetState(int)
 	ShouldReconnect() bool
+	NextRetryDelay() time.Duration
 }
 
 type app struct {
@@ -67,6 +82,8 @@ type app struct {
 	authid string
 	token  string
 	key    string
+
+	retryDelay time.Duration
 }
 
 // Sent up to the mantle and then the crust as callbacks are triggered
@@ -86,6 +103,7 @@ func NewApp() *app {
 		up:         make(chan Callback, 10),
 		listeners:  make(map[uint64]chan message),
 		token:      "",
+		retryDelay: initialRetryDelay,
 	}
 
 	a.stateChange = sync.NewCond(&a.stateMutex)
@@ -111,6 +129,10 @@ func (a *app) CallbackSend(id uint64, args ...interface{}) {
 func (c *app) Send(m message) error {
 	Debug("Sending %s: %v", m.messageType(), m)
 
+	if !c.open {
+		return fmt.Errorf("Could not send on closed connection")
+	}
+
 	if b, err := c.serializer.serialize(m); err != nil {
 		return err
 	} else {
@@ -128,7 +150,7 @@ func (c *app) Queue(m message) {
 }
 
 func (c *app) Close(reason string) {
-	c.setState(Leaving)
+	c.SetState(Leaving)
 	c.leaving = true
 
 	if !c.open {
@@ -158,7 +180,7 @@ func (c *app) ConnectionClosed(reason string) {
 	Info("Connection was closed: ", reason)
 	c.open = false
 
-	c.setState(Disconnected)
+	c.SetState(Disconnected)
 }
 
 // Send a Hello message to join the fabric.
@@ -273,7 +295,10 @@ func (c *app) handle(msg message) {
 	case *welcome:
 		Debug("Received WELCOME, reestablishing state with the fabric")
 		c.open = true
-		c.setState(Ready)
+		c.SetState(Ready)
+
+		// Reset retry delay after successful connection.
+		c.retryDelay = initialRetryDelay
 
 		go c.replayRegistrations()
 		go c.replaySubscriptions()
@@ -465,8 +490,11 @@ func (c *app) getMessageTimeout() (message, error) {
 	}
 }
 
-func (c *app) setState(state int) {
+func (c *app) SetState(state int) {
 	c.stateMutex.Lock()
+	if state == Connected {
+		c.open = true
+	}
 	c.state = state
 	c.stateChange.Broadcast()
 	c.stateMutex.Unlock()
@@ -474,4 +502,17 @@ func (c *app) setState(state int) {
 
 func (c *app) ShouldReconnect() bool {
 	return !c.leaving
+}
+
+func (c *app) NextRetryDelay() time.Duration {
+	delay := c.retryDelay
+
+	c.retryDelay *= 2
+	if c.retryDelay < minRetryDelay {
+		c.retryDelay = minRetryDelay
+	} else if c.retryDelay > maxRetryDelay {
+		c.retryDelay = maxRetryDelay
+	}
+
+	return delay
 }
