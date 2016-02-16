@@ -10,8 +10,8 @@ outputPath = os.path.join(os.getcwd(), 'riffle/src/main/java/com/exis/riffle/')
 #    }
 
 callDeferredTemplate = '''
-public CallDeferred then($handlerType handler) {
-    return _then (Cumin.cuminicate(handler));
+public $genericList CallDeferred then($genericClassList $handlerType handler) {
+    return _then (Cumin.cuminicate($classVars handler));
 }
 '''
 
@@ -58,7 +58,17 @@ def generateBasics(i, j):
 
 
 def renderDeferred(i, j):
-    return Template(callDeferredTemplate).substitute(handlerType=(handlerNames[i] + handlerNames[j]))
+    generics, genericList, classList, handler = generateBasics(i, j)
+    classList = classList + ', ' if len(classList) > 0 else classList
+    handler = "Handler.%s%s" % (handlerNames[i] + handlerNames[j], generics)
+    
+    classVars = ', '.join([x.lower() for x in genericList])
+    classVars = classVars + ', ' if len(classVars) > 0 else classVars
+
+    classes = ', '.join(["convert(%s, q[%s])" % (x.lower(), i) for i, x in enumerate(genericList)])
+
+
+    return Template(callDeferredTemplate).substitute(genericList=generics, handlerType=handler, genericClassList=classList, classVars=classVars)
 
 
 def renderCumin(i, j):
@@ -101,7 +111,7 @@ def foldLines(f, addition):
         for line in inf:
             if end_marker in line:
                 ignoreLines = False
-                
+
             if ignoreLines:
                 if not written:
                     written = True
@@ -133,9 +143,6 @@ if __name__ == '__main__':
             reg.append(renderHandler(i, j, 'register'))
             cumin.append(renderCumin(i, j))
             interfaces.append(renderInterface(i, j))
-
-    for x in subs:
-        print x
     
     foldAndWrite('cumin/Cumin.java', cumin)
     foldAndWrite('CallDeferred.java', call)

@@ -37,10 +37,10 @@ public class Domain {
     public void join() {
         Deferred d = new Deferred(app);
 
-        d.then(() -> {
-            Riffle.debug("Triggering onJoin method");
-            this.onJoin();
-        });
+//        d.then(() -> {
+//            Riffle.debug("Triggering onJoin method");
+//            this.onJoin();
+//        });
 
         mantleDomain.Join(d.cb.toString(), d.eb.toString());
         app.listen(mantleDomain);
