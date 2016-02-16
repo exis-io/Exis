@@ -40,7 +40,7 @@ colorama.init()
 STUB_REPL = False
 
 # This is the time that we will wait for a process to complete (using the ___*COMPLETE___ tags)
-WAIT_TIME = 8
+WAIT_TIME = 15
 
 # Browser testing support???
 try:
