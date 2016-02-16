@@ -37,10 +37,10 @@ public class Domain {
     public void join() {
         Deferred d = new Deferred(app);
 
-//        d.then(() -> {
-//            Riffle.debug("Triggering onJoin method");
-//            this.onJoin();
-//        });
+        d.then(() -> {
+            Riffle.debug("Triggering onJoin method");
+            this.onJoin();
+        });
 
         mantleDomain.Join(d.cb.toString(), d.eb.toString());
         app.listen(mantleDomain);
@@ -80,7 +80,7 @@ public class Domain {
     }
 
     public CallDeferred call(String endpoint, Object... arguments) {
-        CallDeferred d = new CallDeferred();
+        CallDeferred d = new CallDeferred(app);
         mantleDomain.Call(endpoint, d.cb.toString(), d.eb.toString(), Utils.marshall(arguments));
         return d;
     }
@@ -135,34 +135,6 @@ public <A, B, C, D, E> Deferred subscribe(String endpoint, Class<A> a, Class<B> 
 
 public <A, B, C, D, E, F> Deferred subscribe(String endpoint, Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<E> e, Class<F> f,  Handler.SixZero<A, B, C, D, E, F> handler) {
     return _subscribe(endpoint, Cumin.cuminicate(a, b, c, d, e, f, handler));
-}
-
-public  Deferred register(String endpoint,  Handler.ZeroZero handler) {
-    return _register(endpoint, Cumin.cuminicate(handler));
-}
-
-public <A> Deferred register(String endpoint, Class<A> a,  Handler.OneZero<A> handler) {
-    return _register(endpoint, Cumin.cuminicate(a, handler));
-}
-
-public <A, B> Deferred register(String endpoint, Class<A> a, Class<B> b,  Handler.TwoZero<A, B> handler) {
-    return _register(endpoint, Cumin.cuminicate(a, b, handler));
-}
-
-public <A, B, C> Deferred register(String endpoint, Class<A> a, Class<B> b, Class<C> c,  Handler.ThreeZero<A, B, C> handler) {
-    return _register(endpoint, Cumin.cuminicate(a, b, c, handler));
-}
-
-public <A, B, C, D> Deferred register(String endpoint, Class<A> a, Class<B> b, Class<C> c, Class<D> d,  Handler.FourZero<A, B, C, D> handler) {
-    return _register(endpoint, Cumin.cuminicate(a, b, c, d, handler));
-}
-
-public <A, B, C, D, E> Deferred register(String endpoint, Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<E> e,  Handler.FiveZero<A, B, C, D, E> handler) {
-    return _register(endpoint, Cumin.cuminicate(a, b, c, d, e, handler));
-}
-
-public <A, B, C, D, E, F> Deferred register(String endpoint, Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<E> e, Class<F> f,  Handler.SixZero<A, B, C, D, E, F> handler) {
-    return _register(endpoint, Cumin.cuminicate(a, b, c, d, e, f, handler));
 }
 
 public <R> Deferred register(String endpoint, Class<R> r,  Handler.ZeroOne<R> handler) {

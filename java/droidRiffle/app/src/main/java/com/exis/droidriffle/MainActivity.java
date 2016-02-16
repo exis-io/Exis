@@ -113,8 +113,9 @@ class Receiver extends Domain {
             Log.d(TAG, "I have a publish: " + a);
         });
 
-        register("reg", String.class, (name) -> {
+        register("reg", String.class, String.class, (name) -> {
             Log.d(TAG, "I have a call from: " + name);
+            return "Hey. caller!";
         });
 
         // Cool. I guess? It would be really nice to do away with the ".class" here
@@ -148,7 +149,9 @@ class Sender extends Domain {
 
         parent.receiver2.publish("sub", 1, 2, 3);
 
-        parent.receiver2.call("reg", "Johnathan");
+        parent.receiver2.call("reg", "Johnathan").then(String.class, (greeting) -> {
+            Log.d(TAG, "I received : " + greeting);
+        });
     }
 }
 

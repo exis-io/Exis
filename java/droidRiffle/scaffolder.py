@@ -25,6 +25,12 @@ public static $genericList Wrapped cuminicate($genericClassList, $handler fn) {
 }
 '''
 
+cuminReturnTemplate = '''
+public static $genericList Wrapped cuminicate($genericClassList, $handler fn) {
+    return (q) -> { return fn.run($converters); };
+}
+'''
+
 #    public <A> Deferred register(String endpoint, Class<A> a, Handler.One<A> handler) {
 #        return _register(endpoint, Cumin.cuminicate(a, handler));
 #    }
@@ -38,7 +44,7 @@ public $genericList Deferred $name(String endpoint, $genericClassList $handler h
 #   interface Two<A, B> { void run(A a, B b); }
 #   interface Three<A, B, C> { void run(A a, B b, C c); }
 interfaceTemplate = '''
-    interface $name$genericList { $ret run($paramList); }
+interface $name$genericList { $ret run($paramList); }
 '''
 
 allGenerics = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
@@ -73,9 +79,11 @@ def renderDeferred(i, j):
 
 def renderCumin(i, j):
     generics, genericList, classList, handler = generateBasics(i, j)
-    converters = ', '.join(["convert(%s, q[%s])" % (x.lower(), i) for i, x in enumerate(genericList)])
+    converters = ', '.join(["convert(%s, q[%s])" % (x.lower(), i) for i, x in enumerate(allGenerics[:i])])
 
-    return Template(cuminTemplate).substitute(genericList=generics, genericClassList=classList, handler=handler, converters=converters)
+    template = cuminTemplate if j == 0 else cuminReturnTemplate
+
+    return Template(template).substitute(genericList=generics, genericClassList=classList, handler=handler, converters=converters)
 
 
 def renderHandler(i, j, name):
@@ -92,13 +100,12 @@ def renderHandler(i, j, name):
 
 def renderInterface(i, j):
     generics, genericList, classList, handler = generateBasics(i, j)
-    paramList = ", ".join("%s %s" % (x, x.lower()) for x in genericList)
+    paramList = ", ".join("%s %s" % (x, x.lower()) for x in allGenerics[:i])
     ret = "void" if j == 0 else "R"
     return Template(interfaceTemplate).substitute(genericList=generics, name=(handlerNames[i] + handlerNames[j]), paramList=paramList, ret=ret)
 
+
 # Replaces the exising lines with these new lines
-
-
 def foldLines(f, addition):
     start_marker = '// Start Generic Shotgun'
     end_marker = '// End Generic Shotgun'
@@ -139,8 +146,9 @@ if __name__ == '__main__':
             if j == 0:
                 call.append(renderDeferred(i, j))
                 subs.append(renderHandler(i, j, 'subscribe'))
-
-            reg.append(renderHandler(i, j, 'register'))
+            else: 
+                reg.append(renderHandler(i, j, 'register'))
+                
             cumin.append(renderCumin(i, j))
             interfaces.append(renderInterface(i, j))
     

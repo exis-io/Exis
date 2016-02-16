@@ -10,6 +10,9 @@ import com.exis.riffle.cumin.Handler;
  */
 public class CallDeferred extends Deferred {
 
+    public CallDeferred(App app) {
+        super(app);
+    }
 
     @Override
     public CallDeferred _then(Cumin.Wrapped fn) {
@@ -17,15 +20,7 @@ public class CallDeferred extends Deferred {
         return this;
     }
 
-
-//    @Override
-//    public Deferred then(Handler.ZeroZero handler) {
-//        return _then(Cumin.cuminicate(handler));
-//    }
-
-
     // Start Generic Shotgun
-
     public  CallDeferred then( Handler.ZeroZero handler) {
         return _then (Cumin.cuminicate( handler));
     }
