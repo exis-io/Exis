@@ -58,11 +58,11 @@ public class Deferred {
     //
 
     // No args
-    public Deferred then(Handler.Zero handler) {
+    public Deferred then(Handler.ZeroZero handler) {
         return _then (Cumin.cuminicate(handler));
     }
 
-    public Deferred error(Handler.Zero handler) {
+    public Deferred error(Handler.ZeroZero handler) {
         return _error(Cumin.cuminicate(handler));
     }
 }
