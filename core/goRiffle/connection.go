@@ -18,11 +18,6 @@ type WebsocketConnection struct {
 	url         string
 }
 
-const (
-	minRetryDelay = 1  * time.Second
-	maxRetryDelay = 30 * time.Second
-)
-
 func Open(url string) (*WebsocketConnection, error) {
 	core.Debug("Opening ws connection to %s", url)
 	dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
@@ -76,8 +71,6 @@ func (ep *WebsocketConnection) Close(reason string) error {
 }
 
 func (ep *WebsocketConnection) Reconnect() error {
-	delay := minRetryDelay
-
 	for {
 		core.Debug("Opening connection to %s", ep.url)
 		dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
@@ -90,6 +83,8 @@ func (ep *WebsocketConnection) Reconnect() error {
 			ep.conn = conn
 			ep.lock.Unlock()
 
+			ep.app.SetState(core.Connected)
+
 			if err := ep.app.SendHello(); err != nil {
 				core.Debug("Sending HELLO failed: %e", err)
 				ep.conn.Close()
@@ -98,15 +93,9 @@ func (ep *WebsocketConnection) Reconnect() error {
 			}
 		}
 
+		delay := ep.app.NextRetryDelay()
 		core.Debug("Retry in %v", delay)
-
 		time.Sleep(delay)
-
-		// Exponential backoff up to maxRetryDelay.
-		delay *= 2
-		if delay > maxRetryDelay {
-			delay = maxRetryDelay
-		}
 	}
 }
 

@@ -54,6 +54,9 @@ class App {
                         args = a.toArray();
                     }
 
+//                    Riffle.debug("Got invocation: " + id.toString() + " " + args.toString());
+//                    Riffle.debug("Handlers: " + deferreds.toString());
+
                     if (deferreds.containsKey(id)) {
                         Deferred d = deferreds.remove(id);
 
@@ -76,7 +79,6 @@ class App {
                         // TODO: try/catch
 
                         if (t.isRegistration) {
-                            // CAREFUL-- this isn't going to work if the mantle is still dealing in longs!
                             BigInteger yieldId = Utils.convertCoreInt64(args[0]);
                             Object result = t.fn.invoke(Arrays.copyOfRange(args, 1, args.length));
 
