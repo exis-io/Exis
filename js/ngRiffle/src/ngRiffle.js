@@ -214,22 +214,16 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
               return new DomainWrapper(this.conn.linkDomain(id));
             };
             DomainWrapper.prototype.login = function(user) {
+              user = user || {};
               var self = this;
               //deferred for knowing when process is done
               var userDeferred = $q.defer();
 
-              var args = [];
-              if(user && user.username){
-                args.push(user.username);
-              }
               //figure out auth level from user object
               var auth0 = false;
-              if(!user || !user.password || user.password === ""){
+              if(!user.password){
                 auth0 = true;
-              }else{
-                args.push(user.password);
               }
-
               
               function resolve(){
                 userDeferred.resolve(connection.user);
@@ -256,13 +250,13 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
               }
 
               //attempt registration login and continue process on success
-              this.conn.login.apply(this.conn, args).then(success, userDeferred.reject);
+              this.conn.login(user).then(success, userDeferred.reject);
 
               //return the promise which will be resolved once the login process completes.
               return userDeferred.promise;
             };
             DomainWrapper.prototype.registerAccount = function(user) {
-              return this.conn.registerAccount(user.username, user.password, user.email, user.name);
+              return this.conn.registerAccount(user);
             };
 
             function User(app, domain) {

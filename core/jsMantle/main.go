@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/augustoroman/promise"
 	"github.com/exis-io/core"
 	"github.com/gopherjs/gopherjs/js"
+	"strings"
 )
 
 func main() {
@@ -77,9 +77,9 @@ func (c Conn) OnClose(msg *js.Object) {
 func (c Conn) Send(data []byte) error {
 	c.wrapper.Call("send", string(data))
 
-	// Added a nil error return 
+	// Added a nil error return
 	// TOOD: the js connection can return its error for tranmission to the core as appropriate
-	return nil 
+	return nil
 }
 
 func (c Conn) Close(reason string) error {
@@ -159,7 +159,7 @@ func (a *App) Receive() {
 
 // Part 1 of the join-- start the join
 func (d *Domain) Join() {
-	factory := js.Global.Get("WsFactory").New(map[string]string{"type": "websocket", "url":core.Fabric})
+	factory := js.Global.Get("WsFactory").New(map[string]string{"type": "websocket", "url": core.Fabric})
 	wsConn := factory.Call("create")
 
 	conn := Conn{
@@ -192,53 +192,83 @@ func (d *Domain) FinishJoin(c *Conn) {
 func (d *Domain) SetToken(token string) {
 	d.coreDomain.GetApp().SetToken(token)
 }
-func (d *Domain) GetToken() (string) {
+func (d *Domain) GetToken() string {
 	return d.coreDomain.GetApp().GetToken()
 }
 
-func (d *Domain) Login(args ...string) *js.Object {
-    var p promise.Promise
+func (d *Domain) Login(user *js.Object) *js.Object {
+	var p promise.Promise
 
-    go func() {
+	go func() {
 
-	app := d.coreDomain.GetApp()
+		username := user.Get("username")
+		password := user.Get("password")
+		args := make([]string, 2)
+		if username != js.Undefined {
+			args[0] = strings.ToLower(username.String())
+			if password != js.Undefined {
+				args[1] = password.String()
+			}
+		}
 
-	if domain, err := app.Login(d.coreDomain, args...); err != nil {
-	    p.Reject(err.Error())
-	}else{
-	    n := Domain{
-		    coreDomain: domain,
-		    app:        d.app,
-	    }
+		app := d.coreDomain.GetApp()
 
-	    n.wrapped = js.MakeWrapper(&n)
-	    js.Global.Get("Renamer").Invoke(n.wrapped)
-	    p.Resolve(n.wrapped)
-	}
-    }()
+		if domain, err := app.Login(d.coreDomain, args...); err != nil {
+			p.Reject(err.Error())
+		} else {
+			n := Domain{
+				coreDomain: domain,
+				app:        d.app,
+			}
 
-    return p.Js()
+			n.wrapped = js.MakeWrapper(&n)
+			js.Global.Get("Renamer").Invoke(n.wrapped)
+			p.Resolve(n.wrapped)
+		}
+	}()
+
+	return p.Js()
 }
 
-func (d *Domain) RegisterAccount(username string, password string, email string, name string) *js.Object {
-    var p promise.Promise
+func (d *Domain) RegisterAccount(user *js.Object) *js.Object {
+	var p promise.Promise
 
-    go func() {
+	go func() {
 
-	app := d.coreDomain.GetApp()
+		app := d.coreDomain.GetApp()
+		username := user.Get("username")
+		password := user.Get("password")
+		email := user.Get("email")
+		name := user.Get("name")
+		if username == js.Undefined {
+			p.Reject("Must provide username.")
+			return
+		}
+		if password == js.Undefined {
+			p.Reject("Must provide password.")
+			return
+		}
+		if email == js.Undefined {
+			p.Reject("Must provide email.")
+			return
+		}
+		if name == js.Undefined {
+			p.Reject("Must provide name.")
+			return
+		}
 
-	if success, err := app.RegisterAccount(d.coreDomain, username, password, email, name); err != nil {
-	    p.Reject(err.Error())
-	}else{
-	    if success {
-		p.Resolve(nil)
-	    } else {
-		p.Reject("Register Failed")
-	    }
-	}
-    }()
+		if success, err := app.RegisterAccount(d.coreDomain, strings.ToLower(username.String()), password.String(), strings.ToLower(email.String()), name.String()); err != nil {
+			p.Reject(err.Error())
+		} else {
+			if success {
+				p.Resolve(nil)
+			} else {
+				p.Reject("Register Failed")
+			}
+		}
+	}()
 
-    return p.Js()
+	return p.Js()
 }
 
 func (d *Domain) Subscribe(endpoint string, handler *js.Object) *js.Object {
@@ -335,14 +365,13 @@ func (d *Domain) Call(endpoint string, args ...interface{}) *js.Object {
 
 	j := p.Js()
 
-	// Rewraps the existing then callback 
+	// Rewraps the existing then callback
 	existingFunction := j.Get("then")
 	j.Set("then", js.Global.Get("PromiseInterceptor").Invoke(existingFunction, d.wrapped, cb))
 	j.Set("want", js.Global.Get("WaitInterceptor").Invoke(existingFunction, d.wrapped, cb))
 
 	return j
 }
-
 
 func (d *Domain) Publish(endpoint string, args ...interface{}) *js.Object {
 	return promisify(func() (interface{}, error) { return nil, d.coreDomain.Publish(endpoint, args) })
@@ -363,7 +392,6 @@ func (d *Domain) Leave() *js.Object {
 func (d *Domain) CallExpects(cb uint64, types []interface{}) {
 	d.coreDomain.CallExpects(cb, types)
 }
-
 
 // Turn the given invocation into a JS promise. If the function returns an error, return the error,
 // else return the results of the function
@@ -390,22 +418,22 @@ func SetLogLevelInfo()  { core.LogLevel = core.LogLevelInfo }
 func SetLogLevelDebug() { core.LogLevel = core.LogLevelDebug }
 
 func SetFabricDev() {
-    core.Fabric = core.FabricDev
-    core.Registrar = core.RegistrarDev
+	core.Fabric = core.FabricDev
+	core.Registrar = core.RegistrarDev
 }
 
 func SetFabricProduction() {
-    core.Fabric = core.FabricProduction
-    core.Registrar = core.RegistrarProduction
+	core.Fabric = core.FabricProduction
+	core.Registrar = core.RegistrarProduction
 }
 
 func SetFabricLocal() {
-    core.Fabric = core.FabricLocal
-    core.Registrar = core.RegistrarLocal
+	core.Fabric = core.FabricLocal
+	core.Registrar = core.RegistrarLocal
 }
 
-func SetFabricSandbox() { core.Fabric = core.FabricSandbox }
-func SetFabric(url string) { core.Fabric = url }
+func SetFabricSandbox()       { core.Fabric = core.FabricSandbox }
+func SetFabric(url string)    { core.Fabric = url }
 func SetRegistrar(url string) { core.Registrar = url }
 
 func Application(s string) { core.Application("%s", s) }
