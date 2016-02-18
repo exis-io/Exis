@@ -223,7 +223,7 @@ func (d *Domain) GetToken() string {
 }
 
 func (d *Domain) Login(user *js.Object) *js.Object {
-	var p promise.Promise
+	q := js.Global.Get("Q").Get("defer").Invoke()
 
 	go func() {
 
@@ -240,7 +240,7 @@ func (d *Domain) Login(user *js.Object) *js.Object {
 		app := d.coreDomain.GetApp()
 
 		if domain, err := app.Login(d.coreDomain, args...); err != nil {
-			p.Reject(err.Error())
+			q.Get("reject").Invoke(err.Error())
 		} else {
 			n := Domain{
 				coreDomain: domain,
@@ -249,11 +249,11 @@ func (d *Domain) Login(user *js.Object) *js.Object {
 
 			n.wrapped = js.MakeWrapper(&n)
 			js.Global.Get("Renamer").Invoke(n.wrapped)
-			p.Resolve(n.wrapped)
+			q.Get("resolve").Invoke(n.wrapped)
 		}
 	}()
 
-	return p.Js()
+	return q.Get("promise")
 }
 
 func (d *Domain) RegisterAccount(user *js.Object) *js.Object {
@@ -363,40 +363,29 @@ func (d *Domain) Register(endpoint string, handler *js.Object) *js.Object {
 	return p.Js()
 }
 
-// Special, hacky case
+func typeChecker(types []interface{}, results []interface{}, deferred *js.Object) {
+	err := core.SoftCumin(types, results)
+	if err != nil {
+		deferred.Get("reject").Invoke(err.Error())
+	} else {
+		deferred.Get("resolve").Invoke(results...)
+	}
+}
+
 func (d *Domain) Call(endpoint string, args ...interface{}) *js.Object {
-	var p promise.Promise
-	cb := core.NewID()
-	// core.Info("Resolving the promise with results: %s", results)
+	callDefer := js.Global.Get("Q").Get("defer").Invoke()
 
 	go func() {
 		if results, err := d.coreDomain.Call(endpoint, args); err == nil {
-			if types, ok := d.coreDomain.GetCallExpect(cb); !ok {
-				// We were never asked for types. Don't do anything
-				core.Info("Call for %v received, but no cumin enforcement present.", endpoint)
-			} else {
-				d.coreDomain.RemoveCallExpect(cb)
-				if err := core.SoftCumin(types, results); err == nil {
-					p.Resolve(results)
-				} else {
-					p.Reject(err.Error())
-				}
-			}
-
+			callDefer.Get("resolve").Invoke(results...)
 		} else {
-			d.coreDomain.RemoveCallExpect(cb)
-			p.Reject(err.Error())
+			callDefer.Get("reject").Invoke(err.Error())
 		}
 	}()
 
-	j := p.Js()
+	callDefer.Get("promise").Set("want", js.Global.Get("WantInterceptor").Invoke(callDefer.Get("promise"), typeChecker))
 
-	// Rewraps the existing then callback
-	existingFunction := j.Get("then")
-	j.Set("then", js.Global.Get("PromiseInterceptor").Invoke(existingFunction, d.wrapped, cb))
-	j.Set("want", js.Global.Get("WaitInterceptor").Invoke(existingFunction, d.wrapped, cb))
-
-	return j
+	return callDefer.Get("promise")
 }
 
 func (d *Domain) Publish(endpoint string, args ...interface{}) *js.Object {

@@ -1,7 +1,6 @@
 module.exports = {};
 var exports = module.exports;
 exports.want = want;
-exports.wait = wait;
 exports.ModelObject = newModelObject;
 
 
@@ -42,53 +41,11 @@ function want(){
 
   function wrap(){
     // If this is associated with a reg then we must return whatever they give us
-    return fp.apply(this, expect.validate(arguments));
+    return fp.apply({}, expect.validate(arguments));
   }
   handler.fp = wrap;
   handler.types = expect.types();
 
-  return handler;
-}
-
-function wait(){
-  var handler = {};
-  var fp = arguments[0];
-  var expect = new Expectation();
-  var len = arguments.length;
-
-  for(var i = 1; i < len; i++){
-    if(validTypes.indexOf(arguments[i]) > -1 || arguments[i] instanceof ModelObject){
-      expect.addArg(arguments[i], i-1);
-    }else{
-      try{
-        var c = arguments[i].constructor;
-        if(c === Array){
-          expect.addArg(new ArrayWithType(arguments[i][0]), i-1);
-        }else if(c === Object){
-          expect.addArg(new ObjectWithKeys(arguments[i]), i-1);
-        }else{
-          throw "Error";
-        }
-      }catch(e){
-        throw "Error: Inproperly formatted want statement. Argument " + (i + 1) + " is invalid.";
-      }
-    }  
-  }
-
-  function wrap(){
-    // Note that we have to do arg[0] here because it returns to us differently
-    // than the values passed back by want() above (this is because it is the result
-    // of a yield message and is handled differently by the core).
-    // for(var arg in arguments){
-    //   arguments[arg] = arguments[arg][0];
-    // }
-    return fp.apply(this, expect.validate(arguments));
-  }
-  handler.fp = wrap;
-  handler.types = expect.types();
-  
-  // This is part of a promise response from the core, so we can't pass back a handler
-  // we must pass back a function pointer instead
   return handler;
 }
 
