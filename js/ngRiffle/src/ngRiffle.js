@@ -204,7 +204,9 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
               var self = this;
               
               return interceptorWrapper('call', arguments, function () {
-                return self.conn.call.apply(self.conn, a);
+                var ret = self.conn.call.apply(self.conn, a);
+                ret.then(function(ret){console.log(ret);});
+                return ret;
               });
             };
             DomainWrapper.prototype.subdomain = function(id) {
@@ -276,6 +278,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
               var self = this;
               var loadDeferred = $q.defer();
               function loadUser(user){
+                console.log('here')
                 self.name = user.name;
                 self.email = user.email;
                 self.gravatar = user.gravatar;
