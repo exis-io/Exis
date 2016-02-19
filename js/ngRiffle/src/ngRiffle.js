@@ -202,12 +202,30 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
             DomainWrapper.prototype.call = function () {
               var a = arguments
               var self = this;
-              
-              return interceptorWrapper('call', arguments, function () {
-                var ret = self.conn.call.apply(self.conn, a);
-                ret.then(function(ret){console.log(ret);});
-                return ret;
+              var callPromise = undefined;
+              var types = undefined;
+              var callPromiseInit = $q.defer();
+
+              function wantIntercept() {
+                return interceptorWrapper('want', a, function() {
+                  return callPromise.want.apply({}, types)
+                });
+              }
+
+              function want(){
+                types = arguments;
+                return callPromiseInit.promise.then(wantIntercept);
+              }
+
+              var inter = interceptorWrapper('call', arguments, function () {
+                callPromise = self.conn.call.apply(self.conn, a);
+                callPromiseInit.resolve();
+                return callPromise;
               });
+
+              inter.want = want;
+              
+              return inter;
             };
             DomainWrapper.prototype.subdomain = function(id) {
               return new DomainWrapper(this.conn.subdomain(id));
@@ -278,7 +296,6 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
               var self = this;
               var loadDeferred = $q.defer();
               function loadUser(user){
-                console.log('here')
                 self.name = user.name;
                 self.email = user.email;
                 self.gravatar = user.gravatar;

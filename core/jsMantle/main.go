@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/augustoroman/promise"
 	"github.com/exis-io/core"
 	"github.com/gopherjs/gopherjs/js"
 	"strings"
@@ -223,7 +222,7 @@ func (d *Domain) GetToken() string {
 }
 
 func (d *Domain) Login(user *js.Object) *js.Object {
-	q := js.Global.Get("Q").Get("defer").Invoke()
+	q := core.Defer()
 
 	go func() {
 
@@ -240,7 +239,7 @@ func (d *Domain) Login(user *js.Object) *js.Object {
 		app := d.coreDomain.GetApp()
 
 		if domain, err := app.Login(d.coreDomain, args...); err != nil {
-			q.Get("reject").Invoke(err.Error())
+			q.Reject(err.Error())
 		} else {
 			n := Domain{
 				coreDomain: domain,
@@ -249,15 +248,15 @@ func (d *Domain) Login(user *js.Object) *js.Object {
 
 			n.wrapped = js.MakeWrapper(&n)
 			js.Global.Get("Renamer").Invoke(n.wrapped)
-			q.Get("resolve").Invoke(n.wrapped)
+			q.Resolve(n.wrapped)
 		}
 	}()
 
-	return q.Get("promise")
+	return q.Promise()
 }
 
 func (d *Domain) RegisterAccount(user *js.Object) *js.Object {
-	var p promise.Promise
+	p := core.Defer()
 
 	go func() {
 
@@ -294,12 +293,12 @@ func (d *Domain) RegisterAccount(user *js.Object) *js.Object {
 		}
 	}()
 
-	return p.Js()
+	return p.Promise()
 }
 
 func (d *Domain) Subscribe(endpoint string, handler *js.Object) *js.Object {
 	cb := core.NewID()
-	var p promise.Promise
+	p := core.Defer()
 
 	go func() {
 		// From the want wrapper pull out the types they defined,
@@ -323,16 +322,16 @@ func (d *Domain) Subscribe(endpoint string, handler *js.Object) *js.Object {
 			d.app.subscriptions[cb] = handlerFunction
 			p.Resolve(nil)
 		} else {
-			p.Reject(err)
+			p.Reject(err.Error())
 		}
 	}()
 
-	return p.Js()
+	return p.Promise()
 }
 
 func (d *Domain) Register(endpoint string, handler *js.Object) *js.Object {
 	cb := core.NewID()
-	var p promise.Promise
+	p := core.Defer()
 
 	go func() {
 		// From the want wrapper pull out the types they defined,
@@ -356,36 +355,36 @@ func (d *Domain) Register(endpoint string, handler *js.Object) *js.Object {
 			d.app.registrations[cb] = handlerFunction
 			p.Resolve(nil)
 		} else {
-			p.Reject(err)
+			p.Reject(err.Error())
 		}
 	}()
 
-	return p.Js()
+	return p.Promise()
 }
 
 func typeChecker(types []interface{}, results []interface{}, deferred *js.Object) {
 	err := core.SoftCumin(types, results)
 	if err != nil {
-		deferred.Get("reject").Invoke(err.Error())
+		deferred.Call("reject", err.Error())
 	} else {
-		deferred.Get("resolve").Invoke(results...)
+		deferred.Call("resolve", results...)
 	}
 }
 
 func (d *Domain) Call(endpoint string, args ...interface{}) *js.Object {
-	callDefer := js.Global.Get("Q").Get("defer").Invoke()
+	p := core.Defer()
 
 	go func() {
 		if results, err := d.coreDomain.Call(endpoint, args); err == nil {
-			callDefer.Get("resolve").Invoke(results...)
+			p.Resolve(results...)
 		} else {
-			callDefer.Get("reject").Invoke(err.Error())
+			p.Reject(err.Error())
 		}
 	}()
 
-	callDefer.Get("promise").Set("want", js.Global.Get("WantInterceptor").Invoke(callDefer.Get("promise"), typeChecker))
+	p.Promise().Set("want", js.Global.Get("WantInterceptor").Invoke(p.Promise(), typeChecker))
 
-	return callDefer.Get("promise")
+	return p.Promise()
 }
 
 func (d *Domain) Publish(endpoint string, args ...interface{}) *js.Object {
@@ -411,7 +410,7 @@ func (d *Domain) CallExpects(cb uint64, types []interface{}) {
 // Turn the given invocation into a JS promise. If the function returns an error, return the error,
 // else return the results of the function
 func promisify(fn func() (interface{}, error)) *js.Object {
-	var p promise.Promise
+	p := core.Defer()
 
 	go func() {
 		if results, err := fn(); err == nil {
@@ -422,7 +421,7 @@ func promisify(fn func() (interface{}, error)) *js.Object {
 		}
 	}()
 
-	return p.Js()
+	return p.Promise()
 }
 
 func SetLogLevelOff()   { core.LogLevel = core.LogLevelOff }
