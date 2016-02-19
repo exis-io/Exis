@@ -21,22 +21,7 @@ function want(){
   var expect = new Expectation();
   var len = arguments.length;
   for(var i = 1; i < len; i++){
-    if(validTypes.indexOf(arguments[i]) > -1 || arguments[i] instanceof ModelObject){
       expect.addArg(arguments[i], i-1);
-    }else{
-      try{
-        var c = arguments[i].constructor;
-        if(c === Array){
-          expect.addArg(new ArrayWithType(arguments[i][0]), i-1);
-        }else if(c === Object){
-          expect.addArg(new ObjectWithKeys(arguments[i]), i-1);
-        }else{
-          throw "Error";
-        }
-      }catch(e){
-        throw "Error: Inproperly formatted want statement. Argument " + (i+1) + " is invalid.";
-      }
-    }
   }
 
   function wrap(){
@@ -66,9 +51,9 @@ Expectation.prototype.types = function(){
     return argTypes;
 };
 
-Expectation.prototype.validTypes = [String, Boolean, Number, null, Array, Object];
+Expectation.prototype.validTypes = [String, Boolean, Number, Array, Object];
 
-Expectation.prototype.typeNames = "String, Boolean, Number, null, Array, Object";
+Expectation.prototype.typeNames = "String, Boolean, Number, Array, Object, {key: Type}, [Type]";
 
 Expectation.prototype.argType =  function(type){
   if(type instanceof Model){
@@ -93,35 +78,10 @@ Expectation.prototype.argType =  function(type){
 };
 
 Expectation.prototype.validate = function(args){
-  /** I think this is all validation that should already be done in core.
-  if(args.length !== this.args.length){
-    throw "Error: Expected " + this.args.length + " arguments but recieved " + args.length + ".";
-  }
-  */
   for(var i in this.args){
     if(this.args[i] instanceof Model){
       args[i] = this.args[i].construct(args[i]);
     }
-    /** I think this is all validation that should already be done in core.
-    else if(this.args[i] === null || args[i] === null){
-      if(args[i] === null && this.args[i] === null){
-        continue;
-      }else{
-        if(args[i] && args[i].constructor){
-          throw "Error: Expected " + this.typeName(this.args[i]) + " for argument: [" + i + "] but got " + this.typeName(args[i].constructor) + ".";
-        }else{
-          throw "Error: Expected " + this.typeName(this.args[i]) + " for argument: [" + i + "] but got " + args[i] + ".";
-        }      
-      }
-    }else if(args[i] === undefined || !args[i].constructor){
-      throw "Error: Invalid argument. Unknown type, no constructor found.";
-    }else if(this.args[i] === args[i].constructor){
-      //Type matches basic class with no validation required
-      continue;
-    }else{
-      throw "Error: Invalid argument. Expecting " + this.typeName(this.args[i]) + " but recieved " + this.typeName(args[i].constructor) + ".";
-    }
-    */
   }
   return args;
 };
@@ -131,7 +91,18 @@ Expectation.prototype.addArg = function(arg, index){
   if(this.validTypes.indexOf(arg) > -1 || arg instanceof Model){
     this.args[index] = arg;
   }else{
-    throw "Error: Argument at index: [" + index + "] is not a valid argument type. Valid types are valid jsRiffle Models or " + this.typeNames + ".";
+    try{
+        var c = arg.constructor;
+        if(c === Array){
+          this.args[index] = new ArrayWithType(arg[0]);
+        }else if(c === Object){
+          this.args[index] = new ObjectWithKeys(arg);
+        }else{
+          throw "Error";
+        }
+    }catch(e){
+      throw "Error: Argument " + index + " is not a valid argument type. Valid types are valid jsRiffle ModelObjects or " + this.typeNames + ".";
+    }
   }
 
 };
