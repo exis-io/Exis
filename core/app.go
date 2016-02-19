@@ -78,6 +78,8 @@ type app struct {
 	listenersLock sync.Mutex
 
 	// authentication options
+	// TODO: store as a list of credentials
+	// TODO: include username/password as a type
 	agent  string
 	authid string
 	token  string

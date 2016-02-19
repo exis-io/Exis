@@ -29,7 +29,12 @@ class Domain(object):
             self.mantleDomain = pymantle.NewDomain(name)
             self.app = App()
 
-    def join(self):
+    def join(self, token=None):
+        # Pass credentials down to the core before attempting to join the
+        # fabric.
+        if token is not None:
+            self.mantleDomain.SetToken(token)
+
         # TODO: convert the "control plane" to use deferreds using Twisted style callbacks
         cb, eb = utils.newID(2)
         self.app.control[cb] = self.onJoin

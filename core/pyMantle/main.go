@@ -75,6 +75,11 @@ func (d *Domain) YieldError(request uint64, etype string, args string) {
 	go d.coreDomain.GetApp().YieldError(request, etype, core.MantleUnmarshal(args))
 }
 
+func (d *Domain) SetToken(token string) {
+	app := d.coreDomain.GetApp()
+	app.SetToken(token)
+}
+
 func (d *Domain) Leave() {
 	go d.coreDomain.Leave()
 }
