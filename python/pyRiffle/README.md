@@ -17,3 +17,22 @@ Riffle functionality for python.
 6. Install pyRiffle locally. In `python/pyRiffle` run `sudo pip install -e .`
 
 7. Compile and run sample project. In python/example: `python receiver.py` and `python sender.py`.
+
+
+## Installation on Mac OSX
+
+1. Currently, pyRiffle requires Apple's default Python interpreter.  If you have python installed through Homebrew, it must be removed in order to use pyRiffle.  We realize this may inconvenience more than a few developers and are working to fix this limitation.
+
+    `brew rm python`
+
+2. We highly recommend using [virtualenv][https://virtualenv.readthedocs.org/en/latest/] for dependency management.  Install and activate a virtual environment.  Please see the [User Guide][https://virtualenv.readthedocs.org/en/latest/userguide.html] if you are unfamiliar with the virtualenv workflow.
+
+    ```
+    sudo pip install virtualenv
+    virtualenv venv
+    source venv/bin/activate
+    ```
+
+3. Install pyRiffle
+
+    `pip install pyRiffle`
