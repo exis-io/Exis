@@ -17,6 +17,7 @@ print "___SETUPCOMPLETE___"
 
 try:
     title = WebDriverWait(driver, 10).until(EC.text_to_be_present_in_element((By.ID, "results"), "$REPL_BROWSER_EXPECT"))
+    print "$REPL_BROWSER_EXPECT"
     print "___RUNCOMPLETE___"
 except:
     print "Exception"

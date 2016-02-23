@@ -365,7 +365,7 @@ class BrowserCoder(Coder):
             good = "no expect required"
         else:
             for t, o in out:
-                if "___RUNCOMPLETE___" in o:
+                if "___RUNCOMPLETE___" in o or ev in o:
                     good = ev
         return good
 
