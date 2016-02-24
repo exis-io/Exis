@@ -3,6 +3,7 @@ require('./go.js');
 var want = require('./want.js');
 var ws = require('./websocket.js');
 var pjson = require('../package.json');
+global.Q = require('q');
 
 global.WsFactory = require('./websocket').Factory;
 
@@ -25,51 +26,27 @@ global.Renamer = function(domain) {
 	}
 }
 
-// Intercepts .then and sends down cumin args to the core. 
-// Should only be used by Calls, and internally at that 
-global.PromiseInterceptor = function(trueHandler, domain, cb) {
-    return function(callback, errback) {
-        // Automatically splat the arguments across the callback function 
-        var applyer = function(fn) {
-            return function(a) {  fn.apply(domain, a) }
-        };
-
-        // If callback has these two properties, then its NOT a callback, its a wait
-        if (callback.types == undefined && callback.fb == undefined) {
-            domain.callExpects(cb, [null]);
-            trueHandler(applyer(callback), errback)
-        } else {
-            domain.callExpects(cb, callback.types);
-            trueHandler(applyer(callback.fp), errback);
-        }
-    }
-}
-
-global.WaitInterceptor = function(trueHandler, domain, cb) {
-
-    var t = global.PromiseInterceptor(trueHandler, domain, cb);
+global.WantInterceptor = function(corePromise, typeCheck) {
 
     return function(){
-        var types = [];
-        for(var arg in arguments){
-          types.push(arguments[arg]);
+      var wantDefer = global.Q.defer();
+      var args = [];
+      args.push(wantDefer.resolve);
+      for(var i in arguments){
+        args.push(arguments[i]);
+      }
+      var callback = want.want.apply(this, args)
+      function checkTypes(){
+        var args = [];
+        for(arg in arguments){
+          args.push(arguments[arg]);
         }
-
-        function then(){
-          var args = [];
-          for(var i in arguments){
-            args.push(arguments[i]);
-          }
-          types.unshift(arguments[0]);
-          console.log(types);
-          args[0] = want.want.apply(this, types);
-          console.log(args)
-          t.apply(this, args);
-        }
-    
-        return {
-          then: then
-        };
+        var anotherDefer = global.Q.defer();
+        typeCheck(callback.types, args, anotherDefer);
+        anotherDefer.promise.then(callback.fp, wantDefer.reject);
+      }
+      corePromise.then(checkTypes, wantDefer.reject);
+      return wantDefer.promise;
     };
 }
 
