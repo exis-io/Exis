@@ -31,7 +31,7 @@ from subprocess import call
 import shutil
 import tempfile
 
-# Attempt to set the directory automatically if stump is executing 
+# Attempt to set the directory automatically if stump is executing
 if os.environ.get("EXIS_REPO", None) is None:
     if 'stump.py' in next(os.walk('.'))[2]:
         os.environ["EXIS_REPO"] = os.getcwd()
@@ -100,9 +100,14 @@ if __name__ == '__main__':
             call("git subtree push --prefix %s %s %s" % (p, r, b,), shell=True)
 
     elif args['pull']:
-        repos = SUBTREES if args['all'] else args['REPOS']
+        if args['all']:
+            repos = SUBTREES
+        else:
+            repos = [x for x in SUBTREES if x[1] in args['REPOS']]
+
         b = 'master'
 
+        print "Pushing: ", repos
         for p, r, u in repos:
             call("git subtree pull --prefix %s %s %s -m 'Update to stump' --squash" % (p, r, b,), shell=True)
 
