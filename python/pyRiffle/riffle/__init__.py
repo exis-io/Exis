@@ -15,6 +15,8 @@ elif platform.architecture() == ("32bit", "ELF"):
     libdir = "linux-386"
     print("Warning: for 32-bit platforms, you must set GODEBUG in your environment.")
     print("Try 'export GODEBUG=cgocheck=0' if you experience problems.")
+elif platform.system() == "Darwin" and platform.machine() == "x86_64":
+    libdir = "Darwin-x86_64"
 else:
     # Unsupported platforms can still work if the developer built pymantle.so
     # from source.
