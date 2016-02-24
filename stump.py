@@ -107,7 +107,8 @@ if __name__ == '__main__':
 
         b = 'master'
 
-        print "Pushing: ", repos
+        print "Pulling: ", [x[0] for x in repos]
+
         for p, r, u in repos:
             call("git subtree pull --prefix %s %s %s -m 'Update to stump' --squash" % (p, r, b,), shell=True)
 
