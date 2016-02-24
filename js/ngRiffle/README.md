@@ -34,7 +34,7 @@ To use ngRiffle in your project, you need to include the following files in your
 $ npm install ngRiffle
 ```
 
-And then you can import angular-wamp into your js files:
+And then you can import ngRiffle into your js files:
 
 ```js
 import angular     from 'angular';
