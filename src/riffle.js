@@ -1,189 +1,80 @@
 
-
-require('./polyfill.js');
-
-var log = require('./log.js');
+require('./go.js');
+var want = require('./want.js');
+var ws = require('./websocket.js');
 var pjson = require('../package.json');
-var when = require('when');
-var fn = require("when/function");
-var configure = require('./configure.js');
 
-exports.version = pjson.version;
-exports.transports = configure.transports;
-exports.when = when;
-exports.log = log;
+global.WsFactory = require('./websocket').Factory;
 
-
-//
-// Begin GOJS implementation
-//
-
-var go = require('./go.js');
-var ws = require('./transport/websocket.js');
-
-FABRIC_URL = "ws://localhost:8000/ws";
-
-var Ws = function () {
-    self = this;
-
-    this.open = function() {
-        // Methods available on the conn: console.log, protocol, send, close, onmessage, onopen, onclose, info
-
-        var factory = new ws.Factory({'type': 'websocket', 'url': FABRIC_URL});
-        self.conn = factory.create();
-
-        self.conn.onmessage = global.Wrapper.NewMessage;
-        self.conn.onopen = global.Wrapper.ConnectionOpened;
-
-        self.conn.onclose = function() {
-            console.log("DEFAULT Transport closed");
-
-            // Call closed on the core
-        };
-    }
-}; 
-
-Ws.prototype.send = function(message) {
-    console.log("Sending message: ", message)
-    this.conn.send(message);
-};
-
-Ws.prototype.close = function(code, reason) {
-    console.log("Closing connection with reason: ", reason)
-    this.conn.close(code, reason)
-};
-
-
-global.Wrapper.New();
-
-// Create and open the connection, let the wrapper have it 
-var conn = new Ws();
-conn.open()
-
-global.Wrapper.SetConnection(conn);
-
-//
-// Start client implementation
-//
-
-function prependDomain(domain, target) {
-    if (target.indexOf("xs.") > -1) {
-        return target
-    }
-
-    return domain + "/" + target;
-};
-
-function flattenHash(hash) {
-    var ret = [];
-
-    for (k in hash) {
-        ret.push(hash[k]);
-    }
-
-    return ret
-}
-
+exports.want = want.want;
+exports.modelObject = want.ModelObject;
 
 exports.Domain = global.Domain.New;
+exports.version = pjson.version;
 
-// Old domain implementation 
 
-
-// Introduction of domain object. Wraps one connection and offers multiple levels of 
-// indirection for interacting with remote domains
-var Domain = function (name) {
-    this.domain = name;
-    this.connection = null;
-    this.session = null;
-    this.pool = [this];
-    this.joined = false;
-}; 
-
-// Does not check the validity of the incoming or final name
-Domain.prototype.subdomain = function(name) {
-   var child = new Domain(this.domain + '.' + name)
-
-   // If already connected instantly trigger the domain's handler
-   if (this.joined) {
-        child.connection = this.connection;
-        child.session = this.session
-        child.joined = true;
-        child.onJoin();
-   }
-
-   this.pool.push(child);
-   child.pool = this.pool;
-
-   return child;
+// Used to counteract uint generation on seemlingly 32 bit platforms
+global.NewID = function() {
+   return Math.floor(Math.random() * 9007199254740992);
 };
 
+global.Renamer = function(domain) {
+	for (var func in domain) {
+		domain[func.substr(0, 1).toLowerCase() + func.substr(1)] = domain[func];
+		delete domain[func];
+	}
+}
 
+// Intercepts .then and sends down cumin args to the core. 
+// Should only be used by Calls, and internally at that 
+global.PromiseInterceptor = function(trueHandler, domain, cb) {
+    return function(callback, errback) {
+        // Automatically splat the arguments across the callback function 
+        var applyer = function(fn) {
+            return function(a) {  fn.apply(domain, a) }
+        };
 
-Domain.prototype.join = function() {
-   var self = this;
-   self.connection = new riffle.Connection(self.domain);
+        // If callback has these two properties, then its NOT a callback, its a wait
+        if (callback.types == undefined && callback.fb == undefined) {
+            domain.callExpects(cb, [null]);
+            trueHandler(applyer(callback), errback)
+        } else {
+            domain.callExpects(cb, callback.types);
+            trueHandler(applyer(callback.fp), errback);
+        }
+    }
+}
 
-    self.connection.onJoin = function (session) {
-        self.session = session;
+global.WaitInterceptor = function(trueHandler, domain, cb) {
 
-        for (var i = 0; i < self.pool.length; i++)  {
-            self.pool[i].session = session; 
-            self.pool[i].connection = this.connection;
+    var t = global.PromiseInterceptor(trueHandler, domain, cb);
+
+    return function(){
+        var types = [];
+        for(var arg in arguments){
+          types.push(arguments[arg]);
         }
 
-        for (var i = 0; i < self.pool.length; i++)  {
-            if (!self.pool[i].joined) {
-                self.pool[i].joined = true;
-                self.pool[i].onJoin();
-            }
+        function then(){
+          var args = [];
+          for(var i in arguments){
+            args.push(arguments[i]);
+          }
+          types.unshift(arguments[0]);
+          console.log(types);
+          args[0] = want.want.apply(this, types);
+          console.log(args)
+          t.apply(this, args);
         }
-   };
-
-   self.connection.join();
-};
-
-Domain.prototype.leave = function() {
-    // Not done!
-    // this.session.close();
-};
-
-Domain.prototype.onJoin = function() {
-    log.debug("Domain " + this.domain + " default join");
-};
-
-Domain.prototype.onLeave = function() {
-    log.debug("Domain " + this.domain + " default leave");
-};
-
-
-// Message patterns
-Domain.prototype.subscribe = function(action, handler) {
-    return this.session.subscribe(prependDomain(this.domain, action), handler);
-};
-
-Domain.prototype.register = function(action, handler) {
-    return this.session.register(prependDomain(this.domain, action), handler);
-};
-
-Domain.prototype.call = function() {
-    var args = flattenHash(arguments);
-    var action = args.shift();
     
-    return this.session.call(prependDomain(this.domain, action), args);
-};
+        return {
+          then: then
+        };
+    };
+}
 
-Domain.prototype.publish = function() {
-    var args = flattenHash(arguments);
-    var action = args.shift();
+// Inject configuration functions from the mantle into the crust with the same name
+for (var e in global.Config) {
+    exports[e] = global.Config[e];
+}
 
-    return this.session.publish(prependDomain(this.domain, action), args);
-};
-
-Domain.prototype.unsubscribe = function(action) {
-   
-};
-
-Domain.prototype.unregister = function(action) {
-
-};

@@ -1,13 +1,15 @@
 {
   "name": "jsriffle",
-  "version": "0.1.15",
+  "version": "0.3.2",
   "description": "Riffle allows applications to connect over a fabric",
   "main": "index.js",
   "browser": {
     "src/transport/rawsocket.js": false
   },
   "dependencies": {
+    "bufferutil": "^1.2.1",
     "crypto-js": ">= 3.1.5",
+    "utf-8-validate": "^1.2.1",
     "when": ">= 3.7.3",
     "ws": ">= 0.8.0"
   },
@@ -23,6 +25,6 @@
     "Riffle",
     "WebSocket"
   ],
-  "author": "Damouse",
+  "author": "Exis",
   "license": "MIT"
 }
