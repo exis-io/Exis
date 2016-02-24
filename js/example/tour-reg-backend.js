@@ -32,12 +32,12 @@ backend.onJoin = function() {
     }, Number));
     // End Example Tour Reg/Call Lesson 2 Fails
     
-    // Example Tour Reg/Call Lesson 2 Want Check - type enforcement on want
+    // Example Tour Reg/Call Lesson 2 Wait Check - type enforcement on want
     this.register("iGiveInts", riffle.want(function(s) {
         console.log(s); // Expects a String, like "Hi"
         return 42;
     }, String));
-    // End Example Tour Reg/Call Lesson 2 Want Check
+    // End Example Tour Reg/Call Lesson 2 Wait Check
     
     /////////////////////////////////////////////////////////////////////////////////////
     // Example Tour Reg/Call Lesson 3 Works - collections of types
