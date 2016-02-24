@@ -1,31 +1,33 @@
 /* commonjs package manager support */
 if (typeof module !== "undefined" && typeof exports !== "undefined" && module.exports === exports){
-    var jsriffle = require('jsriffle');
+    var jsriffle = require('jsRiffle');
     module.exports = 'ngRiffle';
 }
 
 (function () {
     'use strict';
 
-    jsRiffle.setDevFabric();
 
     var ngRiffleModule = angular.module('ngRiffle', []).provider('$riffle', $RiffleProvider);
 
     function $RiffleProvider() {
-        var options;
 
-        this.init = function (initOptions) {
-            options = initOptions || {};
+        var id = undefined;
+        var providerAPIExcludes = ['Application', 'Domain', 'modelObject', 'want'];
+        for(var key in jsRiffle){
+          if(providerAPIExcludes.indexOf(key) === -1){
+            this[key] = jsRiffle[key];
+          }
+        }
+
+        this.setDomain = function(domain){
+          id = domain;
         };
 
 
         var interceptors = this.interceptors = [];
 
         this.$get = ["$rootScope", "$q", "$log", "$injector", function ($rootScope, $q, $log, $injector) {
-
-            var connection;
-            var sessionDeferred = $q.defer();
-            var sessionPromise = sessionDeferred.promise;
 
             /**
              * Interceptors stored in reverse order. Inner interceptors before outer interceptors.
@@ -46,10 +48,6 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
              */
             function digestWrapper(func) {
 
-                // if (options.disable_digest && options.disable_digest === true) {
-                //     return func;
-                // }
-
                 return function () {
                     var cb = func.apply(this, arguments);
                     $rootScope.$apply();
@@ -57,21 +55,250 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                 };
             }
 
-            // options = angular.extend({onchallenge: digestWrapper(onchallenge), use_deferred: $q.defer}, options);
-
-            connection = new jsRiffle.Domain(options);
-
-            connection.onJoin = digestWrapper(function () {
+            var connection;
+            var sessionDeferred = $q.defer();
+            var sessionPromise = sessionDeferred.promise;
+            
+            var joinFnc = digestWrapper(function () {
+                $log.debug("Connection Opened: ");
                 $rootScope.$broadcast("$riffle.open");
+                connection.connected = true;
                 sessionDeferred.resolve();
             });
 
-            connection.onLeave = digestWrapper(function (reason, details) {
+            var leaveFnc = digestWrapper(function (reason, details) {
                 $log.debug("Connection Closed: ", reason, details);
+                connection.connected = false;
                 sessionDeferred = $q.defer();
                 sessionPromise = sessionDeferred.promise;
-                $rootScope.$broadcast("$riffle.close", {reason: reason, details: details});
+                $rootScope.$broadcast("$riffle.leave", {reason: reason, details: details});
             });
+
+
+            connection = new DomainWrapper(jsRiffle.Domain(id));
+            connection.want = jsRiffle.want;
+            connection.modelObject = jsRiffle.modelObject;
+            connection.connected = false;
+
+            
+            /**
+             * Wraps WAMP actions, so that when they're called, the defined interceptors get called before the result is returned
+             *
+             * @param type
+             * @param args
+             * @param callback
+             * @returns {*}
+             */
+            var interceptorWrapper = function (type, args, callback) {
+
+                var result = function (result) {
+                    return {result: result, type: type, args: args};
+                };
+
+                var error = function (error) {
+                    //$log.error("$riffle error", {type: type, arguments: args, error: error});
+                    return $q.reject({error: error, type: type, args: args});
+                };
+
+                // Only execute the action callback once we have an established session
+                var action = sessionPromise.then(function () {
+                    return callback();
+                });
+
+                var chain = [result, error];
+
+                // Apply interceptors
+                angular.forEach(reversedInterceptors, function (interceptor) {
+                    if (interceptor[type + 'Response'] || interceptor[type + 'ResponseError']) {
+                        chain.push(interceptor[type + 'Response'], interceptor[type + 'ResponseError']);
+                    }
+                });
+
+                // We only want to return the actually result or error, not the entire information object
+                chain.push(
+                    function (response) {
+                        return response.result;
+                    }, function (response) {
+                        return $q.reject(response.error);
+                    }
+                );
+
+                while (chain.length) {
+                    var resolved = chain.shift();
+                    var rejected = chain.shift();
+
+                    action = action.then(resolved, rejected);
+                }
+
+                return action;
+            };
+
+            function DomainWrapper(riffleDomain){
+              this.conn = riffleDomain;
+              this.conn.onJoin = joinFnc;
+              this.conn.onLeave = leaveFnc;
+            }
+            DomainWrapper.prototype.join = function(){
+              return this.conn.join();
+            };
+            DomainWrapper.prototype.leave = function(){
+              return this.conn.leave();
+            };
+            DomainWrapper.prototype.subscribeOnScope = function(scope, channel, callback){
+              var self = this;
+              return this.subscribe(channel, callback).then(function(){
+                scope.$on('$destroy', function () {
+                  return self.unsubscribe(channel);
+                });
+              });
+            };
+            DomainWrapper.prototype.setToken = function(tok) {
+                this.conn.setToken(tok);
+            };
+            DomainWrapper.prototype.getToken = function() {
+                return this.conn.getToken();
+            };
+            DomainWrapper.prototype.unsubscribe = function (channel) {
+              var self = this;
+              return interceptorWrapper('unsubscribe', arguments, function () {
+                return self.conn.unsubscribe(channel);
+              });
+            };
+            DomainWrapper.prototype.publish = function(){
+              var a = arguments
+              var self = this;
+              return interceptorWrapper('publish', arguments, function(){
+                return self.conn.publish.apply(self.conn, a);
+              });
+            };
+            DomainWrapper.prototype.register = function (action, handler) {
+              if(typeof(handler) === 'function'){
+                handler = digestWrapper(handler);
+              }else{
+                handler.fp = digestWrapper(handler.fp);
+              }
+              var self = this;
+              return interceptorWrapper('register', arguments, function () {
+                return self.conn.register(action, handler);
+              });
+            };
+            DomainWrapper.prototype.subscribe = function (action, handler) {
+              if(typeof(handler) === 'function'){
+                handler = digestWrapper(handler);
+              }else{
+                handler.fp = digestWrapper(handler.fp);
+              }
+              var self = this;
+              return interceptorWrapper('subscribe', arguments, function () {
+                return self.conn.subscribe(action, handler);
+              });
+            };
+            DomainWrapper.prototype.unregister = function (registration) {
+              var self = this;
+              return interceptorWrapper('unregister', arguments, function () {
+                return self.conn.unregister(registration);
+              });
+            };
+            DomainWrapper.prototype.call = function () {
+              var a = arguments
+              var self = this;
+              
+              return interceptorWrapper('call', arguments, function () {
+                return self.conn.call.apply(self.conn, a);
+              });
+            };
+            DomainWrapper.prototype.subdomain = function(id) {
+              return new DomainWrapper(this.conn.subdomain(id));
+            };
+            DomainWrapper.prototype.linkDomain = function(id) {
+              return new DomainWrapper(this.conn.linkDomain(id));
+            };
+            DomainWrapper.prototype.login = function(user) {
+              var self = this;
+              //deferred for knowing when process is done
+              var userDeferred = $q.defer();
+
+              var args = [];
+              if(user && user.username){
+                args.push(user.username);
+              }
+              //figure out auth level from user object
+              var auth0 = false;
+              if(!user || !user.password || user.password === ""){
+                auth0 = true;
+              }else{
+                args.push(user.password);
+              }
+
+              
+              function resolve(){
+                userDeferred.resolve(connection.user);
+              }
+
+              //if we are auth1 load user data
+              function load(){
+                connection.user.load().then(userDeferred.resolve, userDeferred.reject);
+              }
+
+              //if we get success from the registrar on login continue depending on auth level
+              function success(domain){
+                if(auth0){
+                  //if auth0 then we don't have user storage
+                  connection.user = new DomainWrapper(domain); 
+                  connection.user.join();
+                  sessionPromise.then(resolve);
+                }else{
+                  //if auth1 use user class to wrap domain and implement user storage and load user data
+                  connection.user = new User(self, domain); 
+                  connection.user.join();
+                  sessionPromise.then(load);
+                }
+              }
+
+              //attempt registration login and continue process on success
+              this.conn.login.apply(this.conn, args).then(success, userDeferred.reject);
+
+              //return the promise which will be resolved once the login process completes.
+              return userDeferred.promise;
+            };
+            DomainWrapper.prototype.registerAccount = function(user) {
+              return this.conn.registerAccount(user.username, user.password, user.email, user.name);
+            };
+
+            function User(app, domain) {
+              DomainWrapper.call(this, domain);
+              this.storage = app.subdomain("Auth");
+            }
+            User.prototype = Object.create(DomainWrapper.prototype);
+            User.prototype.constructor = User;
+            User.prototype.email = "";
+            User.prototype.name = "";
+            User.prototype.privateStorage = {};
+            User.prototype.publicStorage = {};
+            User.prototype.save = function(){
+              return this.storage.call('save_user_data', this.publicStorage, this.privateStorage);
+            };
+            User.prototype.load = function(){
+              var self = this;
+              var loadDeferred = $q.defer();
+              function loadUser(user){
+                self.name = user.name;
+                self.email = user.email;
+                self.gravatar = user.gravatar;
+                self.privateStorage = user.private || {};
+                self.publicStorage = user.public || {};
+                loadDeferred.resolve(self);
+              }
+              function error(error){
+                loadDeferred.reject(error);
+              }
+              this.storage.call('get_user_data').then(loadUser, error);
+              return loadDeferred.promise;
+            };
+            User.prototype.getPublicData = function(query){
+              return this.storage.call('get_public_data', query)
+            };
+
 
 
             /**
@@ -82,7 +309,6 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
              * @param subscribedCallback
              * @returns {{}}
              * @constructor
-             */
             var Subscription = function (topic, handler, options, subscribedCallback) {
 
                 var subscription = {}, unregister, onOpen, deferred = $q.defer();
@@ -121,123 +347,10 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                 return subscription.promise;
             };
-
-            /**
-             * Wraps WAMP actions, so that when they're called, the defined interceptors get called before the result is returned
-             *
-             * @param type
-             * @param args
-             * @param callback
-             * @returns {*}
              */
-            var interceptorWrapper = function (type, args, callback) {
 
-                var result = function (result) {
-                    return {result: result, type: type, args: args};
-                };
 
-                var error = function (error) {
-                    $log.error("$riffle error", {type: type, arguments: args, error: error});
-                    return $q.reject({error: error, type: type, args: args});
-                };
-
-                // Only execute the action callback once we have an established session
-                var action = sessionPromise.then(function () {
-                    return callback();
-                });
-
-                var chain = [result, error];
-
-                // Apply interceptors
-                angular.forEach(reversedInterceptors, function (interceptor) {
-                    if (interceptor[type + 'Response'] || interceptor[type + 'ResponseError']) {
-                        chain.push(interceptor[type + 'Response'], interceptor[type + 'ResponseError']);
-                    }
-                });
-
-                // We only want to return the actually result or error, not the entire information object
-                chain.push(
-                    function (response) {
-                        return response.result;
-                    }, function (response) {
-                        return $q.reject(response.error);
-                    }
-                );
-
-                while (chain.length) {
-                    var resolved = chain.shift();
-                    var rejected = chain.shift();
-
-                    action = action.then(resolved, rejected);
-                }
-
-                return action;
-            };
-
-            return {
-                connection: connection,
-                open: function () {
-                    connection.join();
-                },
-                // TODO
-                leave: function () {
-                    connection.leave();
-                },
-                // TODO
-                // subscribe: function (topic, handler, options, subscribedCallback) {
-                //     return interceptorWrapper('subscribe', arguments, function () {
-                //         return Subscription(topic, handler, options, subscribedCallback);
-                //     });
-                // },
-                // TODO
-                subscribeOnScope: function (scope, channel, callback) {
-                    return this.subscribe(channel, callback).then(function (subscription) {
-                        scope.$on('$destroy', function () {
-                            return subscription.unsubscribe();
-                        });
-                    });
-                },
-                // TODO
-                unsubscribe: function (subscription) {
-                    return interceptorWrapper('unsubscribe', arguments, function () {
-                        return subscription.unsubscribe();
-                    });
-                },
-                publish: function () {
-                    var a = arguments
-
-                    return interceptorWrapper('publish', arguments, function () {
-                        return connection.publish.apply(connection, a);
-                    });
-                },
-                register: function (action, handler) {
-                    handler = digestWrapper(handler);
-
-                    return interceptorWrapper('register', arguments, function () {
-                        return connection.register(action, handler);
-                    });
-                },
-                subscribe: function (action, handler) {
-                    handler = digestWrapper(handler);
-
-                    return interceptorWrapper('subscribe', arguments, function () {
-                        return connection.subscribe(action, handler);
-                    });
-                },
-                // TODO
-                unregister: function (registration) {
-                    return interceptorWrapper('unregister', arguments, function () {
-                        return registration.unregister();
-                    });
-                },
-                call: function () {
-                    var a = arguments
-
-                    return interceptorWrapper('call', arguments, function () {
-                        return connection.call.apply(connection, a);
-                    });
-                }
-            };
+            return connection;
         }];
 
         return this;

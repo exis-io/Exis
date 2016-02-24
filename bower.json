@@ -2,7 +2,7 @@
     "name": "ngRiffle",
     "main": "release/ngRiffle.js",
     "authors": [
-        "Damouse <damouse007@gmail.com>"
+        "Exis <developers@exis.io>"
     ],
     "description": "Angular library wrapping jsRiffle",
     "keywords": [
@@ -21,6 +21,6 @@
     ],
     "dependencies": {
         "angular": "^1.2.0",
-        "jsriffle": "latest"
+        "jsRiffle": "latest"
     }
 }
