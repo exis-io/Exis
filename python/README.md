@@ -33,6 +33,7 @@ export PKG_CONFIG_PATH=/System/Library/Frameworks/Python.framework/Versions/2.7/
 ```
 
 Which looks something like:
+
 ```
 prefix=/System/Library/Frameworks/Python.framework/Versions/2.7
 exec_prefix=${prefix}
@@ -45,4 +46,10 @@ Requires:
 Version: 2.7
 Libs.private: -ldl  -framework CoreFoundation
 Libs: -L${libdir} -lpython2.7
+```
+
+Someone else's runin with this problem: 
+
+```
+https://github.com/numenta/nupic/issues/1813
 ```
