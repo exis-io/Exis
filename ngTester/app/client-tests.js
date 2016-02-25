@@ -1,11 +1,39 @@
 ####TEST####
-//calls with "Hello" string expects String "Hello World"
-$riffle.call("regStrStr", "Hello").want(String).then(function (s) {
+/* Tests register/call type enforcement when we have correct type works*/
+$riffle.call("t1", "Hi").want(String).then(function (s) {
     assert(s === "Hello World", "Expected: 'Hello World' Got: " + s);
 },
 function (err) {
     assert(false, "Error: Promise Rejected with: " + err);
 });
+
+
+####TEST####
+/* Tests register/call, type enforcement with incorrect type throws exception */
+$riffle.call("t2", "Hi").want(String).then(function (s) {
+    assert(false, "Expected: Exception when calling a function that wants ints.);
+},
+function (err) {
+    assert(true, "Expected: TypeError Got: " + err);
+});
+
+
+####TEST####
+/* Tests register/call, type enforcement on want works correctly */
+$riffle.call("iWantStrings", "Hi").want(String).then(function (s) {
+    assert(false, "Expected: Exception when calling a function that wants ints.);
+},
+function (err) {
+    assert(true, "Expected: TypeError Got: " + err);
+});
+
+
+
+
+
+
+
+
 
 ####TEST####
 //calls with number 42 expects number 24

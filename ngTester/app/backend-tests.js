@@ -1,9 +1,16 @@
-####TEST####
-//Wants a string "Hello" returns string "Hello World"
-$riffle.register("regStrStr", $riffle.want(function(s) {
-    assert(s === "Hello", "Expected: 'Hello' Got: " + s);
+$riffle.register("iWantStrings", $riffle.want(function(s) {
     return "Hello World";
 }, String));
+
+
+$riffle.register("iWantInts", $riffle.want(function(s) {
+    return "Hello World";
+}, Number));
+
+####TEST####
+//Wants a string returns string "Hello World"
+
+
 
 ####TEST####
 //Wants a Number 42 returns a Number 24
