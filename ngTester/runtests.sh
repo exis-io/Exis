@@ -1,19 +1,33 @@
-$!/bin/bash
+#!/bin/bash
 
-function ctrl_c() {
+WAITTIME=20
+
+function cleanup() {
     if [ ! -z "$GRUNT_PID" ]; then
         echo "GRUNT_PID: $GRUNT_PID"
         kill -9 $GRUNT_PID
     fi
 
+    exit 0
 }
-trap ctrl_c SIGINT
+
+trap cleanup SIGINT
 
 grunt serve &
 GRUNT_PID=$!
 
 sleep 5
 
-python runtests.py
+python test.py
+
+ENDTIME=$((SECONDS+WAITTIME))
+
+while [ $SECONDS -lt $ENDTIME ]; do
+    sleep 1
+done
+
+cleanup
+
+
 
 
