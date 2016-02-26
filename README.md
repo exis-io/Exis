@@ -7,7 +7,7 @@
 <div align="center">
   <img src="https://img.shields.io/badge/OS-iOS%209-brightgreen.svg">
   <img src="https://img.shields.io/badge/language-Swift%202-brightgreen.svg">
-  <script async defer src="http://slack.exis.io/slackin.js"></script>
+  <img src="http://slack.exis.io/badge.svg">
 </div>
 
 Find documentation at [docs.exis.io](http://docs.exis.io). See our splash page at [exis.io](exis.io). 
