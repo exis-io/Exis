@@ -37,21 +37,39 @@ angular.module('browserTesterApp', ['ngResource', 'ngRoute', 'ngRiffle'])
     var tests = [];
     $scope.results = [];
     
+    function addToResults(index, color, result, description, message) {
+      var result = $sce.trustAsHtml("<p id=success_" + index + " style='color:" + color + ";'>" + result + " - " + description + " - " + message + "</p>");
+      $scope.results.push(result);
+    }
+    
+    function removeToResults(index, color, result, description, message) {
+      var result = $sce.trustAsHtml("<p id=success_" + index + " style='color:" + color + ";'>" + result + " - " + description + " - " + message + "</p>");
+      var i = $scope.results.indexOf(result)
+      if (i > -1) {
+        $scope.results.splice(i, 1); 
+      }
+    }
+
     function assertBuilder(index){
       return function(condition, message){
-        if(condition){
-          var result = $sce.trustAsHtml("<p id=success_" + index + " style='color: green;'> PASSED: " + message + ": PASSED</p>");
-          $scope.results.push(result);
-        }else{
-          var result = $sce.trustAsHtml("<p id=success_" + index + " style='color: red;'>" + message + ": FAILED</p><p id=reason_" + index + " style='color: brown;'>" + code[index] + "</p>");
-          $scope.results.push(result);
+        var color = "red";
+        var result = "FAILED"; 
+        var description = tests[index][1];
+
+        // If we weren't supposed to receive call, we need to remove old rule
+        if (tests[index][2]) {
+          removeFromResults(i, "green", "SUCCESS", description, "didn't receive a call!");
+        } else if (condition){
+          color = "green";
+          result = "SUCCESS";
         }
+        addToResults(index, color, result, tests[index][1], message);
       };
     }
 
     function runTests(){
       for(var i in tests){
-        tests[i]($riffle, assertBuilder(i));
+        tests[i][0]($riffle, assertBuilder(i));
       }
     }
 
@@ -66,9 +84,23 @@ angular.module('browserTesterApp', ['ngResource', 'ngRoute', 'ngRiffle'])
       // Log the code we are executing to the console
       for(var i in code){
         var testDescription = code[i].split('\n')[0];
-        var actualCode = code[i].substring(testDescription.length);
+        var codeStart = testDescription.length
+
+        var expectCall = code[i].split('\n')[1];
+        var dontReceiveCall = (expectCall === '## shouldnt receive call ##');
+
+        console.log(dontReceiveCall);
+
+        if (dontReceiveCall) {
+          // Add a success to results
+          // If we receive a call later, we will remove that element from results
+          addToResults(i, "green", "SUCCESS", testDescription, "didn't receive a call!");
+          codeStart += expectCall.length;
+        }
+
+        var actualCode = code[i].substring(codeStart);
         console.log(testDescription);
-        tests.push(new Function('$riffle', 'assert', actualCode));
+        tests.push([new Function('$riffle', 'assert', actualCode), testDescription, dontReceiveCall]);
       }
       runTests();
     }

@@ -12,7 +12,6 @@ import threading
 
 CONFIG_PATH = 'configtests.yaml'
 
-
 def runBrowser(endpoint, startNextBrowser, allLoaded, globalLock, isLast, results):
 
     failed = False
@@ -41,15 +40,26 @@ def runBrowser(endpoint, startNextBrowser, allLoaded, globalLock, isLast, result
 
         currElement = 0
 
-        globalLock.acquire()
-        results[endpoint] = []
-        globalLock.release()
 
         while True:
             # Get the element
             try:
-                success = driver.find_element_by_id("success_{}".format(currElement))
-                print("{}: {}".format(endpoint, success.text))
+                result = driver.find_element_by_id("success_{}".format(currElement))
+                success, description, output = result.text.split(" - ")
+                isSuccess = (success == "SUCCESS")
+
+
+                globalLock.acquire()
+                if description not in results:
+                    results[description] = {}
+
+                results[description][endpoint] = {
+                        'success': isSuccess,
+                        'description': description,
+                        'output': output
+                    }
+                globalLock.release()
+
                 currElement += 1
             except:
                 break
@@ -57,26 +67,18 @@ def runBrowser(endpoint, startNextBrowser, allLoaded, globalLock, isLast, result
         driver.quit()
 
     except Exception as e:
-        failed = True
         driver.quit()
-    finally:
-        logMessage = time.strftime('%a, %d %b %Y %I:%M:%S %p') + " : RESULT: "
-        if failed:
-            logMessage = logMessage + "FAILED\n\n" + tb
-        else:
-            logMessage = logMessage + "PASSED\n"
 
-        print(logMessage)
+def runSingleTest(test):
 
 
-def runTest(test):
+    print("START TEST: {}".format(test['name']))
     startNextBrowser = threading.Event()
     allLoaded = threading.Event()
     resultLock = threading.Lock()
     thread_list = []
     results = {}
     for i, jsFile in enumerate(test['files']):
-        print(jsFile)
         isLast = i == len(test['files']) - 1
         t = threading.Thread(target=runBrowser, args=[jsFile, startNextBrowser, allLoaded, resultLock, isLast, results])
         thread_list.append(t)
@@ -85,9 +87,40 @@ def runTest(test):
         startNextBrowser.wait()
         startNextBrowser.clear()
 
-    # Wait for all to complete
+    # Wait for threads to complete
     for t in thread_list:
         t.join()
+
+    # Go through tests to see which failed
+    numTests = 0
+    numFailures = 0
+    for description, endpointResults in results.iteritems():
+        print("   test: {}".format(description))
+
+        seen = {endpoint:False for endpoint in test['files']}
+        success = True
+
+        for endpoint, endpointResult in endpointResults.iteritems():
+            seen[endpoint] = True
+            if not endpointResult['success']:
+                success = False
+                print("    ERROR ({}) - {}".format(endpoint, endpointResult['description']))
+                print("        {}".format(endpointResult['output']))
+
+        for endpoint in test['files']:
+            if not seen[endpoint]:
+                success = False
+                print("    Error: didn't find result for {}".format(endpoint))
+
+        if success:
+            print("     success!")
+        else:
+            numFailures += 1
+
+        numTests += 1
+
+    print("COMPLETE TEST: {}. {}/{} tests succeeded".format(test['name'], numTests-numFailures, numTests))
+
 
 def runtests():
 
@@ -96,8 +129,7 @@ def runtests():
         testConfig = yaml.safe_load(f.read())
 
     for test in testConfig:
-
-        runTest(test)
+        runSingleTest(test)
 
 
 
