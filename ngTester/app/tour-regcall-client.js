@@ -11,7 +11,7 @@ function (err) {
 #####################################TEST######################################
 Calling a function with wrong type fails
 
-$riffle.call("iWantInts", 2).want(String).then(function (s) {
+$riffle.call("iWantInts", "test").want(String).then(function (s) {
     assert(false, "call shouldn't have gone through");
 },
 function (err) {
