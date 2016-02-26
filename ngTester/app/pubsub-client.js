@@ -28,3 +28,23 @@ $riffle.publish("iWantInts", "Hi").then(function () {
 function (err) {
     assert(false, "Received exception: " + err);
 });
+
+#####################################TEST######################################
+Example 1: Very basic pubsub
+
+$riffle.publish("basicSub", "Hello").then(function () {
+    assert(true, "Publish to basicSub completes");
+},
+function (err) {
+    assert(false, "Received exception: " + err);
+});
+
+#####################################TEST######################################
+Example 2: Pubsub sending two different types of data
+
+$riffle.publish("basicSubTwo", "Hello", 3).then(function () {
+    assert(true, "Publish to basicSub completes");
+},
+function (err) {
+    assert(false, "Received exception: " + err);
+});
