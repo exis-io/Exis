@@ -1,5 +1,6 @@
-####TEST####
-/* Tests register/call type enforcement when we have correct type works*/
+#####################################TEST######################################
+# Reg call with correct type
+
 $riffle.call("iWantStrings", "Hello").want(String).then(function (s) {
     assert(s === "Hello World", "Expected: 'Hello World' Got: " + s);
 },

@@ -40,7 +40,7 @@ angular.module('browserTesterApp', ['ngResource', 'ngRoute', 'ngRiffle'])
     function assertBuilder(index){
       return function(condition, message){
         if(condition){
-          var result = $sce.trustAsHtml("<p id=success_" + index + " style='color: green;'>" + message + ": PASSED</p>");
+          var result = $sce.trustAsHtml("<p id=success_" + index + " style='color: green;'> PASSED: " + message + ": PASSED</p>");
           $scope.results.push(result);
         }else{
           var result = $sce.trustAsHtml("<p id=success_" + index + " style='color: red;'>" + message + ": FAILED</p><p id=reason_" + index + " style='color: brown;'>" + code[index] + "</p>");
@@ -57,16 +57,18 @@ angular.module('browserTesterApp', ['ngResource', 'ngRoute', 'ngRiffle'])
 
     function parseTests(resp){
       // Split each test using this string
-      code = resp.data.split('####TEST####');
+      code = resp.data.split("#####################################TEST######################################\n");
       // Remove the first test if empty
       if(code[0] === ""){
         code.shift();
       }
 
       // Log the code we are executing to the console
-      console.log(code);
       for(var i in code){
-        tests.push(new Function('$riffle', 'assert', code[i]));
+        var testDescription = code[i].split('\n')[0];
+        var actualCode = code[i].substring(testDescription.length);
+        console.log(testDescription);
+        tests.push(new Function('$riffle', 'assert', actualCode));
       }
       runTests();
     }
