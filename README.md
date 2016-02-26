@@ -6,8 +6,9 @@
 <div align="center">
   <img src="https://img.shields.io/badge/OS-iOS%209-brightgreen.svg">
   <img src="https://img.shields.io/badge/language-Swift%202-brightgreen.svg">
-  <img src="http://slack.exis.io/badge.svg">
+  <a href="http://slack.exis.io"><img src="http://slack.exis.io/badge.svg"></a>
 </div>
+
 <br>
 [Exis + Swift](http://exis.io/swift) is currently the best solution to allow Swift developers to run their code in the cloud. Exis allows developers to write native Swift code, test it locally in Xcode, and launch it in the cloud.
 
