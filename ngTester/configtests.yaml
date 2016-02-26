@@ -1,6 +1,6 @@
 -
     name: regtour
     files: 
-        - reg-tour-backend
-        - reg-tour-client
+        - tour-regcall-backend
+        - tour-regcall-client
 

@@ -7,38 +7,56 @@ import traceback
 import time
 import os
 import yaml
-from threading import Thread
+import threading
 
 
 CONFIG_PATH = 'configtests.yaml'
 
 
-def runBrowser(endpoint):
+def runBrowser(endpoint, startNextBrowser, allLoaded, globalLock, isLast, results):
 
     failed = False
-    url = "http://localhost:9001/{}".format(endpoint)
+    url = "http://localhost:9001/#/{}".format(endpoint)
 
     try:
 
         # Create a new instance of the Firefox driver
         driver = webdriver.Firefox()
 
-        # go to the google home page
+        # go to the test page
         driver.get(url)
 
+        # use event to tell main thread that it can launch next brower
+        startNextBrowser.set()
+
+        # Wait until all browsers all loaded
+        if isLast:
+            allLoaded.set()
+        else:
+            allLoaded.wait()
+
+        # We need to currently sleep so server side doesn't exit before
+        # client had a chance to call it
+        time.sleep(1)
+
         currElement = 0
+
+        globalLock.acquire()
+        results[endpoint] = []
+        globalLock.release()
 
         while True:
             # Get the element
             try:
                 success = driver.find_element_by_id("success_{}".format(currElement))
-                print(success)
+                #isSuccess =
+                print("{}: {}".format(endpoint, success))
+                currElement += 1
             except:
                 break
 
-        time.sleep(5)
-
         driver.quit()
+
     except Exception as e:
         failed = True
         driver.quit()
@@ -53,14 +71,24 @@ def runBrowser(endpoint):
 
 
 def runTest(test):
-
+    startNextBrowser = threading.Event()
+    allLoaded = threading.Event()
+    resultLock = threading.Lock()
     thread_list = []
-    for file in test['files']:
-        t = Thread(target=runBrowser, args=[file])
+    results = {}
+    for i, jsFile in enumerate(test['files']):
+        print(jsFile)
+        isLast = i == len(test['files']) - 1
+        t = threading.Thread(target=runBrowser, args=[jsFile, startNextBrowser, allLoaded, resultLock, isLast, results])
         thread_list.append(t)
         t.start()
 
-        time.sleep(2)
+        startNextBrowser.wait()
+        startNextBrowser.clear()
+
+    # Wait for all to complete
+    for t in thread_list:
+        t.join()
 
 def runtests():
 
