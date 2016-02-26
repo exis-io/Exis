@@ -16,7 +16,7 @@ Feel free to checkout [other programming languages](https://github.com/exis-io/E
 ### Example
 
 Server-side (cloud) code:
-```
+```swift
 class Backend: RiffleDomain {
     override func onJoin() {
         register("hello", sayHi)
@@ -31,7 +31,7 @@ class Backend: RiffleDomain {
 ```
 
 Client-side (local) code:
-```
+```swift
 //Send your request to your Swift backend!
 @IBAction func sendRequest(sender: AnyObject) {
 
