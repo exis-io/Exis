@@ -8,3 +8,12 @@ function (err) {
     assert(false, "Error: Promise Rejected with: " + err);
 });
 
+#####################################TEST######################################
+Calling a function with wrong type fails
+
+$riffle.call("iWantInts", 2).want(String).then(function (s) {
+    assert(false, "call shouldn't have gone through");
+},
+function (err) {
+    assert(true, "we received an error about incorrect type.");
+});
