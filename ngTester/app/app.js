@@ -42,12 +42,12 @@ angular.module('browserTesterApp', ['ngResource', 'ngRoute', 'ngRiffle'])
       $scope.results.push(result);
     }
     
-    function removeFromResults(index, color, result, description, message) {
-      var result = "<p id=success_" + index + " style='color:" + color + ";'>" + result + " - " + description + " - ";
+    function removeFromResults(index) {
+      var result = "<p id=success_" + index;
       var i = -1;
       for (var j in $scope.results) {
         var displayedTestResult = $sce.getTrustedHtml($scope.results[j]);
-        if (result.startsWith(displayedTestResult) {
+        if (displayedTestResult.startsWith(result)) {
           i = j;
         }
       }
@@ -56,19 +56,49 @@ angular.module('browserTesterApp', ['ngResource', 'ngRoute', 'ngRiffle'])
       }
     }
 
+    function checkIfSuccess(index) {
+        console.log("checkIfSuccess");
+
+        var description = tests[index][1];
+        var results = tests[index][2];
+        var receiver = null;
+
+        // Go through all receivers, check if they are all correct
+        var testSuccess = true;
+        var message = "";
+        for (var r in results) {
+            receiver = results[r];
+            if ((receiver['beenCalled']  !== receiver['shouldReceiveCall']) ||
+                    (receiver['shouldReceiveCall'] && !receiver['callResult'])) {
+                console.log("Found error");
+                console.log(receiver);
+                testSuccess = false;
+            }
+            message += "..." + r + "_" + receiver['message'];
+        }
+
+        var color = "red";
+        var result = "FAILED"; 
+
+        if (testSuccess === true) {
+            color = "green";
+            result = "SUCCESS";
+        }
+
+        // Remove the old test
+        removeFromResults(index);
+
+        // Add in the new test with correct results
+        addToResults(index, color, result, description, message);
+    }
+
     function assertBuilder(index){
       return function(condition, message, whichReceiver){
         if (typeof whichReceiver  === "undefined") {
           whichReceiver = 0;
         }
 
-        /*
-         * Find the specific test from the index
-         * Use the receiver to find the specific receiver
-        */
-
         // Every time we receive a call here, we need to check
-        var description = tests[index][1];
         var results = tests[index][2];
         var receiver = results[whichReceiver];
 
@@ -76,23 +106,7 @@ angular.module('browserTesterApp', ['ngResource', 'ngRoute', 'ngRiffle'])
         receiver['callResult'] = condition;
         receiver['message'] = message;
         
-        var correctTest = true;
-
-        for (var r in results) {
-            
-        }
-
-        var color = "red";
-        var result = "FAILED"; 
-
-        // If we weren't supposed to receive call, we need to remove old rule
-        if (tests[index][2]) {
-          removeFromResults(index, "green", "SUCCESS", description, "didn't receive a call!");
-        } else if (condition){
-          color = "green";
-          result = "SUCCESS";
-        }
-        addToResults(index, color, result, tests[index][1], message);
+        checkIfSuccess(index);
       };
     }
 
@@ -117,6 +131,7 @@ angular.module('browserTesterApp', ['ngResource', 'ngRoute', 'ngRiffle'])
 
       // Log the code we are executing to the console
       for(var i in code){
+        console.log(i);
 
         var testDescription = "";
         // Holds the number reg/sub functions which can receive input
@@ -136,14 +151,14 @@ angular.module('browserTesterApp', ['ngResource', 'ngRoute', 'ngRiffle'])
         var testDescription = actualCode.split('\n')[0];
         actualCode = actualCode.substring(testDescription.length + 1);
 
-        
+
         // Check if we have multiple receivers
         firstLine = actualCode.split('\n')[0];
-        if (firstLine === multipleReceivers) {
+        if (firstLine.startsWith(multipleReceiversString)) {
             numReceivers = parseInt(firstLine.substring(multipleReceiversString.length));
-            console.log(numReceivers);
             actualCode = actualCode.substring(firstLine.length + 1);
         }
+        
 
         // Check if we are actually expecting a call
         firstLine = actualCode.split('\n')[0];
@@ -157,12 +172,6 @@ angular.module('browserTesterApp', ['ngResource', 'ngRoute', 'ngRiffle'])
             actualCode = actualCode.substring(firstLine.length + 1);
         }
 
-        if (dontReceiveCall) {
-          // Add a success to results, only will switch to failure if called
-          addToResults(i, "green", "SUCCESS", testDescription, "didn't receive a call!");
-          actualCode = actualCode.substring(firstLine.length + 1);
-        }
-
         /*
          * We need to store a list which holds data for each receiver.
          * Each receiver should have two values:
@@ -170,18 +179,21 @@ angular.module('browserTesterApp', ['ngResource', 'ngRoute', 'ngRiffle'])
          *      didReceive: bool
         */
         var results = [];
-        var i;
-        for ( i = 0; i < numReceivers; i++) {
-            receiver = {}
+        var j;
+        for ( j = 0; j < numReceivers; j++) {
+            var receiver = {}
             // We have a successful receiver when we haven't been called and we shouldn't receive a call
             // OR when we have been called, assert is true, and we should receive call
             receiver['beenCalled'] = false;
-            receiver['shouldReceiveCall'] = (dontReceiveEndpoints.indexOf(i) > -1)
+            receiver['shouldReceiveCall'] = (dontReceiveEndpoints.indexOf(j) === -1)
             receiver['message'] = "didn't receive a call";
             results.push(receiver);
         }
 
+        // Start off everything as a success
         tests.push([new Function('$riffle', 'assert', actualCode), testDescription, results]);
+        checkIfSuccess(i);
+
       }
       runTests();
     }

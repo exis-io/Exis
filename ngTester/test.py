@@ -104,7 +104,11 @@ def runSingleTest(test):
             seen[endpoint] = True
             if not endpointResult['success']:
                 success = False
-                print("      ERROR ({}) - {}".format(endpoint, endpointResult['output']))
+                print("      ERROR ({})".format(endpoint, endpointResult['output']))
+                outputSplit = endpointResult['output'].split("...")
+                for o in outputSplit:
+                    if o != "" and o != None:
+                        print("        {}".format(o))
 
         for endpoint in test['files']:
             if not seen[endpoint]:

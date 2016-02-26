@@ -1,8 +1,7 @@
 #####################################TEST######################################
 Lesson 1.1: Basic pubsub works
-## shouldnt receive call ##
 
-$riffle.publish("iWantStrings", "Hi").then(function() {
+$riffle.publish("myFirstSub", "Hello").then(function() {
     assert(true, "Publish to iWantStrings completes");
 },
 function (err) {
