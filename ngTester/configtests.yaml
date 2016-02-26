@@ -1,6 +1,10 @@
 -
-    name: regtour
+    name: regCall
     files: 
-        - tour-regcall-backend
-        - tour-regcall-client
-
+        - regcall-backend
+        - regcall-client
+-
+    name: pubSub
+    files:
+        - pubsub-backend
+        - pubsub-client

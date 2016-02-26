@@ -64,9 +64,7 @@ angular.module('browserTesterApp', ['ngResource', 'ngRoute', 'ngRiffle'])
 
         // If we weren't supposed to receive call, we need to remove old rule
         if (tests[index][2]) {
-          console.log($scope.results);
           removeFromResults(index, "green", "SUCCESS", description, "didn't receive a call!");
-          console.log($scope.results);
         } else if (condition){
           color = "green";
           result = "SUCCESS";
@@ -95,10 +93,8 @@ angular.module('browserTesterApp', ['ngResource', 'ngRoute', 'ngRiffle'])
         var codeStart = testDescription.length + 1;
 
         var expectCall = code[i].split('\n')[1];
-        console.log(expectCall);
         var dontReceiveCall = (expectCall === '## shouldnt receive call ##');
 
-        console.log(dontReceiveCall);
 
         if (dontReceiveCall) {
           // Add a success to results
@@ -108,8 +104,6 @@ angular.module('browserTesterApp', ['ngResource', 'ngRoute', 'ngRiffle'])
         }
 
         var actualCode = code[i].substring(codeStart);
-        console.log(testDescription);
-        console.log(actualCode);
         tests.push([new Function('$riffle', 'assert', actualCode), testDescription, dontReceiveCall]);
       }
       runTests();

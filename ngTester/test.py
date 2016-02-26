@@ -8,7 +8,7 @@ import time
 import os
 import yaml
 import threading
-
+import sys
 
 CONFIG_PATH = 'configtests.yaml'
 
@@ -94,8 +94,8 @@ def runSingleTest(test):
     # Go through tests to see which failed
     numTests = 0
     numFailures = 0
-    for description, endpointResults in results.iteritems():
-        print("   test: {}".format(description))
+    for description, endpointResults in sorted(results.iteritems()):
+        print("   {}".format(description))
 
         seen = {endpoint:False for endpoint in test['files']}
         success = True
@@ -104,8 +104,7 @@ def runSingleTest(test):
             seen[endpoint] = True
             if not endpointResult['success']:
                 success = False
-                print("    ERROR ({}) - {}".format(endpoint, endpointResult['description']))
-                print("        {}".format(endpointResult['output']))
+                print("      ERROR ({}) - {}".format(endpoint, endpointResult['output']))
 
         for endpoint in test['files']:
             if not seen[endpoint]:
@@ -113,7 +112,9 @@ def runSingleTest(test):
                 print("    Error: didn't find result for {}".format(endpoint))
 
         if success:
-            print("     success!")
+            # dont print anything on success for shorter output
+            #print("     success!")
+            pass
         else:
             numFailures += 1
 
@@ -122,16 +123,25 @@ def runSingleTest(test):
     print("COMPLETE TEST: {}. {}/{} tests succeeded".format(test['name'], numTests-numFailures, numTests))
 
 
-def runtests():
+def runtests(whichTests):
 
     # Load the description of all calls we need
     with open(CONFIG_PATH, 'r') as f:
         testConfig = yaml.safe_load(f.read())
 
-    for test in testConfig:
+    if whichTests is None:
+        runningTests = testConfig
+    else:
+        runningTests = [test for test in testConfig if test['name'] in whichTests]
+
+    for test in runningTests:
         runSingleTest(test)
 
 
 
 if __name__ == "__main__":
-    runtests()
+    if len(sys.argv) > 1: 
+        whichTests = sys.argv[1:] 
+    else:
+        whichTests = None
+    runtests(whichTests)
