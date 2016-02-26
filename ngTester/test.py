@@ -50,7 +50,7 @@ def runBrowser(endpoint, startNextBrowser, allLoaded, globalLock, isLast, result
             try:
                 success = driver.find_element_by_id("success_{}".format(currElement))
                 #isSuccess =
-                print("{}: {}".format(endpoint, success))
+                print("{}: {}".format(endpoint, success.text))
                 currElement += 1
             except:
                 break
