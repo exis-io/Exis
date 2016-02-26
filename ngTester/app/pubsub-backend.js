@@ -1,14 +1,15 @@
 #####################################TEST######################################
 Lesson 1.1: Basic pubsub works
+## Multiple receivers: 2 
 
 $riffle.subscribe("myFirstSub", $riffle.want(function(s) {
     var expected = "I got Hello";
-    assert(s === expected, "Expected: '" + expected + "', Got: " + s)
+    assert(s === expected, "Expected: '" + expected + "', Got: " + s, 0)
 }, String));
 
 $riffle.subscribe("myFirstSub", $riffle.want(function(s) {
     var expected = "I got Hello";
-    assert(s === expected, "Expected: '" + expected + "', Got: " + s)
+    assert(s === expected, "Expected: '" + expected + "', Got: " + s, 1)
 }, String));
 
 
