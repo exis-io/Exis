@@ -6,6 +6,7 @@
 <div align="center">
   <img src="https://img.shields.io/badge/OS-iOS%209-brightgreen.svg">
   <img src="https://img.shields.io/badge/language-Swift%202-brightgreen.svg">
+  <a href="http://slack.exis.io"><img src="http://slack.exis.io/badge.svg"></a>
 </div>
 
 <br>
