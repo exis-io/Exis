@@ -37,14 +37,14 @@ client.onJoin = function() {
     });
     // End Example Tour Reg/Call Lesson 2 Fails
     
-    // Example Tour Reg/Call Lesson 2 Want Check - type enforcement on want
+    // Example Tour Reg/Call Lesson 2 Wait Check - type enforcement on want
     backend.call("iGiveInts", "Hi").want(String).then(function (s) {
         console.log(s);
     },
     function (err) {
         console.log(err); // Expects a String, like "Cumin: expecting primitive str, got int"
     });
-    // End Example Tour Reg/Call Lesson 2 Want Check
+    // End Example Tour Reg/Call Lesson 2 Wait Check
     
     /////////////////////////////////////////////////////////////////////////////////////
     // Example Tour Reg/Call Lesson 3 Works - collections of types
