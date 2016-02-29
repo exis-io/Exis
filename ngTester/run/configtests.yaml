@@ -1,0 +1,30 @@
+-
+    name: regCall
+    files: 
+        - regcall-backend
+        - regcall-client
+-
+    name: pubSub
+    files:
+        - pubsub-backend
+        - pubsub-client
+-
+    name: leaveClient
+    files:
+        - leaveclient-backend
+        - leaveclient-client
+-
+    name: leaveBackend
+    files:
+        - leavebackend-backend
+        - leavebackend-client
+-   
+    name: restartBeforeCall
+    files:
+        - restartbeforecall-backend
+        - restartbeforecall-client
+-   
+    name: restartAfterReg
+    files:
+        - restartafterreg-backend
+        - restartafterreg-client

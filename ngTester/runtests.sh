@@ -16,7 +16,7 @@ GRUNT_PID=$!
 
 sleep 5
 
-python test.py "$@"
+python run/test.py "$@"
 
 cleanup
 

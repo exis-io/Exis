@@ -112,7 +112,7 @@ angular.module('browserTesterApp', ['ngResource', 'ngRoute', 'ngRiffle'])
 
     function runTests(){
       for(var i in tests){
-        tests[i][0]($riffle, assertBuilder(i));
+        tests[i][0]($riffle, assertBuilder(i), $scope);
       }
     }
 
@@ -190,8 +190,9 @@ angular.module('browserTesterApp', ['ngResource', 'ngRoute', 'ngRiffle'])
             results.push(receiver);
         }
 
+        console.log(actualCode);
         // Start off everything as a success
-        tests.push([new Function('$riffle', 'assert', actualCode), testDescription, results]);
+        tests.push([new Function('$riffle', 'assert', '$scope', actualCode), testDescription, results]);
         checkIfSuccess(i);
 
       }

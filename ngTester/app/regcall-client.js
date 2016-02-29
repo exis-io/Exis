@@ -65,6 +65,41 @@ function (err) {
     assert(err === expected, "Expected: '" + expected + "', Got: " + err);
 });
 
+
+#####################################TEST######################################
+Reg-backend 1: Example reg/call str str
+
+$riffle.call("regStrStr", "Hello").want(String).then(function (s) {
+    var expected = "Hello World";
+    assert(s === expected, "Expected: '" + expected + "', Got: " + expected);
+},
+function (err) {
+    assert(false, "Error: Promise Rejected with: " + err);
+});
+
+#####################################TEST######################################
+Reg-backend 2: Example reg/call str int
+
+$riffle.call("regStrInt", "Hello").want(Number).then(function (s) {
+    var expected = 42;
+    assert(s === expected, "Expected: '" + expected + "', Got: " + expected);
+},
+function (err) {
+    assert(false, "Error: Promise Rejected with: " + err);
+});
+
+#####################################TEST######################################
+Reg-backend 3: Example reg/call int str
+
+$riffle.call("regIntStr", 42).want(String).then(function (s) {
+    var expected = "Hello World";
+    assert(s === expected, "Expected: '" + expected + "', Got: " + expected);
+},
+function (err) {
+    assert(false, "Error: Promise Rejected with: " + err);
+});
+
+
 #####################################TEST######################################
 7. Sending classes using riffle works properly
 ## shouldnt receive call ##

@@ -56,6 +56,33 @@ $riffle.register("iWantManyInts", $riffle.want(function(s) {
     assert(false, "shouldnt have received a call");
     return "Thanks for " + s.length + " ints!"
 }, [Number]));
+
+#####################################TEST######################################
+Reg-backend 1: Example reg/call str str
+
+$riffle.register("regStrStr", $riffle.want(function(s) {
+    var expected = "Hello";
+    assert(s === expected, "Expected: '" + expected + "', Got: " + s)
+    return "Hello World";
+}, String));
+
+#####################################TEST######################################
+Reg-backend 2: Example reg/call str int
+
+$riffle.register("regStrInt", $riffle.want(function(s) {
+    var expected = "Hello";
+    assert(s === expected, "Expected: '" + expected + "', Got: " + s)
+    return 42;
+}, String));
+
+#####################################TEST######################################
+Reg-backend 3: Example reg/call int str
+
+$riffle.register("regIntStr", $riffle.want(function(s) {
+    var expected = 42;
+    assert(s === expected, "Expected: '" + expected + "', Got: " + s)
+    return "Hello World";
+}, Number));
     
 
 #####################################TEST######################################
