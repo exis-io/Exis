@@ -12,7 +12,7 @@ print("Starting up the backend...")
 
 //This is your apps backend
 //Change USERNAME to your username that you used to sign up with at my.exis.io
-let app = RiffleDomain(domain: "xs.demo.USERNAME.helloworldswift")
+let app = RiffleDomain(domain: "xs.demo.USERNAME.swifthelloworld")
 
 class ContainerAgent: RiffleDomain {
     override func onJoin() {

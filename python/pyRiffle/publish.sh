@@ -5,12 +5,14 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-if [ ! -f riffle/linux-x86_64/pymantle.so ]; then
-    echo "pymantle.so was not found."
-    echo "Please run 'make python' in the top-level directory."
-    echo "Then move the file to riffle/linux-x86_64"
-    exit 1
-fi
+# Make sure we have all of the files listed in the manifest.
+for f in `cat MANIFEST.in`; do
+    if [ "$f" != "include" -a ! -f "$f" ]; then
+        echo "$f was not found."
+        echo "Run 'make python' on that architecture and aggregate the shared library files."
+        exit 1
+    fi
+done
 
 if [ ! -f ~/.pypirc ]; then
     echo "~/.pypirc was not found."
