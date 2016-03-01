@@ -227,7 +227,7 @@ function ModelObject(constructor){
           this._id = result.inserted_id;
           return result;
         }
-        return self.__storage.call("collection/insert_one", self.__collection, this).then(wait(helper, Object));
+        return self.__storage.call("collection/insert_one", self.__collection, this).then(helper);
       }else{
         return self.__storage.call("collection/replace_one", self.__collection, {'_id': this._id}, this, true);
       }
@@ -305,10 +305,7 @@ ModelObject.prototype.find = function(query){
   }
   this.assertBound();
   var self = this;
-  function passer(args){
-    return args;
-  }
-  return this.__storage.call("collection/find", this.__collection, query).then(wait(passer, [this]));
+  return this.__storage.call("collection/find", this.__collection, query).want([this]);
 };
 
 ModelObject.prototype.find_one = function(query){
@@ -316,10 +313,7 @@ ModelObject.prototype.find_one = function(query){
     query = {};
   }
   this.assertBound();
-  function passer(args){
-    return args;
-  }
-  return this.__storage.call("collection/find_one", this.__collection, query).then(wait(passer, this));
+  return this.__storage.call("collection/find_one", this.__collection, query).want(this);
 };
 
 
