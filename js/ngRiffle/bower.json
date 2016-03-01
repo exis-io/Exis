@@ -1,6 +1,6 @@
 {
     "name": "ngRiffle",
-    "main": "release/ngRiffle.js",
+    "main": "release/ngRiffle.min.js",
     "authors": [
         "Exis <developers@exis.io>"
     ],
