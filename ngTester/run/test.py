@@ -104,7 +104,6 @@ def runBrowser(endpoint, startNextBrowser, allLoaded, globalLock, isLast, result
 def runSingleTest(test):
 
 
-    print("START TEST: {}".format(test['name']))
     startNextBrowser = threading.Event()
     allLoaded = threading.Event()
     resultLock = threading.Lock()
@@ -157,7 +156,7 @@ def runSingleTest(test):
 
         numTests += 1
 
-    print("COMPLETE TEST: {}. {}/{} tests succeeded".format(test['name'], numTests-numFailures, numTests))
+    return (numTests-numFailures, numTests)
 
 
 def runtests(whichTests):
@@ -171,8 +170,27 @@ def runtests(whichTests):
     else:
         runningTests = [test for test in testConfig if test['name'] in whichTests]
 
+    allTests = {}
+
     for test in runningTests:
-        runSingleTest(test)
+        print("START TEST: {}".format(test['name']))
+        numSuccess, numTotal = runSingleTest(test)
+        print("COMPLETE TEST: {}. {}/{} tests succeeded".format(test['name'], numSuccess, numTotal))
+        allTests[test['name']] = {'numSuccess': numSuccess, 'numTotal': numTotal}
+
+    featureTotal = 0
+    featureSuccess = 0
+    testTotal = 0
+    testSuccess = 0
+    for test, results in allTests.iteritems():
+        featureTotal += 1
+        testTotal += results['numTotal']
+        testSuccess += results['numSuccess']
+        if results['numTotal'] == results['numSuccess']:
+            featureSuccess += 1
+
+    print("COMPLETED TEST SUITE: {}/{} features successful, ({}/{} tests)".format(
+        featureSuccess, featureTotal, testSuccess, testTotal))
 
 
 # TODO replicated code, needs to be consistent/moved into arbiter
