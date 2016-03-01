@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = 'ECAF9EF077EBED695511867B'
+               BlueprintIdentifier = '643210D4E2F1A5FD6CA730A2'
                BlueprintName = 'Pods-ExAgainst-GHODictionary'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'GHODictionary.framework'>

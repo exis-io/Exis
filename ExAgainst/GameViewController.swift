@@ -7,7 +7,6 @@
 //
 
 
-
 import UIKit
 import Riffle
 import RMSwipeTableViewCell
@@ -41,6 +40,7 @@ class GameViewController: UIViewController {
         collectionDelegate = PlayerCollectionDelegate(collectionview: collectionPlayers, parent: self, baseAppName: app.domain)
         
         buttonBack.imageView?.contentMode = .ScaleAspectFit
+        blur(viewRound)
         
         collectionDelegate.refreshPlayers(players)
         tableDelegate.refreshCards(currentPlayer.hand)
@@ -48,15 +48,11 @@ class GameViewController: UIViewController {
         room.subscribe("answering", answering)
         room.subscribe("picking", picking)
         room.subscribe("scoring", scoring)
-        
         me.register("draw", draw)
-        
-        blur(viewRound)
     }
     
     override func viewWillDisappear(animated: Bool) {
-        room.call("leave", currentPlayer.domain, handler: nil)
-        
+        room.call("leave", handler: nil)
         room.leave()
         me.leave()
     }
@@ -68,14 +64,14 @@ class GameViewController: UIViewController {
     
     // MARK: Game Logics
     func answering(newCzar: Player, question: String, time: Double) {
+        state = "Answering"
         labelActiveCard.text = question
         _ = players.map { $0.czar = $0 == newCzar }
+        
         collectionDelegate.setCzar(newCzar)
         tableDelegate.refreshCards(newCzar.domain == me.domain ? [] : currentPlayer.hand)
         viewProgress.countdown(time)
-        
         flashView(viewRound, label: labelRound, text: currentPlayer.czar ? "You're the czar" : "Choose a card")
-        state = "Answering"
     }
     
     func picking(answers: [String], time: Double) {
@@ -125,7 +121,12 @@ class GameViewController: UIViewController {
             tableDelegate.removeCellsExcept([card])
         }
         
-        room.call("pick", currentPlayer, card, handler: nil)
+        room.call("pick", card, handler: nil)
+    }
+    
+    func playerJoined(player: Player) {
+        players.append(player)
+        collectionDelegate.refreshPlayers(players)
     }
     
     func draw(cards: [String]) {

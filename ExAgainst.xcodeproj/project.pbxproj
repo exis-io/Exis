@@ -22,8 +22,6 @@
 		50CAC8491BEE9FEE005E605F /* LiberationSans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50CAC8451BEE9FEE005E605F /* LiberationSans-Italic.ttf */; };
 		50CAC84A1BEE9FEE005E605F /* LiberationSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50CAC8461BEE9FEE005E605F /* LiberationSans-Regular.ttf */; };
 		50CAC8591BEEA2BB005E605F /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50CAC83A1BEE9FBB005E605F /* Models.swift */; };
-		50F70DB21BF0577A006E7384 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F70DB11BF0577A006E7384 /* Utilities.swift */; };
-		50F70DB31BF057AB006E7384 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F70DB11BF0577A006E7384 /* Utilities.swift */; };
 		50F70DB61BF0B20F006E7384 /* a13.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 50F70DB41BF099CD006E7384 /* a13.json */; };
 		50F70DB71BF0B20F006E7384 /* q13.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 50F70DB51BF099CD006E7384 /* q13.json */; };
 		50FE3E411BFEB00D00E3BC29 /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50FE3E3F1BFEAE6800E3BC29 /* Room.swift */; };
@@ -65,7 +63,6 @@
 		50CAC8451BEE9FEE005E605F /* LiberationSans-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LiberationSans-Italic.ttf"; sourceTree = "<group>"; };
 		50CAC8461BEE9FEE005E605F /* LiberationSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LiberationSans-Regular.ttf"; sourceTree = "<group>"; };
 		50CAC84C1BEEA0B2005E605F /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
-		50F70DB11BF0577A006E7384 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		50F70DB41BF099CD006E7384 /* a13.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = a13.json; sourceTree = "<group>"; };
 		50F70DB51BF099CD006E7384 /* q13.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = q13.json; sourceTree = "<group>"; };
 		50FE3E3F1BFEAE6800E3BC29 /* Room.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
@@ -134,7 +131,6 @@
 				50CAC83C1BEE9FBB005E605F /* GameViewController.swift */,
 				50CAC83A1BEE9FBB005E605F /* Models.swift */,
 				50CAC83D1BEE9FBB005E605F /* Views.swift */,
-				50F70DB11BF0577A006E7384 /* Utilities.swift */,
 			);
 			path = ExAgainst;
 			sourceTree = "<group>";
@@ -392,7 +388,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				50F70DB21BF0577A006E7384 /* Utilities.swift in Sources */,
 				50CAC8401BEE9FBB005E605F /* GameViewController.swift in Sources */,
 				50CAC83E1BEE9FBB005E605F /* Models.swift in Sources */,
 				50CAC8411BEE9FBB005E605F /* Views.swift in Sources */,
@@ -406,7 +401,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				50CAC8591BEEA2BB005E605F /* Models.swift in Sources */,
-				50F70DB31BF057AB006E7384 /* Utilities.swift in Sources */,
 				50FE3E411BFEB00D00E3BC29 /* Room.swift in Sources */,
 				50CAC8351BEE97A1005E605F /* main.swift in Sources */,
 			);

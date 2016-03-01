@@ -84,19 +84,19 @@ class RiffleConnection: NSObject, MDWampClientDelegate {
         login(domain, requesting: superdomain, success: { (token: String) -> () in
             Riffle.debug("Auth 0 completed")
             completed(token: token)
-            }) { () -> () in
-                register(domain, requesting: superdomain, success: { () in
-                    Riffle.debug("Registration completed")
-                    login(domain, requesting: superdomain, success: { (token: String) -> () in
-                        Riffle.debug("Auth 0 completed")
-                        completed(token: token)
-                        }) { () -> () in
-                            print("WARN: Domain \(domain) registered, but unable to login.")
-                    }
-                    
-                    }, fail: { () in
-                        print("WARN: Unable to register domain \(domain) as subdomain of \(superdomain)")
-                })
+        }) { () -> () in
+            register(domain, requesting: superdomain, success: { () in
+                Riffle.debug("Registration completed")
+                login(domain, requesting: superdomain, success: { (token: String) -> () in
+                    Riffle.debug("Auth 0 completed")
+                    completed(token: token)
+                    }) { () -> () in
+                        print("WARN: Domain \(domain) registered, but unable to login.")
+                }
+                
+                }, fail: { () in
+                    print("WARN: Unable to register domain \(domain) as subdomain of \(superdomain)")
+            })
         }
         
         // Else attempt to register
