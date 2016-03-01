@@ -22,11 +22,14 @@ angular.module('cardsAgainst')
     var registrar = 'https://node.exis.io:8880/';
 
     $scope.login = function (username) {
+      if(username){
+        username = 'xs.demo.exis.cardsagainst.' + username;
+      }
       var credentials = angular.toJson({domain: username, requestingdomain: "xs.demo.exis.cardsagainst"});
       attemptLogin();
 
       function register(){
-        var registerURL = registrar + 'register';
+        var registerURL = registrar + 'login';
         $http.post(registerURL, credentials).then(getToken, error);
       }
 
@@ -42,7 +45,6 @@ angular.module('cardsAgainst')
     };
 
     function buildSession (result) {
-      console.log(result);
       $scope.session = {
         domain: result.data.domain,
         token: result.data.login_token
@@ -51,8 +53,9 @@ angular.module('cardsAgainst')
     }
 
     function connectWamp(session){
-      $wamp.connection._options.authmethods = ['token'];
+      $scope.username = $scope.getName(session.domain);
       $wamp.connection._options.realm = session.domain;
+      $wamp.connection._options.authmethods = ['token'];
       $wamp.connection._options.authid = session.domain;
       $wamp.connection._options.onchallenge = function(){return session.token;};
       $wamp.open();
@@ -70,5 +73,9 @@ angular.module('cardsAgainst')
       $scope.loggedin = false;
       $scope.session = null;
     });
+
+    $scope.getName = function(domain){
+      return domain.split('.')[domain.split('.').length - 1];
+    };
 
   }]);

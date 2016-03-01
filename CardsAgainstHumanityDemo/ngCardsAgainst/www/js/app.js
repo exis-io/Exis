@@ -19,9 +19,7 @@ app.config(function($stateProvider, $urlRouterProvider){
   })
 })
 .config(['$wampProvider', function($wampProvider){
-  $wampProvider.init({
-    url: 'wss://node.exis.io:8000/ws',
-  }); 
+  $wampProvider.init( {url: 'wss://node.exis.io:8000/ws'}); 
 }])
 .config(function ($httpProvider) {
   //disregard browser pre-flight checks
