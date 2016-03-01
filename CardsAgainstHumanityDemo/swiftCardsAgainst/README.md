@@ -1,3 +1,10 @@
+<div align="center">
+    <h1>Join the Chat!
+    <br>
+    <a href="http://slack.exis.io"><img src="http://slack.exis.io/badge.svg"></a>
+    </h3>
+</div>
+
 # Swift Cards Against Humanity Demo
 
 This project is the result of a [tutorial on getting started with exis](http://docs.exis.io/#/pages/samples/SwiftCardsTutorial.md). All our docs live at [docs.exis.io](http://docs.exis.io). 
