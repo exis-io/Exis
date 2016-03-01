@@ -55,8 +55,9 @@ def runBrowser(endpoint, startNextBrowser, allLoaded, globalLock, isLast, result
             logs = driver.get_log('browser')
             for i in range(logIndex, len(logs)):
                 line = logs[i]
+                #print(line)
                 if "___NODERESTART___" in line['message']:
-                    print("Restarting node")
+                    #print("restarting node")
                     node.restart(line)
 
             # we dont want to look at these logs next time

@@ -91,7 +91,6 @@ class Node:
 
     def restart(self, line):
         # See if we need to look for options
-        print("Restarting node")
         self.restartOpts = dict()
         if "," in line:
             try:
@@ -156,7 +155,6 @@ class Node:
         """
         while(self.running):
             for line in iter(out.readline, b''):
-                print("nodeout: {}".format(line))
                 l = line.rstrip()
                 stor.append((time.time(), l))
         out.close()

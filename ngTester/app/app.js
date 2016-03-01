@@ -190,7 +190,7 @@ angular.module('browserTesterApp', ['ngResource', 'ngRoute', 'ngRiffle'])
             results.push(receiver);
         }
 
-        console.log(actualCode);
+        //console.log(actualCode);
         // Start off everything as a success
         tests.push([new Function('$riffle', 'assert', '$scope', actualCode), testDescription, results]);
         checkIfSuccess(i);
