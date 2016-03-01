@@ -70,6 +70,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
          *      - `max_retry_delay`: `{float=}` - Maximum delay for reconnection attempts in seconds (default: 300).
          *      - `retry_delay_growth`: `{float=}` - The growth factor applied to the retry delay between reconnection attempts (default: 1.5).
          *      - `retry_delay_jitter`: `{float=}` - The standard deviation of a Gaussian to jitter the delay on each retry cycle as a fraction of the mean (default: 0.1).
+         *      - `disable_digest`: `{boolean=}` - Disables wrapping all promises and callbacks with scope.$apply (default: false).
          *
          * @description
          * Configures the AutobhanJS Service
@@ -220,6 +221,11 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
              * Wraps a callback with a function that calls scope.$apply(), so that the callback is added to the digest
              */
             function digestWrapper(func) {
+
+                if (options.disable_digest && options.disable_digest === true) {
+                    return func;
+                }
+
                 return function () {
                     var cb = func.apply(this, arguments);
                     $rootScope.$apply();
@@ -262,6 +268,10 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                 onOpen = function () {
                     var p = connection.session.subscribe(topic, handler, options).then(
                         function (s) {
+                            if (subscription.hasOwnProperty('id')) {
+                                delete subscription.id;
+                            }
+
                             subscription = angular.extend(s, subscription);
                             deferred.resolve(subscription);
                             return s;
@@ -376,6 +386,13 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         return Subscription(topic, handler, options, subscribedCallback);
                     });
                 },
+                subscribeOnScope: function (scope, channel, callback) {
+                    return this.subscribe(channel, callback).then(function (subscription) {
+                        scope.$on('$destroy', function () {
+                            return subscription.unsubscribe();
+                        });
+                    });
+                },
                 unsubscribe: function (subscription) {
                     return interceptorWrapper('unsubscribe', arguments, function () {
                         return subscription.unsubscribe();
@@ -391,6 +408,11 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                     return interceptorWrapper('register', arguments, function () {
                         return connection.session.register(procedure, endpoint, options);
+                    });
+                },
+                unregister: function (registration) {
+                    return interceptorWrapper('unregister', arguments, function () {
+                        return registration.unregister();
                     });
                 },
                 call: function (procedure, args, kwargs, options) {
