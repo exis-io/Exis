@@ -8,22 +8,22 @@
 
 /* Begin PBXBuildFile section */
 		1287EE08C950269926D99264ED22B6A4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E4E89230EF59BC255123B67864ACF77 /* Foundation.framework */; };
+		297F956DD2253930B48F574733BC2CE2 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACDE87FEF270A6DC340D61907F7CCE14 /* Utils.swift */; };
 		472E5F6D8CF6DF9147F3AF55B40BB4F0 /* Pods-Riffle_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = CC094032479EC475DA9A4A4CA050285C /* Pods-Riffle_Tests-dummy.m */; };
-		507D70D71C8D0A080030F9F4 /* Cumin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507D70CD1C8D0A080030F9F4 /* Cumin.swift */; };
-		507D70D81C8D0A080030F9F4 /* CuminicableExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507D70CE1C8D0A080030F9F4 /* CuminicableExtensions.swift */; };
-		507D70D91C8D0A080030F9F4 /* Deferred.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507D70CF1C8D0A080030F9F4 /* Deferred.swift */; };
-		507D70DA1C8D0A080030F9F4 /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507D70D01C8D0A080030F9F4 /* Domain.swift */; };
-		507D70DB1C8D0A080030F9F4 /* Json.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507D70D11C8D0A080030F9F4 /* Json.swift */; };
-		507D70DD1C8D0A080030F9F4 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507D70D31C8D0A080030F9F4 /* Model.swift */; };
-		507D70DF1C8D0A080030F9F4 /* Silver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507D70D51C8D0A080030F9F4 /* Silver.swift */; };
-		507D70E01C8D0A080030F9F4 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507D70D61C8D0A080030F9F4 /* Utils.swift */; };
+		68B3AEDAC345BB3504AD3BF9EC500892 /* Silver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5E9FE157F8D1F800D33A366B7D84D1 /* Silver.swift */; };
+		6F8616240E932F87A78B498B2C58E1DF /* Riffle-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 36309CBBD82FA782C4CD018A41D0E6B3 /* Riffle-dummy.m */; };
 		720C9D2809147D1921C2630B1CC46F92 /* Riffle-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D13BA5E1BED99C0603B26CC09557C92 /* Riffle-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		74A11A35E4EF16739A6A42979F2FF836 /* Riffle-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 36309CBBD82FA782C4CD018A41D0E6B3 /* Riffle-dummy.m */; };
+		765259150C381C4CFB4C95B48FAAEFE9 /* CuminicableExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4BD4A2489FF41997C5C52FC5184100 /* CuminicableExtensions.swift */; };
+		7D72BA9DD14B503C9A04E87F7DB756E6 /* Deferred.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAF5B4474CBF7BE34948E6D262E2E11 /* Deferred.swift */; };
 		7E8D51E6857DE74577ABCA37C3C867B0 /* Pods-Riffle_Example-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 8897CC00F5A3586670B187B1E28048BF /* Pods-Riffle_Example-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		94F91644EA15E85B49A4BEEEA55AA23A /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14B3E4A9686C43631C918577FAA0CDD /* Domain.swift */; };
 		9E2750354A4E4945B45AEF5339A66FF7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E4E89230EF59BC255123B67864ACF77 /* Foundation.framework */; };
 		A8BAFE91690A1267BBD744138B6B6D39 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E4E89230EF59BC255123B67864ACF77 /* Foundation.framework */; };
 		A8C1230C449DF8A14D4CBE1E6F4D368F /* Pods-Riffle_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 8226CD07BDB5AF9D11AAED716049B72E /* Pods-Riffle_Example-dummy.m */; };
+		AA2A34BBE62F35292E4F71D0BA93831D /* Json.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DEF0F1AFCE91B360F126353DDB0F129 /* Json.swift */; };
+		B49C1C87D0CBFDBD4F20B08BB69CDC34 /* Cumin.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2E4C0A141872922A3EB7EE21ADC057E /* Cumin.swift */; };
 		B519825E5EB6E23CA58CAECD0CC3EABE /* Pods-Riffle_Tests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4623AE4E914CF55B05097B0DC1A84FAB /* Pods-Riffle_Tests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		EA0FBF87DF6A3CC8FA7843D969897E8E /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC0365451BC4D15A0FEE8CC929E67B /* Model.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +45,7 @@
 
 /* Begin PBXFileReference section */
 		007F89758DAC9ECBC7DE4F84A46ED5A5 /* Riffle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Riffle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0C5E9FE157F8D1F800D33A366B7D84D1 /* Silver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Silver.swift; sourceTree = "<group>"; };
 		11F48C2F8E8D6C71B609C89F2007CDF0 /* Riffle-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Riffle-prefix.pch"; sourceTree = "<group>"; };
 		136A9A56B087CF261A4879E4AD738277 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		23C68779506F9478CB6615FC48207A8E /* Pods-Riffle_Tests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Riffle_Tests-frameworks.sh"; sourceTree = "<group>"; };
@@ -57,18 +58,13 @@
 		42BDDF50222F58EF640BEE37826E2C8B /* Pods-Riffle_Tests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Riffle_Tests-resources.sh"; sourceTree = "<group>"; };
 		4623AE4E914CF55B05097B0DC1A84FAB /* Pods-Riffle_Tests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-Riffle_Tests-umbrella.h"; sourceTree = "<group>"; };
 		466DA7815AC9D37334B626D6593CCF8C /* Pods-Riffle_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Riffle_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		507D70CD1C8D0A080030F9F4 /* Cumin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cumin.swift; sourceTree = "<group>"; };
-		507D70CE1C8D0A080030F9F4 /* CuminicableExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CuminicableExtensions.swift; sourceTree = "<group>"; };
-		507D70CF1C8D0A080030F9F4 /* Deferred.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Deferred.swift; sourceTree = "<group>"; };
-		507D70D01C8D0A080030F9F4 /* Domain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Domain.swift; sourceTree = "<group>"; };
-		507D70D11C8D0A080030F9F4 /* Json.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Json.swift; sourceTree = "<group>"; };
-		507D70D31C8D0A080030F9F4 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
-		507D70D51C8D0A080030F9F4 /* Silver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Silver.swift; sourceTree = "<group>"; };
-		507D70D61C8D0A080030F9F4 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		4DEF0F1AFCE91B360F126353DDB0F129 /* Json.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Json.swift; sourceTree = "<group>"; };
 		52D3A396876A9726D799403263BB237A /* Riffle.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = Riffle.modulemap; sourceTree = "<group>"; };
 		53FE714425AB2575DAB07114211EE7A0 /* Pods-Riffle_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Riffle_Example.release.xcconfig"; sourceTree = "<group>"; };
+		63CC0365451BC4D15A0FEE8CC929E67B /* Model.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		69D882DAFAF7F6C87B7636F1168294BC /* Pods-Riffle_Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-Riffle_Example-acknowledgements.markdown"; sourceTree = "<group>"; };
 		6E1D431BF0C9CF5219AED56DFD6963F6 /* Pods-Riffle_Example-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Riffle_Example-resources.sh"; sourceTree = "<group>"; };
+		6E4BD4A2489FF41997C5C52FC5184100 /* CuminicableExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CuminicableExtensions.swift; sourceTree = "<group>"; };
 		72242A22BB6CD1590B0E9C30570640B8 /* Pods-Riffle_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Riffle_Example-acknowledgements.plist"; sourceTree = "<group>"; };
 		791AD9C1DF72A4870F6273630F9B4D8E /* Riffle.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Riffle.xcconfig; sourceTree = "<group>"; };
 		7BA90895EC41CF3B149E6A991C3EFD7A /* Pods-Riffle_Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-Riffle_Tests.modulemap"; sourceTree = "<group>"; };
@@ -77,11 +73,15 @@
 		8897CC00F5A3586670B187B1E28048BF /* Pods-Riffle_Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-Riffle_Example-umbrella.h"; sourceTree = "<group>"; };
 		9B20282C3A7E57A4BC390502B38934A5 /* Pods-Riffle_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Riffle_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		AB69B552B0075F23BE78F7DA80892027 /* Mantle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Mantle.framework; path = Pod/Assets/Mantle.framework; sourceTree = "<group>"; };
+		ACDE87FEF270A6DC340D61907F7CCE14 /* Utils.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		B14B3E4A9686C43631C918577FAA0CDD /* Domain.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Domain.swift; sourceTree = "<group>"; };
 		BA6428E9F66FD5A23C0A2E06ED26CD2F /* Podfile */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		C39B0FB11B4AFCF92A5A0436FAC4EF40 /* Pods-Riffle_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-Riffle_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
 		C96C6B29596760F49AB9BA540C39DA7A /* Pods_Riffle_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Riffle_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC094032479EC475DA9A4A4CA050285C /* Pods-Riffle_Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Riffle_Tests-dummy.m"; sourceTree = "<group>"; };
 		CC3CF6E67B363C590B48D1EFD08BF823 /* Pods_Riffle_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Riffle_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DFAF5B4474CBF7BE34948E6D262E2E11 /* Deferred.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Deferred.swift; sourceTree = "<group>"; };
+		F2E4C0A141872922A3EB7EE21ADC057E /* Cumin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Cumin.swift; sourceTree = "<group>"; };
 		F6887786FD1706AE0FAE67CD173B76F5 /* Pods-Riffle_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Riffle_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
 		FE95D336F7780E933B5E8CE950254193 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -114,14 +114,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		4CC435BF9A4BFE2427FFD3C8B15CBFD6 /* Pod */ = {
-			isa = PBXGroup;
-			children = (
-				9B0CFA708B3C3E5C8286FBAB8A1F89BD /* Classes */,
-			);
-			path = Pod;
-			sourceTree = "<group>";
-		};
 		7DB346D0F39D3F0E887471402A8071AB = {
 			isa = PBXGroup;
 			children = (
@@ -131,6 +123,21 @@
 				CD4DD3CF94FB7EAE21EEEAC8B1B56471 /* Products */,
 				9DDC7F9C351CEEF13343CA56815B99C1 /* Targets Support Files */,
 			);
+			sourceTree = "<group>";
+		};
+		83896DF8313E9D5E26224675BFB68562 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				F2E4C0A141872922A3EB7EE21ADC057E /* Cumin.swift */,
+				6E4BD4A2489FF41997C5C52FC5184100 /* CuminicableExtensions.swift */,
+				DFAF5B4474CBF7BE34948E6D262E2E11 /* Deferred.swift */,
+				B14B3E4A9686C43631C918577FAA0CDD /* Domain.swift */,
+				4DEF0F1AFCE91B360F126353DDB0F129 /* Json.swift */,
+				63CC0365451BC4D15A0FEE8CC929E67B /* Model.swift */,
+				0C5E9FE157F8D1F800D33A366B7D84D1 /* Silver.swift */,
+				ACDE87FEF270A6DC340D61907F7CCE14 /* Utils.swift */,
+			);
+			path = Classes;
 			sourceTree = "<group>";
 		};
 		874A283FFDDA3C760BD07E0D971A96F0 /* Support Files */ = {
@@ -163,6 +170,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		8D124315B329B46B1AD1A3075AF72049 /* Pod */ = {
+			isa = PBXGroup;
+			children = (
+				83896DF8313E9D5E26224675BFB68562 /* Classes */,
+			);
+			path = Pod;
+			sourceTree = "<group>";
+		};
 		91F9A92D9F6A5A9F12BC14738BA4CFB2 /* Pods-Riffle_Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -179,21 +194,6 @@
 			);
 			name = "Pods-Riffle_Tests";
 			path = "Target Support Files/Pods-Riffle_Tests";
-			sourceTree = "<group>";
-		};
-		9B0CFA708B3C3E5C8286FBAB8A1F89BD /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-				507D70CD1C8D0A080030F9F4 /* Cumin.swift */,
-				507D70CE1C8D0A080030F9F4 /* CuminicableExtensions.swift */,
-				507D70CF1C8D0A080030F9F4 /* Deferred.swift */,
-				507D70D01C8D0A080030F9F4 /* Domain.swift */,
-				507D70D11C8D0A080030F9F4 /* Json.swift */,
-				507D70D31C8D0A080030F9F4 /* Model.swift */,
-				507D70D51C8D0A080030F9F4 /* Silver.swift */,
-				507D70D61C8D0A080030F9F4 /* Utils.swift */,
-			);
-			path = Classes;
 			sourceTree = "<group>";
 		};
 		9DDC7F9C351CEEF13343CA56815B99C1 /* Targets Support Files */ = {
@@ -227,7 +227,7 @@
 			isa = PBXGroup;
 			children = (
 				8C8FE4C8B05F5B9970A77BA95F9FEEE1 /* Frameworks */,
-				4CC435BF9A4BFE2427FFD3C8B15CBFD6 /* Pod */,
+				8D124315B329B46B1AD1A3075AF72049 /* Pod */,
 				874A283FFDDA3C760BD07E0D971A96F0 /* Support Files */,
 			);
 			name = Riffle;
@@ -312,7 +312,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3D5E9346F7CAF10DAEB75C551EF1FDF8 /* Build configuration list for PBXNativeTarget "Riffle" */;
 			buildPhases = (
-				F99405BF32EC9A2D97BBEAB6ED1802EC /* Sources */,
+				18FEEA0CFA07C647E1527E48EB8D185B /* Sources */,
 				DAB1574594A519AFBAB09FC7AE003BE2 /* Frameworks */,
 				CBE1DC5CA5E2745C504B1A31F0F0A4A0 /* Headers */,
 			);
@@ -349,7 +349,7 @@
 		D41D8CD98F00B204E9800998ECF8427E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0720;
+				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0700;
 			};
 			buildConfigurationList = 2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */;
@@ -380,27 +380,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		18FEEA0CFA07C647E1527E48EB8D185B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B49C1C87D0CBFDBD4F20B08BB69CDC34 /* Cumin.swift in Sources */,
+				765259150C381C4CFB4C95B48FAAEFE9 /* CuminicableExtensions.swift in Sources */,
+				7D72BA9DD14B503C9A04E87F7DB756E6 /* Deferred.swift in Sources */,
+				94F91644EA15E85B49A4BEEEA55AA23A /* Domain.swift in Sources */,
+				AA2A34BBE62F35292E4F71D0BA93831D /* Json.swift in Sources */,
+				EA0FBF87DF6A3CC8FA7843D969897E8E /* Model.swift in Sources */,
+				6F8616240E932F87A78B498B2C58E1DF /* Riffle-dummy.m in Sources */,
+				68B3AEDAC345BB3504AD3BF9EC500892 /* Silver.swift in Sources */,
+				297F956DD2253930B48F574733BC2CE2 /* Utils.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B0BC50310686EB5A10E7889DC604186A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				A8C1230C449DF8A14D4CBE1E6F4D368F /* Pods-Riffle_Example-dummy.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F99405BF32EC9A2D97BBEAB6ED1802EC /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				507D70D81C8D0A080030F9F4 /* CuminicableExtensions.swift in Sources */,
-				507D70DA1C8D0A080030F9F4 /* Domain.swift in Sources */,
-				507D70D71C8D0A080030F9F4 /* Cumin.swift in Sources */,
-				507D70DB1C8D0A080030F9F4 /* Json.swift in Sources */,
-				507D70D91C8D0A080030F9F4 /* Deferred.swift in Sources */,
-				507D70DF1C8D0A080030F9F4 /* Silver.swift in Sources */,
-				507D70E01C8D0A080030F9F4 /* Utils.swift in Sources */,
-				74A11A35E4EF16739A6A42979F2FF836 /* Riffle-dummy.m in Sources */,
-				507D70DD1C8D0A080030F9F4 /* Model.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -530,7 +530,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 791AD9C1DF72A4870F6273630F9B4D8E /* Riffle.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -620,7 +619,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 791AD9C1DF72A4870F6273630F9B4D8E /* Riffle.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;

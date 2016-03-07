@@ -11,6 +11,9 @@ import Riffle
 
 class ViewController: UIViewController {
     override func viewDidLoad() {
+        SetLogLevelDebug()
+        SetFabricSandbox()
+        
         super.viewDidLoad()
         
         print("viewDidLoad")

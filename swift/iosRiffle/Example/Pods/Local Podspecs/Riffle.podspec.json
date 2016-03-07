@@ -6,7 +6,7 @@
     "ios": "8.0",
     "osx": "10.10"
   },
-  "description": "Riffle allows for simple interaction with a Fabric. This library is meant to replace your\nnetworking code with something that doesn't look like networking code at all!",
+  "description": "Riffle allows for simple interaction with a Fabric, made by Exis. This library is meant to replace your\nnetworking code with something that doesn't look like networking code at all!",
   "homepage": "https://github.com/exis-io/swiftRiffle",
   "license": "MIT",
   "authors": {

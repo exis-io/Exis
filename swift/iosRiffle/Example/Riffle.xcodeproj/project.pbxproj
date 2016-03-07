@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3F49E229E84377B89F9BF464 /* Pods_Riffle_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA177ED3F63730C700757B10 /* Pods_Riffle_Example.framework */; };
+		507D70E21C8D19070030F9F4 /* DomainTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507D70E11C8D19070030F9F4 /* DomainTesting.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
@@ -33,6 +34,7 @@
 		3275DFFFF5ACCEF7E137C77C /* Pods_Riffle_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Riffle_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A282C0909F4D17C0D412CE2 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		502DDEBB1BE19F57008EC0EB /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
+		507D70E11C8D19070030F9F4 /* DomainTesting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DomainTesting.swift; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* Riffle_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Riffle_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -95,6 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
+				507D70E11C8D19070030F9F4 /* DomainTesting.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				502DDEBB1BE19F57008EC0EB /* MyPlayground.playground */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
@@ -362,6 +365,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
+				507D70E21C8D19070030F9F4 /* DomainTesting.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

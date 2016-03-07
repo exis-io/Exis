@@ -1,12 +1,12 @@
 import Foundation
 import CoreFoundation
-
-#if os(Linux)
-    import SwiftGlibc
-    import Glibc
-#else
-    import Darwin.C
-#endif
+//
+//#if os(Linux)
+//    import SwiftGlibc
+//    import Glibc
+//#else
+//    import Darwin.C
+//#endif
 
 let unescapeMapping: [UnicodeScalar: UnicodeScalar] = [
     "t": "\t",

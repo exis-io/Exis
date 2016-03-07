@@ -8,14 +8,7 @@
 
 import Foundation
 
-#if os(Linux)
-    import SwiftGlibc
-    import Glibc
-#else
-    import Darwin.C
-#endif
-
-// All properties implement Convertible, but Models react differently 
+// All properties implement Convertible, but Models react differently
 // This allows each property to handle its construction differently
 public protocol Convertible {
     // Return a constructed form of this object

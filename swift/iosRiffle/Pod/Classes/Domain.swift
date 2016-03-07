@@ -41,36 +41,36 @@ public class Domain {
         app = superdomain.app
     }
     
-//    public func _subscribe(endpoint: String, _ types: [Any], fn: [Any] -> ()) -> Deferred {
-//        let hn = CBID()
-//        app.handlers[hn] = fn
-//
-//        let d = Deferred(domain: self)
-//        mantleDomain.subscribe(endpoint, d.cb, d.eb, hn, marshall(serializeArguments(types)))
-//        return d
-//    }
-    
-//    public func _register(endpoint: String, _ types: [Any], fn: [Any] -> Any) -> Deferred {
-//        let hn = CBID()
-//        app.registrations[hn] = fn
-//
-//        let d = Deferred(domain: self)
-//        mantleDomain.register(endpoint, d.cb, d.eb, hn, marshall(types))
-//        return d
-//    }
+    public func _subscribe(endpoint: String, _ types: [Any], fn: [Any] -> ()) -> Deferred {
+        let hn = CBID()
+        app.handlers[hn] = fn
 
-//    public func publish(endpoint: String, _ args: Any...) -> Deferred {
-//        let d = Deferred(domain: self)
-//        mantleDomain.publish(endpoint, d.cb, d.eb, marshall(serializeArguments(args)))
-//        return d
-//    }
-//    
-//    public func call(endpoint: String, _ args: Any...) -> HandlerDeferred {
-//        let d = HandlerDeferred(domain: self)
-//        d.mantleDomain = self.mantleDomain
+        let d = Deferred(domain: self)
+//        mantleDomain.subscribe(endpoint, d.cb, d.eb, hn, marshall(serializeArguments(types)))
+        return d
+    }
+    
+    public func _register(endpoint: String, _ types: [Any], fn: [Any] -> Any) -> Deferred {
+        let hn = CBID()
+        app.registrations[hn] = fn
+
+        let d = Deferred(domain: self)
+//        mantleDomain.register(endpoint, d.cb, d.eb, hn, marshall(types))
+        return d
+    }
+
+    public func publish(endpoint: String, _ args: Any...) -> Deferred {
+        let d = Deferred(domain: self)
+        mantleDomain.publish(endpoint, cb: String(d.cb), eb: String(d.eb), args: marshall(serializeArguments(args)))
+        return d
+    }
+//
+    public func call(endpoint: String, _ args: Any...) -> HandlerDeferred {
+        let d = HandlerDeferred(domain: self)
+        d.mantleDomain = self.mantleDomain
 //        mantleDomain.call(endpoint, d.cb, d.eb, marshall(serializeArguments(args)))
-//        return d
-//    }
+        return d
+    }
     
     public func join() {
         let cb = CBID()
