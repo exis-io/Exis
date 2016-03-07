@@ -17,15 +17,7 @@ TODO:
 */
 
 import Foundation
-import CoreFoundation
-
-#if os(Linux)
-    import mantle
-    import SwiftGlibc
-    import Glibc
-#else
-    import Darwin.C
-#endif
+import Mantle
 
 public protocol Delegate {
     func onJoin()
@@ -35,56 +27,56 @@ public protocol Delegate {
 
 public class Domain {
     public var delegate: Delegate?
-    var mantleDomain: UnsafeMutablePointer<Void>
+    var mantleDomain: MantleDomain
     var app: App
     
     
     public init(name: String) {
-        mantleDomain = NewDomain(name.cString())
+        mantleDomain = MantleNewDomain(name)
         app = App(domain: mantleDomain)
     }
     
     public init(name: String, superdomain: Domain) {
-        mantleDomain = Subdomain(superdomain.mantleDomain, name.cString())
+        mantleDomain = superdomain.mantleDomain.subdomain(name)
         app = superdomain.app
     }
     
-    public func _subscribe(endpoint: String, _ types: [Any], fn: [Any] -> ()) -> Deferred {
-        let hn = CBID()
-        app.handlers[hn] = fn
-
-        let d = Deferred(domain: self)
-        Subscribe(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(serializeArguments(types)))
-        return d
-    }
+//    public func _subscribe(endpoint: String, _ types: [Any], fn: [Any] -> ()) -> Deferred {
+//        let hn = CBID()
+//        app.handlers[hn] = fn
+//
+//        let d = Deferred(domain: self)
+//        mantleDomain.subscribe(endpoint, d.cb, d.eb, hn, marshall(serializeArguments(types)))
+//        return d
+//    }
     
-    public func _register(endpoint: String, _ types: [Any], fn: [Any] -> Any) -> Deferred {
-        let hn = CBID()
-        app.registrations[hn] = fn
+//    public func _register(endpoint: String, _ types: [Any], fn: [Any] -> Any) -> Deferred {
+//        let hn = CBID()
+//        app.registrations[hn] = fn
+//
+//        let d = Deferred(domain: self)
+//        mantleDomain.register(endpoint, d.cb, d.eb, hn, marshall(types))
+//        return d
+//    }
 
-        let d = Deferred(domain: self)
-        Register(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(types))
-        return d
-    }
-
-    public func publish(endpoint: String, _ args: Any...) -> Deferred {
-        let d = Deferred(domain: self)
-        Publish(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)))
-        return d
-    }
-    
-    public func call(endpoint: String, _ args: Any...) -> HandlerDeferred {
-        let d = HandlerDeferred(domain: self)
-        d.mantleDomain = self.mantleDomain
-        Call(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)))
-        return d
-    }
+//    public func publish(endpoint: String, _ args: Any...) -> Deferred {
+//        let d = Deferred(domain: self)
+//        mantleDomain.publish(endpoint, d.cb, d.eb, marshall(serializeArguments(args)))
+//        return d
+//    }
+//    
+//    public func call(endpoint: String, _ args: Any...) -> HandlerDeferred {
+//        let d = HandlerDeferred(domain: self)
+//        d.mantleDomain = self.mantleDomain
+//        mantleDomain.call(endpoint, d.cb, d.eb, marshall(serializeArguments(args)))
+//        return d
+//    }
     
     public func join() {
         let cb = CBID()
         let eb = CBID()
         
-        Join(mantleDomain, cb, eb)
+        mantleDomain.join(String(cb), eb: String(eb))
         
         app.handlers[cb] = { a in
             if let d = self.delegate {
@@ -118,20 +110,20 @@ public class Domain {
 
 
 class App {
-    var mantleDomain: UnsafeMutablePointer<Void>
+    var mantleDomain: MantleDomain
     
-    var deferreds: [UInt64: Deferred] = [:]
-    var handlers: [UInt64: [Any] -> ()] = [:]
-    var registrations: [UInt64: [Any] -> Any?] = [:]
+    var deferreds: [Double: Deferred] = [:]
+    var handlers: [Double: [Any] -> ()] = [:]
+    var registrations: [Double: [Any] -> Any?] = [:]
 
 
-    init(domain: UnsafeMutablePointer<Void>) {
+    init(domain: MantleDomain) {
         mantleDomain = domain
     }
     
     func receive() {
         while true {
-            var (i, args) = decode(Receive(mantleDomain))
+            var (i, args) = decode(mantleDomain.receive())
             
             if let d = deferreds[i] {
                 // remove the deferred (should this ever be optional?)
@@ -151,19 +143,19 @@ class App {
                 let resultId = args.removeAtIndex(0) as! Double
                 
                 // Optional serialization has some problems. This unwraps the result to avoid that particular issue
-                if let ret = fn(args) {
-                    // Function did not return anything
-                    if let _ = ret as? Void {
-                        Yield(mantleDomain, UInt64(resultId), marshall([]))
-                        
-                    // If function returned an array it could be a tuple
-                    } else {
-                        Yield(mantleDomain, UInt64(resultId), marshall([ret]))
-                    }
-                } else {
-                    let empty: [Any] = []
-                    Yield(mantleDomain, UInt64(resultId), marshall(empty))
-                }
+//                if let ret = fn(args) {
+//                    // Function did not return anything
+//                    if let _ = ret as? Void {
+//                        Yield(mantleDomain, UInt64(resultId), marshall([]))
+//                        
+//                    // If function returned an array it could be a tuple
+//                    } else {
+//                        Yield(mantleDomain, UInt64(resultId), marshall([ret]))
+//                    }
+//                } else {
+//                    let empty: [Any] = []
+//                    Yield(mantleDomain, UInt64(resultId), marshall(empty))
+//                }
             }
         }
     }

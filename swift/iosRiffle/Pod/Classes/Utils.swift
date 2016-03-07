@@ -9,10 +9,16 @@
 
 import Foundation
 import CoreFoundation
+import Mantle
 
-#if os(Linux)
-    import mantle
-#endif
+// Biggest random number that can be choosen
+let randomMax = UInt32(pow(Double(2), Double(32)) - 1)
+
+func CBID() -> Double {
+    // Create a random callback id
+    let r = arc4random_uniform(randomMax);
+    return Double(r)
+}
 
 extension String {
     func cString() -> UnsafeMutablePointer<Int8> {
@@ -38,29 +44,25 @@ extension String {
 }
 
 // Decode arbitrary returns from the mantle
-func decode(p: GoSlice) -> (UInt64, [Any]) {
-    let int8Ptr = unsafeBitCast(p.data, UnsafePointer<Int8>.self)
-    // If the length of the slice is the same as the cap, the string conversion always fails
-    let dataString = String.fromCString(int8Ptr)!
-    
-    guard let data = try! JSONParser.parse(dataString) as? [Any] else {
+func decode(json: String) -> (Double, [Any]) {
+    guard let data = try! JSONParser.parse(json) as? [Any] else {
         print("DID NOT RECEIVE ARRAY BACK!")
-        return (UInt64(0), [])
+        return (Double(0), [])
     }
     
     if let args = data[1] as? [Any] {
-        return (UInt64(data[0] as! Double), args)
+        return (Double(data[0] as! Double), args)
     } else {
-        return (UInt64(data[0] as! Double), [])
+        return (Double(data[0] as! Double), [])
     }
 }
 
 // Return a goslice of the JSON marshaled arguments as a cString
-func marshall(args: [Any]) -> UnsafeMutablePointer<Int8> {
+func marshall(args: [Any]) -> String {
     let json = JSON.from(args)
     let jsonString = json.serialize(DefaultJSONSerializer())
     //print("Args: \(args) Json: \(json) String: \(jsonString)")
-    return jsonString.cString()
+    return jsonString
 }
 
 // Do we still need this here?
@@ -77,37 +79,37 @@ func serializeArguments(args: [Any]) -> [Any] {
 }
 
 public func SetFabric(url: String) {
-    MantleSetFabric(url.cString())
+    MantleSetFabric(url)
 }
 
-public func ApplicationLog(s: String){
-    Application(s.cString())
+public func Application(s: String){
+    MantleApplication(s)
 }
 
-public func DebugLog(s: String){
-    Debug(s.cString())
+public func Debug(s: String){
+    MantleDebug(s)
 }
 
-public func InfoLog(s: String){
-    Info(s.cString())
+public func Info(s: String){
+    MantleInfo(s)
 }
 
-public func WarnLog(s: String){
-    Warn(s.cString())
+public func Warn(s: String){
+    MantleWarn(s)
 }
 
-public func ErrorLog(s: String){
-    Error(s.cString())
+public func Error(s: String){
+    MantleError(s)
 }
 
-public func LogLevelOff() { SetLogLevelOff() }
-public func LogLevelApp() { SetLogLevelApp() }
-public func LogLevelErr() { SetLogLevelErr() }
-public func LogLevelWarn() { SetLogLevelWarn() }
-public func LogLevelInfo() { SetLogLevelInfo() }
-public func LogLevelDebug() { SetLogLevelDebug() }
+public func LogLevelOff() { MantleSetLogLevelOff() }
+public func LogLevelApp() { MantleSetLogLevelApp() }
+public func LogLevelErr() { MantleSetLogLevelErr() }
+public func LogLevelWarn() { MantleSetLogLevelWarn() }
+public func LogLevelInfo() { MantleSetLogLevelInfo() }
+public func LogLevelDebug() { MantleSetLogLevelDebug() }
 
-public func FabricDev() { SetFabricDev() }
-public func FabricSandbox() { SetFabricSandbox() }
-public func FabricProduction() { SetFabricProduction() }
-public func FabricLocal() { SetFabricLocal() }
+public func FabricDev() { MantleSetFabricDev() }
+public func FabricSandbox() { MantleSetFabricSandbox() }
+public func FabricProduction() { MantleSetFabricProduction() }
+public func FabricLocal() { MantleSetFabricLocal() }

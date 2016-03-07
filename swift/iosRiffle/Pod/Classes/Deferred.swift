@@ -9,16 +9,12 @@
 
 
 import Foundation
-
-#if os(Linux)
-    import mantle
-#endif
-
+import Mantle
 
 public class Deferred {
     // Callback and Errback ids
-    var cb: UInt64 = 0
-    var eb: UInt64 = 0
+    var cb: Double = 0
+    var eb: Double = 0
     
     var callbackFuntion: ([Any] -> Any?)? = nil
     var errbackFunction: ([Any] -> Any?)? = nil
@@ -75,7 +71,7 @@ public class Deferred {
             }
             
             // No chain exists. TODO: Send the error to some well-known place
-            WarnLog("Unhandled error: \(args)")
+            Warn("Unhandled error: \(args)")
             return nil
         }
     }
@@ -83,7 +79,7 @@ public class Deferred {
 
 // Contains handler "then"s to replace handler functions
 public class HandlerDeferred: Deferred {
-    public var mantleDomain: UnsafeMutablePointer<Void>!
+    public var mantleDomain: MantleDomain!
     
     public override func then(fn: () -> ()) -> Deferred {
         // this override is a special case. It overrides the base then, but cant go in the extension
@@ -92,7 +88,7 @@ public class HandlerDeferred: Deferred {
     
     public func _then(types: [Any], _ fn: [Any] -> ()) -> Deferred {
         next = Deferred()
-        CallExpects(mantleDomain, self.cb, marshall(types))
+        mantleDomain.callExpects(String(self.cb), types: marshall(types))
         callbackFuntion = { a in return fn(a) }
         return next!
     }

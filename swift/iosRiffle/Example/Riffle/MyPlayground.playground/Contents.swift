@@ -1,6 +1,7 @@
 //: Playground - noun: a place where people can play
 
 import Cocoa
+import Foundation
 
 /////////////////////////////////////
 // Naive example 1: no args

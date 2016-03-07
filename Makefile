@@ -64,7 +64,7 @@ cocoapod:
 
 ios:
 	@echo "Building core..."
-	@gomobile bind -prefix="" -target=ios github.com/exis-io/core/androidMantle
+	@gomobile bind -target=ios -prefix=' ' github.com/exis-io/core/androidMantle
 	@echo "Moving mantle"
 	@rm -rf swift/iosRiffle/Pod/Assets/Mantle.framework
 	@mv Mantle.framework swift/iosRiffle/Pod/Assets/Mantle.framework
@@ -119,7 +119,7 @@ clean:
 	@-rm -f utils/assets/libriffmantle.so utils/assets/libriffmantle.h
 	@-rm -f swift/osxCrust/RiffleTest/riffle.a  swift/osxCrust/RiffleTest/riffle.h
 	@-rm -rf .tmp
-	
+
 	@-rm -f utils/assets/libriffmantle.so utils/assets/libriffmantle.h >$(LOG) ||:
 	@$(MAKE) -C swift/mantle clean >$(LOG) ||:
 	@$(MAKE) -C swift/swiftRiffle/Riffle clean >$(LOG) ||:
