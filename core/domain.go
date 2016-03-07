@@ -219,6 +219,7 @@ func (c domain) Publish(endpoint string, args []interface{}) error {
 		Name:      endpoint,
 		Arguments: args,
 	})
+	
 	return nil
 }
 

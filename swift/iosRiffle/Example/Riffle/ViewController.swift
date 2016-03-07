@@ -25,8 +25,9 @@ class ViewController: UIViewController {
         
         let app2 = Domain(name: "xs.tester")
         let sender2 = Sender(name: "sender", superdomain: app2)
+        let receiver2 = Domain(name: "receiver", superdomain: app2)
         
-        sender2.receiver = receiver
+        sender2.receiver = receiver2
         
         receiver.joinFinished = {
             sender2.join()
