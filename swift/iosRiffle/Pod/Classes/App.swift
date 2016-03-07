@@ -43,19 +43,19 @@ class App {
                 let resultId = args.removeAtIndex(0) as! Double
                 
                 // Optional serialization has some problems. This unwraps the result to avoid that particular issue
-                //                if let ret = fn(args) {
-                //                    // Function did not return anything
-                //                    if let _ = ret as? Void {
-                //                        Yield(mantleDomain, UInt64(resultId), marshall([]))
-                //
-                //                    // If function returned an array it could be a tuple
-                //                    } else {
-                //                        Yield(mantleDomain, UInt64(resultId), marshall([ret]))
-                //                    }
-                //                } else {
-                //                    let empty: [Any] = []
-                //                    Yield(mantleDomain, UInt64(resultId), marshall(empty))
-                //                }
+                if let ret = fn(args) {
+                    // Function did not return anything
+                    if let _ = ret as? Void {
+                        mantleDomain.yield(resultId.go(), args: marshall([]))
+
+                    // If function returned an array it could be a tuple
+                    } else {
+                        mantleDomain.yield(resultId.go(), args: marshall([ret]))
+                    }
+                } else {
+                    let empty: [Any] = []
+                    mantleDomain.yield(resultId.go(), args: marshall(empty))
+                }
             }
         }
     }

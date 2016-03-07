@@ -61,18 +61,12 @@ public class Domain {
     var domainIndex = 0
     
     public init(name: String) {
-//        mantleDomain = MantleNewDomain(name)
-//        app = App(domain: mantleDomain)
-        
         let domain = MantleNewDomain(name)
         domainIndex = DomainIndex.set(domain)
         app = App(domain: domain)
     }
     
     public init(name: String, superdomain: Domain) {
-//        mantleDomain = superdomain.mantleDomain.subdomain(name)
-//        app = superdomain.app
-        
         let domain = DomainIndex.get(superdomain.domainIndex).subdomain(name)
         domainIndex = DomainIndex.set(domain)
         app = App(domain: domain)
@@ -83,7 +77,6 @@ public class Domain {
         app.handlers[hn] = fn
 
         let d = Deferred(domain: self)
-        print("\(endpoint) subbed with: \(hn) (converted: \(hn.go()))")
         DomainIndex.get(domainIndex).subscribe(endpoint, cb: d.cb.go(), eb: d.eb.go(), fn: hn.go(), types: marshall(serializeArguments(types)))
         return d
     }
@@ -93,21 +86,20 @@ public class Domain {
         app.registrations[hn] = fn
 
         let d = Deferred(domain: self)
-//        mantleDomain.register(endpoint, d.cb, d.eb, hn, marshall(types))
+        DomainIndex.get(domainIndex).register(endpoint, cb: d.cb.go(), eb: d.eb.go(), fn: hn.go(), types: marshall(types))
         return d
     }
 
     public func publish(endpoint: String, _ args: Any...) -> Deferred {
         let d = Deferred(domain: self)
-//        mantleDomain.publish(endpoint, cb: String(d.cb), eb: String(d.eb), args: marshall(serializeArguments(args)))
         DomainIndex.get(domainIndex).publish(endpoint, cb: d.cb.go(), eb: d.eb.go(), args: marshall(serializeArguments(args)))
         return d
     }
-//
+
     public func call(endpoint: String, _ args: Any...) -> HandlerDeferred {
         let d = HandlerDeferred(domain: self)
-//        d.mantleDomain = self.mantleDomain
-//        mantleDomain.call(endpoint, d.cb, d.eb, marshall(serializeArguments(args)))
+        d.index = domainIndex
+        DomainIndex.get(domainIndex).call(endpoint, cb: d.cb.go(), eb: d.eb.go(), args: marshall(serializeArguments(args)))
         return d
     }
     
@@ -115,8 +107,6 @@ public class Domain {
         let cb = CBID()
         let eb = CBID()
         
-//        mantleDomain.join(String(cb), eb: String(eb))
-    
         DomainIndex.get(domainIndex).join(cb.go(), eb: eb.go())
         
         app.handlers[cb] = { a in

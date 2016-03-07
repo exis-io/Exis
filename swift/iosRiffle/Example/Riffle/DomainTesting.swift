@@ -9,6 +9,15 @@
 import Foundation
 import Riffle
 
+class Dog: Model {
+    var name = "Fido"
+    var age = 43
+}
+
+// Create an object
+let dog = Dog()
+
+
 class Receiver: Domain {
     var joinFinished: (() -> ())!
     
@@ -56,7 +65,7 @@ class Receiver: Domain {
         // TODO: Dictionaries of simple types
         // TODO: Any
         
-        /*
+        
         // Reg/Call Success Cases
         // No arguments
         register("registerNothing") {
@@ -101,7 +110,7 @@ class Receiver: Domain {
             assert(d.name == dog.name && d.age == dog.age)
             return d
         }
-        */
+
         
         //            receiver.call("asdf", dog).then { (d: Dog) in
         //                //print("\(t) Recieved\(d), expecting \(dog)")
@@ -164,9 +173,9 @@ class Sender: Domain {
         receiver.publish("subscribeArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
         
         // Model not reconstructed well
-        //        receiver.publish("subscribeModel", dog)
+        // eceiver.publish("subscribeModel", dog)
         
-        /*
+        
         // Reg/Call Success Cases
         // No arguments
         receiver.call("registerNothing").then {
@@ -195,7 +204,6 @@ class Sender: Domain {
                 print("FAILURE ON CALL --- 2-2")
                 print("\tREASON: \(reason)")
         }
-        */
     }
     
     override func onLeave() {

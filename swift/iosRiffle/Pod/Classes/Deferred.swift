@@ -79,7 +79,8 @@ public class Deferred {
 
 // Contains handler "then"s to replace handler functions
 public class HandlerDeferred: Deferred {
-    public var mantleDomain: MantleDomain!
+//    var mantleDomain: MantleDomain!
+    var index = -1
     
     public override func then(fn: () -> ()) -> Deferred {
         // this override is a special case. It overrides the base then, but cant go in the extension
@@ -88,7 +89,7 @@ public class HandlerDeferred: Deferred {
     
     public func _then(types: [Any], _ fn: [Any] -> ()) -> Deferred {
         next = Deferred()
-        mantleDomain.callExpects(String(self.cb), types: marshall(types))
+        DomainIndex.get(index).callExpects(cb.go(), types: marshall(types))
         callbackFuntion = { a in return fn(a) }
         return next!
     }
