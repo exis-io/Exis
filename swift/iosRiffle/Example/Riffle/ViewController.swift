@@ -9,6 +9,9 @@
 import UIKit
 import Riffle
 
+class Receiver: RiffleDomain {
+
+}
 
 class ViewController: UIViewController {
     override func viewDidLoad() {

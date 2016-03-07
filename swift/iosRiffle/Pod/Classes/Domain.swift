@@ -25,6 +25,7 @@ public protocol Delegate {
 }
 
 
+
 public class Domain {
     public var delegate: Delegate?
     var mantleDomain: MantleDomain

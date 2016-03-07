@@ -8,6 +8,12 @@
 
 import Foundation
 
+public class RiffleDomain {
+    var dem: Domain!
+    
+    init() {}
+}
+
 public class Model: Silvery, Property {
     
     required public init() {}
