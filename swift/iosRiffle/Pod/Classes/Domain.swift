@@ -83,6 +83,7 @@ public class Domain {
         app.handlers[hn] = fn
 
         let d = Deferred(domain: self)
+        print("\(endpoint) subbed with: \(hn) (converted: \(hn.go()))")
         DomainIndex.get(domainIndex).subscribe(endpoint, cb: d.cb.go(), eb: d.eb.go(), fn: hn.go(), types: marshall(serializeArguments(types)))
         return d
     }
@@ -115,8 +116,7 @@ public class Domain {
         let eb = CBID()
         
 //        mantleDomain.join(String(cb), eb: String(eb))
-        
-        // Oh this is rich
+    
         DomainIndex.get(domainIndex).join(cb.go(), eb: eb.go())
         
         app.handlers[cb] = { a in
@@ -139,7 +139,10 @@ public class Domain {
             print("Unable to join!")
         }
         
-        app.receive()
+        // Very different in swift 2.2, since we may still not have access to GCD
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+            self.app.receive()
+        }
     }
     
     

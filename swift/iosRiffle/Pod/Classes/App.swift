@@ -25,9 +25,6 @@ class App {
         while true {
             var (i, args) = decode(mantleDomain.receive())
             
-            Riffle.info("Callback: \(i)")
-            Riffle.info("Handlers: \(handlers)")
-            
             if let d = deferreds[i] {
                 // remove the deferred (should this ever be optional?)
                 deferreds[d.cb] = nil
