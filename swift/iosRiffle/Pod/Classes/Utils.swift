@@ -20,6 +20,14 @@ func CBID() -> Double {
     return Double(r)
 }
 
+// Hahahahah. No.
+// Pass bytes and avoid this nonsense.
+extension Double {
+    func go() -> String {
+        return String(UInt64(self))
+    }
+}
+
 extension String {
     func cString() -> UnsafeMutablePointer<Int8> {
         var ret: UnsafeMutablePointer<Int8> = UnsafeMutablePointer<Int8>()
@@ -78,39 +86,45 @@ func serializeArguments(args: [Any]) -> [Any] {
     return ret
 }
 
-public func SetFabric(url: String) {
-    MantleSetFabric(url)
+public class Riffle {
+    public class func setFabric(url: String) {
+        MantleSetFabric(url)
+    }
+
+    public class func application(s: String){
+        MantleApplication(s)
+    }
+
+    public class func debug(s: String){
+        MantleDebug(s)
+    }
+
+    public class func info(s: String){
+        MantleInfo(s)
+    }
+
+    public class func warn(s: String){
+        MantleWarn(s)
+    }
+
+    public class func error(s: String){
+        MantleError(s)
+    }
+
+    public class func setLogLevelApp() { MantleSetLogLevelApp() }
+    public class func setLogLevelOff() { MantleSetLogLevelOff() }
+    public class func setLogLevelErr() { MantleSetLogLevelErr() }
+    public class func setLogLevelWarn() { MantleSetLogLevelWarn() }
+    public class func setLogLevelInfo() { MantleSetLogLevelInfo() }
+    public class func setLogLevelDebug() { MantleSetLogLevelDebug() }
+    
+    public class func setFabricDev() { MantleSetFabricDev() }
+    public class func setFabricSandbox() { MantleSetFabricSandbox() }
+    public class func setFabricProduction() { MantleSetFabricProduction() }
+    public class func setFabricLocal() { MantleSetFabricLocal() }
+    
+    public class func setCuminStrict() { MantleSetCuminStrict() }
+    public class func setCuminLoose() { MantleSetCuminLoose() }
+    public class func setCuminOff() { MantleSetCuminOff() }
 }
-
-public func Application(s: String){
-    MantleApplication(s)
-}
-
-public func Debug(s: String){
-    MantleDebug(s)
-}
-
-public func Info(s: String){
-    MantleInfo(s)
-}
-
-public func Warn(s: String){
-    MantleWarn(s)
-}
-
-public func Error(s: String){
-    MantleError(s)
-}
-
-public func SetLogLevelOff() { MantleSetLogLevelOff() }
-public func SetLogLevelApp() { MantleSetLogLevelApp() }
-public func SetLogLevelErr() { MantleSetLogLevelErr() }
-public func SetLogLevelWarn() { MantleSetLogLevelWarn() }
-public func SetLogLevelInfo() { MantleSetLogLevelInfo() }
-public func SetLogLevelDebug() { MantleSetLogLevelDebug() }
-
-public func SetFabricDev() { MantleSetFabricDev() }
-public func SetFabricSandbox() { MantleSetFabricSandbox() }
-public func SetFabricProduction() { MantleSetFabricProduction() }
-public func SetFabricLocal() { MantleSetFabricLocal() }
 

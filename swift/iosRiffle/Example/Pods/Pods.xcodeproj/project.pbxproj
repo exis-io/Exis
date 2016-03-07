@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		297F956DD2253930B48F574733BC2CE2 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACDE87FEF270A6DC340D61907F7CCE14 /* Utils.swift */; };
+		505777C01C8E2A3100DE33DF /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505777BF1C8E2A3100DE33DF /* App.swift */; };
 		68B3AEDAC345BB3504AD3BF9EC500892 /* Silver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5E9FE157F8D1F800D33A366B7D84D1 /* Silver.swift */; };
 		6F8616240E932F87A78B498B2C58E1DF /* Riffle-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 36309CBBD82FA782C4CD018A41D0E6B3 /* Riffle-dummy.m */; };
 		720C9D2809147D1921C2630B1CC46F92 /* Riffle-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D13BA5E1BED99C0603B26CC09557C92 /* Riffle-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -44,6 +45,7 @@
 		3DDCA60DECDD7E7580E981566A2ECA3B /* Riffle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Riffle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E4E89230EF59BC255123B67864ACF77 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		4DEF0F1AFCE91B360F126353DDB0F129 /* Json.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Json.swift; sourceTree = "<group>"; };
+		505777BF1C8E2A3100DE33DF /* App.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		52D3A396876A9726D799403263BB237A /* Riffle.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = Riffle.modulemap; sourceTree = "<group>"; };
 		5EC9A8976B68603E7046B20D8CF26566 /* Pods-Riffle_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-Riffle_Example.modulemap"; sourceTree = "<group>"; };
 		63CC0365451BC4D15A0FEE8CC929E67B /* Model.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 			children = (
 				F2E4C0A141872922A3EB7EE21ADC057E /* Cumin.swift */,
 				6E4BD4A2489FF41997C5C52FC5184100 /* CuminicableExtensions.swift */,
+				505777BF1C8E2A3100DE33DF /* App.swift */,
 				DFAF5B4474CBF7BE34948E6D262E2E11 /* Deferred.swift */,
 				B14B3E4A9686C43631C918577FAA0CDD /* Domain.swift */,
 				4DEF0F1AFCE91B360F126353DDB0F129 /* Json.swift */,
@@ -303,6 +306,7 @@
 				B49C1C87D0CBFDBD4F20B08BB69CDC34 /* Cumin.swift in Sources */,
 				765259150C381C4CFB4C95B48FAAEFE9 /* CuminicableExtensions.swift in Sources */,
 				7D72BA9DD14B503C9A04E87F7DB756E6 /* Deferred.swift in Sources */,
+				505777C01C8E2A3100DE33DF /* App.swift in Sources */,
 				94F91644EA15E85B49A4BEEEA55AA23A /* Domain.swift in Sources */,
 				AA2A34BBE62F35292E4F71D0BA93831D /* Json.swift in Sources */,
 				EA0FBF87DF6A3CC8FA7843D969897E8E /* Model.swift in Sources */,

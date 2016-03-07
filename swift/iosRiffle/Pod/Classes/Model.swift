@@ -9,12 +9,6 @@
 import Foundation
 import Mantle
 
-public class RiffleDomain {
-    var dem: Domain!
-    
-    init() {}
-
-}
 
 public class Model: Silvery, Property {
     

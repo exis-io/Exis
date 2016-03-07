@@ -38,10 +38,10 @@ func (d *Domain) Join(cb string, eb string) {
 			d.coreDomain.GetApp().CallbackSend(idUnmarshal(eb), err.Error())
 		} else {
 			if err := d.coreDomain.Join(c); err != nil {
-				core.Warn("Mantle join failure: %v", err.Error())
+				// core.Warn("Mantle join failure: %v", err.Error())
 				d.coreDomain.GetApp().CallbackSend(idUnmarshal(eb), err.Error())
 			} else {
-				core.Warn("Mantle join success! %v", cb)
+				// core.Warn("Mantle join success! %v", cb)
 				d.coreDomain.GetApp().CallbackSend(idUnmarshal(cb))
 			}
 		}

@@ -25,21 +25,57 @@ public protocol Delegate {
 }
 
 
+/* The linker is *very* unhappy with exported references that themselves have references to Mantle objects
+ In other words, we can't have them in the Domain object.
+
+     var mantleDomain: MantleDomain
+
+ in this class. The references have to be indirect, either through some access bus
+ or another object that runs interference.
+
+ Things that dont work:
+      Subclassing MantleDomain
+      Making the ivar private
+
+This data structure and set of accessors manage access to an array that indexes the MantleDomains.
+If you're still reading this, then the current implementation is primitive.
+*/
+class DomainIndex {
+    private static var currentIndex = 0
+    private static var mantleDomainIndex: [MantleDomain] = []
+    
+    class func get(i: Int) -> MantleDomain {
+        return mantleDomainIndex[i]
+    }
+    
+    class func set(domain: MantleDomain) -> Int {
+        mantleDomainIndex.append(domain)
+        return mantleDomainIndex.count - 1
+    }
+}
+
 
 public class Domain {
     public var delegate: Delegate?
-    var mantleDomain: MantleDomain
     var app: App
-    
+    var domainIndex = 0
     
     public init(name: String) {
-        mantleDomain = MantleNewDomain(name)
-        app = App(domain: mantleDomain)
+//        mantleDomain = MantleNewDomain(name)
+//        app = App(domain: mantleDomain)
+        
+        let domain = MantleNewDomain(name)
+        domainIndex = DomainIndex.set(domain)
+        app = App(domain: domain)
     }
     
     public init(name: String, superdomain: Domain) {
-        mantleDomain = superdomain.mantleDomain.subdomain(name)
-        app = superdomain.app
+//        mantleDomain = superdomain.mantleDomain.subdomain(name)
+//        app = superdomain.app
+        
+        let domain = DomainIndex.get(superdomain.domainIndex).subdomain(name)
+        domainIndex = DomainIndex.set(domain)
+        app = App(domain: domain)
     }
     
     public func _subscribe(endpoint: String, _ types: [Any], fn: [Any] -> ()) -> Deferred {
@@ -47,7 +83,7 @@ public class Domain {
         app.handlers[hn] = fn
 
         let d = Deferred(domain: self)
-//        mantleDomain.subscribe(endpoint, d.cb, d.eb, hn, marshall(serializeArguments(types)))
+        DomainIndex.get(domainIndex).subscribe(endpoint, cb: d.cb.go(), eb: d.eb.go(), fn: hn.go(), types: marshall(serializeArguments(types)))
         return d
     }
     
@@ -62,13 +98,14 @@ public class Domain {
 
     public func publish(endpoint: String, _ args: Any...) -> Deferred {
         let d = Deferred(domain: self)
-        mantleDomain.publish(endpoint, cb: String(d.cb), eb: String(d.eb), args: marshall(serializeArguments(args)))
+//        mantleDomain.publish(endpoint, cb: String(d.cb), eb: String(d.eb), args: marshall(serializeArguments(args)))
+        DomainIndex.get(domainIndex).publish(endpoint, cb: d.cb.go(), eb: d.eb.go(), args: marshall(serializeArguments(args)))
         return d
     }
 //
     public func call(endpoint: String, _ args: Any...) -> HandlerDeferred {
         let d = HandlerDeferred(domain: self)
-        d.mantleDomain = self.mantleDomain
+//        d.mantleDomain = self.mantleDomain
 //        mantleDomain.call(endpoint, d.cb, d.eb, marshall(serializeArguments(args)))
         return d
     }
@@ -77,7 +114,10 @@ public class Domain {
         let cb = CBID()
         let eb = CBID()
         
-        mantleDomain.join(String(cb), eb: String(eb))
+//        mantleDomain.join(String(cb), eb: String(eb))
+        
+        // Oh this is rich
+        DomainIndex.get(domainIndex).join(cb.go(), eb: eb.go())
         
         app.handlers[cb] = { a in
             if let d = self.delegate {
@@ -108,56 +148,3 @@ public class Domain {
     public func onLeave() { }
 }
 
-
-
-class App {
-    var mantleDomain: MantleDomain
-    
-    var deferreds: [Double: Deferred] = [:]
-    var handlers: [Double: [Any] -> ()] = [:]
-    var registrations: [Double: [Any] -> Any?] = [:]
-
-
-    init(domain: MantleDomain) {
-        mantleDomain = domain
-    }
-    
-    func receive() {
-        while true {
-            var (i, args) = decode(mantleDomain.receive())
-            
-            if let d = deferreds[i] {
-                // remove the deferred (should this ever be optional?)
-                deferreds[d.cb] = nil
-                deferreds[d.eb] = nil
-                
-                if d.cb == i {
-                    d.callback(args)
-                }
-                
-                if d.eb == i {
-                    d.errback(args)
-                }
-            } else if let fn = handlers[i] {
-                fn(args)
-            } else if let fn = registrations[i] {
-                let resultId = args.removeAtIndex(0) as! Double
-                
-                // Optional serialization has some problems. This unwraps the result to avoid that particular issue
-//                if let ret = fn(args) {
-//                    // Function did not return anything
-//                    if let _ = ret as? Void {
-//                        Yield(mantleDomain, UInt64(resultId), marshall([]))
-//                        
-//                    // If function returned an array it could be a tuple
-//                    } else {
-//                        Yield(mantleDomain, UInt64(resultId), marshall([ret]))
-//                    }
-//                } else {
-//                    let empty: [Any] = []
-//                    Yield(mantleDomain, UInt64(resultId), marshall(empty))
-//                }
-            }
-        }
-    }
-}
