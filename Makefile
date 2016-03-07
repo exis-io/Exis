@@ -29,6 +29,48 @@ swift_example: printcheck libriffmantle.so
 osx: 
 	GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o swift/swiftRiffle/riffle.a core/cMantle/main.go
 
+# Testing for cocoapod update, building a universal library manually with lipo
+cocoapod:
+	rm -rf .tmp
+
+	@echo "Building arm" 
+	GOOS=darwin GOARCH=arm GOARM=7 \
+	CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
+	CXX=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
+	CGO_CFLAGS='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk -arch armv7' \
+	CGO_LDFLAGS='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk -arch armv7' \
+	CGO_ENABLED=1 \
+	go build -buildmode=c-archive -o .tmp/riffle-arm.a core/cMantle/main.go
+
+	@echo "Building arm64" 
+	GOOS=darwin GOARCH=arm64 \
+	CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
+	CXX=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
+	CGO_CFLAGS='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk -arch arm64' \
+	CGO_LDFLAGS='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk -arch arm64' \
+	CGO_ENABLED=1 \
+	go build -buildmode=c-archive -o .tmp/riffle-arm64.a core/cMantle/main.go
+
+	@echo "Building x86" 
+	GOOS=darwin GOARCH=amd64 \
+	CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
+	CXX=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
+	CGO_CFLAGS='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.2.sdk -mios-simulator-version-min=6.1 -arch x86_64' \
+	CGO_LDFLAGS='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.2.sdk -mios-simulator-version-min=6.1 -arch x86_64' \
+	CGO_ENABLED=1 \
+	go build -buildmode=c-archive -o .tmp/riffle-x86_64.a core/cMantle/main.go
+
+	@echo "Combining with lipo" 
+	xcrun lipo -create .tmp/riffle-arm.a .tmp/riffle-arm64.a .tmp/riffle-x86_64.a -o swift/SwiftKVC/SwiftKVC/riffle.a
+	mv .tmp/riffle-arm.h swift/SwiftKVC/SwiftKVC/riffle.h
+
+ios:
+	@echo "Building core..."
+	@gomobile bind -prefix="" -target=ios github.com/exis-io/core/androidMantle
+	@echo "Moving mantle"
+	@rm -rf swift/SwiftKVC/Mantle.framework
+	@mv Mantle.framework swift/SwiftKVC/Mantle.framework
+
 android:
 	@echo "Building core..."
 	@gomobile bind --work -target=android github.com/exis-io/core/androidMantle

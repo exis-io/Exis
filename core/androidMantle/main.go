@@ -10,6 +10,10 @@ type Domain struct {
 	coreDomain core.Domain
 }
 
+func Hello(name string) string {
+    return "Hello, " + name + ", this is patrick"
+}
+
 func NewDomain(name string) *Domain {
 	return &Domain{coreDomain: core.NewDomain(name, nil)}
 }
