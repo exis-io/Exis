@@ -76,3 +76,5 @@ Requirements
 - use `stump.py init` to link the riffle core
 - Run `make ios`
 - Open `Example/Riffle.xcworkspace`, build, and run
+
+As of 3/7/15, [this patch](directory not found for option '-F/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.2.sdk/Developer/Library/Frameworks') is **required** to get the mantle to compile for the cocoapod. 
