@@ -63,3 +63,16 @@ end
 ## Known Issues
 
 In progress.
+
+## Developing with iosRiffle
+
+`iosRiffle` is *not* meant to be developed as a standalone project. Its a subproject of only one language in the Riffle libraries. You should be working out of the main [exis repo!](https:/github.com/exis-io/Exis)
+
+Requirements 
+
+- Install go, make sure gopath is set
+- Install gomobile
+- Install needed dependencies: `cd core && go get`
+- use `stump.py init` to link the riffle core
+- Run `make ios`
+- Open `Example/Riffle.xcworkspace`, build, and run
