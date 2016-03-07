@@ -3,8 +3,7 @@
   "version": "0.1.70",
   "summary": "Client side library for connecting to a fabric.",
   "platforms": {
-    "ios": "8.0",
-    "osx": "10.10"
+    "ios": "8.0"
   },
   "description": "Riffle allows for simple interaction with a Fabric, made by Exis. This library is meant to replace your\nnetworking code with something that doesn't look like networking code at all!",
   "homepage": "https://github.com/exis-io/swiftRiffle",

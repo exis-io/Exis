@@ -7,7 +7,8 @@
 //
 
 import UIKit
-import Riffle 
+import Riffle
+
 
 class ViewController: UIViewController {
     override func viewDidLoad() {

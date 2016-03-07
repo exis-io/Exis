@@ -5,7 +5,6 @@ Pod::Spec.new do |s|
     s.summary          = "Client side library for connecting to a fabric."
 
     s.ios.deployment_target = "8.0"
-    s.osx.deployment_target = "10.10"
 
     s.description      = <<-DESC
 Riffle allows for simple interaction with a Fabric, made by Exis. This library is meant to replace your

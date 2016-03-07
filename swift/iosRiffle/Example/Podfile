@@ -4,7 +4,3 @@ use_frameworks!
 target 'Riffle_Example', :exclusive => true do
   pod "Riffle", :path => "../"
 end
-
-target 'Riffle_Tests', :exclusive => true do
-  pod "Riffle", :path => "../"
-end
