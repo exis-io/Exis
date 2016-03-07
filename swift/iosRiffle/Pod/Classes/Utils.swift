@@ -102,14 +102,15 @@ public func Error(s: String){
     MantleError(s)
 }
 
-public func SetLogLevelOff() { SetLogLevelOff() }
-public func SetLogLevelApp() { SetLogLevelApp() }
-public func SetLogLevelErr() { SetLogLevelErr() }
-public func SetLogLevelWarn() { SetLogLevelWarn() }
-public func SetLogLevelInfo() { SetLogLevelInfo() }
-public func SetLogLevelDebug() { SetLogLevelDebug() }
+public func SetLogLevelOff() { MantleSetLogLevelOff() }
+public func SetLogLevelApp() { MantleSetLogLevelApp() }
+public func SetLogLevelErr() { MantleSetLogLevelErr() }
+public func SetLogLevelWarn() { MantleSetLogLevelWarn() }
+public func SetLogLevelInfo() { MantleSetLogLevelInfo() }
+public func SetLogLevelDebug() { MantleSetLogLevelDebug() }
 
-public func SetFabricDev() { SetFabricDev() }
-public func SetFabricSandbox() { SetFabricSandbox() }
-public func SetFabricProduction() { SetFabricProduction() }
-public func SetFabricLocal() { SetFabricLocal() }
+public func SetFabricDev() { MantleSetFabricDev() }
+public func SetFabricSandbox() { MantleSetFabricSandbox() }
+public func SetFabricProduction() { MantleSetFabricProduction() }
+public func SetFabricLocal() { MantleSetFabricLocal() }
+
