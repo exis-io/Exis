@@ -42,4 +42,3 @@ js/ngRiffle/release/*
 
 *.bin
 .tmp
-swift/iosRiffle/Pod/Assets/Mantle.framework
