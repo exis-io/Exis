@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
     s.osx.deployment_target = "10.10"
 
     s.description      = <<-DESC
-Riffle allows for simple interaction with a Fabric. This library is meant to replace your
+Riffle allows for simple interaction with a Fabric, made by Exis. This library is meant to replace your
 networking code with something that doesn't look like networking code at all!
                        DESC
 

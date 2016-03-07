@@ -31,8 +31,6 @@ osx:
 
 # Testing for cocoapod update, building a universal library manually with lipo
 cocoapod:
-	rm -rf .tmp
-
 	@echo "Building arm" 
 	GOOS=darwin GOARCH=arm GOARM=7 \
 	CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
@@ -68,8 +66,8 @@ ios:
 	@echo "Building core..."
 	@gomobile bind -prefix="" -target=ios github.com/exis-io/core/androidMantle
 	@echo "Moving mantle"
-	@rm -rf swift/SwiftKVC/Mantle.framework
-	@mv Mantle.framework swift/SwiftKVC/Mantle.framework
+	@rm -rf swift/iosRiffle/Pod/Assets/Mantle.framework
+	@mv Mantle.framework swift/iosRiffle/Pod/Assets/Mantle.framework
 
 android:
 	@echo "Building core..."
@@ -120,10 +118,13 @@ libriffmantle.so:
 clean: 
 	@-rm -f utils/assets/libriffmantle.so utils/assets/libriffmantle.h
 	@-rm -f swift/osxCrust/RiffleTest/riffle.a  swift/osxCrust/RiffleTest/riffle.h
-
+	@-rm -rf .tmp
+	
 	@-rm -f utils/assets/libriffmantle.so utils/assets/libriffmantle.h >$(LOG) ||:
 	@$(MAKE) -C swift/mantle clean >$(LOG) ||:
 	@$(MAKE) -C swift/swiftRiffle/Riffle clean >$(LOG) ||:
 	@rm -rf swift/example/Packages >$(LOG) ||:
+
+
 
 
