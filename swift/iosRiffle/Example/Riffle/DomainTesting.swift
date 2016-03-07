@@ -31,7 +31,7 @@ class Receiver: Domain {
             print("SUCCESS --- 1-1")
         }
         
-        //        // Primitive Types
+        // Primitive Types
         subscribe("subscribePrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
             print("SUCCESS --- 1-2")
             //print("1 : Sub receiving single types:", a, b, c, d, e)
@@ -173,7 +173,7 @@ class Sender: Domain {
         receiver.publish("subscribeArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
         
         // Model not reconstructed well
-        // eceiver.publish("subscribeModel", dog)
+        // receiver.publish("subscribeModel", dog)
         
         
         // Reg/Call Success Cases
@@ -183,14 +183,15 @@ class Sender: Domain {
         }
         
         // Primitive Types
-        receiver.call("registerPrimitives", 1, 2.2, 3.3, "4", true)
-        //            .then { (a: Int, b: Float, c: Double, d: String, e: Bool) in
-        //            assert(a == 1)
-        //            assert(b == 2.2)
-        //            assert(c == 3.3)
-        //            assert(d == "4")
-        //            assert(e == true)
-        //        }
+        receiver.call("registerPrimitives", 1, 2.2, 3.3, "4", true).then { (a: Int, b: Float, c: Double, d: String, e: Bool) in
+            assert(a == 1)
+            assert(b == 2.2)
+            assert(c == 3.3)
+            assert(d == "4")
+            assert(e == true)
+            
+            print("SUCCCES --- 2-4")
+        }
         
         // Collections of simple types
         receiver.call("registerArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false]).then { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
@@ -199,10 +200,10 @@ class Sender: Domain {
             assert(c == [4.4, 5.5])
             assert(d == ["6", "7"])
             assert(e == [true, false])
-            }.error { reason in
-                // TODO: the reason itself is not given, instead its the class of argument
-                print("FAILURE ON CALL --- 2-2")
-                print("\tREASON: \(reason)")
+        }.error { reason in
+            // TODO: the reason itself is not given, instead its the class of argument
+            print("FAILURE ON CALL --- 2-2")
+            print("\tREASON: \(reason)")
         }
     }
     

@@ -15,7 +15,6 @@ class ViewController: UIViewController {
         
         Riffle.setLogLevelInfo()
         Riffle.setFabricDev()
-//        Riffle.setCuminOff()
         
         print("Starting Tests")
         
