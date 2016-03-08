@@ -27,7 +27,9 @@ swift_example: printcheck libriffmantle.so
 	@echo "Now 'cd swift/example' and run './.build/debug/Example', 'SENDER=true ./.build/debug/Example'"
 
 osx: 
-	GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o swift/swiftRiffle/riffle.a core/cMantle/main.go
+	GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o .tmp/riffle-x86_64_osx.a core/cMantle/main.go
+	mv .tmp/riffle-x86_64_osx.h swift/iosRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Headers/Mantle.h
+	mv .tmp/riffle-x86_64_osx.a swift/iosRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Mantle
 
 cocoapod:
 	@echo "Building arm7" 
@@ -58,12 +60,12 @@ cocoapod:
 	go build -p=4 -pkgdir=/Users/damouse/code/go/pkg/gomobile/pkg_darwin_arm -tags="" -buildmode=c-archive -tags=ios -o .tmp/riffle-x86_64_ios.a core/cMantle/main.go
 
 	@echo "Combining with lipo" 
-	@xcrun lipo -create .tmp/riffle-arm.a .tmp/riffle-arm64.a .tmp/riffle-x86_64_ios.a -o swift/iosRiffle/Pod/Assets/Mantle.framework/Versions/A/Mantle
-	@mv .tmp/riffle-arm.h swift/iosRiffle/Pod/Assets/Mantle.framework/Versions/A/Headers/Mantle.h
+	@xcrun lipo -create .tmp/riffle-arm.a .tmp/riffle-arm64.a .tmp/riffle-x86_64_ios.a -o swift/iosRiffle/Pod/Assets/ios/Mantle.framework/Versions/A/Mantle
+	@mv .tmp/riffle-arm.h swift/iosRiffle/Pod/Assets/ios/Mantle.framework/Versions/A/Headers/Mantle.h
 
 	# TODO: remove the goint32 check, it ALWAYS errors!
 
-	@echo "Framework available at swift/iosRiffle/Pod/Assets/Mantle.framework"
+	@echo "Framework available at swift/iosRiffle/Pod/Assets/ios/Mantle.framework"
 
 ios:
 	@echo "Building core..."

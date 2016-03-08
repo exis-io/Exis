@@ -1,6 +1,5 @@
-#import <Cocoa/Cocoa.h>
+#import <UIKit/UIKit.h>
 
-#import "riffle.h"
 
 FOUNDATION_EXPORT double RiffleVersionNumber;
 FOUNDATION_EXPORT const unsigned char RiffleVersionString[];

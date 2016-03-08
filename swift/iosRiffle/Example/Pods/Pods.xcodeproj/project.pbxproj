@@ -7,157 +7,177 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		114EDC795D25D71B59E869599D599D86 /* Cumin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3CA78D54CEFCB5B1BA06F0CC1F570C /* Cumin.swift */; };
-		143DFA5E3C268BE536CB9F21F52F0816 /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = A35C92B456B03D4911F2455362B16D7F /* Domain.swift */; };
-		1DB347F68E1899DF97FA37C569743F0A /* Pods-Backend-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = E8F7CC00FB743A4E28C470AD14799DB7 /* Pods-Backend-dummy.m */; };
-		316AE8824823917F63F142BE34A7B4BB /* Json.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E62C3208815E66156877591188A06A /* Json.swift */; };
-		31A84C1053E0E9A3CD03D7A83D8559CF /* Pods-Riffle_Example-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 207CB30263246F9A7F81EB896E1C0811 /* Pods-Riffle_Example-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		39CA3A9F8229A950205C0C4297D43346 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34B3C2614602D253AFC2EBFE58477DB /* App.swift */; };
-		53FA6C3C42B34644E0870A79E9B120FB /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2A9059FD25D9156FAAB47A5AD0A23A4 /* Utils.swift */; };
-		58E374F4D9B52328D45069C2BEFADB83 /* Deferred.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E32865057B1B070F9AE36CE51042880 /* Deferred.swift */; };
-		603C060358E563596FCF767B9E6D9294 /* Pods-Riffle_Example-Riffle-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F2DE93892185FC13978C2A41EBC0D153 /* Pods-Riffle_Example-Riffle-dummy.m */; };
-		63310B1561261685734A82754CF9AA01 /* Pods-Riffle_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 4875F481C5FE0442F13524F1C07E27D8 /* Pods-Riffle_Example-dummy.m */; };
-		65C662AE92AF1F445D03F9A5B5327CEB /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3EDF956451ECAA7BB388497E4539CF2 /* Model.swift */; };
-		6A1C9489894EFA84ECCC4C3A3A24AF2F /* Deferred.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E32865057B1B070F9AE36CE51042880 /* Deferred.swift */; };
-		6A2C2BE53E494BE99E4628899E7C8113 /* Silver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 571C227DEEE03577CF35D00C509A83C4 /* Silver.swift */; };
-		76C864D00F1940A4435ECC777825D074 /* Pods-Riffle_Example-Riffle-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F41A281DD860C18489B96A874E8EE1 /* Pods-Riffle_Example-Riffle-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		7FF3BC864FEAB0E7ADFC8CE6D46423A7 /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = A35C92B456B03D4911F2455362B16D7F /* Domain.swift */; };
-		8102D425F3BAA611FFD67A544EEAA089 /* Pods-Backend-Riffle-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = CBFD996779A2AF9E68D590E4979FD00A /* Pods-Backend-Riffle-dummy.m */; };
-		84BCA95BEF1E4BE70D1BD2E63530F74D /* Cumin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3CA78D54CEFCB5B1BA06F0CC1F570C /* Cumin.swift */; };
-		8D69294F05DEF91A0BAA55FC270A58E8 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE25DD04263CA735DBC0065D686C708D /* Cocoa.framework */; };
-		927D43D9C41192FEEB3F11E71519DECA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F426C20791C2C776D6B81F15C1EA8A5 /* Foundation.framework */; };
-		A02407DB3FB879DD33759E215FCDED6C /* CuminicableExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5089175E982E530A43715E6EF66B6384 /* CuminicableExtensions.swift */; };
-		C23A12D32CCAF5B3BFFB4803D3B78B40 /* Silver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 571C227DEEE03577CF35D00C509A83C4 /* Silver.swift */; };
-		CC4602A7C5B544799C5381EA5CE80031 /* Json.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E62C3208815E66156877591188A06A /* Json.swift */; };
-		CE3B89CDBAA2EA03550F6587B0C1D9D2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F426C20791C2C776D6B81F15C1EA8A5 /* Foundation.framework */; };
-		D865CDB726FCAD95FB6AFB1813F57DEB /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2A9059FD25D9156FAAB47A5AD0A23A4 /* Utils.swift */; };
-		DB63D3A376425DB65816951CC0961D44 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE25DD04263CA735DBC0065D686C708D /* Cocoa.framework */; };
-		E96AE73BB57BEB1B2D8FEE693401A28E /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3EDF956451ECAA7BB388497E4539CF2 /* Model.swift */; };
-		EA79E33A4720FF06A2C686FC0254A51F /* CuminicableExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5089175E982E530A43715E6EF66B6384 /* CuminicableExtensions.swift */; };
-		F11441B5E7B1B4C3B36D3CD1FE4CF5EA /* Pods-Backend-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F4BFFB59F906DBC1ED423D4F4936017 /* Pods-Backend-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F2E013E34E4FB7B0616981763F8AFAF2 /* Pods-Backend-Riffle-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D566C49CCFB35B2EDA4E18ACC786C30 /* Pods-Backend-Riffle-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		FFE0956ADBB50011F9BCBC4B49D67E7B /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34B3C2614602D253AFC2EBFE58477DB /* App.swift */; };
+		045CEB2F576EBCE9E6D45B808D04F6FE /* CuminicableExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86BF82C13F4675A0C7B9DA431673A83E /* CuminicableExtensions.swift */; };
+		05FB78EA81B922FED2F355693AF48A98 /* Pods-Riffle_Example-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 207CB30263246F9A7F81EB896E1C0811 /* Pods-Riffle_Example-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		082610442417FEEA04164AB7B1BB528C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE25DD04263CA735DBC0065D686C708D /* Cocoa.framework */; };
+		0EE3C0E0930DAC9CE0C93FD54B746C7C /* Json.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206DB4EFEEF6466A17F7AB37C36CF0DA /* Json.swift */; };
+		1DB3900479AE8B8207F3FEBEE2A32BE7 /* Pods-Backend-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = E8F7CC00FB743A4E28C470AD14799DB7 /* Pods-Backend-dummy.m */; };
+		36D21ED81016794EF67B69FFC6A2F6F4 /* Riffle-iOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = EB1FE96FC4B37EF41E2F28D7B46918DC /* Riffle-iOS-dummy.m */; };
+		49F0847A4BE0FBAF202EA1C50C56B7CC /* Riffle-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 2874EF911410EC2E5E12366AE81040A7 /* Riffle-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4CE9DB1B0A4305C847BF44068693F4C8 /* Deferred.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D94B58AC5AF65EE360125A0CEA153CB /* Deferred.swift */; };
+		53A589BF56E2DF9D9F1BB9BC83DBDAB4 /* Mantle.framework in Resources */ = {isa = PBXBuildFile; fileRef = 68C66677017B5B2BDA0E05445F10F881 /* Mantle.framework */; };
+		55A65A600415931B61AE3B3AC71FCCEA /* Pods-Backend-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F4BFFB59F906DBC1ED423D4F4936017 /* Pods-Backend-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		617A91FBD277F24CA1D99DB2378AA6CB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BD6FD1D7D9F530F9EBD5D83BF5E9B37 /* Foundation.framework */; };
+		62078BBA0667A3A10739488E4B90E560 /* Riffle-OSX-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = B535014EDE36AC65B816B24579277547 /* Riffle-OSX-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		645E3CFACB2695EE38F1D9BF432733CC /* Cumin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A6EAD140E713DCBF18C4276F2BF94A /* Cumin.swift */; };
+		6C80F36AFA61AFAFA6CCCC179033BCAA /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04BDB26C262D82BF23C0CF108FF4F890 /* Domain.swift */; };
+		7241236EB05D12D77F20248944C76A80 /* Pods-Riffle_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 4875F481C5FE0442F13524F1C07E27D8 /* Pods-Riffle_Example-dummy.m */; };
+		725DCEBAD8B5D293C323E1B17145E27B /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868C470CB8E07A7C3B97592752DDFC44 /* Model.swift */; };
+		760E01C218DC48A37393AB4160A72317 /* CuminicableExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86BF82C13F4675A0C7B9DA431673A83E /* CuminicableExtensions.swift */; };
+		97FCB0BE529398D2F60D13B88B951DA8 /* Cumin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A6EAD140E713DCBF18C4276F2BF94A /* Cumin.swift */; };
+		983C05000C36BA77CA9AAFEB86E04FD6 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F36BD672CE9F72B8DA74120623B369D /* App.swift */; };
+		9F9DF203763F3173D73506478A55DBEA /* Json.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206DB4EFEEF6466A17F7AB37C36CF0DA /* Json.swift */; };
+		AEA6F3EA71FF561F2EB3669224D181A4 /* Silver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0794E5EEF466B68E18FD157334E61DC9 /* Silver.swift */; };
+		B810F495E4773FD893B21770DDA4E98E /* Silver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0794E5EEF466B68E18FD157334E61DC9 /* Silver.swift */; };
+		BC94AB4E77BF7D9EB725DBECA3A5AE9D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE25DD04263CA735DBC0065D686C708D /* Cocoa.framework */; };
+		CB0134FFBA6667D0DD48B8DE8C9F84B9 /* Deferred.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D94B58AC5AF65EE360125A0CEA153CB /* Deferred.swift */; };
+		D62A5F120BD546FE9830AAF1327A56BC /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868C470CB8E07A7C3B97592752DDFC44 /* Model.swift */; };
+		E078424CE7F4EE17297F43C7457713DF /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04BDB26C262D82BF23C0CF108FF4F890 /* Domain.swift */; };
+		E358BB40EDD8AA3ECBA68F5B2503F42C /* Mantle.framework in Resources */ = {isa = PBXBuildFile; fileRef = E98EFD2046A2ADBBD40486985CBC4227 /* Mantle.framework */; };
+		E793012E1B85768D54F71DF83FF682D6 /* Riffle-OSX-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = C88E0AFADE0B770D7B6F7EC612C80BE6 /* Riffle-OSX-dummy.m */; };
+		EB59FA5B1C5E060B6134A0E5B24AD995 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BD6FD1D7D9F530F9EBD5D83BF5E9B37 /* Foundation.framework */; };
+		F11EDE57E41EA0425CBF3042E1A49AD1 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74CB01D68DF53E6DCB293AF2189F04C /* Utils.swift */; };
+		F44C43ED236C880629AAA8B8D23EAADE /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F36BD672CE9F72B8DA74120623B369D /* App.swift */; };
+		F8C065DE5CD534B8DECB587459B89C21 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74CB01D68DF53E6DCB293AF2189F04C /* Utils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		13E9628B81AD61C5AD17AC16B69FF52B /* PBXContainerItemProxy */ = {
+		02EFAAA415D3A11B6B727A3C72D10F40 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = DBBD58244D38D7E4209B63A6D4845D19;
-			remoteInfo = "Pods-Riffle_Example-Riffle";
+			remoteGlobalIDString = 1608140FF89BFBF823D81FD6F84A0E34;
+			remoteInfo = "Riffle-OSX";
 		};
-		4E2744FE158D284CC218B2197DD161CC /* PBXContainerItemProxy */ = {
+		1960EFD64DB6470DAF363563536F2084 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = CBA5CE185DF785C1C83D4D3BB13C3A11;
-			remoteInfo = "Pods-Backend-Riffle";
+			remoteGlobalIDString = 5AED801CA239F7E20F8CD57BE49AC960;
+			remoteInfo = "Riffle-iOS";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		02ED520199CDBE7EFEDDFDF4763230AB /* Pods-Backend-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-Backend-acknowledgements.markdown"; sourceTree = "<group>"; };
-		0509DF0C677DC70FEE1EAE0CFC053330 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0D0F9574E438BB1ADA58D69700B667AE /* Pods-Riffle_Example-Riffle.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Riffle_Example-Riffle.xcconfig"; path = "../Pods-Riffle_Example-Riffle/Pods-Riffle_Example-Riffle.xcconfig"; sourceTree = "<group>"; };
+		04BDB26C262D82BF23C0CF108FF4F890 /* Domain.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Domain.swift; sourceTree = "<group>"; };
+		0794E5EEF466B68E18FD157334E61DC9 /* Silver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Silver.swift; sourceTree = "<group>"; };
 		13B97EC5067A956893AF434DF4428719 /* Pods-Riffle_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Riffle_Example.release.xcconfig"; sourceTree = "<group>"; };
-		1D566C49CCFB35B2EDA4E18ACC786C30 /* Pods-Backend-Riffle-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-Backend-Riffle-umbrella.h"; sourceTree = "<group>"; };
+		206DB4EFEEF6466A17F7AB37C36CF0DA /* Json.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Json.swift; sourceTree = "<group>"; };
 		207CB30263246F9A7F81EB896E1C0811 /* Pods-Riffle_Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-Riffle_Example-umbrella.h"; sourceTree = "<group>"; };
-		2F426C20791C2C776D6B81F15C1EA8A5 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		2874EF911410EC2E5E12366AE81040A7 /* Riffle-iOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "Riffle-iOS-umbrella.h"; path = "../Riffle-iOS/Riffle-iOS-umbrella.h"; sourceTree = "<group>"; };
+		2CA5543710AE1C50AAB699C850EAD05F /* Riffle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Riffle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		33CF8295FF4B67E9BC2740E51181DD42 /* Pods-Backend-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Backend-frameworks.sh"; sourceTree = "<group>"; };
 		39AC3597CA0B99514E185704A73262CC /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3DD6D1701A85E9D37E75EED4048991F4 /* Pods-Backend-Riffle-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-Backend-Riffle-prefix.pch"; sourceTree = "<group>"; };
+		3AC32ABB801EDAFFB27B666DC0678192 /* Pods_Backend.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Backend.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3F7A619C4EDBF940E24081DBAD2DB155 /* Riffle-iOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "Riffle-iOS-prefix.pch"; path = "../Riffle-iOS/Riffle-iOS-prefix.pch"; sourceTree = "<group>"; };
 		3FF9DC038DCE443D5627B03228CBA4DD /* Pods-Riffle_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-Riffle_Example.modulemap"; sourceTree = "<group>"; };
+		40BC067E198834AD280CA0510F22F8AA /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Info.plist; path = "../Riffle-iOS/Info.plist"; sourceTree = "<group>"; };
+		40CC9F4807EC1BAEA275BED4CBBC45E1 /* Riffle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Riffle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4875F481C5FE0442F13524F1C07E27D8 /* Pods-Riffle_Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Riffle_Example-dummy.m"; sourceTree = "<group>"; };
-		4E32865057B1B070F9AE36CE51042880 /* Deferred.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Deferred.swift; sourceTree = "<group>"; };
-		5089175E982E530A43715E6EF66B6384 /* CuminicableExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CuminicableExtensions.swift; sourceTree = "<group>"; };
-		53E62C3208815E66156877591188A06A /* Json.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Json.swift; sourceTree = "<group>"; };
 		54F1CEA8648812097BE7F5439B2F9243 /* Pods-Riffle_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Riffle_Example-acknowledgements.plist"; sourceTree = "<group>"; };
-		571C227DEEE03577CF35D00C509A83C4 /* Silver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Silver.swift; sourceTree = "<group>"; };
 		57768DBC8D4149E3C798D8C8B41227C1 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		61D44851412D6839241C96E6F6F2473C /* Mantle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Mantle.framework; path = Pod/Assets/Mantle.framework; sourceTree = "<group>"; };
 		62BF9E6066D9CEB3CD4C49BB9EA55892 /* Pods-Backend-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Backend-resources.sh"; sourceTree = "<group>"; };
-		69B612820ECE557AECB83C684BF9935D /* Riffle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Riffle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6BB3D916ED6A1FE7E7869373C9C2F4DE /* Pods-Riffle_Example-Riffle.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; name = "Pods-Riffle_Example-Riffle.modulemap"; path = "../Pods-Riffle_Example-Riffle/Pods-Riffle_Example-Riffle.modulemap"; sourceTree = "<group>"; };
-		6D3CA78D54CEFCB5B1BA06F0CC1F570C /* Cumin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Cumin.swift; sourceTree = "<group>"; };
+		63A6EAD140E713DCBF18C4276F2BF94A /* Cumin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Cumin.swift; sourceTree = "<group>"; };
+		68C66677017B5B2BDA0E05445F10F881 /* Mantle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Mantle.framework; path = Pod/Assets/ios/Mantle.framework; sourceTree = "<group>"; };
 		6F4BFFB59F906DBC1ED423D4F4936017 /* Pods-Backend-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-Backend-umbrella.h"; sourceTree = "<group>"; };
-		73CEB8AF27D2C0CB5F8518136CEE6009 /* Pods_Riffle_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Riffle_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		7412DCCDC90022265A2B882E298144DF /* Pods-Backend-Riffle.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Backend-Riffle.xcconfig"; sourceTree = "<group>"; };
+		760D7FAC0EF1CEC792125AEF11E0863A /* Riffle-OSX.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Riffle-OSX.modulemap"; sourceTree = "<group>"; };
 		7D4801CBA4430E90366C38CAE5F53B78 /* Pods-Riffle_Example-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Riffle_Example-resources.sh"; sourceTree = "<group>"; };
 		7E540B6C205BE873FA6593A87B96F78F /* Pods-Riffle_Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Riffle_Example-frameworks.sh"; sourceTree = "<group>"; };
-		8ED97667C9C741B7D8432CBF6C80D111 /* Pods_Backend.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Backend.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		868C470CB8E07A7C3B97592752DDFC44 /* Model.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		86BF82C13F4675A0C7B9DA431673A83E /* CuminicableExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CuminicableExtensions.swift; sourceTree = "<group>"; };
+		8F36BD672CE9F72B8DA74120623B369D /* App.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
+		91CF4F6478001219BB57F6B11D7B7641 /* Riffle-iOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; name = "Riffle-iOS.modulemap"; path = "../Riffle-iOS/Riffle-iOS.modulemap"; sourceTree = "<group>"; };
+		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		97509C7C1BC251D74538B6F28A7D7F09 /* Pods-Backend.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-Backend.modulemap"; sourceTree = "<group>"; };
+		9BB24689321260414E5BCCA7F0BF3F33 /* Riffle-iOS.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Riffle-iOS.xcconfig"; path = "../Riffle-iOS/Riffle-iOS.xcconfig"; sourceTree = "<group>"; };
+		9BD6FD1D7D9F530F9EBD5D83BF5E9B37 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		9CCADB147A080A0B5D4924FA17D2E231 /* Pods-Riffle_Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-Riffle_Example-acknowledgements.markdown"; sourceTree = "<group>"; };
-		A35C92B456B03D4911F2455362B16D7F /* Domain.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Domain.swift; sourceTree = "<group>"; };
-		A3EDF956451ECAA7BB388497E4539CF2 /* Model.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		9D94B58AC5AF65EE360125A0CEA153CB /* Deferred.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Deferred.swift; sourceTree = "<group>"; };
+		A79355F9016866F31C7924D30D9F67DF /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A7D8ABA4F86A51EDC106BB9E77DF03BA /* Pods-Backend.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Backend.debug.xcconfig"; sourceTree = "<group>"; };
-		B34B3C2614602D253AFC2EBFE58477DB /* App.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
-		BA6428E9F66FD5A23C0A2E06ED26CD2F /* Podfile */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		CBFD996779A2AF9E68D590E4979FD00A /* Pods-Backend-Riffle-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Backend-Riffle-dummy.m"; sourceTree = "<group>"; };
-		CDF2595FB1435F869034D9F2322DD1F4 /* Pods-Backend-Riffle.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-Backend-Riffle.modulemap"; sourceTree = "<group>"; };
-		D9F7D6FCAC7670FA6BD63A228D45D316 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Info.plist; path = "../Pods-Riffle_Example-Riffle/Info.plist"; sourceTree = "<group>"; };
+		B535014EDE36AC65B816B24579277547 /* Riffle-OSX-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Riffle-OSX-umbrella.h"; sourceTree = "<group>"; };
+		BDAAF7F33DA7127870D742B8B97CC29B /* Riffle-OSX.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Riffle-OSX.xcconfig"; sourceTree = "<group>"; };
+		C88E0AFADE0B770D7B6F7EC612C80BE6 /* Riffle-OSX-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Riffle-OSX-dummy.m"; sourceTree = "<group>"; };
 		DE25DD04263CA735DBC0065D686C708D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
-		E1F41A281DD860C18489B96A874E8EE1 /* Pods-Riffle_Example-Riffle-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "Pods-Riffle_Example-Riffle-umbrella.h"; path = "../Pods-Riffle_Example-Riffle/Pods-Riffle_Example-Riffle-umbrella.h"; sourceTree = "<group>"; };
-		E231FCB3FE6702E20786A783F4542475 /* Pods-Riffle_Example-Riffle-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "Pods-Riffle_Example-Riffle-prefix.pch"; path = "../Pods-Riffle_Example-Riffle/Pods-Riffle_Example-Riffle-prefix.pch"; sourceTree = "<group>"; };
 		E4795F131B1FE4F334ECF3F06C2766A0 /* Pods-Backend.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Backend.release.xcconfig"; sourceTree = "<group>"; };
+		E74CB01D68DF53E6DCB293AF2189F04C /* Utils.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		E8F7CC00FB743A4E28C470AD14799DB7 /* Pods-Backend-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Backend-dummy.m"; sourceTree = "<group>"; };
-		F2A9059FD25D9156FAAB47A5AD0A23A4 /* Utils.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
-		F2DE93892185FC13978C2A41EBC0D153 /* Pods-Riffle_Example-Riffle-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "Pods-Riffle_Example-Riffle-dummy.m"; path = "../Pods-Riffle_Example-Riffle/Pods-Riffle_Example-Riffle-dummy.m"; sourceTree = "<group>"; };
+		E98EFD2046A2ADBBD40486985CBC4227 /* Mantle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Mantle.framework; path = Pod/Assets/osx/Mantle.framework; sourceTree = "<group>"; };
+		EB1FE96FC4B37EF41E2F28D7B46918DC /* Riffle-iOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "Riffle-iOS-dummy.m"; path = "../Riffle-iOS/Riffle-iOS-dummy.m"; sourceTree = "<group>"; };
+		F2DB2ACF44C0FBE0986368A9C530938A /* Pods_Riffle_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Riffle_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5717AFF60A307EDAF3A18F78537CB60 /* Pods-Backend-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Backend-acknowledgements.plist"; sourceTree = "<group>"; };
 		FF0AB020F9C95BCDA2B32A7D71538CA3 /* Pods-Riffle_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Riffle_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		FF8896E21FD6E986B499630B3F17FE41 /* Riffle-OSX-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Riffle-OSX-prefix.pch"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		8B065FD24012F913E7E0C40D9763E4D7 /* Frameworks */ = {
+		2E12C8BDE82A4098C62DB110B275B711 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				927D43D9C41192FEEB3F11E71519DECA /* Foundation.framework in Frameworks */,
+				BC94AB4E77BF7D9EB725DBECA3A5AE9D /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A61571E6835615254CB6C8FC164DE371 /* Frameworks */ = {
+		55CA97D99B3F092467737848776E61D4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB63D3A376425DB65816951CC0961D44 /* Cocoa.framework in Frameworks */,
+				082610442417FEEA04164AB7B1BB528C /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D0B86E0D3C170BFEFB58B26DE495D8A4 /* Frameworks */ = {
+		AE2B5AD4B2E89F252D9ECCF396F863D4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE3B89CDBAA2EA03550F6587B0C1D9D2 /* Foundation.framework in Frameworks */,
+				617A91FBD277F24CA1D99DB2378AA6CB /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F7DD6A60AF6F3403DC5B02104FA8616E /* Frameworks */ = {
+		DE74B78239CD47677504B5CA850B8A2D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D69294F05DEF91A0BAA55FC270A58E8 /* Cocoa.framework in Frameworks */,
+				EB59FA5B1C5E060B6134A0E5B24AD995 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		376538775BB4B75C02CE102816A6E28F /* Riffle */ = {
+		18A71681A4308D0B61F7AE5384FA07CB /* Pod */ = {
 			isa = PBXGroup;
 			children = (
-				49F0C11F5E0B0E89E8EF2E633A6B301D /* Frameworks */,
-				A1F125264C0263F087EC399297D9F3A8 /* Pod */,
-				4B5AFF29E0D3D47E61974F8609C57839 /* Support Files */,
+				ECB24D66F20F7ECF281F67EF54846A98 /* Assets */,
+			);
+			path = Pod;
+			sourceTree = "<group>";
+		};
+		3948E838DCFC3866819F76418E9407D6 /* Riffle */ = {
+			isa = PBXGroup;
+			children = (
+				BC4996830BF3F47DCEA85CD46D8C0B74 /* Frameworks */,
+				AE15D5FC5885C8E3A059666BBFB15BDF /* Pod */,
+				5A3EC7FE23125AED6461CE71D6CCCAED /* Resources */,
+				6B0CC454D3F145709DADA8F6DC8E2B77 /* Support Files */,
 			);
 			name = Riffle;
 			path = ../..;
 			sourceTree = "<group>";
 		};
+		3AECD002B2BE1DCD4DB3B8DDE6B217FB /* osx */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = osx;
+			sourceTree = "<group>";
+		};
 		3AEF7D761E8EA8419BB4A7000AB770CB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				7AD470ACF4E5545C3E4A621BD6E0A529 /* iOS */,
+				D0A8DCE2A689A1A949072E3AFF2F6E85 /* iOS */,
 				9304B30CB87FDB77B6CEE9FB6B800855 /* OS X */,
 			);
 			name = Frameworks;
@@ -181,40 +201,32 @@
 			path = "Target Support Files/Pods-Riffle_Example";
 			sourceTree = "<group>";
 		};
-		49F0C11F5E0B0E89E8EF2E633A6B301D /* Frameworks */ = {
+		5A3EC7FE23125AED6461CE71D6CCCAED /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				61D44851412D6839241C96E6F6F2473C /* Mantle.framework */,
+				18A71681A4308D0B61F7AE5384FA07CB /* Pod */,
 			);
-			name = Frameworks;
+			name = Resources;
 			sourceTree = "<group>";
 		};
-		4B5AFF29E0D3D47E61974F8609C57839 /* Support Files */ = {
+		6B0CC454D3F145709DADA8F6DC8E2B77 /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
-				D9F7D6FCAC7670FA6BD63A228D45D316 /* Info.plist */,
-				0509DF0C677DC70FEE1EAE0CFC053330 /* Info.plist */,
-				CDF2595FB1435F869034D9F2322DD1F4 /* Pods-Backend-Riffle.modulemap */,
-				7412DCCDC90022265A2B882E298144DF /* Pods-Backend-Riffle.xcconfig */,
-				CBFD996779A2AF9E68D590E4979FD00A /* Pods-Backend-Riffle-dummy.m */,
-				3DD6D1701A85E9D37E75EED4048991F4 /* Pods-Backend-Riffle-prefix.pch */,
-				1D566C49CCFB35B2EDA4E18ACC786C30 /* Pods-Backend-Riffle-umbrella.h */,
-				6BB3D916ED6A1FE7E7869373C9C2F4DE /* Pods-Riffle_Example-Riffle.modulemap */,
-				0D0F9574E438BB1ADA58D69700B667AE /* Pods-Riffle_Example-Riffle.xcconfig */,
-				F2DE93892185FC13978C2A41EBC0D153 /* Pods-Riffle_Example-Riffle-dummy.m */,
-				E231FCB3FE6702E20786A783F4542475 /* Pods-Riffle_Example-Riffle-prefix.pch */,
-				E1F41A281DD860C18489B96A874E8EE1 /* Pods-Riffle_Example-Riffle-umbrella.h */,
+				40BC067E198834AD280CA0510F22F8AA /* Info.plist */,
+				A79355F9016866F31C7924D30D9F67DF /* Info.plist */,
+				91CF4F6478001219BB57F6B11D7B7641 /* Riffle-iOS.modulemap */,
+				9BB24689321260414E5BCCA7F0BF3F33 /* Riffle-iOS.xcconfig */,
+				EB1FE96FC4B37EF41E2F28D7B46918DC /* Riffle-iOS-dummy.m */,
+				3F7A619C4EDBF940E24081DBAD2DB155 /* Riffle-iOS-prefix.pch */,
+				2874EF911410EC2E5E12366AE81040A7 /* Riffle-iOS-umbrella.h */,
+				760D7FAC0EF1CEC792125AEF11E0863A /* Riffle-OSX.modulemap */,
+				BDAAF7F33DA7127870D742B8B97CC29B /* Riffle-OSX.xcconfig */,
+				C88E0AFADE0B770D7B6F7EC612C80BE6 /* Riffle-OSX-dummy.m */,
+				FF8896E21FD6E986B499630B3F17FE41 /* Riffle-OSX-prefix.pch */,
+				B535014EDE36AC65B816B24579277547 /* Riffle-OSX-umbrella.h */,
 			);
 			name = "Support Files";
-			path = "Example/Pods/Target Support Files/Pods-Backend-Riffle";
-			sourceTree = "<group>";
-		};
-		7AD470ACF4E5545C3E4A621BD6E0A529 /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-				2F426C20791C2C776D6B81F15C1EA8A5 /* Foundation.framework */,
-			);
-			name = iOS;
+			path = "Example/Pods/Target Support Files/Riffle-OSX";
 			sourceTree = "<group>";
 		};
 		7B4BD60578EA4EC36F4B01E3B856429A /* Pods-Backend */ = {
@@ -235,23 +247,31 @@
 			path = "Target Support Files/Pods-Backend";
 			sourceTree = "<group>";
 		};
+		7B9DCF9CE55374C1E64FA29D9676A507 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				8F36BD672CE9F72B8DA74120623B369D /* App.swift */,
+				63A6EAD140E713DCBF18C4276F2BF94A /* Cumin.swift */,
+				86BF82C13F4675A0C7B9DA431673A83E /* CuminicableExtensions.swift */,
+				9D94B58AC5AF65EE360125A0CEA153CB /* Deferred.swift */,
+				04BDB26C262D82BF23C0CF108FF4F890 /* Domain.swift */,
+				206DB4EFEEF6466A17F7AB37C36CF0DA /* Json.swift */,
+				868C470CB8E07A7C3B97592752DDFC44 /* Model.swift */,
+				0794E5EEF466B68E18FD157334E61DC9 /* Silver.swift */,
+				E74CB01D68DF53E6DCB293AF2189F04C /* Utils.swift */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
 		7DB346D0F39D3F0E887471402A8071AB = {
 			isa = PBXGroup;
 			children = (
-				BA6428E9F66FD5A23C0A2E06ED26CD2F /* Podfile */,
-				87B3210EC24E3C17C3AA88889A65B799 /* Development Pods */,
+				93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */,
+				F33A4E2C7B9E657C0D1B9500859C5B47 /* Development Pods */,
 				3AEF7D761E8EA8419BB4A7000AB770CB /* Frameworks */,
-				D76E77EA8F98C64E1591CA12D1698C22 /* Products */,
+				A0171032A8BD322021A1223BE38DCEDD /* Products */,
 				F2F0E2F6B5DFE6B95D66989E360136D4 /* Targets Support Files */,
 			);
-			sourceTree = "<group>";
-		};
-		87B3210EC24E3C17C3AA88889A65B799 /* Development Pods */ = {
-			isa = PBXGroup;
-			children = (
-				376538775BB4B75C02CE102816A6E28F /* Riffle */,
-			);
-			name = "Development Pods";
 			sourceTree = "<group>";
 		};
 		9304B30CB87FDB77B6CEE9FB6B800855 /* OS X */ = {
@@ -262,22 +282,56 @@
 			name = "OS X";
 			sourceTree = "<group>";
 		};
-		A1F125264C0263F087EC399297D9F3A8 /* Pod */ = {
+		A0171032A8BD322021A1223BE38DCEDD /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F91F5F69F68740B1D9DA4942DF072688 /* Classes */,
+				3AC32ABB801EDAFFB27B666DC0678192 /* Pods_Backend.framework */,
+				F2DB2ACF44C0FBE0986368A9C530938A /* Pods_Riffle_Example.framework */,
+				40CC9F4807EC1BAEA275BED4CBBC45E1 /* Riffle.framework */,
+				2CA5543710AE1C50AAB699C850EAD05F /* Riffle.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AE15D5FC5885C8E3A059666BBFB15BDF /* Pod */ = {
+			isa = PBXGroup;
+			children = (
+				7B9DCF9CE55374C1E64FA29D9676A507 /* Classes */,
 			);
 			path = Pod;
 			sourceTree = "<group>";
 		};
-		D76E77EA8F98C64E1591CA12D1698C22 /* Products */ = {
+		BC4996830BF3F47DCEA85CD46D8C0B74 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				8ED97667C9C741B7D8432CBF6C80D111 /* Pods_Backend.framework */,
-				73CEB8AF27D2C0CB5F8518136CEE6009 /* Pods_Riffle_Example.framework */,
-				69B612820ECE557AECB83C684BF9935D /* Riffle.framework */,
+				68C66677017B5B2BDA0E05445F10F881 /* Mantle.framework */,
+				E98EFD2046A2ADBBD40486985CBC4227 /* Mantle.framework */,
 			);
-			name = Products;
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BF289907FE1B5E3EBE160C65B783E1CF /* ios */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ios;
+			sourceTree = "<group>";
+		};
+		D0A8DCE2A689A1A949072E3AFF2F6E85 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				9BD6FD1D7D9F530F9EBD5D83BF5E9B37 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		ECB24D66F20F7ECF281F67EF54846A98 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				BF289907FE1B5E3EBE160C65B783E1CF /* ios */,
+				3AECD002B2BE1DCD4DB3B8DDE6B217FB /* osx */,
+			);
+			path = Assets;
 			sourceTree = "<group>";
 		};
 		F2F0E2F6B5DFE6B95D66989E360136D4 /* Targets Support Files */ = {
@@ -289,128 +343,122 @@
 			name = "Targets Support Files";
 			sourceTree = "<group>";
 		};
-		F91F5F69F68740B1D9DA4942DF072688 /* Classes */ = {
+		F33A4E2C7B9E657C0D1B9500859C5B47 /* Development Pods */ = {
 			isa = PBXGroup;
 			children = (
-				B34B3C2614602D253AFC2EBFE58477DB /* App.swift */,
-				6D3CA78D54CEFCB5B1BA06F0CC1F570C /* Cumin.swift */,
-				5089175E982E530A43715E6EF66B6384 /* CuminicableExtensions.swift */,
-				4E32865057B1B070F9AE36CE51042880 /* Deferred.swift */,
-				A35C92B456B03D4911F2455362B16D7F /* Domain.swift */,
-				53E62C3208815E66156877591188A06A /* Json.swift */,
-				A3EDF956451ECAA7BB388497E4539CF2 /* Model.swift */,
-				571C227DEEE03577CF35D00C509A83C4 /* Silver.swift */,
-				F2A9059FD25D9156FAAB47A5AD0A23A4 /* Utils.swift */,
+				3948E838DCFC3866819F76418E9407D6 /* Riffle */,
 			);
-			path = Classes;
+			name = "Development Pods";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		0F46AE3D921012CA78C81EB5D5D99BCF /* Headers */ = {
+		13F8D6D51DEE8541D693C0AFBB7D43D7 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				76C864D00F1940A4435ECC777825D074 /* Pods-Riffle_Example-Riffle-umbrella.h in Headers */,
+				49F0847A4BE0FBAF202EA1C50C56B7CC /* Riffle-iOS-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		16719C473C4D6FDF16107808625077D0 /* Headers */ = {
+		6E12379D0537619FFFE7B7FD62CD67CE /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F11441B5E7B1B4C3B36D3CD1FE4CF5EA /* Pods-Backend-umbrella.h in Headers */,
+				62078BBA0667A3A10739488E4B90E560 /* Riffle-OSX-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		62F7318527F5EB21A01D52721FFEC1DB /* Headers */ = {
+		D5D8306A14CED435125887E65F68E364 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				31A84C1053E0E9A3CD03D7A83D8559CF /* Pods-Riffle_Example-umbrella.h in Headers */,
+				05FB78EA81B922FED2F355693AF48A98 /* Pods-Riffle_Example-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		80A096B914570CD43730F46F925F2DF5 /* Headers */ = {
+		DB6069731B1A9C0E859C1F5F65104BB4 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F2E013E34E4FB7B0616981763F8AFAF2 /* Pods-Backend-Riffle-umbrella.h in Headers */,
+				55A65A600415931B61AE3B3AC71FCCEA /* Pods-Backend-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		2C453FC8DD9A32F24368E2B7EE22B2A5 /* Pods-Backend */ = {
+		1608140FF89BFBF823D81FD6F84A0E34 /* Riffle-OSX */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E39BBA3371C5A30BE45870D6A3864DBB /* Build configuration list for PBXNativeTarget "Pods-Backend" */;
+			buildConfigurationList = B5101017C08E3D1151FE9CD473A43C35 /* Build configuration list for PBXNativeTarget "Riffle-OSX" */;
 			buildPhases = (
-				5E99E091854976785B376FF5E05E0153 /* Sources */,
-				F7DD6A60AF6F3403DC5B02104FA8616E /* Frameworks */,
-				16719C473C4D6FDF16107808625077D0 /* Headers */,
+				A3FE8A7265487F36693B084CB34D3992 /* Sources */,
+				2E12C8BDE82A4098C62DB110B275B711 /* Frameworks */,
+				6CE0AA772920D3C032DB04AA31AB235E /* Resources */,
+				6E12379D0537619FFFE7B7FD62CD67CE /* Headers */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				59FD3BE5B3317B02695B265377D9CF9C /* PBXTargetDependency */,
+			);
+			name = "Riffle-OSX";
+			productName = "Riffle-OSX";
+			productReference = 2CA5543710AE1C50AAB699C850EAD05F /* Riffle.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		5AED801CA239F7E20F8CD57BE49AC960 /* Riffle-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EBEE512086904E7FCF2B1BA03AABA322 /* Build configuration list for PBXNativeTarget "Riffle-iOS" */;
+			buildPhases = (
+				0773A7806D1229E222059CBD8AFC4DA4 /* Sources */,
+				AE2B5AD4B2E89F252D9ECCF396F863D4 /* Frameworks */,
+				2503EEB3A431FFB47BDDC986BC5ADD84 /* Resources */,
+				13F8D6D51DEE8541D693C0AFBB7D43D7 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Riffle-iOS";
+			productName = "Riffle-iOS";
+			productReference = 40CC9F4807EC1BAEA275BED4CBBC45E1 /* Riffle.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		810D1930605FC6E11F5767C1F9125577 /* Pods-Backend */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5D5CF5B54DFEE9F230FEB81870C95DBB /* Build configuration list for PBXNativeTarget "Pods-Backend" */;
+			buildPhases = (
+				2C2D0278B8DE283C17EDC576B4510884 /* Sources */,
+				55CA97D99B3F092467737848776E61D4 /* Frameworks */,
+				DB6069731B1A9C0E859C1F5F65104BB4 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1EC02305C9A4A416AB725BE73FAE76C1 /* PBXTargetDependency */,
 			);
 			name = "Pods-Backend";
 			productName = "Pods-Backend";
-			productReference = 8ED97667C9C741B7D8432CBF6C80D111 /* Pods_Backend.framework */;
+			productReference = 3AC32ABB801EDAFFB27B666DC0678192 /* Pods_Backend.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		9F42B535CDACAA199269B7F1B551F052 /* Pods-Riffle_Example */ = {
+		EA8ACD78514318F59F774AD3916696ED /* Pods-Riffle_Example */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 297F9E75C98B514464EE758AB960D4ED /* Build configuration list for PBXNativeTarget "Pods-Riffle_Example" */;
+			buildConfigurationList = 35C3FCCD53EED24BAB029AAE10EF50B6 /* Build configuration list for PBXNativeTarget "Pods-Riffle_Example" */;
 			buildPhases = (
-				EE2CA863C95D8B0A5AAD3BD8FEB763FC /* Sources */,
-				8B065FD24012F913E7E0C40D9763E4D7 /* Frameworks */,
-				62F7318527F5EB21A01D52721FFEC1DB /* Headers */,
+				917ADD171510275C047989CF2B9C7EF5 /* Sources */,
+				DE74B78239CD47677504B5CA850B8A2D /* Frameworks */,
+				D5D8306A14CED435125887E65F68E364 /* Headers */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				FAB692550704849158D6D72FB18D3D31 /* PBXTargetDependency */,
+				4199C2C5D7654C32D516353EE24C246D /* PBXTargetDependency */,
 			);
 			name = "Pods-Riffle_Example";
 			productName = "Pods-Riffle_Example";
-			productReference = 73CEB8AF27D2C0CB5F8518136CEE6009 /* Pods_Riffle_Example.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		CBA5CE185DF785C1C83D4D3BB13C3A11 /* Pods-Backend-Riffle */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 06088BC1706FC7C86D0F7B3B3196144F /* Build configuration list for PBXNativeTarget "Pods-Backend-Riffle" */;
-			buildPhases = (
-				4900948972F0637E853D1250F9E371E2 /* Sources */,
-				A61571E6835615254CB6C8FC164DE371 /* Frameworks */,
-				80A096B914570CD43730F46F925F2DF5 /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Pods-Backend-Riffle";
-			productName = "Pods-Backend-Riffle";
-			productReference = 69B612820ECE557AECB83C684BF9935D /* Riffle.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		DBBD58244D38D7E4209B63A6D4845D19 /* Pods-Riffle_Example-Riffle */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 6A4F0B6194D8106622530BD74DADAEB3 /* Build configuration list for PBXNativeTarget "Pods-Riffle_Example-Riffle" */;
-			buildPhases = (
-				42A397598E0D93986ABD10705AB8AC8A /* Sources */,
-				D0B86E0D3C170BFEFB58B26DE495D8A4 /* Frameworks */,
-				0F46AE3D921012CA78C81EB5D5D99BCF /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Pods-Riffle_Example-Riffle";
-			productName = "Pods-Riffle_Example-Riffle";
-			productReference = 69B612820ECE557AECB83C684BF9935D /* Riffle.framework */;
+			productReference = F2DB2ACF44C0FBE0986368A9C530938A /* Pods_Riffle_Example.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -419,7 +467,7 @@
 		D41D8CD98F00B204E9800998ECF8427E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0700;
+				LastSwiftUpdateCheck = 0720;
 				LastUpgradeCheck = 0700;
 			};
 			buildConfigurationList = 2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */;
@@ -430,163 +478,127 @@
 				en,
 			);
 			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
-			productRefGroup = D76E77EA8F98C64E1591CA12D1698C22 /* Products */;
+			productRefGroup = A0171032A8BD322021A1223BE38DCEDD /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				2C453FC8DD9A32F24368E2B7EE22B2A5 /* Pods-Backend */,
-				CBA5CE185DF785C1C83D4D3BB13C3A11 /* Pods-Backend-Riffle */,
-				9F42B535CDACAA199269B7F1B551F052 /* Pods-Riffle_Example */,
-				DBBD58244D38D7E4209B63A6D4845D19 /* Pods-Riffle_Example-Riffle */,
+				810D1930605FC6E11F5767C1F9125577 /* Pods-Backend */,
+				EA8ACD78514318F59F774AD3916696ED /* Pods-Riffle_Example */,
+				5AED801CA239F7E20F8CD57BE49AC960 /* Riffle-iOS */,
+				1608140FF89BFBF823D81FD6F84A0E34 /* Riffle-OSX */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		2503EEB3A431FFB47BDDC986BC5ADD84 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53A589BF56E2DF9D9F1BB9BC83DBDAB4 /* Mantle.framework in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6CE0AA772920D3C032DB04AA31AB235E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E358BB40EDD8AA3ECBA68F5B2503F42C /* Mantle.framework in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
-		42A397598E0D93986ABD10705AB8AC8A /* Sources */ = {
+		0773A7806D1229E222059CBD8AFC4DA4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				39CA3A9F8229A950205C0C4297D43346 /* App.swift in Sources */,
-				84BCA95BEF1E4BE70D1BD2E63530F74D /* Cumin.swift in Sources */,
-				A02407DB3FB879DD33759E215FCDED6C /* CuminicableExtensions.swift in Sources */,
-				6A1C9489894EFA84ECCC4C3A3A24AF2F /* Deferred.swift in Sources */,
-				7FF3BC864FEAB0E7ADFC8CE6D46423A7 /* Domain.swift in Sources */,
-				316AE8824823917F63F142BE34A7B4BB /* Json.swift in Sources */,
-				65C662AE92AF1F445D03F9A5B5327CEB /* Model.swift in Sources */,
-				603C060358E563596FCF767B9E6D9294 /* Pods-Riffle_Example-Riffle-dummy.m in Sources */,
-				C23A12D32CCAF5B3BFFB4803D3B78B40 /* Silver.swift in Sources */,
-				D865CDB726FCAD95FB6AFB1813F57DEB /* Utils.swift in Sources */,
+				983C05000C36BA77CA9AAFEB86E04FD6 /* App.swift in Sources */,
+				645E3CFACB2695EE38F1D9BF432733CC /* Cumin.swift in Sources */,
+				045CEB2F576EBCE9E6D45B808D04F6FE /* CuminicableExtensions.swift in Sources */,
+				CB0134FFBA6667D0DD48B8DE8C9F84B9 /* Deferred.swift in Sources */,
+				E078424CE7F4EE17297F43C7457713DF /* Domain.swift in Sources */,
+				0EE3C0E0930DAC9CE0C93FD54B746C7C /* Json.swift in Sources */,
+				725DCEBAD8B5D293C323E1B17145E27B /* Model.swift in Sources */,
+				36D21ED81016794EF67B69FFC6A2F6F4 /* Riffle-iOS-dummy.m in Sources */,
+				AEA6F3EA71FF561F2EB3669224D181A4 /* Silver.swift in Sources */,
+				F8C065DE5CD534B8DECB587459B89C21 /* Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4900948972F0637E853D1250F9E371E2 /* Sources */ = {
+		2C2D0278B8DE283C17EDC576B4510884 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FFE0956ADBB50011F9BCBC4B49D67E7B /* App.swift in Sources */,
-				114EDC795D25D71B59E869599D599D86 /* Cumin.swift in Sources */,
-				EA79E33A4720FF06A2C686FC0254A51F /* CuminicableExtensions.swift in Sources */,
-				58E374F4D9B52328D45069C2BEFADB83 /* Deferred.swift in Sources */,
-				143DFA5E3C268BE536CB9F21F52F0816 /* Domain.swift in Sources */,
-				CC4602A7C5B544799C5381EA5CE80031 /* Json.swift in Sources */,
-				E96AE73BB57BEB1B2D8FEE693401A28E /* Model.swift in Sources */,
-				8102D425F3BAA611FFD67A544EEAA089 /* Pods-Backend-Riffle-dummy.m in Sources */,
-				6A2C2BE53E494BE99E4628899E7C8113 /* Silver.swift in Sources */,
-				53FA6C3C42B34644E0870A79E9B120FB /* Utils.swift in Sources */,
+				1DB3900479AE8B8207F3FEBEE2A32BE7 /* Pods-Backend-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5E99E091854976785B376FF5E05E0153 /* Sources */ = {
+		917ADD171510275C047989CF2B9C7EF5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1DB347F68E1899DF97FA37C569743F0A /* Pods-Backend-dummy.m in Sources */,
+				7241236EB05D12D77F20248944C76A80 /* Pods-Riffle_Example-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EE2CA863C95D8B0A5AAD3BD8FEB763FC /* Sources */ = {
+		A3FE8A7265487F36693B084CB34D3992 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				63310B1561261685734A82754CF9AA01 /* Pods-Riffle_Example-dummy.m in Sources */,
+				F44C43ED236C880629AAA8B8D23EAADE /* App.swift in Sources */,
+				97FCB0BE529398D2F60D13B88B951DA8 /* Cumin.swift in Sources */,
+				760E01C218DC48A37393AB4160A72317 /* CuminicableExtensions.swift in Sources */,
+				4CE9DB1B0A4305C847BF44068693F4C8 /* Deferred.swift in Sources */,
+				6C80F36AFA61AFAFA6CCCC179033BCAA /* Domain.swift in Sources */,
+				9F9DF203763F3173D73506478A55DBEA /* Json.swift in Sources */,
+				D62A5F120BD546FE9830AAF1327A56BC /* Model.swift in Sources */,
+				E793012E1B85768D54F71DF83FF682D6 /* Riffle-OSX-dummy.m in Sources */,
+				B810F495E4773FD893B21770DDA4E98E /* Silver.swift in Sources */,
+				F11EDE57E41EA0425CBF3042E1A49AD1 /* Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		59FD3BE5B3317B02695B265377D9CF9C /* PBXTargetDependency */ = {
+		1EC02305C9A4A416AB725BE73FAE76C1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "Pods-Backend-Riffle";
-			target = CBA5CE185DF785C1C83D4D3BB13C3A11 /* Pods-Backend-Riffle */;
-			targetProxy = 4E2744FE158D284CC218B2197DD161CC /* PBXContainerItemProxy */;
+			name = "Riffle-OSX";
+			target = 1608140FF89BFBF823D81FD6F84A0E34 /* Riffle-OSX */;
+			targetProxy = 02EFAAA415D3A11B6B727A3C72D10F40 /* PBXContainerItemProxy */;
 		};
-		FAB692550704849158D6D72FB18D3D31 /* PBXTargetDependency */ = {
+		4199C2C5D7654C32D516353EE24C246D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "Pods-Riffle_Example-Riffle";
-			target = DBBD58244D38D7E4209B63A6D4845D19 /* Pods-Riffle_Example-Riffle */;
-			targetProxy = 13E9628B81AD61C5AD17AC16B69FF52B /* PBXContainerItemProxy */;
+			name = "Riffle-iOS";
+			target = 5AED801CA239F7E20F8CD57BE49AC960 /* Riffle-iOS */;
+			targetProxy = 1960EFD64DB6470DAF363563536F2084 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		1CD747BB9338FEFBD362909F45C5ABB8 /* Debug */ = {
+		09A037AF56453CFCA65622A47821EC35 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FF0AB020F9C95BCDA2B32A7D71538CA3 /* Pods-Riffle_Example.debug.xcconfig */;
+			baseConfigurationReference = BDAAF7F33DA7127870D742B8B97CC29B /* Riffle-OSX.xcconfig */;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				INFOPLIST_FILE = "Target Support Files/Pods-Riffle_Example/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-Riffle_Example/Pods-Riffle_Example.modulemap";
-				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_NAME = Pods_Riffle_Example;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		1EE449DCE323D502885DE68109BB82AF /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0D0F9574E438BB1ADA58D69700B667AE /* Pods-Riffle_Example-Riffle.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_PREFIX_HEADER = "Target Support Files/Pods-Riffle_Example-Riffle/Pods-Riffle_Example-Riffle-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/Pods-Riffle_Example-Riffle/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "Target Support Files/Pods-Riffle_Example-Riffle/Pods-Riffle_Example-Riffle.modulemap";
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = Riffle;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		6BC49FB07B254B08E2E61B05FB2A2812 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7412DCCDC90022265A2B882E298144DF /* Pods-Backend-Riffle.xcconfig */;
-			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_VERSION = A;
-				GCC_PREFIX_HEADER = "Target Support Files/Pods-Backend-Riffle/Pods-Backend-Riffle-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/Pods-Backend-Riffle/Info.plist";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/Riffle-OSX/Riffle-OSX-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Riffle-OSX/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MODULEMAP_FILE = "Target Support Files/Pods-Backend-Riffle/Pods-Backend-Riffle.modulemap";
+				MODULEMAP_FILE = "Target Support Files/Riffle-OSX/Riffle-OSX.modulemap";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = Riffle;
 				SDKROOT = macosx;
@@ -597,7 +609,7 @@
 			};
 			name = Debug;
 		};
-		7101852DB1273C163148ED3D232199A4 /* Debug */ = {
+		0ADDADC5A4591DB2275E34A334ACE619 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -615,10 +627,12 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
 					"DEBUG=1",
 					"$(inherited)",
 				);
@@ -629,7 +643,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				ONLY_ACTIVE_ARCH = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -637,25 +651,31 @@
 			};
 			name = Debug;
 		};
-		8545E49469CAD5E5BF47E5EA5823DCF2 /* Debug */ = {
+		257765AE3274F60069382CB627ED4379 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0D0F9574E438BB1ADA58D69700B667AE /* Pods-Riffle_Example-Riffle.xcconfig */;
+			baseConfigurationReference = FF0AB020F9C95BCDA2B32A7D71538CA3 /* Pods-Riffle_Example.debug.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_PREFIX_HEADER = "Target Support Files/Pods-Riffle_Example-Riffle/Pods-Riffle_Example-Riffle-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/Pods-Riffle_Example-Riffle/Info.plist";
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-Riffle_Example/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "Target Support Files/Pods-Riffle_Example-Riffle/Pods-Riffle_Example-Riffle.modulemap";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-Riffle_Example/Pods-Riffle_Example.modulemap";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_NAME = Riffle;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = Pods_Riffle_Example;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -665,7 +685,168 @@
 			};
 			name = Debug;
 		};
-		C16008D0259796F1CEC008076A903B82 /* Release */ = {
+		3A6DAF1E52AF3225A7801414C0C0E472 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 13B97EC5067A956893AF434DF4428719 /* Pods-Riffle_Example.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-Riffle_Example/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-Riffle_Example/Pods-Riffle_Example.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = Pods_Riffle_Example;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		4F95A1BC3A06A4840629794A88B669CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BDAAF7F33DA7127870D742B8B97CC29B /* Riffle-OSX.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_VERSION = A;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/Riffle-OSX/Riffle-OSX-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Riffle-OSX/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MODULEMAP_FILE = "Target Support Files/Riffle-OSX/Riffle-OSX.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = Riffle;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		5316CC4A126FA5051602E144570D3256 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E4795F131B1FE4F334ECF3F06C2766A0 /* Pods-Backend.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_VERSION = A;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-Backend/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MODULEMAP_FILE = "Target Support Files/Pods-Backend/Pods-Backend.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = Pods_Backend;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		6AE01CA6D85FC93823C9E3FC8B8F55FE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A7D8ABA4F86A51EDC106BB9E77DF03BA /* Pods-Backend.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_VERSION = A;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-Backend/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MODULEMAP_FILE = "Target Support Files/Pods-Backend/Pods-Backend.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = Pods_Backend;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		9F0D270BAB3E715D70A5229D648AB1B7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9BB24689321260414E5BCCA7F0BF3F33 /* Riffle-iOS.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/Riffle-iOS/Riffle-iOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Riffle-iOS/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/Riffle-iOS/Riffle-iOS.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = Riffle;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		A5435ECF0CD0BBEC604A851E8665B003 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -685,14 +866,17 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PREPROCESSOR_DEFINITIONS = "RELEASE=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SYMROOT = "${SRCROOT}/../build";
@@ -700,170 +884,80 @@
 			};
 			name = Release;
 		};
-		D53B8F9A7B4BF963C18039059C737743 /* Release */ = {
+		E226B1253820985A3A47BA3CE4A5E048 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 13B97EC5067A956893AF434DF4428719 /* Pods-Riffle_Example.release.xcconfig */;
+			baseConfigurationReference = 9BB24689321260414E5BCCA7F0BF3F33 /* Riffle-iOS.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				INFOPLIST_FILE = "Target Support Files/Pods-Riffle_Example/Info.plist";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/Riffle-iOS/Riffle-iOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Riffle-iOS/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-Riffle_Example/Pods-Riffle_Example.modulemap";
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_NAME = Pods_Riffle_Example;
+				MODULEMAP_FILE = "Target Support Files/Riffle-iOS/Riffle-iOS.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = Riffle;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		D8A1D9BC86E66D94495BC0BB458EBF9B /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = E4795F131B1FE4F334ECF3F06C2766A0 /* Pods-Backend.release.xcconfig */;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = "Target Support Files/Pods-Backend/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MACH_O_TYPE = staticlib;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MODULEMAP_FILE = "Target Support Files/Pods-Backend/Pods-Backend.modulemap";
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_NAME = Pods_Backend;
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		DCB22FBB1B7A77289F474051B1031154 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A7D8ABA4F86A51EDC106BB9E77DF03BA /* Pods-Backend.debug.xcconfig */;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = "Target Support Files/Pods-Backend/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MACH_O_TYPE = staticlib;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MODULEMAP_FILE = "Target Support Files/Pods-Backend/Pods-Backend.modulemap";
-				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_NAME = Pods_Backend;
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
 		};
-		FDA1188299673F5ED1A85A56D92CD8FC /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7412DCCDC90022265A2B882E298144DF /* Pods-Backend-Riffle.xcconfig */;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_VERSION = A;
-				GCC_PREFIX_HEADER = "Target Support Files/Pods-Backend-Riffle/Pods-Backend-Riffle-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/Pods-Backend-Riffle/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MODULEMAP_FILE = "Target Support Files/Pods-Backend-Riffle/Pods-Backend-Riffle.modulemap";
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = Riffle;
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		06088BC1706FC7C86D0F7B3B3196144F /* Build configuration list for PBXNativeTarget "Pods-Backend-Riffle" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				6BC49FB07B254B08E2E61B05FB2A2812 /* Debug */,
-				FDA1188299673F5ED1A85A56D92CD8FC /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		297F9E75C98B514464EE758AB960D4ED /* Build configuration list for PBXNativeTarget "Pods-Riffle_Example" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				1CD747BB9338FEFBD362909F45C5ABB8 /* Debug */,
-				D53B8F9A7B4BF963C18039059C737743 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7101852DB1273C163148ED3D232199A4 /* Debug */,
-				C16008D0259796F1CEC008076A903B82 /* Release */,
+				0ADDADC5A4591DB2275E34A334ACE619 /* Debug */,
+				A5435ECF0CD0BBEC604A851E8665B003 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6A4F0B6194D8106622530BD74DADAEB3 /* Build configuration list for PBXNativeTarget "Pods-Riffle_Example-Riffle" */ = {
+		35C3FCCD53EED24BAB029AAE10EF50B6 /* Build configuration list for PBXNativeTarget "Pods-Riffle_Example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				8545E49469CAD5E5BF47E5EA5823DCF2 /* Debug */,
-				1EE449DCE323D502885DE68109BB82AF /* Release */,
+				257765AE3274F60069382CB627ED4379 /* Debug */,
+				3A6DAF1E52AF3225A7801414C0C0E472 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E39BBA3371C5A30BE45870D6A3864DBB /* Build configuration list for PBXNativeTarget "Pods-Backend" */ = {
+		5D5CF5B54DFEE9F230FEB81870C95DBB /* Build configuration list for PBXNativeTarget "Pods-Backend" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				DCB22FBB1B7A77289F474051B1031154 /* Debug */,
-				D8A1D9BC86E66D94495BC0BB458EBF9B /* Release */,
+				6AE01CA6D85FC93823C9E3FC8B8F55FE /* Debug */,
+				5316CC4A126FA5051602E144570D3256 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B5101017C08E3D1151FE9CD473A43C35 /* Build configuration list for PBXNativeTarget "Riffle-OSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				09A037AF56453CFCA65622A47821EC35 /* Debug */,
+				4F95A1BC3A06A4840629794A88B669CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EBEE512086904E7FCF2B1BA03AABA322 /* Build configuration list for PBXNativeTarget "Riffle-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E226B1253820985A3A47BA3CE4A5E048 /* Debug */,
+				9F0D270BAB3E715D70A5229D648AB1B7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

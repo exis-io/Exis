@@ -31,6 +31,11 @@ typedef double GoFloat64;
 typedef float _Complex GoComplex64;
 typedef double _Complex GoComplex128;
 
+/*
+  static assertion to make sure the file is being used on architecture
+  at least with matching size of GoInt.
+*/
+//typedef char _check_for_32_bit_pointer_matching_GoInt[sizeof(void*)==32/8 ? 1:-1];
 
 typedef struct { const char *p; GoInt n; } GoString;
 typedef void *GoMap;
@@ -75,39 +80,45 @@ extern void Unregister(void* p0, char* p1, GoUint64 p2, GoUint64 p3);
 
 extern void Leave(void* p0);
 
-extern void SetLogLevelOff();
+extern void MantleSetLogLevelOff();
 
-extern void SetLogLevelApp();
+extern void MantleSetLogLevelApp();
 
-extern void SetLogLevelErr();
+extern void MantleSetLogLevelErr();
 
-extern void SetLogLevelWarn();
+extern void MantleSetLogLevelWarn();
 
-extern void SetLogLevelInfo();
+extern void MantleSetLogLevelInfo();
 
-extern void SetLogLevelDebug();
+extern void MantleSetLogLevelDebug();
 
-extern void SetFabricDev();
+extern void MantleSetFabricDev();
 
-extern void SetFabricSandbox();
+extern void MantleSetFabricSandbox();
 
-extern void SetFabricProduction();
+extern void MantleSetFabricProduction();
 
-extern void SetFabricLocal();
+extern void MantleSetFabricLocal();
 
 extern void MantleSetFabric(char* p0);
 
 extern void MantleSetRegistrar(char* p0);
 
-extern void Application(char* p0);
+extern void MantleApplication(char* p0);
 
-extern void Debug(char* p0);
+extern void MantleDebug(char* p0);
 
-extern void Info(char* p0);
+extern void MantleInfo(char* p0);
 
-extern void Warn(char* p0);
+extern void MantleWarn(char* p0);
 
-extern void Error(char* p0);
+extern void MantleError(char* p0);
+
+extern void MantleSetCuminStrict();
+
+extern void MantleSetCuminLoose();
+
+extern void MantleSetCuminOff();
 
 #ifdef __cplusplus
 }

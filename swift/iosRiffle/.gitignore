@@ -32,4 +32,5 @@ Carthage
 #
 # Pods/
 
-Pod/Assets/Mantle.framework/Versions/A/Mantle
+Pod/Assets/ios/Mantle.framework/Versions/A/Mantle
+Pod/Assets/osx/Mantle.framework/Versions/A/Mantle

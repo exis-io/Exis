@@ -1,1 +1,1 @@
-../../../../../../Pod/Assets/Mantle.framework/Versions/A/Headers/Mantle.h
+../../../../../../Pod/Assets/osx/Mantle.framework/Versions/A/Headers/Mantle.h

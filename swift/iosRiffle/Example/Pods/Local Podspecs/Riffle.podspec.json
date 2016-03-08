@@ -19,6 +19,14 @@
   "requires_arc": true,
   "source_files": "Pod/Classes/**/*",
   "ios": {
-    "vendored_frameworks": "Pod/Assets/Mantle.framework"
+    "vendored_frameworks": "Pod/Assets/ios/Mantle.framework",
+    "resources": "Pod/Assets/ios/Mantle.framework",
+    "xcconfig": {
+      "FRAMEWORK_SEARCH_PATHS": "$(inherited) $(PODS_ROOT)/../../Pod/Assets/ios/"
+    }
+  },
+  "osx": {
+    "vendored_frameworks": "Pod/Assets/osx/Mantle.framework",
+    "resources": "Pod/Assets/osx/Mantle.framework"
   }
 }
