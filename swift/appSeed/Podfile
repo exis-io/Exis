@@ -5,4 +5,4 @@ platform :ios, '9.0'
 use_frameworks!
 
 # The dependency we want to use. You can add more here if you'd like!
-pod 'Riffle'
+pod 'Riffle', :path => "../iosRiffle/"

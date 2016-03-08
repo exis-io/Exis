@@ -37,6 +37,8 @@ FOUNDATION_EXPORT void  MantleDebug(NSString* s);
 
 FOUNDATION_EXPORT void  MantleError(NSString* s);
 
+FOUNDATION_EXPORT void  MantleGetBytes(NSData* bit);
+
 FOUNDATION_EXPORT NSString*  MantleHello(NSString* name);
 
 FOUNDATION_EXPORT void  MantleInfo(NSString* s);

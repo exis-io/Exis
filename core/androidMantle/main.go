@@ -14,6 +14,11 @@ func Hello(name string) string {
     return "Hello, " + name + ", this is patrick"
 }
 
+// Testing what a byte array looks like in swiftland
+func GetBytes(bit []byte) {
+	core.Warn("Got: %v", bit)
+}
+
 func NewDomain(name string) *Domain {
 	return &Domain{coreDomain: core.NewDomain(name, nil)}
 }
