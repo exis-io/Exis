@@ -37,6 +37,7 @@
 		505777C51C8E50DE00DE33DF /* Backend */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Backend; sourceTree = BUILT_PRODUCTS_DIR; };
 		505777C71C8E50DE00DE33DF /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		505777D71C8F6D1C00DE33DF /* Mantle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Mantle.framework; path = ../Pod/Assets/ios/Mantle.framework; sourceTree = "<group>"; };
+		5063FF051C8F88FA00D0F623 /* Riffle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Riffle.framework; path = "Pods/../build/Debug/Riffle-OSX/Riffle.framework"; sourceTree = "<group>"; };
 		507D70E11C8D19070030F9F4 /* DomainTesting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DomainTesting.swift; sourceTree = "<group>"; };
 		6020B0B5C2C0B8481671DAD5 /* Pods-Riffle_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Riffle_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Riffle_Example/Pods-Riffle_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* Riffle_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Riffle_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -86,8 +87,8 @@
 			isa = PBXGroup;
 			children = (
 				607FACD21AFB9204008FA782 /* Sample */,
-				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				505777C61C8E50DE00DE33DF /* Backend */,
+				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD11AFB9204008FA782 /* Products */,
 				E68CD4094F9862266055B9F5 /* Frameworks */,
 				EA5FAB4A2DFDAB116A2DC024 /* Pods */,
@@ -140,6 +141,7 @@
 		E68CD4094F9862266055B9F5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5063FF051C8F88FA00D0F623 /* Riffle.framework */,
 				505777D71C8F6D1C00DE33DF /* Mantle.framework */,
 				BC9F1C4A02F01D9C6C70539D /* Pods_Backend.framework */,
 				6FED052EAEC69AD7A5134688 /* Pods_Riffle_Example.framework */,
@@ -169,7 +171,6 @@
 				505777C11C8E50DE00DE33DF /* Sources */,
 				505777C21C8E50DE00DE33DF /* Frameworks */,
 				505777C31C8E50DE00DE33DF /* CopyFiles */,
-				4A5061AF852C4E51DED80843 /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -282,21 +283,6 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		4A5061AF852C4E51DED80843 /* 📦 Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "📦 Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Backend/Pods-Backend-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		5060A2989058CDC4F7553D77 /* 📦 Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -376,7 +362,13 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/build/Debug/Riffle-OSX",
+				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Riffle-OSX";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -387,7 +379,13 @@
 			baseConfigurationReference = 7748BEF54C73D078704C620F /* Pods-Backend.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/build/Debug/Riffle-OSX",
+				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Riffle-OSX";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};

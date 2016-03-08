@@ -1,5 +1,5 @@
 
-all: swift osx ios python js
+all: swift ios python js
 
 .PHONY: python js clean osx ios java android
 
@@ -26,12 +26,7 @@ swift_example: printcheck libriffmantle.so
 	@swift build --chdir swift/example
 	@echo "Now 'cd swift/example' and run './.build/debug/Example', 'SENDER=true ./.build/debug/Example'"
 
-osx: 
-	GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o .tmp/riffle-x86_64_osx.a core/cMantle/main.go
-	mv .tmp/riffle-x86_64_osx.h swift/iosRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Headers/Mantle.h
-	mv .tmp/riffle-x86_64_osx.a swift/iosRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Mantle
-
-cocoapod:
+ios:
 	@echo "Building arm7" 
 	@GOOS=darwin GOARCH=arm GOARM=7 \
 	CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
@@ -63,16 +58,10 @@ cocoapod:
 	@xcrun lipo -create .tmp/riffle-arm.a .tmp/riffle-arm64.a .tmp/riffle-x86_64_ios.a -o swift/iosRiffle/Pod/Assets/ios/Mantle.framework/Versions/A/Mantle
 	@mv .tmp/riffle-arm.h swift/iosRiffle/Pod/Assets/ios/Mantle.framework/Versions/A/Headers/Mantle.h
 
-	# TODO: remove the goint32 check, it ALWAYS errors!
-
-	@echo "Framework available at swift/iosRiffle/Pod/Assets/ios/Mantle.framework"
-
-ios:
-	@echo "Building core..."
-	@gomobile bind -work -target=ios -prefix=' ' github.com/exis-io/core/androidMantle
-	@echo "Moving mantle"
-	@rm -rf swift/iosRiffle/Pod/Assets/Mantle.framework
-	@mv Mantle.framework swift/iosRiffle/Pod/Assets/Mantle.framework
+	@echo "Building x86 (command line)" 
+	@GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o .tmp/riffle-x86_64_osx.a core/cMantle/main.go
+	@mv .tmp/riffle-x86_64_osx.h swift/iosRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Headers/Mantle.h
+	@mv .tmp/riffle-x86_64_osx.a swift/iosRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Mantle
 
 android:
 	@echo "Building core..."

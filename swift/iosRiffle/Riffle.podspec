@@ -26,5 +26,5 @@ networking code with something that doesn't look like networking code at all!
 
     s.osx.vendored_frameworks = "Pod/Assets/osx/Mantle.framework"
     s.osx.resource = "Pod/Assets/osx/Mantle.framework"
-    s.ios.xcconfig = { 'FRAMEWORK_SEARCH_PATHS' => '$(inherited) $(PODS_ROOT)/../../Pod/Assets/ios/'  }
+    s.osx.xcconfig = { 'FRAMEWORK_SEARCH_PATHS' => '$(inherited) $(PODS_ROOT)/../../Pod/Assets/osx/'  }
 end

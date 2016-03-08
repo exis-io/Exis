@@ -27,6 +27,9 @@
   },
   "osx": {
     "vendored_frameworks": "Pod/Assets/osx/Mantle.framework",
-    "resources": "Pod/Assets/osx/Mantle.framework"
+    "resources": "Pod/Assets/osx/Mantle.framework",
+    "xcconfig": {
+      "FRAMEWORK_SEARCH_PATHS": "$(inherited) $(PODS_ROOT)/../../Pod/Assets/osx/"
+    }
   }
 }
