@@ -11,10 +11,11 @@
 import Foundation
 import Mantle
 
+
 public class Deferred {
     // Callback and Errback ids
-    var cb: Double = 0
-    var eb: Double = 0
+    var cb: UInt64 = 0
+    var eb: UInt64 = 0
     
     var callbackFuntion: ([Any] -> Any?)? = nil
     var errbackFunction: ([Any] -> Any?)? = nil
@@ -71,7 +72,7 @@ public class Deferred {
             }
             
             // No chain exists. TODO: Send the error to some well-known place
-            Riffle.warn("Unhandled error: \(args)")
+            WarnLog("Unhandled error: \(args)")
             return nil
         }
     }
@@ -79,8 +80,7 @@ public class Deferred {
 
 // Contains handler "then"s to replace handler functions
 public class HandlerDeferred: Deferred {
-//    var mantleDomain: MantleDomain!
-    var index = -1
+    public var mantleDomain: UnsafeMutablePointer<Void>!
     
     public override func then(fn: () -> ()) -> Deferred {
         // this override is a special case. It overrides the base then, but cant go in the extension
@@ -89,7 +89,7 @@ public class HandlerDeferred: Deferred {
     
     public func _then(types: [Any], _ fn: [Any] -> ()) -> Deferred {
         next = Deferred()
-        DomainIndex.get(index).callExpects(cb.go(), types: marshall(types))
+        CallExpects(mantleDomain, self.cb, marshall(types))
         callbackFuntion = { a in return fn(a) }
         return next!
     }

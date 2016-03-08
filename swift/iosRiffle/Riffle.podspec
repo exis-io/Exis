@@ -5,6 +5,7 @@ Pod::Spec.new do |s|
     s.summary          = "Client side library for connecting to a fabric."
 
     s.ios.deployment_target = "8.0"
+    s.osx.deployment_target = "10.11"
 
     s.description      = <<-DESC
 Riffle allows for simple interaction with a Fabric, made by Exis. This library is meant to replace your
@@ -18,5 +19,6 @@ networking code with something that doesn't look like networking code at all!
 
     s.requires_arc = true
     s.source_files = 'Pod/Classes/**/*'
-    s.vendored_frameworks = "Pod/Assets/Mantle.framework"
+
+    s.ios.vendored_frameworks = "Pod/Assets/Mantle.framework"
 end

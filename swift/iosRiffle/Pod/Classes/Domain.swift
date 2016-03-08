@@ -17,7 +17,16 @@ TODO:
 */
 
 import Foundation
+import CoreFoundation
 import Mantle
+
+#if os(Linux)
+    import SwiftGlibc
+    import Glibc
+#else
+    import Darwin.C
+#endif
+
 
 public protocol Delegate {
     func onJoin()
@@ -25,51 +34,20 @@ public protocol Delegate {
 }
 
 
-/* The linker is *very* unhappy with exported references that themselves have references to Mantle objects
- In other words, we can't have them in the Domain object.
-
-     var mantleDomain: MantleDomain
-
- in this class. The references have to be indirect, either through some access bus
- or another object that runs interference.
-
- Things that dont work:
-      Subclassing MantleDomain
-      Making the ivar private
-
-This data structure and set of accessors manage access to an array that indexes the MantleDomains.
-If you're still reading this, then the current implementation is primitive.
-*/
-class DomainIndex {
-    private static var currentIndex = 0
-    private static var mantleDomainIndex: [MantleDomain] = []
-    
-    class func get(i: Int) -> MantleDomain {
-        return mantleDomainIndex[i]
-    }
-    
-    class func set(domain: MantleDomain) -> Int {
-        mantleDomainIndex.append(domain)
-        return mantleDomainIndex.count - 1
-    }
-}
-
-
 public class Domain {
     public var delegate: Delegate?
+    var mantleDomain: UnsafeMutablePointer<Void>
     var app: App
-    var domainIndex = 0
+    
     
     public init(name: String) {
-        let domain = MantleNewDomain(name)
-        domainIndex = DomainIndex.set(domain)
-        app = App(domain: domain)
+        mantleDomain = NewDomain(name.cString())
+        app = App(domain: mantleDomain)
     }
     
     public init(name: String, superdomain: Domain) {
-        let domain = DomainIndex.get(superdomain.domainIndex).subdomain(name)
-        domainIndex = DomainIndex.set(domain)
-        app = App(domain: domain)
+        mantleDomain = Subdomain(superdomain.mantleDomain, name.cString())
+        app = superdomain.app
     }
     
     public func _subscribe(endpoint: String, _ types: [Any], fn: [Any] -> ()) -> Deferred {
@@ -77,7 +55,7 @@ public class Domain {
         app.handlers[hn] = fn
 
         let d = Deferred(domain: self)
-        DomainIndex.get(domainIndex).subscribe(endpoint, cb: d.cb.go(), eb: d.eb.go(), fn: hn.go(), types: marshall(serializeArguments(types)))
+        Subscribe(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(serializeArguments(types)))
         return d
     }
     
@@ -86,20 +64,20 @@ public class Domain {
         app.registrations[hn] = fn
 
         let d = Deferred(domain: self)
-        DomainIndex.get(domainIndex).register(endpoint, cb: d.cb.go(), eb: d.eb.go(), fn: hn.go(), types: marshall(types))
+        Register(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(types))
         return d
     }
 
     public func publish(endpoint: String, _ args: Any...) -> Deferred {
         let d = Deferred(domain: self)
-        DomainIndex.get(domainIndex).publish(endpoint, cb: d.cb.go(), eb: d.eb.go(), args: marshall(serializeArguments(args)))
+        Publish(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)))
         return d
     }
-
+    
     public func call(endpoint: String, _ args: Any...) -> HandlerDeferred {
         let d = HandlerDeferred(domain: self)
-        d.index = domainIndex
-        DomainIndex.get(domainIndex).call(endpoint, cb: d.cb.go(), eb: d.eb.go(), args: marshall(serializeArguments(args)))
+        d.mantleDomain = self.mantleDomain
+        Call(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)))
         return d
     }
     
@@ -107,7 +85,7 @@ public class Domain {
         let cb = CBID()
         let eb = CBID()
         
-        DomainIndex.get(domainIndex).join(cb.go(), eb: eb.go())
+        Join(mantleDomain, cb, eb)
         
         app.handlers[cb] = { a in
             if let d = self.delegate {
@@ -129,10 +107,7 @@ public class Domain {
             print("Unable to join!")
         }
         
-        // Very different in swift 2.2, since we may still not have access to GCD
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            self.app.receive()
-        }
+        app.receive()
     }
     
     

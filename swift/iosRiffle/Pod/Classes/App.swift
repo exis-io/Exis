@@ -10,20 +10,20 @@ import Foundation
 import Mantle
 
 class App {
-    var mantleDomain: MantleDomain
+    var mantleDomain: UnsafeMutablePointer<Void>
     
-    var deferreds: [Double: Deferred] = [:]
-    var handlers: [Double: [Any] -> ()] = [:]
-    var registrations: [Double: [Any] -> Any?] = [:]
+    var deferreds: [UInt64: Deferred] = [:]
+    var handlers: [UInt64: [Any] -> ()] = [:]
+    var registrations: [UInt64: [Any] -> Any?] = [:]
     
     
-    init(domain: MantleDomain) {
+    init(domain: UnsafeMutablePointer<Void>) {
         mantleDomain = domain
     }
     
     func receive() {
         while true {
-            var (i, args) = decode(mantleDomain.receive())
+            var (i, args) = decode(Receive(mantleDomain))
             
             if let d = deferreds[i] {
                 // remove the deferred (should this ever be optional?)
@@ -46,15 +46,15 @@ class App {
                 if let ret = fn(args) {
                     // Function did not return anything
                     if let _ = ret as? Void {
-                        mantleDomain.yield(resultId.go(), args: marshall([]))
-
-                    // If function returned an array it could be a tuple
+                        Yield(mantleDomain, UInt64(resultId), marshall([]))
+                        
+                        // If function returned an array it could be a tuple
                     } else {
-                        mantleDomain.yield(resultId.go(), args: marshall([ret]))
+                        Yield(mantleDomain, UInt64(resultId), marshall([ret]))
                     }
                 } else {
                     let empty: [Any] = []
-                    mantleDomain.yield(resultId.go(), args: marshall(empty))
+                    Yield(mantleDomain, UInt64(resultId), marshall(empty))
                 }
             }
         }

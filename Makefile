@@ -29,42 +29,45 @@ swift_example: printcheck libriffmantle.so
 osx: 
 	GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o swift/swiftRiffle/riffle.a core/cMantle/main.go
 
-# Testing for cocoapod update, building a universal library manually with lipo
 cocoapod:
-	@echo "Building arm" 
-	GOOS=darwin GOARCH=arm GOARM=7 \
+	@echo "Building arm7" 
+	@GOOS=darwin GOARCH=arm GOARM=7 \
 	CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
 	CXX=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
 	CGO_CFLAGS='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk -arch armv7' \
 	CGO_LDFLAGS='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk -arch armv7' \
 	CGO_ENABLED=1 \
-	go build -buildmode=c-archive -o .tmp/riffle-arm.a core/cMantle/main.go
+	go build -p=4 -pkgdir=/Users/damouse/code/go/pkg/gomobile/pkg_darwin_arm -tags="" -buildmode=c-archive -tags=ios -o .tmp/riffle-arm.a core/cMantle/main.go
 
 	@echo "Building arm64" 
-	GOOS=darwin GOARCH=arm64 \
+	@GOOS=darwin GOARCH=arm64 \
 	CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
 	CXX=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
 	CGO_CFLAGS='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk -arch arm64' \
 	CGO_LDFLAGS='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk -arch arm64' \
 	CGO_ENABLED=1 \
-	go build -buildmode=c-archive -o .tmp/riffle-arm64.a core/cMantle/main.go
+	go build -p=4 -pkgdir=/Users/damouse/code/go/pkg/gomobile/pkg_darwin_arm -tags="" -buildmode=c-archive -tags=ios -o .tmp/riffle-arm64.a core/cMantle/main.go
 
-	@echo "Building x86" 
-	GOOS=darwin GOARCH=amd64 \
+	@echo "Building x86 (simulator)" 
+	@GOOS=darwin GOARCH=amd64 \
 	CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
 	CXX=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
-	CGO_CFLAGS='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.2.sdk -mios-simulator-version-min=6.1 -arch x86_64' \
-	CGO_LDFLAGS='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.2.sdk -mios-simulator-version-min=6.1 -arch x86_64' \
+	CGO_CFLAGS="-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.2.sdk -miphoneos-version-min=9.0 -mios-simulator-version-min=6.1 -arch x86_64" \
+	CGO_LDFLAGS="-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.2.sdk -miphoneos-version-min=9.0 -mios-simulator-version-min=6.1 -arch x86_64" \
 	CGO_ENABLED=1 \
-	go build -buildmode=c-archive -o .tmp/riffle-x86_64.a core/cMantle/main.go
+	go build -p=4 -pkgdir=/Users/damouse/code/go/pkg/gomobile/pkg_darwin_arm -tags="" -buildmode=c-archive -tags=ios -o .tmp/riffle-x86_64_ios.a core/cMantle/main.go
 
 	@echo "Combining with lipo" 
-	xcrun lipo -create .tmp/riffle-arm.a .tmp/riffle-arm64.a .tmp/riffle-x86_64.a -o swift/SwiftKVC/SwiftKVC/riffle.a
-	mv .tmp/riffle-arm.h swift/SwiftKVC/SwiftKVC/riffle.h
+	@xcrun lipo -create .tmp/riffle-arm.a .tmp/riffle-arm64.a .tmp/riffle-x86_64_ios.a -o swift/iosRiffle/Pod/Assets/Mantle.framework/Versions/A/Mantle
+	@mv .tmp/riffle-arm.h swift/iosRiffle/Pod/Assets/Mantle.framework/Versions/A/Headers/Mantle.h
+
+	# TODO: remove the goint32 check, it ALWAYS errors!
+
+	@echo "Framework available at swift/iosRiffle/Pod/Assets/Mantle.framework"
 
 ios:
 	@echo "Building core..."
-	@gomobile bind -target=ios -prefix=' ' github.com/exis-io/core/androidMantle
+	@gomobile bind -work -target=ios -prefix=' ' github.com/exis-io/core/androidMantle
 	@echo "Moving mantle"
 	@rm -rf swift/iosRiffle/Pod/Assets/Mantle.framework
 	@mv Mantle.framework swift/iosRiffle/Pod/Assets/Mantle.framework

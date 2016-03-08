@@ -8,7 +8,14 @@
 
 import Foundation
 
-// All properties implement Convertible, but Models react differently
+#if os(Linux)
+    import SwiftGlibc
+    import Glibc
+#else
+    import Darwin.C
+#endif
+
+// All properties implement Convertible, but Models react differently 
 // This allows each property to handle its construction differently
 public protocol Convertible {
     // Return a constructed form of this object
@@ -237,7 +244,7 @@ extension Array : Property, BaseConvertible {
             // return "[\(child.representation())]"
         }
         
-        Riffle.warn("WARN- Unable to derive representation of array! Type: \(self)")
+        WarnLog("WARN- Unable to derive representation of array! Type: \(self)")
         return "[\(Generator.Element.self)]"
     }
 }

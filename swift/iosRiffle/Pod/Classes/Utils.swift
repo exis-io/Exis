@@ -11,22 +11,6 @@ import Foundation
 import CoreFoundation
 import Mantle
 
-// Biggest random number that can be choosen
-let randomMax = UInt32(pow(Double(2), Double(32)) - 1)
-
-func CBID() -> Double {
-    // Create a random callback id
-    let r = arc4random_uniform(randomMax);
-    return Double(r)
-}
-
-// Hahahahah. No.
-// Pass bytes and avoid this nonsense.
-extension Double {
-    func go() -> String {
-        return String(UInt64(self))
-    }
-}
 
 extension String {
     func cString() -> UnsafeMutablePointer<Int8> {
@@ -52,25 +36,29 @@ extension String {
 }
 
 // Decode arbitrary returns from the mantle
-func decode(json: String) -> (Double, [Any]) {
-    guard let data = try! JSONParser.parse(json) as? [Any] else {
+func decode(p: GoSlice) -> (UInt64, [Any]) {
+    let int8Ptr = unsafeBitCast(p.data, UnsafePointer<Int8>.self)
+    // If the length of the slice is the same as the cap, the string conversion always fails
+    let dataString = String.fromCString(int8Ptr)!
+    
+    guard let data = try! JSONParser.parse(dataString) as? [Any] else {
         print("DID NOT RECEIVE ARRAY BACK!")
-        return (Double(0), [])
+        return (UInt64(0), [])
     }
     
     if let args = data[1] as? [Any] {
-        return (Double(data[0] as! Double), args)
+        return (UInt64(data[0] as! Double), args)
     } else {
-        return (Double(data[0] as! Double), [])
+        return (UInt64(data[0] as! Double), [])
     }
 }
 
 // Return a goslice of the JSON marshaled arguments as a cString
-func marshall(args: [Any]) -> String {
+func marshall(args: [Any]) -> UnsafeMutablePointer<Int8> {
     let json = JSON.from(args)
     let jsonString = json.serialize(DefaultJSONSerializer())
     //print("Args: \(args) Json: \(json) String: \(jsonString)")
-    return jsonString
+    return jsonString.cString()
 }
 
 // Do we still need this here?
@@ -86,45 +74,38 @@ func serializeArguments(args: [Any]) -> [Any] {
     return ret
 }
 
-public class Riffle {
-    public class func setFabric(url: String) {
-        MantleSetFabric(url)
-    }
-
-    public class func application(s: String){
-        MantleApplication(s)
-    }
-
-    public class func debug(s: String){
-        MantleDebug(s)
-    }
-
-    public class func info(s: String){
-        MantleInfo(s)
-    }
-
-    public class func warn(s: String){
-        MantleWarn(s)
-    }
-
-    public class func error(s: String){
-        MantleError(s)
-    }
-
-    public class func setLogLevelApp() { MantleSetLogLevelApp() }
-    public class func setLogLevelOff() { MantleSetLogLevelOff() }
-    public class func setLogLevelErr() { MantleSetLogLevelErr() }
-    public class func setLogLevelWarn() { MantleSetLogLevelWarn() }
-    public class func setLogLevelInfo() { MantleSetLogLevelInfo() }
-    public class func setLogLevelDebug() { MantleSetLogLevelDebug() }
-    
-    public class func setFabricDev() { MantleSetFabricDev() }
-    public class func setFabricSandbox() { MantleSetFabricSandbox() }
-    public class func setFabricProduction() { MantleSetFabricProduction() }
-    public class func setFabricLocal() { MantleSetFabricLocal() }
-    
-    public class func setCuminStrict() { MantleSetCuminStrict() }
-    public class func setCuminLoose() { MantleSetCuminLoose() }
-    public class func setCuminOff() { MantleSetCuminOff() }
+public func SetFabric(url: String) {
+    MantleSetFabric(url.cString())
 }
 
+public func ApplicationLog(s: String){
+    Application(s.cString())
+}
+
+public func DebugLog(s: String){
+    Debug(s.cString())
+}
+
+public func InfoLog(s: String){
+    Info(s.cString())
+}
+
+public func WarnLog(s: String){
+    Warn(s.cString())
+}
+
+public func ErrorLog(s: String){
+    Error(s.cString())
+}
+
+public func LogLevelOff() { SetLogLevelOff() }
+public func LogLevelApp() { SetLogLevelApp() }
+public func LogLevelErr() { SetLogLevelErr() }
+public func LogLevelWarn() { SetLogLevelWarn() }
+public func LogLevelInfo() { SetLogLevelInfo() }
+public func LogLevelDebug() { SetLogLevelDebug() }
+
+public func FabricDev() { SetFabricDev() }
+public func FabricSandbox() { SetFabricSandbox() }
+public func FabricProduction() { SetFabricProduction() }
+public func FabricLocal() { SetFabricLocal() }

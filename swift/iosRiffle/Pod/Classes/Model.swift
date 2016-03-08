@@ -7,8 +7,6 @@
 //
 
 import Foundation
-import Mantle
-
 
 public class Model: Silvery, Property {
     

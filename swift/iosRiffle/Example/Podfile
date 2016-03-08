@@ -4,3 +4,8 @@ use_frameworks!
 target 'Riffle_Example', :exclusive => true do
   pod "Riffle", :path => "../"
 end
+
+target :Backend, :exclusive => true do
+    platform :osx, '10.11'
+    pod 'Riffle', :path => "../"
+end
