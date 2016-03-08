@@ -13,9 +13,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        Riffle.setLogLevelInfo()
-//        Riffle.setFabricDev()
-//        
+        Riffle.setLogLevelInfo()
+        Riffle.setFabricDev()
+        
         print("Starting Tests")
 
         // This is faking two seperate connections by creating another top level domain

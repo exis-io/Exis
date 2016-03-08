@@ -107,7 +107,11 @@ public class Domain {
             print("Unable to join!")
         }
         
-        app.receive()
+        // Very different in swift 2.2, since we may still not have access to GCD
+        // TODO: find a solution that works for both!
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+            self.app.receive()
+        }
     }
     
     

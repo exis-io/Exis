@@ -74,38 +74,67 @@ func serializeArguments(args: [Any]) -> [Any] {
     return ret
 }
 
-public func SetFabric(url: String) {
-    MantleSetFabric(url.cString())
+// Makes configuration calls a little cleaner when accessed from the top level 
+// as well as keeping them all in one place
+public class Riffle {
+    public class func setFabric(url: String) {
+        MantleSetFabric(url.cString())
+    }
+
+    public class func application(s: String){
+        MantleApplication(s.cString())
+    }
+
+    public class func debug(s: String){
+        MantleDebug(s.cString())
+    }
+
+    public class func info(s: String){
+        MantleInfo(s.cString())
+    }
+
+    public class func warn(s: String){
+        MantleWarn(s.cString())
+    }
+
+    public class func error(s: String){
+        MantleError(s.cString())
+    }
+
+    public class func setLogLevelApp() { MantleSetLogLevelApp() }
+    public class func setLogLevelOff() { MantleSetLogLevelOff() }
+    public class func setLogLevelErr() { MantleSetLogLevelErr() }
+    public class func setLogLevelWarn() { MantleSetLogLevelWarn() }
+    public class func setLogLevelInfo() { MantleSetLogLevelInfo() }
+    public class func setLogLevelDebug() { MantleSetLogLevelDebug() }
+
+    public class func setFabricDev() { MantleSetFabricDev() }
+    public class func setFabricSandbox() { MantleSetFabricSandbox() }
+    public class func setFabricProduction() { MantleSetFabricProduction() }
+    public class func setFabricLocal() { MantleSetFabricLocal() }
+
+    public class func setCuminStrict() { MantleSetCuminStrict() }
+    public class func setCuminLoose() { MantleSetCuminLoose() }
+    public class func setCuminOff() { MantleSetCuminOff() }
 }
 
-public func ApplicationLog(s: String){
-    Application(s.cString())
-}
 
-public func DebugLog(s: String){
-    Debug(s.cString())
-}
+// Create CBIDs on this side of the boundary. Note this makes them doubles, should be using byte arrays
+// TODO: Use this but convert to byte slices first
+//// Biggest random number that can be choosen
+//let randomMax = UInt32(pow(Double(2), Double(32)) - 1)
+//
+//func CBID() -> Double {
+//    // Create a random callback id
+//    let r = arc4random_uniform(randomMax);
+//    return Double(r)
+//}
+//
+//// Hahahahah. No.
+//// Pass bytes and avoid this nonsense.
+//extension Double {
+//    func go() -> String {
+//        return String(UInt64(self))
+//    }
+//}
 
-public func InfoLog(s: String){
-    Info(s.cString())
-}
-
-public func WarnLog(s: String){
-    Warn(s.cString())
-}
-
-public func ErrorLog(s: String){
-    Error(s.cString())
-}
-
-public func LogLevelOff() { SetLogLevelOff() }
-public func LogLevelApp() { SetLogLevelApp() }
-public func LogLevelErr() { SetLogLevelErr() }
-public func LogLevelWarn() { SetLogLevelWarn() }
-public func LogLevelInfo() { SetLogLevelInfo() }
-public func LogLevelDebug() { SetLogLevelDebug() }
-
-public func FabricDev() { SetFabricDev() }
-public func FabricSandbox() { SetFabricSandbox() }
-public func FabricProduction() { SetFabricProduction() }
-public func FabricLocal() { SetFabricLocal() }

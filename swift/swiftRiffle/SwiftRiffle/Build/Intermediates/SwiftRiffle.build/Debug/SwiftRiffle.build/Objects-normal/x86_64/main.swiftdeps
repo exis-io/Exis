@@ -1,0 +1,400 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "Dog"
+- "dog"
+- "Receiver"
+- "receiver"
+- "Sender"
+- "startSender"
+- "app"
+- "sender"
+provides-nominal:
+- "C11SwiftRiffle3Dog"
+- "C11SwiftRiffle8Receiver"
+- "C11SwiftRiffle6Sender"
+provides-member:
+- ["C11SwiftRiffle3Dog", ""]
+- ["C11SwiftRiffle8Receiver", ""]
+- ["C11SwiftRiffle6Sender", ""]
+provides-dynamic-lookup:
+depends-top-level:
+- !private "String"
+- "Receiver"
+- "receiver"
+- !private "Double"
+- "IntegerLiteralType"
+- !private "=="
+- "UnicodeScalarType"
+- "Sender"
+- !private "&&"
+- "Model"
+- "app"
+- "startSender"
+- !private "Int"
+- "sender"
+- "!="
+- "StringLiteralType"
+- "NSProcessInfo"
+- "Domain"
+- !private "Float"
+- "SetLogLevelDebug"
+- "Dog"
+- "print"
+- "dog"
+- !private "Bool"
+- "FloatLiteralType"
+- "Array"
+- !private "assert"
+- "BooleanLiteralType"
+- "SetFabricLocal"
+depends-member:
+- !private ["PSs9AnyObject", "Element"]
+- ["PSs9AnyObject", "age"]
+- !private ["PSs9AnyObject", "assert"]
+- !private ["PSs9AnyObject", "call"]
+- !private ["PSs9AnyObject", "dog"]
+- ["PSs9AnyObject", "environment"]
+- !private ["PSs9AnyObject", "error"]
+- ["PSs9AnyObject", "init"]
+- ["PSs9AnyObject", "join"]
+- ["PSs9AnyObject", "name"]
+- ["PSs9AnyObject", "onJoin"]
+- ["PSs9AnyObject", "onLeave"]
+- !private ["PSs9AnyObject", "print"]
+- ["PSs9AnyObject", "processInfo"]
+- !private ["PSs9AnyObject", "publish"]
+- !private ["PSs9AnyObject", "receiver"]
+- !private ["PSs9AnyObject", "register"]
+- !private ["PSs9AnyObject", "subscribe"]
+- !private ["PSs9AnyObject", "then"]
+- ["PSs9AnyObject", ""]
+- !private ["Sa", "Element"]
+- !private ["Sa", "deinit"]
+- !private ["PSs23ArrayLiteralConvertible", "Element"]
+- ["P11SwiftRiffle15BaseConvertible", "Element"]
+- ["P11SwiftRiffle15BaseConvertible", "Generator"]
+- ["P11SwiftRiffle15BaseConvertible", "Index"]
+- ["P11SwiftRiffle15BaseConvertible", "SubSequence"]
+- ["P11SwiftRiffle15BaseConvertible", "_Element"]
+- ["P11SwiftRiffle15BaseConvertible", "environment"]
+- !private ["P11SwiftRiffle15BaseConvertible", "init"]
+- ["P11SwiftRiffle15BaseConvertible", "processInfo"]
+- ["P11SwiftRiffle15BaseConvertible", "subscript"]
+- ["Sb", "_getBuiltinLogicValue"]
+- !private ["Sb", "deinit"]
+- ["PSs25BooleanLiteralConvertible", "_getBuiltinLogicValue"]
+- ["PSs11BooleanType", "_getBuiltinLogicValue"]
+- !private ["PSs11CVarArgType", "Element"]
+- ["PSs11CVarArgType", "environment"]
+- !private ["PSs11CVarArgType", "init"]
+- ["PSs11CVarArgType", "processInfo"]
+- !private ["VSs9Character", "deinit"]
+- !private ["PSs14CollectionType", "Element"]
+- ["PSs14CollectionType", "Generator"]
+- ["PSs14CollectionType", "Index"]
+- ["PSs14CollectionType", "SubSequence"]
+- ["PSs14CollectionType", "_Element"]
+- ["PSs14CollectionType", "subscript"]
+- !private ["PSs10Comparable", "init"]
+- ["P11SwiftRiffle11Convertible", "Element"]
+- ["P11SwiftRiffle11Convertible", "Generator"]
+- ["P11SwiftRiffle11Convertible", "Index"]
+- ["P11SwiftRiffle11Convertible", "SubSequence"]
+- ["P11SwiftRiffle11Convertible", "_Element"]
+- ["P11SwiftRiffle11Convertible", "_getBuiltinLogicValue"]
+- ["P11SwiftRiffle11Convertible", "age"]
+- ["P11SwiftRiffle11Convertible", "environment"]
+- ["P11SwiftRiffle11Convertible", "init"]
+- ["P11SwiftRiffle11Convertible", "name"]
+- ["P11SwiftRiffle11Convertible", "processInfo"]
+- ["P11SwiftRiffle11Convertible", "subscript"]
+- ["P11SwiftRiffle11Convertible", ""]
+- !private ["PSs28CustomDebugStringConvertible", "Element"]
+- ["PSs28CustomDebugStringConvertible", "Index"]
+- !private ["PSs28CustomDebugStringConvertible", "init"]
+- ["PSs28CustomDebugStringConvertible", "subscript"]
+- !private ["PSs23CustomStringConvertible", "Element"]
+- ["PSs23CustomStringConvertible", "Index"]
+- ["PSs23CustomStringConvertible", "_getBuiltinLogicValue"]
+- ["PSs23CustomStringConvertible", "environment"]
+- !private ["PSs23CustomStringConvertible", "init"]
+- ["PSs23CustomStringConvertible", "processInfo"]
+- ["PSs23CustomStringConvertible", "subscript"]
+- !private ["C11SwiftRiffle8Deferred", "error"]
+- !private ["C11SwiftRiffle8Deferred", "then"]
+- ["VSs10Dictionary", "Index"]
+- ["VSs10Dictionary", "deinit"]
+- ["VSs10Dictionary", "subscript"]
+- ["PSs28DictionaryLiteralConvertible", "Index"]
+- ["PSs28DictionaryLiteralConvertible", "subscript"]
+- ["C11SwiftRiffle3Dog", "age"]
+- ["C11SwiftRiffle3Dog", "deinit"]
+- ["C11SwiftRiffle3Dog", "init"]
+- ["C11SwiftRiffle3Dog", "name"]
+- !private ["C11SwiftRiffle6Domain", "Bool"]
+- !private ["C11SwiftRiffle6Domain", "Dog"]
+- !private ["C11SwiftRiffle6Domain", "Double"]
+- !private ["C11SwiftRiffle6Domain", "Float"]
+- !private ["C11SwiftRiffle6Domain", "Int"]
+- !private ["C11SwiftRiffle6Domain", "String"]
+- !private ["C11SwiftRiffle6Domain", "assert"]
+- !private ["C11SwiftRiffle6Domain", "call"]
+- !private ["C11SwiftRiffle6Domain", "dog"]
+- ["C11SwiftRiffle6Domain", "init"]
+- ["C11SwiftRiffle6Domain", "join"]
+- ["C11SwiftRiffle6Domain", "onJoin"]
+- ["C11SwiftRiffle6Domain", "onLeave"]
+- !private ["C11SwiftRiffle6Domain", "print"]
+- !private ["C11SwiftRiffle6Domain", "publish"]
+- !private ["C11SwiftRiffle6Domain", "receiver"]
+- !private ["C11SwiftRiffle6Domain", "register"]
+- !private ["C11SwiftRiffle6Domain", "subscribe"]
+- ["C11SwiftRiffle6Domain", ""]
+- !private ["Sd", "deinit"]
+- !private ["PSs9Equatable", "Element"]
+- ["PSs9Equatable", "_getBuiltinLogicValue"]
+- ["PSs9Equatable", "environment"]
+- !private ["PSs9Equatable", "init"]
+- ["PSs9Equatable", "processInfo"]
+- !private ["PSs41ExtendedGraphemeClusterLiteralConvertible", "init"]
+- !private ["Sf", "deinit"]
+- ["PSs13GeneratorType", "Element"]
+- !private ["C11SwiftRiffle15HandlerDeferred", "then"]
+- !private ["PSs8Hashable", "Element"]
+- ["PSs8Hashable", "_getBuiltinLogicValue"]
+- ["PSs8Hashable", "environment"]
+- !private ["PSs8Hashable", "init"]
+- ["PSs8Hashable", "processInfo"]
+- !private ["PSs9Indexable", "Element"]
+- ["PSs9Indexable", "Generator"]
+- ["PSs9Indexable", "Index"]
+- ["PSs9Indexable", "SubSequence"]
+- ["PSs9Indexable", "_Element"]
+- ["PSs9Indexable", "subscript"]
+- ["VSs17IndexingGenerator", "Element"]
+- !private ["Si", "deinit"]
+- !private ["VSs5Int16", "deinit"]
+- !private ["VSs5Int32", "deinit"]
+- !private ["VSs5Int64", "deinit"]
+- !private ["VSs4Int8", "deinit"]
+- !private ["PSs14MirrorPathType", "init"]
+- ["C11SwiftRiffle5Model", "age"]
+- ["C11SwiftRiffle5Model", "init"]
+- ["C11SwiftRiffle5Model", "name"]
+- ["C11SwiftRiffle5Model", ""]
+- !private ["PSs21MutableCollectionType", "Element"]
+- !private ["PSs16MutableIndexable", "Element"]
+- !private ["PSs16MutableSliceable", "Element"]
+- !private ["CSo7NSArray", "Element"]
+- !private ["PSo8NSCoding", "Element"]
+- !private ["PSo8NSCoding", "init"]
+- !private ["PSo9NSCopying", "Element"]
+- !private ["PSo9NSCopying", "init"]
+- !private ["PSo17NSFastEnumeration", "Element"]
+- !private ["PSo16NSMutableCopying", "Element"]
+- !private ["PSo16NSMutableCopying", "init"]
+- !private ["CSo8NSObject", "Element"]
+- !private ["CSo8NSObject", "deinit"]
+- ["CSo8NSObject", "environment"]
+- !private ["CSo8NSObject", "init"]
+- ["CSo8NSObject", "processInfo"]
+- !private ["PSo16NSObjectProtocol", "Element"]
+- ["PSo16NSObjectProtocol", "environment"]
+- !private ["PSo16NSObjectProtocol", "init"]
+- ["PSo16NSObjectProtocol", "processInfo"]
+- ["CSo13NSProcessInfo", "environment"]
+- ["CSo13NSProcessInfo", "processInfo"]
+- !private ["PSo14NSSecureCoding", "Element"]
+- !private ["PSo14NSSecureCoding", "init"]
+- !private ["CSo8NSString", "deinit"]
+- !private ["CSo8NSString", "init"]
+- !private ["CSo7NSValue", "deinit"]
+- !private ["PSs21NilLiteralConvertible", "Element"]
+- ["Sq", "deinit"]
+- !private ["PSs16OutputStreamType", "init"]
+- ["P11SwiftRiffle8Property", "Element"]
+- ["P11SwiftRiffle8Property", "Generator"]
+- ["P11SwiftRiffle8Property", "Index"]
+- ["P11SwiftRiffle8Property", "SubSequence"]
+- ["P11SwiftRiffle8Property", "_Element"]
+- ["P11SwiftRiffle8Property", "_getBuiltinLogicValue"]
+- ["P11SwiftRiffle8Property", "age"]
+- ["P11SwiftRiffle8Property", "environment"]
+- ["P11SwiftRiffle8Property", "init"]
+- ["P11SwiftRiffle8Property", "name"]
+- ["P11SwiftRiffle8Property", "processInfo"]
+- ["P11SwiftRiffle8Property", "subscript"]
+- ["P11SwiftRiffle8Property", ""]
+- !private ["PSs30RangeReplaceableCollectionType", "Element"]
+- !private ["C11SwiftRiffle8Receiver", "Bool"]
+- !private ["C11SwiftRiffle8Receiver", "Dog"]
+- !private ["C11SwiftRiffle8Receiver", "Double"]
+- !private ["C11SwiftRiffle8Receiver", "Float"]
+- !private ["C11SwiftRiffle8Receiver", "Int"]
+- !private ["C11SwiftRiffle8Receiver", "String"]
+- !private ["C11SwiftRiffle8Receiver", "assert"]
+- !private ["C11SwiftRiffle8Receiver", "call"]
+- ["C11SwiftRiffle8Receiver", "deinit"]
+- !private ["C11SwiftRiffle8Receiver", "dog"]
+- ["C11SwiftRiffle8Receiver", "init"]
+- ["C11SwiftRiffle8Receiver", "join"]
+- ["C11SwiftRiffle8Receiver", "onJoin"]
+- ["C11SwiftRiffle8Receiver", "onLeave"]
+- !private ["C11SwiftRiffle8Receiver", "print"]
+- !private ["C11SwiftRiffle8Receiver", "publish"]
+- !private ["C11SwiftRiffle8Receiver", "register"]
+- !private ["C11SwiftRiffle8Receiver", "subscribe"]
+- !private ["C11SwiftRiffle6Sender", "Bool"]
+- !private ["C11SwiftRiffle6Sender", "Double"]
+- !private ["C11SwiftRiffle6Sender", "Float"]
+- !private ["C11SwiftRiffle6Sender", "Int"]
+- !private ["C11SwiftRiffle6Sender", "String"]
+- !private ["C11SwiftRiffle6Sender", "assert"]
+- ["C11SwiftRiffle6Sender", "deinit"]
+- ["C11SwiftRiffle6Sender", "init"]
+- ["C11SwiftRiffle6Sender", "join"]
+- ["C11SwiftRiffle6Sender", "onJoin"]
+- ["C11SwiftRiffle6Sender", "onLeave"]
+- !private ["C11SwiftRiffle6Sender", "print"]
+- !private ["C11SwiftRiffle6Sender", "receiver"]
+- ["PSs12SequenceType", "Element"]
+- ["PSs12SequenceType", "Generator"]
+- ["PSs12SequenceType", "Index"]
+- ["PSs12SequenceType", "SubSequence"]
+- ["PSs12SequenceType", "_Element"]
+- ["PSs12SequenceType", "subscript"]
+- ["P11SwiftRiffle7Silvery", "age"]
+- ["P11SwiftRiffle7Silvery", "init"]
+- ["P11SwiftRiffle7Silvery", "name"]
+- ["P11SwiftRiffle7Silvery", ""]
+- ["VSs5Slice", "Generator"]
+- ["VSs5Slice", "Index"]
+- ["VSs5Slice", "SubSequence"]
+- ["VSs5Slice", "_Element"]
+- !private ["VSs12StaticString", "deinit"]
+- !private ["PSs10Streamable", "init"]
+- !private ["SS", "deinit"]
+- !private ["SS", "init"]
+- !private ["PSs30StringInterpolationConvertible", "init"]
+- !private ["PSs24StringLiteralConvertible", "init"]
+- !private ["Su", "deinit"]
+- !private ["VSs6UInt16", "deinit"]
+- !private ["VSs6UInt32", "deinit"]
+- !private ["VSs6UInt64", "deinit"]
+- !private ["VSs5UInt8", "deinit"]
+- !private ["Sc", "deinit"]
+- !private ["PSs31UnicodeScalarLiteralConvertible", "init"]
+- !private ["PSs10_ArrayType", "Element"]
+- ["PSs33_BuiltinBooleanLiteralConvertible", "_getBuiltinLogicValue"]
+- !private ["PSs49_BuiltinExtendedGraphemeClusterLiteralConvertible", "init"]
+- !private ["PSs32_BuiltinStringLiteralConvertible", "init"]
+- !private ["PSs37_BuiltinUTF16StringLiteralConvertible", "init"]
+- !private ["PSs39_BuiltinUnicodeScalarLiteralConvertible", "init"]
+- !private ["PSs16_CocoaStringType", "init"]
+- !private ["PSs24_DestructorSafeContainer", "Element"]
+- !private ["PSs21_ObjectiveCBridgeable", "Element"]
+- ["PSs21_ObjectiveCBridgeable", "Index"]
+- ["PSs21_ObjectiveCBridgeable", "_getBuiltinLogicValue"]
+- !private ["PSs21_ObjectiveCBridgeable", "init"]
+- ["PSs21_ObjectiveCBridgeable", "subscript"]
+- !private ["VSs26_OptionalNilComparisonType", "Element"]
+- ["VSs26_OptionalNilComparisonType", "deinit"]
+- !private ["PSs12_Reflectable", "Element"]
+- ["PSs12_Reflectable", "Index"]
+- ["PSs12_Reflectable", "_getBuiltinLogicValue"]
+- !private ["PSs12_Reflectable", "init"]
+- ["PSs12_Reflectable", "subscript"]
+depends-nominal:
+- "PSs9AnyObject"
+- !private "Sa"
+- !private "PSs23ArrayLiteralConvertible"
+- "P11SwiftRiffle15BaseConvertible"
+- "Sb"
+- "PSs25BooleanLiteralConvertible"
+- "PSs11BooleanType"
+- "PSs11CVarArgType"
+- !private "VSs9Character"
+- "PSs14CollectionType"
+- !private "PSs10Comparable"
+- "P11SwiftRiffle11Convertible"
+- "PSs28CustomDebugStringConvertible"
+- "PSs23CustomStringConvertible"
+- !private "C11SwiftRiffle8Deferred"
+- "VSs10Dictionary"
+- "PSs28DictionaryLiteralConvertible"
+- "C11SwiftRiffle3Dog"
+- "C11SwiftRiffle6Domain"
+- !private "Sd"
+- "PSs9Equatable"
+- !private "PSs41ExtendedGraphemeClusterLiteralConvertible"
+- !private "Sf"
+- "PSs13GeneratorType"
+- !private "C11SwiftRiffle15HandlerDeferred"
+- "PSs8Hashable"
+- "PSs9Indexable"
+- "VSs17IndexingGenerator"
+- !private "Si"
+- !private "VSs5Int16"
+- !private "VSs5Int32"
+- !private "VSs5Int64"
+- !private "VSs4Int8"
+- !private "PSs14MirrorPathType"
+- "C11SwiftRiffle5Model"
+- !private "PSs21MutableCollectionType"
+- !private "PSs16MutableIndexable"
+- !private "PSs16MutableSliceable"
+- !private "CSo7NSArray"
+- !private "PSo8NSCoding"
+- !private "PSo9NSCopying"
+- !private "PSo17NSFastEnumeration"
+- !private "PSo16NSMutableCopying"
+- "CSo8NSObject"
+- "PSo16NSObjectProtocol"
+- "CSo13NSProcessInfo"
+- !private "PSo14NSSecureCoding"
+- !private "CSo8NSString"
+- !private "CSo7NSValue"
+- !private "PSs21NilLiteralConvertible"
+- "Sq"
+- !private "PSs16OutputStreamType"
+- "P11SwiftRiffle8Property"
+- !private "PSs30RangeReplaceableCollectionType"
+- "C11SwiftRiffle8Receiver"
+- "C11SwiftRiffle6Sender"
+- "PSs12SequenceType"
+- "P11SwiftRiffle7Silvery"
+- "VSs5Slice"
+- !private "VSs12StaticString"
+- !private "PSs10Streamable"
+- !private "SS"
+- !private "PSs30StringInterpolationConvertible"
+- !private "PSs24StringLiteralConvertible"
+- !private "Su"
+- !private "VSs6UInt16"
+- !private "VSs6UInt32"
+- !private "VSs6UInt64"
+- !private "VSs5UInt8"
+- !private "Sc"
+- !private "PSs31UnicodeScalarLiteralConvertible"
+- !private "PSs10_ArrayType"
+- "PSs33_BuiltinBooleanLiteralConvertible"
+- !private "PSs49_BuiltinExtendedGraphemeClusterLiteralConvertible"
+- !private "PSs32_BuiltinStringLiteralConvertible"
+- !private "PSs37_BuiltinUTF16StringLiteralConvertible"
+- !private "PSs39_BuiltinUnicodeScalarLiteralConvertible"
+- !private "PSs16_CocoaStringType"
+- !private "PSs24_DestructorSafeContainer"
+- "PSs21_ObjectiveCBridgeable"
+- "VSs26_OptionalNilComparisonType"
+- "PSs12_Reflectable"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Swift.swiftmodule"
+- "/Users/damouse/code/merged/riffle/swift/swiftRiffle/Bridge.h"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Darwin.swiftmodule"
+- "/Users/damouse/code/merged/riffle/swift/swiftRiffle/./riffle.h"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Foundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/ObjectiveC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreGraphics.swiftmodule"
+interface-hash: "1270d9549046e9d529242d5114afac68"

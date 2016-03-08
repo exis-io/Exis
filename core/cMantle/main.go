@@ -49,7 +49,7 @@ func Join(pdomain unsafe.Pointer, cb uint64, eb uint64) {
 			d.GetApp().CallbackSend(cb)
 		}
 	}
-}
+} 
 
 //export Subscribe
 func Subscribe(pdomain unsafe.Pointer, endpoint *C.char, cb uint64, eb uint64, hn uint64, types *C.char) {
@@ -105,41 +105,41 @@ func Leave(pdomain unsafe.Pointer) {
 	go d.Leave()
 }
 
-//export SetLogLevelOff
-func SetLogLevelOff() { core.LogLevel = core.LogLevelOff }
+//export MantleSetLogLevelOff
+func MantleSetLogLevelOff() { core.LogLevel = core.LogLevelOff }
 
-//export SetLogLevelApp
-func SetLogLevelApp() { core.LogLevel = core.LogLevelApp }
+//export MantleSetLogLevelApp
+func MantleSetLogLevelApp() { core.LogLevel = core.LogLevelApp }
 
-//export SetLogLevelErr
-func SetLogLevelErr() { core.LogLevel = core.LogLevelErr }
+//export MantleSetLogLevelErr
+func MantleSetLogLevelErr() { core.LogLevel = core.LogLevelErr }
 
-//export SetLogLevelWarn
-func SetLogLevelWarn() { core.LogLevel = core.LogLevelWarn }
+//export MantleSetLogLevelWarn
+func MantleSetLogLevelWarn() { core.LogLevel = core.LogLevelWarn }
 
-//export SetLogLevelInfo
-func SetLogLevelInfo() { core.LogLevel = core.LogLevelInfo }
+//export MantleSetLogLevelInfo
+func MantleSetLogLevelInfo() { core.LogLevel = core.LogLevelInfo }
 
-//export SetLogLevelDebug
-func SetLogLevelDebug() { core.LogLevel = core.LogLevelDebug }
+//export MantleSetLogLevelDebug
+func MantleSetLogLevelDebug() { core.LogLevel = core.LogLevelDebug }
 
-//export SetFabricDev
-func SetFabricDev() {
+//export MantleSetFabricDev
+func MantleSetFabricDev() {
     core.Fabric = core.FabricDev
     core.Registrar = core.RegistrarDev
 }
 
-//export SetFabricSandbox
-func SetFabricSandbox() { core.Fabric = core.FabricSandbox }
+//export MantleSetFabricSandbox
+func MantleSetFabricSandbox() { core.Fabric = core.FabricSandbox }
 
-//export SetFabricProduction
-func SetFabricProduction() {
+//export MantleSetFabricProduction
+func MantleSetFabricProduction() {
     core.Fabric = core.FabricProduction
     core.Registrar = core.RegistrarProduction
 }
 
-//export SetFabricLocal
-func SetFabricLocal() {
+//export MantleSetFabricLocal
+func MantleSetFabricLocal() {
     core.Fabric = core.FabricLocal
     core.Registrar = core.RegistrarLocal
 }
@@ -150,17 +150,28 @@ func MantleSetFabric(url *C.char) { core.Fabric = C.GoString(url) }
 //export MantleSetRegistrar
 func MantleSetRegistrar(url *C.char) { core.Registrar = C.GoString(url) }
 
-//export Application
-func Application(s *C.char) { core.Application("%s", C.GoString(s)) }
+//export MantleApplication
+func MantleApplication(s *C.char) { core.Application("%s", C.GoString(s)) }
 
-//export Debug
-func Debug(s *C.char) { core.Debug("%s", C.GoString(s)) }
+//export MantleDebug
+func MantleDebug(s *C.char) { core.Debug("%s", C.GoString(s)) }
 
-//export Info
-func Info(s *C.char) { core.Info("%s", C.GoString(s)) }
+//export MantleInfo
+func MantleInfo(s *C.char) { core.Info("%s", C.GoString(s)) }
 
-//export Warn
-func Warn(s *C.char) { core.Warn("%s", C.GoString(s)) }
+//export MantleWarn
+func MantleWarn(s *C.char) { core.Warn("%s", C.GoString(s)) }
 
-//export Error
-func Error(s *C.char) { core.Error("%s", C.GoString(s)) }
+//export MantleError
+func MantleError(s *C.char) { core.Error("%s", C.GoString(s)) }
+
+
+//export MantleSetCuminStrict
+func MantleSetCuminStrict() { core.CuminLevel = core.CuminStrict }
+
+//export MantleSetCuminLoose
+func MantleSetCuminLoose() { core.CuminLevel = core.CuminLoose }
+
+//export MantleSetCuminOff
+func MantleSetCuminOff() { core.CuminLevel = core.CuminOff }
+

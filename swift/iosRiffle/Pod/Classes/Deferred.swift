@@ -72,7 +72,7 @@ public class Deferred {
             }
             
             // No chain exists. TODO: Send the error to some well-known place
-            WarnLog("Unhandled error: \(args)")
+            Riffle.warn("Unhandled error: \(args)")
             return nil
         }
     }
