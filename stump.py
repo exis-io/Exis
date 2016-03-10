@@ -195,12 +195,6 @@ if __name__ == '__main__':
 
 
 '''
-Start xcode with open source swift version: 
-    xcrun launch-with-toolchain /Library/Developer/Toolchains/swift-latest.xctoolchain
-
-Use open source swift on command line: 
-    export PATH=/Library/Developer/Toolchains/swift-latest.xctoolchain/usr/bin:"${PATH}"
-
 Deployment scripts from old stump
 
 ios() {
@@ -235,46 +229,30 @@ ios() {
     git push origin master
 }
 
-js() {
-    echo "Updating js to version $1"
+Quick scribbles for shadow subtrees. The basics are: 
 
-    browserify js/jsRiffle/index.js --standalone jsRiffle -o jsRiffle.js
-    browserify js/jsRiffle/index.js --standalone jsRiffle | uglifyjs > jsRiffle.min.js
+    - Clone *just* the git repo, no files
+    - Drop the .git dir into the target directory
+    - Add and push from that directory
+    - Remove the .git directory
 
-    mv jsRiffle.js js/jsRiffle/release/jsRiffle.js
-    mv jsRiffle.min.js js/jsRiffle/release/jsRiffle.min.js
+This is for situations where you want to check in files into the subtree and not the trunk (like big binary files)
+Make sure the binary files are ignored at the trunk, not in the local repo, else they'll be ignored
+when pushing the shadow. You can also move gitignores too and avoid this problem 
 
-    cd js/jsRiffle
-    npm version $1
-    npm publish
+git clone --no-checkout git@github.com:exis-io/swiftRiffleCocoapod.git swift/swiftRiffle/swiftRiffle.tmp 
 
-    cd ../ngRiffle
-    npm version $1
-    npm publish
+mv swift/swiftRiffle.tmp/.git swift/swiftRiffle/
 
-    cd ../..
+git -C swift/swiftRiffle add --all 
+git -C swift/swiftRiffle commit -m "Some message"
+git -C swift/swiftRiffle push origin master
 
-    git add --all
-    git commit -m "jsRiffle upgrade to v $1"
-
-    git push origin master
-    git subtree push --prefix js/jsRiffle jsRiffle master
-    git subtree push --prefix js/ngRiffle ngRiffle master
-
-    git clone git@github.com:exis-io/jsRiffle.git
-    cd jsRiffle
-    git tag $1 
-    git push --tags
-    cd ..
-    rm -rf jsRiffle
-
-    git clone git@github.com:exis-io/ngRiffle.git 
-    cd ngRiffle
-    git tag $1 
-    git push --tags
-    cd ..
-    rm -rf ngRiffle
-
-    # Do something with the seed app!
-}
 '''
+
+
+
+
+
+
+
