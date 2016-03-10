@@ -1,15 +1,8 @@
 <div align="center">
-    <h1>Join the Chat!
-    <br>
     <a href="http://slack.exis.io"><img src="http://slack.exis.io/badge.svg"></a>
     </h3>
 </div>
 
-# swiftRiffle
-
-This directory contains the swiftRiffle client libraries and a set of preconfigured projects. 
-
-Riffle requries at least iOS 8.0, OSX 10.10, and Swift 2.1. Please check out *Known Issues* below for troubleshooting. 
 
 ### iOS Apps
 
@@ -59,7 +52,3 @@ target :Backend, :exclusive => true do
 end
 ```
 
-
-## Known Issues
-
-In progress.
