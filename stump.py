@@ -242,7 +242,8 @@ when pushing the shadow. You can also move gitignores too and avoid this problem
 
 git clone --no-checkout git@github.com:exis-io/swiftRiffleCocoapod.git swift/swiftRiffle/swiftRiffle.tmp 
 
-mv swift/swiftRiffle.tmp/.git swift/swiftRiffle/
+mv swift/swiftRiffle/swiftRiffle.tmp/.git swift/swiftRiffle/
+rm -rf swift/swiftRiffle/swiftRiffle.tmp
 
 git -C swift/swiftRiffle add --all 
 git -C swift/swiftRiffle commit -m "Some message"
