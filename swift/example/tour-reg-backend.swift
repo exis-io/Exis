@@ -6,7 +6,7 @@ class Student: Model {
     var studentID = 0
 }
 
-class TourRegBackend: Riffle.Domain, Riffle.Delegate {
+class TourRegBackend: Domain, Delegate {
 
     override func onJoin() {
         /////////////////////////////////////////////////////////////////////////////////////

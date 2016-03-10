@@ -25,7 +25,7 @@ class Dog: Model {
     var age = 43
 }
 
-class Receiver: Riffle.Domain, Riffle.Delegate {
+class Receiver: Domain, Delegate {
 
     override func onJoin() {
         // Pub Sub Success Cases

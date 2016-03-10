@@ -1,7 +1,7 @@
 
 import Riffle
 
-class Sender: Riffle.Domain, Riffle.Delegate  {
+class Sender: Domain, Delegate  {
     
     override func onJoin() {
         // Pub Sub Success Cases

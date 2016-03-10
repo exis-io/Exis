@@ -17,11 +17,11 @@ swift: printcheck libriffmantle.so
 	@$(MAKE) -C swift/mantle all >>$(LOG)
 
 	@echo "Installing crust..."
-	@$(MAKE) -C swift/swiftRiffle/Riffle all >>$(LOG)
+	@$(MAKE) -C swift/swiftRiffle/Pod/Classes all >>$(LOG)
 
 	@echo "To build the example, run make swift_example"
 
-swift_example: printcheck libriffmantle.so
+swift_example: printcheck 
 	@echo "Building example..."
 	@swift build --chdir swift/example
 	@echo "Now 'cd swift/example' and run './.build/debug/Example', 'SENDER=true ./.build/debug/Example'"
@@ -74,13 +74,6 @@ ios:
 
 	@# make sure this doesnt cause problem on vanilla arm7
 	@sed -i.gobak '/_check_for_32/d' ./swift/swiftRiffle/Pod/Assets/ios/Mantle.framework/Versions/A/Headers/Mantle.h
-
-# Temporary!
-osx:
-	@echo "Building x86 (command line)" 
-	@GOOS=darwin GOARCH=amd64 GODEBUG=cgocheck=0 go build -buildmode=c-archive -o .tmp/riffle-x86_64_osx.a core/cMantle/main.go
-	@mv .tmp/riffle-x86_64_osx.h swift/swiftRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Headers/Mantle.h
-	@mv .tmp/riffle-x86_64_osx.a swift/swiftRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Mantle
 
 android:
 	@echo "Building core..."
@@ -135,7 +128,7 @@ clean:
 
 	@-rm -f utils/assets/libriffmantle.so utils/assets/libriffmantle.h >$(LOG) ||:
 	@$(MAKE) -C swift/mantle clean >$(LOG) ||:
-	@$(MAKE) -C swift/swiftRiffle/Riffle clean >$(LOG) ||:
+	@$(MAKE) -C swift/swiftRiffle/Pod/Classes clean >$(LOG) ||:
 	@rm -rf swift/example/Packages >$(LOG) ||:
 
 
