@@ -1,0 +1,1 @@
+../../../../../Pod/Classes/src/Categories/NSString+MDString.h
