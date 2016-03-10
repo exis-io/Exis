@@ -24,6 +24,8 @@ s.source_files = 'Pod/Classes/**/*.swift'
 s.ios.vendored_frameworks = "Pod/Assets/ios/Mantle.framework"
 s.osx.vendored_frameworks = "Pod/Assets/osx/Mantle.framework"
 
+
+
 # Options for aws. If cocoapod can build successfully then this can be used
 # s.source = { :http => "http://riffle-dist.s3-website-us-west-2.amazonaws.com/iosRiffle.zip" }
 # s.source_files = 'iosRiffle/Pod/Classes/**/*.swift'

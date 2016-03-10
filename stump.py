@@ -212,7 +212,7 @@ if __name__ == '__main__':
         - Remove the .git directory
 
         Example using the swiftRiffleCocoapod
-        
+
             git clone --no-checkout git@github.com:exis-io/swiftRiffleCocoapod.git swift/swiftRiffle/swiftRiffle.tmp 
 
             mv swift/swiftRiffle/swiftRiffle.tmp/.git swift/swiftRiffle/
@@ -223,6 +223,11 @@ if __name__ == '__main__':
             git -C swift/swiftRiffle push origin master
 
             rm -rf swift/swiftRiffle/.git
+
+
+        Notes:
+            - This implementation is incomplete. Release option above is better-- add the copy task 
+            - 
         '''
 
         found = False
@@ -231,22 +236,19 @@ if __name__ == '__main__':
                 found = True
                 break
 
-        if not found:
-            print("Error: unrecognized remote ({})".format(args['<remote>']))
-            sys.exit(1)
-
-        # Not finished
-        print 'Pulling down shadow repository'
-        # print("Pushing {} to remote {} ({})...".format(prefix, remote, url))
-
-        # call("git subtree push --prefix {} {} master".format(prefix, remote), shell=True)
+        # if not found:
+        #     print("Error: unrecognized remote ({})".format(args['<remote>']))
+        #     sys.exit(1)
 
         # tag = args['<version>']
         # if not tag.startswith("v"):
         #     tag = "v" + tag
 
         # tmp = tempfile.mkdtemp()
-        # call("git clone {} {}".format(url, tmp), shell=True)
+        # call("git clone --no-checkout {} {}".format(url, tmp), shell=True)
+
+        # print "Merging changes"
+
 
         # print("Creating tag: {}".format(tag))
         # call('git -C {0} tag -a {1} -m "Release {1}."'.format(tmp, tag), shell=True)
