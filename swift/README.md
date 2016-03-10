@@ -1,3 +1,8 @@
+<div align="center">
+    <a href="http://slack.exis.io"><img src="http://slack.exis.io/badge.svg"></a>
+    </h3>
+</div>
+
 # swiftRiffle (swift 2.2 Open Source)
 
 All our docs live at [docs.exis.io](http://docs.exis.io). 
@@ -16,13 +21,6 @@ This is for the open source version of swift. This directory is exploratory and 
 
 **6**. Compile and run sample project. In `swift/example`: `make` and then `./run`. 
 
-
-
-# swiftRiffle (iOS)
-
-This directory contains the swiftRiffle client libraries and a set of preconfigured projects for development on iOS and OSX.
-
-Riffle requries at least iOS 8.0, OSX 10.10, and Swift 2.1. Please check out *Known Issues* below for troubleshooting. 
 
 ### iOS Apps
 
@@ -72,6 +70,44 @@ target :Backend, :exclusive => true do
 end
 ```
 
+
+### Setting up a App + Backend Manually
+
+These instructions are for setting up a new or existing project with Riffle with a backend. Tested on Xcode 7.3, cocoapods 1.0.0beta5, and swift 2.1.
+
+- Create a new iOS project.
+- Create a new target with `File > New > Target`. Make sure to set the type of the target as OSX Command Line Application
+- Close the project. Create a new file in the directory you saved the project. Save it as `Podfile` and change it as follows: 
+
+```
+
+use_frameworks!
+
+target :App do
+    platform :ios, '9.0'
+  pod "Riffle", :path => "../"
+end
+
+target :Backend do
+    platform :osx, '10.11'
+    pod 'Riffle', :path => "../"
+end
+
+```
+
+Make sure to replace `App` and `Backend` with your project's target names. The app target is usually the same as the project. The second target name is the same as entered in step 2. 
+
+See the name of all targets by clicking on the blue project icon on the left bar with Xcode open. 
+
+- Run `pod install` in a terminal in the same directory as your project. 
+- Open the workspace, not the project (`.xcworkspace`, not `.xcodeproj`
+- Open settings for the `Pods` project. Under `Build Settings > Runpaths` for `Riffle-OSX` add the following to `Runpath Search Paths`
+
+```
+@executable_path/Riffle-OSX
+```
+
+- Set `Embedded Content Contains Swift Code` to `YES` for `Riffle-OSX` in `Build Settings`
 
 ## Dev Notes
 
@@ -165,15 +201,5 @@ Tested with go1.6 on OSX 10.11, Xcode 7.3, cocoapods 1.0.0beta5, and swift 2.1 o
 ### C Go Run
 
 As of 1.6 the rules for passing pointers over the language boundraries have become [more strict (and safe, of course)](https://tip.golang.org/doc/go1.6). Until such a time as the riffle core bindings are updated, all compilation of C code has to include `GODEBUG=cgocheck=0` as an env flag before the build. 
-
-### Misc
-
-Including vendored statics: http://stackoverflow.com/questions/19481125/add-static-library-to-podspec
-
-Making a fat static with lipo.
-
-```
-Building lipo with:  [xcrun lipo -create -arch armv7 /var/folders/qx/62_2kmm174s6njsmk46_rk080000gn/T/gomobile-work-415098175/hello-arm.a -arch arm64 /var/folders/qx/62_2kmm174s6njsmk46_rk080000gn/T/gomobile-work-415098175/hello-arm64.a -arch x86_64 /var/folders/qx/62_2kmm174s6njsmk46_rk080000gn/T/gomobile-work-415098175/hello-amd64.a -o Hello.framework/Versions/A/Hello]
-```
 
 
