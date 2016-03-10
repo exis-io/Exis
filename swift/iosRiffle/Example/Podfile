@@ -1,0 +1,12 @@
+
+use_frameworks!
+
+target 'Riffle_Example' do
+    platform :ios, '9.0'
+  pod "Riffle", :path => "../"
+end
+
+target :Backend do
+    platform :osx, '10.11'
+    pod 'Riffle', :path => "../"
+end

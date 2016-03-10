@@ -10,6 +10,15 @@ type Domain struct {
 	coreDomain core.Domain
 }
 
+func Hello(name string) string {
+    return "Hello, " + name + ", this is patrick"
+}
+
+// Testing what a byte array looks like in swiftland
+func GetBytes(bit []byte) {
+	core.Warn("Got: %v", bit)
+}
+
 func NewDomain(name string) *Domain {
 	return &Domain{coreDomain: core.NewDomain(name, nil)}
 }
@@ -34,10 +43,10 @@ func (d *Domain) Join(cb string, eb string) {
 			d.coreDomain.GetApp().CallbackSend(idUnmarshal(eb), err.Error())
 		} else {
 			if err := d.coreDomain.Join(c); err != nil {
-				core.Warn("Mantle join failure: %v", err.Error())
+				// core.Warn("Mantle join failure: %v", err.Error())
 				d.coreDomain.GetApp().CallbackSend(idUnmarshal(eb), err.Error())
 			} else {
-				core.Warn("Mantle join success! %v", cb)
+				// core.Warn("Mantle join success! %v", cb)
 				d.coreDomain.GetApp().CallbackSend(idUnmarshal(cb))
 			}
 		}

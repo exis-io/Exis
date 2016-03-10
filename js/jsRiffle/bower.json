@@ -1,7 +1,7 @@
 {
   "name": "jsRiffle",
   "description": "Riffle allows applications to connect over a fabric",
-  "main": "index.js",
+  "main": "./release/jsRiffle.min.js",
   "authors": [
     "Exis"
   ],

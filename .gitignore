@@ -41,3 +41,5 @@ js/jsRiffle/release/*
 js/ngRiffle/release/*
 
 *.bin
+.tmp
+*.gobak

@@ -1,5 +1,5 @@
 
-all: swift osx ios python js
+all: swift ios python js
 
 .PHONY: python js clean osx ios java android
 
@@ -26,8 +26,52 @@ swift_example: printcheck libriffmantle.so
 	@swift build --chdir swift/example
 	@echo "Now 'cd swift/example' and run './.build/debug/Example', 'SENDER=true ./.build/debug/Example'"
 
-osx: 
-	GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o swift/swiftRiffle/riffle.a core/cMantle/main.go
+ios:
+	@echo "Building arm7" 
+	@GOOS=darwin GOARCH=arm GOARM=7 \
+	CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
+	CXX=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
+	CGO_CFLAGS='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk -arch armv7' \
+	CGO_LDFLAGS='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk -arch armv7' \
+	CGO_ENABLED=1 \
+	go build -p=4 -pkgdir=/Users/damouse/code/go/pkg/gomobile/pkg_darwin_arm -tags="" -buildmode=c-archive -tags=ios -o .tmp/riffle-arm.a core/cMantle/main.go
+
+	@echo "Building arm64" 
+	@GOOS=darwin GOARCH=arm64 \
+	CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
+	CXX=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
+	CGO_CFLAGS='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk -arch arm64' \
+	CGO_LDFLAGS='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk -arch arm64' \
+	CGO_ENABLED=1 \
+	go build -p=4 -pkgdir=/Users/damouse/code/go/pkg/gomobile/pkg_darwin_arm -tags="" -buildmode=c-archive -tags=ios -o .tmp/riffle-arm64.a core/cMantle/main.go
+
+	@echo "Building x86 (simulator)" 
+	@GOOS=darwin GOARCH=amd64 \
+	CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
+	CXX=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
+	CGO_CFLAGS="-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.2.sdk -miphoneos-version-min=9.0 -mios-simulator-version-min=6.1 -arch x86_64" \
+	CGO_LDFLAGS="-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.2.sdk -miphoneos-version-min=9.0 -mios-simulator-version-min=6.1 -arch x86_64" \
+	CGO_ENABLED=1 \
+	go build -p=4 -pkgdir=/Users/damouse/code/go/pkg/gomobile/pkg_darwin_arm -tags="" -buildmode=c-archive -tags=ios -o .tmp/riffle-x86_64_ios.a core/cMantle/main.go
+
+	@echo "Combining with lipo" 
+	@xcrun lipo -create .tmp/riffle-arm.a .tmp/riffle-arm64.a .tmp/riffle-x86_64_ios.a -o swift/iosRiffle/Pod/Assets/ios/Mantle.framework/Versions/A/Mantle
+	@mv .tmp/riffle-arm.h swift/iosRiffle/Pod/Assets/ios/Mantle.framework/Versions/A/Headers/Mantle.h
+
+	@echo "Building x86 (command line)" 
+	@GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o .tmp/riffle-x86_64_osx.a core/cMantle/main.go
+	@mv .tmp/riffle-x86_64_osx.h swift/iosRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Headers/Mantle.h
+	@mv .tmp/riffle-x86_64_osx.a swift/iosRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Mantle
+
+	@# make sure this doesnt cause problem on vanilla arm7
+	@sed -i.gobak '/_check_for_32/d' ./swift/iosRiffle/Pod/Assets/ios/Mantle.framework/Versions/A/Headers/Mantle.h
+
+# Temporary!
+osx:
+	@echo "Building x86 (command line)" 
+	@GOOS=darwin GOARCH=amd64 GODEBUG=cgocheck=0 go build -buildmode=c-archive -o .tmp/riffle-x86_64_osx.a core/cMantle/main.go
+	@mv .tmp/riffle-x86_64_osx.h swift/iosRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Headers/Mantle.h
+	@mv .tmp/riffle-x86_64_osx.a swift/iosRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Mantle
 
 android:
 	@echo "Building core..."
@@ -65,11 +109,11 @@ python:
 js: 
 	gopherjs build -mv core/jsMantle/main.go
 	mv main.js js/jsRiffle/src/go.js
-	mv main.js.map js/jsRiffle/src/go.js.map
+	rm main.js.map
 
 jsbrowser: js
 	browserify js/jsRiffle/index.js --standalone jsRiffle -o js/jsRiffle/release/jsRiffle.js
-	browserify js/jsRiffle/index.js --standalone jsRiffle | uglifyjs > js/jsRiffle/release/jsRiffle.min.js
+	uglifyjs js/jsRiffle/release/jsRiffle.js -o js/jsRiffle/release/jsRiffle.min.js
 
 libriffmantle.so: 
 	@echo "Building core..."
@@ -78,10 +122,13 @@ libriffmantle.so:
 clean: 
 	@-rm -f utils/assets/libriffmantle.so utils/assets/libriffmantle.h
 	@-rm -f swift/osxCrust/RiffleTest/riffle.a  swift/osxCrust/RiffleTest/riffle.h
+	@-rm -rf .tmp
 
 	@-rm -f utils/assets/libriffmantle.so utils/assets/libriffmantle.h >$(LOG) ||:
 	@$(MAKE) -C swift/mantle clean >$(LOG) ||:
 	@$(MAKE) -C swift/swiftRiffle/Riffle clean >$(LOG) ||:
 	@rm -rf swift/example/Packages >$(LOG) ||:
+
+
 
 
