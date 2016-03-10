@@ -1,6 +1,6 @@
 {
   "name": "Riffle",
-  "version": "0.1.71",
+  "version": "0.2.01",
   "summary": "Client side library for connecting to a fabric.",
   "platforms": {
     "ios": "8.0",
@@ -12,24 +12,20 @@
   "authors": {
     "Damouse": "damouse007@gmail.com"
   },
+  "requires_arc": true,
   "source": {
     "git": "https://github.com/exis-io/swiftRiffle.git",
-    "tag": "0.1.71"
+    "tag": "0.2.01"
   },
-  "requires_arc": true,
   "source_files": "Pod/Classes/**/*.swift",
   "ios": {
-    "vendored_frameworks": "Pod/Assets/ios/Mantle.framework",
-    "resources": "Pod/Assets/ios/Mantle.framework",
-    "xcconfig": {
-      "FRAMEWORK_SEARCH_PATHS": "$(inherited) $(PODS_ROOT)/../../Pod/Assets/ios/"
-    }
+    "vendored_frameworks": "Pod/Assets/ios/Mantle.framework"
   },
   "osx": {
     "vendored_frameworks": "Pod/Assets/osx/Mantle.framework",
-    "resources": "Pod/Assets/osx/Mantle.framework",
     "xcconfig": {
-      "FRAMEWORK_SEARCH_PATHS": "$(inherited) $(PODS_ROOT)/../../Pod/Assets/osx/"
+      "EMBEDDED_CONTENT_CONTAINS_SWIFT": "YES",
+      "LD_RUNPATH_SEARCH_PATHS": "$(inherited) @executable_path/Riffle-OSX"
     }
   }
 }

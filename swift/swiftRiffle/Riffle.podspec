@@ -2,7 +2,7 @@
 Pod::Spec.new do |s|
 
 s.name             = "Riffle"
-s.version          = "0.2.01"
+s.version          = "0.2.04"
 s.summary          = "Client side library for connecting to a fabric."
 
 s.ios.deployment_target = "8.0"
@@ -24,7 +24,7 @@ s.source_files = 'Pod/Classes/**/*.swift'
 s.ios.vendored_frameworks = "Pod/Assets/ios/Mantle.framework"
 s.osx.vendored_frameworks = "Pod/Assets/osx/Mantle.framework"
 
-
+s.osx.xcconfig = { "EMBEDDED_CONTENT_CONTAINS_SWIFT" => "YES", "LD_RUNPATH_SEARCH_PATHS" => "$(inherited) @executable_path/Riffle-OSX"}
 
 # Options for aws. If cocoapod can build successfully then this can be used
 # s.source = { :http => "http://riffle-dist.s3-website-us-west-2.amazonaws.com/iosRiffle.zip" }
