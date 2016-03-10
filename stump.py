@@ -9,6 +9,7 @@ Usage:
   stump add-subtree DIRECTORY NAME URL
   stump test (list | all | <languageOrTestNumber>)
   stump release <remote> <version>
+  stump shadow <remote> <version>
 
 Options:
   -h --help     Show this screen.
@@ -193,6 +194,66 @@ if __name__ == '__main__':
         call("git -C {} push --tags origin master".format(tmp), shell=True)
         shutil.rmtree(tmp)
 
+    elif args['shadow']:
+        '''
+        This action pushes out a "shadow" subtree, or a subtree that is *not* added as a remote to the trunk
+        This is for checking in binary files into a subtree but not the trunk.
+
+        This is for situations where you want to check in files into the subtree and not the trunk (like big binary files)
+        Make sure the binary files are ignored at the trunk, not in the local repo, else they'll be ignored
+        when pushing the shadow. You can also move gitignores too and avoid this problem 
+
+
+        The basics are: 
+
+        - Clone *just* the git repo, no files
+        - Drop the .git dir into the target directory
+        - Add and push from that directory
+        - Remove the .git directory
+
+        Example using the swiftRiffleCocoapod
+        
+            git clone --no-checkout git@github.com:exis-io/swiftRiffleCocoapod.git swift/swiftRiffle/swiftRiffle.tmp 
+
+            mv swift/swiftRiffle/swiftRiffle.tmp/.git swift/swiftRiffle/
+            rm -rf swift/swiftRiffle/swiftRiffle.tmp
+
+            git -C swift/swiftRiffle add --all 
+            git -C swift/swiftRiffle commit -m "Some message"
+            git -C swift/swiftRiffle push origin master
+
+            rm -rf swift/swiftRiffle/.git
+        '''
+
+        found = False
+        for prefix, remote, url in SUBTREES:
+            if remote == args['<remote>']:
+                found = True
+                break
+
+        if not found:
+            print("Error: unrecognized remote ({})".format(args['<remote>']))
+            sys.exit(1)
+
+        # Not finished
+        print 'Pulling down shadow repository'
+        # print("Pushing {} to remote {} ({})...".format(prefix, remote, url))
+
+        # call("git subtree push --prefix {} {} master".format(prefix, remote), shell=True)
+
+        # tag = args['<version>']
+        # if not tag.startswith("v"):
+        #     tag = "v" + tag
+
+        # tmp = tempfile.mkdtemp()
+        # call("git clone {} {}".format(url, tmp), shell=True)
+
+        # print("Creating tag: {}".format(tag))
+        # call('git -C {0} tag -a {1} -m "Release {1}."'.format(tmp, tag), shell=True)
+        # call('git  tag -a {1}-{0} -m "Release {1}-{0}."'.format(args['<version>'], remote), shell=True)
+        # call("git push --tags origin HEAD", shell=True)
+        # call("git -C {} push --tags origin master".format(tmp), shell=True)
+        # shutil.rmtree(tmp)
 
 '''
 Deployment scripts from old stump
@@ -229,32 +290,4 @@ ios() {
     git push origin master
 }
 
-Quick scribbles for shadow subtrees. The basics are: 
-
-    - Clone *just* the git repo, no files
-    - Drop the .git dir into the target directory
-    - Add and push from that directory
-    - Remove the .git directory
-
-This is for situations where you want to check in files into the subtree and not the trunk (like big binary files)
-Make sure the binary files are ignored at the trunk, not in the local repo, else they'll be ignored
-when pushing the shadow. You can also move gitignores too and avoid this problem 
-
-git clone --no-checkout git@github.com:exis-io/swiftRiffleCocoapod.git swift/swiftRiffle/swiftRiffle.tmp 
-
-mv swift/swiftRiffle/swiftRiffle.tmp/.git swift/swiftRiffle/
-rm -rf swift/swiftRiffle/swiftRiffle.tmp
-
-git -C swift/swiftRiffle add --all 
-git -C swift/swiftRiffle commit -m "Some message"
-git -C swift/swiftRiffle push origin master
-
-rm -rf swift/swiftRiffle/.git
 '''
-
-
-
-
-
-
-
