@@ -249,6 +249,7 @@ git -C swift/swiftRiffle add --all
 git -C swift/swiftRiffle commit -m "Some message"
 git -C swift/swiftRiffle push origin master
 
+rm -rf swift/swiftRiffle/.git
 '''
 
 
