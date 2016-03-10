@@ -21,10 +21,5 @@ networking code with something that doesn't look like networking code at all!
     s.source_files = 'Pod/Classes/**/*.swift'
 
     s.ios.vendored_frameworks = "Pod/Assets/ios/Mantle.framework"
-    s.ios.resource = "Pod/Assets/ios/Mantle.framework"
-    s.ios.xcconfig = { 'FRAMEWORK_SEARCH_PATHS' => '$(inherited) $(PODS_ROOT)/../../Pod/Assets/ios/' }
-
     s.osx.vendored_frameworks = "Pod/Assets/osx/Mantle.framework"
-    s.osx.resource = "Pod/Assets/osx/Mantle.framework"
-    s.osx.xcconfig = { 'FRAMEWORK_SEARCH_PATHS' => '$(inherited) $(PODS_ROOT)/../../Pod/Assets/osx/'  }
 end
