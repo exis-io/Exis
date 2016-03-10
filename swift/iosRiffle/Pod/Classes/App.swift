@@ -10,20 +10,20 @@ import Foundation
 import Mantle
 
 class App {
-    var mantleDomain: UnsafeMutablePointer<Void>
+    var mantleDomain: UInt64
     
     var deferreds: [UInt64: Deferred] = [:]
     var handlers: [UInt64: [Any] -> ()] = [:]
     var registrations: [UInt64: [Any] -> Any?] = [:]
     
     
-    init(domain: UnsafeMutablePointer<Void>) {
+    init(domain: UInt64) {
         mantleDomain = domain
     }
     
     func receive() {
         while true {
-            var (i, args) = decode(Receive(mantleDomain))
+            var (i, args) = decode(Receive(self.mantleDomain))
             
             if let d = deferreds[i] {
                 // remove the deferred (should this ever be optional?)

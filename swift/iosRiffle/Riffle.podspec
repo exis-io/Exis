@@ -18,7 +18,7 @@ networking code with something that doesn't look like networking code at all!
     s.source           = { :git => "https://github.com/exis-io/swiftRiffle.git", :tag => s.version.to_s }
 
     s.requires_arc = true
-    s.source_files = 'Pod/Classes/**/*'
+    s.source_files = 'Pod/Classes/**/*.swift'
 
     s.ios.vendored_frameworks = "Pod/Assets/ios/Mantle.framework"
     s.ios.resource = "Pod/Assets/ios/Mantle.framework"

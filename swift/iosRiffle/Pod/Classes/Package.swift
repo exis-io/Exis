@@ -1,3 +1,7 @@
+
+// Tested on xcode, but not on ubuntu yet. Make sure swift doesn't complain about it
+
+#if os(Linux)
 import PackageDescription
 
 let package = Package(
@@ -6,3 +10,4 @@ let package = Package(
         .Package(url: "../../mantle", majorVersion: 1)
     ]
 )
+#endif

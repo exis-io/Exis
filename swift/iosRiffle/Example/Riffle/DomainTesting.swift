@@ -31,6 +31,7 @@ class Receiver: Domain {
             print("SUCCESS --- 1-1")
         }
         
+
         // Primitive Types
         subscribe("subscribePrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
             print("SUCCESS --- 1-2")

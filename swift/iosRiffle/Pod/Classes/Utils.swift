@@ -36,10 +36,12 @@ extension String {
 }
 
 // Decode arbitrary returns from the mantle
-func decode(p: GoSlice) -> (UInt64, [Any]) {
-    let int8Ptr = unsafeBitCast(p.data, UnsafePointer<Int8>.self)
+//func decode(p: GoSlice) -> (UInt64, [Any]) {
+func decode(p: UnsafePointer<Int8>) -> (UInt64, [Any]) {
+//    let int8Ptr = unsafeBitCast(p.data, UnsafePointer<Int8>.self)
     // If the length of the slice is the same as the cap, the string conversion always fails
-    let dataString = String.fromCString(int8Ptr)!
+    let dataString = String.fromCString(p)!
+    
     
     guard let data = try! JSONParser.parse(dataString) as? [Any] else {
         print("DID NOT RECEIVE ARRAY BACK!")

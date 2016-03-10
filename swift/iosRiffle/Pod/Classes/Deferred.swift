@@ -80,7 +80,7 @@ public class Deferred {
 
 // Contains handler "then"s to replace handler functions
 public class HandlerDeferred: Deferred {
-    public var mantleDomain: UnsafeMutablePointer<Void>!
+    public var mantleDomain: UInt64!
     
     public override func then(fn: () -> ()) -> Deferred {
         // this override is a special case. It overrides the base then, but cant go in the extension

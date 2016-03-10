@@ -160,7 +160,11 @@ export PATH=/path/to/patched/bin/go:$PATH
 
 Make the library and run something in swiftRiffle on OSX. If you see `ld: illegal text-relocation to 'type..eq.[0]string` then things didnt work. 
 
-Tested with go1.6 on OSX 10.11, Xcode 7.3, and swift 2.1 on 3/8/15.
+Tested with go1.6 on OSX 10.11, Xcode 7.3, cocoapods 1.0.0beta5, and swift 2.1 on 3/8/15.
+
+### C Go Run
+
+As of 1.6 the rules for passing pointers over the language boundraries have become [more strict (and safe, of course)](https://tip.golang.org/doc/go1.6). Until such a time as the riffle core bindings are updated, all compilation of C code has to include `GODEBUG=cgocheck=0` as an env flag before the build. 
 
 ### Misc
 

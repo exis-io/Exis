@@ -16,8 +16,6 @@ TODO:
     Implment Call, Unreg, Unsub
 */
 
-
-
 import Foundation
 import CoreFoundation
 import Mantle
@@ -39,7 +37,7 @@ public protocol Delegate {
 
 public class Domain {
     public var delegate: Delegate?
-    var mantleDomain: UnsafeMutablePointer<Void>
+    var mantleDomain: UInt64
     var app: App
     
     
@@ -85,6 +83,7 @@ public class Domain {
     }
     
     public func join() {
+        
         let cb = CBID()
         let eb = CBID()
         

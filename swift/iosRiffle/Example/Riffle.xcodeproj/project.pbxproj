@@ -171,6 +171,7 @@
 				505777C11C8E50DE00DE33DF /* Sources */,
 				505777C21C8E50DE00DE33DF /* Frameworks */,
 				505777C31C8E50DE00DE33DF /* CopyFiles */,
+				A3DBFBA5C25AC10C43D20F13 /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -296,6 +297,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		A3DBFBA5C25AC10C43D20F13 /* 📦 Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Backend/Pods-Backend-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		AAA59B5F1C73D0D3B4690129 /* 📦 Embed Pods Frameworks */ = {

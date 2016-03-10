@@ -42,3 +42,4 @@ js/ngRiffle/release/*
 
 *.bin
 .tmp
+*.gobak

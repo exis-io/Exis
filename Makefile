@@ -63,6 +63,16 @@ ios:
 	@mv .tmp/riffle-x86_64_osx.h swift/iosRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Headers/Mantle.h
 	@mv .tmp/riffle-x86_64_osx.a swift/iosRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Mantle
 
+	@# make sure this doesnt cause problem on vanilla arm7
+	@sed -i.gobak '/_check_for_32/d' ./swift/iosRiffle/Pod/Assets/ios/Mantle.framework/Versions/A/Headers/Mantle.h
+
+# Temporary!
+osx:
+	@echo "Building x86 (command line)" 
+	@GOOS=darwin GOARCH=amd64 GODEBUG=cgocheck=0 go build -buildmode=c-archive -o .tmp/riffle-x86_64_osx.a core/cMantle/main.go
+	@mv .tmp/riffle-x86_64_osx.h swift/iosRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Headers/Mantle.h
+	@mv .tmp/riffle-x86_64_osx.a swift/iosRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Mantle
+
 android:
 	@echo "Building core..."
 	@gomobile bind --work -target=android github.com/exis-io/core/androidMantle
