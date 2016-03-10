@@ -55,23 +55,23 @@ ios:
 	go build -p=4 -pkgdir=/Users/damouse/code/go/pkg/gomobile/pkg_darwin_arm -tags="" -buildmode=c-archive -tags=ios -o .tmp/riffle-x86_64_ios.a core/cMantle/main.go
 
 	@echo "Combining with lipo" 
-	@xcrun lipo -create .tmp/riffle-arm.a .tmp/riffle-arm64.a .tmp/riffle-x86_64_ios.a -o swift/iosRiffle/Pod/Assets/ios/Mantle.framework/Versions/A/Mantle
-	@mv .tmp/riffle-arm.h swift/iosRiffle/Pod/Assets/ios/Mantle.framework/Versions/A/Headers/Mantle.h
+	@xcrun lipo -create .tmp/riffle-arm.a .tmp/riffle-arm64.a .tmp/riffle-x86_64_ios.a -o swift/swiftRiffle/Pod/Assets/ios/Mantle.framework/Versions/A/Mantle
+	@mv .tmp/riffle-arm.h swift/swiftRiffle/Pod/Assets/ios/Mantle.framework/Versions/A/Headers/Mantle.h
 
 	@echo "Building x86 (command line)" 
 	@GOOS=darwin GOARCH=amd64 go build -buildmode=c-archive -o .tmp/riffle-x86_64_osx.a core/cMantle/main.go
-	@mv .tmp/riffle-x86_64_osx.h swift/iosRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Headers/Mantle.h
-	@mv .tmp/riffle-x86_64_osx.a swift/iosRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Mantle
+	@mv .tmp/riffle-x86_64_osx.h swift/swiftRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Headers/Mantle.h
+	@mv .tmp/riffle-x86_64_osx.a swift/swiftRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Mantle
 
 	@# make sure this doesnt cause problem on vanilla arm7
-	@sed -i.gobak '/_check_for_32/d' ./swift/iosRiffle/Pod/Assets/ios/Mantle.framework/Versions/A/Headers/Mantle.h
+	@sed -i.gobak '/_check_for_32/d' ./swift/swiftRiffle/Pod/Assets/ios/Mantle.framework/Versions/A/Headers/Mantle.h
 
 # Temporary!
 osx:
 	@echo "Building x86 (command line)" 
 	@GOOS=darwin GOARCH=amd64 GODEBUG=cgocheck=0 go build -buildmode=c-archive -o .tmp/riffle-x86_64_osx.a core/cMantle/main.go
-	@mv .tmp/riffle-x86_64_osx.h swift/iosRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Headers/Mantle.h
-	@mv .tmp/riffle-x86_64_osx.a swift/iosRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Mantle
+	@mv .tmp/riffle-x86_64_osx.h swift/swiftRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Headers/Mantle.h
+	@mv .tmp/riffle-x86_64_osx.a swift/swiftRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Mantle
 
 android:
 	@echo "Building core..."
