@@ -6,10 +6,10 @@ DEPENDENCIES:
 
 EXTERNAL SOURCES:
   Riffle:
-    :path: "../"
+    :path: ../
 
 SPEC CHECKSUMS:
-  Riffle: cb778deb3f98f33cc0850a53067f8d0b0df19003
+  Riffle: 68e78cc61925ab51298da1375eeb568b4f6620ae
 
 PODFILE CHECKSUM: 684388b6c080beeaf4998edff2ce5dfbb46f0080
 

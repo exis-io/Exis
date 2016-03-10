@@ -7,12 +7,7 @@
 //
 
 
- import Riffle
- 
- var a: UInt64 = 1550453263105362
- 
- print("Trying to access: \(a)")
+import Riffle
 
- WhatTheHellGo(a)
- 
- print("done")
+print("Hello, World!")
+

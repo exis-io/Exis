@@ -17,7 +17,7 @@
     "tag": "0.1.71"
   },
   "requires_arc": true,
-  "source_files": "Pod/Classes/**/*",
+  "source_files": "Pod/Classes/**/*.swift",
   "ios": {
     "vendored_frameworks": "Pod/Assets/ios/Mantle.framework",
     "resources": "Pod/Assets/ios/Mantle.framework",
