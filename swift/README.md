@@ -54,23 +54,6 @@ Clone the project from github:
 git clone https://github.com/exis-io/iosAppBackendSeed.git
 ```
 
-Replace `ExisiOSBackend` and `Backend` with the target name of your app and backend, respectively. Cocoapods: 
-
-```
-use_frameworks!
-
-target :ExisiOSBackend, :exclusive => true do
-  platform :ios, '9.0'
-  pod 'Riffle'
-end
-
-target :Backend, :exclusive => true do
-  platform :osx, '10.10'
-  pod 'Riffle'
-end
-```
-
-
 ### Setting up a App + Backend Manually
 
 These instructions are for setting up a new or existing project with Riffle with a backend. Tested on Xcode 7.3, cocoapods 1.0.0beta5, and swift 2.1.
