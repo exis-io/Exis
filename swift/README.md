@@ -92,6 +92,12 @@ See the name of all targets by clicking on the blue project icon on the left bar
 
 - Set `Embedded Content Contains Swift Code` to `YES` for `Riffle-OSX` in `Build Settings`
 
+Note: occasionally Xcode can get a little greedy, build the framework ahead of time, and ignore the settings above after. If you'be made these changes and see see errors about linking libraries, delete your derived data directory. 
+
+```
+rm -rf ~/Library/Developer/Xcode/DerivedData
+```
+
 ## Dev Notes
 
 Starting Xcode with swift 2.2 toolchain: 

@@ -6,15 +6,6 @@
 //  Copyright © 2015 exis. All rights reserved.
 //
 
-/*
-TODO:
-
-    Integrate with main swiftRiffle lib for testing
-    Make conditional compilers for ios and osx
-    Cleanup and integrate new changes with goRiffle
-    Implement Domain class in goRiffle
-    Implment Call, Unreg, Unsub
-*/
 
 import Foundation
 import CoreFoundation

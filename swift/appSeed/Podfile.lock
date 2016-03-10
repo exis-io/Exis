@@ -1,14 +1,21 @@
 PODS:
-  - Riffle (0.1.71)
+  - Riffle (0.2.03)
 
 DEPENDENCIES:
-  - Riffle (from `../iosRiffle/`)
+  - Riffle (from `https://github.com/exis-io/swiftRiffleCocoapod`)
 
 EXTERNAL SOURCES:
   Riffle:
-    :path: "../iosRiffle/"
+    :git: https://github.com/exis-io/swiftRiffleCocoapod
+
+CHECKOUT OPTIONS:
+  Riffle:
+    :commit: 5b85bea8be8b1e0dd6b2b4c277b678aa621eee5b
+    :git: https://github.com/exis-io/swiftRiffleCocoapod
 
 SPEC CHECKSUMS:
-  Riffle: c09acaf7f6ce509f5e78cfa29ba28a116772e703
+  Riffle: acea4736af153233c407e45d040864777ce73cf3
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: 23a4dae77545bb325d75c917d80684805bf619c9
+
+COCOAPODS: 1.0.0.beta.5

@@ -12,11 +12,11 @@
 		50CAC7C71BEE83F0005E605F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 50CAC7C51BEE83F0005E605F /* Main.storyboard */; };
 		50CAC7C91BEE83F0005E605F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 50CAC7C81BEE83F0005E605F /* Assets.xcassets */; };
 		50CAC7CC1BEE83F0005E605F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 50CAC7CA1BEE83F0005E605F /* LaunchScreen.storyboard */; };
-		6F705E9F18F224B9C5C99C0C /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC37C4529A684B4E5C9A35E1 /* Pods.framework */; };
+		64B28E1A1E95FF0C94645B6E /* Pods_ExisiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88078F54468409E73A4A1703 /* Pods_ExisiOS.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		41008054F9C3920BC8E1F330 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		0A31918DD484E8DDA413B75C /* Pods-ExisiOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExisiOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-ExisiOS/Pods-ExisiOS.release.xcconfig"; sourceTree = "<group>"; };
 		50CAC7BE1BEE83F0005E605F /* ExisiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExisiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		50CAC7C11BEE83F0005E605F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		50CAC7C31BEE83F0005E605F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -24,7 +24,8 @@
 		50CAC7C81BEE83F0005E605F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		50CAC7CB1BEE83F0005E605F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		50CAC7CD1BEE83F0005E605F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		55DC373B47DD0C7395595120 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		88078F54468409E73A4A1703 /* Pods_ExisiOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExisiOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F4BA7B3A48693D35AA52CE18 /* Pods-ExisiOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExisiOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ExisiOS/Pods-ExisiOS.debug.xcconfig"; sourceTree = "<group>"; };
 		FC37C4529A684B4E5C9A35E1 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -33,7 +34,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6F705E9F18F224B9C5C99C0C /* Pods.framework in Frameworks */,
+				64B28E1A1E95FF0C94645B6E /* Pods_ExisiOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,6 +45,7 @@
 			isa = PBXGroup;
 			children = (
 				FC37C4529A684B4E5C9A35E1 /* Pods.framework */,
+				88078F54468409E73A4A1703 /* Pods_ExisiOS.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -53,8 +55,8 @@
 			children = (
 				50CAC7C01BEE83F0005E605F /* ExisiOS */,
 				50CAC7BF1BEE83F0005E605F /* Products */,
-				E9689820855CA04857BACD29 /* Pods */,
 				3D787237898BEA6F8A0C79C7 /* Frameworks */,
+				D429616A4070911B9155B720 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -79,11 +81,11 @@
 			path = ExisiOS;
 			sourceTree = "<group>";
 		};
-		E9689820855CA04857BACD29 /* Pods */ = {
+		D429616A4070911B9155B720 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				55DC373B47DD0C7395595120 /* Pods.debug.xcconfig */,
-				41008054F9C3920BC8E1F330 /* Pods.release.xcconfig */,
+				F4BA7B3A48693D35AA52CE18 /* Pods-ExisiOS.debug.xcconfig */,
+				0A31918DD484E8DDA413B75C /* Pods-ExisiOS.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -95,12 +97,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 50CAC7D01BEE83F0005E605F /* Build configuration list for PBXNativeTarget "ExisiOS" */;
 			buildPhases = (
-				8DF1F86C8DFD4BF1353547CA /* Check Pods Manifest.lock */,
+				B02EA8E5DBE97FAEF2ABA4BC /* 📦 Check Pods Manifest.lock */,
 				50CAC7BA1BEE83F0005E605F /* Sources */,
 				50CAC7BB1BEE83F0005E605F /* Frameworks */,
 				50CAC7BC1BEE83F0005E605F /* Resources */,
-				8C5799801E849C9E9C4644C2 /* Embed Pods Frameworks */,
-				1EA1CA13E0E9C6336A4310B1 /* Copy Pods Resources */,
+				F54370793923B30AC5952DB4 /* 📦 Embed Pods Frameworks */,
+				8429B20727B93145198BF418 /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -157,49 +159,49 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1EA1CA13E0E9C6336A4310B1 /* Copy Pods Resources */ = {
+		8429B20727B93145198BF418 /* 📦 Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "📦 Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ExisiOS/Pods-ExisiOS-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		8C5799801E849C9E9C4644C2 /* Embed Pods Frameworks */ = {
+		B02EA8E5DBE97FAEF2ABA4BC /* 📦 Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		8DF1F86C8DFD4BF1353547CA /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
+			name = "📦 Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		F54370793923B30AC5952DB4 /* 📦 Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ExisiOS/Pods-ExisiOS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -321,7 +323,7 @@
 		};
 		50CAC7D11BEE83F0005E605F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 55DC373B47DD0C7395595120 /* Pods.debug.xcconfig */;
+			baseConfigurationReference = F4BA7B3A48693D35AA52CE18 /* Pods-ExisiOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = ExisiOS/Info.plist;
@@ -333,7 +335,7 @@
 		};
 		50CAC7D21BEE83F0005E605F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 41008054F9C3920BC8E1F330 /* Pods.release.xcconfig */;
+			baseConfigurationReference = 0A31918DD484E8DDA413B75C /* Pods-ExisiOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = ExisiOS/Info.plist;

@@ -1,11 +1,13 @@
+
 use_frameworks!
 
-target :ExisiOSBackend, :exclusive => true do
-  platform :ios, '9.0'
-  pod 'Riffle'
+target :ExisiOSBackend do
+    platform :ios, '9.0'
+  pod "Riffle", :git => 'https://github.com/exis-io/swiftRiffleCocoapod'
 end
 
-target :Backend, :exclusive => true do
-  platform :osx, '10.10'
-  pod 'Riffle'
+target :Backend do
+    platform :osx, '10.11'
+    pod 'Riffle', :git => 'https://github.com/exis-io/swiftRiffleCocoapod'
 end
+
