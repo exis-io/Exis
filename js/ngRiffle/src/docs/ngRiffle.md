@@ -1,45 +1,5 @@
 # ngRiffle
-ngRiffle is an AngularJS service that wraps the [jsRiffle]() library and provides an API for connection and interaction with Exis.
-    
-## Table of Contents
-* ## [$riffleProvider](#$riffleProvider)
-    * ##### [setDomain](#$riffleProvider.setDomain-domain-)
-    * ##### [setFabric](#$riffleProvider.setFabric-url-)
-    * ##### [setFabricLocal]()
-    * ##### [setFabricProduction]()
-    * ##### [setFabricSandbox]()
-* ## [$riffle API]()
-    * ##### [login]()
-    * ##### [registerAccount]()
-    * ##### [setToken]()
-    * ##### [getToken]()
-    * ##### [want]()
-    * ##### [modelObject]()
-    * ##### [Domain API]()
-    * ##### [user API]()
-* ## [Domain API]()
-    * ##### [join]()
-    * ##### [leave]()
-    * ##### [register]()
-    * ##### [call]()
-    * ##### [publish]()
-    * ##### [subscribe]()
-    * ##### [subscribeOnScope]()
-    * ##### [unregister]()
-    * ##### [unsubscribe]()
-    * ##### [subdomain]()
-    * ##### [linkDomain]()
-* ## [$riffle.user API]()
-    * ##### [load]()
-    * ##### [save]()
-    * ##### [getPublicData]()
-    * ##### [user details]()
-        * ##### [email]()
-        * ##### [name]()
-        * ##### [gravatar]()
-        * ##### [privateStorage]()
-        * ##### [publicStorage]()
-
+ngRiffle is an AngularJS service that wraps the [jsRiffle](https://github.com/exis-io/jsRiffle) library and provides an API for connection and interaction with Exis.
 ## Objects
 
 <dl>
@@ -48,7 +8,11 @@ ngRiffle is an AngularJS service that wraps the [jsRiffle]() library and provide
 The functions can be used in a .config block of the application.</p>
 </dd>
 <dt><a href="#$riffle">$riffle</a> : <code>object</code></dt>
-<dd></dd>
+<dd><p>The $riffle service is that provides an API for easy interaction with Exis. The service
+itself represents the top-level <a href="/docs/riffle/Domain">domain</a> of the application and provides 
+functions for creating new domain objects, and interacting with <a href="#ModelObject">ModelObject</a> Storage and 
+<a href="#$riffle.user">user</a> storage as well.</p>
+</dd>
 </dl>
 
 ## Typedefs
@@ -148,6 +112,11 @@ Connect to sandbox.exis.io, the Exis sandbox node.
 **Kind**: static method of <code>[$riffleProvider](#$riffleProvider)</code>  
 <a name="$riffle"></a>
 ## $riffle : <code>object</code>
+The $riffle service is that provides an API for easy interaction with Exis. The service
+itself represents the top-level [domain](/docs/riffle/Domain) of the application and provides 
+functions for creating new domain objects, and interacting with [ModelObject](#ModelObject) Storage and 
+[user](#$riffle.user) storage as well.
+
 **Kind**: global namespace  
 
 * [$riffle](#$riffle) : <code>object</code>
@@ -169,7 +138,14 @@ Connect to sandbox.exis.io, the Exis sandbox node.
     * [.join()](#$riffle.join)
     * [.leave()](#$riffle.leave)
     * [.user](#$riffle.user) : <code>object</code>
+        * [.email](#$riffle.user.email) : <code>string</code>
+        * [.name](#$riffle.user.name) : <code>string</code>
+        * [.gravatar](#$riffle.user.gravatar) : <code>string</code>
+        * [.privateStorage](#$riffle.user.privateStorage) : <code>object</code>
+        * [.publicStorage](#$riffle.user.publicStorage) : <code>object</code>
         * [.load()](#$riffle.user.load) ⇒ <code>Promise</code>
+        * [.save()](#$riffle.user.save) ⇒ <code>Promise</code>
+        * [.getPublicData([query])](#$riffle.user.getPublicData) ⇒ <code>Promise</code>
 
 <a name="$riffle.login"></a>
 ### $riffle.login([user]) ⇒ <code>Promise</code>
@@ -499,12 +475,84 @@ The user object is created only if connection to the fabric is done via the [log
 an [Auth](/docs/appliances/Auth) appliance.
 
 **Kind**: static typedef of <code>[$riffle](#$riffle)</code>  
+
+* [.user](#$riffle.user) : <code>object</code>
+    * [.email](#$riffle.user.email) : <code>string</code>
+    * [.name](#$riffle.user.name) : <code>string</code>
+    * [.gravatar](#$riffle.user.gravatar) : <code>string</code>
+    * [.privateStorage](#$riffle.user.privateStorage) : <code>object</code>
+    * [.publicStorage](#$riffle.user.publicStorage) : <code>object</code>
+    * [.load()](#$riffle.user.load) ⇒ <code>Promise</code>
+    * [.save()](#$riffle.user.save) ⇒ <code>Promise</code>
+    * [.getPublicData([query])](#$riffle.user.getPublicData) ⇒ <code>Promise</code>
+
+<a name="$riffle.user.email"></a>
+#### user.email : <code>string</code>
+The email that the user registered with. This is loaded from the user's storage
+on successful login and currently can't be updated via [save](#$riffle.user.save).
+
+**Kind**: static property of <code>[user](#$riffle.user)</code>  
+<a name="$riffle.user.name"></a>
+#### user.name : <code>string</code>
+The name that the user registered with. This is loaded from the user's storage
+on successful login and currently can't be updated via [save](#$riffle.user.save).
+
+**Kind**: static property of <code>[user](#$riffle.user)</code>  
+<a name="$riffle.user.gravatar"></a>
+#### user.gravatar : <code>string</code>
+An md5 hash of the user's email for convience in using gravatar. This is loaded from the user's storage
+on successful login and currently can't be updated via [save](#$riffle.user.save).
+
+**Kind**: static property of <code>[user](#$riffle.user)</code>  
+<a name="$riffle.user.privateStorage"></a>
+#### user.privateStorage : <code>object</code>
+The user's private storage object. This will be loaded on successful login or via [load](#$riffle.user.load).
+Any updates to the object can be saved to Exis' user storage via [save](#$riffle.user.save). Private storage
+documents are only visible to the user they are associated with. For public storage see [publicStorage](#$riffle.user.publicStorage).
+
+**Kind**: static property of <code>[user](#$riffle.user)</code>  
+<a name="$riffle.user.publicStorage"></a>
+#### user.publicStorage : <code>object</code>
+The user's public storage object. This will be loaded on successful login or via [load](#$riffle.user.load).
+Any updates to the object can be saved to Exis' user storage via [save](#$riffle.user.save). All registered 
+user's off an application have access to any public storage documents.
+
+**Kind**: static property of <code>[user](#$riffle.user)</code>  
 <a name="$riffle.user.load"></a>
 #### user.load() ⇒ <code>Promise</code>
-Reload the user data from Storage.
+Load the user data from Storage.
 
 **Kind**: static method of <code>[user](#$riffle.user)</code>  
 **Returns**: <code>Promise</code> - A promise that is resolved if the user data is loaded or rejected on error.  
+**Example**  
+```js
+//load user data
+$riffle.user.load().then(userLoaded, error);
+```
+<a name="$riffle.user.save"></a>
+#### user.save() ⇒ <code>Promise</code>
+Save the user data to Exis user storage. Both the private and public storage objects
+on Exis will be overwritten with the contents of the local private and public storage objects.
+
+**Kind**: static method of <code>[user](#$riffle.user)</code>  
+**Returns**: <code>Promise</code> - A promise that is resolved if the user data is successfully saved or rejected on error.  
+**Example**  
+```js
+//save user data
+$riffle.user.save().then(userSaved, error);
+```
+<a name="$riffle.user.getPublicData"></a>
+#### user.getPublicData([query]) ⇒ <code>Promise</code>
+Load the public user objects from Storage. Accepts an optional MongoDB 
+[query](https://docs.mongodb.org/manual/tutorial/query-documents/)  object to filter results.
+
+**Kind**: static method of <code>[user](#$riffle.user)</code>  
+**Returns**: <code>Promise</code> - A promise that is resolved with the user documents on success or rejected on error.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [query] | <code>object</code> | Optional MongoDB [query](https://docs.mongodb.org/manual/tutorial/query-documents/) |
+
 <a name="ModelObject"></a>
 ## ModelObject
 The ModelObject class is used to to wrap a custom JavaScript class and provides an API for interaction with

@@ -52,6 +52,10 @@
 
 /**
  * @namespace $riffle
+ * @description The $riffle service is that provides an API for easy interaction with Exis. The service
+ * itself represents the top-level {@link /docs/riffle/Domain domain} of the application and provides 
+ * functions for creating new domain objects, and interacting with {@link ModelObject} Storage and 
+ * {@link $riffle.user} storage as well.
  * @borrows RiffleDomain.call as call
  * @borrows RiffleDomain.register as register
  * @borrows RiffleDomain.publish as publish
@@ -181,10 +185,74 @@
 /**
  * @memberof $riffle.user
  * @function load
- * @description Reload the user data from Storage.
+ * @description Load the user data from Storage.
  * @returns {Promise} A promise that is resolved if the user data is loaded or rejected on error.
+ * @example
+ * //load user data
+ * $riffle.user.load().then(userLoaded, error);
  */
 
+/**
+ * @memberof $riffle.user
+ * @function save
+ * @description Save the user data to Exis user storage. Both the private and public storage objects
+ * on Exis will be overwritten with the contents of the local private and public storage objects.
+ * @returns {Promise} A promise that is resolved if the user data is successfully saved or rejected on error.
+ * @example
+ * //save user data
+ * $riffle.user.save().then(userSaved, error);
+ */
+
+/**
+ * @memberof $riffle.user
+ * @function getPublicData
+ * @param {object=} query - Optional MongoDB {@link https://docs.mongodb.org/manual/tutorial/query-documents/ query}
+ * @description Load the public user objects from Storage. Accepts an optional MongoDB 
+ * {@link https://docs.mongodb.org/manual/tutorial/query-documents/ query}  object to filter results.
+ * @returns {Promise} A promise that is resolved with the user documents on success or rejected on error.
+ */
+
+/**
+ * @memberof $riffle.user
+ * @name email
+ * @type {string}
+ * @description The email that the user registered with. This is loaded from the user's storage
+ * on successful login and currently can't be updated via {@link $riffle.user.save}.
+ */
+
+/**
+ * @memberof $riffle.user
+ * @name name
+ * @type {string}
+ * @description The name that the user registered with. This is loaded from the user's storage
+ * on successful login and currently can't be updated via {@link $riffle.user.save}.
+ */
+
+/**
+ * @memberof $riffle.user
+ * @name gravatar
+ * @type {string}
+ * @description An md5 hash of the user's email for convience in using gravatar. This is loaded from the user's storage
+ * on successful login and currently can't be updated via {@link $riffle.user.save}.
+ */
+
+/**
+ * @memberof $riffle.user
+ * @name privateStorage
+ * @type {object}
+ * @description The user's private storage object. This will be loaded on successful login or via {@link $riffle.user.load}.
+ * Any updates to the object can be saved to Exis' user storage via {@link $riffle.user.save}. Private storage
+ * documents are only visible to the user they are associated with. For public storage see {@link $riffle.user.publicStorage}.
+ */
+
+/**
+ * @memberof $riffle.user
+ * @name publicStorage
+ * @type {object}
+ * @description The user's public storage object. This will be loaded on successful login or via {@link $riffle.user.load}.
+ * Any updates to the object can be saved to Exis' user storage via {@link $riffle.user.save}. All registered 
+ * user's off an application have access to any public storage documents.
+ */
 
 /**
  * @typedef ModelObject
