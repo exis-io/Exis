@@ -158,6 +158,12 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
             DomainWrapper.prototype.getToken = function() {
                 return this.conn.getToken();
             };
+            DomainWrapper.prototype.getName = function() {
+                return this.conn.getName();
+            };
+            DomainWrapper.prototype.username = function() {
+                return this.conn.getName().split('.')[this.conn.getName().split('.').length-1];
+            };
             DomainWrapper.prototype.unsubscribe = function (channel) {
               var self = this;
               return interceptorWrapper('unsubscribe', arguments, function () {

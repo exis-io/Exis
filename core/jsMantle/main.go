@@ -221,6 +221,10 @@ func (d *Domain) GetToken() string {
 	return d.coreDomain.GetApp().GetToken()
 }
 
+func (d *Domain) GetName() string {
+	return d.coreDomain.GetName()
+}
+
 func (d *Domain) Login(user *js.Object) *js.Object {
 	q := core.Defer()
 
