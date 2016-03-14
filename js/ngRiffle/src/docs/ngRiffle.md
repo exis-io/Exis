@@ -71,9 +71,9 @@ Sets the top level application domain.
 
 **Kind**: static method of <code>[$riffleProvider](#$riffleProvider)</code>  
 
-| Param | Type |
-| --- | --- |
-| domain | <code>string</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| domain | <code>string</code> | The top level domain for the application. |
 
 **Example**  
 ```js
@@ -82,13 +82,13 @@ $riffleProvider.setDomain('xs.demo.user.app1');
 ```
 <a name="$riffleProvider.setFabric"></a>
 ### $riffleProvider.setFabric(url)
-Sets the url of the node we are connecting to.
+Sets the url of the node being connected to.
 
 **Kind**: static method of <code>[$riffleProvider](#$riffleProvider)</code>  
 
-| Param | Type |
-| --- | --- |
-| url | <code>string</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| url | <code>string</code> | The url of the node to be connected to. |
 
 **Example**  
 ```js
