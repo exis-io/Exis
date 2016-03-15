@@ -302,7 +302,7 @@ func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
 	if err := SoftCumin(binding.expectedTypes, msg.Arguments); err == nil {
 		c.app.CallbackSend(binding.callback, msg.Arguments...)
 	} else {
-        // TODO: warn application level code at some well-known location
+		// TODO: warn application level code at some well-known location
 		Warn("%v", err)
 	}
 }
