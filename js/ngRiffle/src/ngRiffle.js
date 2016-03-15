@@ -1,4 +1,8 @@
 /**
+ * @version 0.4.4
+ */
+
+/**
  * @namespace $riffleProvider
  * @description The $riffleProvider is used to configure settings for the $riffle service.
  * The functions can be used in a .config block of the application.
