@@ -121,7 +121,8 @@ public class Riffle {
 }
 
 
-// Create CBIDs on this side of the boundary. Note this makes them doubles, should be using byte arrays
+// Create CBIDs on this side of the boundary. Note this makes them doubles, should be using byte arrays or 
+// uint64
 // TODO: Use this but convert to byte slices first
 //// Biggest random number that can be choosen
 //let randomMax = UInt32(pow(Double(2), Double(32)) - 1)

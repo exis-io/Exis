@@ -6,16 +6,6 @@
 //  Copyright © 2015 exis. All rights reserved.
 //
 
-/*
-TODO:
-
-    Integrate with main swiftRiffle lib for testing
-    Make conditional compilers for ios and osx
-    Cleanup and integrate new changes with goRiffle
-    Implement Domain class in goRiffle
-    Implment Call, Unreg, Unsub
-*/
-
 import Foundation
 import CoreFoundation
 import Mantle
@@ -109,11 +99,15 @@ public class Domain {
             print("Unable to join!")
         }
         
-        // Very different in swift 2.2, since we may still not have access to GCD
-        // TODO: find a solution that works for both!
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+        // Differences based on implementation differences in open source swift and apple swift
+        #if os(Linux)
             self.app.receive()
-        }
+        #else
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                self.app.receive()
+            }
+        #endif       
+        
     }
     
     

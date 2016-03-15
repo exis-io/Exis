@@ -1,8 +1,10 @@
 CODE_SIGN_IDENTITY =
 CONFIGURATION_BUILD_DIR = $PODS_SHARED_BUILD_DIR/Riffle-OSX
-FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/../../Pod/Assets/osx" $(inherited) $(PODS_ROOT)/../../Pod/Assets/osx/
+EMBEDDED_CONTENT_CONTAINS_SWIFT = YES
+FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/../../Pod/Assets/osx"
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
 HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers/Private" "${PODS_ROOT}/Headers/Public"
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Riffle-OSX
 OTHER_LDFLAGS = -framework "Mantle"
 OTHER_SWIFT_FLAGS = $(inherited) "-D" "COCOAPODS"
 PODS_ROOT = ${SRCROOT}
