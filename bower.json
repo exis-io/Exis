@@ -1,6 +1,6 @@
 {
     "name": "ngRiffle",
-    "main": "release/ngRiffle.js",
+    "main": "release/ngRiffle.min.js",
     "authors": [
         "Exis <developers@exis.io>"
     ],
@@ -21,6 +21,6 @@
     ],
     "dependencies": {
         "angular": "^1.2.0",
-        "jsRiffle": "0.4.3"
+        "jsRiffle": "0.4.4"
     }
 }
