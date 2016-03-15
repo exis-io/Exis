@@ -84,18 +84,8 @@ strip_invalid_archs() {
 
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_framework "Pods-Riffle_Example/AFNetworking.framework"
-  install_framework "Pods-Riffle_Example/CocoaAsyncSocket.framework"
-  install_framework "Pods-Riffle_Example/GHODictionary.framework"
-  install_framework "Pods-Riffle_Example/MPMessagePack.framework"
-  install_framework "Pods-Riffle_Example/Riffle.framework"
-  install_framework "Pods-Riffle_Example/SocketRocket.framework"
+  install_framework "$CONFIGURATION_BUILD_DIR/Riffle-iOS/Riffle.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_framework "Pods-Riffle_Example/AFNetworking.framework"
-  install_framework "Pods-Riffle_Example/CocoaAsyncSocket.framework"
-  install_framework "Pods-Riffle_Example/GHODictionary.framework"
-  install_framework "Pods-Riffle_Example/MPMessagePack.framework"
-  install_framework "Pods-Riffle_Example/Riffle.framework"
-  install_framework "Pods-Riffle_Example/SocketRocket.framework"
+  install_framework "$CONFIGURATION_BUILD_DIR/Riffle-iOS/Riffle.framework"
 fi
