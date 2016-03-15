@@ -29,6 +29,7 @@ import os
 import sys
 import docopt
 from subprocess import call
+from distutils.dir_util import copy_tree
 import shutil
 import tempfile
 
@@ -201,9 +202,8 @@ if __name__ == '__main__':
         This is for checking in binary files into a subtree but not the trunk.
 
         This is for situations where you want to check in files into the subtree and not the trunk (like big binary files)
-        Make sure the binary files are ignored at the trunk, not in the local repo, else they'll be ignored
-        when pushing the shadow. You can also move gitignores too and avoid this problem 
-
+        required by a semver dependency manager. Make sure the binary files are ignored at the trunk, not in the local 
+        repo, else they'll be ignored when pushing the shadow. You can also move gitignores too and avoid this problem 
 
         The basics are: 
 
@@ -236,41 +236,42 @@ if __name__ == '__main__':
                 found = True
                 break
 
-        pass
+        if not found:
+            print("Error: unrecognized remote ({})".format(args['<remote>']))
+            sys.exit(1)
 
-'''
-Deployment scripts from old stump
+        # Note that the shadows have their own remotes. TODO: consolidate this into the top data
+        # structure
+        if remote == 'swiftRiffle':
+            shadow = 'git@github.com:exis-io/swiftRiffleCocoapod.git'
+        else:
+            print 'Unrecognized remote. Not all remotes have shadows!'
+            sys.exit(1)
 
-ios() {
-    echo "Updating riffle, seeds, and cards to version $1"
+        # print("Pushing {} to remote {} ({})...".format(prefix, remote, url))
+        # call("git subtree push --prefix {} {} master".format(prefix, remote), shell=True)
 
-    git subtree push --prefix swift/swiftRiffle swiftRiffle master
+        # tag = args['<version>']
+        # if not tag.startswith("v"):
+        #     tag = "v" + tag
 
-    git clone git@github.com:exis-io/swiftRiffle.git
-    cd swiftRiffle
-    
-    git tag $1 
-    git push --tags
+        tmp = tempfile.mkdtemp()
 
-    pod trunk push --allow-warnings --verbose
+        # clone without the checkout to just grab the .git directory
+        call("git clone --no-checkout {} {}".format(shadow, tmp), shell=True)
 
-    cd ..
-    rm -rf swiftRiffle
+        # Copy the contents of the real directory
+        copy_tree(prefix, tmp)
 
-    # update the seed projects and push them 
-    cd swift/appSeed
-    pod update
+        call('git -C {0} add --all'.format(tmp), shell=True)
+        call('git -C {0} commit -m "Shadow subtree merge"'.format(tmp), shell=True)
 
-    cd ../appBackendSeed
-    pod update
-    cd ../..
+        print 'Shadow set up in ', tmp
 
-    git add --all
-    git commit -m "swRiffle upgrade to v $1"
+        # print("Creating tag: {}".format(tag))
+        # call('git -C {0} tag -a {1} -m "Release {1}."'.format(tmp, tag), shell=True)
+        # call('git  tag -a {1}-{0} -m "Release {1}-{0}."'.format(args['<version>'], remote), shell=True)
+        # call("git push --tags origin HEAD", shell=True)
+        # call("git -C {} push --tags origin master".format(tmp), shell=True)
+        # shutil.rmtree(tmp)
 
-    git subtree push --prefix swift/appBackendSeed iosAppBackendSeed master
-    git subtree push --prefix swift/appSeed iosAppSeed master
-    git push origin master
-}
-
-'''
