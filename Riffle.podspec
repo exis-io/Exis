@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
     s.name             = "Riffle"
-    s.version          = "0.2.03"
+    s.version          = "0.2.01"
     s.summary          = "Client side library for connecting to a fabric."
 
     s.ios.deployment_target = "8.0"
@@ -18,11 +18,11 @@ networking code with something that doesn't look like networking code at all!
 
     #s.source           = { :git => "https://github.com/exis-io/swiftRiffle.git", :tag => s.version.to_s }
 
-    s.source       = { :http => "http://riffle-dist.s3-website-us-west-2.amazonaws.com/swiftRiffle.zip" }
+    s.source       = { :http => "http://riffle-dist.s3-website-us-west-2.amazonaws.com/iosRiffle.zip" }
 
     s.requires_arc = true
-    s.source_files = 'swiftRiffle/Pod/Classes/**/*.swift'
+    s.source_files = 'iosRiffle/Pod/Classes/**/*.swift'
 
-    s.ios.vendored_frameworks = "swiftRiffle/Pod/Assets/ios/Mantle.framework"
-    s.osx.vendored_frameworks = "swiftRiffle/Pod/Assets/osx/Mantle.framework"
+    s.ios.vendored_frameworks = "iosRiffle/Pod/Assets/ios/Mantle.framework"
+    s.osx.vendored_frameworks = "iosRiffle/Pod/Assets/osx/Mantle.framework"
 end
