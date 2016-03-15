@@ -195,6 +195,7 @@ if __name__ == '__main__':
         shutil.rmtree(tmp)
 
     elif args['shadow']:
+
         '''
         This action pushes out a "shadow" subtree, or a subtree that is *not* added as a remote to the trunk
         This is for checking in binary files into a subtree but not the trunk.
@@ -214,12 +215,11 @@ if __name__ == '__main__':
         Example using the swiftRiffleCocoapod
 
             git clone --no-checkout git@github.com:exis-io/swiftRiffleCocoapod.git swift/swiftRiffle/swiftRiffle.tmp 
-
             mv swift/swiftRiffle/swiftRiffle.tmp/.git swift/swiftRiffle/
             rm -rf swift/swiftRiffle/swiftRiffle.tmp
 
             git -C swift/swiftRiffle add --all 
-            git -C swift/swiftRiffle commit -m "Some message"
+            git -C swift/swiftRiffle commit -m "m"
             git -C swift/swiftRiffle push origin master
 
             rm -rf swift/swiftRiffle/.git
@@ -236,26 +236,7 @@ if __name__ == '__main__':
                 found = True
                 break
 
-        # if not found:
-        #     print("Error: unrecognized remote ({})".format(args['<remote>']))
-        #     sys.exit(1)
-
-        # tag = args['<version>']
-        # if not tag.startswith("v"):
-        #     tag = "v" + tag
-
-        # tmp = tempfile.mkdtemp()
-        # call("git clone --no-checkout {} {}".format(url, tmp), shell=True)
-
-        # print "Merging changes"
-
-
-        # print("Creating tag: {}".format(tag))
-        # call('git -C {0} tag -a {1} -m "Release {1}."'.format(tmp, tag), shell=True)
-        # call('git  tag -a {1}-{0} -m "Release {1}-{0}."'.format(args['<version>'], remote), shell=True)
-        # call("git push --tags origin HEAD", shell=True)
-        # call("git -C {} push --tags origin master".format(tmp), shell=True)
-        # shutil.rmtree(tmp)
+        pass
 
 '''
 Deployment scripts from old stump
