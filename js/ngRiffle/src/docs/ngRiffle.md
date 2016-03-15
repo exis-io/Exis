@@ -137,6 +137,8 @@ functions for creating new domain objects, and interacting with [ModelObject](#M
     * [.linkDomain(fullDomain)](#$riffle.linkDomain) ⇒ <code>[RiffleDomain](#RiffleDomain)</code>
     * [.join()](#$riffle.join)
     * [.leave()](#$riffle.leave)
+    * [.getName()](#$riffle.getName) ⇒ <code>string</code>
+    * [.username()](#$riffle.username) ⇒ <code>string</code>
     * [.user](#$riffle.user) : <code>object</code>
         * [.email](#$riffle.user.email) : <code>string</code>
         * [.name](#$riffle.user.name) : <code>string</code>
@@ -146,6 +148,19 @@ functions for creating new domain objects, and interacting with [ModelObject](#M
         * [.load()](#$riffle.user.load) ⇒ <code>Promise</code>
         * [.save()](#$riffle.user.save) ⇒ <code>Promise</code>
         * [.getPublicData([query])](#$riffle.user.getPublicData) ⇒ <code>Promise</code>
+        * [.call(action, ...args)](#$riffle.user.call) ⇒ <code>[RifflePromise](#RifflePromise)</code>
+        * [.register(action, handler)](#$riffle.user.register) ⇒ <code>Promise</code>
+        * [.publish(channel, ...args)](#$riffle.user.publish)
+        * [.subscribe(channel, handler)](#$riffle.user.subscribe) ⇒ <code>Promise</code>
+        * [.subscribeOnScope(scope, channel, handler)](#$riffle.user.subscribeOnScope) ⇒ <code>Promise</code>
+        * [.unregister(action)](#$riffle.user.unregister)
+        * [.unsubscribe(channel)](#$riffle.user.unsubscribe)
+        * [.subdomain(name)](#$riffle.user.subdomain) ⇒ <code>[RiffleDomain](#RiffleDomain)</code>
+        * [.linkDomain(fullDomain)](#$riffle.user.linkDomain) ⇒ <code>[RiffleDomain](#RiffleDomain)</code>
+        * [.join()](#$riffle.user.join)
+        * [.leave()](#$riffle.user.leave)
+        * [.getName()](#$riffle.user.getName) ⇒ <code>string</code>
+        * [.username()](#$riffle.user.username) ⇒ <code>string</code>
 
 <a name="$riffle.login"></a>
 ### $riffle.login([user]) ⇒ <code>Promise</code>
@@ -469,6 +484,26 @@ $scope.$on('$riffle.leave', function(){
   console.log('Connection Closed!');
 });
 ```
+<a name="$riffle.getName"></a>
+### $riffle.getName() ⇒ <code>string</code>
+Get the string representation of the domain.
+
+**Kind**: static method of <code>[$riffle](#$riffle)</code>  
+**Returns**: <code>string</code> - The string representation of the domain. i.e. `xs.demo.user.app`.  
+**Example**  
+```js
+$riffle.getName(); //returns 'xs.demo.developer.app'
+```
+<a name="$riffle.username"></a>
+### $riffle.username() ⇒ <code>string</code>
+Returns the final portion of domain.
+
+**Kind**: static method of <code>[$riffle](#$riffle)</code>  
+**Returns**: <code>string</code> - The final portion of the domain. i.e. `xs.demo.user.app.username` => `username`  
+**Example**  
+```js
+$riffle.user.username(); //returns 'username'
+```
 <a name="$riffle.user"></a>
 ### $riffle.user : <code>object</code>
 The user object is created only if connection to the fabric is done via the [login](#$riffle.login) function through
@@ -485,6 +520,19 @@ an [Auth](/docs/appliances/Auth) appliance.
     * [.load()](#$riffle.user.load) ⇒ <code>Promise</code>
     * [.save()](#$riffle.user.save) ⇒ <code>Promise</code>
     * [.getPublicData([query])](#$riffle.user.getPublicData) ⇒ <code>Promise</code>
+    * [.call(action, ...args)](#$riffle.user.call) ⇒ <code>[RifflePromise](#RifflePromise)</code>
+    * [.register(action, handler)](#$riffle.user.register) ⇒ <code>Promise</code>
+    * [.publish(channel, ...args)](#$riffle.user.publish)
+    * [.subscribe(channel, handler)](#$riffle.user.subscribe) ⇒ <code>Promise</code>
+    * [.subscribeOnScope(scope, channel, handler)](#$riffle.user.subscribeOnScope) ⇒ <code>Promise</code>
+    * [.unregister(action)](#$riffle.user.unregister)
+    * [.unsubscribe(channel)](#$riffle.user.unsubscribe)
+    * [.subdomain(name)](#$riffle.user.subdomain) ⇒ <code>[RiffleDomain](#RiffleDomain)</code>
+    * [.linkDomain(fullDomain)](#$riffle.user.linkDomain) ⇒ <code>[RiffleDomain](#RiffleDomain)</code>
+    * [.join()](#$riffle.user.join)
+    * [.leave()](#$riffle.user.leave)
+    * [.getName()](#$riffle.user.getName) ⇒ <code>string</code>
+    * [.username()](#$riffle.user.username) ⇒ <code>string</code>
 
 <a name="$riffle.user.email"></a>
 #### user.email : <code>string</code>
@@ -553,6 +601,222 @@ Load the public user objects from Storage. Accepts an optional MongoDB
 | --- | --- | --- |
 | [query] | <code>object</code> | Optional MongoDB [query](https://docs.mongodb.org/manual/tutorial/query-documents/) |
 
+<a name="$riffle.user.call"></a>
+#### user.call(action, ...args) ⇒ <code>[RifflePromise](#RifflePromise)</code>
+Call a function already registered to an action on this domain. If the domain object represents an domain like `xs.demo.user.app` the 
+endpoint that is called to will look like `xs.demo.user.app/action`.
+
+**Kind**: static method of <code>[user](#$riffle.user)</code>  
+**Returns**: <code>[RifflePromise](#RifflePromise)</code> - Returns a regular promise but with an extra [want](#RifflePromise.want) function that can be used to specify the expected result type  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| action | <code>string</code> | The action the function being called is registered under on the domain. |
+| ...args | <code>\*</code> | The arguments to provide to the function being called. |
+
+**Example**  
+```js
+//call an action sum on with two numbers on our top level app domain. i.e. xs.demo.user.app/sum
+var p = $riffle.call('sum', 1, 1);
+
+//anyHandler will be called if the call is successful no matter what the result error1 will be called if there an error
+p.then(anyHandler, error);
+
+//numHandler will only be called if the result from the call is a number
+//numError will be called if the response is not a number or any other error
+p.want(Number).then(numHandler, numError);
+```
+<a name="$riffle.user.register"></a>
+#### user.register(action, handler) ⇒ <code>Promise</code>
+Register a function to handle calls made to action on this domain. If the domain object represents a domain like `xs.demo.user.app` the 
+endpoint that the handler is registered to will look like `xs.demo.user.app/action`.
+
+**Kind**: static method of <code>[user](#$riffle.user)</code>  
+**Returns**: <code>Promise</code> - a promise that is resolved if the handler is successfully registered or rejected if there is an error.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| action | <code>string</code> | The action that the handler should be registered as under the domain. |
+| handler | <code>function</code> | The function that will handle any calls made to the registered endpoint or a valid [want](#$riffle.want) function. |
+
+**Example**  
+```js
+//register an action call hello on our top level app domain. i.e. xs.demo.user.app/hello
+$riffle.register('hello', function(){
+  console.log('hello');
+});
+```
+<a name="$riffle.user.publish"></a>
+#### user.publish(channel, ...args)
+Publish data to any subscribers listening on a given channel on the domain. If the [domain](#RiffleDomain) represents a domain like `xs.demo.user.app` the 
+endpoint that is published to will look like `xs.demo.user.app/channel`.
+
+**Kind**: static method of <code>[user](#$riffle.user)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| channel | <code>string</code> | The channel the being published to on the domain. |
+| ...args | <code>\*</code> | The arguments to publish to the channel. |
+
+**Example**  
+```js
+//publish the string 'hello' to the `ping` channel on our top level app domain. i.e. `xs.demo.user.app/ping`
+$riffle.publish('ping', 'hello');
+```
+<a name="$riffle.user.subscribe"></a>
+#### user.subscribe(channel, handler) ⇒ <code>Promise</code>
+Subscribe a function to handle publish events made to the channel on this domain. If the domain object represents an domain like `xs.demo.user.app` the 
+endpoint that the handler is subscribed to will look like `xs.demo.user.app/channel`.
+
+**Kind**: static method of <code>[user](#$riffle.user)</code>  
+**Returns**: <code>Promise</code> - a promise that is resolved if the handler is successfully subscribed or rejected if there is an error.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| channel | <code>string</code> | The channel that the handler should subscribe to under the domain. |
+| handler | <code>function</code> | The function that will handle any publishes made to the registered endpoint or a valid [want](#$riffle.want) function. |
+
+**Example**  
+```js
+//subscribe to events published to hello on our top level app domain. i.e. xs.demo.user.app/hello
+$riffle.subscribe('hello', function(){
+  console.log('Received hello event!');
+});
+```
+<a name="$riffle.user.subscribeOnScope"></a>
+#### user.subscribeOnScope(scope, channel, handler) ⇒ <code>Promise</code>
+Creates a subscription via [subscribe](#RiffleDomain.subscribe) but binds it to the provided scope so that on destruction of the scope the handler is unsubscribed.
+
+**Kind**: static method of <code>[user](#$riffle.user)</code>  
+**Returns**: <code>Promise</code> - a promise that is resolved if the handler is successfully subscribed or rejected if there is an error.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| scope | <code>object</code> | The $scope that the subscribe should be bound to. |
+| channel | <code>string</code> | The channel that the handler should subscribe to under the domain. |
+| handler | <code>function</code> | The function that will handle any publishes made to the registered endpoint or a valid [want](#$riffle.want) function. |
+
+**Example**  
+```js
+//subscribe to events published to hello on our top level app domain and bind the subscription to $scope
+$riffle.subscribeOnScope($scope, 'hello', function(){
+  console.log('Received hello event!');
+});
+```
+<a name="$riffle.user.unregister"></a>
+#### user.unregister(action)
+Unregister the handler for the specified action on this domain.
+
+**Kind**: static method of <code>[user](#$riffle.user)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| action | <code>string</code> | The action that you wish to unregister the handler from under the domain. |
+
+**Example**  
+```js
+//unregister the 'getData' action handler on our top level app domain. i.e. xs.demo.user.app/getData
+$riffle.unregister('getData');
+```
+<a name="$riffle.user.unsubscribe"></a>
+#### user.unsubscribe(channel)
+Unsubscribe all handlers subscribe to the channel on this domain.
+
+**Kind**: static method of <code>[user](#$riffle.user)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| channel | <code>string</code> | The channel that you wish to unsubscribe handlers from under the domain. |
+
+**Example**  
+```js
+//unsubscribe to events published to hello on our top level app domain. i.e. xs.demo.user.app/hello
+$riffle.unsubscribe('hello');
+```
+<a name="$riffle.user.subdomain"></a>
+#### user.subdomain(name) ⇒ <code>[RiffleDomain](#RiffleDomain)</code>
+Create a subdomain from the current [domain](#RiffleDomain) object.
+
+**Kind**: static method of <code>[user](#$riffle.user)</code>  
+**Returns**: <code>[RiffleDomain](#RiffleDomain)</code> - A subdomain representing a domain with name appended to the parent domain. i.e. `xs.demo.user.app` => `xs.demo.user.app.subdomain`  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | The name of the new subdomain. |
+
+**Example**  
+```js
+//if $riffle represents the domain xs.demo.user.app backend is a [RiffleDomain](#RiffleDomain) that represents `xs.demo.user.app.backend`
+var backend = $riffle.subdomain('backend');
+```
+<a name="$riffle.user.linkDomain"></a>
+#### user.linkDomain(fullDomain) ⇒ <code>[RiffleDomain](#RiffleDomain)</code>
+Create a new domain from the current [domain](#RiffleDomain) object that represents the domain specified by fullDomain.
+
+**Kind**: static method of <code>[user](#$riffle.user)</code>  
+**Returns**: <code>[RiffleDomain](#RiffleDomain)</code> - A [RiffleDomain](#RiffleDomain) representing a domain specified by the fullDomain argument  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| fullDomain | <code>string</code> | The full name of the new domain. |
+
+**Example**  
+```js
+//create a new domain that represents xs.demo.partner.app
+var anotherApp = $riffle.linkDomain('xs.demo.partner.app');
+```
+<a name="$riffle.user.join"></a>
+#### user.join()
+Attempts to create a connection to the Exis fabric using this domain. If successful a `$riffle.open` event will be broadcast throughout the app
+to notify listening handlers that a successful connection was established.
+
+**Kind**: static method of <code>[user](#$riffle.user)</code>  
+**Example**  
+```js
+//attempt to join connect to Exis as the top level domain i.e. xs.demo.user.app
+$riffle.join();
+
+//if the join is successful this function will be triggered
+$scope.$on('$riffle.open', function(){
+  console.log('Connected!');
+});
+```
+<a name="$riffle.user.leave"></a>
+#### user.leave()
+Unregister and unsubscribe anything in the domain and disconnect from Exis if this the the domain that [join](#RiffleDomain.join) was called on.
+If the connection is closed a `$riffle.leave` event will be broadcast thoughout the app to notify listening handlers that the session has been closed.
+
+**Kind**: static method of <code>[user](#$riffle.user)</code>  
+**Example**  
+```js
+//unregister/unsubscribe any handlers on the top level domain and close the connection if it this the the domain join was called on.
+$riffle.leave();
+
+//if the connection is closed this function will be triggered
+$scope.$on('$riffle.leave', function(){
+  console.log('Connection Closed!');
+});
+```
+<a name="$riffle.user.getName"></a>
+#### user.getName() ⇒ <code>string</code>
+Get the string representation of the domain.
+
+**Kind**: static method of <code>[user](#$riffle.user)</code>  
+**Returns**: <code>string</code> - The string representation of the domain. i.e. `xs.demo.user.app`.  
+**Example**  
+```js
+$riffle.getName(); //returns 'xs.demo.developer.app'
+```
+<a name="$riffle.user.username"></a>
+#### user.username() ⇒ <code>string</code>
+Returns the final portion of domain.
+
+**Kind**: static method of <code>[user](#$riffle.user)</code>  
+**Returns**: <code>string</code> - The final portion of the domain. i.e. `xs.demo.user.app.username` => `username`  
+**Example**  
+```js
+$riffle.user.username(); //returns 'username'
+```
 <a name="ModelObject"></a>
 ## ModelObject
 The ModelObject class is used to to wrap a custom JavaScript class and provides an API for interaction with
@@ -776,6 +1040,8 @@ backend.call('getData').then(handler);
 ```
 
 * [RiffleDomain](#RiffleDomain)
+    * [.getName()](#RiffleDomain.getName) ⇒ <code>string</code>
+    * [.username()](#RiffleDomain.username) ⇒ <code>string</code>
     * [.register(action, handler)](#RiffleDomain.register) ⇒ <code>Promise</code>
     * [.call(action, ...args)](#RiffleDomain.call) ⇒ <code>[RifflePromise](#RifflePromise)</code>
     * [.publish(channel, ...args)](#RiffleDomain.publish)
@@ -788,6 +1054,26 @@ backend.call('getData').then(handler);
     * [.join()](#RiffleDomain.join)
     * [.leave()](#RiffleDomain.leave)
 
+<a name="RiffleDomain.getName"></a>
+### RiffleDomain.getName() ⇒ <code>string</code>
+Get the string representation of the domain.
+
+**Kind**: static method of <code>[RiffleDomain](#RiffleDomain)</code>  
+**Returns**: <code>string</code> - The string representation of the domain. i.e. `xs.demo.user.app`.  
+**Example**  
+```js
+$riffle.getName(); //returns 'xs.demo.developer.app'
+```
+<a name="RiffleDomain.username"></a>
+### RiffleDomain.username() ⇒ <code>string</code>
+Returns the final portion of domain.
+
+**Kind**: static method of <code>[RiffleDomain](#RiffleDomain)</code>  
+**Returns**: <code>string</code> - The final portion of the domain. i.e. `xs.demo.user.app.username` => `username`  
+**Example**  
+```js
+$riffle.user.username(); //returns 'username'
+```
 <a name="RiffleDomain.register"></a>
 ### RiffleDomain.register(action, handler) ⇒ <code>Promise</code>
 Register a function to handle calls made to action on this domain. If the domain object represents a domain like `xs.demo.user.app` the 
