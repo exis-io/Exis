@@ -2,7 +2,7 @@
   "name": "jsriffle",
   "version": "0.4.5",
   "description": "Riffle allows applications to connect over a fabric",
-  "main": "release/jsRiffle.min.js",
+  "main": "index.js",
   "browser": {
     "src/transport/rawsocket.js": false
   },
