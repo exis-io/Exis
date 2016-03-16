@@ -16,6 +16,7 @@ class Dog: Model {
 
 // Create an object
 let dog = Dog()
+let dogs = [dog, dog, dog]
 
 
 class Receiver: Domain {
@@ -28,82 +29,81 @@ class Receiver: Domain {
         
         
         // No arguments
-        subscribe("subscribeNothing") {
-            print("SUCCESS --- 1-1")
-        }
-        
-
-        // Primitive Types
-        subscribe("subscribePrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
-            print("SUCCESS --- 1-2")
-            //print("1 : Sub receiving single types:", a, b, c, d, e)
-            
-            assert(a == 1)
-            assert(b == 2.2)
-            assert(c == 3.3)
-            assert(d == "4")
-            assert(e == true)
-        }
-        
-        // Arrys of simple types
-        subscribe("subscribeArrays") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
-            print("SUCCESS --- 1-3 ")
-            //print("Received: \(a) \(b) \(c) \(d) \(e), expecting 1 2.2 3.3 4 true")
-            
-            assert(a == [1, 2])
-            assert(b == [2.2, 3.3])
-            assert(c == [4.4, 5.5])
-            assert(d == ["6", "7"])
-            assert(e == [true, false])
-        }
-        
-        subscribe("subscribeModel") { (d: Dog) in
-            //print("Recieved:\(d), expecting: \(dog)")
-            print("SUCESS --- 1-4")
-            assert(d.name == dog.name && d.age == dog.age)
-        }
-        
-        // TODO: subscribe with model object
-        // TODO: Dictionaries of simple types
-        // TODO: Any
-        
-        
-        // Reg/Call Success Cases
-        // No arguments
-        register("registerNothing") {
-            print("SUCCESS --- 2-1")
-        }
-        
-        
-        // Simple Types
-        // FAIL when returning the types back to the client
-        // FAIL with no cumin enforcement present
-        // FAIL with floats
-        register("registerPrimitives") { (a: Int, c: Double, d: String, e: Bool) -> Any in
-            print("SUCCESS --- 2-2")
-            
-            assert(a == 1)
-            //assert(b == 2.2)
-            assert(c == 3.3)
-            assert(d == "4")
-            assert(e == true)
-
-            return (a, c, d, e)
-        }
-        
-        
-        // Collections of simple types
-        register("registerArrays") { (a: [Int], c: [Double], d: [String], e: [Bool]) -> Any in
-            print("SUCCESS --- 2-3")
-            
-            assert(a == [1, 2])
-            //assert(b == [2.2, 3.3])
-            assert(c == [4.4, 5.5])
-            assert(d == ["6", "7"])
-            assert(e == [true, false])
-            
-            return (a, c, d, e)
-        }
+//        subscribe("subscribeNothing") {
+//            print("SUCCESS --- 1-1")
+//        }
+//        
+//        // Primitive Types
+//        subscribe("subscribePrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
+//            print("SUCCESS --- 1-2")
+//            //print("1 : Sub receiving single types:", a, b, c, d, e)
+//            
+//            assert(a == 1)
+//            assert(b == 2.2)
+//            assert(c == 3.3)
+//            assert(d == "4")
+//            assert(e == true)
+//        }
+//        
+//        // Arrys of simple types
+//        subscribe("subscribeArrays") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
+//            print("SUCCESS --- 1-3 ")
+//            //print("Received: \(a) \(b) \(c) \(d) \(e), expecting 1 2.2 3.3 4 true")
+//            
+//            assert(a == [1, 2])
+//            assert(b == [2.2, 3.3])
+//            assert(c == [4.4, 5.5])
+//            assert(d == ["6", "7"])
+//            assert(e == [true, false])
+//        }
+//        
+//        subscribe("subscribeModel") { (d: Dog) in
+//            //print("Recieved:\(d), expecting: \(dog)")
+//            print("SUCESS --- 1-4")
+//            assert(d.name == dog.name && d.age == dog.age)
+//        }
+//        
+//        // TODO: subscribe with model object
+//        // TODO: Dictionaries of simple types
+//        // TODO: Any
+//        
+//        
+//        // Reg/Call Success Cases
+//        // No arguments
+//        register("registerNothing") {
+//            print("SUCCESS --- 2-1")
+//        }
+//        
+//        
+//        // Simple Types
+//        // FAIL when returning the types back to the client
+//        // FAIL with no cumin enforcement present
+//        // FAIL with floats
+//        register("registerPrimitives") { (a: Int, c: Double, d: String, e: Bool) -> Any in
+//            print("SUCCESS --- 2-2")
+//            
+//            assert(a == 1)
+//            //assert(b == 2.2)
+//            assert(c == 3.3)
+//            assert(d == "4")
+//            assert(e == true)
+//
+//            return (a, c, d, e)
+//        }
+//        
+//        
+//        // Collections of simple types
+//        register("registerArrays") { (a: [Int], c: [Double], d: [String], e: [Bool]) -> Any in
+//            print("SUCCESS --- 2-3")
+//            
+//            assert(a == [1, 2])
+//            //assert(b == [2.2, 3.3])
+//            assert(c == [4.4, 5.5])
+//            assert(d == ["6", "7"])
+//            assert(e == [true, false])
+//            
+//            return (a, c, d, e)
+//        }
         
 //        register("registerSinglePrimitive") { (a: Int) -> Any in
 //            print("SUCCESS --- 2-5")
@@ -125,15 +125,14 @@ class Receiver: Domain {
 //            })
 //
 //            // Collections of Riffle Model Objects
-//            let dogs = [Dog(1, "1"), Dog(1, "1"), Dog(1, "1")]
-//
-//            // Test both sending and receiving types
-//            // Test receiving collections in invocation
-//            register("registerModelArrays") { (d: [Dog]) -> AnyObject in
-//                print("\(t) : Register receiving model object:", d.count)
-//                print("                          expecting: \(dogs.count)\n")
-//                return d
-//            }
+
+
+            // Test both sending and receiving types
+            // Test receiving collections in invocation
+            register("registerModelArrays") { (d: [Dog]) -> Any in
+                print("SUCCESS --- 2-9")
+                return d
+            }
 //
 //            // WARNING: cant receive 5 elements in return
 //            receiver.call("registerModelArrays", [Dog(), Dog(), Dog()]).then { (dogs: [Dog]) in
@@ -171,54 +170,63 @@ class Sender: Domain {
         
         // Pub Sub Success Cases
         // No args
-        receiver.publish("subscribeNothing")
+//        receiver.publish("subscribeNothing")
+//        
+//        // Primitive Types
+//        receiver.publish("subscribePrimitives", 1, 2.2, 3.3, "4", true)
+//        
+//        // Arrys of simple types
+//        receiver.publish("subscribeArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
+//        
+//        // Model not reconstructed well
+//         receiver.publish("subscribeModel", dog)
+//        
+//        // Reg/Call Success Cases
+//        // No arguments
+//        receiver.call("registerNothing").then {
+//            assert(true)
+//        }
+//        
+//        // Primitive Types
+//        receiver.call("registerPrimitives", 1, 2.2, 3.3, "4", true).then { (a: Int, c: Double, d: String, e: Bool) in
+//            assert(a == 1)
+//            //assert(b == 2.2)
+//            assert(c == 3.3)
+//            assert(d == "4")
+//            assert(e == true)
+//            
+//            print("SUCCCES --- 2-4")
+//        }
+//        
+//        // Collections of simple types
+//        receiver.call("registerArrays", [1, 2], [4.4, 5.5], ["6", "7"], [true, false]).then { (a: [Int], c: [Double], d: [String], e: [Bool]) in
+//            assert(a == [1, 2])
+//            //assert(b == [2.2, 3.3])
+//            assert(c == [4.4, 5.5])
+//            assert(d == ["6", "7"])
+//            assert(e == [true, false])
+//            print("SUCCESS --- 2-7")
+//            
+//        }.error { reason in
+//            // TODO: the reason itself is not given, instead its the class of argument
+//            print("FAILURE ON CALL RETURN --- 2-2")
+//            print("\tREASON: \(reason)")
+//        }
         
-        // Primitive Types
-        receiver.publish("subscribePrimitives", 1, 2.2, 3.3, "4", true)
-        
-        // Arrys of simple types
-        receiver.publish("subscribeArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
-        
-        // Model not reconstructed well
-         receiver.publish("subscribeModel", dog)
-        
-        // Reg/Call Success Cases
-        // No arguments
-        receiver.call("registerNothing").then {
-            assert(true)
-        }
-        
-        // Primitive Types
-        receiver.call("registerPrimitives", 1, 2.2, 3.3, "4", true).then { (a: Int, c: Double, d: String, e: Bool) in
-            assert(a == 1)
-            //assert(b == 2.2)
-            assert(c == 3.3)
-            assert(d == "4")
-            assert(e == true)
-            
-            print("SUCCCES --- 2-4")
-        }
-        
-        // Collections of simple types
-        receiver.call("registerArrays", [1, 2], [4.4, 5.5], ["6", "7"], [true, false]).then { (a: [Int], c: [Double], d: [String], e: [Bool]) in
-            assert(a == [1, 2])
-            //assert(b == [2.2, 3.3])
-            assert(c == [4.4, 5.5])
-            assert(d == ["6", "7"])
-            assert(e == [true, false])
-            print("SUCCESS --- 2-7")
-            
+        // Collections of model objects
+        receiver.call("registerModelArrays", dogs).then { (a: [Dog]) in
+            assert(a.count == 3)
+            print("SUCCESS --- 2-10")
         }.error { reason in
-            // TODO: the reason itself is not given, instead its the class of argument
-            print("FAILURE ON CALL RETURN --- 2-2")
+            print("FAILURE ON CALL RETURN --- 2-9")
             print("\tREASON: \(reason)")
         }
-        
-        
-        receiver.call("registerSinglePrimitive", 1).then { (a: Int) in
-            assert(a == 1)
-            print("SUCCCES --- 2-6")
-        }
+//        
+//        
+//        receiver.call("registerSinglePrimitive", 1).then { (a: Int) in
+//            assert(a == 1)
+//            print("SUCCCES --- 2-6")
+//        }
     }
     
     override func onLeave() {

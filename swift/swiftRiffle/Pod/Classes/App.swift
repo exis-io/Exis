@@ -50,13 +50,12 @@ class App {
                         
                     // Function returned well known serializable types
                     } else if let _ = ret as? Property {
-                        Yield(mantleDomain, UInt64(resultId), marshall([ret]))
+                        Yield(mantleDomain, UInt64(resultId), marshall(serializeArguments([ret])))
                         
                     // Function returned something we can't check-- assume its a tuple
                     } else {
                         let unpacked = unpackTuple(ret)
-                        print("Tuple before: \(ret), after: \(unpacked)")
-                        Yield(mantleDomain, UInt64(resultId), marshall(unpacked))
+                        Yield(mantleDomain, UInt64(resultId), marshall(serializeArguments(unpacked)))
                     }
                 } else {
                     let empty: [Any] = []
