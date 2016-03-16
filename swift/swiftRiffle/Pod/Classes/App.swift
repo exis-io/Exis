@@ -48,9 +48,15 @@ class App {
                     if let _ = ret as? Void {
                         Yield(mantleDomain, UInt64(resultId), marshall([]))
                         
-                        // If function returned an array it could be a tuple
-                    } else {
+                    // Function returned well known serializable types
+                    } else if let _ = ret as? Property {
                         Yield(mantleDomain, UInt64(resultId), marshall([ret]))
+                        
+                    // Function returned something we can't check-- assume its a tuple
+                    } else {
+                        let unpacked = unpackTuple(ret)
+                        print("Tuple before: \(ret), after: \(unpacked)")
+                        Yield(mantleDomain, UInt64(resultId), marshall(unpacked))
                     }
                 } else {
                     let empty: [Any] = []
@@ -59,4 +65,11 @@ class App {
             }
         }
     }
+}
+
+// Here for testing. May break terribly on ubuntu, in which case core changes are needed to allow tupled returns
+// Takes a tuple and returns it as an array
+func unpackTuple(tuple: Any) -> [Any] {
+    let mirror = Mirror(reflecting: tuple)
+    return mirror.children.map { $0.value as Any }
 }

@@ -39,6 +39,7 @@ extension String {
 func decode(p: UnsafePointer<Int8>) -> (UInt64, [Any]) {
     let dataString = String.fromCString(p)!
     
+    
     guard let data = try! JSONParser.parse(dataString) as? [Any] else {
         print("DID NOT RECEIVE ARRAY BACK!")
         return (UInt64(0), [])
@@ -72,52 +73,52 @@ func serializeArguments(args: [Any]) -> [Any] {
     return ret
 }
 
-// Makes configuration calls a little cleaner when accessed from the top level
+// Makes configuration calls a little cleaner when accessed from the top level 
 // as well as keeping them all in one place
 public class Riffle {
     public class func setFabric(url: String) {
         MantleSetFabric(url.cString())
     }
-    
+
     public class func application(s: String){
         MantleApplication(s.cString())
     }
-    
+
     public class func debug(s: String){
         MantleDebug(s.cString())
     }
-    
+
     public class func info(s: String){
         MantleInfo(s.cString())
     }
-    
+
     public class func warn(s: String){
         MantleWarn(s.cString())
     }
-    
+
     public class func error(s: String){
         MantleError(s.cString())
     }
-    
+
     public class func setLogLevelApp() { MantleSetLogLevelApp() }
     public class func setLogLevelOff() { MantleSetLogLevelOff() }
     public class func setLogLevelErr() { MantleSetLogLevelErr() }
     public class func setLogLevelWarn() { MantleSetLogLevelWarn() }
     public class func setLogLevelInfo() { MantleSetLogLevelInfo() }
     public class func setLogLevelDebug() { MantleSetLogLevelDebug() }
-    
+
     public class func setFabricDev() { MantleSetFabricDev() }
     public class func setFabricSandbox() { MantleSetFabricSandbox() }
     public class func setFabricProduction() { MantleSetFabricProduction() }
     public class func setFabricLocal() { MantleSetFabricLocal() }
-    
+
     public class func setCuminStrict() { MantleSetCuminStrict() }
     public class func setCuminLoose() { MantleSetCuminLoose() }
     public class func setCuminOff() { MantleSetCuminOff() }
 }
 
 
-// Create CBIDs on this side of the boundary. Note this makes them doubles, should be using byte arrays or
+// Create CBIDs on this side of the boundary. Note this makes them doubles, should be using byte arrays or 
 // uint64
 // TODO: Use this but convert to byte slices first
 //// Biggest random number that can be choosen

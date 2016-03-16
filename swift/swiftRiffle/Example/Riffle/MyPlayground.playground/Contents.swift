@@ -132,13 +132,16 @@
 //
 //cumin(1, String.self)
 
+let t = (5, "String", false)
+let z = t as! Any
 
+print(t.dynamicType)
 
-let a = Double(12341234.4)
-let b = String(format: "%.0f", UInt64(a))
-let c = String(stringInterpolationSegment: a)
-
-
+let mirror = Mirror(reflecting: t)
+for (label, value) in mirror.children {
+    print(label)
+    print(value)
+}
 
 
 

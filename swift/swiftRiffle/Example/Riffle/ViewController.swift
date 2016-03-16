@@ -13,7 +13,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        Riffle.setLogLevelInfo()
+        Riffle.setLogLevelDebug()
         Riffle.setFabricDev()
         
         print("Starting Tests")

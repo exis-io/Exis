@@ -77,7 +77,6 @@ public class Domain {
     }
     
     public func join() {
-        
         let cb = CBID()
         let eb = CBID()
         
@@ -91,19 +90,19 @@ public class Domain {
             }
         }
         
-        app.handlers[eb] = { a in
-            if let d = self.delegate {
-                d.onLeave()
-            } else {
-                self.onLeave()
-            }
-        }
+//        app.handlers[eb] = { a in
+//            if let d = self.delegate {
+//                d.onLeave()
+//            } else {
+//                self.onLeave()
+//            }
+//        }
         
         app.handlers[eb] = { (a: Any) in
             print("Unable to join: \(a)")
         }
         
-        // Differences based on implementation differences in open source swift and apple swift
+        // Implementation differences in open source swift and apple swift. Should come together soon
         #if os(Linux)
             self.app.receive()
         #else
