@@ -154,7 +154,7 @@ func primitiveCheck(expected string, argument reflect.Kind) error {
 	if argument == reflect.Bool && expected == "bool" ||
 		argument == reflect.String && expected == "str" ||
 		argument == reflect.Float64 && (expected == "float" || expected == "int" || expected == "double") ||
-		argument == reflect.Int && (expected == "float" || expected == "int") ||
+		argument == reflect.Int && (expected == "float" || expected == "int" || expected == "double") ||
 		argument == reflect.Map && expected == "dict" {
 		return nil
 	}
