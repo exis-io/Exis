@@ -91,7 +91,6 @@ func (d domain) GetName() string {
 // Accepts a connection that has just been opened. This method should only
 // be called once, to initialize the fabric
 func (c domain) Join(conn Connection) error {
-
 	if c.joined {
 		return fmt.Errorf("Domain %s is already joined", c.name)
 	}

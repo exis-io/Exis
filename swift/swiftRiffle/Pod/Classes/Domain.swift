@@ -44,7 +44,7 @@ public class Domain {
     public func _subscribe(endpoint: String, _ types: [Any], fn: [Any] -> ()) -> Deferred {
         let hn = CBID()
         app.handlers[hn] = fn
-
+        
         let d = Deferred(domain: self)
         Subscribe(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(serializeArguments(types)))
         return d
@@ -53,12 +53,12 @@ public class Domain {
     public func _register(endpoint: String, _ types: [Any], fn: [Any] -> Any) -> Deferred {
         let hn = CBID()
         app.registrations[hn] = fn
-
+        
         let d = Deferred(domain: self)
         Register(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(types))
         return d
     }
-
+    
     public func publish(endpoint: String, _ args: Any...) -> Deferred {
         let d = Deferred(domain: self)
         Publish(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)))
@@ -70,6 +70,10 @@ public class Domain {
         d.mantleDomain = self.mantleDomain
         Call(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)))
         return d
+    }
+    
+    public func leave() {
+        Leave(self.mantleDomain)
     }
     
     public func join() {
@@ -86,7 +90,7 @@ public class Domain {
                 self.onJoin()
             }
         }
-
+        
         app.handlers[eb] = { a in
             if let d = self.delegate {
                 d.onLeave()
@@ -96,7 +100,7 @@ public class Domain {
         }
         
         app.handlers[eb] = { (a: Any) in
-            print("Unable to join!")
+            print("Unable to join: \(a)")
         }
         
         // Differences based on implementation differences in open source swift and apple swift
@@ -106,8 +110,7 @@ public class Domain {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
                 self.app.receive()
             }
-        #endif       
-        
+        #endif
     }
     
     
