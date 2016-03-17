@@ -40,7 +40,9 @@ s.osx.vendored_frameworks = "Pod/Assets/osx/Mantle.framework"
 #s.osx.vendored_frameworks = "Pod/Assets/osx/Mantle.framework"
 #s.osx.preserve_paths = "Pod/Assets/osx/Mantle.framework/Versions/A/Mantle"
 
-#s.osx.xcconfig = { "EMBEDDED_CONTENT_CONTAINS_SWIFT" => "YES", "LD_RUNPATH_SEARCH_PATHS" => "$(inherited) @executable_path/Riffle-OSX"}
+s.osx.xcconfig = { "EMBEDDED_CONTENT_CONTAINS_SWIFT" => "YES", "LD_RUNPATH_SEARCH_PATHS" => "$(inherited) @executable_path/Riffle-OSX"}
+
+s.ios.xcconfig = { "ENABLE_BITCODE" => "NO" } 
 
 
 end
