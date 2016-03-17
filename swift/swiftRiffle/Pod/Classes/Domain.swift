@@ -41,7 +41,7 @@ public class Domain {
         app = superdomain.app
     }
     
-    public func _subscribe(endpoint: String, _ types: [Any], fn: [Any] -> ()) -> Deferred {
+    public func _subscribe(endpoint: String, _ types: [Any], fn: [AnyObject] -> ()) -> Deferred {
         let hn = CBID()
         app.handlers[hn] = fn
         

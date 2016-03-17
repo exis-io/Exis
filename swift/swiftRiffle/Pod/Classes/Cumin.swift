@@ -15,7 +15,7 @@ associativity right
 precedence 155
 }
 
-func <- <T: Property> (t:T.Type, object: Any) -> T {
+func <- <T: Property> (t:T.Type, object: AnyObject) -> T {
     // Deserialize is implemented as part of the Convertible protocol. All properties implement Convertible
     return T.deserialize(object) as! T
 }
