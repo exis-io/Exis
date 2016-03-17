@@ -264,7 +264,7 @@ if __name__ == '__main__':
         copy_tree(prefix, tmp)
 
         call('git -C {0} add --all'.format(tmp), shell=True)
-        call('git -C {0} commit -m "Shadow subtree merge"'.format(tmp), shell=True)
+        call('git -C {0} commit -m "Shadow subtree {1}"'.format(tmp, tag), shell=True)
         call('git -C {0} push origin master'.format(tmp), shell=True)
         print 'Shadow set up in ', tmp
 
