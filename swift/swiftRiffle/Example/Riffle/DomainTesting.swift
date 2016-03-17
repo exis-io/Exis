@@ -12,6 +12,7 @@ import Riffle
 class Dog: Model {
     var name = "Fido"
     var age = 43
+    var something: Double = 1.0
 }
 
 // Create an object
