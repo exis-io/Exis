@@ -25,6 +25,8 @@ class Receiver: Domain {
     
     override func onJoin() {
         print("Recever joined")
+        dog.age = 21
+        dog.name = "Trump"
         
         // Pub Sub Success Cases
         
@@ -113,11 +115,11 @@ class Receiver: Domain {
 //        }
         
         // Riffle Model objects with returns
-//        register("registerModel") { (d: Dog) -> Dog in
-//            print("Recieved:\(d), expecting: \(dog)")
-//            assert(d.name == dog.name && d.age == dog.age)
-//            return d
-//        }
+        register("registerModel") { (d: Dog) -> Dog in
+            print("SUCCESS --- 2-11")
+            assert(d.name == dog.name && d.age == dog.age)
+            return d
+        }
 
         
 //            receiver.call("asdf", dog).then { (d: Dog) in
@@ -130,10 +132,6 @@ class Receiver: Domain {
 
             // Test both sending and receiving types
             // Test receiving collections in invocation
-//            register("registerModelArrays") { (d: [Dog]) -> Any in
-//                print("SUCCESS --- 2-9")
-//                return d
-//            }
 //
 //            // WARNING: cant receive 5 elements in return
 //            receiver.call("registerModelArrays", [Dog(), Dog(), Dog()]).then { (dogs: [Dog]) in
@@ -157,10 +155,10 @@ class Receiver: Domain {
         // Test Caller Cumin Error
         
         // Deferreds
-        register("subDeferred") { (a: Int) -> Any in
-            print("SUCCESS --- 3-1")
-            return a
-        }
+//        register("subDeferred") { (a: Int) -> Any in
+//            print("SUCCESS --- 3-1")
+//            return a
+//        }
         
         joinFinished()
     }
@@ -185,16 +183,20 @@ class Sender: Domain {
 //        
 //        // Arrys of simple types
 //        receiver.publish("subscribeArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
-//        
-//        // Model not reconstructed well
+//
 //         receiver.publish("subscribeModel", dog)
-//        
+
 //        // Reg/Call Success Cases
 //        // No arguments
 //        receiver.call("registerNothing").then {
 //            assert(true)
 //        }
-//        
+        
+        receiver.call("registerModel", dog).then { (d: Dog) in
+            assert(d.age == 21)
+            print("SUCESS --- 2-12")
+        }
+
 //        // Primitive Types
 //        receiver.call("registerPrimitives", 1, 2.2, 3.3, "4", true).then { (a: Int, c: Double, d: String, e: Bool) in
 //            assert(a == 1)
@@ -223,7 +225,9 @@ class Sender: Domain {
         
         // Collections of model objects
 //        receiver.call("registerModelArrays", dogs).then { (a: [Dog]) in
+//            print("Got dogs: \(a)")
 //            assert(a.count == 3)
+//            assert(a[0].age == 21)
 //            print("SUCCESS --- 2-10")
 //        }.error { reason in
 //            print("FAILURE ON CALL RETURN --- 2-9")
@@ -236,17 +240,17 @@ class Sender: Domain {
 //            print("SUCCCES --- 2-6")
 //        }
         
-        receiver.call("subDeferred", 1).then { (a: Int) in
-            print("SUCCESS --- 3-2")
-        }.then {
-            print("SUCCESS --- 3-3")
-        }
-        
-        receiver.call("subDeferred", "a").error { reason in
-            print("SUCCESS --- 3-4")
-        }.error { reason in 
-            print("SUCCESS --- 3-5")
-        }
+//        receiver.call("subDeferred", 1).then { (a: Int) in
+//            print("SUCCESS --- 3-2")
+//        }.then {
+//            print("SUCCESS --- 3-3")
+//        }
+//        
+//        receiver.call("subDeferred", "a").error { reason in
+//            print("SUCCESS --- 3-4")
+//        }.error { reason in 
+//            print("SUCCESS --- 3-5")
+//        }
     }
     
     override func onLeave() {

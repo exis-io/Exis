@@ -14,7 +14,7 @@ class App {
     
     var deferreds: [UInt64: Deferred] = [:]
     var handlers: [UInt64: [Any] -> ()] = [:]
-    var registrations: [UInt64: [Any] -> Any?] = [:]
+    var registrations: [UInt64: [AnyObject] -> Any?] = [:]
     
     
     init(domain: UInt64) {

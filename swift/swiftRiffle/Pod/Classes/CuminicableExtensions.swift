@@ -42,7 +42,7 @@ extension BaseConvertible {
     }
 }
 
-/// All model properties must conform to this protocol
+// All model properties must conform to this protocol
 public protocol Property: Convertible {}
 
 extension Property {
@@ -62,6 +62,7 @@ extension Property {
     mutating func codeOptionalInto(pointer: UnsafePointer<Int>) {
         (UnsafeMutablePointer(pointer) as UnsafeMutablePointer<Optional<Self>>).memory = self
     }
+    
 }
 
 protocol OptionalProperty : Property {
@@ -94,7 +95,6 @@ extension Optional : OptionalProperty {
 }
 
 // Deprecated or not present in swift 2.2
-
 // extension AutoreleasingUnsafeMutablePointer : Property, BaseConvertible {}
 
 // Extremely primitive types
