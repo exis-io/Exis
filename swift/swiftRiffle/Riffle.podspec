@@ -4,7 +4,7 @@ Pod::Spec.new do |s|
 
 
 s.name             = "Riffle"
-s.version          = "0.2.10"
+s.version          = "0.2.11"
 s.summary          = "Client side library for connecting to a fabric."
 
 s.description      = <<-DESC
