@@ -235,13 +235,21 @@ extension Array : Property, BaseConvertible {
     
     public func serialize() -> Any {
         // TODO: Apply recursive serialization here
-        return self
+        var ret: [Any] = []
+        
+        for child in self {
+            if let convert = child as? Convertible {
+                ret.append(convert.serialize())
+            }
+        }
+        
+        return ret
+//        return self
     }
     
     public static func representation() -> Any {
         if let child = Generator.Element.self as? Convertible.Type {
             return [child.representation()]
-            // return "[\(child.representation())]"
         }
         
         Riffle.warn("WARN- Unable to derive representation of array! Type: \(self)")
