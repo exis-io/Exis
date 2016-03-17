@@ -265,7 +265,7 @@ if __name__ == '__main__':
 
         call('git -C {0} add --all'.format(tmp), shell=True)
         call('git -C {0} commit -m "Shadow subtree merge"'.format(tmp), shell=True)
-
+        call('git -C {0} push origin master'.format(tmp), shell=True)
         print 'Shadow set up in ', tmp
 
         # print("Creating tag: {}".format(tag))
@@ -274,4 +274,3 @@ if __name__ == '__main__':
         # call("git push --tags origin HEAD", shell=True)
         # call("git -C {} push --tags origin master".format(tmp), shell=True)
         # shutil.rmtree(tmp)
-

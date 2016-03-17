@@ -27,6 +27,7 @@ class Receiver: Domain {
         print("Recever joined")
         dog.age = 21
         dog.name = "Trump"
+        dog.something = 56.4
         
         // Pub Sub Success Cases
         
