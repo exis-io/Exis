@@ -15,6 +15,10 @@ public class Model: Silvery, Property, CustomStringConvertible {
     public var description:String {
         return "\(self.dynamicType){\(self.propertyNames().map { "\($0): \(self[$0])"}.joinWithSeparator(", "))}"
     }
+    
+    func _serialize() {
+        
+    }
 }
 
 extension Model: Convertible {
@@ -24,7 +28,7 @@ extension Model: Convertible {
     
     // Creates a new instance of this model object from the given json
     public static func deserialize(from: Any) -> Any {
-        guard let json = from as? [String: AnyObject] else {
+        guard let json = from as? [String: Any] else {
             print("WARN: model wasn't given a json! Instead received type: \(from.dynamicType)")
             return from
         }
@@ -32,12 +36,25 @@ extension Model: Convertible {
         var ret = self.init()
         
         _ = ret.propertyNames().map {
-            print("Json: \(json[$0]): \(json[$0].dynamicType)")
-            print("Repr: \(ret[$0]!.dynamicType.representation())")
+            //print("Json: \(json[$0]): \(json[$0].dynamicType)")
+            //print("Repr: \(ret[$0]!.dynamicType.representation())")
             let repr = "\(ret[$0]!.dynamicType.representation())"
             
-            // Silvery cant understand assignments where the asigner is an AnyObject
-            if let value = json[$0] as? Bool where "\(repr)" == "bool" {
+            // JSON is returning ints as doubles. Correct that and this isn't needed: Json.swift line 882
+            if repr == "int" {
+                if let value = json[$0] as? Double {
+                    ret[$0] = Int(value)
+                }
+                else if let value = json[$0] as? Float {
+                    ret[$0] = Int(value)
+                }
+                else {
+                    Riffle.warn("Model deserialization unable to cast property \(json[$0]): \(json[$0].dynamicType)")
+                }
+            }
+                
+            // Silvery cant understand assignments where the asigner is an AnyObject, so 
+            else if let value = json[$0] as? Bool where "\(repr)" == "bool" {
                 ret[$0] = value
             }
             else if let value = json[$0] as? Double where "\(repr)" == "double" || "\(repr)" == "float" {
@@ -62,14 +79,6 @@ extension Model: Convertible {
                 Riffle.warn("Model deserialization unable to cast property \(json[$0]): \(json[$0].dynamicType)")
             }
         }
-        
-        // Set the properties from the json
-        // TODO: recursively check for nested model objects
-//        for property in ret.propertyNames() {
-//            ret[property] = ret[property].property()!
-//            try! ret.setValue(json[property], forKey: property)
-//            ret[property] = json[property]!
-//        }
         
         return ret
     }

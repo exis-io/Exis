@@ -41,7 +41,7 @@ public class Domain {
         app = superdomain.app
     }
     
-    public func _subscribe(endpoint: String, _ types: [Any], fn: [AnyObject] -> ()) -> Deferred {
+    public func _subscribe(endpoint: String, _ types: [Any], fn: [Any] -> ()) -> Deferred {
         let hn = CBID()
         app.handlers[hn] = fn
         
@@ -50,7 +50,7 @@ public class Domain {
         return d
     }
     
-    public func _register(endpoint: String, _ types: [Any], fn: [AnyObject] -> Any) -> Deferred {
+    public func _register(endpoint: String, _ types: [Any], fn: [Any] -> Any) -> Deferred {
         let hn = CBID()
         app.registrations[hn] = fn
         

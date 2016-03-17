@@ -36,22 +36,23 @@ extension String {
 }
 
 // Decode arbitrary returns from the mantle
-func decode(p: UnsafePointer<Int8>) -> (UInt64, [AnyObject]) {
+func decode(p: UnsafePointer<Int8>) -> (UInt64, [Any]) {
     let dataString = String.fromCString(p)!
     
-    guard let data = try! JSONParser.parse(dataString) as? [AnyObject] else {
+    
+    guard let data = try! JSONParser.parse(dataString) as? [Any] else {
         print("DID NOT RECEIVE ARRAY BACK!")
         return (UInt64(0), [])
     }
     
-    if let args = data[1] as? [AnyObject] {
+    if let args = data[1] as? [Any] {
         return (UInt64(data[0] as! Double), args)
     } else {
         return (UInt64(data[0] as! Double), [])
     }
 }
 
-// JSON marshaled arguments as a cString
+// Return a goslice of the JSON marshaled arguments as a cString
 func marshall(args: [Any]) -> UnsafeMutablePointer<Int8> {
     let json = JSON.from(args)
     let jsonString = json.serialize(DefaultJSONSerializer())

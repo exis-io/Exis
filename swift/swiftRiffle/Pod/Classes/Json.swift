@@ -601,15 +601,15 @@ enum JSONParseError: ErrorType, CustomStringConvertible {
 
 
 public struct JSONParser {
-    public static func parse(source: String) throws -> AnyObject {
+    public static func parse(source: String) throws -> Any {
         return try GenericJSONParser(source.utf8).parse()
     }
     
-    public static func parse(source: [UInt8]) throws -> AnyObject {
+    public static func parse(source: [UInt8]) throws -> Any {
         return try GenericJSONParser(source).parse()
     }
     
-    public static func parse(source: [Int8]) throws -> AnyObject {
+    public static func parse(source: [Int8]) throws -> Any {
         return try parse(source.map({UInt8($0)}))
     }
 }
@@ -631,7 +631,7 @@ public class GenericJSONParser<ByteSequence: CollectionType where ByteSequence.G
         self.end = source.endIndex
     }
     
-    public func parse() throws -> AnyObject {
+    public func parse() throws -> Any {
         let JSON = try parseValue()
         
         skipWhitespaces()
@@ -649,7 +649,7 @@ public class GenericJSONParser<ByteSequence: CollectionType where ByteSequence.G
 }
 
 extension GenericJSONParser {
-    private func parseValue() throws -> AnyObject {
+    private func parseValue() throws -> Any {
         skipWhitespaces()
         
         if cur == end {
@@ -688,7 +688,7 @@ extension GenericJSONParser {
         return Character(UnicodeScalar(currentChar))
     }
     
-    private func parseSymbol(target: StaticString, @autoclosure _ iftrue: Void -> AnyObject) throws -> AnyObject {
+    private func parseSymbol(target: StaticString, @autoclosure _ iftrue: Void -> Any) throws -> Any {
         if expect(target) {
             return iftrue()
         } else {
@@ -700,7 +700,7 @@ extension GenericJSONParser {
         }
     }
     
-    private func parseString() throws -> String {
+    private func parseString() throws -> Any {
         assert(currentChar == Char(ascii: "\""), "points a double quote")
         advance()
         var buffer: [CChar] = []
@@ -786,7 +786,7 @@ extension GenericJSONParser {
         }
     }
     
-    private func parseNumber() throws -> AnyObject {
+    private func parseNumber() throws -> Any {
         let sign = expect("-") ? -1.0 : 1.0
         var integer: Int64 = 0
         
@@ -882,11 +882,11 @@ extension GenericJSONParser {
         return sign * (Double(integer) + fraction) * pow(10, Double(exponent))
     }
     
-    private func parseObject() throws -> AnyObject {
+    private func parseObject() throws -> Any {
         assert(currentChar == Char(ascii: "{"), "points \"{\"")
         advance()
         skipWhitespaces()
-        var object: [String: AnyObject] = [:]
+        var object: [String: Any] = [:]
         
         LOOP: while cur != end && !expect("}") {
             let keyValue = try parseValue()
@@ -930,12 +930,12 @@ extension GenericJSONParser {
         return object
     }
     
-    private func parseArray() throws -> AnyObject {
+    private func parseArray() throws -> Any {
         assert(currentChar == Char(ascii: "["), "points \"[\"")
         advance()
         skipWhitespaces()
         
-        var array: [AnyObject] = []
+        var array: [Any] = []
         
         // Another example of the loop break
         LOOP: while cur != end && !expect("]") {
@@ -1038,7 +1038,7 @@ extension GenericJSONParser {
 }
 
 // Convert parsed JSON to Any, because why the hell do you think everyone wants to manually query their json?
-func anynize(from: JSON) -> AnyObject {
+func anynize(from: JSON) -> Any {
     switch from {
     case .NullValue:
         return NSNull()
@@ -1051,7 +1051,7 @@ func anynize(from: JSON) -> AnyObject {
     case .ArrayValue:
         return from.arrayValue!.map { anynize($0) }
     case .ObjectValue:
-        var ret: [String: AnyObject] = [:]
+        var ret: [String: Any] = [:]
         for (k, v) in from.dictionaryValue! {
             ret[k] = anynize(v)
         }

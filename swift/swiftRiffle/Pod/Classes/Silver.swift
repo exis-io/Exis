@@ -38,21 +38,14 @@ extension Silvery {
         }
         set {
             do {
-                if let nonoptional = newValue {
-                    //print("Assigning \(nonoptional), type: \(nonoptional.dynamicType)")
-                    try setValue(nonoptional, forKey: key)
-                }
-            } catch let e as SilverError {
-                Riffle.warn("Property assignment failed: \(e)")
+                try setValue(newValue, forKey: key)
             } catch {
-                Riffle.warn("Property assignment failed for unknown reasons!")
+                
             }
         }
     }
     
     public mutating func setValue(value: Property?, forKey key: String) throws {
-        //print("Assigning \(value), type: \(value.dynamicType)")
-        
         var offset = 0
         for child in Mirror(reflecting: self).children {
             guard let property = child.value.dynamicType as? Property.Type else { throw SilverError.TypeDoesNotConformToProperty(type: child.value.dynamicType) }
@@ -91,10 +84,8 @@ extension Silvery {
     }
     
     func x(x: Any, isY y: Any.Type) throws {
-        //print("Incoming value: \(x) Imcoming Type: \(x.dynamicType) Target Type: \(y)")
-        
         if x.dynamicType == y {
-        } else if let x = x as? AnyObject, let y = y as? AnyClass where x.isKindOfClass(y) {
+        // } else if let x = x as? AnyObject, let y = y as? AnyClass where x.isKindOfClass(y) {
         } else {
             throw SilverError.CannotSetTypeAsType(x: x.dynamicType, y: y)
         }

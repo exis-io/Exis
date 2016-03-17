@@ -17,8 +17,8 @@ public class Deferred {
     var cb: UInt64 = 0
     var eb: UInt64 = 0
     
-    var callbackFuntion: ([AnyObject] -> Any?)? = nil
-    var errbackFunction: ([AnyObject] -> Any?)? = nil
+    var callbackFuntion: ([Any] -> Any?)? = nil
+    var errbackFunction: ([Any] -> Any?)? = nil
     
     var next: Deferred?
     
@@ -43,11 +43,11 @@ public class Deferred {
     
     public func error(fn: (String) -> ()) -> Deferred {
         next = Deferred()
-        errbackFunction = { a in return fn(a[0] as! String) }
+        errbackFunction = { a in fn(a[0] as! String) }
         return next!
     }
     
-    public func callback(args: [AnyObject]) -> AnyObject? {
+    public func callback(args: [Any]) -> Any? {
         // Fires off a deferred chain recursively. TODO: work in error logic, recovery, propogation, etc
         var ret: Any?
         
@@ -58,21 +58,17 @@ public class Deferred {
         
         // follow the chain, propogate the calback to the next deferred
         if let n = next {
-            if let arrayReturn = ret as? [AnyObject] {
+            if let arrayReturn = ret as? [Any] {
                 return n.callback(arrayReturn)
             }
             
-            if let r = ret as? AnyObject {
-                return n.callback([r])
-            } else {
-                return n.callback([])
-            }
+            return n.callback([ret])
         }
         
         return nil
     }
     
-    public func errback(args: [AnyObject]) -> AnyObject? {
+    public func errback(args: [Any]) -> Any? {
         if let handler = errbackFunction {
             // if the next result is a deferred, wait for it to complete before returning (?)
             handler(args)
@@ -98,7 +94,7 @@ public class HandlerDeferred: Deferred {
         return _then([]) { a in return fn() }
     }
     
-    public func _then(types: [Any], _ fn: [AnyObject] -> ()) -> Deferred {
+    public func _then(types: [Any], _ fn: [Any] -> ()) -> Deferred {
         next = Deferred()
         CallExpects(mantleDomain, self.cb, marshall(types))
         callbackFuntion = { a in return fn(a) }

@@ -13,8 +13,8 @@ class App {
     var mantleDomain: UInt64
     
     var deferreds: [UInt64: Deferred] = [:]
-    var handlers: [UInt64: [AnyObject] -> ()] = [:]
-    var registrations: [UInt64: [AnyObject] -> Any?] = [:]
+    var handlers: [UInt64: [Any] -> ()] = [:]
+    var registrations: [UInt64: [Any] -> Any?] = [:]
     
     
     init(domain: UInt64) {
