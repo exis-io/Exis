@@ -121,14 +121,12 @@ class Receiver: Domain {
             return d
         }
 
-        
-//            receiver.call("asdf", dog).then { (d: Dog) in
-//                //print("\(t) Recieved\(d), expecting \(dog)")
-//                assert(d == dog)
-//            })
-//
-//            // Collections of Riffle Model Objects
-
+        register("registerModelArrays") { (d: [Dog]) -> [Dog] in
+            print("SUCCESS --- 2-10")
+            assert(d.count == 3)
+            assert(d[0].name == dog.name && d[0].age == dog.age && d[0].something == dog.something)
+            return d
+        }
 
             // Test both sending and receiving types
             // Test receiving collections in invocation
@@ -224,17 +222,15 @@ class Sender: Domain {
 //        }
         
         // Collections of model objects
-//        receiver.call("registerModelArrays", dogs).then { (a: [Dog]) in
-//            print("Got dogs: \(a)")
-//            assert(a.count == 3)
-//            assert(a[0].age == 21)
-//            print("SUCCESS --- 2-10")
-//        }.error { reason in
-//            print("FAILURE ON CALL RETURN --- 2-9")
-//            print("\tREASON: \(reason)")
-//        }
+        receiver.call("registerModelArrays", dogs).then { (d: [Dog]) in
+            assert(d[0].name == dog.name && d[0].age == dog.age && d[0].something == dog.something)
+            print("SUCCESS --- 2-13")
+        }.error { reason in
+            print("FAILURE ON CALL RETURN --- 2-9")
+            print("\tREASON: \(reason)")
+        }
+
 //
-//        
 //        receiver.call("registerSinglePrimitive", 1).then { (a: Int) in
 //            assert(a == 1)
 //            print("SUCCCES --- 2-6")
