@@ -130,10 +130,10 @@ class Receiver: Domain {
 
             // Test both sending and receiving types
             // Test receiving collections in invocation
-            register("registerModelArrays") { (d: [Dog]) -> Any in
-                print("SUCCESS --- 2-9")
-                return d
-            }
+//            register("registerModelArrays") { (d: [Dog]) -> Any in
+//                print("SUCCESS --- 2-9")
+//                return d
+//            }
 //
 //            // WARNING: cant receive 5 elements in return
 //            receiver.call("registerModelArrays", [Dog(), Dog(), Dog()]).then { (dogs: [Dog]) in
@@ -155,6 +155,13 @@ class Receiver: Domain {
         // Test Receiver Cumin Error
         
         // Test Caller Cumin Error
+        
+        // Deferreds
+        register("subDeferred") { (a: Int) -> Any in
+            print("SUCCESS --- 3-1")
+            return a
+        }
+        
         joinFinished()
     }
     
@@ -215,19 +222,31 @@ class Sender: Domain {
 //        }
         
         // Collections of model objects
-        receiver.call("registerModelArrays", dogs).then { (a: [Dog]) in
-            assert(a.count == 3)
-            print("SUCCESS --- 2-10")
-        }.error { reason in
-            print("FAILURE ON CALL RETURN --- 2-9")
-            print("\tREASON: \(reason)")
-        }
-//        
+//        receiver.call("registerModelArrays", dogs).then { (a: [Dog]) in
+//            assert(a.count == 3)
+//            print("SUCCESS --- 2-10")
+//        }.error { reason in
+//            print("FAILURE ON CALL RETURN --- 2-9")
+//            print("\tREASON: \(reason)")
+//        }
+//
 //        
 //        receiver.call("registerSinglePrimitive", 1).then { (a: Int) in
 //            assert(a == 1)
 //            print("SUCCCES --- 2-6")
 //        }
+        
+        receiver.call("subDeferred", 1).then { (a: Int) in
+            print("SUCCESS --- 3-2")
+        }.then {
+            print("SUCCESS --- 3-3")
+        }
+        
+        receiver.call("subDeferred", "a").error { reason in
+            print("SUCCESS --- 3-4")
+        }.error { reason in 
+            print("SUCCESS --- 3-5")
+        }
     }
     
     override func onLeave() {

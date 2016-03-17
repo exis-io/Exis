@@ -48,33 +48,40 @@ public class Deferred {
     }
     
     public func callback(args: [Any]) -> Any? {
+        // Fires off a deferred chain recursively. TODO: work in error logic, recovery, propogation, etc
+        var ret: Any?
+        
         if let handler = callbackFuntion {
              // if the next result is a deferred, wait for it to complete before returning (?)
-            return handler(args)
-        } else {
-            // follow the chain, propogate the calback to the next deferred
-            if let n = next {
-                n.callback(args)
+            ret = handler(args)
+        }
+        
+        // follow the chain, propogate the calback to the next deferred
+        if let n = next {
+            if let arrayReturn = ret as? [Any] {
+                return n.callback(arrayReturn)
             }
             
-            // No chain exists. Do nothing
-            return nil
+            return n.callback([ret])
         }
+        
+        return nil
     }
     
     public func errback(args: [Any]) -> Any? {
         if let handler = errbackFunction {
-            return handler(args)
-        } else {
-            // Follow the chain, propogate the error to the next deferred
-            if let n = next {
-                n.errback(args)
-            }
-            
-            // No chain exists. TODO: Send the error to some well-known place
-            Riffle.warn("Unhandled error: \(args)")
-            return nil
+            // if the next result is a deferred, wait for it to complete before returning (?)
+            handler(args)
         }
+        
+        // follow the chain, propogate the calback to the next deferred
+        if let n = next {
+            return n.errback(args)
+        }
+        
+        // No chain exists. TODO: Send the error to some well-known place
+        //Riffle.warn("Unhandled error: \(args)")
+        return nil
     }
 }
 
