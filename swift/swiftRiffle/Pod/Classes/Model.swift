@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class Model: Silvery, Property {
+public class Model: Silvery, Property, CustomStringConvertible {
     
     required public init() {}
     
@@ -35,7 +35,7 @@ extension Model: Convertible {
         
         var ret = self.init()
         
-        // Set the properties from the json 
+        // Set the properties from the json
         // TODO: recursively check for nested model objects
         for property in ret.propertyNames() {
             ret[property] = json[property]
@@ -54,14 +54,12 @@ extension Model: Convertible {
         return ret
     }
     
-
-    
     public static func representation() -> Any {
         let me = self.init()
         var fields: [String: Any] = [:]
-       
+        
         for property in me.propertyNames() {
-           fields[property] = me[property]!.dynamicType.representation()
+            fields[property] = me[property]!.dynamicType.representation()
         }
         
         // return "{\(me.propertyNames().map { "\($0): \(me[$0]!.dynamicType.representation())"}.joinWithSeparator(", "))}"
