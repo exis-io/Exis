@@ -104,23 +104,17 @@ extension Optional : OptionalProperty {
 }
 
 // Deprecated or not present in swift 2.2
-
 // extension AutoreleasingUnsafeMutablePointer : Property, BaseConvertible {}
 
-// Extremely primitive types
 extension Int: Property, Convertible {
     public func serialize() -> Any { return self }
     
     public static func deserialize(from: Any) -> Any {
         if let x = from as? Int {
             return x
-        }
-        
-        if let x = from as? String {
+        } else if let x = from as? String {
             return Int(x)
-        }
-        
-        if let x = from as? Double {
+        } else if let x = from as? Double {
             return Int(x)
         }
         
@@ -158,9 +152,7 @@ extension String: Property, Convertible {
     public static func deserialize(from: Any) -> Any {
         if let x = from as? String {
             return x
-        }
-        
-        if let x = from as? Int {
+        } else if let x = from as? Int {
             return String(x)
         }
         
@@ -183,9 +175,7 @@ extension Double: Property, Convertible {
     public static func deserialize(from: Any) -> Any {
         if let x = from as? Double {
             return x
-        }
-        
-        if let x = from as? Int {
+        } else if let x = from as? Int {
             return Double(x)
         }
         
@@ -208,13 +198,9 @@ extension Float: Property, Convertible {
     public static func deserialize(from: Any) -> Any {
         if let x = from as? Float {
             return x
-        }
-        
-        if let x = from as? Double {
+        } else if let x = from as? Double {
             return Float(x)
-        }
-        
-        if let x = from as? Int {
+        } else if let x = from as? Int {
             return Float(x)
         }
         
@@ -237,9 +223,7 @@ extension Bool: Property, Convertible {
     public static func deserialize(from: Any) -> Any {
         if let x = from as? Bool {
             return x
-        }
-        
-        if let x = from as? Int {
+        } else if let x = from as? Int {
             return x == 1 ? true : false
         }
         

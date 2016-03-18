@@ -6,7 +6,6 @@
 //  Copyright © 2015 exis. All rights reserved.
 //
 
-
 import Foundation
 import CoreFoundation
 import Mantle
@@ -52,7 +51,7 @@ func decode(p: UnsafePointer<Int8>) -> (UInt64, [Any]) {
     }
 }
 
-// Return a goslice of the JSON marshaled arguments as a cString
+// Marshalls some set of arguments into Json, then a c string for core consumption
 func marshall(args: [Any]) -> UnsafeMutablePointer<Int8> {
     let json = JSON.from(args)
     let jsonString = json.serialize(DefaultJSONSerializer())
@@ -63,11 +62,6 @@ func marshall(args: [Any]) -> UnsafeMutablePointer<Int8> {
 // Do we still need this here?
 func serializeArguments(args: [Any]) -> [Any] {
     var ret: [Any] = []
-    var args = args
-    
-    #if os(OSX)
-    args = args.map { swapClassToRiffle($0) }
-    #endif
     
     for a in args {
         if let arg = a as? Property {
@@ -88,20 +82,8 @@ func serializeArguments(args: [Property]) -> [Any] {
     return ret
 }
 
-// When linking against an OSX CLI both the app and the library are linked against swift seperately.
-// This leads to all sorts of nasty behavior, key of which is classes NOT being the same.
-// This method is only used for backend testing, and should be temprorary.
-func swapClassToRiffle(object: Any) -> Any {
-    print("Swapping \(object) type: \(object.self) dytype: \(object.dynamicType) ")
-    
-    // Just use repr.
-    
-    return object
-}
-
-// From riffle back to the app
-func swapClassFromRiffle() {
-    
+func swapClassToRiffle(a: Any) -> Any {
+    return 1
 }
 
 // Makes configuration calls a little cleaner when accessed from the top level 

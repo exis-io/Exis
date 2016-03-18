@@ -85,6 +85,8 @@ class App {
                     
                     // Optional serialization has some problems. This unwraps the result to avoid that particular issue
                     if let ret = fn(args) {
+                        print("Have result: \(ret)")
+                        
                         // Function did not return anything
                         if let _ = ret as? Void {
                             Yield(self.mantleDomain, UInt64(resultId), marshall([]))

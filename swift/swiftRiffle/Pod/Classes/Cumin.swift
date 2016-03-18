@@ -19,11 +19,6 @@ func <- <T: Property> (t:T.Type, object: Any) -> T {
     // Deserialize is implemented as part of the Convertible protocol. All properties implement Convertible
     
     #if os(OSX)
-        let converted = T.brutalize(object, t: T.self)
-        
-        //print("Foreign size: \(sizeof(t.self)) native: \(sizeof(converted.dynamicType))")
-        print("converted: \(converted) type: \(converted.dynamicType) expected: \(t.self)")
-        
         return T.brutalize(object, t: T.self)!
     #else
         return T.deserialize(object) as! T
