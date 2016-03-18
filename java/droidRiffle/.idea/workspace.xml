@@ -46,17 +46,7 @@
                 <state vertical-scroll-proportion="0.0">
                   <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
                   <folding>
-                    <element signature="imports" expanded="true" />
-                    <element signature="e#318#319#0" expanded="true" />
-                    <element signature="e#344#345#0" expanded="true" />
-                    <element signature="method#_then#0;class#CallDeferred#0" expanded="true" />
-                    <element signature="method#then#0;class#CallDeferred#0" expanded="true" />
-                    <element signature="method#then#1;class#CallDeferred#0" expanded="true" />
-                    <element signature="method#then#2;class#CallDeferred#0" expanded="true" />
-                    <element signature="method#then#3;class#CallDeferred#0" expanded="true" />
-                    <element signature="method#then#4;class#CallDeferred#0" expanded="true" />
-                    <element signature="method#then#5;class#CallDeferred#0" expanded="true" />
-                    <element signature="method#then#6;class#CallDeferred#0" expanded="true" />
+                    <marker date="1457375115550" expanded="true" signature="33:99" placeholder="..." />
                   </folding>
                 </state>
               </provider>
@@ -83,7 +73,7 @@
           <file leaf-file-name="App.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/App.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.44338876">
+                <state vertical-scroll-proportion="0.297166">
                   <caret line="57" column="24" selection-start-line="57" selection-start-column="24" selection-end-line="57" selection-end-column="24" />
                   <folding>
                     <element signature="method#App#0;class#App#0" expanded="true" />
@@ -107,33 +97,52 @@
       </split-first>
       <split-second>
         <leaf>
-          <file leaf-file-name="Domain.java" pinned="false" current-in-tab="true">
+          <file leaf-file-name="Domain.java" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Domain.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.55661124">
+                <state vertical-scroll-proportion="-0.0">
                   <caret line="84" column="17" selection-start-line="84" selection-start-column="17" selection-end-line="84" selection-end-column="17" />
                   <folding>
-                    <element signature="method#join#0;class#Domain#0" expanded="true" />
-                    <element signature="method#_subscribe#0;class#Domain#0" expanded="true" />
-                    <element signature="method#_register#0;class#Domain#0" expanded="true" />
-                    <element signature="method#publish#0;class#Domain#0" expanded="true" />
-                    <element signature="method#unsubscribe#0;class#Domain#0" expanded="true" />
-                    <element signature="method#unregister#0;class#Domain#0" expanded="true" />
-                    <element signature="method#subscribe#0;class#Domain#0" expanded="true" />
-                    <element signature="method#subscribe#1;class#Domain#0" expanded="true" />
-                    <element signature="method#subscribe#2;class#Domain#0" expanded="true" />
-                    <element signature="method#subscribe#3;class#Domain#0" expanded="true" />
-                    <element signature="method#subscribe#4;class#Domain#0" expanded="true" />
-                    <element signature="method#subscribe#5;class#Domain#0" expanded="true" />
-                    <element signature="method#subscribe#6;class#Domain#0" expanded="true" />
-                    <element signature="method#register#0;class#Domain#0" expanded="true" />
-                    <element signature="method#register#1;class#Domain#0" expanded="true" />
-                    <element signature="method#register#2;class#Domain#0" expanded="true" />
-                    <element signature="method#register#3;class#Domain#0" expanded="true" />
-                    <element signature="method#register#4;class#Domain#0" expanded="true" />
-                    <element signature="method#register#5;class#Domain#0" expanded="true" />
-                    <element signature="method#register#6;class#Domain#0" expanded="true" />
+                    <element signature="imports" expanded="false" />
+                    <element signature="method#Domain#0;class#Domain#0" expanded="false" />
+                    <element signature="method#Domain#1;class#Domain#0" expanded="false" />
+                    <element signature="e#1194#1195#0" expanded="false" />
+                    <element signature="e#1245#1246#0" expanded="false" />
+                    <element signature="e#1274#1275#0" expanded="false" />
+                    <element signature="e#1326#1327#0" expanded="false" />
+                    <element signature="e#2928#2929#0" expanded="false" />
+                    <element signature="e#2964#2965#0" expanded="false" />
                   </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/build.gradle">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="-12.689655">
+                  <caret line="23" column="17" selection-start-line="23" selection-start-column="17" selection-end-line="23" selection-end-column="17" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/build.gradle">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="41" column="0" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="build.gradle" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/backend/build.gradle">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.12955466">
+                  <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -144,7 +153,11 @@
                 <state vertical-scroll-proportion="0.0">
                   <caret line="35" column="57" selection-start-line="35" selection-start-column="57" selection-end-line="35" selection-end-column="57" />
                   <folding>
-                    <element signature="method#unmarshall#0;class#Utils#0" expanded="true" />
+                    <element signature="imports" expanded="false" />
+                    <element signature="e#359#360#0" expanded="false" />
+                    <element signature="e#411#412#0" expanded="false" />
+                    <element signature="e#569#570#0" expanded="false" />
+                    <element signature="e#609#610#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -165,22 +178,7 @@
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
                   <caret line="29" column="20" selection-start-line="29" selection-start-column="20" selection-end-line="29" selection-end-column="20" />
-                  <folding>
-                    <element signature="method#cuminicate#0;class#Cumin#0" expanded="true" />
-                    <element signature="method#cuminicate#1;class#Cumin#0" expanded="true" />
-                    <element signature="method#cuminicate#2;class#Cumin#0" expanded="true" />
-                    <element signature="method#cuminicate#3;class#Cumin#0" expanded="true" />
-                    <element signature="method#cuminicate#4;class#Cumin#0" expanded="true" />
-                    <element signature="method#cuminicate#5;class#Cumin#0" expanded="true" />
-                    <element signature="method#cuminicate#6;class#Cumin#0" expanded="true" />
-                    <element signature="method#cuminicate#7;class#Cumin#0" expanded="true" />
-                    <element signature="method#cuminicate#8;class#Cumin#0" expanded="true" />
-                    <element signature="method#cuminicate#9;class#Cumin#0" expanded="true" />
-                    <element signature="method#cuminicate#10;class#Cumin#0" expanded="true" />
-                    <element signature="method#cuminicate#11;class#Cumin#0" expanded="true" />
-                    <element signature="method#cuminicate#12;class#Cumin#0" expanded="true" />
-                    <element signature="method#cuminicate#13;class#Cumin#0" expanded="true" />
-                  </folding>
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -2418,7 +2416,7 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="8729013643748" />
+        <entry key="$PROJECT_DIR$" value="8740077934164" />
         <entry key="C:\Users\damouse\Documents\code\merged\Exis\java\droidRiffle" value="8730950374357" />
       </map>
     </option>
@@ -3156,10 +3154,10 @@
         <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Deferred.java" />
         <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/cumin/Handler.java" />
         <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/cumin/Cumin.java" />
-        <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Domain.java" />
         <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/CallDeferred.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/exis/droidriffle/MainActivity.java" />
         <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/App.java" />
+        <option value="$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Domain.java" />
       </list>
     </option>
   </component>
@@ -3174,10 +3172,10 @@
     <order />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1985" />
-    <option name="y" value="-4" />
-    <option name="width" value="2495" />
-    <option name="height" value="1444" />
+    <option name="x" value="1995" />
+    <option name="y" value="384" />
+    <option name="width" value="2485" />
+    <option name="height" value="1416" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -3463,6 +3461,8 @@
         </subPane>
       </pane>
       <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="AndroidView">
         <subPane>
           <PATH>
@@ -3470,15 +3470,9 @@
               <option name="myItemId" value="droidRiffle" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
             </PATH_ELEMENT>
-          </PATH>
-          <PATH>
             <PATH_ELEMENT>
-              <option name="myItemId" value="droidRiffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="riffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+              <option name="myItemId" value="Gradle Scripts" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidBuildScriptsGroupNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -3490,71 +3484,11 @@
               <option name="myItemId" value="riffle" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="droidRiffle" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="riffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="riffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="droidRiffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="riffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="riffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="App.java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="droidRiffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="riffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="riffle" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="cumin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -3641,8 +3575,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -3657,7 +3589,7 @@
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="FA38WS902258" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="OverrideImplement.overriding.sorted" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../android/scratch/Autobahn" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../android/CardsAgainstAndroid" />
   </component>
   <component name="RunManager" selected="Android Application.MainActivity">
     <configuration default="false" name="Native" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
@@ -3965,8 +3897,8 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1985" y="-4" width="2495" height="1444" extended-state="6" />
-    <editor active="true" />
+    <frame x="1995" y="384" width="2485" height="1416" extended-state="0" />
+    <editor active="false" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3296" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22041763" sideWeight="0.4947569" order="7" side_tool="false" content_ui="tabs" />
@@ -3976,7 +3908,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2224" sideWeight="0.5033365" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.328" sideWeight="0.49857086" order="7" side_tool="false" content_ui="tabs" x="946" y="384" width="967" height="1056" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.328" sideWeight="0.49857086" order="7" side_tool="false" content_ui="tabs" x="953" y="412" width="967" height="1056" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.2776" sideWeight="0.4969375" order="2" side_tool="false" content_ui="tabs" x="6685" y="956" width="1148" height="468" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.328" sideWeight="0.49666348" order="7" side_tool="false" content_ui="tabs" />
@@ -3984,7 +3916,7 @@
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2224" sideWeight="0.50524306" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1404655" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14104141" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24989791" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32979625" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
@@ -4093,26 +4025,15 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="40" column="26" selection-start-line="40" selection-start-column="26" selection-end-line="40" selection-end-column="26" />
           <folding>
-            <element signature="method#join#0;class#Domain#0" expanded="true" />
-            <element signature="method#_subscribe#0;class#Domain#0" expanded="true" />
-            <element signature="method#_register#0;class#Domain#0" expanded="true" />
-            <element signature="method#publish#0;class#Domain#0" expanded="true" />
-            <element signature="method#unsubscribe#0;class#Domain#0" expanded="true" />
-            <element signature="method#unregister#0;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#0;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#1;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#2;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#3;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#4;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#5;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#6;class#Domain#0" expanded="true" />
-            <element signature="method#register#0;class#Domain#0" expanded="true" />
-            <element signature="method#register#1;class#Domain#0" expanded="true" />
-            <element signature="method#register#2;class#Domain#0" expanded="true" />
-            <element signature="method#register#3;class#Domain#0" expanded="true" />
-            <element signature="method#register#4;class#Domain#0" expanded="true" />
-            <element signature="method#register#5;class#Domain#0" expanded="true" />
-            <element signature="method#register#6;class#Domain#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="method#Domain#0;class#Domain#0" expanded="false" />
+            <element signature="method#Domain#1;class#Domain#0" expanded="false" />
+            <element signature="e#1194#1195#0" expanded="false" />
+            <element signature="e#1245#1246#0" expanded="false" />
+            <element signature="e#1274#1275#0" expanded="false" />
+            <element signature="e#1326#1327#0" expanded="false" />
+            <element signature="e#2928#2929#0" expanded="false" />
+            <element signature="e#2964#2965#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -4122,7 +4043,11 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="method#unmarshall#0;class#Utils#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#359#360#0" expanded="false" />
+            <element signature="e#411#412#0" expanded="false" />
+            <element signature="e#569#570#0" expanded="false" />
+            <element signature="e#609#610#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -4132,12 +4057,12 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="9" column="2" selection-start-line="9" selection-start-column="2" selection-end-line="9" selection-end-column="2" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#Deferred#0;class#Deferred#0" expanded="true" />
-            <element signature="method#_then#0;class#Deferred#0" expanded="true" />
-            <element signature="method#_error#0;class#Deferred#0" expanded="true" />
-            <element signature="method#callback#0;class#Deferred#0" expanded="true" />
-            <element signature="method#errback#0;class#Deferred#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="method#Deferred#0;class#Deferred#0" expanded="false" />
+            <element signature="method#_then#0;class#Deferred#0" expanded="false" />
+            <element signature="method#_error#0;class#Deferred#0" expanded="false" />
+            <element signature="method#callback#0;class#Deferred#0" expanded="false" />
+            <element signature="method#errback#0;class#Deferred#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -4154,7 +4079,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4162,22 +4086,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="47" column="0" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
-          <folding>
-            <element signature="method#cuminicate#0;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#1;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#2;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#3;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#4;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#5;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#6;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#7;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#8;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#9;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#10;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#11;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#12;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#13;class#Cumin#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -4209,26 +4118,15 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="65" column="21" selection-start-line="65" selection-start-column="21" selection-end-line="65" selection-end-column="21" />
           <folding>
-            <element signature="method#join#0;class#Domain#0" expanded="true" />
-            <element signature="method#_subscribe#0;class#Domain#0" expanded="true" />
-            <element signature="method#_register#0;class#Domain#0" expanded="true" />
-            <element signature="method#publish#0;class#Domain#0" expanded="true" />
-            <element signature="method#unsubscribe#0;class#Domain#0" expanded="true" />
-            <element signature="method#unregister#0;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#0;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#1;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#2;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#3;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#4;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#5;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#6;class#Domain#0" expanded="true" />
-            <element signature="method#register#0;class#Domain#0" expanded="true" />
-            <element signature="method#register#1;class#Domain#0" expanded="true" />
-            <element signature="method#register#2;class#Domain#0" expanded="true" />
-            <element signature="method#register#3;class#Domain#0" expanded="true" />
-            <element signature="method#register#4;class#Domain#0" expanded="true" />
-            <element signature="method#register#5;class#Domain#0" expanded="true" />
-            <element signature="method#register#6;class#Domain#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="method#Domain#0;class#Domain#0" expanded="false" />
+            <element signature="method#Domain#1;class#Domain#0" expanded="false" />
+            <element signature="e#1194#1195#0" expanded="false" />
+            <element signature="e#1245#1246#0" expanded="false" />
+            <element signature="e#1274#1275#0" expanded="false" />
+            <element signature="e#1326#1327#0" expanded="false" />
+            <element signature="e#2928#2929#0" expanded="false" />
+            <element signature="e#2964#2965#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -4270,12 +4168,12 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="51" column="5" selection-start-line="51" selection-start-column="5" selection-end-line="51" selection-end-column="5" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#Deferred#0;class#Deferred#0" expanded="true" />
-            <element signature="method#_then#0;class#Deferred#0" expanded="true" />
-            <element signature="method#_error#0;class#Deferred#0" expanded="true" />
-            <element signature="method#callback#0;class#Deferred#0" expanded="true" />
-            <element signature="method#errback#0;class#Deferred#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="method#Deferred#0;class#Deferred#0" expanded="false" />
+            <element signature="method#_then#0;class#Deferred#0" expanded="false" />
+            <element signature="method#_error#0;class#Deferred#0" expanded="false" />
+            <element signature="method#callback#0;class#Deferred#0" expanded="false" />
+            <element signature="method#errback#0;class#Deferred#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -4387,13 +4285,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/backend/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/riffle/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -4401,24 +4292,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="23" column="17" selection-start-line="23" selection-start-column="17" selection-end-line="23" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/settings.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.41805226">
-          <caret line="33" column="34" selection-start-line="33" selection-start-column="34" selection-end-line="33" selection-end-column="34" />
         </state>
       </provider>
     </entry>
@@ -4466,22 +4343,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="29" column="20" selection-start-line="29" selection-start-column="20" selection-end-line="29" selection-end-column="20" />
-          <folding>
-            <element signature="method#cuminicate#0;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#1;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#2;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#3;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#4;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#5;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#6;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#7;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#8;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#9;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#10;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#11;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#12;class#Cumin#0" expanded="true" />
-            <element signature="method#cuminicate#13;class#Cumin#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -4489,7 +4351,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.48139352">
           <caret line="38" column="65" selection-start-line="38" selection-start-column="65" selection-end-line="38" selection-end-column="65" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4506,7 +4367,11 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="35" column="57" selection-start-line="35" selection-start-column="57" selection-end-line="35" selection-end-column="57" />
           <folding>
-            <element signature="method#unmarshall#0;class#Utils#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#359#360#0" expanded="false" />
+            <element signature="e#411#412#0" expanded="false" />
+            <element signature="e#569#570#0" expanded="false" />
+            <element signature="e#609#610#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -4516,12 +4381,12 @@
         <state vertical-scroll-proportion="0.354711">
           <caret line="28" column="28" selection-start-line="28" selection-start-column="28" selection-end-line="28" selection-end-column="28" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#Deferred#0;class#Deferred#0" expanded="true" />
-            <element signature="method#_then#0;class#Deferred#0" expanded="true" />
-            <element signature="method#_error#0;class#Deferred#0" expanded="true" />
-            <element signature="method#callback#0;class#Deferred#0" expanded="true" />
-            <element signature="method#errback#0;class#Deferred#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="method#Deferred#0;class#Deferred#0" expanded="false" />
+            <element signature="method#_then#0;class#Deferred#0" expanded="false" />
+            <element signature="method#_error#0;class#Deferred#0" expanded="false" />
+            <element signature="method#callback#0;class#Deferred#0" expanded="false" />
+            <element signature="method#errback#0;class#Deferred#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -4531,17 +4396,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#318#319#0" expanded="true" />
-            <element signature="e#344#345#0" expanded="true" />
-            <element signature="method#_then#0;class#CallDeferred#0" expanded="true" />
-            <element signature="method#then#0;class#CallDeferred#0" expanded="true" />
-            <element signature="method#then#1;class#CallDeferred#0" expanded="true" />
-            <element signature="method#then#2;class#CallDeferred#0" expanded="true" />
-            <element signature="method#then#3;class#CallDeferred#0" expanded="true" />
-            <element signature="method#then#4;class#CallDeferred#0" expanded="true" />
-            <element signature="method#then#5;class#CallDeferred#0" expanded="true" />
-            <element signature="method#then#6;class#CallDeferred#0" expanded="true" />
+            <marker date="1457375115550" expanded="true" signature="33:99" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -4564,41 +4419,54 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/Domain.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.55661124">
+        <state vertical-scroll-proportion="0.0">
           <caret line="84" column="17" selection-start-line="84" selection-start-column="17" selection-end-line="84" selection-end-column="17" />
           <folding>
-            <element signature="method#join#0;class#Domain#0" expanded="true" />
-            <element signature="method#_subscribe#0;class#Domain#0" expanded="true" />
-            <element signature="method#_register#0;class#Domain#0" expanded="true" />
-            <element signature="method#publish#0;class#Domain#0" expanded="true" />
-            <element signature="method#unsubscribe#0;class#Domain#0" expanded="true" />
-            <element signature="method#unregister#0;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#0;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#1;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#2;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#3;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#4;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#5;class#Domain#0" expanded="true" />
-            <element signature="method#subscribe#6;class#Domain#0" expanded="true" />
-            <element signature="method#register#0;class#Domain#0" expanded="true" />
-            <element signature="method#register#1;class#Domain#0" expanded="true" />
-            <element signature="method#register#2;class#Domain#0" expanded="true" />
-            <element signature="method#register#3;class#Domain#0" expanded="true" />
-            <element signature="method#register#4;class#Domain#0" expanded="true" />
-            <element signature="method#register#5;class#Domain#0" expanded="true" />
-            <element signature="method#register#6;class#Domain#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="method#Domain#0;class#Domain#0" expanded="false" />
+            <element signature="method#Domain#1;class#Domain#0" expanded="false" />
+            <element signature="e#1194#1195#0" expanded="false" />
+            <element signature="e#1245#1246#0" expanded="false" />
+            <element signature="e#1274#1275#0" expanded="false" />
+            <element signature="e#1326#1327#0" expanded="false" />
+            <element signature="e#2928#2929#0" expanded="false" />
+            <element signature="e#2964#2965#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/riffle/src/main/java/com/exis/riffle/App.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.44338876">
+        <state vertical-scroll-proportion="0.297166">
           <caret line="57" column="24" selection-start-line="57" selection-start-column="24" selection-end-line="57" selection-end-column="24" />
           <folding>
             <element signature="method#App#0;class#App#0" expanded="true" />
             <element signature="method#HandlerTuple#0;class#HandlerTuple#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-12.689655">
+          <caret line="23" column="17" selection-start-line="23" selection-start-column="17" selection-end-line="23" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="41" column="0" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backend/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.12955466">
+          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
