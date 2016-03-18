@@ -20,6 +20,10 @@ import Foundation
 public protocol Convertible {
     // Return a constructed form of this object
     static func deserialize(from: Any) -> Any
+    
+    // Deserialize, but also coerce output to the given type
+    static func brutalize<T>(from: Any, t: T.Type) -> T?
+    
     func serialize() -> Any
     
     // Returns a core representation of this type
@@ -28,11 +32,17 @@ public protocol Convertible {
 
 public protocol BaseConvertible: Convertible {}
 
+    
+
 extension BaseConvertible {
     public static func deserialize(from: Any) -> Any {
         return from
     }
     
+    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
+        return unsafeBitCast(from, t.self)
+    }
+
     public static func representation() -> Any {
         return "\(Self.self)"
     }
@@ -118,6 +128,25 @@ extension Int: Property, Convertible {
         return from
     }
     
+    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
+        var ret: Int? = nil
+        
+        if let x = from as? Int {
+            ret = x
+        } else if let x = from as? String {
+            ret = Int(x)
+        } else if let x = from as? Double {
+            ret = Int(x)
+        }
+        
+        if let ret = ret {
+            return unsafeBitCast(ret, t.self)
+        }
+        
+        print("WARN: Convertible was not able to complete for type \(self) with value \(from)")
+        return nil
+    }
+
     public static func representation() -> Any {
         return "int"
     }
@@ -127,7 +156,6 @@ extension String: Property, Convertible {
     public func serialize() -> Any { return self }
     
     public static func deserialize(from: Any) -> Any {
-        
         if let x = from as? String {
             return x
         }
@@ -140,6 +168,10 @@ extension String: Property, Convertible {
         return from
     }
     
+    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
+        return unsafeBitCast(from, t.self)
+    }
+
     public static func representation() -> Any {
         return "str"
     }
@@ -161,6 +193,10 @@ extension Double: Property, Convertible {
         return from
     }
     
+    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
+        return unsafeBitCast(from, t.self)
+    }
+
     public static func representation() -> Any {
         return "double"
     }
@@ -186,6 +222,10 @@ extension Float: Property, Convertible {
         return from
     }
     
+    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
+        return unsafeBitCast(from, t.self)
+    }
+
     public static func representation() -> Any {
         return "float"
     }
@@ -207,6 +247,10 @@ extension Bool: Property, Convertible {
         return from
     }
     
+    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
+        return unsafeBitCast(from, t.self)
+    }
+
     public static func representation() -> Any {
         return "bool"
     }
@@ -247,6 +291,10 @@ extension Array : Property, BaseConvertible {
 //        return self
     }
     
+    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
+        return unsafeBitCast(from, t.self)
+    }
+
     public static func representation() -> Any {
         if let child = Generator.Element.self as? Convertible.Type {
             return [child.representation()]
