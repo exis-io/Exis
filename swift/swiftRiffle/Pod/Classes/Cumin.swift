@@ -17,7 +17,14 @@ precedence 155
 
 func <- <T: Property> (t:T.Type, object: Any) -> T {
     // Deserialize is implemented as part of the Convertible protocol. All properties implement Convertible
-    return T.deserialize(object) as! T
+    
+    #if os(OSX)
+        let converted = T.deserialize(object)
+        print("converted: \(converted) type: \(converted.dynamicType) expected: \(t.self)")
+        return unsafeBitCast(T.deserialize(object), T.self)
+    #else
+        return T.deserialize(object) as! T
+    #endif
 }
 
 // Used only in this file to shorten the length of the method signatures

@@ -38,16 +38,16 @@ class Receiver: Domain {
 //        }
 //
 //        // Primitive Types
-        subscribe("subscribePrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
-            print("SUCCESS --- 1-2")
-            //print("1 : Sub receiving single types:", a, b, c, d, e)
-            
-            assert(a == 1)
-            assert(b == 2.2)
-            assert(c == 3.3)
-            assert(d == "4")
-            assert(e == true)
-        }
+//        subscribe("subscribePrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
+//            print("SUCCESS --- 1-2")
+//            //print("1 : Sub receiving single types:", a, b, c, d, e)
+//            
+//            assert(a == 1)
+//            assert(b == 2.2)
+//            assert(c == 3.3)
+//            assert(d == "4")
+//            assert(e == true)
+//        }
 //
 //        // Arrys of simple types
 //        subscribe("subscribeArrays") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
@@ -109,11 +109,11 @@ class Receiver: Domain {
 //            return (a, c, d, e)
 //        }
         
-//        register("registerSinglePrimitive") { (a: Int) -> Any in
-//            print("SUCCESS --- 2-5")
-//            assert(a == 1)
-//            return a
-//        }
+        register("registerSinglePrimitive") { (a: Int) -> Any in
+            print("SUCCESS --- 2-5")
+            assert(a == 1)
+            return a
+        }
         
         // Riffle Model objects with returns
 //        register("registerModel") { (d: Dog) -> Dog in
@@ -178,7 +178,7 @@ class Sender: Domain {
 //        receiver.publish("subscribeNothing")
 //
 //        // Primitive Types
-        receiver.publish("subscribePrimitives", 1, 2.2, 3.3, "4", true)
+//        receiver.publish("subscribePrimitives", 1, 2.2, 3.3, "4", true)
 //
 //        // Arrys of simple types
 //        receiver.publish("subscribeArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
@@ -230,12 +230,14 @@ class Sender: Domain {
 //            print("FAILURE ON CALL RETURN --- 2-9")
 //            print("\tREASON: \(reason)")
 //        }
-
 //
-//        receiver.call("registerSinglePrimitive", 1).then { (a: Int) in
-//            assert(a == 1)
-//            print("SUCCCES --- 2-6")
-//        }
+        receiver.call("registerSinglePrimitive", 1).then { (a: Int) in
+            assert(a == 1)
+            print("SUCCCES --- 2-6")
+        }.error { reason in
+            print("FAIL --- 2-6")
+            print(reason)
+        }
         
 //        receiver.call("subDeferred", 1).then { (a: Int) in
 //            print("SUCCESS --- 3-2")

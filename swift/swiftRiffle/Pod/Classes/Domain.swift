@@ -54,6 +54,8 @@ public class Domain {
         let hn = CBID()
         app.registrations[hn] = fn
         
+        print("Reg type \(types)")
+        
         let d = Deferred(domain: self)
         Register(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(types))
         return d
@@ -65,9 +67,16 @@ public class Domain {
         return d
     }
     
-    public func call(endpoint: String, _ args: Any...) -> HandlerDeferred {
+    public func call(endpoint: String, _ args: Property...) -> HandlerDeferred {
         let d = HandlerDeferred(domain: self)
         d.mantleDomain = self.mantleDomain
+        
+//        var ret: [Any] = []
+//        for c in args {
+//            print("Calling with arg type: \(c.self))")
+//            ret.append(c as! Any)
+//        }
+        
         Call(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)))
         return d
     }

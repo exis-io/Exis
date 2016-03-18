@@ -63,6 +63,11 @@ func marshall(args: [Any]) -> UnsafeMutablePointer<Int8> {
 // Do we still need this here?
 func serializeArguments(args: [Any]) -> [Any] {
     var ret: [Any] = []
+    var args = args
+    
+    #if os(OSX)
+    args = args.map { swapClassToRiffle($0) }
+    #endif
     
     for a in args {
         if let arg = a as? Property {
@@ -71,6 +76,32 @@ func serializeArguments(args: [Any]) -> [Any] {
     }
     
     return ret
+}
+
+func serializeArguments(args: [Property]) -> [Any] {
+    var ret: [Any] = []
+    
+    for a in args {
+        ret.append(a.serialize())
+    }
+    
+    return ret
+}
+
+// When linking against an OSX CLI both the app and the library are linked against swift seperately.
+// This leads to all sorts of nasty behavior, key of which is classes NOT being the same.
+// This method is only used for backend testing, and should be temprorary.
+func swapClassToRiffle(object: Any) -> Any {
+    print("Swapping \(object) type: \(object.self) dytype: \(object.dynamicType) ")
+    
+    // Just use repr.
+    
+    return object
+}
+
+// From riffle back to the app
+func swapClassFromRiffle() {
+    
 }
 
 // Makes configuration calls a little cleaner when accessed from the top level 
