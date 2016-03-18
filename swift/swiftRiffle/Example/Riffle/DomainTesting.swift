@@ -36,19 +36,19 @@ class Receiver: Domain {
 //        subscribe("subscribeNothing") {
 //            print("SUCCESS --- 1-1")
 //        }
-//        
+//
 //        // Primitive Types
-//        subscribe("subscribePrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
-//            print("SUCCESS --- 1-2")
-//            //print("1 : Sub receiving single types:", a, b, c, d, e)
-//            
-//            assert(a == 1)
-//            assert(b == 2.2)
-//            assert(c == 3.3)
-//            assert(d == "4")
-//            assert(e == true)
-//        }
-//        
+        subscribe("subscribePrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
+            print("SUCCESS --- 1-2")
+            //print("1 : Sub receiving single types:", a, b, c, d, e)
+            
+            assert(a == 1)
+            assert(b == 2.2)
+            assert(c == 3.3)
+            assert(d == "4")
+            assert(e == true)
+        }
+//
 //        // Arrys of simple types
 //        subscribe("subscribeArrays") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
 //            print("SUCCESS --- 1-3 ")
@@ -116,18 +116,18 @@ class Receiver: Domain {
 //        }
         
         // Riffle Model objects with returns
-        register("registerModel") { (d: Dog) -> Dog in
-            print("SUCCESS --- 2-11")
-            assert(d.name == dog.name && d.age == dog.age)
-            return d
-        }
-
-        register("registerModelArrays") { (d: [Dog]) -> [Dog] in
-            print("SUCCESS --- 2-10")
-            assert(d.count == 3)
-            assert(d[0].name == dog.name && d[0].age == dog.age && d[0].something == dog.something)
-            return d
-        }
+//        register("registerModel") { (d: Dog) -> Dog in
+//            print("SUCCESS --- 2-11")
+//            assert(d.name == dog.name && d.age == dog.age)
+//            return d
+//        }
+//
+//        register("registerModelArrays") { (d: [Dog]) -> [Dog] in
+//            print("SUCCESS --- 2-10")
+//            assert(d.count == 3)
+//            assert(d[0].name == dog.name && d[0].age == dog.age && d[0].something == dog.something)
+//            return d
+//        }
 
             // Test both sending and receiving types
             // Test receiving collections in invocation
@@ -176,10 +176,10 @@ class Sender: Domain {
         // Pub Sub Success Cases
         // No args
 //        receiver.publish("subscribeNothing")
-//        
+//
 //        // Primitive Types
-//        receiver.publish("subscribePrimitives", 1, 2.2, 3.3, "4", true)
-//        
+        receiver.publish("subscribePrimitives", 1, 2.2, 3.3, "4", true)
+//
 //        // Arrys of simple types
 //        receiver.publish("subscribeArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
 //
@@ -191,10 +191,10 @@ class Sender: Domain {
 //            assert(true)
 //        }
         
-        receiver.call("registerModel", dog).then { (d: Dog) in
-            assert(d.age == 21)
-            print("SUCESS --- 2-12")
-        }
+//        receiver.call("registerModel", dog).then { (d: Dog) in
+//            assert(d.age == 21)
+//            print("SUCESS --- 2-12")
+//        }
 
 //        // Primitive Types
 //        receiver.call("registerPrimitives", 1, 2.2, 3.3, "4", true).then { (a: Int, c: Double, d: String, e: Bool) in
@@ -223,13 +223,13 @@ class Sender: Domain {
 //        }
         
         // Collections of model objects
-        receiver.call("registerModelArrays", dogs).then { (d: [Dog]) in
-            assert(d[0].name == dog.name && d[0].age == dog.age && d[0].something == dog.something)
-            print("SUCCESS --- 2-13")
-        }.error { reason in
-            print("FAILURE ON CALL RETURN --- 2-9")
-            print("\tREASON: \(reason)")
-        }
+//        receiver.call("registerModelArrays", dogs).then { (d: [Dog]) in
+//            assert(d[0].name == dog.name && d[0].age == dog.age && d[0].something == dog.something)
+//            print("SUCCESS --- 2-13")
+//        }.error { reason in
+//            print("FAILURE ON CALL RETURN --- 2-9")
+//            print("\tREASON: \(reason)")
+//        }
 
 //
 //        receiver.call("registerSinglePrimitive", 1).then { (a: Int) in

@@ -252,7 +252,7 @@ extension Array : Property, BaseConvertible {
             return [child.representation()]
         }
         
-        Riffle.warn("WARN- Unable to derive representation of array! Type: \(self)")
+        Riffle.warn("Unable to derive representation of array! Type: \(self)")
         return "[\(Generator.Element.self)]"
     }
 }
