@@ -6,7 +6,6 @@
 //  Copyright © 2015 exis. All rights reserved.
 //
 
-
 import Foundation
 import CoreFoundation
 import Mantle
@@ -52,7 +51,7 @@ func decode(p: UnsafePointer<Int8>) -> (UInt64, [Any]) {
     }
 }
 
-// Return a goslice of the JSON marshaled arguments as a cString
+// Marshalls some set of arguments into Json, then a c string for core consumption
 func marshall(args: [Any]) -> UnsafeMutablePointer<Int8> {
     let json = JSON.from(args)
     let jsonString = json.serialize(DefaultJSONSerializer())
@@ -71,6 +70,20 @@ func serializeArguments(args: [Any]) -> [Any] {
     }
     
     return ret
+}
+
+func serializeArguments(args: [Property]) -> [Any] {
+    var ret: [Any] = []
+    
+    for a in args {
+        ret.append(a.serialize())
+    }
+    
+    return ret
+}
+
+func swapClassToRiffle(a: Any) -> Any {
+    return 1
 }
 
 // Makes configuration calls a little cleaner when accessed from the top level 

@@ -25,6 +25,7 @@ class App {
         while true {
             var (i, args) = decode(Receive(self.mantleDomain))
             
+            #if os(Linux)
             if let d = deferreds[i] {
                 // remove the deferred (should this ever be optional?)
                 deferreds[d.cb] = nil
@@ -62,6 +63,51 @@ class App {
                     Yield(mantleDomain, UInt64(resultId), marshall(empty))
                 }
             }
+                
+            #else
+            dispatch_async(dispatch_get_main_queue()) {
+                if let d = self.deferreds[i] {
+                    // remove the deferred (should this ever be optional?)
+                    self.deferreds[d.cb] = nil
+                    self.deferreds[d.eb] = nil
+                    
+                    if d.cb == i {
+                        d.callback(args)
+                    }
+                    
+                    if d.eb == i {
+                        d.errback(args)
+                    }
+                } else if let fn = self.handlers[i] {
+                    fn(args)
+                } else if let fn = self.registrations[i] {
+                    let resultId = args.removeAtIndex(0) as! Double
+                    
+                    // Optional serialization has some problems. This unwraps the result to avoid that particular issue
+                    if let ret = fn(args) {
+                        print("Have result: \(ret)")
+                        
+                        // Function did not return anything
+                        if let _ = ret as? Void {
+                            Yield(self.mantleDomain, UInt64(resultId), marshall([]))
+                            
+                            // Function returned well known serializable types
+                        } else if let _ = ret as? Property {
+                            Yield(self.mantleDomain, UInt64(resultId), marshall(serializeArguments([ret])))
+                            
+                            // Function returned something we can't check-- assume its a tuple
+                        } else {
+                            let unpacked = unpackTuple(ret)
+                            Yield(self.mantleDomain, UInt64(resultId), marshall(serializeArguments(unpacked)))
+                        }
+                    } else {
+                        let empty: [Any] = []
+                        Yield(self.mantleDomain, UInt64(resultId), marshall(empty))
+                    }
+                }
+            }
+            #endif
+            
         }
     }
 }

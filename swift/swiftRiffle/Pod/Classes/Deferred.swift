@@ -25,7 +25,7 @@ public class Deferred {
     
     public init() {}
     
-    public init(domain: Domain) {
+    init(domain: Domain) {
         // Automatically creates and sets callback and errback assignments for the given domain
         cb = CBID()
         eb = CBID()
@@ -88,6 +88,11 @@ public class Deferred {
 // Contains handler "then"s to replace handler functions
 public class HandlerDeferred: Deferred {
     public var mantleDomain: UInt64!
+    
+    override init(domain: Domain) {
+        super.init(domain: domain)
+        mantleDomain = domain.mantleDomain
+    }
     
     public override func then(fn: () -> ()) -> Deferred {
         // this override is a special case. It overrides the base then, but cant go in the extension

@@ -43,31 +43,30 @@ public class Domain {
     
     public func _subscribe(endpoint: String, _ types: [Any], fn: [Any] -> ()) -> Deferred {
         let hn = CBID()
-        app.handlers[hn] = fn
-        
         let d = Deferred(domain: self)
+        
+        app.handlers[hn] = fn
         Subscribe(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(serializeArguments(types)))
         return d
     }
     
     public func _register(endpoint: String, _ types: [Any], fn: [Any] -> Any) -> Deferred {
         let hn = CBID()
-        app.registrations[hn] = fn
-        
         let d = Deferred(domain: self)
+        
+        app.registrations[hn] = fn
         Register(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(types))
         return d
     }
     
-    public func publish(endpoint: String, _ args: Any...) -> Deferred {
+    public func publish(endpoint: String, _ args: Property...) -> Deferred {
         let d = Deferred(domain: self)
         Publish(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)))
         return d
     }
     
-    public func call(endpoint: String, _ args: Any...) -> HandlerDeferred {
+    public func call(endpoint: String, _ args: Property...) -> HandlerDeferred {
         let d = HandlerDeferred(domain: self)
-        d.mantleDomain = self.mantleDomain
         Call(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)))
         return d
     }
@@ -90,19 +89,12 @@ public class Domain {
             }
         }
         
-//        app.handlers[eb] = { a in
-//            if let d = self.delegate {
-//                d.onLeave()
-//            } else {
-//                self.onLeave()
-//            }
-//        }
-        
         app.handlers[eb] = { (a: Any) in
             print("Unable to join: \(a)")
         }
         
         // Implementation differences in open source swift and apple swift. Should come together soon
+        // based on swift 2.2 Grand Central Dispatch progress
         #if os(Linux)
             self.app.receive()
         #else
