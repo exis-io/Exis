@@ -39,4 +39,9 @@ Optional note: to import model objects to both sides, put them in the backend! C
 
 ## Misc
 
-JNI architectures:  armeabi, armeabi-v7a, arm64-v8a, x86, x86_64, mips, mips64
+JNI architectures:  armeabi, armeabi-v7a, arm64-v8a, x86, x86_64, mips, mips64. These are what the names of the folders for architectures 
+
+x86 support: 
+- https://groups.google.com/forum/#!topic/golang-nuts/cZPdxDmnuUM
+- https://groups.google.com/forum/#!topic/golang-nuts/OgccKzrFVnU
+- https://github.com/golang/go/issues/10743
