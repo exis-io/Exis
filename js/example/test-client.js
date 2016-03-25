@@ -32,17 +32,17 @@ client.onJoin = function() {
   // End Example Test Backend leave
 
   // Example Test Returning Nested Deferred - demonstrates returning nested deferreds
+  // ARBITER set action call
   this.register("testClientNested", riffle.want(function(s) {
     return s + ", third"
   }, String));
 
-  receiver.call("testBackendNested", "first").then(function(a) {
+  backend.call("testBackendNested", "first").then(function(a) {
       console.log(a); // Expects a String, like "first, second, third, fourth"
     },
     function(err) {
       console.log("ERROR: ", err);
     });
-
   // End Example Test Returning Nested Deferred
 };
 

@@ -2,9 +2,9 @@ package core
 
 import (
 	"strings"
-    "testing"
+	"testing"
 
-    . "github.com/smartystreets/goconvey/convey"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestTrace(t *testing.T) {

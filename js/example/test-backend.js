@@ -27,8 +27,9 @@ backend.onJoin = function() {
   // End Example Test Backend leave
 
   // Example Test Returning Nested Deferred - demonstrates returning nested deferreds
+  // ARBITER set action register
   this.register("testBackendNested", riffle.want(function(s) {
-    return sender.call("testClientNested", s + ", second").then(function(a) {
+    return client.call("testClientNested", s + ", second").then(function(a) {
       return a + ", fourth"
     });
   }, String));
