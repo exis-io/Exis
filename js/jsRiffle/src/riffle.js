@@ -54,9 +54,8 @@ global.WantInterceptor = function(corePromise, typeCheck) {
 
 // Takes a javascript promise and a go function. Assigns the go function as 
 // the then for the crust promise.
-// TODO: catch errors!
 global.NestedInterceptor = function(crustPromise, completeYield) {
-  crustPromise.then(completeYield)
+  crustPromise.then(completeYield, completeYield)
 }
 
 // Inject configuration functions from the mantle into the crust with the same name
