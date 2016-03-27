@@ -91,7 +91,6 @@ func (d domain) GetName() string {
 // Accepts a connection that has just been opened. This method should only
 // be called once, to initialize the fabric
 func (c domain) Join(conn Connection) error {
-
 	if c.joined {
 		return fmt.Errorf("Domain %s is already joined", c.name)
 	}
@@ -142,7 +141,7 @@ func (c domain) Join(conn Connection) error {
 		}
 	}
 
-	Info("Domain joined")
+	Info("Domain %s joined", c.name)
 	return nil
 }
 
@@ -210,13 +209,16 @@ func (c domain) Register(endpoint string, requestId uint64, types []interface{})
 
 // TODO: ask for a Publish Suceeded all the times, so we can trigger callbacks
 func (c domain) Publish(endpoint string, args []interface{}) error {
+	endpoint = makeEndpoint(c.name, endpoint)
 	Info("Publish %s %v", endpoint, args)
+
 	c.app.Queue(&publish{
 		Request:   NewID(),
 		Options:   make(map[string]interface{}),
-		Name:      makeEndpoint(c.name, endpoint),
+		Name:      endpoint,
 		Arguments: args,
 	})
+	
 	return nil
 }
 

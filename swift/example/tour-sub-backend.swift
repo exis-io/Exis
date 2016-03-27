@@ -1,6 +1,6 @@
 import Riffle
 
-class TourSubBackend: Riffle.Domain, Riffle.Delegate {
+class TourSubBackend: Domain, Delegate {
 
     override func onJoin() {
         /////////////////////////////////////////////////////////////////////////////////////

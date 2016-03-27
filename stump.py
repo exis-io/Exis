@@ -9,6 +9,7 @@ Usage:
   stump add-subtree DIRECTORY NAME URL
   stump test (list | all | <languageOrTestNumber>)
   stump release <remote> <version>
+  stump shadow <remote> <version>
 
 Options:
   -h --help     Show this screen.
@@ -28,6 +29,7 @@ import os
 import sys
 import docopt
 from subprocess import call
+from distutils.dir_util import copy_tree
 import shutil
 import tempfile
 
@@ -40,10 +42,10 @@ import arbiter
 
 # Format: (prefix: remote, url)
 SUBTREES = [
-    ("ios/swiftRiffle", "swiftRiffle", "git@github.com:exis-io/swiftRiffle.git"),
-    ("ios/appBackendSeed", "iosAppBackendSeed", "git@github.com:exis-io/iosAppBackendSeed.git"),
-    ("ios/appSeed", "iosAppSeed", "git@github.com:exis-io/iosAppSeed.git"),
-    ("ios/example", "iosExample", "git@github.com:exis-io/iOSExample.git"),
+    ("swift/swiftRiffle", "swiftRiffle", "git@github.com:exis-io/swiftRiffle.git"),
+    ("swift/appBackendSeed", "iosAppBackendSeed", "git@github.com:exis-io/iosAppBackendSeed.git"),
+    ("swift/appSeed", "iosAppSeed", "git@github.com:exis-io/iosAppSeed.git"),
+    ("swift/example", "iosExample", "git@github.com:exis-io/iOSExample.git"),
 
     ("js/jsRiffle", "jsRiffle", "git@github.com:exis-io/jsRiffle.git"),
     ("js/ngRiffle", "ngRiffle", "git@github.com:exis-io/ngRiffle.git"),
@@ -193,88 +195,79 @@ if __name__ == '__main__':
         call("git -C {} push --tags origin master".format(tmp), shell=True)
         shutil.rmtree(tmp)
 
+    elif args['shadow']:
 
-'''
-Start xcode with open source swift version: 
-    xcrun launch-with-toolchain /Library/Developer/Toolchains/swift-latest.xctoolchain
+        '''
+        This action pushes out a "shadow" subtree, or a subtree that is *not* added as a remote to the trunk
+        This is for checking in binary files into a subtree but not the trunk.
 
-Use open source swift on command line: 
-    export PATH=/Library/Developer/Toolchains/swift-latest.xctoolchain/usr/bin:"${PATH}"
+        This is for situations where you want to check in files into the subtree and not the trunk (like big binary files)
+        required by a semver dependency manager. Make sure the binary files are ignored at the trunk, not in the local 
+        repo, else they'll be ignored when pushing the shadow. You can also move gitignores too and avoid this problem 
 
-Deployment scripts from old stump
+        The basics are: 
 
-ios() {
-    echo "Updating riffle, seeds, and cards to version $1"
+        - Clone *just* the git repo, no files
+        - Drop the .git dir into the target directory
+        - Add and push from that directory
+        - Remove the .git directory
 
-    git subtree push --prefix swift/swiftRiffle swiftRiffle master
+        Example using the swiftRiffleCocoapod
 
-    git clone git@github.com:exis-io/swiftRiffle.git
-    cd swiftRiffle
-    
-    git tag $1 
-    git push --tags
+            git clone --no-checkout git@github.com:exis-io/swiftRiffleCocoapod.git swift/swiftRiffle/swiftRiffle.tmp 
+            mv swift/swiftRiffle/swiftRiffle.tmp/.git swift/swiftRiffle/
+            rm -rf swift/swiftRiffle/swiftRiffle.tmp
 
-    pod trunk push --allow-warnings --verbose
+            git -C swift/swiftRiffle add --all 
+            git -C swift/swiftRiffle commit -m "m"
+            git -C swift/swiftRiffle push origin master
 
-    cd ..
-    rm -rf swiftRiffle
+            rm -rf swift/swiftRiffle/.git
 
-    # update the seed projects and push them 
-    cd swift/appSeed
-    pod update
 
-    cd ../appBackendSeed
-    pod update
-    cd ../..
+        Notes:
+            - This implementation is incomplete. Release option above is better-- add the copy task 
+            - 
+        '''
 
-    git add --all
-    git commit -m "swRiffle upgrade to v $1"
+        found = False
+        for prefix, remote, url in SUBTREES:
+            if remote == args['<remote>']:
+                found = True
+                break
 
-    git subtree push --prefix swift/appBackendSeed iosAppBackendSeed master
-    git subtree push --prefix swift/appSeed iosAppSeed master
-    git push origin master
-}
+        if not found:
+            print("Error: unrecognized remote ({})".format(args['<remote>']))
+            sys.exit(1)
 
-js() {
-    echo "Updating js to version $1"
+        # Note that the shadows have their own remotes. TODO: consolidate this into the top data
+        # structure
+        if remote == 'swiftRiffle':
+            shadow = 'git@github.com:exis-io/swiftRiffleCocoapod.git'
+        else:
+            print 'Unrecognized remote. Not all remotes have shadows!'
+            sys.exit(1)
 
-    browserify js/jsRiffle/index.js --standalone jsRiffle -o jsRiffle.js
-    browserify js/jsRiffle/index.js --standalone jsRiffle | uglifyjs > jsRiffle.min.js
+        # print("Pushing {} to remote {} ({})...".format(prefix, remote, url))
+        # call("git subtree push --prefix {} {} master".format(prefix, remote), shell=True)
 
-    mv jsRiffle.js js/jsRiffle/release/jsRiffle.js
-    mv jsRiffle.min.js js/jsRiffle/release/jsRiffle.min.js
+        tag = args['<version>']
 
-    cd js/jsRiffle
-    npm version $1
-    npm publish
+        tmp = tempfile.mkdtemp()
 
-    cd ../ngRiffle
-    npm version $1
-    npm publish
+        # clone without the checkout to just grab the .git directory
+        call("git clone --no-checkout {} {}".format(shadow, tmp), shell=True)
 
-    cd ../..
+        # Copy the contents of the real directory
+        copy_tree(prefix, tmp)
 
-    git add --all
-    git commit -m "jsRiffle upgrade to v $1"
+        call('git -C {0} add --all'.format(tmp), shell=True)
+        call('git -C {0} commit -m "Exis shadow subtree push: {1}"'.format(tmp, tag), shell=True)
+        call('git -C {0} push origin master'.format(tmp), shell=True)
+        # print 'Shadow set up in ', tmp
 
-    git push origin master
-    git subtree push --prefix js/jsRiffle jsRiffle master
-    git subtree push --prefix js/ngRiffle ngRiffle master
-
-    git clone git@github.com:exis-io/jsRiffle.git
-    cd jsRiffle
-    git tag $1 
-    git push --tags
-    cd ..
-    rm -rf jsRiffle
-
-    git clone git@github.com:exis-io/ngRiffle.git 
-    cd ngRiffle
-    git tag $1 
-    git push --tags
-    cd ..
-    rm -rf ngRiffle
-
-    # Do something with the seed app!
-}
-'''
+        print("Creating tag: {}".format(tag))
+        call('git -C {0} tag -a {1} -m "Release {1}."'.format(tmp, tag), shell=True)
+        # call('git  tag -a {1}-{0} -m "Release {1}-{0}."'.format(args['<version>'], remote), shell=True)
+        call("git -C {} push --tags origin master".format(tmp), shell=True)
+        shutil.rmtree(tmp)

@@ -1,6 +1,6 @@
 import Riffle
 
-class TourRegClient: Riffle.Domain, Riffle.Delegate  {
+class TourRegClient: Domain, Delegate  {
     
     override func onJoin() {
         /////////////////////////////////////////////////////////////////////////////////////

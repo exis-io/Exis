@@ -3,7 +3,6 @@ package main
 
 import (
 	"C"
-	"unsafe"
 
 	"github.com/exis-io/core"
 	"github.com/exis-io/core/goRiffle"
@@ -17,28 +16,44 @@ func CBID() uint64 {
 	return core.NewID()
 }
 
+// Note that with go 1.6 we can't pass pointers back up through the language boundrary. 
+// An "unsafe" implementation is going to fail, since the go GC is going to have a bad time. 
+
+// So yet another messaging bus. Make sure to destroy domains in the crust.
+
+var domainIndex = make(map[uint64]core.Domain)
+
+//export Free
+func Free(pdomain uint64) {
+	delete(domainIndex, pdomain)
+}
+
 //export NewDomain
-func NewDomain(name *C.char) unsafe.Pointer {
+func NewDomain(name *C.char) uint64 {
+	i := CBID()
 	d := core.NewDomain(C.GoString(name), nil)
-	return unsafe.Pointer(&d)
+	domainIndex[i] = d
+	return i
 }
 
 //export Subdomain
-func Subdomain(pdomain unsafe.Pointer, name *C.char) unsafe.Pointer {
-	d := *(*core.Domain)(pdomain)
-	n := d.Subdomain(C.GoString(name))
-	return unsafe.Pointer(&n)
+func Subdomain(pdomain uint64, name *C.char) uint64 {
+	d := get(pdomain)
+	i := CBID()
+	domainIndex[i] = d.Subdomain(C.GoString(name))
+	return i
 }
 
 //export Receive
-func Receive(pdomain unsafe.Pointer) []byte {
-	d := *(*core.Domain)(pdomain)
-	return []byte(core.MantleMarshall(d.GetApp().CallbackListen()))
+func Receive(dptr uint64) *C.char {
+	// Used to be a byte slice, but 1.6 cgo checks will not allow that 
+	d := get(dptr)
+	return C.CString(core.MantleMarshall(d.GetApp().CallbackListen()))
 }
 
 //export Join
-func Join(pdomain unsafe.Pointer, cb uint64, eb uint64) {
-	d := *(*core.Domain)(pdomain)
+func Join(pdomain uint64, cb uint64, eb uint64) {
+	d := get(pdomain)
 
 	if c, err := goRiffle.Open(core.Fabric); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
@@ -49,97 +64,107 @@ func Join(pdomain unsafe.Pointer, cb uint64, eb uint64) {
 			d.GetApp().CallbackSend(cb)
 		}
 	}
-}
+} 
 
 //export Subscribe
-func Subscribe(pdomain unsafe.Pointer, endpoint *C.char, cb uint64, eb uint64, hn uint64, types *C.char) {
-	d := *(*core.Domain)(pdomain)
+func Subscribe(pdomain uint64, endpoint *C.char, cb uint64, eb uint64, hn uint64, types *C.char) {
+	d := get(pdomain)
 	go core.MantleSubscribe(d, C.GoString(endpoint), cb, eb, hn, core.MantleUnmarshal(C.GoString(types)))
 }
 
 //export Register
-func Register(pdomain unsafe.Pointer, endpoint *C.char, cb uint64, eb uint64, hn uint64, types *C.char) {
-	d := *(*core.Domain)(pdomain)
+func Register(pdomain uint64, endpoint *C.char, cb uint64, eb uint64, hn uint64, types *C.char) {
+	d := get(pdomain)
 	go core.MantleRegister(d, C.GoString(endpoint), cb, eb, hn, core.MantleUnmarshal(C.GoString(types)))
 }
 
 //export Publish
-func Publish(pdomain unsafe.Pointer, endpoint *C.char, cb uint64, eb uint64, args *C.char) {
-	d := *(*core.Domain)(pdomain)
+func Publish(pdomain uint64, endpoint *C.char, cb uint64, eb uint64, args *C.char) {
+	d := get(pdomain)
 	go core.MantlePublish(d, C.GoString(endpoint), cb, eb, core.MantleUnmarshal(C.GoString(args)))
 }
 
 //export Call
-func Call(pdomain unsafe.Pointer, endpoint *C.char, cb uint64, eb uint64, args *C.char) {
-	d := *(*core.Domain)(pdomain)
+func Call(pdomain uint64, endpoint *C.char, cb uint64, eb uint64, args *C.char) {
+	d := get(pdomain)
 	go core.MantleCall(d, C.GoString(endpoint), cb, eb, core.MantleUnmarshal(C.GoString(args)))
 }
 
 //export Yield
-func Yield(pdomain unsafe.Pointer, request uint64, args *C.char) {
-	d := *(*core.Domain)(pdomain)
+func Yield(pdomain uint64, request uint64, args *C.char) {
+	d := get(pdomain)
 	go d.GetApp().Yield(request, core.MantleUnmarshal(C.GoString(args)))
 }
 
 //export CallExpects
-func CallExpects(pdomain unsafe.Pointer, cb uint64, types *C.char) {
-	d := *(*core.Domain)(pdomain)
+func CallExpects(pdomain uint64, cb uint64, types *C.char) {
+	d := get(pdomain)
 	go d.CallExpects(cb, core.MantleUnmarshal(C.GoString(types)))
 }
 
 //export Unsubscribe
-func Unsubscribe(pdomain unsafe.Pointer, endpoint *C.char, cb uint64, eb uint64) {
-	d := *(*core.Domain)(pdomain)
+func Unsubscribe(pdomain uint64, endpoint *C.char, cb uint64, eb uint64) {
+	d := get(pdomain)
 	go core.MantleUnsubscribe(d, C.GoString(endpoint), cb, eb)
 }
 
 //export Unregister
-func Unregister(pdomain unsafe.Pointer, endpoint *C.char, cb uint64, eb uint64) {
-	d := *(*core.Domain)(pdomain)
+func Unregister(pdomain uint64, endpoint *C.char, cb uint64, eb uint64) {
+	d := get(pdomain)
 	go core.MantleUnregister(d, C.GoString(endpoint), cb, eb)
 }
 
 //export Leave
-func Leave(pdomain unsafe.Pointer) {
-	d := *(*core.Domain)(pdomain)
+func Leave(pdomain uint64) {
+	d := get(pdomain)
 	go d.Leave()
 }
 
-//export SetLogLevelOff
-func SetLogLevelOff() { core.LogLevel = core.LogLevelOff }
+func get(i uint64) core.Domain {
+	// get the domain from the domain index
+	if d, ok := domainIndex[i]; !ok {
+		return nil 
+	} else {
+		return d
+	}
+}
 
-//export SetLogLevelApp
-func SetLogLevelApp() { core.LogLevel = core.LogLevelApp }
 
-//export SetLogLevelErr
-func SetLogLevelErr() { core.LogLevel = core.LogLevelErr }
+//export MantleSetLogLevelOff
+func MantleSetLogLevelOff() { core.LogLevel = core.LogLevelOff }
 
-//export SetLogLevelWarn
-func SetLogLevelWarn() { core.LogLevel = core.LogLevelWarn }
+//export MantleSetLogLevelApp
+func MantleSetLogLevelApp() { core.LogLevel = core.LogLevelApp }
 
-//export SetLogLevelInfo
-func SetLogLevelInfo() { core.LogLevel = core.LogLevelInfo }
+//export MantleSetLogLevelErr
+func MantleSetLogLevelErr() { core.LogLevel = core.LogLevelErr }
 
-//export SetLogLevelDebug
-func SetLogLevelDebug() { core.LogLevel = core.LogLevelDebug }
+//export MantleSetLogLevelWarn
+func MantleSetLogLevelWarn() { core.LogLevel = core.LogLevelWarn }
 
-//export SetFabricDev
-func SetFabricDev() {
+//export MantleSetLogLevelInfo
+func MantleSetLogLevelInfo() { core.LogLevel = core.LogLevelInfo }
+
+//export MantleSetLogLevelDebug
+func MantleSetLogLevelDebug() { core.LogLevel = core.LogLevelDebug }
+
+//export MantleSetFabricDev
+func MantleSetFabricDev() {
     core.Fabric = core.FabricDev
     core.Registrar = core.RegistrarDev
 }
 
-//export SetFabricSandbox
-func SetFabricSandbox() { core.Fabric = core.FabricSandbox }
+//export MantleSetFabricSandbox
+func MantleSetFabricSandbox() { core.Fabric = core.FabricSandbox }
 
-//export SetFabricProduction
-func SetFabricProduction() {
+//export MantleSetFabricProduction
+func MantleSetFabricProduction() {
     core.Fabric = core.FabricProduction
     core.Registrar = core.RegistrarProduction
 }
 
-//export SetFabricLocal
-func SetFabricLocal() {
+//export MantleSetFabricLocal
+func MantleSetFabricLocal() {
     core.Fabric = core.FabricLocal
     core.Registrar = core.RegistrarLocal
 }
@@ -150,17 +175,29 @@ func MantleSetFabric(url *C.char) { core.Fabric = C.GoString(url) }
 //export MantleSetRegistrar
 func MantleSetRegistrar(url *C.char) { core.Registrar = C.GoString(url) }
 
-//export Application
-func Application(s *C.char) { core.Application("%s", C.GoString(s)) }
+//export MantleApplication
+func MantleApplication(s *C.char) { core.Application("%s", C.GoString(s)) }
 
-//export Debug
-func Debug(s *C.char) { core.Debug("%s", C.GoString(s)) }
+//export MantleDebug
+func MantleDebug(s *C.char) { core.Debug("%s", C.GoString(s)) }
 
-//export Info
-func Info(s *C.char) { core.Info("%s", C.GoString(s)) }
+//export MantleInfo
+func MantleInfo(s *C.char) { core.Info("%s", C.GoString(s)) }
 
-//export Warn
-func Warn(s *C.char) { core.Warn("%s", C.GoString(s)) }
+//export MantleWarn
+func MantleWarn(s *C.char) { core.Warn("%s", C.GoString(s)) }
 
-//export Error
-func Error(s *C.char) { core.Error("%s", C.GoString(s)) }
+//export MantleError
+func MantleError(s *C.char) { core.Error("%s", C.GoString(s)) }
+
+
+//export MantleSetCuminStrict
+func MantleSetCuminStrict() { core.CuminLevel = core.CuminStrict }
+
+//export MantleSetCuminLoose
+func MantleSetCuminLoose() { core.CuminLevel = core.CuminLoose }
+
+//export MantleSetCuminOff
+func MantleSetCuminOff() { core.CuminLevel = core.CuminOff }
+
+

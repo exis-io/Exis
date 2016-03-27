@@ -1,4 +1,4 @@
-module mantle {
+module Mantle {
     header "libriffmantle.h"
     link "riffmantle"
     export *

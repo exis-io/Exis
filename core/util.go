@@ -28,6 +28,7 @@ const (
 	FabricDev	    = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
 	FabricSandbox	    = "ws://sandbox.exis.io:8000/ws"
 	FabricProduction    = "wss://node.exis.io:8000/wss"
+	
 	RegistrarLocal      = "http://localhost:8880"
 	RegistrarDev        = "http://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8880"
 	RegistrarProduction = "https://node.exis.io:8880"

@@ -1,6 +1,6 @@
 import Riffle
 
-class Client: Riffle.Domain, Riffle.Delegate  {
+class Client: Domain, Delegate  {
     
     override func onJoin() {
         // Example Reg/Call str str - Basic reg expects string, returns string

@@ -1,9 +1,10 @@
 var riffle = require('jsriffle');
 
-riffle.setFabricSandbox();
+riffle.setFabricLocal();
 riffle.setLogLevelDebug();
 
 var app = riffle.Domain("xs.damouse");
+var sender = app.subdomain("beta");
 var me = app.subdomain("alpha");
 
 
@@ -12,12 +13,19 @@ me.onJoin = function() {
 
   var self = this;
 
-  this.register("iGiveInts", riffle.want(function(s) {
-    console.log(s); // Expects a String, like "Hi"
-    return [1, 2];
+  // Called first
+  this.register("stepone", riffle.want(function(s) {
+    console.log("Returning from stepone");
+
+    return sender.call("steptwo", "Receiever.stepOne").then(function(a) {
+      console.log("Receiver.Result: ", a);
+      return "Receiver.Result: " + a
+    });
+
+    return "Receiever.stepOne"
+
   }, String));
 
 };
 
 me.join()
-

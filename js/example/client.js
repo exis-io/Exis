@@ -1,4 +1,3 @@
-
 // "Real" client.js testing code
 var riffle = require('jsriffle');
 
@@ -10,21 +9,20 @@ var receiver = app.subdomain("alpha");
 var me = app.subdomain("beta");
 
 me.onJoin = function() {
-    console.log("Sender Joined");
+  console.log("Sender Joined");
 
-    receiver.call("iGiveInts", "Hi").wait([Number]).then(function(a) {
-        console.log("Result: ", a);
+  // called second
+  this.register("steptwo", riffle.want(function(s) {
+    console.log("Returning from steptwo");
+    return "Sender.stepTwo"
+  }, String));
+
+  receiver.call("stepone", "Sender.stepZero").then(function(a) {
+      console.log("Result: ", a);
     },
-    function (err) {
-        console.log("ERROR: ", err); 
+    function(err) {
+      console.log("ERROR: ", err);
     });
-
-    // receiver.call("iGiveInts", "Hi").then(function(a) {
-    //     console.log("Result: ", a);
-    // },
-    // function (err) {
-    //     console.log("ERROR: ", err); 
-    // });
 
 };
 

@@ -41,3 +41,8 @@ js/jsRiffle/release/*
 js/ngRiffle/release/*
 
 *.bin
+.tmp
+*.gobak
+
+swift/swiftRiffle/Pod/Assets/ios/Mantle.framework/Versions/A/Mantle
+swift/swiftRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Mantle

@@ -1,6 +1,6 @@
 import Riffle
 
-class TourBasics: Riffle.Domain, Riffle.Delegate {
+class TourBasics: Domain, Delegate {
 
     override func onJoin() {
         // Example Tour Basics 1 - simple print

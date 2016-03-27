@@ -6,7 +6,6 @@
       <module fileurl="file://$PROJECT_DIR$/backend/backend.iml" filepath="$PROJECT_DIR$/backend/backend.iml" />
       <module fileurl="file://$PROJECT_DIR$/droidRiffle.iml" filepath="$PROJECT_DIR$/droidRiffle.iml" />
       <module fileurl="file://$PROJECT_DIR$/mantle/mantle.iml" filepath="$PROJECT_DIR$/mantle/mantle.iml" />
-      <module fileurl="file://$PROJECT_DIR$/mantle/mantle.iml" filepath="$PROJECT_DIR$/mantle/mantle.iml" />
       <module fileurl="file://$PROJECT_DIR$/riffle/riffle.iml" filepath="$PROJECT_DIR$/riffle/riffle.iml" />
     </modules>
   </component>

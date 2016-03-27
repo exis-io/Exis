@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/exis-io/core"
-	"github.com/gopherjs/gopherjs/js"
 	"strings"
 	"time"
+
+	"github.com/exis-io/core"
+	"github.com/gopherjs/gopherjs/js"
 )
 
 func main() {
@@ -58,6 +59,44 @@ type idGenerator struct{}
 
 func (i idGenerator) NewID() uint64 {
 	return js.Global.Get("NewID").Invoke().Uint64()
+}
+
+type Deferred interface {
+	Resolve(...interface{})
+	Reject(...interface{})
+	Notify(...interface{})
+	Promise() *js.Object
+}
+
+type deferred struct {
+	this    *js.Object
+	promise *js.Object
+}
+
+func Defer() Deferred {
+	q := js.Global.Get("Q").Get("defer").Invoke()
+	d := &deferred{
+		this:    q,
+		promise: q.Get("promise"),
+	}
+
+	return d
+}
+
+func (d *deferred) Resolve(args ...interface{}) {
+	d.this.Get("resolve").Invoke(args...)
+}
+
+func (d *deferred) Reject(args ...interface{}) {
+	d.this.Get("reject").Invoke(args...)
+}
+
+func (d *deferred) Notify(args ...interface{}) {
+	d.this.Get("notify").Invoke(args...)
+}
+
+func (d *deferred) Promise() *js.Object {
+	return d.promise
 }
 
 func (c *Conn) OnMessage(msg *js.Object) {
@@ -177,7 +216,27 @@ func (a *App) Receive() {
 
 		if fn, ok := a.registrations[cb.Id]; ok {
 			ret := fn.Invoke(cb.Args[1:]...)
-			a.conn.app.Yield(cb.Args[0].(uint64), []interface{}{ret.Interface()})
+			yieldId := cb.Args[0].(uint64)
+
+			// If the handler returns a promise, don't yeild! Wait until the
+			// internal deferred resolves
+			// core.Debug("Receive loop has object: %v", ret.String())
+
+			// TODO: find the promises in a safer way, please
+			if strings.Contains(ret.String(), "Promise") {
+
+				// Closes over references so the final yield can be executed
+				completeYield := func(result *js.Object) {
+					core.Debug("Finishing deferred return")
+					core.Debug("Finishing deferred return with id %d, args: %v", yieldId, result)
+					a.conn.app.Yield(cb.Args[0].(uint64), []interface{}{result.Interface()})
+				}
+
+				// See riffle.js
+				js.Global.Get("NestedInterceptor").Invoke(ret, completeYield)
+			} else {
+				a.conn.app.Yield(cb.Args[0].(uint64), []interface{}{ret.Interface()})
+			}
 		}
 	}
 }
@@ -226,7 +285,7 @@ func (d *Domain) GetName() string {
 }
 
 func (d *Domain) Login(user *js.Object) *js.Object {
-	q := core.Defer()
+	q := Defer()
 
 	go func() {
 
@@ -260,7 +319,7 @@ func (d *Domain) Login(user *js.Object) *js.Object {
 }
 
 func (d *Domain) RegisterAccount(user *js.Object) *js.Object {
-	p := core.Defer()
+	p := Defer()
 
 	go func() {
 
@@ -302,7 +361,7 @@ func (d *Domain) RegisterAccount(user *js.Object) *js.Object {
 
 func (d *Domain) Subscribe(endpoint string, handler *js.Object) *js.Object {
 	cb := core.NewID()
-	p := core.Defer()
+	p := Defer()
 
 	go func() {
 		// From the want wrapper pull out the types they defined,
@@ -335,7 +394,7 @@ func (d *Domain) Subscribe(endpoint string, handler *js.Object) *js.Object {
 
 func (d *Domain) Register(endpoint string, handler *js.Object) *js.Object {
 	cb := core.NewID()
-	p := core.Defer()
+	p := Defer()
 
 	go func() {
 		// From the want wrapper pull out the types they defined,
@@ -376,7 +435,7 @@ func typeChecker(types []interface{}, results []interface{}, deferred *js.Object
 }
 
 func (d *Domain) Call(endpoint string, args ...interface{}) *js.Object {
-	p := core.Defer()
+	p := Defer()
 
 	go func() {
 		if results, err := d.coreDomain.Call(endpoint, args); err == nil {
@@ -414,7 +473,7 @@ func (d *Domain) CallExpects(cb uint64, types []interface{}) {
 // Turn the given invocation into a JS promise. If the function returns an error, return the error,
 // else return the results of the function
 func promisify(fn func() (interface{}, error)) *js.Object {
-	p := core.Defer()
+	p := Defer()
 
 	go func() {
 		if results, err := fn(); err == nil {

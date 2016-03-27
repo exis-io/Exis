@@ -1,0 +1,31 @@
+{
+  "name": "Riffle",
+  "version": "0.2.01",
+  "summary": "Client side library for connecting to a fabric.",
+  "platforms": {
+    "ios": "8.0",
+    "osx": "10.11"
+  },
+  "description": "Riffle allows for simple interaction with a Fabric, made by Exis. This library is meant to replace your\nnetworking code with something that doesn't look like networking code at all!",
+  "homepage": "https://github.com/exis-io/swiftRiffle",
+  "license": "MIT",
+  "authors": {
+    "Damouse": "damouse007@gmail.com"
+  },
+  "requires_arc": true,
+  "source": {
+    "git": "https://github.com/exis-io/swiftRiffle.git",
+    "tag": "0.2.01"
+  },
+  "source_files": "Pod/Classes/**/*.swift",
+  "ios": {
+    "vendored_frameworks": "Pod/Assets/ios/Mantle.framework"
+  },
+  "osx": {
+    "vendored_frameworks": "Pod/Assets/osx/Mantle.framework",
+    "xcconfig": {
+      "EMBEDDED_CONTENT_CONTAINS_SWIFT": "YES",
+      "LD_RUNPATH_SEARCH_PATHS": "$(inherited) @executable_path/Riffle-OSX"
+    }
+  }
+}
