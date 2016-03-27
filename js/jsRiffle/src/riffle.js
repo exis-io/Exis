@@ -1,6 +1,7 @@
 
 require('./go.js');
 var want = require('./want.js');
+var storage = require('./collections.js');
 var ws = require('./websocket.js');
 var pjson = require('../package.json');
 global.Q = require('q');
@@ -9,6 +10,7 @@ global.WsFactory = require('./websocket').Factory;
 
 exports.want = want.want;
 exports.modelObject = want.ModelObject;
+exports.xsStorage = storage.Storage;
 
 exports.Domain = global.Domain.New;
 exports.version = pjson.version;
