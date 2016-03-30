@@ -231,9 +231,14 @@ func (a *App) Receive() {
 					core.Debug("Finishing deferred return with id %d, args: %v", yieldId, result)
 					a.conn.app.Yield(cb.Args[0].(uint64), []interface{}{result.Interface()})
 				}
+				errorYield := func(result *js.Object) {
+					core.Debug("Finishing deferred return")
+					core.Debug("Finishing deferred return with id %d, args: %v", yieldId, result)
+					a.conn.app.YieldError(cb.Args[0].(uint64), "wamp.error.promise_rejection", []interface{}{result.Interface()})
+				}
 
 				// See riffle.js
-				js.Global.Get("NestedInterceptor").Invoke(ret, completeYield)
+				js.Global.Get("NestedInterceptor").Invoke(ret, completeYield, errorYield)
 			} else {
 				a.conn.app.Yield(cb.Args[0].(uint64), []interface{}{ret.Interface()})
 			}

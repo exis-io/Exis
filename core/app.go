@@ -25,8 +25,8 @@ const (
 // minRetryDelay and maxRetryDelay.
 const (
 	initialRetryDelay = 0 * time.Second
-    minRetryDelay = 1  * time.Second
-    maxRetryDelay = 30 * time.Second
+	minRetryDelay     = 1 * time.Second
+	maxRetryDelay     = 30 * time.Second
 )
 
 type App interface {
