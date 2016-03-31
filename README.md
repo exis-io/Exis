@@ -34,7 +34,7 @@ $ npm install jsRiffle
 And then you can import jsRiffle into your js files:
 
 ```js
-import jsRiffle from 'jsRiffle';
-
+var riffle = require('jsriffle');
 ```
 
+Check out out [Documentation](https://exis.io/docs/API-Reference/jsRiffle)
