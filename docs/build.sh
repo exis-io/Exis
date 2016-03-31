@@ -1,3 +1,3 @@
 #!/bin/bash
 cat contents.md > ngRiffle.md && \
-jsdoc2md ../ngRiffle.js >> ngRiffle.md
+jsdoc2md ../src/ngRiffle.js >> ngRiffle.md
