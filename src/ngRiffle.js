@@ -653,7 +653,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
     function $RiffleProvider() {
 
         var id = undefined;
-        var providerAPIExcludes = ['Application', 'Domain', 'modelObject', 'want'];
+        var providerAPIExcludes = ['Application', 'Domain', 'modelObject', 'want', 'xsStorage', 'xsPromises'];
         for(var key in jsRiffle){
           if(providerAPIExcludes.indexOf(key) === -1){
             this[key] = jsRiffle[key];
@@ -718,6 +718,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
             connection = new DomainWrapper(jsRiffle.Domain(id));
             connection.want = jsRiffle.want;
             connection.modelObject = jsRiffle.modelObject;
+            connection.xsStorage = jsRiffle.xsStorage;
             connection.connected = false;
 
             
