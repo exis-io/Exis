@@ -37,19 +37,25 @@ To use ngRiffle in your project, you need to include the following files in your
 #### With NPM
 
 ```bash
-$ npm install ngRiffle
+$ npm install ngriffle
+```
+```html
+<!-- AngularJS -->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+
+<!-- jsRiffle -->
+<script src="node_modules/jsRiffle/release/jsRiffle.min.js"></script>
+
+<!-- ngRiffle -->
+<script src="node_modules/ngRiffle/release/ngRiffle.min.js"></script>
 ```
 
-And then you can import ngRiffle into your js files:
-
 ```js
-import angular     from 'angular';
-import jsRiffle from 'jsRiffle';
 
 // module definition
 export default angular.module('app.starter', [ngRiffle])
     .config(function($riffleProvider) {
-        $wampProvider.setDomain("YOUR.APP.DOMAIN.HERE");
+        $riffleProvider.setDomain("YOUR.APP.DOMAIN.HERE");
     })
     .run(function($riffle){
         $riffle.setToken("APP_TOKEN");
@@ -59,4 +65,5 @@ export default angular.module('app.starter', [ngRiffle])
 angular.bootstrap(document, ['app.starter']);
 
 ```
+Check out our [Documentation](https://exis.io/docs/API-Reference/ngRiffle)
 
