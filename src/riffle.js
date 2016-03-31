@@ -10,6 +10,7 @@ global.WsFactory = require('./websocket').Factory;
 exports.want = want.want;
 exports.modelObject = want.ModelObject;
 exports.xsStorage = storage.Storage;
+exports.xsPromises = global.Q;
 
 exports.Domain = global.Domain.New;
 exports.version = pjson.version;
@@ -54,8 +55,8 @@ global.WantInterceptor = function(corePromise, typeCheck) {
 
 // Takes a javascript promise and a go function. Assigns the go function as 
 // the then for the crust promise.
-global.NestedInterceptor = function(crustPromise, completeYield) {
-  crustPromise.then(completeYield, completeYield)
+global.NestedInterceptor = function(crustPromise, completeYield, error) {
+  crustPromise.then(completeYield, error)
 }
 
 // Inject configuration functions from the mantle into the crust with the same name
