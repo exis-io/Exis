@@ -29,7 +29,8 @@ func (a *app) run() {
 				Warn("%s", err.Error())
 			}
 		} else if handler, ok := a.registrations[cb.Id]; ok {
-			// The first id for all calls is the yield id
+			// The first id for all calls is the yield id, or the id the result
+			// of the call should go to
 			yieldId := cb.Args[0].(uint64)
 			args := cb.Args[1:]
 
