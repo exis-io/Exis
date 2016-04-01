@@ -260,6 +260,5 @@ if __name__ == '__main__':
         call('git -C {0} tag -a {1} -m "Release {1}."'.format(tmp, tag), shell=True)
         call('git  tag -a {1}-{0} -m "Release {1}-{0}."'.format(args['<version>'], remote), shell=True)
         call("git -C {} push --tags origin master".format(tmp), shell=True)
-        call('git  tag -a {1}-{0} -m "Release {1}-{0}."'.format(args['<version>'], remote), shell=True)
         call("git push --tags origin HEAD", shell=True)
         shutil.rmtree(tmp)
