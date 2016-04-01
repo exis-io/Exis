@@ -43,9 +43,8 @@ import arbiter
 # Format: (prefix: remote, url)
 SUBTREES = [
     ("swift/swiftRiffle", "swiftRiffle", "git@github.com:exis-io/swiftRiffle.git"),
-    ("swift/appBackendSeed", "iosAppBackendSeed", "git@github.com:exis-io/iosAppBackendSeed.git"),
-    ("swift/appSeed", "iosAppSeed", "git@github.com:exis-io/iosAppSeed.git"),
-    ("swift/example", "iosExample", "git@github.com:exis-io/iOSExample.git"),
+    ("swift/swiftRiffle/Pod/Classes", "swiftUbuntu", "git@github.com:exis-io/swiftRiffleUbuntu.git"),
+    ("swift/exampleIOS", "iosExample", "git@github.com:exis-io/iOSExample.git"),
 
     ("js/jsRiffle", "jsRiffle", "git@github.com:exis-io/jsRiffle.git"),
     ("js/ngRiffle", "ngRiffle", "git@github.com:exis-io/ngRiffle.git"),
