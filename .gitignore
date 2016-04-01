@@ -18,8 +18,6 @@ biddly
 *.so
 *.jar
 
-libriffmantle.h
-
 IosMantle.framework/
 
 products/
