@@ -1,14 +1,22 @@
 package core
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 type Domain interface {
 	Subdomain(string) Domain
+	LinkDomain(string) Domain
 
 	Subscribe(string, uint64, []interface{}) error
 	Register(string, uint64, []interface{}) error
 	Publish(string, []interface{}) error
-	Call(string, []interface{}, []interface{}) ([]interface{}, error)
+	Call(string, []interface{}) ([]interface{}, error)
+
+	CallExpects(uint64, []interface{})
+	GetCallExpect(uint64) ([]interface{}, bool)
+	RemoveCallExpect(uint64)
 
 	Unsubscribe(string) error
 	Unregister(string) error
@@ -16,14 +24,18 @@ type Domain interface {
 	Join(Connection) error
 	Leave() error
 	GetApp() App
+	GetName() string
 }
 
 type domain struct {
-	app           *app
-	name          string
-	joined        bool
-	subscriptions map[uint64]*boundEndpoint
-	registrations map[uint64]*boundEndpoint
+	app               *app
+	name              string
+	joined            bool
+	subscriptions     map[uint64]*boundEndpoint
+	registrations     map[uint64]*boundEndpoint
+	callResponseTypes map[uint64][]interface{}
+	subLock           sync.RWMutex
+	regLock           sync.RWMutex
 }
 
 type boundEndpoint struct {
@@ -38,21 +50,16 @@ func NewDomain(name string, a *app) Domain {
 	Debug("Creating domain %s", name)
 
 	if a == nil {
-		a = &app{
-			domains:    make([]*domain, 0),
-			serializer: new(jSONSerializer),
-			in:         make(chan message, 10),
-			up:         make(chan Callback, 10),
-			listeners:  make(map[uint64]chan message),
-		}
+		a = NewApp()
 	}
 
 	d := &domain{
-		app:           a,
-		name:          name,
-		joined:        false,
-		subscriptions: make(map[uint64]*boundEndpoint),
-		registrations: make(map[uint64]*boundEndpoint),
+		app:               a,
+		name:              name,
+		joined:            false,
+		subscriptions:     make(map[uint64]*boundEndpoint),
+		registrations:     make(map[uint64]*boundEndpoint),
+		callResponseTypes: make(map[uint64][]interface{}),
 	}
 
 	// TODO: trigger onJoin if the superdomain has joined
@@ -62,11 +69,23 @@ func NewDomain(name string, a *app) Domain {
 }
 
 func (d domain) Subdomain(name string) Domain {
-	return NewDomain(d.name+"."+name, d.app)
+	if name == "" {
+		return NewDomain(d.name, d.app)
+	} else {
+		return NewDomain(d.name+"."+name, d.app)
+	}
+}
+
+func (d domain) LinkDomain(name string) Domain {
+	return NewDomain(name, d.app)
 }
 
 func (d domain) GetApp() App {
 	return d.app
+}
+
+func (d domain) GetName() string {
+	return d.name
 }
 
 // Accepts a connection that has just been opened. This method should only
@@ -79,38 +98,50 @@ func (c domain) Join(conn Connection) error {
 	// Handshake between the connection and the app
 	c.app.Connection = conn
 	conn.SetApp(c.app)
+	c.app.open = true
 
 	// Set the agent string, or who WE are. When this domain leaves, termintate the connection
 	c.app.agent = c.name
 
-	// Should we hard close on conn.Close()? The App may be interested in knowing about the close
-	if err := c.app.Send(&hello{Realm: c.name, Details: map[string]interface{}{}}); err != nil {
+	err := c.app.SendHello()
+	if err != nil {
 		c.app.Close("ERR: could not send a hello message")
 		return err
 	}
 
-	if msg, err := c.app.getMessageTimeout(); err != nil {
-		c.app.Close(err.Error())
-		return err
-	} else if _, ok := msg.(*welcome); !ok {
-		c.app.Send(&abort{Details: map[string]interface{}{}, Reason: "Error- unexpected_message_type"})
-		c.app.Close("Error- unexpected_message_type")
-		return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME.String()))
+	receivedWelcome := false
+	for !receivedWelcome {
+		msg, err := c.app.getMessageTimeout()
+		if err != nil {
+			c.app.Close(err.Error())
+			return err
+		}
+
+		switch msg := msg.(type) {
+		case *welcome:
+			receivedWelcome = true
+		case *challenge:
+			c.app.handleChallenge(msg)
+		default:
+			c.app.Send(&abort{Details: map[string]interface{}{}, Reason: "Error- unexpected_message_type"})
+			c.app.Close("Error- unexpected_message_type")
+			return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME.String()))
+		}
 	}
+
+	c.app.SetState(Ready)
 
 	// This is super dumb, and the reason its in here was fixed. Please revert
 	go c.app.receiveLoop()
 
-	// old contents of app.join
+	// old contents of app.join. This functionality isn't needed anymore. Please revert
 	for _, x := range c.app.domains {
 		if !x.joined {
 			x.joined = true
-			// x.Delegate.OnJoin(x.name)
-			// Invoke the onjoin method for the domain!
 		}
 	}
 
-	Info("Domain joined")
+	Info("Domain %s joined", c.name)
 	return nil
 }
 
@@ -124,7 +155,7 @@ func (c *domain) Leave() error {
 	}
 
 	if dems, ok := removeDomain(c.app.domains, c); !ok {
-		return fmt.Errorf("WARN: couldn't find %s to remove!", c)
+		return fmt.Errorf("WARN: couldn't find %v to remove!", c)
 	} else {
 		c.app.domains = dems
 	}
@@ -134,8 +165,9 @@ func (c *domain) Leave() error {
 		c.app.Close("No domains connected")
 	}
 
-	// Trigger closing callbacks
+	// TODO: If the domain representing the agent name leaves, should the entire conection be taken down?
 
+	// TODO: Trigger closing callbacks in the crust as needed
 	return nil
 }
 
@@ -150,9 +182,11 @@ func (c domain) Subscribe(endpoint string, requestId uint64, types []interface{}
 	if msg, err := c.app.requestListenType(sub, "*core.subscribed"); err != nil {
 		return err
 	} else {
-		Info("Subscribed: %s", endpoint)
+		Info("Subscribed: %s %v", endpoint, types)
 		subbed := msg.(*subscribed)
+		c.subLock.Lock()
 		c.subscriptions[subbed.Subscription] = &boundEndpoint{requestId, endpoint, types}
+		c.subLock.Unlock()
 		return nil
 	}
 }
@@ -161,37 +195,42 @@ func (c domain) Register(endpoint string, requestId uint64, types []interface{})
 	endpoint = makeEndpoint(c.name, endpoint)
 	register := &register{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
 
-	Debug("Registering with types: %s", types)
-
 	if msg, err := c.app.requestListenType(register, "*core.registered"); err != nil {
 		return err
 	} else {
-		Info("Registered: %s", endpoint)
+		Info("Registered: %s %v", endpoint, types)
 		reg := msg.(*registered)
+		c.regLock.Lock()
 		c.registrations[reg.Registration] = &boundEndpoint{requestId, endpoint, types}
+		c.regLock.Unlock()
 		return nil
 	}
 }
 
+// TODO: ask for a Publish Suceeded all the times, so we can trigger callbacks
 func (c domain) Publish(endpoint string, args []interface{}) error {
-	return c.app.Send(&publish{
+	endpoint = makeEndpoint(c.name, endpoint)
+	Info("Publish %s %v", endpoint, args)
+
+	c.app.Queue(&publish{
 		Request:   NewID(),
 		Options:   make(map[string]interface{}),
-		Name:      makeEndpoint(c.name, endpoint),
+		Name:      endpoint,
 		Arguments: args,
 	})
+
+	return nil
 }
 
-func (c domain) Call(endpoint string, args []interface{}, types []interface{}) ([]interface{}, error) {
+func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error) {
 	endpoint = makeEndpoint(c.name, endpoint)
 	call := &call{Request: NewID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
+	Info("Calling %s %v", endpoint, args)
 
+	// This is a call, so setup to listen for a yield message with our return values
 	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
-		Debug("Call err with results: %v", err)
 		return nil, err
 	} else {
-		// TODO: check the types of the retuend arguments
-		Debug("Call suceed with results: %v", msg)
 		return msg.(*result).Arguments, nil
 	}
 }
@@ -199,16 +238,21 @@ func (c domain) Call(endpoint string, args []interface{}, types []interface{}) (
 func (c domain) Unsubscribe(endpoint string) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 
+	c.subLock.RLock()
 	if id, _, ok := bindingForEndpoint(c.subscriptions, endpoint); !ok {
+		c.subLock.RUnlock()
 		return fmt.Errorf("domain %s is not registered with this client.", endpoint)
 	} else {
+		c.subLock.RUnlock()
 		sub := &unsubscribe{Request: NewID(), Subscription: id}
 
 		if _, err := c.app.requestListenType(sub, "*core.unsubscribed"); err != nil {
 			return err
 		} else {
 			Info("Unsubscribed: %s", endpoint)
+			c.subLock.Lock()
 			delete(c.subscriptions, id)
+			c.subLock.Unlock()
 			return nil
 		}
 	}
@@ -217,47 +261,65 @@ func (c domain) Unsubscribe(endpoint string) error {
 func (c domain) Unregister(endpoint string) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 
+	c.regLock.RLock()
 	if id, _, ok := bindingForEndpoint(c.registrations, endpoint); !ok {
+		c.regLock.RUnlock()
 		return fmt.Errorf("domain %s is not registered with this domain.", endpoint)
 	} else {
+		c.regLock.RUnlock()
 		unregister := &unregister{Request: NewID(), Registration: id}
 
 		if _, err := c.app.requestListenType(unregister, "*core.unregistered"); err != nil {
 			return err
 		} else {
 			Info("Unregistered: %s", endpoint)
+			c.regLock.Lock()
 			delete(c.registrations, id)
+			c.regLock.Unlock()
 			return nil
 		}
 	}
 }
 
 func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
-	if err := softCumin(binding.expectedTypes, msg.Arguments); err == nil {
+	if err := SoftCumin(binding.expectedTypes, msg.Arguments); err == nil {
 		c.app.CallbackSend(binding.callback, append([]interface{}{msg.Request}, msg.Arguments...)...)
 	} else {
+		errorArguments := make([]interface{}, 0)
+		errorArguments = append(errorArguments, err.Error())
+
 		tosend := &errorMessage{
 			Type:      iNVOCATION,
 			Request:   msg.Request,
 			Details:   make(map[string]interface{}),
-			Arguments: msg.Arguments,
-			Error:     err.Error(),
+			Arguments: errorArguments,
+			Error:     ErrInvalidArgument,
 		}
 
-		if err := c.app.Send(tosend); err != nil {
-			Warn("error sending message:", err)
-		}
+		c.app.Queue(tosend)
 	}
 }
 
 func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
-	if e := softCumin(binding.expectedTypes, msg.Arguments); e == nil {
+	if err := SoftCumin(binding.expectedTypes, msg.Arguments); err == nil {
 		c.app.CallbackSend(binding.callback, msg.Arguments...)
 	} else {
-		tosend := &errorMessage{Type: pUBLISH, Request: msg.Subscription, Details: make(map[string]interface{}), Arguments: make([]interface{}, 0), Error: e.Error()}
-
-		if err := c.app.Send(tosend); err != nil {
-			Warn("error sending message:", err)
-		}
+		// TODO: warn application level code at some well-known location
+		Warn("%v", err)
 	}
+}
+
+// Adds the types to this domains expectant calls. As written, this method is potentially
+// unsafe-- no way to check if the call really went out, which could leave the types in there forever
+func (c domain) CallExpects(id uint64, types []interface{}) {
+	c.callResponseTypes[id] = types
+}
+
+func (c domain) GetCallExpect(id uint64) ([]interface{}, bool) {
+	types, ok := c.callResponseTypes[id]
+	return types, ok
+}
+
+func (c domain) RemoveCallExpect(id uint64) {
+	delete(c.callResponseTypes, id)
 }

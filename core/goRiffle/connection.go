@@ -15,6 +15,7 @@ type WebsocketConnection struct {
 	app         core.App
 	payloadType int
 	closed      bool
+	url         string
 }
 
 func Open(url string) (*WebsocketConnection, error) {
@@ -29,6 +30,7 @@ func Open(url string) (*WebsocketConnection, error) {
 			conn:        conn,
 			lock:        &sync.Mutex{},
 			payloadType: websocket.TextMessage,
+			url:         url,
 		}
 
 		go connection.run()
@@ -36,17 +38,15 @@ func Open(url string) (*WebsocketConnection, error) {
 	}
 }
 
-func (ep *WebsocketConnection) Send(data []byte) {
-	// core.Debug("Writing data")
-	// Does the lock block? The locks should be faster than working off the channel,
-	// but the comments in the other code imply that the lock blocks on the send?
-
+func (ep *WebsocketConnection) Send(data []byte) error {
 	ep.lock.Lock()
-	if err := ep.conn.WriteMessage(ep.payloadType, data); err != nil {
-		core.Warn("No one is dealing with my errors! Cant write to socket. Eror: %s", err)
-		panic("Unrecoverable error")
+	defer ep.lock.Unlock()
+
+	err := ep.conn.WriteMessage(ep.payloadType, data)
+	if err != nil {
+		core.Warn("Error writing to socket: %s", err)
 	}
-	ep.lock.Unlock()
+	return err
 }
 
 func (ep *WebsocketConnection) SetApp(app core.App) {
@@ -65,16 +65,41 @@ func (ep *WebsocketConnection) Close(reason string) error {
 		log.Println("error sending close message:", err)
 	}
 
-	ep.lock = nil
 	ep.closed = true
 
 	return ep.conn.Close()
 }
 
-func (ep *WebsocketConnection) run() {
-	// Theres some missing logic here when it comes to dealing with closes, including whats
-	// actually returned from those closes
+func (ep *WebsocketConnection) Reconnect() error {
+	for {
+		core.Debug("Opening connection to %s", ep.url)
+		dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
 
+		if conn, _, err := dialer.Dial(ep.url, nil); err != nil {
+			core.Debug("Connection failed: %e", err)
+		} else {
+			// Set pointer to new websocket connection.
+			ep.lock.Lock()
+			ep.conn = conn
+			ep.lock.Unlock()
+
+			ep.app.SetState(core.Connected)
+
+			if err := ep.app.SendHello(); err != nil {
+				core.Debug("Sending HELLO failed: %e", err)
+				ep.conn.Close()
+			} else {
+				return nil
+			}
+		}
+
+		delay := ep.app.NextRetryDelay()
+		core.Debug("Retry in %v", delay)
+		time.Sleep(delay)
+	}
+}
+
+func (ep *WebsocketConnection) run() {
 	for {
 		if msgType, bytes, err := ep.conn.ReadMessage(); err != nil {
 			if ep.closed {
@@ -84,14 +109,22 @@ func (ep *WebsocketConnection) run() {
 				ep.conn.Close()
 			}
 
-			// ep.App.Close()
-			break
+			ep.app.ConnectionClosed("Peer connection closed")
+			if ep.app.ShouldReconnect() {
+				ep.Reconnect()
+			} else {
+				break
+			}
 		} else if msgType == websocket.CloseMessage {
 			core.Info("Close message recieved")
 			ep.conn.Close()
 
-			// ep.App.Close()
-			break
+			ep.app.ConnectionClosed("Close message received")
+			if ep.app.ShouldReconnect() {
+				ep.Reconnect()
+			} else {
+				break
+			}
 		} else {
 			ep.app.ReceiveBytes(bytes)
 		}

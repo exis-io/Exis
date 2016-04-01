@@ -7,7 +7,7 @@ import (
 )
 
 type Connection interface {
-	Send([]byte)
+	Send([]byte) error
 	Close(string) error
 	SetApp(App)
 }
@@ -21,25 +21,28 @@ type IdGenerator interface {
 var ExternalGenerator IdGenerator = nil
 
 const (
-	FabricLocal      string = "ws://localhost:8000/ws"
-	FabricDev        string = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
-	FabricSandbox    string = "ws://sandbox.exis.io/ws"
-	FabricProduction string = "wss://node.exis.io/wss"
-
 	maxId          int64         = 1 << 53
-	MessageTimeout time.Duration = 3 * time.Second
+	MessageTimeout time.Duration = 3 * time.Hour
 
-	ErrInvalidArgument     = "ERR-- Invalid Arguments, check your receiver!"
-	ErrSystemShutdown      = "ERR-- Connection collapsed. It wasn't pretty."
-	ErrCloseRealm          = "ERR-- Im leaving and taking the dog."
-	ErrGoodbyeAndOut       = "ERR-- Goodbye and go away."
-	ErrNotAuthorized       = "ERR-- Not Authorized. Ask nicely."
-	ErrAuthorizationFailed = "ERR-- Unable to Authorize. Try harder."
+	FabricLocal	    = "ws://localhost:8000/ws"
+	FabricDev	    = "ws://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8000/ws"
+	FabricSandbox	    = "ws://sandbox.exis.io:8000/ws"
+	FabricProduction    = "wss://node.exis.io:8000/wss"
+	
+	RegistrarLocal      = "http://localhost:8880"
+	RegistrarDev        = "http://ec2-52-26-83-61.us-west-2.compute.amazonaws.com:8880"
+	RegistrarProduction = "https://node.exis.io:8880"
+
+	CuminStrict = 2
+	CuminLoose = 1
+	CuminOff = 0
 )
 
 var (
 	LogLevel int    = 1
 	Fabric   string = FabricProduction
+	Registrar string = RegistrarProduction
+	CuminLevel int = CuminLoose
 )
 
 func NewID() uint64 {

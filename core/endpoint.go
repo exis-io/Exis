@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -13,17 +14,9 @@ func (e InvalidURIError) Error() string {
 
 // Check out the golang tester for more info:
 // https://regex-golang.appspot.com/assets/html/index.html
-func validEndpoint(s string) bool {
+func validDomain(s string) bool {
 	r, _ := regexp.Compile("(^([a-z]+)(.[a-z]+)*$)")
 	return r.MatchString(s)
-}
-
-func validDomain(s string) bool {
-	return true
-}
-
-func validAction(s string) bool {
-	return true
 }
 
 func makeEndpoint(d string, a string) string {
@@ -65,6 +58,17 @@ func extractDomain(s string) (string, error) {
 func topLevelDomain(subdomain string) string {
 	parts := strings.Split(subdomain, ".")
 	return parts[0]
+}
+
+// Return the ancestor domain if possible
+func getSuperdomain(domain string) (string, error) {
+	parts := strings.Split(domain, ".")
+
+	if len(parts) < 2 {
+		return "", fmt.Errorf("Unable to retreive superdomain. Domain %s either has no superdomains or is poorly constructed", domain)
+	}
+
+	return parts[len(parts)-1], nil
 }
 
 // Generate list of ancestors up to the top level.
@@ -127,17 +131,10 @@ func subdomain(agent, target string) bool {
 
 // breaks down an endpoint into domain and action, or returns an error
 func breakdownEndpoint(s string) (string, string, error) {
-	d, errDomain := extractDomain(s)
-
-	if errDomain != nil {
+	i := strings.Index(s, "/")
+	if i == -1 {
 		return "", "", InvalidURIError(s)
 	}
 
-	a, errAction := extractActions(s)
-
-	if errAction != nil {
-		return "", "", InvalidURIError(s)
-	}
-
-	return d, a, nil
+	return s[:i], s[i+1:], nil
 }

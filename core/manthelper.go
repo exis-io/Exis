@@ -1,7 +1,8 @@
 package core
 
 // Helper methods for mantles. Operate functionally on Domains, triggering success or
-// error callbacks based on the intended functionality
+// error callbacks based on the intended functionality. These functions are here to cut down 
+// on the redundancy of mantles
 
 func MantleSubscribe(d Domain, endpoint string, cb uint64, eb uint64, handler uint64, types []interface{}) {
 	if err := d.Subscribe(endpoint, handler, types); err != nil {
@@ -27,11 +28,22 @@ func MantlePublish(d Domain, endpoint string, cb uint64, eb uint64, args []inter
 	}
 }
 
-func MantleCall(d Domain, endpoint string, cb uint64, eb uint64, args []interface{}, types []interface{}) {
-	if results, err := d.Call(endpoint, args, types); err != nil {
+func MantleCall(d Domain, endpoint string, cb uint64, eb uint64, args []interface{}) {
+	if results, err := d.Call(endpoint, args); err != nil {
+		d.RemoveCallExpect(cb)
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
-		d.GetApp().CallbackSend(cb, results)
+		if types, ok := d.GetCallExpect(cb); (!ok && CuminLevel != CuminOff) {
+			// We were never asked for types. Don't do anything
+			Info("Call for %v received, but no cumin enforcement present.", endpoint)
+		} else {
+			d.RemoveCallExpect(cb)
+			if err := SoftCumin(types, results); err == nil {
+				d.GetApp().CallbackSend(cb, results...)
+			} else {
+				d.GetApp().CallbackSend(eb, err.Error())
+			}
+		}
 	}
 }
 

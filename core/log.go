@@ -15,6 +15,10 @@ const (
 	LogLevelDebug int = 5
 )
 
+var (
+	ShouldLogLineNumber = true // Print the line that emitted the log
+)
+
 func Debug(format string, a ...interface{}) {
 	if LogLevel >= LogLevelDebug {
 		out(fmt.Sprintf("%s", fmt.Sprintf(format, a...)))
@@ -43,20 +47,24 @@ func Application(format string, a ...interface{}) {
 	if LogLevel >= LogLevelApp {
 		// out(fmt.Sprintf(format, a...))
 
-		// Use out here, please
+		// TODO: Use out here, please
 		fmt.Println(fmt.Sprintf(format, a...))
 	}
 }
 
 func out(mess string) {
+	// Injectible writer-- useful for JS
 	// if writer != nil {
 	// 	writer.Write(fmt.Sprintf("[%s] %s", trace(), mess))
 	// }
 
-	fmt.Println(fmt.Sprintf("[%s] %s", trace(), mess))
+	if ShouldLogLineNumber {
+		fmt.Println(fmt.Sprintf("[%s] %s", trace(), mess))
+	} else {
+		fmt.Println(fmt.Sprintf("%s", mess))
+	}
 }
 
-// This might not make any sense for non-go languages...
 func trace() string {
 	pc := make([]uintptr, 10) // at least 1 entry needed
 	runtime.Callers(4, pc)

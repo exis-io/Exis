@@ -1,6 +1,7 @@
 package core
 
 import (
+	"reflect"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
@@ -9,29 +10,43 @@ import (
 func TestValidDomain(t *testing.T) {
 	Convey("Valid endpoints", t, func() {
 		Convey("Don't need to have periods", func() {
-			So(validEndpoint("pd"), ShouldBeTrue)
+			So(validDomain("pd"), ShouldBeTrue)
 		})
 
 		Convey("Can have a single subdomain", func() {
-			So(validEndpoint("pd.damouse"), ShouldBeTrue)
+			So(validDomain("pd.damouse"), ShouldBeTrue)
 		})
 
 		Convey("Can have an arbitrary number of subdomains", func() {
-			So(validEndpoint("pd.damouse.a.b.c"), ShouldBeTrue)
+			So(validDomain("pd.damouse.a.b.c"), ShouldBeTrue)
 		})
 	})
 
 	Convey("Invalid endpoints", t, func() {
 		Convey("Cannot end in an period", func() {
-			So(validEndpoint("pd."), ShouldBeFalse)
+			So(validDomain("pd."), ShouldBeFalse)
 		})
 
 		Convey("Cannot end in an period and slash", func() {
-			So(validEndpoint("pd./"), ShouldBeFalse)
+			So(validDomain("pd./"), ShouldBeFalse)
 		})
 
 		Convey("Cannot end in an period, slash, and text", func() {
-			So(validEndpoint("pd./a"), ShouldBeFalse)
+			So(validDomain("pd./a"), ShouldBeFalse)
+		})
+	})
+}
+
+func TestMakeEndpoint(t *testing.T) {
+	Convey("Building an endpoint", t, func() {
+		Convey("Can append an action", func() {
+			s := makeEndpoint("xs.test", "action")
+			So(s, ShouldEqual, "xs.test/action")
+		})
+
+		Convey("Accepts a full endpoint", func() {
+			s := makeEndpoint("xs.test", "xs.other/action")
+			So(s, ShouldEqual, "xs.other/action")
 		})
 	})
 }
@@ -43,10 +58,36 @@ func TestExtractDomain(t *testing.T) {
 	})
 }
 
+func TestTopLevelDomain(t *testing.T) {
+	Convey("Top level domain can be extracted", t, func() {
+		s := topLevelDomain("xs.test/action")
+		So(s, ShouldEqual, "xs")
+	})
+}
+
+func TestAncestorDomains(t *testing.T) {
+	Convey("Should work without appended string", t, func() {
+		expected := []string{"xs.X", "xs"}
+		results := ancestorDomains("xs.X.Y", "")
+		So(reflect.DeepEqual(results, expected), ShouldBeTrue)
+	})
+
+	Convey("Should work with appended string", t, func() {
+		expected := []string{"xs.X.Auth", "xs.Auth"}
+		results := ancestorDomains("xs.X.Y.Auth", "Auth")
+		So(reflect.DeepEqual(results, expected), ShouldBeTrue)
+	})
+}
+
 func TestExtractAction(t *testing.T) {
 	Convey("Single actions can be extracted", t, func() {
 		s, _ := extractActions("pd/alpha")
 		So(s, ShouldEqual, "alpha")
+	})
+
+	Convey("Invalid endpoints produce an error", t, func() {
+		_, err := extractActions("xs.test")
+		So(err, ShouldNotBeNil)
 	})
 }
 
@@ -73,6 +114,13 @@ func TestExtractBoth(t *testing.T) {
 
 			So(e, ShouldEqual, "pd.x")
 			So(a, ShouldEqual, "alpha/beta")
+			So(ok, ShouldBeNil)
+		})
+
+		Convey("With a short action can be extracted", func() {
+			domain, action, ok := breakdownEndpoint("xs.test/a")
+			So(domain, ShouldEqual, "xs.test")
+			So(action, ShouldEqual, "a")
 			So(ok, ShouldBeNil)
 		})
 	})
@@ -112,6 +160,10 @@ func TestDownwardAction(t *testing.T) {
 
 		Convey("Can have spaces at the start", func() {
 			So(subdomain(" pd.damouse", "pd.damouse.a.b.c"), ShouldBeFalse)
+		})
+
+		Convey("Can be longer", func() {
+			So(subdomain("xs.demo.lance", "xs.demo"), ShouldBeFalse)
 		})
 	})
 }
