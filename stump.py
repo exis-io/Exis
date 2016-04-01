@@ -51,8 +51,8 @@ SUBTREES = [
     ("js/ngRiffle", "ngRiffle", "git@github.com:exis-io/ngRiffle.git"),
     ("js/angularSeed", "ngSeed", "git@github.com:exis-io/ngSeed.git"),
 
-    # ("core", "core", "git@github.com:exis-io/core.git"),
-    ("core", "gocore", "git@github.com:exis-io/core.git"),
+    ("core", "core", "git@github.com:exis-io/core.git"),
+    # ("core", "gocore", "git@github.com:exis-io/core.git"),
 
     ("python/pyRiffle", "pyRiffle", "git@github.com:exis-io/pyRiffle.git"),
 
