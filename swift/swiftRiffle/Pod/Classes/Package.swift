@@ -9,7 +9,7 @@ let package = Package(
         //.Package(url: "../../../mantle", majorVersion: 1)
 
         // For production
-        .Package(url: "https://github.com/exis-io/swiftRiffleMantle.git", majorVersion: 0, minorVersion: 2)
+        .Package(url: "https://github.com/exis-io/swiftRiffleMantle.git", majorVersion: 0, minor: 2)
     ]
 )
 #endif
