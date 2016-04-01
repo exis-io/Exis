@@ -75,11 +75,11 @@ func (a *app) run() {
 			break
 		}
 
-		if handler, ok := a.subscriptions[id]; !ok {
-			Warn("No subscription found for id %s", cb.Id)
-		} else {
+		// if handler, ok := a.subscriptions[id]; !ok {
+		// 	Warn("No subscription found for id %s", cb.Id)
+		// } else {
 
-		}
+		// }
 	}
 }
 
