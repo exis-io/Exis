@@ -59,6 +59,14 @@ SUBTREES = [
     ("CardsAgainstHumanityDemo/ngCardsAgainst", "ngCAH", "git@github.com:exis-io/ionicCardsAgainstEXIStence.git")
 ]
 
+# Subtrees that track binary files in the subtree but not in the branch
+# These are not added as remotes. Prefixes may match true subtrees.
+# Format: (prefix: name, url)
+SHADOW_SUBTREES = [
+    ("swift/swiftRiffle", 'swiftRiffle', 'git@github.com:exis-io/swiftRiffleCocoapod.git'),
+    ("swift/mantle", 'swiftMantle', 'git@github.com:exis-io/swiftRiffleMantle.git'),
+]
+
 
 if __name__ == '__main__':
     args = docopt.docopt(helpstr, options_first=True, help=True)
@@ -203,7 +211,7 @@ if __name__ == '__main__':
 
         This is for situations where you want to check in files into the subtree and not the trunk (like big binary files)
         required by a semver dependency manager. Make sure the binary files are ignored at the trunk, not in the local 
-        repo, else they'll be ignored when pushing the shadow. You can also move gitignores too and avoid this problem 
+        repo, else they'll be ignored when pushing the shadow. You can also move gitignores to avoid this problem 
 
         The basics are: 
 
@@ -223,51 +231,33 @@ if __name__ == '__main__':
             git -C swift/swiftRiffle push origin master
 
             rm -rf swift/swiftRiffle/.git
-
-
-        Notes:
-            - This implementation is incomplete. Release option above is better-- add the copy task 
-            - 
         '''
 
         found = False
-        for prefix, remote, url in SUBTREES:
+        for prefix, remote, url in SHADOW_SUBTREES:
             if remote == args['<remote>']:
                 found = True
                 break
 
         if not found:
-            print("Error: unrecognized remote ({})".format(args['<remote>']))
+            print("Error: unrecognized shadow remote ({})".format(args['<remote>']))
             sys.exit(1)
-
-        # Note that the shadows have their own remotes. TODO: consolidate this into the top data
-        # structure
-        if remote == 'swiftRiffle':
-            shadow = 'git@github.com:exis-io/swiftRiffleCocoapod.git'
-        else:
-            print 'Unrecognized remote. Not all remotes have shadows!'
-            sys.exit(1)
-
-        # print("Pushing {} to remote {} ({})...".format(prefix, remote, url))
-        # call("git subtree push --prefix {} {} master".format(prefix, remote), shell=True)
 
         tag = args['<version>']
-
         tmp = tempfile.mkdtemp()
 
         # clone without the checkout to just grab the .git directory
-        call("git clone --no-checkout {} {}".format(shadow, tmp), shell=True)
+        call("git clone --no-checkout {} {}".format(url, tmp), shell=True)
 
         # Copy the contents of the real directory
-        copy_tree(prefix, tmp)
+        copy_tree(prefix, tmp, lambda d, files: ['.git'])
 
         call('git -C {0} add --all'.format(tmp), shell=True)
         call('git -C {0} commit -m "Exis shadow subtree push: {1}"'.format(tmp, tag), shell=True)
         call('git -C {0} push origin master'.format(tmp), shell=True)
-        # print 'Shadow set up in ', tmp
 
         print("Creating tag: {}".format(tag))
         call('git -C {0} tag -a {1} -m "Release {1}."'.format(tmp, tag), shell=True)
-        # call('git  tag -a {1}-{0} -m "Release {1}-{0}."'.format(args['<version>'], remote), shell=True)
+        call('git  tag -a {1}-{0} -m "Release {1}-{0}."'.format(args['<version>'], remote), shell=True)
         call("git -C {} push --tags origin master".format(tmp), shell=True)
         shutil.rmtree(tmp)
