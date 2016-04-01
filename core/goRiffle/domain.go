@@ -8,15 +8,15 @@ type Domain interface {
 	Subdomain(string) Domain
 
 	Subscribe(string, interface{}) error
-	// Register(string, interface{}) error
+	Register(string, interface{}) error
 	Publish(string, ...interface{}) error
-	// Call(string, []interface{}) ([]interface{}, error)
+	Call(string, ...interface{}) ([]interface{}, error)
 
-	// Unsubscribe(string) error
-	// Unregister(string) error
+	Unsubscribe(string) error
+	Unregister(string) error
 
 	Join() error
-	// Leave() error
+	Leave() error
 	Listen() error
 }
 
@@ -73,26 +73,32 @@ func (d domain) Subscribe(endpoint string, handler interface{}) error {
 	}
 }
 
-// func (d Domain) Register(endpoint string, handler interface{}) error {
-// 	return d.coreDomain.Register()
-// }
+func (d domain) Register(endpoint string, handler interface{}) error {
+	c := core.NewID()
+	if err := d.coreDomain.Register(endpoint, c, nil); err != nil {
+		return err
+	} else {
+		d.mantleApp.registrations[c] = handler
+		return nil
+	}
+}
 
 func (d domain) Publish(endpoint string, args ...interface{}) error {
 	return d.coreDomain.Publish(endpoint, args)
 }
 
-// func (d Domain) Call(endpoint string, args []interface{}) ([]interface{}, error) {
-// 	return d.coreDomain.Call()
-// }
+func (d domain) Call(endpoint string, args ...interface{}) ([]interface{}, error) {
+	return d.coreDomain.Call(endpoint, args)
+}
 
-// func (d Domain) Unsubscribe(string) error {
-// 	return d.coreDomain.Unsubscribe()
-// }
+func (d domain) Unsubscribe(endpoint string) error {
+	return d.coreDomain.Unsubscribe(endpoint)
+}
 
-// func (d Domain) Unregister(string) error {
-// 	return d.coreDomain.Unregister()
-// }
+func (d domain) Unregister(endpoint string) error {
+	return d.coreDomain.Unregister(endpoint)
+}
 
-// func (d Domain) Leave() error {
-// 	return d.coreDomain.Leave()
-// }
+func (d domain) Leave() error {
+	return d.coreDomain.Leave()
+}

@@ -22,15 +22,24 @@ func (a *app) run() {
 			break
 		}
 
-		Debug("Received callback %d", cb.Id)
-		Debug("Current subscriptions: %v")
+		Debug("Received callback %d, %v", cb.Id, cb.Args)
 
 		if handler, ok := a.subscriptions[cb.Id]; ok {
 			if _, err := core.Cumin(handler, cb.Args); err != nil {
 				Warn("%s", err.Error())
 			}
 		} else if handler, ok := a.registrations[cb.Id]; ok {
-			core.Cumin(handler, cb.Args)
+			// The first id for all calls is the yield id
+			yieldId := cb.Args[0].(uint64)
+			args := cb.Args[1:]
+
+			if ret, err := core.Cumin(handler, args); err != nil {
+				Warn("%s", err.Error())
+				a.coreApp.YieldError(yieldId, err.Error(), nil)
+			} else {
+				a.coreApp.Yield(yieldId, ret)
+			}
+
 		} else {
 			Warn("No handler for id: %d", cb.Id)
 		}

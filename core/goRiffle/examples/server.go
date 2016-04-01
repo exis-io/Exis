@@ -5,7 +5,7 @@ import "github.com/exis-io/core/goRiffle"
 func main() {
 	// set flags for testing
 	goRiffle.SetFabricDev()
-	goRiffle.SetLogLevelDebug()
+	goRiffle.SetLogLevelInfo()
 
 	app := goRiffle.NewDomain("xs.damouse")
 	receiver := app.Subdomain("receiver")
@@ -20,13 +20,14 @@ func main() {
 		goRiffle.Info("Subscribed!")
 	}
 
-	// e = a.Register("reg", func() {
-	// 	goRiffle.Info("Call received!")
-	// })
-
-	// if e != nil {
-	// 	goRiffle.Info("Unable to subscribe: ", e.Error())
-	// }
+	if e := receiver.Register("reg", func(name string) string {
+		goRiffle.Info("Call received! Name: %s", name)
+		return "Hello from the server!"
+	}); e != nil {
+		goRiffle.Info("Unable to register: ", e.Error())
+	} else {
+		goRiffle.Info("Registered!")
+	}
 
 	// Handle until the connection closes
 	receiver.Listen()

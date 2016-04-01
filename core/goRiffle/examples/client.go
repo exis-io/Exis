@@ -5,7 +5,7 @@ import "github.com/exis-io/core/goRiffle"
 func main() {
 	// set flags for testing
 	goRiffle.SetFabricDev()
-	goRiffle.SetLogLevelDebug()
+	goRiffle.SetLogLevelInfo()
 
 	// Create the domain objects
 	app := goRiffle.NewDomain("xs.damouse")
@@ -15,10 +15,16 @@ func main() {
 	// Connect
 	sender.Join()
 
-	if e := receiver.Publish("sub", "Hello!"); e != nil {
+	if e := receiver.Publish("sub", "Publish from Client"); e != nil {
 		goRiffle.Info("Unable to publish: ", e.Error())
 	} else {
 		goRiffle.Info("Published!")
+	}
+
+	if ret, e := receiver.Call("reg", "Call from Client"); e != nil {
+		goRiffle.Info("Unable to call: ", e.Error())
+	} else {
+		goRiffle.Info("Result of call: %v", ret)
 	}
 
 	// Handle until the connection closes

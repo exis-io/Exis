@@ -2,7 +2,6 @@
 import PackageDescription
 
 let package = Package(
-    name: "Example",
     dependencies: [
         // For local testing within exis repo
         //.Package(url: "../../swiftRiffle/Pod/Classes/", majorVersion: 1)
