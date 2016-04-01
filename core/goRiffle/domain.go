@@ -20,13 +20,6 @@ type Domain interface {
 	Listen() error
 }
 
-type app struct {
-	registrations map[uint64]interface{}
-	subscriptions map[uint64]interface{}
-	closing       chan bool // set when the connection closes
-	coreApp       core.App
-}
-
 type domain struct {
 	coreDomain core.Domain
 	mantleApp  *app
@@ -60,26 +53,6 @@ func (d domain) Join() error {
 	} else {
 		go d.mantleApp.run()
 		return nil
-	}
-}
-
-// Main run loop. Start listening to the core. Run in a goroutine.
-func (a *app) run() {
-	for {
-		cb := a.coreApp.CallbackListen()
-
-		// 0 means close
-		if cb.Id == 0 {
-			Debug("Closing mantle receive loop")
-			a.closing <- true
-			break
-		}
-
-		// if handler, ok := a.subscriptions[id]; !ok {
-		// 	Warn("No subscription found for id %s", cb.Id)
-		// } else {
-
-		// }
 	}
 }
 

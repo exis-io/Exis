@@ -68,7 +68,7 @@ func SoftCumin(types []interface{}, args []interface{}) error {
 	//fmt.Printf("SOFTCUMIN: %v against %v\n", types, args)
 
 	if CuminLevel == CuminOff {
-		return nil 
+		return nil
 	}
 
 	// Special case-- allow any arguments

@@ -12,8 +12,8 @@ func main() {
 
 	receiver.Join()
 
-	if e := receiver.Subscribe("sub", func() {
-		goRiffle.Info("Pub received!")
+	if e := receiver.Subscribe("sub", func(name string) {
+		goRiffle.Info("Pub received! Name: %s", name)
 	}); e != nil {
 		goRiffle.Info("Unable to subscribe: ", e.Error())
 	} else {
