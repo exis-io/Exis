@@ -1,154 +1,125 @@
 package goRiffle
 
-// type Domain interface {
-// 	Subscribe(string, interface{}) error
-// 	Register(string, interface{}) error
+import "github.com/exis-io/core"
 
-// 	Publish(string, ...interface{}) error
-// 	Call(string, ...interface{}) error
+// A wrapper around the core domain. Re-exposes the methods from the core
 
-// 	Unsubscribe(string) error
-// 	Unregister(string) error
+type Domain interface {
+	Subdomain(string) Domain
 
-// 	Join() error
-// 	Leave() error
-// 	Run()
+	Subscribe(string, interface{}) error
+	// Register(string, interface{}) error
+	Publish(string, ...interface{}) error
+	// Call(string, []interface{}) ([]interface{}, error)
+
+	// Unsubscribe(string) error
+	// Unregister(string) error
+
+	Join() error
+	// Leave() error
+	Listen() error
+}
+
+type app struct {
+	registrations map[uint64]interface{}
+	subscriptions map[uint64]interface{}
+	closing       chan bool // set when the connection closes
+	coreApp       core.App
+}
+
+type domain struct {
+	coreDomain core.Domain
+	mantleApp  *app
+}
+
+func NewDomain(name string) Domain {
+	core.CuminLevel = core.CuminOff
+
+	a := app{
+		registrations: make(map[uint64]interface{}),
+		subscriptions: make(map[uint64]interface{}),
+		closing:       make(chan bool, 1),
+	}
+
+	d := domain{core.NewDomain(name, nil), &a}
+	a.coreApp = d.coreDomain.GetApp()
+
+	return d
+
+}
+
+func (d domain) Subdomain(name string) Domain {
+	return domain{d.coreDomain.Subdomain(name), d.mantleApp}
+}
+
+func (d domain) Join() error {
+	if c, err := Open(core.Fabric); err != nil {
+		return err
+	} else if err := d.coreDomain.Join(c); err != nil {
+		return err
+	} else {
+		go d.mantleApp.run()
+		return nil
+	}
+}
+
+// Main run loop. Start listening to the core. Run in a goroutine.
+func (a *app) run() {
+	for {
+		cb := a.coreApp.CallbackListen()
+
+		// 0 means close
+		if cb.Id == 0 {
+			Debug("Closing mantle receive loop")
+			a.closing <- true
+			break
+		}
+
+		if handler, ok := a.subscriptions[id]; !ok {
+			Warn("No subscription found for id %s", cb.Id)
+		} else {
+
+		}
+	}
+}
+
+// Block and listen until the connection closes
+func (d domain) Listen() error {
+	// TODO: return error if connetion has not been opened
+	<-d.mantleApp.closing
+	return nil
+}
+
+func (d domain) Subscribe(endpoint string, handler interface{}) error {
+	c := core.NewID()
+	if err := d.coreDomain.Subscribe(endpoint, c, nil); err != nil {
+		return err
+	} else {
+		d.mantleApp.subscriptions[c] = handler
+		return nil
+	}
+}
+
+// func (d Domain) Register(endpoint string, handler interface{}) error {
+// 	return d.coreDomain.Register()
 // }
 
-// type mantle struct {
-// 	honcho core.App
-// 	conn   *WebsocketConnection
+func (d domain) Publish(endpoint string, args ...interface{}) error {
+	return d.coreDomain.Publish(endpoint, args)
+}
+
+// func (d Domain) Call(endpoint string, args []interface{}) ([]interface{}, error) {
+// 	return d.coreDomain.Call()
 // }
 
-// type domain struct {
-// 	mantle   *mantle
-// 	mirror   core.Domain
-// 	handlers map[uint64]interface{}
-// 	kill     chan bool
+// func (d Domain) Unsubscribe(string) error {
+// 	return d.coreDomain.Unsubscribe()
 // }
 
-// var wrap *mantle
-
-// func NewDomain(name string) Domain {
-
-// 	if wrap == nil {
-// 		h := core.NewApp()
-
-// 		wrap = &mantle{
-// 			honcho: h,
-// 		}
-// 	}
-
-// 	d := domain{
-// 		mantle:   wrap,
-// 		handlers: make(map[uint64]interface{}),
-// 		kill:     make(chan bool),
-// 	}
-
-// 	d.mirror = wrap.honcho.NewDomain(name)
-// 	return d
+// func (d Domain) Unregister(string) error {
+// 	return d.coreDomain.Unregister()
 // }
 
-// func (d domain) Subscribe(endpoint string, handler interface{}) error {
-// 	id := core.NewID()
-// 	if err := d.mirror.Subscribe(endpoint, id, []interface{}{}); err != nil {
-// 		return err
-// 	} else {
-// 		d.handlers[id] = handler
-// 		return nil
-// 	}
-// }
-
-// func (d domain) Register(endpoint string, handler interface{}) error {
-// 	id := core.NewID()
-// 	if err := d.mirror.Register(endpoint, id, []interface{}{}); err != nil {
-// 		return err
-// 	} else {
-// 		d.handlers[id] = handler
-// 		return nil
-// 	}
-// }
-
-// func (d domain) Publish(endpoint string, args ...interface{}) error {
-// 	id := core.NewID()
-// 	err := d.mirror.Publish(endpoint, id, args)
-// 	return err
-// }
-
-// func (d domain) Call(endpoint string, args ...interface{}) error {
-// 	id := core.NewID()
-// 	err := d.mirror.Call(endpoint, id, args)
-// 	return err
-// }
-
-// func (d domain) Unsubscribe(endpoint string) error {
-// 	err := d.mirror.Unsubscribe(endpoint)
-// 	return err
-// }
-
-// func (d domain) Unregister(endpoint string) error {
-// 	err := d.mirror.Unregister(endpoint)
-// 	return err
-// }
-
-// func (d domain) Join() error {
-// 	// Open a new connection if we don't have one yet
-// 	if d.mantle.conn == nil {
-// 		c, err := Open(core.LocalFabric)
-
-// 		if err != nil {
-// 			fmt.Println("Unable to open connection!")
-// 			return err
-// 		}
-
-// 		wrap.conn = c
-// 		return d.mirror.Join(c)
-// 	}
-
-// 	return nil
-// }
-
-// func (d domain) Leave() error {
-// 	err := d.mirror.Leave()
-
-// 	// for each subscription
-// 	// for each registration
-
-// 	return err
-// }
-
-// func (d domain) Invoke(id uint64, args []interface{}) {
-// 	Debug("Called with %s", args)
-
-// 	if handler, ok := d.handlers[id]; ok {
-// 		core.Cumin(handler, args)
-// 	}
-// }
-
-// // Spin and run while the domain is still connected
-// func (d domain) Run() {
-// 	<-d.kill
-// }
-
-// func Debug(format string, a ...interface{}) {
-// 	core.Debug(format, a...)
-// }
-
-// func Info(format string, a ...interface{}) {
-// 	core.Info(format, a...)
-// }
-
-// func Warn(format string, a ...interface{}) {
-// 	core.Warn(format, a...)
-// }
-
-// const (
-// 	LogLevelErr   int = 0
-// 	LogLevelWarn  int = 1
-// 	LogLevelInfo  int = 2
-// 	LogLevelDebug int = 3
-// )
-
-// func SetLoggingLevel(l int) {
-// 	core.LogLevel = l
+// func (d Domain) Leave() error {
+// 	return d.coreDomain.Leave()
 // }
