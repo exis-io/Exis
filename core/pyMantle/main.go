@@ -92,19 +92,19 @@ func SetLogLevelInfo()  { core.LogLevel = core.LogLevelInfo }
 func SetLogLevelDebug() { core.LogLevel = core.LogLevelDebug }
 
 func SetFabricDev() {
-    core.Fabric = core.FabricDev
-    core.Registrar = core.RegistrarDev
+	core.Fabric = core.FabricDev
+	core.Registrar = core.RegistrarDev
 }
 func SetFabricSandbox() { core.Fabric = core.FabricSandbox }
 func SetFabricProduction() {
-    core.Fabric = core.FabricProduction
-    core.Registrar = core.RegistrarProduction
+	core.Fabric = core.FabricProduction
+	core.Registrar = core.RegistrarProduction
 }
 func SetFabricLocal() {
-    core.Fabric = core.FabricLocal
-    core.Registrar = core.RegistrarLocal
+	core.Fabric = core.FabricLocal
+	core.Registrar = core.RegistrarLocal
 }
-func SetFabric(url string) { core.Fabric = url }
+func SetFabric(url string)    { core.Fabric = url }
 func SetRegistrar(url string) { core.Registrar = url }
 
 func Application(s string) { core.Application("%s", s) }

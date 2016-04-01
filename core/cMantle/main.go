@@ -16,8 +16,8 @@ func CBID() uint64 {
 	return core.NewID()
 }
 
-// Note that with go 1.6 we can't pass pointers back up through the language boundrary. 
-// An "unsafe" implementation is going to fail, since the go GC is going to have a bad time. 
+// Note that with go 1.6 we can't pass pointers back up through the language boundrary.
+// An "unsafe" implementation is going to fail, since the go GC is going to have a bad time.
 
 // So yet another messaging bus. Make sure to destroy domains in the crust.
 
@@ -46,7 +46,7 @@ func Subdomain(pdomain uint64, name *C.char) uint64 {
 
 //export Receive
 func Receive(dptr uint64) *C.char {
-	// Used to be a byte slice, but 1.6 cgo checks will not allow that 
+	// Used to be a byte slice, but 1.6 cgo checks will not allow that
 	d := get(dptr)
 	return C.CString(core.MantleMarshall(d.GetApp().CallbackListen()))
 }
@@ -64,7 +64,7 @@ func Join(pdomain uint64, cb uint64, eb uint64) {
 			d.GetApp().CallbackSend(cb)
 		}
 	}
-} 
+}
 
 //export Subscribe
 func Subscribe(pdomain uint64, endpoint *C.char, cb uint64, eb uint64, hn uint64, types *C.char) {
@@ -123,12 +123,11 @@ func Leave(pdomain uint64) {
 func get(i uint64) core.Domain {
 	// get the domain from the domain index
 	if d, ok := domainIndex[i]; !ok {
-		return nil 
+		return nil
 	} else {
 		return d
 	}
 }
-
 
 //export MantleSetLogLevelOff
 func MantleSetLogLevelOff() { core.LogLevel = core.LogLevelOff }
@@ -150,8 +149,8 @@ func MantleSetLogLevelDebug() { core.LogLevel = core.LogLevelDebug }
 
 //export MantleSetFabricDev
 func MantleSetFabricDev() {
-    core.Fabric = core.FabricDev
-    core.Registrar = core.RegistrarDev
+	core.Fabric = core.FabricDev
+	core.Registrar = core.RegistrarDev
 }
 
 //export MantleSetFabricSandbox
@@ -159,14 +158,14 @@ func MantleSetFabricSandbox() { core.Fabric = core.FabricSandbox }
 
 //export MantleSetFabricProduction
 func MantleSetFabricProduction() {
-    core.Fabric = core.FabricProduction
-    core.Registrar = core.RegistrarProduction
+	core.Fabric = core.FabricProduction
+	core.Registrar = core.RegistrarProduction
 }
 
 //export MantleSetFabricLocal
 func MantleSetFabricLocal() {
-    core.Fabric = core.FabricLocal
-    core.Registrar = core.RegistrarLocal
+	core.Fabric = core.FabricLocal
+	core.Registrar = core.RegistrarLocal
 }
 
 //export MantleSetFabric
@@ -190,7 +189,6 @@ func MantleWarn(s *C.char) { core.Warn("%s", C.GoString(s)) }
 //export MantleError
 func MantleError(s *C.char) { core.Error("%s", C.GoString(s)) }
 
-
 //export MantleSetCuminStrict
 func MantleSetCuminStrict() { core.CuminLevel = core.CuminStrict }
 
@@ -199,5 +197,3 @@ func MantleSetCuminLoose() { core.CuminLevel = core.CuminLoose }
 
 //export MantleSetCuminOff
 func MantleSetCuminOff() { core.CuminLevel = core.CuminOff }
-
-
