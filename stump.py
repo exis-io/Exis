@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# ./stump.py add-subtree swift/swiftRiffle/Pod/Classes swiftubuntu git@github.com:exis-io/swiftRiffleUbuntu.git
 
 helpstr = '''Riffle maintenance and management.
 
