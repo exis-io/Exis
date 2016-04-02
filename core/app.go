@@ -35,6 +35,7 @@ type App interface {
 
 	Yield(uint64, []interface{})
 	YieldError(uint64, string, []interface{})
+	YieldOptions(request uint64, args []interface{}, options map[string]interface{})
 
 	Close(string)
 	ConnectionClosed(string)
@@ -216,6 +217,16 @@ func (a *app) Yield(request uint64, args []interface{}) {
 	m := &yield{
 		Request:   request,
 		Options:   make(map[string]interface{}),
+		Arguments: args,
+	}
+
+	a.Queue(m)
+}
+
+func (a *app) YieldOptions(request uint64, args []interface{}, options map[string]interface{}) {
+	m := &yield{
+		Request:   request,
+		Options:   options,
 		Arguments: args,
 	}
 

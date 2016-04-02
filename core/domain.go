@@ -14,6 +14,13 @@ type Domain interface {
 	Publish(string, []interface{}) error
 	Call(string, []interface{}) ([]interface{}, error)
 
+	// Options overloading-- VERY BAD PLEASE MERGE
+	// Subscribe(string, uint64, []interface{}) error
+	RegisterOptions(string, uint64, []interface{}, map[string]interface{}) error
+	// Publish(string, []interface{}) error
+	CallOptions(string, []interface{}, map[string]interface{}) ([]interface{}, uint64, error)
+	SuccessiveResult(string, uint64) ([]interface{}, bool)
+
 	CallExpects(uint64, []interface{})
 	GetCallExpect(uint64) ([]interface{}, bool)
 	RemoveCallExpect(uint64)
@@ -191,9 +198,30 @@ func (c domain) Subscribe(endpoint string, requestId uint64, types []interface{}
 	}
 }
 
+func (c domain) SubscribeOptions(endpoint string, requestId uint64, types []interface{}) error {
+	Warn("NOT IMPLEMENTED- SubscribeOptions")
+	return nil
+}
+
 func (c domain) Register(endpoint string, requestId uint64, types []interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 	register := &register{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
+
+	if msg, err := c.app.requestListenType(register, "*core.registered"); err != nil {
+		return err
+	} else {
+		Info("Registered: %s %v", endpoint, types)
+		reg := msg.(*registered)
+		c.regLock.Lock()
+		c.registrations[reg.Registration] = &boundEndpoint{requestId, endpoint, types}
+		c.regLock.Unlock()
+		return nil
+	}
+}
+
+func (c domain) RegisterOptions(endpoint string, requestId uint64, types []interface{}, options map[string]interface{}) error {
+	endpoint = makeEndpoint(c.name, endpoint)
+	register := &register{Request: requestId, Options: options, Name: endpoint}
 
 	if msg, err := c.app.requestListenType(register, "*core.registered"); err != nil {
 		return err
@@ -222,6 +250,11 @@ func (c domain) Publish(endpoint string, args []interface{}) error {
 	return nil
 }
 
+func (c domain) PublishOptions(endpoint string, args []interface{}) error {
+	Warn("NOT IMPLEMENTED- PublishOptions")
+	return nil
+}
+
 func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error) {
 	endpoint = makeEndpoint(c.name, endpoint)
 	call := &call{Request: NewID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
@@ -232,6 +265,42 @@ func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error)
 		return nil, err
 	} else {
 		return msg.(*result).Arguments, nil
+	}
+}
+
+func (c domain) CallOptions(endpoint string, args []interface{}, options map[string]interface{}) ([]interface{}, uint64, error) {
+	endpoint = makeEndpoint(c.name, endpoint)
+	call := &call{Request: NewID(), Name: endpoint, Options: options, Arguments: args}
+	Info("Calling %s %v", endpoint, args)
+
+	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
+		return nil, 0, err
+	} else {
+		return msg.(*result).Arguments, 0, nil
+	}
+}
+
+// AAAGH bad bad hack hack
+// Call with a callID to receive the successive results. Returns true
+// if this is the last one
+func (c domain) SuccessiveResult(endpoint string, id uint64) ([]interface{}, bool) {
+	Debug("Successive result listening")
+	endpoint = makeEndpoint(c.name, endpoint)
+	call := &call{Request: id, Name: endpoint, Options: nil, Arguments: nil}
+
+	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
+		// TODO: catch these errors? Can they even occur?
+		Warn("An error occured on a successive result. Unable to proceed")
+		return nil, true
+	} else {
+		m := msg.(*result)
+
+		if _, ok := m.Details["progress"]; ok {
+			return msg.(*result).Arguments, false
+		} else {
+			// Done
+			return msg.(*result).Arguments, true
+		}
 	}
 }
 
