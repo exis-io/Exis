@@ -72,7 +72,13 @@ func (d domain) Listen() error {
 
 func (d domain) Subscribe(endpoint string, handler interface{}, options ...Options) error {
 	c := core.NewID()
-	if err := d.coreDomain.Subscribe(endpoint, c, nil, nil); err != nil {
+	opts, jsonOpts := parseOptions(options)
+
+	if opts != nil {
+
+	}
+
+	if err := d.coreDomain.Subscribe(endpoint, c, nil, jsonOpts); err != nil {
 		return err
 	} else {
 		d.mantleApp.subscriptions[c] = &boundHandler{handler: handler}
@@ -93,7 +99,13 @@ func (d domain) Register(endpoint string, handler interface{}, options ...Option
 }
 
 func (d domain) Publish(endpoint string, args ...interface{}) error {
-	return d.coreDomain.Publish(endpoint, args, nil)
+	args, opts, jsonOpts := parseOptionsArgs(args)
+
+	if opts != nil {
+
+	}
+
+	return d.coreDomain.Publish(endpoint, args, jsonOpts)
 }
 
 func (d domain) Call(endpoint string, args ...interface{}) ([]interface{}, error) {
@@ -102,6 +114,7 @@ func (d domain) Call(endpoint string, args ...interface{}) ([]interface{}, error
 	if opts != nil {
 		if id, handler, ok := opts.progressive(); ok {
 			d.mantleApp.handlers[id] = &boundHandler{handler: handler, options: opts}
+			defer delete(d.mantleApp.handlers, id)
 		}
 	}
 

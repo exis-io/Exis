@@ -45,7 +45,7 @@ func (a *app) run() {
 				}
 			} else if _, _, ok := binding.options.progressive(); ok {
 
-				// Can still apply cumin to the registered function, but the ret does not return immediately
+				// Invocations on progressive handlers must return two channels immediately
 				if ret, err := core.Cumin(binding.handler, args); err != nil {
 					Warn("%s", err.Error())
 					a.coreApp.YieldError(yieldId, err.Error(), nil)
@@ -56,6 +56,7 @@ func (a *app) run() {
 					// Continue to handle progressive results
 					// TODO: handle errors
 					// TODO: detect channel closes
+					// TODO: timeout?
 					go func() {
 						for {
 							select {
