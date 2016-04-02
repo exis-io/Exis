@@ -1,4 +1,8 @@
-package goRiffle
+package shared
+
+// This package is shared by all the mantles except js
+// It used to be part of the goRiffle package, but that was changed to riffle
+// for consistency
 
 import (
 	"log"

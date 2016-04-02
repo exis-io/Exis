@@ -1,11 +1,14 @@
 package main
 
-import "time"
-import "fmt"
-import "github.com/exis-io/core/goRiffle"
+import (
+	"fmt"
+	"time"
+
+	riffle "github.com/exis-io/core/riffle"
+)
 
 func reg(name string) (chan interface{}, chan interface{}) {
-	goRiffle.Info("Starting progressive handler")
+	riffle.Info("Starting progressive handler")
 
 	progress, done := make(chan interface{}), make(chan interface{})
 
@@ -22,42 +25,42 @@ func reg(name string) (chan interface{}, chan interface{}) {
 }
 
 func regNoProgress(name string) string {
-	goRiffle.Info("Receiver got message from " + name)
+	riffle.Info("Receiver got message from " + name)
 	return "This is patrick"
 }
 
 func sub(name string) {
-	goRiffle.Info("Pub received! Name: %s", name)
+	riffle.Info("Pub received! Name: %s", name)
 }
 
 func main() {
 	// set flags for testing
-	goRiffle.SetFabricLocal()
-	goRiffle.SetLogLevelDebug()
+	riffle.SetFabricLocal()
+	riffle.SetLogLevelDebug()
 
 	// Domain objects
-	app := goRiffle.NewDomain("xs.damouse")
+	app := riffle.NewDomain("xs.damouse")
 	receiver := app.Subdomain("receiver")
 
 	// Connect
 	receiver.Join()
 
 	if e := receiver.Subscribe("sub", sub); e != nil {
-		goRiffle.Info("Unable to subscribe: ", e.Error())
+		riffle.Info("Unable to subscribe: ", e.Error())
 	} else {
-		goRiffle.Info("Subscribed!")
+		riffle.Info("Subscribed!")
 	}
 
 	if e := receiver.Register("reg", regNoProgress); e != nil {
-		goRiffle.Info("Unable to register: ", e.Error())
+		riffle.Info("Unable to register: ", e.Error())
 	} else {
-		goRiffle.Info("Registered!")
+		riffle.Info("Registered!")
 	}
 
-	if e := receiver.Register("progressive", reg, goRiffle.Options{Progress: true}); e != nil {
-		goRiffle.Info("Unable to register: ", e.Error())
+	if e := receiver.Register("progressive", reg, riffle.Options{Progress: true}); e != nil {
+		riffle.Info("Unable to register: ", e.Error())
 	} else {
-		goRiffle.Info("Registered!")
+		riffle.Info("Registered!")
 	}
 
 	// Handle until the connection closes

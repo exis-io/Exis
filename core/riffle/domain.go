@@ -1,6 +1,9 @@
 package goRiffle
 
-import "github.com/exis-io/core"
+import (
+	"github.com/exis-io/core"
+	"github.com/exis-io/core/shared"
+)
 
 // A wrapper around the core domain. Re-exposes the methods from the core
 
@@ -53,7 +56,7 @@ func (d domain) Subdomain(name string) Domain {
 }
 
 func (d domain) Join() error {
-	if c, err := Open(core.Fabric); err != nil {
+	if c, err := shared.Open(core.Fabric); err != nil {
 		return err
 	} else if err := d.coreDomain.Join(c); err != nil {
 		return err

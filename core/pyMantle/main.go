@@ -2,7 +2,7 @@ package pymantle
 
 import (
 	"github.com/exis-io/core"
-	"github.com/exis-io/core/goRiffle"
+	"github.com/exis-io/core/shared"
 )
 
 type Domain struct {
@@ -28,7 +28,7 @@ func (d *Domain) Receive() string {
 
 // TODO: Move this to the mantle helper
 func (d *Domain) Join(cb uint64, eb uint64) {
-	if c, err := goRiffle.Open(core.Fabric); err != nil {
+	if c, err := shared.Open(core.Fabric); err != nil {
 		d.coreDomain.GetApp().CallbackSend(eb, err.Error())
 	} else {
 		if err := d.coreDomain.Join(c); err != nil {

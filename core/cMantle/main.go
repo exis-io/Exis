@@ -5,7 +5,7 @@ import (
 	"C"
 
 	"github.com/exis-io/core"
-	"github.com/exis-io/core/goRiffle"
+	"github.com/exis-io/core/shared"
 )
 
 // Required main method
@@ -55,7 +55,7 @@ func Receive(dptr uint64) *C.char {
 func Join(pdomain uint64, cb uint64, eb uint64) {
 	d := get(pdomain)
 
-	if c, err := goRiffle.Open(core.Fabric); err != nil {
+	if c, err := shared.Open(core.Fabric); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
 		if err := d.Join(c); err != nil {

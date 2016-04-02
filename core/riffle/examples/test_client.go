@@ -1,15 +1,15 @@
 package main
 
 import "fmt"
-import "github.com/exis-io/core/goRiffle"
+import riffle "github.com/exis-io/core/riffle"
 
 func main() {
 	// set flags for testing
-	goRiffle.SetFabricLocal()
-	goRiffle.SetLogLevelDebug()
+	riffle.SetFabricLocal()
+	riffle.SetLogLevelDebug()
 
 	// Create the domain objects
-	app := goRiffle.NewDomain("xs.damouse")
+	app := riffle.NewDomain("xs.damouse")
 	sender := app.Subdomain("sender")
 	receiver := app.Subdomain("receiver")
 
