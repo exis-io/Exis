@@ -26,8 +26,6 @@ func (a *app) run() {
 			break
 		}
 
-		//Debug("Received callback %d, %v", cb.Id, cb.Args)
-
 		if binding, ok := a.subscriptions[cb.Id]; ok {
 			if _, err := core.Cumin(binding.handler, cb.Args); err != nil {
 				Warn("%s", err.Error())
@@ -38,8 +36,6 @@ func (a *app) run() {
 			yieldId := cb.Args[0].(uint64)
 			args := cb.Args[1:]
 
-			// Start handling options cases seperately
-			Debug("Options: %v", binding.options)
 			if binding.options == nil {
 				if ret, err := core.Cumin(binding.handler, args); err != nil {
 					Warn("%s", err.Error())
@@ -47,18 +43,13 @@ func (a *app) run() {
 				} else {
 					a.coreApp.Yield(yieldId, ret)
 				}
-			} else if binding.options.Progress != nil {
-
-				Debug("Found progressive handler")
+			} else if _, _, ok := binding.options.progressive(); ok {
 
 				// Can still apply cumin to the registered function, but the ret does not return immediately
 				if ret, err := core.Cumin(binding.handler, args); err != nil {
 					Warn("%s", err.Error())
 					a.coreApp.YieldError(yieldId, err.Error(), nil)
 				} else {
-					Debug("Have ret: %v", ret)
-
-					// TODO: fix double slice nesting bug
 					progress := ret[0].(chan interface{})
 					done := ret[1].(chan interface{})
 
@@ -79,6 +70,10 @@ func (a *app) run() {
 				}
 			}
 
+		} else if binding, ok := a.handlers[cb.Id]; ok {
+			if _, err := core.Cumin(binding.handler, cb.Args); err != nil {
+				Warn("%s", err.Error())
+			}
 		} else {
 			Warn("No handler for id: %d", cb.Id)
 		}

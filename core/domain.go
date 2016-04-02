@@ -326,6 +326,17 @@ func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
 	}
 }
 
+// Only called as the result of a progressive result callback. The final call return
+// is processed normally
+func (c *domain) handleResult(msg *result, binding *boundEndpoint) {
+	if err := SoftCumin(binding.expectedTypes, msg.Arguments); err == nil {
+		c.app.CallbackSend(binding.callback, msg.Arguments...)
+	} else {
+		// TODO: warn application level code at some well-known location
+		Warn("%v", err)
+	}
+}
+
 // Adds the types to this domains expectant calls. As written, this method is potentially
 // unsafe-- no way to check if the call really went out, which could leave the types in there forever
 func (c domain) CallExpects(id uint64, types []interface{}) {

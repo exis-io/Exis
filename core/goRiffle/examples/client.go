@@ -27,11 +27,11 @@ func main() {
 		goRiffle.Info("Final result of call: %s", ret)
 	}
 
-	// ret, _ := receiver.Call("progressive", "Call from Client", goRiffle.Options{Progress: func(progress string) {
-	// 	goRiffle.Info("Progress: " + progress)
-	// }})
+	ret, _ := receiver.Call("progressive", "Call from Client", goRiffle.Options{Progress: func(progress string) {
+		goRiffle.Info("Progress: " + progress)
+	}})
 
-	// goRiffle.Info("Final result of call: %s", ret)
+	goRiffle.Info("Final result of call: %s", ret)
 
 	// Handle until the connection closes
 	sender.Listen()

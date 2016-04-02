@@ -307,7 +307,21 @@ func (c *app) handle(msg message) {
 
 	// Handle call results seperately to account for progressive calls
 	case *result:
-		c.findListener(msg)
+		// If this is a progress call call the handler, do not alert the listener
+		// Listener is only updated once the call completes
+		if p, ok := msg.Details["progress"]; ok {
+			x := p.(bool)
+			if x {
+				for _, x := range c.domains {
+					if binding, ok := x.handlers[msg.Request]; ok {
+						go x.handleResult(msg, binding)
+						return
+					}
+				}
+			}
+		} else {
+			c.findListener(msg)
+		}
 
 	case *welcome:
 		Debug("Received WELCOME, reestablishing state with the fabric")

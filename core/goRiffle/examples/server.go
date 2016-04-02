@@ -10,9 +10,9 @@ func reg(name string) (chan interface{}, chan interface{}) {
 	progress, done := make(chan interface{}), make(chan interface{})
 
 	go func() {
-		for i := 1; i <= 5; i++ {
+		for i := 1; i <= 10; i++ {
 			progress <- fmt.Sprintf("Some Progress: %d", i)
-			time.Sleep(1 * time.Second)
+			time.Sleep(1 * 100 * time.Millisecond)
 		}
 
 		done <- "Done!"
@@ -54,11 +54,11 @@ func main() {
 		goRiffle.Info("Registered!")
 	}
 
-	// if e := receiver.Register("reg", reg, goRiffle.Options{Progress: true}); e != nil {
-	// 	goRiffle.Info("Unable to register: ", e.Error())
-	// } else {
-	// 	goRiffle.Info("Registered!")
-	// }
+	if e := receiver.Register("progressive", reg, goRiffle.Options{Progress: true}); e != nil {
+		goRiffle.Info("Unable to register: ", e.Error())
+	} else {
+		goRiffle.Info("Registered!")
+	}
 
 	// Handle until the connection closes
 	receiver.Listen()
