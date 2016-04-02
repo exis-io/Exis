@@ -57,7 +57,6 @@ func (a *app) run() {
 					a.coreApp.YieldError(yieldId, err.Error(), nil)
 				} else {
 					Debug("Have ret: %v", ret)
-					// a.coreApp.Yield(yieldId, ret)
 
 					// TODO: fix double slice nesting bug
 					progress := ret[0].(chan interface{})
@@ -73,6 +72,7 @@ func (a *app) run() {
 								a.coreApp.YieldOptions(yieldId, []interface{}{p}, map[string]interface{}{"progress": true})
 							case d := <-done:
 								a.coreApp.Yield(yieldId, []interface{}{d})
+								break
 							}
 						}
 					}()

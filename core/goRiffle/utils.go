@@ -33,8 +33,8 @@ func SetLogLevelInfo()  { core.LogLevel = core.LogLevelInfo }
 func SetLogLevelDebug() { core.LogLevel = core.LogLevelDebug }
 
 // Logging
-func Application(format string, args ...interface{}) { core.Application(format, args) }
-func Debug(format string, args ...interface{})       { core.Debug(format, args) }
-func Info(format string, args ...interface{})        { core.Info(format, args) }
-func Warn(format string, args ...interface{})        { core.Warn(format, args) }
-func Error(format string, args ...interface{})       { core.Error(format, args) }
+func Application(format string, args ...interface{}) { core.Application(format, args...) }
+func Debug(format string, args ...interface{})       { core.Debug(format, args...) }
+func Info(format string, args ...interface{})        { core.Info(format, args...) }
+func Warn(format string, args ...interface{})        { core.Warn(format, args...) }
+func Error(format string, args ...interface{})       { core.Error(format, args...) }

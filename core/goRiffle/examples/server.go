@@ -1,5 +1,7 @@
 package main
 
+import "time"
+import "fmt"
 import "github.com/exis-io/core/goRiffle"
 
 func reg(name string) (chan interface{}, chan interface{}) {
@@ -8,8 +10,9 @@ func reg(name string) (chan interface{}, chan interface{}) {
 	progress, done := make(chan interface{}), make(chan interface{})
 
 	go func() {
-		for i := 1; i <= 10; i++ {
-			progress <- "Some Progres"
+		for i := 1; i <= 5; i++ {
+			progress <- fmt.Sprintf("Some Progress: %d", i)
+			time.Sleep(1 * time.Second)
 		}
 
 		done <- "Done!"
@@ -24,7 +27,7 @@ func sub(name string) {
 
 func main() {
 	// set flags for testing
-	goRiffle.SetFabricDev()
+	goRiffle.SetFabricLocal()
 	goRiffle.SetLogLevelDebug()
 
 	// Domain objects
@@ -34,11 +37,13 @@ func main() {
 	// Connect
 	receiver.Join()
 
-	if e := receiver.Subscribe("sub", sub); e != nil {
-		goRiffle.Info("Unable to subscribe: ", e.Error())
-	} else {
-		goRiffle.Info("Subscribed!")
-	}
+	/*
+		if e := receiver.Subscribe("sub", sub); e != nil {
+			goRiffle.Info("Unable to subscribe: ", e.Error())
+		} else {
+			goRiffle.Info("Subscribed!")
+		}
+	*/
 
 	if e := receiver.Register("reg", reg, goRiffle.Options{Progress: true}); e != nil {
 		goRiffle.Info("Unable to register: ", e.Error())

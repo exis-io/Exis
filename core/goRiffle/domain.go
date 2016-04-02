@@ -97,7 +97,7 @@ func (d domain) Register(endpoint string, handler interface{}, options ...Option
 		if err := d.coreDomain.Register(endpoint, c, nil); err != nil {
 			return err
 		} else {
-			d.mantleApp.subscriptions[c] = &boundHandler{handler: handler}
+			d.mantleApp.registrations[c] = &boundHandler{handler: handler}
 			return nil
 		}
 	}
@@ -114,30 +114,41 @@ func (d domain) Call(endpoint string, args ...interface{}) ([]interface{}, error
 		if opts, ok := args[len(args)-1].(Options); ok {
 			Debug("Options detected")
 
-			// done := make(chan interface{})
-
 			// TODO: Place a special handler in the app that gets called over and over,
 			// or spin off a func to handle results; bind on the done channel above
 			if handler := opts.Progress; handler != nil {
-				// d.mantleApp.handlers[]
-				ret, id, err := d.coreDomain.CallOptions(endpoint, args[:1], opts.convertToJson())
+				// Setup a done chan to block on while we wait for each prog call
+				done := make(chan []interface{})
 
+				// Make the first call (to send the args to the reg)
+				ret, id, err := d.coreDomain.CallOptions(endpoint, args[:1], opts.convertToJson())
 				if err != nil {
 					return nil, err
 				}
+				// Setup the async handling, but AFTER the CallOption return
+				// **NOTE this is kind of a race cond - issue is that in requestListenType
+				// we add and remove the ID for each function call
+				go func() {
+					for {
+						ret, done := d.coreDomain.SuccessiveResult(endpoint, id)
+						if done {
+							break
+						} else {
+							core.Cumin(handler, ret)
+						}
+					}
+					done <- ret
+				}()
+				Debug("First call ret: %v, %v, %v", ret, id, err)
 
+				// Fulfill the first progress result (returned by callopts above)
+				// TODO - What if they never send a prog and just call done?
 				core.Cumin(handler, ret)
 
-				Debug("Starting receive loop")
+				// Now block waiting for the done call
+				retVal := <-done
+				return retVal, nil
 
-				for {
-					ret, done := d.coreDomain.SuccessiveResult(endpoint, id)
-					if done {
-						return ret, nil
-					} else {
-						core.Cumin(handler, ret)
-					}
-				}
 			} else {
 				ret, _, err := d.coreDomain.CallOptions(endpoint, args[:1], opts.convertToJson())
 				return ret, err

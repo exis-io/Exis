@@ -270,13 +270,14 @@ func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error)
 
 func (c domain) CallOptions(endpoint string, args []interface{}, options map[string]interface{}) ([]interface{}, uint64, error) {
 	endpoint = makeEndpoint(c.name, endpoint)
-	call := &call{Request: NewID(), Name: endpoint, Options: options, Arguments: args}
+	rid := NewID()
+	call := &call{Request: rid, Name: endpoint, Options: options, Arguments: args}
 	Info("Calling %s %v", endpoint, args)
 
 	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
 		return nil, 0, err
 	} else {
-		return msg.(*result).Arguments, 0, nil
+		return msg.(*result).Arguments, rid, nil
 	}
 }
 
