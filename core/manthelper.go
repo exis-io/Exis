@@ -1,11 +1,11 @@
 package core
 
 // Helper methods for mantles. Operate functionally on Domains, triggering success or
-// error callbacks based on the intended functionality. These functions are here to cut down 
+// error callbacks based on the intended functionality. These functions are here to cut down
 // on the redundancy of mantles
 
 func MantleSubscribe(d Domain, endpoint string, cb uint64, eb uint64, handler uint64, types []interface{}) {
-	if err := d.Subscribe(endpoint, handler, types); err != nil {
+	if err := d.Subscribe(endpoint, handler, types, nil); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
 		d.GetApp().CallbackSend(cb)
@@ -13,7 +13,7 @@ func MantleSubscribe(d Domain, endpoint string, cb uint64, eb uint64, handler ui
 }
 
 func MantleRegister(d Domain, endpoint string, cb uint64, eb uint64, handler uint64, types []interface{}) {
-	if err := d.Register(endpoint, handler, types); err != nil {
+	if err := d.Register(endpoint, handler, types, nil); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
 		d.GetApp().CallbackSend(cb)
@@ -21,7 +21,7 @@ func MantleRegister(d Domain, endpoint string, cb uint64, eb uint64, handler uin
 }
 
 func MantlePublish(d Domain, endpoint string, cb uint64, eb uint64, args []interface{}) {
-	if err := d.Publish(endpoint, args); err != nil {
+	if err := d.Publish(endpoint, args, nil); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
 		d.GetApp().CallbackSend(cb)
@@ -29,11 +29,11 @@ func MantlePublish(d Domain, endpoint string, cb uint64, eb uint64, args []inter
 }
 
 func MantleCall(d Domain, endpoint string, cb uint64, eb uint64, args []interface{}) {
-	if results, err := d.Call(endpoint, args); err != nil {
+	if results, err := d.Call(endpoint, args, nil); err != nil {
 		d.RemoveCallExpect(cb)
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
-		if types, ok := d.GetCallExpect(cb); (!ok && CuminLevel != CuminOff) {
+		if types, ok := d.GetCallExpect(cb); !ok && CuminLevel != CuminOff {
 			// We were never asked for types. Don't do anything
 			Info("Call for %v received, but no cumin enforcement present.", endpoint)
 		} else {

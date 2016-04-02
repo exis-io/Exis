@@ -305,6 +305,10 @@ func (c *app) handle(msg message) {
 
 		c.Queue(m)
 
+	// Handle call results seperately to account for progressive calls
+	case *result:
+		c.findListener(msg)
+
 	case *welcome:
 		Debug("Received WELCOME, reestablishing state with the fabric")
 		c.open = true
@@ -320,22 +324,27 @@ func (c *app) handle(msg message) {
 		c.Connection.Close("Fabric said goodbye. Closing connection")
 
 	default:
-		id, ok := requestID(msg)
+		c.findListener(msg)
+	}
+}
 
-		// Catch control messages here and replace getMessageTimeout
+// Find the appropriate listener and pass it the message
+func (c *app) findListener(msg message) {
+	id, ok := requestID(msg)
 
-		if ok {
-			c.listenersLock.Lock()
-			if l, found := c.listeners[id]; found {
-				l <- msg
-				c.listenersLock.Unlock()
-			} else {
-				c.listenersLock.Unlock()
-				Error("No listener for message %v", msg)
-			}
+	// Catch control messages here and replace getMessageTimeout
+
+	if ok {
+		c.listenersLock.Lock()
+		if l, found := c.listeners[id]; found {
+			l <- msg
+			c.listenersLock.Unlock()
 		} else {
-			panic("Bad handler picking up requestID!")
+			c.listenersLock.Unlock()
+			Error("No listener for message %v", msg)
 		}
+	} else {
+		panic("Bad handler picking up requestID!")
 	}
 }
 

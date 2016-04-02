@@ -21,6 +21,11 @@ func reg(name string) (chan interface{}, chan interface{}) {
 	return progress, done
 }
 
+func regNoProgress(name string) string {
+	goRiffle.Info("Receiver got message from " + name)
+	return "This is patrick"
+}
+
 func sub(name string) {
 	goRiffle.Info("Pub received! Name: %s", name)
 }
@@ -37,19 +42,23 @@ func main() {
 	// Connect
 	receiver.Join()
 
-	/*
-		if e := receiver.Subscribe("sub", sub); e != nil {
-			goRiffle.Info("Unable to subscribe: ", e.Error())
-		} else {
-			goRiffle.Info("Subscribed!")
-		}
-	*/
+	if e := receiver.Subscribe("sub", sub); e != nil {
+		goRiffle.Info("Unable to subscribe: ", e.Error())
+	} else {
+		goRiffle.Info("Subscribed!")
+	}
 
-	if e := receiver.Register("reg", reg, goRiffle.Options{Progress: true}); e != nil {
+	if e := receiver.Register("reg", regNoProgress); e != nil {
 		goRiffle.Info("Unable to register: ", e.Error())
 	} else {
 		goRiffle.Info("Registered!")
 	}
+
+	// if e := receiver.Register("reg", reg, goRiffle.Options{Progress: true}); e != nil {
+	// 	goRiffle.Info("Unable to register: ", e.Error())
+	// } else {
+	// 	goRiffle.Info("Registered!")
+	// }
 
 	// Handle until the connection closes
 	receiver.Listen()
