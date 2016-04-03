@@ -48,6 +48,7 @@ type App interface {
 	// Temporary location, will move to security
 	SetToken(string)
 	GetToken() string
+	LoadKey(string) error
 
 	Login(Domain, ...string) (Domain, error)
 	RegisterAccount(Domain, string, string, string, string) (bool, error)

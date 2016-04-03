@@ -108,49 +108,61 @@ func (a *app) SetToken(token string) {
 }
 
 // Gets the current token
-func (a *app) GetToken() (string) {
+func (a *app) GetToken() string {
 	return a.token
 }
 
-//takes the domain that login was called on and then 0-2 strings which correspond to username and password
-func (a *app) Login(d Domain, args ...string) (Domain, error){
-    username := ""
-    password := ""
+// Reads in the key path provided to set the app key
+func (a *app) LoadKey(p string) error {
+	if buf, err := ioutil.ReadFile(p); err != nil {
+		Error("Unable to find key: %s", p)
+		return err
+	} else {
+		a.key = string(buf)
+	}
 
-    if len(args) == 2 {
+	return nil
+}
+
+//takes the domain that login was called on and then 0-2 strings which correspond to username and password
+func (a *app) Login(d Domain, args ...string) (Domain, error) {
+	username := ""
+	password := ""
+
+	if len(args) == 2 {
 		username = args[0]
 		password = args[1]
-    } else if len(args) == 1 {
+	} else if len(args) == 1 {
 		username = args[0]
-    } else if len(args) != 0 {
+	} else if len(args) != 0 {
 		return nil, fmt.Errorf("Login must be called with 0,1 or 2 args. ([username [, password]]).")
-    }
-    if Fabric == FabricSandbox {
-	if username == "" {
-	    return d, nil
-	}else {
-	    return d.Subdomain(username), nil
 	}
-    }
+	if Fabric == FabricSandbox {
+		if username == "" {
+			return d, nil
+		} else {
+			return d.Subdomain(username), nil
+		}
+	}
 
-    if token, domain, err := tokenLogin(d.GetName(), username, password ); err != nil{
+	if token, domain, err := tokenLogin(d.GetName(), username, password); err != nil {
 		return nil, err
-    } else {
+	} else {
 		a.SetToken(token)
 		return d.LinkDomain(domain), nil
-    }
-    return nil, nil
+	}
+	return nil, nil
 }
 
 //takes the domain that register was called on and registration info required by Auth
-func (a *app) RegisterAccount(d Domain, username string, password string, email string, name string ) (bool, error){
+func (a *app) RegisterAccount(d Domain, username string, password string, email string, name string) (bool, error) {
 	if Fabric == FabricSandbox {
-	    return false, fmt.Errorf("Registration is not available on the sandbox node.")
+		return false, fmt.Errorf("Registration is not available on the sandbox node.")
 	}
 	Info("Attempting to register")
 	url := Registrar + "/register"
 
-	payload := map[string]interface{}{"domain": username, "domain-password": password, "requestingdomain": d.GetName(), "domain-email": email, "Name": name }
+	payload := map[string]interface{}{"domain": username, "domain-password": password, "requestingdomain": d.GetName(), "domain-email": email, "Name": name}
 	jsonString, err := json.Marshal(payload)
 
 	if err != nil {
@@ -160,15 +172,15 @@ func (a *app) RegisterAccount(d Domain, username string, password string, email 
 	resp, err := http.Post(url, "application/x-www-form-urlencoded", bytes.NewBuffer(jsonString))
 
 	if err != nil {
-	    return false, err
+		return false, err
 	} else {
 		defer resp.Body.Close()
 		if resp.StatusCode != 200 {
-		    body, _ := ioutil.ReadAll(resp.Body)
-		    result := string(body)
-		    return false, fmt.Errorf(result)
+			body, _ := ioutil.ReadAll(resp.Body)
+			result := string(body)
+			return false, fmt.Errorf(result)
 		} else {
-		    return true, nil
+			return true, nil
 		}
 	}
 
@@ -192,9 +204,9 @@ func tokenLogin(domain string, username string, password string) (string, string
 	} else {
 		defer resp.Body.Close()
 		if resp.StatusCode != 200 {
-		    body, _ := ioutil.ReadAll(resp.Body)
-		    result := string(body)
-		    return "", "", fmt.Errorf(result)
+			body, _ := ioutil.ReadAll(resp.Body)
+			result := string(body)
+			return "", "", fmt.Errorf(result)
 		}
 		body, _ := ioutil.ReadAll(resp.Body)
 
@@ -203,9 +215,9 @@ func tokenLogin(domain string, username string, password string) (string, string
 		if err := json.Unmarshal(body, &result); err != nil {
 			return "", "", err
 		} else {
-		        name, ok := result["domain"]
+			name, ok := result["domain"]
 			if !ok {
-			    return "", "", fmt.Errorf("no domain returned")
+				return "", "", fmt.Errorf("no domain returned")
 			}
 			if token, ok := result["login_token"]; !ok {
 				return "", "", fmt.Errorf("Server error: could not find login_token key in reply")

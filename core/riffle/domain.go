@@ -21,6 +21,10 @@ type Domain interface {
 	Join() error
 	Leave() error
 	Listen() error
+
+	SetToken(string)
+	GetToken() string
+	LoadKey(string) error
 }
 
 type domain struct {
@@ -49,6 +53,18 @@ func NewDomain(name string) Domain {
 
 	return d
 
+}
+
+func (d domain) SetToken(tok string) {
+	d.coreDomain.GetApp().SetToken(tok)
+}
+
+func (d domain) GetToken() string {
+	return d.coreDomain.GetApp().GetToken()
+}
+
+func (d domain) LoadKey(p string) error {
+	return d.coreDomain.GetApp().LoadKey(p)
 }
 
 func (d domain) Subdomain(name string) Domain {
