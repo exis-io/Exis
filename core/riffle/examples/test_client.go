@@ -6,7 +6,7 @@ import riffle "github.com/exis-io/core/riffle"
 func main() {
 	// set flags for testing
 	riffle.SetFabricLocal()
-	riffle.SetLogLevelDebug()
+	//riffle.SetLogLevelDebug()
 
 	// Create the domain objects
 	app := riffle.NewDomain("xs.damouse")
@@ -30,6 +30,12 @@ func main() {
 		fmt.Println("reg3 not called", err3)
 	} else {
 		fmt.Println("reg3 never called ", ret3)
+	}
+
+	if ret4, err4 := receiver.Call("reg4", 4); err4 != nil {
+		fmt.Println("SHOULDN'T SEE THIS ", err4)
+	} else {
+		fmt.Println("reg4 called ", ret4)
 	}
 
 	// Handle until the connection closes
