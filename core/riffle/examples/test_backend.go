@@ -6,7 +6,7 @@ import riffle "github.com/exis-io/core/riffle"
 func main() {
 	// set flags for testing
 	riffle.SetFabricLocal()
-	//riffle.SetLogLevelDebug()
+	riffle.SetLogLevelDebug()
 
 	// Domain objects
 	app := riffle.NewDomain("xs.damouse")
@@ -37,6 +37,15 @@ func main() {
 	receiver.Register("reg4#details", func(opts map[string]interface{}, a int64) {
 		fmt.Printf("reg4 called by %s, recv %d\n", opts["caller"].(string), a)
 	})
+	receiver.Register("reg5", func(a string) (chan interface{}, chan interface{}) {
+		fmt.Printf("reg5 called %s\n", a)
+		p, d := make(chan interface{}), make(chan interface{})
+		go func() {
+			p <- "Progress sent"
+			d <- "Done!"
+		}()
+		return p, d
+	}, riffle.Options{Progress: true})
 
 	// Handle until the connection closes
 	receiver.Listen()
