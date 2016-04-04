@@ -386,7 +386,7 @@ func (d *Domain) Subscribe(endpoint string, handler *js.Object) *js.Object {
 			handlerTypes = types
 		}
 
-		if err := d.coreDomain.Subscribe(endpoint, cb, handlerTypes); err == nil {
+		if err := d.coreDomain.Subscribe(endpoint, cb, handlerTypes, nil); err == nil {
 			d.app.subscriptions[cb] = handlerFunction
 			p.Resolve(nil)
 		} else {
@@ -419,7 +419,7 @@ func (d *Domain) Register(endpoint string, handler *js.Object) *js.Object {
 			handlerTypes = types
 		}
 
-		if err := d.coreDomain.Register(endpoint, cb, handlerTypes); err == nil {
+		if err := d.coreDomain.Register(endpoint, cb, handlerTypes, nil); err == nil {
 			d.app.registrations[cb] = handlerFunction
 			p.Resolve(nil)
 		} else {
@@ -443,7 +443,7 @@ func (d *Domain) Call(endpoint string, args ...interface{}) *js.Object {
 	p := Defer()
 
 	go func() {
-		if results, err := d.coreDomain.Call(endpoint, args); err == nil {
+		if results, err := d.coreDomain.Call(endpoint, args, nil); err == nil {
 			p.Resolve(results...)
 		} else {
 			p.Reject(err.Error())
@@ -456,7 +456,7 @@ func (d *Domain) Call(endpoint string, args ...interface{}) *js.Object {
 }
 
 func (d *Domain) Publish(endpoint string, args ...interface{}) *js.Object {
-	return promisify(func() (interface{}, error) { return nil, d.coreDomain.Publish(endpoint, args) })
+	return promisify(func() (interface{}, error) { return nil, d.coreDomain.Publish(endpoint, args, nil) })
 }
 
 func (d *Domain) Unsubscribe(endpoint string) *js.Object {
