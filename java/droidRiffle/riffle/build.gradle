@@ -14,7 +14,7 @@ ext {
     siteUrl = 'https://github.com/exis-io/droidRiffle'
     gitUrl = 'https://github.com/exis-io/droidRiffle.git'
 
-    libraryVersion = '0.2.42'
+    libraryVersion = '0.2.43'
 
     developerId = 'exis'
     developerName = 'Exis'
@@ -48,15 +48,13 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(include: ['*.jar', '*.so'], dir: 'libs')
     testCompile 'junit:junit:4.12'
 
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'me.tatarka:gradle-retrolambda:3.2.5'
     compile 'org.immutables:gson:2.1.8'
     compile 'net.jodah:typetools:0.4.4'
-
-    compile project(':mantle')
 }
 
 retrolambda {

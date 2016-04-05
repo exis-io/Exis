@@ -77,9 +77,18 @@ ios:
 
 android:
 	@echo "Building core..."
-	@gomobile bind --work -target=android github.com/exis-io/core/androidMantle
+	# @gomobile bind -target=android github.com/exis-io/core/androidMantle
+
 	@echo "Moving mantle"
-	@mv mantle.aar java/droidRiffle/mantle/mantle.aar
+	@rm -rf .tmp/android
+	@mkdir -p .tmp/android
+	@unzip mantle.aar -d .tmp/android
+	@rm mantle.aar
+
+	@rm -f java/droidRiffle/riffle/libs/classes.jar
+	@rm -rf java/droidRiffle/riffle/src/main/jniLibs
+	mv .tmp/android/classes.jar java/droidRiffle/riffle/libs/classes.jar
+	mv .tmp/android/jni java/droidRiffle/riffle/src/main/jniLibs
 
 android86:
 	@echo "Building core..."

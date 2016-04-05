@@ -65,6 +65,7 @@ SUBTREES = [
 SHADOW_SUBTREES = [
     ("swift/swiftRiffle", 'swiftRiffle', 'git@github.com:exis-io/swiftRiffleCocoapod.git'),
     ("swift/mantle", 'swiftMantle', 'git@github.com:exis-io/swiftRiffleMantle.git'),
+    ("java/droidRiffle", 'droidRiffle', 'git@github.com:exis-io/droidRiffle.git'),
 ]
 
 
