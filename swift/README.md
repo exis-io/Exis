@@ -21,6 +21,53 @@ This is for the open source version of swift. This directory is exploratory and 
 
 **6**. Compile and run sample project. In `swift/example`: `make` and then `./run`. 
 
+**GCD**, Grand Central Dispatch, is Swift's high level threading mechanism. You will need to build it seperately from swift. 
+
+```
+sudo apt-get install autoconf libtool pkg-config libblocksruntime-dev libkqueue-dev libpthread-workqueue-dev systemtap-sdt-dev libbsd-dev libbsd0 libbsd0-dbg
+git clone --recursive https://github.com/apple/swift-corelibs-libdispatch.git
+cd swift-corelibs-libdispatch
+sh autogen.sh
+./configure
+make
+```
+
+Use the following when executing swift executables that link with GCD (anything that imports Riffle).
+
+```
+swift build -Xcc -fblocks -Xlinker -ldispatch
+```
+
+As of the time of this writing the above command doesnt work. Something is missing. Note the following output from the result of the installation.
+
+```
+Libraries have been installed in:
+   /home/damouse/.swiftenv/DEVELOPMENT-SNAPSHOT-2016-03-01-a/usr/lib/swift/linux
+
+If you ever happen to want to link against installed libraries
+in a given directory, LIBDIR, you must either use libtool, and
+specify the full pathname of the library, or use the `-LLIBDIR'
+flag during linking and do at least one of the following:
+   - add LIBDIR to the `LD_LIBRARY_PATH' environment variable
+     during execution
+   - add LIBDIR to the `LD_RUN_PATH' environment variable
+     during linking
+   - use the `-Wl,-rpath -Wl,LIBDIR' linker flag
+   - have your system administrator add LIBDIR to `/etc/ld.so.conf'
+
+```
+
+Also note an upstream commit to libdispatch installation instructions.
+
+```
+sh autogen.sh
+./configure CC=clang --with-blocks-runtime=/usr/local/lib
+make check
+```
+
+`make check` doesn't work on my system. Suspect an issue with swiftenv. According to (this)[http://stackoverflow.com/questions/34680816/swift-in-linux-use-of-unresolved-identifier-dispatch-async] SO answer libdispatch doesn't play nicely with `swift build` yet. 
+
+(alwaysrightinstitute)[http://www.alwaysrightinstitute.com/swift-multi-module-dev/] seems to be working on a wrapper around the library so swift build can still be used. 
 
 ### iOS Apps
 

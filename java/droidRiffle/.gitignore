@@ -3,3 +3,9 @@ local.properties
 build/*
 .idea/
 *.so
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
