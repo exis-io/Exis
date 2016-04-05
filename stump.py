@@ -56,7 +56,8 @@ SUBTREES = [
     ("python/pyRiffle", "pyRiffle", "git@github.com:exis-io/pyRiffle.git"),
 
     ("CardsAgainstHumanityDemo/swiftCardsAgainst", "iosCAH", "git@github.com:exis-io/CardsAgainst.git"),
-    ("CardsAgainstHumanityDemo/ngCardsAgainst", "ngCAH", "git@github.com:exis-io/ionicCardsAgainstEXIStence.git")
+    ("CardsAgainstHumanityDemo/ngCardsAgainst", "ngCAH", "git@github.com:exis-io/ionicCardsAgainstEXIStence.git"),
+    ("CardsAgainstHumanityDemo/droidCardsAgainst", "droidCAH", "git@github.com:exis-io/androidCardsAgainstHumanity.git")
 ]
 
 # Subtrees that track binary files in the subtree but not in the branch
