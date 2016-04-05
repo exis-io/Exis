@@ -137,6 +137,7 @@ func (a *app) Login(d Domain, args ...string) (Domain, error) {
 	} else if len(args) != 0 {
 		return nil, fmt.Errorf("Login must be called with 0,1 or 2 args. ([username [, password]]).")
 	}
+
 	if Fabric == FabricSandbox {
 		if username == "" {
 			return d, nil
@@ -159,6 +160,7 @@ func (a *app) RegisterAccount(d Domain, username string, password string, email 
 	if Fabric == FabricSandbox {
 		return false, fmt.Errorf("Registration is not available on the sandbox node.")
 	}
+
 	Info("Attempting to register")
 	url := Registrar + "/register"
 
