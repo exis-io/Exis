@@ -59,6 +59,8 @@ extern GoUint64 NewDomain(char* p0);
 
 extern GoUint64 Subdomain(GoUint64 p0, char* p1);
 
+extern void SetToken(GoUint64 p0, char* p1);
+
 extern char* Receive(GoUint64 p0);
 
 extern void Join(GoUint64 p0, GoUint64 p1, GoUint64 p2);

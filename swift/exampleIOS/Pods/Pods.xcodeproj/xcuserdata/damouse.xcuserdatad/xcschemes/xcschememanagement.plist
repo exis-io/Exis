@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SchemeUserState</key>
+	<dict>
+		<key>Pods-Backend.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-ExisiOSBackend.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Riffle-OSX.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Riffle-iOS.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>1608140FF89BFBF823D81FD6F84A0E34</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>2DA174796A69A5A10CFB75BA2EC7A428</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6BDD2CC9A42FD9617C5863188E3537A5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>810D1930605FC6E11F5767C1F9125577</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+	</dict>
+</dict>
+</plist>

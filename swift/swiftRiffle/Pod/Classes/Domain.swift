@@ -75,6 +75,10 @@ public class Domain {
         Leave(self.mantleDomain)
     }
     
+    public func setToken(token: String) {
+        SetToken(self.mantleDomain, token.cString())
+    }
+    
     public func join() {
         let cb = CBID()
         let eb = CBID()
