@@ -1,0 +1,50 @@
+  },
+  {
+    "text": "A killer corset",
+    "id": 2725
+  },
+  {
+    "text": "Professor Pinkertoot's Bosom Wax",
+    "id": 2726
+  },
+  {
+    "text": "Badly translated Latin",
+    "id": 2729
+  },
+  {
+    "text": "Detachable Boobs",
+    "id": 2730
+  },
+  {
+    "text": "Making up for 10 years of shitty parenting with a PlayStation",
+    "id": 2731
+  },
+  {
+    "text": "Giving money and personal information to strangers on the Internet",
+    "id": 2732
+  },
+  {
+    "text": "These low, low prices!",
+    "id": 2734
+  },
+  {
+    "text": "Piece of shit Christmas cards with no money in them",
+    "id": 2735
+  },
+  {
+    "text": "The shittier, Jewish version of Christmas",
+    "id": 2738
+  },
+  {
+    "text": "Swapping bodies with mom for a day",
+    "id": 2739
+  },
+  {
+    "text": "Finding out that Santa isn't real",
+    "id": 2740
+  },
+  {
+    "text": "Slicing a ham in icy silence",
+    "id": 2741
+  },
+  {

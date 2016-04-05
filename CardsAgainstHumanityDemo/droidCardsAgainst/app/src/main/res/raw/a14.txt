@@ -1,0 +1,50 @@
+    "text": "Cool 90s up-in-the-front hair",
+    "id": 2781
+  },
+  {
+    "text": "Several Michael Keatons",
+    "id": 2782
+  },
+  {
+    "text": "A bus that will explode if it goes under 50 miles per hour",
+    "id": 2783
+  },
+  {
+    "text": "The black half of Barack Obama",
+    "id": 2791
+  },
+  {
+    "text": "The white half of Barack Obama",
+    "id": 2792
+  },
+  {
+    "text": "Free ice cream, yo",
+    "id": 2793
+  },
+  {
+    "text": "Getting caught by the police and going to jail",
+    "id": 2795
+  },
+  {
+    "text": "My dead son's baseball glove",
+    "id": 2796
+  },
+  {
+    "text": "Western standards of beauty",
+    "id": 2798
+  },
+  {
+    "text": "Getting eaten alive by Guy Fieri",
+    "id": 2799
+  },
+  {
+    "text": "Blackface",
+    "id": 2801
+  },
+  {
+    "text": "Some shit-hot guitar licks",
+    "id": 2803
+  },
+  {
+    "text": "Social justice warriors with flamethrowers of compassion",
+    "id": 2804

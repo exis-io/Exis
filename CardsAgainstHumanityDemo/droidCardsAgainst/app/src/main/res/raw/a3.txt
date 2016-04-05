@@ -1,0 +1,50 @@
+  },
+  {
+    "text": "Republicans",
+    "id": 8
+  },
+  {
+    "text": "The Big Bang",
+    "id": 9
+  },
+  {
+    "text": "Agriculture",
+    "id": 10
+  },
+  {
+    "text": "Making a pouty face",
+    "id": 11
+  },
+  {
+    "text": "Charisma",
+    "id": 12
+  },
+  {
+    "text": "YOU MUST CONSTRUCT ADDITIONAL PYLONS",
+    "id": 13
+  },
+  {
+    "text": "Taking off your shirt",
+    "id": 14
+  },
+  {
+    "text": "Ronald Reagan",
+    "id": 15
+  },
+  {
+    "text": "Morgan Freeman's voice",
+    "id": 16
+  },
+  {
+    "text": "Breaking out into song and dance",
+    "id": 17
+  },
+  {
+    "text": "All-you-can-eat shrimp for $4.99",
+    "id": 18
+  },
+  {
+    "text": "Soup that is too hot",
+    "id": 19
+  },
+  {

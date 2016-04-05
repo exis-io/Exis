@@ -1,0 +1,37 @@
+  {
+    "text": "In an attempt to reach a wider audience, the Royal Ontario Museum has opened an interactive exhibit on ________",
+    "id": 2661
+  },
+  {
+    "text": "What's the Canadian government using to inspire rural students to suceed?",
+    "id": 2662
+  },
+  {
+    "text": "Air canada guidelines now prohibit ________ on airplanes",
+    "id": 2664
+  },
+  {
+    "text": "In Vancouver it is now legal to ________",
+    "id": 2666
+  },
+  {
+    "text": "O Canada, we stand on guard for ________",
+    "id": 2667
+  },
+  {
+    "text": "If ________ came in two-fours, Canada would be more ________",
+    "id": 2668
+  },
+  {
+    "text": "Why does the Komen Foundation hate Planned Parenthood?",
+    "id": 2594
+  },
+  {
+    "text": "Math is hard. Let's go ________!",
+    "id": 2597
+  },
+  {
+    "text": "The latest proposal in the Texas legislature is to take away ________ from women",
+    "id": 2599
+  }
+]

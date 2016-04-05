@@ -1,0 +1,32 @@
+#Directories#
+#############
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+/build
+/captures
+
+#Annoying files#
+################
+.gradle
+.DS_Store
+*~
+*.swp
+*.idea
+*.iml
+
+#Helper files
+###############
+game_logic.txt
+
+mantle/mantle.aar
+local.properties
+build/*
+.idea
+*.so
+.gradle
+local.properties
+.idea/workspace.xml
+.idea/libraries
+.DS_Store
+build

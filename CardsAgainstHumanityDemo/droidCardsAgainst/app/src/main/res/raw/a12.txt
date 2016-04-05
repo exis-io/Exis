@@ -1,0 +1,50 @@
+    "text": "Rudolph's bright red balls",
+    "id": 2743
+  },
+  {
+    "text": "Breeding elves for their priceless semen",
+    "id": 2745
+  },
+  {
+    "text": "The royal afterbirth",
+    "id": 2746
+  },
+  {
+    "text": "Having a strong opinion about Obamacare",
+    "id": 2748
+  },
+  {
+    "text": "A simultaneous nightmare and wet dream starring Sigourney Weaver",
+    "id": 2749
+  },
+  {
+    "text": "Being blind and deaf and having no limbs",
+    "id": 2750
+  },
+  {
+    "text": "People with cake in their mouths talking about how good cake is",
+    "id": 2751
+  },
+  {
+    "text": "Sunny D! Alright!",
+    "id": 2762
+  },
+  {
+    "text": "A mulatoo, an albino, a mosquito, and my libido",
+    "id": 2763
+  },
+  {
+    "text": "Log.™",
+    "id": 2764
+  },
+  {
+    "text": "Jerking off to a 10-second RealMedia clip",
+    "id": 2765
+  },
+  {
+    "text": "Deregulating the mortgage market",
+    "id": 2766
+  },
+  {
+    "text": "The Y2K bug",
+    "id": 2767

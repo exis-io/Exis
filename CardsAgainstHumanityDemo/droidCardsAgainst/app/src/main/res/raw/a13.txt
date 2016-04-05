@@ -1,0 +1,50 @@
+  },
+  {
+    "text": "Wearing Nicolas Cage's face",
+    "id": 2768
+  },
+  {
+    "text": "Stabbing the shit out a Capri Sun",
+    "id": 2769
+  },
+  {
+    "text": "Kurt Cobain's death",
+    "id": 2770
+  },
+  {
+    "text": "Freeing Willy",
+    "id": 2771
+  },
+  {
+    "text": "Liking big butts and not being able to lie about it",
+    "id": 2772
+  },
+  {
+    "text": "The Great Cornholio",
+    "id": 2773
+  },
+  {
+    "text": "Pure Moods, Vol. 1",
+    "id": 2774
+  },
+  {
+    "text": "Yelling \"girl power!\" and doing a high kick",
+    "id": 2775
+  },
+  {
+    "text": "Pizza in the morning, pizza in the evening, pizza at supper time",
+    "id": 2777
+  },
+  {
+    "text": "Angels interfering in an otherwise fair baseball game",
+    "id": 2778
+  },
+  {
+    "text": "Getting caught up in the CROSSFIRE.™",
+    "id": 2779
+  },
+  {
+    "text": "Patti Mayonnaise",
+    "id": 2780
+  },
+  {

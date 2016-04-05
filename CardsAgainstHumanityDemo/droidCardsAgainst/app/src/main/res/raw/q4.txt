@@ -1,0 +1,32 @@
+    "id": 2866
+  },
+  {
+    "text": "WHOOO! God damn I love ________!",
+    "id": 2867
+  },
+  {
+    "text": "Do you lack energy? Does it sometimes feel like the whole world is ________? Zoloft.®",
+    "id": 2868
+  },
+  {
+    "text": "Hi, this is Jim from accounting. We noticed a $1,200 charge labeled \"________.\" Can you explain?",
+    "id": 2869
+  },
+  {
+    "text": "When Verity snuck out for her nightly exhibitionistic jaunt, she didn't expect to come face to face with ________",
+    "id": 2697
+  },
+  {
+    "text": "Programmable clothes that can turn into any imaginable garment are great, but didn't the designers consider ________?",
+    "id": 2698
+  },
+  {
+    "text": "Procurator Marcus Amandus set out to explore Lake Ontarius and discovered ________",
+    "id": 2699
+  },
+  {
+    "text": "In her next romcom, Katherine Heigl plays a woman who falls in love with her boss's ________",
+    "id": 2606
+  },
+  {
+    "text": "The Pantone color of the year is inspired by ________",

@@ -1,0 +1,50 @@
+  },
+  {
+    "text": "An unforgettable quinceañera",
+    "id": 2806
+  },
+  {
+    "text": "September 11th, 2001",
+    "id": 2807
+  },
+  {
+    "text": "Daddy's credit card",
+    "id": 2808
+  },
+  {
+    "text": "A one-way ticket to Gary, Indiana",
+    "id": 2809
+  },
+  {
+    "text": "An uninterrupted history of imperialism and exploitation",
+    "id": 2810
+  },
+  {
+    "text": "P.F. Change himself",
+    "id": 2811
+  },
+  {
+    "text": "Cutting off a flamingo's legs with garden shears",
+    "id": 2812
+  },
+  {
+    "text": "A giant powdery manbaby",
+    "id": 2813
+  },
+  {
+    "text": "Not believing in giraffes",
+    "id": 2815
+  },
+  {
+    "text": "Getting drive-by shot",
+    "id": 2816
+  },
+  {
+    "text": "A team of lawyers",
+    "id": 2817
+  },
+  {
+    "text": "Wearing glasses and sounding smart",
+    "id": 2819
+  }
+]

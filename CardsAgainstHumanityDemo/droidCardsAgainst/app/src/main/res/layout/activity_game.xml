@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="0dp"
+    android:paddingBottom="0dp"
+    tools:context=".GameActivity"
+    android:background="#000"
+    android:keepScreenOn="true"
+    android:id="@+id/game_bg">
+
+    <TextView android:text="@string/question"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/question"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        android:textColor="#fff"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:padding="10dp"
+        android:minHeight="100sp" />
+
+    <ProgressBar
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:id="@+id/progress"
+        android:layout_below="@+id/question"
+        android:layout_centerHorizontal="true"
+        android:background="#00a2ff"
+        android:textAlignment="center"
+        android:foregroundGravity="left"
+        android:progressBackgroundTint="#ff000000"
+        android:layout_marginBottom="2dp"
+        android:progressDrawable="@drawable/progress_drawable" />
+
+    <TextView
+        android:text="@string/answer"
+        android:clickable="true"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/card_height"
+        android:id="@+id/card1"
+        android:textSize="20sp"
+        android:background="#eee"
+        android:textColor="#555"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="0dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/progress"
+        android:padding="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:gravity="center_vertical|center_horizontal" />
+
+    <TextView
+        android:text="@string/answer"
+        android:clickable="true"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/card_height"
+        android:id="@+id/card2"
+        android:textSize="20sp"
+        android:background="#eee"
+        android:textColor="#555"
+        android:layout_below="@+id/card1"
+        android:layout_marginTop="@dimen/card_spacing"
+        android:padding="5dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:gravity="center_vertical|center_horizontal" />
+
+    <TextView
+        android:text="@string/answer"
+        android:clickable="true"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/card_height"
+        android:id="@+id/card3"
+        android:textSize="20sp"
+        android:background="#eee"
+        android:textColor="#555"
+        android:layout_below="@+id/card2"
+        android:layout_marginTop="@dimen/card_spacing"
+        android:padding="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:gravity="center_vertical|center_horizontal" />
+
+    <TextView
+        android:text="@string/answer"
+        android:clickable="true"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/card_height"
+        android:id="@+id/card4"
+        android:textSize="20sp"
+        android:background="#eee"
+        android:textColor="#555"
+        android:layout_below="@+id/card3"
+        android:layout_marginTop="@dimen/card_spacing"
+        android:padding="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:gravity="center_vertical|center_horizontal" />
+
+    <TextView
+        android:text="@string/answer"
+        android:clickable="true"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/card_height"
+        android:id="@+id/card5"
+        android:textSize="20sp"
+        android:background="#fff"
+        android:textColor="#555"
+        android:layout_below="@+id/card4"
+        android:layout_marginTop="@dimen/card_spacing"
+        android:padding="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:gravity="center_vertical|center_horizontal" />
+
+    <TextView
+        android:text="@string/room"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/info"
+        android:textSize="20sp"
+        android:background="#000"
+        android:textColor="#fff"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:textAlignment="center"
+        android:textStyle="italic"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:baselineAligned="false"
+        android:layout_below="@+id/card5" />
+
+    <TableLayout
+        android:id="@+id/player_infos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/player_info0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="player1"
+                android:textSize="15sp"
+                android:layout_margin="2dp"
+                android:textAlignment="gravity"
+                android:gravity="center_horizontal" />
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/player_info1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="player2"
+                android:textSize="15sp"
+                android:layout_margin="2dp"
+                android:gravity="center_horizontal"
+                android:textAlignment="gravity" />
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/player_info2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="player3"
+                android:textSize="15sp"
+                android:layout_margin="2dp"
+                android:gravity="center_horizontal"
+                android:textAlignment="gravity" />
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/player_info3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="player4"
+                android:textSize="15sp"
+                android:layout_margin="2dp"
+                android:gravity="center_horizontal"
+                android:textAlignment="gravity" />
+        </TableRow>
+    </TableLayout>
+
+</RelativeLayout>
