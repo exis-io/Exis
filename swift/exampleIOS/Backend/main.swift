@@ -37,7 +37,7 @@ let container = Backend(name: "container", superdomain: app)
 
 //Joining container with your token
 //Copy from: Auth() -> Authorized Key Management -> 'container' key
-//container.join("XXXXXXXXXXXXXX")
+container.setToken("")
 
 container.join()
 
