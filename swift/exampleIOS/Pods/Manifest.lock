@@ -1,0 +1,16 @@
+PODS:
+  - Riffle (0.2.12)
+
+DEPENDENCIES:
+  - Riffle (from `../swiftRiffle`)
+
+EXTERNAL SOURCES:
+  Riffle:
+    :path: ../swiftRiffle
+
+SPEC CHECKSUMS:
+  Riffle: 9e6352a7643279bc9631900b11c81e5822fe2a0f
+
+PODFILE CHECKSUM: 80061eb79e23a7bc05c9a116cc0b8d1636d0ed3d
+
+COCOAPODS: 1.0.0.beta.6

@@ -44,6 +44,12 @@ func Subdomain(pdomain uint64, name *C.char) uint64 {
 	return i
 }
 
+//export SetToken
+func SetToken(pdomain uint64, token *C.char) {
+    d := get(pdomain)
+    d.GetApp().SetToken(C.GoString(token))
+}
+
 //export Receive
 func Receive(dptr uint64) *C.char {
 	// Used to be a byte slice, but 1.6 cgo checks will not allow that
