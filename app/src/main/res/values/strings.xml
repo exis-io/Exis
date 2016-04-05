@@ -1,0 +1,24 @@
+<resources>
+    <string name="game_name">Cards Against Humanity</string>
+    <string name="app_name">Cards</string>
+    <string name="action_settings">Settings</string>
+    <string name="play">Play</string>
+    <string name="host">Host Game</string>
+    <string name="pg13">PG-13</string>
+    <string name="adult">Adult</string>
+    <string name="score">Score</string>
+    <string name="your_score">0</string>
+    <string name="question"></string>
+    <string name="answer"></string>
+    <string name="room">Choose a card\n</string>
+    <string name="info">Network Mode</string>
+    <string name="loading_questions">Loading Questions...</string>
+    <string name="loading_answers">Loading Answers...</string>
+    <string name="finished">Finished loading cards!</string>
+    <string name="scoringInfo">Dealer is determining winner\n</string>
+    <string name="pickingInfo">Czar is picking\n</string>
+    <string name="answeringInfo">Choose a card\n</string>
+    <string name="playersPickingInfo">Players are submitting cards\n</string>
+    <string name="change_name">Change Screen Name:</string>
+    <string name="edit_name">&gt; Update screen name</string>
+</resources>

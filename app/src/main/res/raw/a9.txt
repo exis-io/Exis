@@ -1,0 +1,50 @@
+  },
+  {
+    "text": "Burning down the White House",
+    "id": 2682
+  },
+  {
+    "text": "Being Canadian",
+    "id": 2683
+  },
+  {
+    "text": "The Famous Five",
+    "id": 2684
+  },
+  {
+    "text": "A Molson muscle",
+    "id": 2685
+  },
+  {
+    "text": "Poutine",
+    "id": 2687
+  },
+  {
+    "text": "Schmirler the Curler",
+    "id": 2688
+  },
+  {
+    "text": "The Official Languages Act. La Loi sure les langues officielles",
+    "id": 2689
+  },
+  {
+    "text": "Newfies",
+    "id": 2690
+  },
+  {
+    "text": "The CBC",
+    "id": 2691
+  },
+  {
+    "text": "Graham Greene playing the same First Nations character on every TV show",
+    "id": 2692
+  },
+  {
+    "text": "Killing a moose with your bare hands",
+    "id": 2693
+  },
+  {
+    "text": "tim Hortons",
+    "id": 2694
+  },
+  {

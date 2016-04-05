@@ -1,0 +1,50 @@
+    "text": "Amputees",
+    "id": 71
+  },
+  {
+    "text": "Men",
+    "id": 72
+  },
+  {
+    "text": "Russian super-tuberculosis",
+    "id": 2832
+  },
+  {
+    "text": "A mouthful of potato salad",
+    "id": 2833
+  },
+  {
+    "text": "All these decorative pillows",
+    "id": 2834
+  },
+  {
+    "text": "Being worshipped as the one true God",
+    "id": 2836
+  },
+  {
+    "text": "The ghost of Marlon Brando",
+    "id": 2838
+  },
+    {
+    "text": "BETTY FUCKING CROCKER",
+    "id": 2153
+  },
+  {
+    "text": "Binge reading every fanfiction for a pairing and then hating yourself a little bit",
+    "id": 2154
+  },
+  {
+    "text": "BL1ND JUST1C3",
+    "id": 2155
+  },
+  {
+    "text": "Bro",
+    "id": 2158
+  },
+  {
+    "text": "Bro's rapping ventriloquism act",
+    "id": 2159
+  },
+  {
+    "text": "Bro’s death",
+    "id": 2160

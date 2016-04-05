@@ -1,0 +1,50 @@
+    "text": "Charging down halls, shouting profanities and being silly",
+    "id": 2174
+  },
+  {
+    "text": "Asking Larry Summers increasingly difficult mathematical questions until Bar and Mat Mitzvahs are considered equally important",
+    "id": 2659
+  },
+  {
+    "text": "Snotsicles",
+    "id": 2670
+  },
+  {
+    "text": "Naked News",
+    "id": 2671
+  },
+  {
+    "text": "Don Cherry's wardrobe",
+    "id": 2672
+  },
+  {
+    "text": "Syrupy sex with a maple tree",
+    "id": 2673
+  },
+  {
+    "text": "Terry Fox's prosthetic leg",
+    "id": 2674
+  },
+  {
+    "text": "Canada: American's hat",
+    "id": 2675
+  },
+  {
+    "text": "Mr. Dressup",
+    "id": 2677
+  },
+  {
+    "text": "The Front de Libération du Québec",
+    "id": 2678
+  },
+  {
+    "text": "Heritage minutes",
+    "id": 2679
+  },
+  {
+    "text": "The Royal Canadian Mounted Police",
+    "id": 2680
+  },
+  {
+    "text": "Stephen Harper",
+    "id": 2681
