@@ -1,6 +1,30 @@
 apply plugin: 'com.android.library'
 apply plugin: 'me.tatarka.retrolambda'
 
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'riffle'
+
+    publishedGroupId = 'com.exis.riffle'
+    libraryName = 'Riffle'
+    artifact = 'riffle'
+
+    libraryDescription = 'Android version of Riffle'
+
+    siteUrl = 'https://github.com/exis-io/droidRiffle'
+    gitUrl = 'https://github.com/exis-io/droidRiffle.git'
+
+    libraryVersion = '0.2.42'
+
+    developerId = 'exis'
+    developerName = 'Exis'
+    developerEmail = 'developers@exis.io'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -30,11 +54,14 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'me.tatarka:gradle-retrolambda:3.2.5'
     compile 'org.immutables:gson:2.1.8'
+    compile 'net.jodah:typetools:0.4.4'
 
     compile project(':mantle')
-    compile 'net.jodah:typetools:0.4.4'
 }
 
 retrolambda {
     defaultMethods true
 }
+
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
