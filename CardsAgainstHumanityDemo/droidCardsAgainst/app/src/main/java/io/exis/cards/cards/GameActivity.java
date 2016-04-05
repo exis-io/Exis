@@ -26,12 +26,13 @@ import java.util.ArrayList;
  *
  * Created by luke on 10/22/15.
  */
+
 public class GameActivity extends Activity {
     public int points;
     public Player player;
     public static Dealer dealer;
     public static Exec exec;
-    public static Player currentCzar;
+    public static String currentCzar;
     public static Handler handler;
     public static String phase;
     public Player[] players;
@@ -54,7 +55,7 @@ public class GameActivity extends Activity {
     public GameActivity(){
         Log.i("GameActivity", "entered constructor");
         Riffle.setFabricDev();
-//        Riffle.setLogLevelInfo();
+        Riffle.setLogLevelDebug();
         Riffle.setCuminOff();
 
         this.context = MainActivity.getAppContext();
@@ -185,7 +186,7 @@ public class GameActivity extends Activity {
                         runOnUiThread(() -> {
                             String str = p.playerID();
                             playerInfos.get(posF).setText(str);
-                            if (currentCzar != null && str.equals(currentCzar.playerID())) {
+                            if (currentCzar != null && str.equals(currentCzar)) {
                                 playerInfos.get(posF).setBackgroundColor(Color.parseColor("#00a2ff"));
                             }else{
                                 playerInfos.get(posF).setBackgroundColor(Color.parseColor("#005688"));
@@ -290,7 +291,7 @@ public class GameActivity extends Activity {
 
     public void setPlayerBackgrounds(){
         for(TextView t : playerInfos){
-            if( t.getText().equals( currentCzar.playerID() )){
+            if( t.getText().equals( currentCzar )){
                 runOnUiThread(() -> t.setBackgroundColor(Color.parseColor("#00a2ff")));
             }else{
                 runOnUiThread(() -> t.setBackgroundColor(Color.parseColor("#005688")));

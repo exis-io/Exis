@@ -284,7 +284,7 @@ public class Dealer extends Domain{
                         czar().playerID() + ", \n" +
                         getQuestion().getText() + ", \n" +
                         duration + "]");
-                publish("answering", czar(), getQuestion().getText(), duration);
+                publish("answering", czar().playerID(), getQuestion().getText(), duration);
                 Log.i("TAG", "done publishing");
 //                player.danger_pub_answering(players.get(czarNum), getQuestion().getText(), duration);
 
@@ -304,7 +304,7 @@ public class Dealer extends Domain{
                 Log.i(TAG, "publishing [picking, \n" +
                         Card.printHand(answers) +
                         duration + "]");
-                publish("picking", Card.handToStrings(answers), duration);
+                publish("picking", Card.serialize( Card.handToStrings(answers) ), duration);
 //                player.danger_pub_picking(Card.handToStrings(answers), duration);
 
                 phase = "scoring";
@@ -316,7 +316,7 @@ public class Dealer extends Domain{
                         winner.playerID() + ", " +
                         winningCard.getText() + ", " +
                         duration + "]");
-                publish("scoring", winner, winningCard.getText(), duration);
+                publish("scoring", winner.playerID(), winningCard.getText(), duration);
 //                player.danger_pub_scoring(winner.playerID(), winningCard.getText(), duration);
 
                 answers.clear();

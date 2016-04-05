@@ -196,11 +196,11 @@ public class Player {
             subscribe("joined", String.class, activity::addPlayer);
             subscribe("left", String.class, activity::removePlayer);
 
-            subscribe("answering", Player.class, String.class, Integer.class,
+            subscribe("answering", String.class, String.class, Integer.class,
                     (currentCzar, questionText, duration) -> {
                         Log.i("answering sub", "received question " + questionText);
 
-                        player.isCzar = (currentCzar.playerID().equals(playerID));
+                        player.isCzar = (currentCzar.equals(playerID));
                         activity.currentCzar = currentCzar;
                         activity.setPlayerBackgrounds();
                         player.question = questionText;
@@ -208,10 +208,11 @@ public class Player {
                         activity.setQuestion();
                     });
 
-            subscribe("picking", String[].class, Integer.class,
+            subscribe("picking", String.class, Integer.class,
                     (answers, duration) -> {
-                        Log.i("picking sub", "received answers " + Card.printHand(answers));
-                        player.answers = Card.buildHand(answers);
+                        String[] arr = Card.deserialize(answers, String[].class);
+                        Log.i("picking sub", "received answers " + Card.printHand(arr));
+                        player.answers = Card.buildHand(arr);
                         player.duration = duration;
                         activity.runOnUiThread(() -> activity.refreshCards(player.answers));
                     });
@@ -231,7 +232,7 @@ public class Player {
             }
 
             player.hand = Card.buildHand( (String[])playObject[0] );
-            setDealer((String)playObject[3]);
+            setDealer((String) playObject[3]);
 
             activity.onPlayerJoined(playObject);
         }

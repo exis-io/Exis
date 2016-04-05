@@ -15,7 +15,13 @@ package io.exis.cards.cards;
 import org.json.*;
 import android.content.Context;
 import android.util.Log;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import com.google.gson.Gson;
 
 public class Card {
 
@@ -134,4 +140,14 @@ public class Card {
 
         return hand;
     }// end buildHand method
+
+    public static String serialize(String[] s){
+        Gson gson = new Gson();
+        return gson.toJson(s, s.getClass());
+    }
+
+    public static <T> T deserialize(String json, Class<T> clazz){
+        Gson gson = new Gson();
+        return clazz.cast( gson.fromJson(json, clazz));
+    }
 }
