@@ -14,7 +14,7 @@ ext {
     siteUrl = 'https://github.com/exis-io/droidRiffle'
     gitUrl = 'https://github.com/exis-io/droidRiffle.git'
 
-    libraryVersion = '0.2.43'
+    libraryVersion = '0.2.44'
 
     developerId = 'exis'
     developerName = 'Exis'

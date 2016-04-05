@@ -88,8 +88,8 @@
     <orderEntry type="library" exported="" name="gson-2.5" level="project" />
     <orderEntry type="library" exported="" name="jffi-1.2.10-native" level="project" />
     <orderEntry type="library" exported="" name="gson-2.1.8" level="project" />
-    <orderEntry type="library" exported="" name="jffi-1.2.10" level="project" />
     <orderEntry type="library" exported="" name="asm-tree-5.0.3" level="project" />
+    <orderEntry type="library" exported="" name="jffi-1.2.10" level="project" />
     <orderEntry type="library" exported="" name="asm-5.0.3" level="project" />
     <orderEntry type="library" exported="" name="asm-commons-5.0.3" level="project" />
     <orderEntry type="library" exported="" name="typetools-0.4.4" level="project" />
