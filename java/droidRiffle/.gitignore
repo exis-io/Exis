@@ -1,7 +1,7 @@
 mantle/mantle.aar
 local.properties
 build/*
-.idea/
+.idea
 *.so
 .gradle
 local.properties
