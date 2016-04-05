@@ -81,6 +81,10 @@ public class NameActivity extends Activity {
         border.setBackgroundColor(Color.parseColor("#ffffff"));
     }
 
+    public void backClicked(View view){
+        this.finish();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();

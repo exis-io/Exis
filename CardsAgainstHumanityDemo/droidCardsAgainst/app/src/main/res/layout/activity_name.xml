@@ -50,5 +50,17 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp" />
 
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:text="&#8592;Back"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/button"
+        android:onClick="backClicked"
+        android:background="#000000"
+        android:textColor="#ffffff"
+        android:textSize="60sp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp" />
 
 </RelativeLayout>
