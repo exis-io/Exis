@@ -258,6 +258,7 @@ if __name__ == '__main__':
         call("git clone --no-checkout {} {}".format(url, tmp), shell=True)
 
         # Copy the contents of the real directory
+        shutil.rmtree(prefix + '/.git')
         copy_tree(prefix, tmp, lambda d, files: ['.git'])
 
         call('git -C {0} add --all'.format(tmp), shell=True)
