@@ -257,8 +257,8 @@ class SwiftCoder(Coder):
         shutil.copy("{}/example/Package.swift".format(swift), "{}/main".format(tmpdir))
         shutil.copytree("{}/mantle".format(swift), "{}/mantle".format(tmpdir))
         os.mkdir("{}/swiftRiffle".format(tmpdir))
-        shutil.copytree("{}/swiftRiffle/Riffle".format(swift), "{}/swiftRiffle/Riffle".format(tmpdir))
-        if not os.path.exists("{}/swiftRiffle/Riffle/.git".format(tmpdir)):
+        shutil.copytree("{}/swiftRiffle/Pod/Classes".format(swift), "{}/swiftRiffle/Pod/Classes".format(tmpdir))
+        if not os.path.exists("{}/swiftRiffle/Pod/Classes/.git".format(tmpdir)):
             raise Exception("!! Please run 'make swift' so that swiftRiffle is git tagged properly")
 
     def setupRunComplete(self, code):

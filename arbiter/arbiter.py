@@ -22,7 +22,11 @@ import argparse
 import re
 import platform
 from collections import defaultdict as ddict
-from multiprocessing import Process
+
+import multiprocessing
+import threading
+from multiprocessing.dummy import Pool as ThreadPool
+
 
 EXISREPO = os.environ.get("EXIS_REPO", None)
 
@@ -147,12 +151,13 @@ def test(*tasks, **kwargs):
         exit(1)
 
 
-def testAll(lang, stopOnFail=False):
+def testAll(lang, stopOnFail=False, multithreaded=False):
     """
     Executes all found tests for the language provided.
     Args:
         lang       : language to test, or "all"
         stopOnFail : If true, we stop testing when a failure is found, default False
+        multithreaded: if True, run the tests in parallel
     """
 
     if lang == "all":
@@ -160,36 +165,39 @@ def testAll(lang, stopOnFail=False):
     else:
         langs = [lang]
 
-    # Damouse: testing multiproc version-- would work, except that each testing domain
-    # gets the same name, so node gets confused
-    # def runner(taskset):
-    #     res = repl.executeTaskSet(taskset)
-    #     if res is True:
-    #         print('-'*80)
-    #     elif res is False:
-    #         if stopOnFail:
-    #             exit()
-    #         else:
-    #             print('-'*80)
-
-    # for lang in langs:
-    #     examples = exampler.Examples.find(EXISREPO, lang)
-    #     tasks = examples.getTasks(lang)
-
-    #     processes = [Process(target=runner, args=(x,)) for x in tasks]
-    #     [x.start() for x in processes]
-    #     [x.join() for x in processes]
-    # End multiproc testing
-
-    hasFailed = False
-    for lang in langs:
-        examples = exampler.Examples.find(EXISREPO, lang)
-        for t in examples.getTasks(lang):
-            res = repl.executeTaskSet(t)
-            if res is False:
-                hasFailed = True
+    if multithreaded:
+        def runner(taskset):
+            res = repl.executeTaskSet(taskset)
+            if res is True:
+                print('-' * 80)
+            elif res is False:
                 if stopOnFail:
-                    break
+                    exit()
+                else:
+                    print('-' * 80)
+
+        for lang in langs:
+            examples = exampler.Examples.find(EXISREPO, lang)
+            tasks = examples.getTasks(lang)
+
+            pool = ThreadPool(10)
+            pool.map(runner, tasks)
+            pool.close()
+            pool.join()
+
+            # threads = [threading.Thread(target=runner, args=(x,)) for x in tasks]
+            # [x.start() for x in threads]
+            # [x.join() for x in threads]
+    else:
+        hasFailed = False
+        for lang in langs:
+            examples = exampler.Examples.find(EXISREPO, lang)
+            for t in examples.getTasks(lang):
+                res = repl.executeTaskSet(t)
+                if res is False:
+                    hasFailed = True
+                    if stopOnFail:
+                        break
 
     if hasFailed:
         exit(1)

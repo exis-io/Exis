@@ -160,7 +160,7 @@ if __name__ == '__main__':
                 # TODO: seperate by file, and use the files for some reasonable ordering
 
         elif args['all']:
-            arbiter.arbiter.testAll('all')
+            arbiter.arbiter.testAll('all', multithreaded=False)
 
         elif args['<languageOrTestNumber>']:
             target = args['<languageOrTestNumber>']
@@ -175,7 +175,7 @@ if __name__ == '__main__':
 
                 arbiter.repl.executeTaskSet(target)
             else:
-                arbiter.arbiter.testAll(args['<languageOrTestNumber>'])
+                arbiter.arbiter.testAll(args['<languageOrTestNumber>'], multithreaded=False)
 
     elif args['release']:
         found = False

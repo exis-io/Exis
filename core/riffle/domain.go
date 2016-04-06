@@ -84,7 +84,7 @@ func (d domain) Join() error {
 		return err
 	} else {
 		// TEMPORARY TESTING
-		TestCoreModels(core.SetSession(appDomain))
+		//TestCoreModels(core.SetSession(appDomain))
 
 		go d.mantleApp.run()
 		return nil
