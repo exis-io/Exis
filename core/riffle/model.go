@@ -9,10 +9,11 @@ import (
 
 // NOT MEANT TO BE EXPOSED TO goRiffle!
 func TestCoreModels(m core.Model) {
-	m.Query("collection/find", "Dog", nil)
-	// m.Find("Dog", "")
+	// m.Query("collection/find", "Dog", nil)
 
-	// m.Create("Dog", string(`{"name": "Jim"}`))
+	m.Find("Dog", nil)
 
-	// m.Find("Dog", "")
+	m.Create("Dog", map[string]interface{}{"name": "Joe"})
+
+	m.Count("Dog")
 }

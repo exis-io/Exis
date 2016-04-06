@@ -36,7 +36,7 @@ func sub(name string) {
 func main() {
 	// set flags for testing
 	//riffle.SetFabricLocal()
-	riffle.SetLogLevelDebug()
+	riffle.SetLogLevelInfo()
 
 	// Domain objects
 	app := riffle.NewDomain("xs.demo.damouse.swiftstore")
