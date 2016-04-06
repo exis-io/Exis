@@ -10,6 +10,9 @@ printcheck:
 	@echo "Check $(LOG) for warnings and errors"
 
 swift: printcheck libriffmantle.so
+	@$(MAKE) -C swift/mantle clean >$(LOG) ||:
+	@$(MAKE) -C swift/swiftRiffle/Pod/Classes clean >$(LOG) ||:
+
 	@cp utils/assets/libriffmantle.so swift/mantle/libriffmantle.so
 	@cp utils/assets/libriffmantle.h swift/mantle/libriffmantle.h
 
@@ -132,7 +135,6 @@ libriffmantle.so:
 
 clean: 
 	@-rm -f utils/assets/libriffmantle.so utils/assets/libriffmantle.h
-	@-rm -f swift/osxCrust/RiffleTest/riffle.a  swift/osxCrust/RiffleTest/riffle.h
 	@-rm -rf .tmp
 
 	@-rm -f utils/assets/libriffmantle.so utils/assets/libriffmantle.h >$(LOG) ||:
