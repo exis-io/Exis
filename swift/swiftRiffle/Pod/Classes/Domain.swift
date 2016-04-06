@@ -112,5 +112,59 @@ public class Domain {
     // MARK: Delegate methods
     public func onJoin() { }
     public func onLeave() { }
+    
+    // MARK: Temporary methods, going to move to AppDomain
+    public func register() {
+        
+    }
+    
+    public func login() {
+        
+    }
 }
 
+/*
+ The Auth api
+ 
+ // Represents the connection in addition to the domain itself
+ app = AppDomain(name: "xs.test")
+ you = Domain(name: "alpha", superdomain: app)
+ 
+ // myName comes back as a string
+ // join checks persistence for a token then presents it to the fabric. Fails if the
+ // token can't be found or the fabric rejects the token
+ app.join().then { myName: String
+ let me = Domain(myDomain, superdomain: app)
+ 
+ // Blocks and runs the reactor loop
+ app.listen()
+ 
+ }.error {
+ // Username and password is obtained from some input source-- ui, cli prompt, etc
+ let username = "someUsernameFromInput"
+ let password = "somePasswordFromInput"
+ 
+ // Attempt to obtain a token to auth on the fabric. Returns the name of this domain
+ // If the login  succeeded the token is persisted under the name presented when the
+ // login request was started
+ app.login("sender", username, password).then { myName: String
+ me= Domain(myDomain, superdomain: app)
+ app.listen()
+ 
+ // Returns whatever error the Auth appliance returned as a string
+ }.error { reason: String
+ print("reason: \(reason)") // Waiting on email...
+ }
+ 
+ // Attempt to register with the given credentials.
+ // If the login  succeeded the token is persisted under the name presented when the
+ // login request was started
+ app.register("sender", username, password).then { myDomain in
+ me = Domain(myDomain, superdomain: app)
+ app.listen()
+ 
+ }.error { reason in
+ print(reason) // Username taken, password too short
+ }
+ }
+ */

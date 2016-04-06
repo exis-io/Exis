@@ -135,6 +135,12 @@ func get(i uint64) core.Domain {
 	}
 }
 
+// Toying with model operations
+
+func ModelApply() {
+
+}
+
 //export MantleSetLogLevelOff
 func MantleSetLogLevelOff() { core.LogLevel = core.LogLevelOff }
 
