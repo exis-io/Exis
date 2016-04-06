@@ -1,4 +1,5 @@
 
+#if os(Linux)
 import PackageDescription
 
 // This is a "stub" package for local development. The makefile swaps these out when building local
@@ -8,3 +9,4 @@ let package = Package(
         .Package(url: "../../../mantle", majorVersion: 1)
     ]
 )
+#endif

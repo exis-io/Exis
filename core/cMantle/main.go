@@ -24,6 +24,11 @@ func CBID() uint64 {
 var domainIndex = make(map[uint64]core.Domain)
 var coreModel core.Model
 
+// This is bad and should be moved-- here for testing initial model object implementation
+// Used with the model interface to access the top level connection, assigned (and reassigned!)
+// when NewDomain is called
+var appDomain core.Domain
+
 //export Free
 func Free(pdomain uint64) {
 	delete(domainIndex, pdomain)
@@ -33,6 +38,7 @@ func Free(pdomain uint64) {
 func NewDomain(name *C.char) uint64 {
 	i := CBID()
 	d := core.NewDomain(C.GoString(name), nil)
+    appDomain = d
 	domainIndex[i] = d
 	return i
 }
@@ -139,28 +145,28 @@ func get(i uint64) core.Domain {
 // Model Operations
 
 //export ModelAll
-func ModelAll(pdomain uint64, cb uint64, eb uint64, collection *C.char, query *C.char) {
-	go core.MantleModel(get(pdomain), coreModel.All, C.GoString(collection), core.MantleUnmarshalMap(C.GoString(query)), cb, eb)
+func ModelAll(cb uint64, eb uint64, collection *C.char, query *C.char) {
+	go core.MantleModel(appDomain, coreModel.All, C.GoString(collection), core.MantleUnmarshalMap(C.GoString(query)), cb, eb)
 }
 
 //export ModelFind
-func ModelFind(pdomain uint64, cb uint64, eb uint64, collection *C.char, query *C.char) {
-	go core.MantleModel(get(pdomain), coreModel.Find, C.GoString(collection), core.MantleUnmarshalMap(C.GoString(query)), cb, eb)
+func ModelFind(cb uint64, eb uint64, collection *C.char, query *C.char) {
+	go core.MantleModel(appDomain, coreModel.Find, C.GoString(collection), core.MantleUnmarshalMap(C.GoString(query)), cb, eb)
 }
 
 //export ModelCreate
-func ModelCreate(pdomain uint64, cb uint64, eb uint64, collection *C.char, query *C.char) {
-	go core.MantleModel(get(pdomain), coreModel.Create, C.GoString(collection), core.MantleUnmarshalMap(C.GoString(query)), cb, eb)
+func ModelCreate(cb uint64, eb uint64, collection *C.char, query *C.char) {
+	go core.MantleModel(appDomain, coreModel.Create, C.GoString(collection), core.MantleUnmarshalMap(C.GoString(query)), cb, eb)
 }
 
 //export ModelSave
-func ModelSave(pdomain uint64, cb uint64, eb uint64, collection *C.char, query *C.char) {
-	go core.MantleModel(get(pdomain), coreModel.Save, C.GoString(collection), core.MantleUnmarshalMap(C.GoString(query)), cb, eb)
+func ModelSave(cb uint64, eb uint64, collection *C.char, query *C.char) {
+	go core.MantleModel(appDomain, coreModel.Save, C.GoString(collection), core.MantleUnmarshalMap(C.GoString(query)), cb, eb)
 }
 
 //export ModelCount
-func ModelCount(pdomain uint64, cb uint64, eb uint64, collection *C.char, query *C.char) {
-	go core.MantleModel(get(pdomain), coreModel.Count, C.GoString(collection), core.MantleUnmarshalMap(C.GoString(query)), cb, eb)
+func ModelCount(cb uint64, eb uint64, collection *C.char, query *C.char) {
+	go core.MantleModel(appDomain, coreModel.Count, C.GoString(collection), core.MantleUnmarshalMap(C.GoString(query)), cb, eb)
 }
 
 // Logging and general Utils
