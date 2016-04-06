@@ -230,15 +230,7 @@ public class Dealer extends Domain{
         czarNum++;
         czarNum = czarNum % players.size();
         players.get(czarNum).setCzar(true);
-    }//end updateCzar method
-
-    /* @param   player player that is submitting a card
-     * @param   card Card player has chosen
-     */
-    private void pick(Player player, Card card){
-//        call("pick", card).then(Card.class, answers::add);                               // TODO danger
-        player.pick(card);
-    }//end pick method
+    }// end updateCzar method
 
     public Object[] play(){
         //Returns: string[] cards, Player[] players, string state, string roomName
@@ -292,8 +284,9 @@ public class Dealer extends Domain{
                         czar().playerID() + ", \n" +
                         getQuestion().getText() + ", \n" +
                         duration + "]");
-//                    publish("answering", czar(), getQuestion().getText(), duration);
-                player.danger_pub_answering(players.get(czarNum), getQuestion().getText(), duration);
+                publish("answering", czar(), getQuestion().getText(), duration);
+                Log.i("TAG", "done publishing");
+//                player.danger_pub_answering(players.get(czarNum), getQuestion().getText(), duration);
 
                 setPlayers();                    // deal cards back to each player
                 phase = "picking";
@@ -301,19 +294,18 @@ public class Dealer extends Domain{
             case "picking":
                 answers.clear();
                 for(Player p : players){
-                    answers.add( p.pick( generateAnswer() ) );                   // TODO danger
+                    if(p.dummy) {
+                        answers.add(p.pick(generateAnswer()));
+                    }else {
+                        call("pick", generateAnswer()).then(Card.class, answers::add);
+                    }
                 }
-/*
-                // pad pile for czar
-                while(answers.size() < 5){
-                    answers.add(generateAnswer());
-                }
-*/
+
                 Log.i(TAG, "publishing [picking, \n" +
                         Card.printHand(answers) +
                         duration + "]");
-//                    publish("picking", Card.handToStrings(answers), duration);
-                player.danger_pub_picking(Card.handToStrings(answers), duration);
+                publish("picking", Card.handToStrings(answers), duration);
+//                player.danger_pub_picking(Card.handToStrings(answers), duration);
 
                 phase = "scoring";
                 break;
@@ -324,8 +316,8 @@ public class Dealer extends Domain{
                         winner.playerID() + ", " +
                         winningCard.getText() + ", " +
                         duration + "]");
-//                    publish("scoring", winner, winningCard.getText(), duration);
-                player.danger_pub_scoring(winner.playerID(), winningCard.getText(), duration);
+                publish("scoring", winner, winningCard.getText(), duration);
+//                player.danger_pub_scoring(winner.playerID(), winningCard.getText(), duration);
 
                 answers.clear();
                 phase = "answering";

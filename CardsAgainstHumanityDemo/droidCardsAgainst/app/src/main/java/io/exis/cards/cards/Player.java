@@ -144,6 +144,7 @@ public class Player {
     public void leave(){
         playerDomain.call("leave", this);
         playerDomain.leave();
+        playerDomain = null;
     }
 
     public void danger_pub_answering(Player currentCzar, String questionText, int duration){

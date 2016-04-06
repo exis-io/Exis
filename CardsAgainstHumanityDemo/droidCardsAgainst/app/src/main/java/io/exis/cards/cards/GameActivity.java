@@ -137,22 +137,27 @@ public class GameActivity extends Activity {
 
 //         save points here
 
-    }//end onPause method
-
-    @Override
-    protected void onStop(){
-        super.onStop();
         timer.cancel();
-    }//end onStop method
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
         handler.removeCallbacks(dealer.runnable);
         player.leave();
         dealer = null;
         exec = null;
         timer = null;
+    }//end onPause method
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+    }//end onStop method
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    public void onBackPressed(){
+        this.finish();
+        super.onBackPressed();
     }
 
     public void playGame(){
