@@ -11,7 +11,7 @@ printcheck:
 
 swift: printcheck libriffmantle.so
 	@$(MAKE) -C swift/mantle clean >$(LOG) ||:
-	@$(MAKE) -C swift/swiftRiffle/Pod/Classes clean >$(LOG) ||:
+	@rm -rf swift/swiftRiffle/Pod/Classes/.git
 
 	@cp utils/assets/libriffmantle.so swift/mantle/libriffmantle.so
 	@cp utils/assets/libriffmantle.h swift/mantle/libriffmantle.h
@@ -19,8 +19,12 @@ swift: printcheck libriffmantle.so
 	@echo "Installing mantle..."
 	@$(MAKE) -C swift/mantle all >>$(LOG)
 
+	# The package has to be tagged to so SPM can resolve a dependency
 	@echo "Installing crust..."
-	@$(MAKE) -C swift/swiftRiffle/Pod/Classes all >>$(LOG)
+	@git -C swift/swiftRiffle/Pod/Classes init
+	@git -C swift/swiftRiffle/Pod/Classes add .
+	@git -C swift/swiftRiffle/Pod/Classes commit -m "Package setup"
+	@git -C swift/swiftRiffle/Pod/Classes tag 1.0.0
 
 	@echo "To build the example, run make swift_example"
 
@@ -139,6 +143,6 @@ clean:
 
 	@-rm -f utils/assets/libriffmantle.so utils/assets/libriffmantle.h >$(LOG) ||:
 	@$(MAKE) -C swift/mantle clean >$(LOG) ||:
-	@$(MAKE) -C swift/swiftRiffle/Pod/Classes clean >$(LOG) ||:
+	@rm -rf swift/swiftRiffle/Pod/Classes/.git
 	@rm -rf swift/example/Packages >$(LOG) ||:
 
