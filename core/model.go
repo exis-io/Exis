@@ -11,10 +11,11 @@ type model struct {
 }
 
 type Model interface {
+	All(string, map[string]interface{}) ([]interface{}, error)
 	Find(string, map[string]interface{}) ([]interface{}, error)
 	Create(string, map[string]interface{}) ([]interface{}, error)
 	Save(string, map[string]interface{}) ([]interface{}, error)
-	Count(string) ([]interface{}, error)
+	Count(string, map[string]interface{}) ([]interface{}, error)
 }
 
 // Set a session and return a new model interface. The session must already be joined
@@ -27,19 +28,19 @@ func SetSession(appDomain Domain) Model {
 // Executes the query against the collection
 func (m *model) query(endpoint string, collection string, query map[string]interface{}) ([]interface{}, error) {
 	r, e := m.storage.Call(endpoint, []interface{}{collection, query}, nil)
-	Info("Model operation: %s, Name: %s, Query: %s: Result: %s Error: %v", endpoint, collection, query, r, e)
+	Debug("Model operation: %s, Name: %s, Query: %s: Result: %s Error: %v", endpoint, collection, query, r, e)
 	return r, e
 }
 
 // Model query functions. Each mantle should copy this interface, crusts should emulate it
 // Arguments: the name of the model, contents of the query based on the call
-// All the methods return (string, error) to map easily to the query method
+// All functions share signatures for easier mantle access
 
 func (m *model) Find(collection string, query map[string]interface{}) ([]interface{}, error) {
 	return m.query("collection/find", collection, query)
 }
 
-func (m *model) All(collection string) ([]interface{}, error) {
+func (m *model) All(collection string, query map[string]interface{}) ([]interface{}, error) {
 	return m.Find(collection, nil)
 }
 
@@ -52,6 +53,6 @@ func (m *model) Save(collection string, query map[string]interface{}) ([]interfa
 	return m.query("collection/update_one", collection, query)
 }
 
-func (m *model) Count(collection string) ([]interface{}, error) {
+func (m *model) Count(collection string, query map[string]interface{}) ([]interface{}, error) {
 	return m.query("collection/count", collection, nil)
 }

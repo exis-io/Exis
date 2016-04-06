@@ -44,3 +44,6 @@ js/ngRiffle/release/*
 
 swift/swiftRiffle/Pod/Assets/ios/Mantle.framework/Versions/A/Mantle
 swift/swiftRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Mantle
+
+swift/mantle/libriffmantle.h
+utils/assets/libriffmantle.h
