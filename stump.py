@@ -245,6 +245,12 @@ if __name__ == '__main__':
             print("Error: unrecognized shadow remote ({})".format(args['<remote>']))
             sys.exit(1)
 
+        # Special hack case for swiftRiffle on Ubuntu
+        # Replaces the development version of Pacakge.swift, which refers to the local mantle, for the production version
+        if remote == 'swiftUbuntu':
+            os.rename('swift/swiftRiffle/Pod/Classes/Package.swift', 'swift/swiftRiffle/Pod/Classes/Package.swift.dev')
+            os.rename('swift/swiftRiffle/Pod/Classes/Package.swift.prod', 'swift/swiftRiffle/Pod/Classes/Package.swift')
+
         tag = args['<version>']
         tmp = tempfile.mkdtemp()
 
@@ -264,3 +270,7 @@ if __name__ == '__main__':
         call("git -C {} push --tags origin master".format(tmp), shell=True)
         call("git push --tags origin HEAD", shell=True)
         shutil.rmtree(tmp)
+
+        if remote == 'swiftUbuntu':
+            os.rename('swift/swiftRiffle/Pod/Classes/Package.swift', 'swift/swiftRiffle/Pod/Classes/Package.swift.prod')
+            os.rename('swift/swiftRiffle/Pod/Classes/Package.swift.dev', 'swift/swiftRiffle/Pod/Classes/Package.swift')
