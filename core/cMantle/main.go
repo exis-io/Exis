@@ -72,17 +72,6 @@ func Join(pdomain uint64, cb uint64, eb uint64) {
 	}
 }
 
-//export Login
-func Login(pdomain uint64) {
-    d := get(pdomain)
-    d.GetApp().Login()
-}
-
-//export Register
-func Register(pdomain uint64) {
-    d := get(pdomain)
-}
-
 //export Subscribe
 func Subscribe(pdomain uint64, endpoint *C.char, cb uint64, eb uint64, hn uint64, types *C.char) {
 	d := get(pdomain)
