@@ -1,4 +1,4 @@
-package goRiffle
+package riffle
 
 import (
 	"testing"

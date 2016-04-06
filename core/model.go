@@ -2,39 +2,68 @@ package core
 
 // High level, ORM-like bindings. Like Domain, the models here mirror crust objects. Unlike
 // the crust, Models do not store their mirror's data-- this interface is much more functional.
-// All functions return strings directly
+// All functions return the model's "contents"
 
 // Note that this implementation assumes that there's a global, single connection. This might be ok.
-// since this is such a difference you'll still need to pass the connection to the model 
-// type model struct {
-//     App
-//     storageDomain string  // who do we ask for information
-// }
+// since this is such a difference you'll still need to pass the connection to the model
+type model struct {
+	storage Domain // the domain of the storage appliance responsible for our data
+}
 
-// type Model interface {
-//     Query(string, string)
-// }
+type Model interface {
+	Find(string, string) (string, error)
+	Create(string, string) (string, error)
+	Save(string, string) (string, error)
+	Count(string) (string, error)
 
-// // Set a session and return a new model interface
-// func SetSession(a App) Model {
-//     return &model{a}
-// }
+	Query(string, string, interface{}) ([]interface{}, error)
+}
 
-// // Executes the query against the collection
-// func (m Model) Query(collection string, query string) {
+// Set a session and return a new model interface. The session must already be joined
+func SetSession(appDomain Domain) Model {
+	Debug("Initialized models")
+	// Note the hardcoded storage domain endpoint. Temporary
+	s := "Storage"
 
-// }
+	return &model{storage: appDomain.Subdomain(s)}
+}
 
-// // Find all models that match the given query. Return all if no query passed
-// func (m Model) Find(collection string, query string) (string, err) {
-//     return "", nil
-// }
+func (m *model) Query(endpoint string, collection string, query interface{}) ([]interface{}, error) {
+	a := []interface{}{collection}
 
-// func (m Model) Create(collection string, query string) (string, err) {
-//     return "", nil
-// }
+	// if query != nil {
+	// 	a = append(a, query)
+	// }
 
-// func (m Model) Save(collection string, query string) (string, err) {
-//     return "", nil
-// }
+	r, e := m.storage.Call(endpoint, a, nil)
+	Info("Model operation: %s, Name: %s, Query: %s: Result: %s Error: %s", endpoint, collection, query, r, e.Error())
+	return r, e
+}
 
+// Executes the query against the collection
+func (m *model) query(endpoint string, collection string, query string) (string, error) {
+	r, e := m.storage.Call(endpoint, []interface{}{collection, query}, nil)
+	Info("Model operation: %s, Name: %s, Query: %s: Result: %s Error: %s", endpoint, collection, query, r, e.Error())
+	return "", e
+}
+
+// Model query functions. Each mantle should copy this interface, crusts should emulate it
+// Arguments: the name of the model, contents of the query based on the call
+// All the methods return (string, error) to map easily to the query method
+
+func (m *model) Find(collection string, query string) (string, error) {
+	return m.query("collection/find", collection, query)
+}
+
+func (m *model) Create(collection string, query string) (string, error) {
+	return m.query("collection/insert_one", collection, query)
+}
+
+func (m *model) Save(collection string, query string) (string, error) {
+	// Check the count of the incoming models and call update_many?
+	return m.query("update_one", collection, query)
+}
+
+func (m *model) Count(collection string) (string, error) {
+	return m.query("count", collection, "")
+}

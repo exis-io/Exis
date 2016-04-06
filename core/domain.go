@@ -195,6 +195,7 @@ func (c domain) Subscribe(endpoint string, requestId uint64, types []interface{}
 
 func (c domain) Register(endpoint string, requestId uint64, types []interface{}, options map[string]interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
+	options = c.ProcessOptions(requestId, options)
 	register := &register{Request: requestId, Options: options, Name: endpoint}
 
 	if msg, err := c.app.requestListenType(register, "*core.registered"); err != nil {
@@ -225,9 +226,10 @@ func (c domain) Publish(endpoint string, args []interface{}, options map[string]
 }
 
 func (c domain) Call(endpoint string, args []interface{}, options map[string]interface{}) ([]interface{}, error) {
+	id := NewID()
 	endpoint = makeEndpoint(c.name, endpoint)
-	call := &call{Request: NewID(), Name: endpoint, Options: options, Arguments: args}
-	c.ProcessOptions(call.Request, options)
+	options = c.ProcessOptions(id, options)
+	call := &call{Request: id, Name: endpoint, Options: options, Arguments: args}
 	Info("Calling %s %v", endpoint, args)
 
 	// This is a call, so setup to listen for a yield message with our return values
@@ -247,6 +249,10 @@ func (c domain) ProcessOptions(requestId uint64, options map[string]interface{})
 
 		// TODO: dont just pass the handler id, pass the types too for cumin enforcement
 		c.handlers[requestId] = &boundEndpoint{handlerId, "", nil}
+	}
+
+	if options == nil {
+		options = make(map[string]interface{})
 	}
 
 	return options

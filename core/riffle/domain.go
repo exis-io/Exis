@@ -1,4 +1,4 @@
-package goRiffle
+package riffle
 
 import (
 	"github.com/exis-io/core"
@@ -38,6 +38,9 @@ type boundHandler struct {
 	options *ProcessedOptions
 }
 
+// TEMPORARY TESTING
+var appDomain core.Domain
+
 func NewDomain(name string) Domain {
 	core.CuminLevel = core.CuminOff
 
@@ -50,6 +53,9 @@ func NewDomain(name string) Domain {
 
 	d := domain{core.NewDomain(name, nil), &a}
 	a.coreApp = d.coreDomain.GetApp()
+
+	// TEMPORARY TESTING FOR MODELS
+	appDomain = d.coreDomain
 
 	return d
 
@@ -77,6 +83,9 @@ func (d domain) Join() error {
 	} else if err := d.coreDomain.Join(c); err != nil {
 		return err
 	} else {
+		// TEMPORARY TESTING
+		TestCoreModels(core.SetSession(appDomain))
+
 		go d.mantleApp.run()
 		return nil
 	}

@@ -1,6 +1,6 @@
 package main
 
-import riffle "github.com/exis-io/core/riffle"
+import "github.com/exis-io/core/riffle"
 
 func main() {
 	// set flags for testing

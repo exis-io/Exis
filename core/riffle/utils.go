@@ -1,4 +1,4 @@
-package goRiffle
+package riffle
 
 // Settings and utilities within Riffle
 

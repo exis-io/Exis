@@ -35,33 +35,34 @@ func sub(name string) {
 
 func main() {
 	// set flags for testing
-	riffle.SetFabricLocal()
+	//riffle.SetFabricLocal()
 	riffle.SetLogLevelDebug()
 
 	// Domain objects
-	app := riffle.NewDomain("xs.damouse")
-	receiver := app.Subdomain("receiver")
+	app := riffle.NewDomain("xs.demo.damouse.swiftstore")
+	receiver := app.Subdomain("tester")
 
 	// Connect
+	receiver.SetToken("1o1-sPF0NWy2kWcv0XHJxpVUkMHWblQrfa5-cVXcsMujjl-l3W2CNgFSR.1LIE6S-QNT31RCLWgRBvFyGFy0BznBOzvdS8Xr0z9i4iatUWDOV1EdH4PtVd4RDMA5yVr3Ioz2cdvHmWas4rA3plr8G-XiCCjzF7NYE-YYRiaOmZ0_")
 	receiver.Join()
 
-	if e := receiver.Subscribe("sub", sub); e != nil {
-		riffle.Info("Unable to subscribe: ", e.Error())
-	} else {
-		riffle.Info("Subscribed!")
-	}
+	// if e := receiver.Subscribe("sub", sub); e != nil {
+	// 	riffle.Info("Unable to subscribe: ", e.Error())
+	// } else {
+	// 	riffle.Info("Subscribed!")
+	// }
 
-	if e := receiver.Register("reg", regNoProgress); e != nil {
-		riffle.Info("Unable to register: ", e.Error())
-	} else {
-		riffle.Info("Registered!")
-	}
+	// if e := receiver.Register("reg", regNoProgress); e != nil {
+	// 	riffle.Info("Unable to register: ", e.Error())
+	// } else {
+	// 	riffle.Info("Registered!")
+	// }
 
-	if e := receiver.Register("progressive", reg, riffle.Options{Progress: true}); e != nil {
-		riffle.Info("Unable to register: ", e.Error())
-	} else {
-		riffle.Info("Registered!")
-	}
+	// if e := receiver.Register("progressive", reg, riffle.Options{Progress: true}); e != nil {
+	// 	riffle.Info("Unable to register: ", e.Error())
+	// } else {
+	// 	riffle.Info("Registered!")
+	// }
 
 	// Handle until the connection closes
 	receiver.Listen()

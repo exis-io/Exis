@@ -124,6 +124,22 @@ func (a *app) LoadKey(p string) error {
 	return nil
 }
 
+// Attempt to connect as an agent with the given name
+// If no name passed, check Persistence for a "suspended session" and attempt to resume it
+// If a previous login attempt succeeded with this name that token will be used or refreshed
+// If this is the first time this name was used to attempt to auth, attempt to get a new token
+// Returns the agent string obtained through authentication
+func (a *app) LoginDomain(name string, credentials []string) (string, error) {
+	return "", nil
+}
+
+func (a *app) RegisterDomain(name string, credentials []string) (string, error) {
+	return "", nil
+}
+
+// NOTE: this method does not handle its results in a way that makes the other languages happy
+// It will be merged into LoginDomain when damouse does a core refactor
+
 //takes the domain that login was called on and then 0-2 strings which correspond to username and password
 func (a *app) Login(d Domain, args ...string) (Domain, error) {
 	username := ""
@@ -155,6 +171,8 @@ func (a *app) Login(d Domain, args ...string) (Domain, error) {
 	return nil, nil
 }
 
+// NOTE: this method does not return its results in a way that makes the other languages happy
+// It will be merged into RegisterDomain when damouse does a core refactor
 //takes the domain that register was called on and registration info required by Auth
 func (a *app) RegisterAccount(d Domain, username string, password string, email string, name string) (bool, error) {
 	if Fabric == FabricSandbox {
