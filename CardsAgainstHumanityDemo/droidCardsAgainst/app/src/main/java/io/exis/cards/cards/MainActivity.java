@@ -73,6 +73,11 @@ public class MainActivity extends Activity {
             screenNameDisplay.setVisibility(View.VISIBLE);
         }
         Log.i("MainActivity", "loaded screen name " + screenName);
+
+/*
+        RiffleTest test = new RiffleTest();
+        test.test();
+*/
     }
 
     @Override

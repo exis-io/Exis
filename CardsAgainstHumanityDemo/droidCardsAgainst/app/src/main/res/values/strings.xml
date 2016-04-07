@@ -2,7 +2,7 @@
     <string name="game_name">Cards Against Humanity</string>
     <string name="app_name">Cards</string>
     <string name="action_settings">Settings</string>
-    <string name="play">&gt; Play &lt;</string>
+    <string name="play">Play</string>
     <string name="host">Host Game</string>
     <string name="pg13">PG-13</string>
     <string name="adult">Adult</string>

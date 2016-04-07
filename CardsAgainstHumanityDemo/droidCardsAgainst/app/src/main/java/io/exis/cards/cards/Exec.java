@@ -15,12 +15,21 @@ public class Exec extends Domain{
     private Player player;
     Domain superdomain;
     Domain dealerDomain;
+    Domain riffle;
     Dealer dealer;
+    int ID;
 
     public Exec(String name, Domain superdomain, Player player) {
         super(name, superdomain);
         this.superdomain = superdomain;
         this.dealerDomain = new Domain("xs.damouse.CardsAgainst");
+        ID = getNewID();
+        this.riffle = new Domain("dealer" + ID, new Domain("xs.damouse.CardsAgainst")){
+            @Override
+            public void onJoin(){
+                dealer.join();
+            }
+        };
         this.player = player;
         dealer = findDealer();
         GameActivity.dealer = dealer;                   // TODO danger, maybe unnecessary
@@ -30,19 +39,17 @@ public class Exec extends Domain{
     public void onJoin(){
 //        register("play", Object[].class, this::play);
 
-        Thread thread = new Thread(){
-            public void run(){
-                Log.i("Exec", "dealer " + dealer.ID() + " joining");
-                dealer.join();
-            }
-        };
-        thread.start();
+        Log.i("Exec", "dealer " + dealer.ID() + " joining");
+        riffle.join();
     }
 
     public Object[] play(){
         Object[] playObject = dealer.play();
-        dealer.start();
         return playObject;
+    }
+
+    public void start(){
+        dealer.start();
     }
 
     public static void removeDealer(Dealer dealer){
@@ -63,6 +70,8 @@ public class Exec extends Domain{
         dealer.addPlayer(player);
         Log.i(TAG, "added player " + player.playerID());
 
+        player.setRiffle(riffle);
+
         return dealer;
     }// end findDealer method
 
@@ -73,7 +82,7 @@ public class Exec extends Domain{
     //create new dealer and add to dealer list
     //return dealer ID
     private Dealer addDealer(){
-        Dealer dealer = new Dealer(getNewID(), dealerDomain);
+        Dealer dealer = new Dealer(ID, dealerDomain, riffle);
         dealers.add(dealer);
         return dealer;
     }//end addDealer method

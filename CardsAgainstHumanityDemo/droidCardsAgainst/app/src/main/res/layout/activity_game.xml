@@ -26,7 +26,7 @@
     <ProgressBar
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="1dp"
         android:id="@+id/progress"
         android:layout_below="@+id/question"
         android:layout_centerHorizontal="true"
@@ -34,7 +34,7 @@
         android:textAlignment="center"
         android:foregroundGravity="left"
         android:progressBackgroundTint="#ff000000"
-        android:layout_marginBottom="2dp"
+        android:layout_marginBottom="3dp"
         android:progressDrawable="@drawable/progress_drawable" />
 
     <TextView

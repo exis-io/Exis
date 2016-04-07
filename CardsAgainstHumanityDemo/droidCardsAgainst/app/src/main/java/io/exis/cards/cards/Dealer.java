@@ -37,11 +37,13 @@ public class Dealer extends Domain{
     private int duration;
     private Handler handler;
     public Runnable runnable;
+    Domain riffle;
 
     private Player player;
 
-    public Dealer(int ID, Domain domain){
+    public Dealer(int ID, Domain domain, Domain riffle){
         super("dealer" + ID, domain);
+        this.riffle = riffle;
         dealerID = ID + "";
         czarNum = 0;
         players  = new ArrayList<>();
@@ -55,7 +57,6 @@ public class Dealer extends Domain{
         duration = 15;
         phase = "answering";
 
-//        Looper.prepare();
         handler = GameActivity.handler;
     }//end Dealer constructor
 
@@ -63,18 +64,11 @@ public class Dealer extends Domain{
     @Override
     public void onJoin(){
         Log.i("dealer onJoin", "entering method");
-        register("leave", Player.class, Object.class, this::leave);
+
+        register("leave", String.class, Object.class, (p) -> {
+            return this.leave(p);
+        });
         register("pick", String.class, String.class, this::pick);
-
-        subscribe("picked", String.class, (c) -> {
-            Log.i("picked listener", "received card " + c);
-            answers.add(new Card(c));
-        });
-
-        subscribe("chose", String.class, (c)->{
-            Log.i("choose listener", "received card " + c);
-            winningCard = new Card(c);
-        });
 
         Log.i("dealer::onJoin", player.playerID() + " joining");
         player.join();
@@ -92,8 +86,8 @@ public class Dealer extends Domain{
                 return;
             }else{
                 removeDummy();
-                addPlayer(player);
                 Log.i("dealer", "adding player " + player.playerID());
+                addPlayer(player);
             }
         }
 
@@ -102,10 +96,18 @@ public class Dealer extends Domain{
             dealCard(player);
         }
 
-
         if(!player.dummy) {
             playerCount++;
             this.player = player;
+            player.domain().subscribe("picked", String.class, (c) -> {
+                Log.i("picked listener", "received card " + c);
+                answers.add(new Card(c));
+            });
+
+            player.domain().subscribe("chose", String.class, (c) -> {
+                Log.i("choose listener", "received card " + c);
+                winningCard = new Card(c);
+            });
         }
         players.add(player);
         publish("joined", player.playerID());
@@ -121,10 +123,9 @@ public class Dealer extends Domain{
         Card card = generateAnswer();                       //generate new card to give to player
 
         if(!player.dummy) {
-//            call("draw", card);
-            player.draw(card);
+            riffle.call("draw", card.getText());
         }else{
-            player.draw(card);                            //add card to player's hand
+            player.draw(card.getText());                            //add card to player's hand
         }
         return card;
     }//end dealCard method
@@ -196,8 +197,12 @@ public class Dealer extends Domain{
         }
     }
 
-    public Object leave(Player leavingPlayer){
-        players.remove(leavingPlayer);
+    public Object leave(String leavingPlayer){
+        for(Player p: players){
+            if(p.playerID().equals(leavingPlayer)){
+                players.remove(p);
+            }
+        }
         if(playerCount == 0){
             Exec.removeDealer(this);
         }
@@ -236,6 +241,10 @@ public class Dealer extends Domain{
     }// end updateCzar method
 
     public Object[] play(){
+        if(getPlayers().length < ROOMCAP){
+            addDummies();
+        }
+
         return new Object[]{
                 Card.handToStrings( getNewHand() ),             // String[] cards
                 getPlayers(),                                   // Player[] players
@@ -292,7 +301,6 @@ public class Dealer extends Domain{
                         getQuestion().getText() + ", \n" +
                         duration + "]");
                 publish("answering", czar().playerID(), getQuestion().getText(), duration);
-                Log.i("TAG", "done publishing");
 
                 setPlayers();                    // deal cards back to each player
                 phase = "picking";
@@ -311,10 +319,11 @@ public class Dealer extends Domain{
                     answers.add(generateAnswer());
                 }
 
+                ArrayList<Card> a = answers;
                 Log.i(TAG, "publishing [picking, \n" +
-                        Card.printHand(answers) +
+                        Card.printHand(a) +
                         duration + "]");
-                publish("picking", Card.serialize( Card.handToStrings(answers) ), duration);
+                publish("picking", Card.serialize(Card.handToStrings(answers)), duration);
 
                 phase = "scoring";
                 break;
@@ -326,7 +335,6 @@ public class Dealer extends Domain{
                         winningCard.getText() + ", " +
                         duration + "]");
                 publish("scoring", winner.playerID(), winningCard.getText(), duration);
-//                player.danger_pub_scoring(winner.playerID(), winningCard.getText(), duration);
 
                 answers.clear();
                 phase = "answering";

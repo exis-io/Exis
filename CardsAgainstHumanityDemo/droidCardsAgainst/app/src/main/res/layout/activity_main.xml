@@ -14,7 +14,7 @@
         android:textSize="50sp"
         android:textAlignment="gravity"
         android:textColor="#ffffff"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:gravity="right"
         android:layout_alignParentStart="true" />
 

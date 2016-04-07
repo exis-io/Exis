@@ -23,7 +23,6 @@ public class Player {
     private boolean isCzar;
     private int duration;
     private int score;
-    private String dealerDomain;
     private String question;
     private String winnerID;
     private String winningCard;
@@ -31,6 +30,8 @@ public class Player {
     private Card nextCard;
     public Card picked;
     boolean dummy;
+    Domain riffle;
+//    Domain dealerDomain;
 
     GameActivity activity;
     private Receiver playerDomain;
@@ -61,8 +62,8 @@ public class Player {
     }
 
     //add a card to player's hand
-    public Object draw(Card card){
-        hand.add(card);
+    public Object draw(String card){
+        hand.add(new Card(card));
         return null;
     }//end addCard method
 
@@ -70,16 +71,29 @@ public class Player {
     public void pick(){
         if(dummy) return;
 
-        if(picked == null){
-            picked = hand.get(0);
+        if(picked == null) {
+            if (isCzar){
+                picked = answers.get(0);
+            }else {
+                picked = hand.get(0);
+            }
         }
 
-        Log.i("player", "calling pick with card " + picked.getText());
-        playerDomain.call("pick", picked.getText()).then(String.class, (c) -> {
-            Log.i("player", "received new card " + c + " from dealer");
-            hand.add(new Card(c));
-            hand.remove(picked);
-        });
+        if(isCzar){
+            Log.i("player", "calling chose with card " + picked.getText());
+            riffle.call("chose", picked.getText());
+        }else {
+            Log.i("player", "calling pick with card " + picked.getText());
+            riffle.call("pick", picked.getText()).then(String.class, (c) -> {
+                Log.i("player", "received new card " + c + " from dealer");
+                hand.add(new Card(c));
+                hand.remove(picked);
+                activity.runOnUiThread(()->{
+                    Log.i("pick", "refreshing cards with pile " + Card.printHand(hand));
+                    activity.refreshCards(hand);
+                });
+            });
+        }
 
         picked = null;
     }// end pick method
@@ -103,6 +117,7 @@ public class Player {
     public ArrayList<Card> answers(){
         if(answers == null){
             Log.wtf("player", "answers is null!");
+            answers = new ArrayList<>();
             for(int i=0; i<5; i++){
                 answers.add(Dealer.generateAnswer());
             }
@@ -122,18 +137,12 @@ public class Player {
         this.hand = hand;
     }
 
-    public void setDealer(String dealerDomain){
-        this.dealerDomain = dealerDomain;
+    public void setRiffle(Domain riffleDomain){
+        this.riffle = riffleDomain;
     }
 
     public void setPicked(int pos){
         picked = hand.get(pos);
-
-        if(GameActivity.phase.equals("choosing")){
-            playerDomain.publish("chose", picked.getText());
-        }else{ // picking phase
-            playerDomain.publish("picked", picked.getText());
-        }
     }
 
     public void addPoint(){
@@ -149,7 +158,7 @@ public class Player {
     }
 
     public void leave(){
-        playerDomain.call("leave", this);
+        riffle.call("leave", this);
         playerDomain.leave();
         playerDomain = null;
     }
@@ -167,33 +176,39 @@ public class Player {
             String TAG = "Player::onJoin()";
             activity.player = player;
 
-            register("draw", Card.class, Object.class, player::draw);
-            subscribe("joined", String.class, activity::addPlayer);
-            subscribe("left", String.class, activity::removePlayer);
+            register("draw", String.class, Object.class, (c)->{player.draw(c); return null;});
+            riffle.subscribe("joined", String.class, activity::addPlayer);
+            riffle.subscribe("left", String.class, activity::removePlayer);
 
-            subscribe("answering", String.class, String.class, Integer.class,
+            riffle.subscribe("answering", String.class, String.class, Integer.class,
                     (currentCzar, questionText, duration) -> {
-                        Log.i("answering sub", "received question " + questionText);
+                        Log.i("answering sub:", "currentCzar = " + currentCzar +
+                                "\nquestionText = " + questionText +
+                                "\nduration = " + duration);
 
                         player.isCzar = (currentCzar.equals(playerID));
                         activity.currentCzar = currentCzar;
                         player.question = questionText;
                         player.duration = duration;
-                        activity.setQuestion();
+                        activity.runOnUiThread(activity::setQuestion);
                     });
 
-            subscribe("picking", String.class, Integer.class,
+            riffle.subscribe("picking", String.class, Integer.class,
                     (answers, duration) -> {
                         String[] arr = Card.deserialize(answers, String[].class);
-                        Log.i("picking sub", "received answers " + Card.printHand(arr));
+                        Log.i("picking sub: ", "answers = " + Card.printHand(arr) +
+                                "\nduration = " + duration);
                         player.answers = Card.buildHand(arr);
                         player.duration = duration;
                         activity.runOnUiThread(() -> activity.refreshCards(player.answers));
                     });
 
-            subscribe("scoring", String.class, String.class, Integer.class,
+            riffle.subscribe("scoring", String.class, String.class, Integer.class,
                     (winnerID, winningCard, duration) -> {
-                        Log.i("scoring sub", "winning card " + winningCard);
+                        Log.i("scoring sub", "winnerID = " + winnerID +
+                                "\nwinningCard = " + winningCard +
+                                "\nduration = " + duration);
+
                         player.winnerID = winnerID;
                         player.winningCard = winningCard;
                         player.duration = duration;
