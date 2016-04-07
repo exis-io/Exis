@@ -68,14 +68,21 @@ public class Player {
         return null;
     }//end addCard method
 
-    // dealer calls this method on player
-    public Card pick(Card newCard){
-        if(dummy){
+    // calls dealer::pick
+    public void pick(){
+        if(dummy) return;
+
+        if(picked == null){
             picked = hand.get(0);
         }
-        hand.add(newCard);
-        hand.remove(picked);
-        return picked;
+
+        playerDomain.call("pick", picked.getText()).then(String.class, (c) -> {
+            Log.i("player", "received new card " + c + " from dealer");
+            hand.add(new Card(c));
+            hand.remove(picked);
+        });
+
+        picked = null;
     }// end pick method
 
     public ArrayList<Card> hand(){
@@ -110,22 +117,13 @@ public class Player {
         this.dealerDomain = dealerDomain;
     }
 
-    // removes card from player's hand
-    public boolean removeCard(Card card){
-        boolean removed;
-        removed = hand.remove(card);
-        return removed;
-    }// end removeCard method
-
     public void setPicked(int pos){
         picked = hand.get(pos);
 
         if(GameActivity.phase.equals("choosing")){
-//            playerDomain.publish("chose", picked);
-            GameActivity.dealer.danger_pub_chose(picked);
+            playerDomain.publish("chose", picked.getText());
         }else{ // picking phase
-            playerDomain.publish("picked", picked);
-            GameActivity.dealer.danger_pub_picked(picked);
+            playerDomain.publish("picked", picked.getText());
         }
     }
 
@@ -147,37 +145,6 @@ public class Player {
         playerDomain = null;
     }
 
-    public void danger_pub_answering(Player currentCzar, String questionText, int duration){
-//        Log.i("danger answering sub", "received question " + questionText);
-        this.isCzar = ( currentCzar.playerID().equals(playerID) );
-        this.question = questionText;
-        this.duration = duration;
-    }
-
-    // executed
-    public void danger_pub_picking(String[] answers, int duration){
-//        Log.i("danger picking sub", "received answers " + Card.printHand(answers));
-        this.answers = Card.buildHand(answers);
-        this.duration = duration;
-        activity.runOnUiThread(() -> {
-            Log.i("player", "refreshing cards with answers");
-            activity.refreshCards(this.answers);
-        });
-    }
-
-    // executed at end of scoring phase
-    public void danger_pub_scoring(String winnerID, String winningCard, int duration){
-//        Log.i("danger scoring sub", "winning card " + winningCard);
-        this.winnerID = winnerID;
-        this.winningCard = winningCard;
-        this.duration = duration;
-
-        activity.runOnUiThread(()->{
-            Log.i("player", "setting question");
-            activity.setQuestion();
-        });
-    }
-
     // Receiver handles riffle calls
     private class Receiver extends Domain{
         private Player player;
@@ -192,7 +159,6 @@ public class Player {
             activity.player = player;
 
             register("draw", Card.class, Object.class, player::draw);
-            register("pick", Card.class, Card.class, player::pick);
             subscribe("joined", String.class, activity::addPlayer);
             subscribe("left", String.class, activity::removePlayer);
 

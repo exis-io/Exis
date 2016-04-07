@@ -309,9 +309,7 @@ public class GameActivity extends Activity {
                     }else{
                         resetBackgrounds();
                         infoText.setText(R.string.pickingInfo);
-                        if(!answerSelected){
-                            submitCard(0, cardViews.get(0));
-                        }
+                        player.pick();
                     }
 
                     answerSelected = false;

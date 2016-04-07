@@ -53,7 +53,7 @@
     <Button
         android:layout_height="wrap_content"
         android:layout_width="300dp"
-        android:text="&#8592;Back"
+        android:text="&lt; Back"
         android:layout_centerHorizontal="true"
         android:id="@+id/button"
         android:onClick="backClicked"

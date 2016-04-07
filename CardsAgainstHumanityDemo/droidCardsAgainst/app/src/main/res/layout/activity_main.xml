@@ -37,10 +37,10 @@
         android:onClick="startNameActivity"
         android:background="#000000"
         android:textColor="#ffffff"
-        android:textSize="25sp"
-        android:layout_below="@+id/textView"
+        android:textSize="20sp"
+        android:layout_below="@+id/screenname"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="85dp"
+        android:layout_marginTop="5dp"
         android:textAlignment="gravity"
         android:gravity="center" />
 
@@ -56,6 +56,20 @@
         android:textSize="60sp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/screen_name"
+        android:id="@+id/screenname"
+        android:textStyle="italic"
+        android:textSize="30sp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/textView"
+        android:layout_marginTop="50dp"
+        android:visibility="invisible" />
 
 
 </RelativeLayout>

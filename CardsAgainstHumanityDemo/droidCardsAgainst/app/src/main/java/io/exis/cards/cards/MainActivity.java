@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -23,9 +24,11 @@ public class MainActivity extends Activity {
     private static Typeface LibSansBold;
     private static Typeface LibSansItalic;
     private static String screenName;
+    private static TextView screenNameDisplay;
     SharedPreferences preferences;
 
     Button gameButton;
+    Button nameButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,10 @@ public class MainActivity extends Activity {
 
         gameButton  = (Button) findViewById(R.id.button);
         gameButton.setTypeface(LibSansBold);
+        nameButton = (Button) findViewById(R.id.name_button);
+        screenNameDisplay = (TextView) findViewById(R.id.screenname);
+        screenNameDisplay.setTypeface(LibSansBold);
+        screenNameDisplay.setOnClickListener(this::startNameActivity);
 
         questions = Card.questions();
         answers = Card.answers();
@@ -57,8 +64,13 @@ public class MainActivity extends Activity {
     protected void onResume(){
         super.onResume();
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        screenName = preferences.getString("screenName", "");
         if(screenName.equals("")){
-            screenName = preferences.getString("screenName", "");
+            screenNameDisplay.setVisibility(View.INVISIBLE);
+        } else {
+            String name = getString(R.string.screen_name, screenName);
+            screenNameDisplay.setText(name);
+            screenNameDisplay.setVisibility(View.VISIBLE);
         }
         Log.i("MainActivity", "loaded screen name " + screenName);
     }

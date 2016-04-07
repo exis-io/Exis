@@ -64,15 +64,16 @@ public class Dealer extends Domain{
     @Override
     public void onJoin(){
         register("leave", Player.class, Object.class, this::leave);
+        register("pick", String.class, String.class, this::pick);
 
-        subscribe("picked", Card.class, (c) -> {
-            Log.i("picked listener", "received card " + c.getText());
-            answers.add(c);
+        subscribe("picked", String.class, (c) -> {
+            Log.i("picked listener", "received card " + c);
+            answers.add(new Card(c));
         });
 
-        subscribe("choose", Card.class, (c)->{
-            Log.i("choose listener", "received card " + c.getText());
-            winningCard = c;
+        subscribe("chose", String.class, (c)->{
+            Log.i("choose listener", "received card " + c);
+            winningCard = new Card(c);
         });
     }
 
@@ -180,7 +181,6 @@ public class Dealer extends Domain{
         while(players.size() < ROOMCAP){
             addPlayer(new Player());
             dummyCount++;
-            Log.i("add dummies", "dummy count: " + dummyCount);
         }
     }
 
@@ -242,6 +242,13 @@ public class Dealer extends Domain{
                 dealerID};                                      // String
     }
 
+
+    public String pick(String picked){
+        answers.add(new Card(picked));
+        Log.i("dealer", "received answer " + picked + " from player");
+        return generateAnswer().getText();
+    }
+
     public void start(){
         //fill room with players
         addDummies();
@@ -293,11 +300,13 @@ public class Dealer extends Domain{
                 break;
             case "picking":
                 answers.clear();
+                Log.i(TAG, "gathering answers from " + players.size() + " players");
                 for(Player p : players){
                     if(p.dummy) {
-                        answers.add(p.pick(generateAnswer()));
+                        answers.add(generateAnswer());
                     }else {
-                        call("pick", generateAnswer()).then(Card.class, answers::add);
+                        // player calls dealer::pick here
+
                     }
                 }
 
