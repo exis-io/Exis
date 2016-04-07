@@ -88,7 +88,7 @@ extension Model: Convertible {
         return ret
     }
     
-    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
+    public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
         // This is temporary-- refactor needed
         guard let json = from as? [String: Any] else {
             print("WARN: model wasn't given a json! Instead received type: \(from.dynamicType)")

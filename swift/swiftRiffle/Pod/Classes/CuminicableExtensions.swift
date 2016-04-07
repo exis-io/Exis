@@ -18,14 +18,11 @@ import Foundation
 // All properties implement Convertible, but Models react differently 
 // This allows each property to handle its construction differently
 public protocol Convertible {
-    // Return a constructed form of this object
+    func serialize() -> Any
     static func deserialize(from: Any) -> Any
     
-    // Deserialize, but also coerce output to the given type
-    static func brutalize<T>(from: Any, t: T.Type) -> T?
-    
-    func serialize() -> Any
     func unsafeSerialize() -> Any
+    static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T?
     
     // Returns a core representation of this type
     static func representation() -> Any
@@ -40,7 +37,7 @@ extension BaseConvertible {
         return from
     }
     
-    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
+    public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
         return unsafeBitCast(from, t.self)
     }
 
@@ -108,15 +105,9 @@ extension Optional : OptionalProperty {
     }
 }
 
-// Deprecated or not present in swift 2.2
-// extension AutoreleasingUnsafeMutablePointer : Property, BaseConvertible {}
-
 extension Int: Property, Convertible {
     public func serialize() -> Any { return self }
-    
-    public func unsafeSerialize() -> Any {
-        return unsafeBitCast(self, Int.self)
-    }
+    public func unsafeSerialize() -> Any { return unsafeBitCast(self, Int.self) }
     
     public static func deserialize(from: Any) -> Any {
         if let x = from as? Int {
@@ -131,7 +122,7 @@ extension Int: Property, Convertible {
         return from
     }
     
-    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
+    public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
         var ret: Int? = nil
         
         if let x = from as? Int {
@@ -157,10 +148,7 @@ extension Int: Property, Convertible {
 
 extension String: Property, Convertible {
     public func serialize() -> Any { return self }
-    
-    public func unsafeSerialize() -> Any {
-        return self
-    }
+    public func unsafeSerialize() -> Any { return unsafeBitCast(self, String.self) }
     
     public static func deserialize(from: Any) -> Any {
         if let x = from as? String {
@@ -173,7 +161,7 @@ extension String: Property, Convertible {
         return from
     }
     
-    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
+    public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
         return unsafeBitCast(from, t.self)
     }
 
@@ -184,10 +172,7 @@ extension String: Property, Convertible {
 
 extension Double: Property, Convertible {
     public func serialize() -> Any { return self }
-    
-    public func unsafeSerialize() -> Any {
-        return self
-    }
+    public func unsafeSerialize() -> Any { return unsafeBitCast(self, Double.self) }
     
     public static func deserialize(from: Any) -> Any {
         if let x = from as? Double {
@@ -200,7 +185,7 @@ extension Double: Property, Convertible {
         return from
     }
     
-    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
+    public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
         return unsafeBitCast(from, t.self)
     }
 
@@ -211,10 +196,7 @@ extension Double: Property, Convertible {
 
 extension Float: Property, Convertible {
     public func serialize() -> Any { return self }
-    
-    public func unsafeSerialize() -> Any {
-        return self
-    }
+    public func unsafeSerialize() -> Any { return unsafeBitCast(self, Float.self) }
     
     public static func deserialize(from: Any) -> Any {
         if let x = from as? Float {
@@ -229,7 +211,7 @@ extension Float: Property, Convertible {
         return from
     }
     
-    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
+    public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
         return unsafeBitCast(from, t.self)
     }
 
@@ -240,10 +222,7 @@ extension Float: Property, Convertible {
 
 extension Bool: Property, Convertible {
     public func serialize() -> Any { return self }
-    
-    public func unsafeSerialize() -> Any {
-        return self
-    }
+    public func unsafeSerialize() -> Any { return unsafeBitCast(self, Bool.self) }
     
     public static func deserialize(from: Any) -> Any {
         if let x = from as? Bool {
@@ -256,7 +235,7 @@ extension Bool: Property, Convertible {
         return from
     }
     
-    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
+    public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
         return unsafeBitCast(from, t.self)
     }
 
@@ -300,10 +279,11 @@ extension Array : Property, BaseConvertible {
     }
     
     public func unsafeSerialize() -> Any {
-        return self
+        // TODO: have to apply to generic (most likely) and recursively
+        return unsafeBitCast(self, Array.self)
     }
     
-    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
+    public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
         return unsafeBitCast(from, t.self)
     }
 
@@ -312,8 +292,28 @@ extension Array : Property, BaseConvertible {
             return [child.representation()]
         }
         
-        Riffle.warn("Unable to derive representation of array! Type: \(self)")
-        return "[\(Generator.Element.self)]"
+        // OSX hack for primitive arrays, arrays of models not possible
+        var ret = "\(Generator.Element.self)"
+        #if os(OSX)
+            switch ret {
+            case "Int":
+                ret = "int"
+            case "String":
+                ret = "str"
+            case "Double":
+                ret = "double"
+            case "Float":
+                ret = "float"
+            case "Bool":
+                ret = "bool"
+            default:
+                break
+            }
+        #else
+            Riffle.warn("Unable to derive representation of array! Type: \(self), returning \(ret)")
+        #endif
+        
+        return ret
     }
 }
 
