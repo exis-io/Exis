@@ -1,0 +1,50 @@
+  },
+  {
+    "text": "Racially-biased SAT questions",
+    "id": 50
+  },
+  {
+    "text": "Dying",
+    "id": 51
+  },
+  {
+    "text": "Being on fire",
+    "id": 53
+  },
+  {
+    "text": "A lifetime of sadness",
+    "id": 54
+  },
+  {
+    "text": "The Rapture",
+    "id": 59
+  },
+  {
+    "text": "Pterodactyl eggs",
+    "id": 60
+  },
+  {
+    "text": "Crippling debt",
+    "id": 61
+  },
+  {
+    "text": "Exchanging pleasantries",
+    "id": 63
+  },
+  {
+    "text": "Dying of dysentery",
+    "id": 64
+  },
+  {
+    "text": "The forbidden fruit",
+    "id": 67
+  },
+  {
+    "text": "Republicans",
+    "id": 68
+  },
+  {
+    "text": "The Big Bang",
+    "id": 69
+  },
+  {

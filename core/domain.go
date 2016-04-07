@@ -9,17 +9,17 @@ type Domain interface {
 	Subdomain(string) Domain
 	LinkDomain(string) Domain
 
-	Subscribe(string, uint64, []interface{}) error
-	Register(string, uint64, []interface{}) error
-	Publish(string, []interface{}) error
-	Call(string, []interface{}) ([]interface{}, error)
+	Subscribe(string, uint64, []interface{}, map[string]interface{}) error
+	Register(string, uint64, []interface{}, map[string]interface{}) error
+	Publish(string, []interface{}, map[string]interface{}) error
+	Call(string, []interface{}, map[string]interface{}) ([]interface{}, error)
+
+	Unsubscribe(string) error
+	Unregister(string) error
 
 	CallExpects(uint64, []interface{})
 	GetCallExpect(uint64) ([]interface{}, bool)
 	RemoveCallExpect(uint64)
-
-	Unsubscribe(string) error
-	Unregister(string) error
 
 	Join(Connection) error
 	Leave() error
@@ -33,6 +33,7 @@ type domain struct {
 	joined            bool
 	subscriptions     map[uint64]*boundEndpoint
 	registrations     map[uint64]*boundEndpoint
+	handlers          map[uint64]*boundEndpoint // generalized handlers for other purposes
 	callResponseTypes map[uint64][]interface{}
 	subLock           sync.RWMutex
 	regLock           sync.RWMutex
@@ -59,6 +60,7 @@ func NewDomain(name string, a *app) Domain {
 		joined:            false,
 		subscriptions:     make(map[uint64]*boundEndpoint),
 		registrations:     make(map[uint64]*boundEndpoint),
+		handlers:          make(map[uint64]*boundEndpoint),
 		callResponseTypes: make(map[uint64][]interface{}),
 	}
 
@@ -175,9 +177,9 @@ func (c *domain) Leave() error {
 // Message Patterns
 /////////////////////////////////////////////
 
-func (c domain) Subscribe(endpoint string, requestId uint64, types []interface{}) error {
+func (c domain) Subscribe(endpoint string, requestId uint64, types []interface{}, options map[string]interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
-	sub := &subscribe{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
+	sub := &subscribe{Request: requestId, Options: options, Name: endpoint}
 
 	if msg, err := c.app.requestListenType(sub, "*core.subscribed"); err != nil {
 		return err
@@ -191,9 +193,10 @@ func (c domain) Subscribe(endpoint string, requestId uint64, types []interface{}
 	}
 }
 
-func (c domain) Register(endpoint string, requestId uint64, types []interface{}) error {
+func (c domain) Register(endpoint string, requestId uint64, types []interface{}, options map[string]interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
-	register := &register{Request: requestId, Options: make(map[string]interface{}), Name: endpoint}
+	options = c.ProcessOptions(requestId, options)
+	register := &register{Request: requestId, Options: options, Name: endpoint}
 
 	if msg, err := c.app.requestListenType(register, "*core.registered"); err != nil {
 		return err
@@ -208,13 +211,13 @@ func (c domain) Register(endpoint string, requestId uint64, types []interface{})
 }
 
 // TODO: ask for a Publish Suceeded all the times, so we can trigger callbacks
-func (c domain) Publish(endpoint string, args []interface{}) error {
+func (c domain) Publish(endpoint string, args []interface{}, options map[string]interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 	Info("Publish %s %v", endpoint, args)
 
 	c.app.Queue(&publish{
 		Request:   NewID(),
-		Options:   make(map[string]interface{}),
+		Options:   options,
 		Name:      endpoint,
 		Arguments: args,
 	})
@@ -222,9 +225,11 @@ func (c domain) Publish(endpoint string, args []interface{}) error {
 	return nil
 }
 
-func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error) {
+func (c domain) Call(endpoint string, args []interface{}, options map[string]interface{}) ([]interface{}, error) {
+	id := NewID()
 	endpoint = makeEndpoint(c.name, endpoint)
-	call := &call{Request: NewID(), Name: endpoint, Options: make(map[string]interface{}), Arguments: args}
+	options = c.ProcessOptions(id, options)
+	call := &call{Request: id, Name: endpoint, Options: options, Arguments: args}
 	Info("Calling %s %v", endpoint, args)
 
 	// This is a call, so setup to listen for a yield message with our return values
@@ -233,6 +238,24 @@ func (c domain) Call(endpoint string, args []interface{}) ([]interface{}, error)
 	} else {
 		return msg.(*result).Arguments, nil
 	}
+}
+
+// Handles any generalized intialization that has to happen before options pass through
+func (c domain) ProcessOptions(requestId uint64, options map[string]interface{}) map[string]interface{} {
+	// If the key exists, the value is the handler id. Replace it with "true" and set up the handler
+	if id, ok := options["progress"]; ok {
+		handlerId := id.(uint64)
+		options["progress"] = true
+
+		// TODO: dont just pass the handler id, pass the types too for cumin enforcement
+		c.handlers[requestId] = &boundEndpoint{handlerId, "", nil}
+	}
+
+	if options == nil {
+		options = make(map[string]interface{})
+	}
+
+	return options
 }
 
 func (c domain) Unsubscribe(endpoint string) error {
@@ -301,6 +324,17 @@ func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 }
 
 func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
+	if err := SoftCumin(binding.expectedTypes, msg.Arguments); err == nil {
+		c.app.CallbackSend(binding.callback, msg.Arguments...)
+	} else {
+		// TODO: warn application level code at some well-known location
+		Warn("%v", err)
+	}
+}
+
+// Only called as the result of a progressive result callback. The final call return
+// is processed normally
+func (c *domain) handleResult(msg *result, binding *boundEndpoint) {
 	if err := SoftCumin(binding.expectedTypes, msg.Arguments); err == nil {
 		c.app.CallbackSend(binding.callback, msg.Arguments...)
 	} else {

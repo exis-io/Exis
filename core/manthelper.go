@@ -1,11 +1,11 @@
 package core
 
 // Helper methods for mantles. Operate functionally on Domains, triggering success or
-// error callbacks based on the intended functionality. These functions are here to cut down 
+// error callbacks based on the intended functionality. These functions are here to cut down
 // on the redundancy of mantles
 
 func MantleSubscribe(d Domain, endpoint string, cb uint64, eb uint64, handler uint64, types []interface{}) {
-	if err := d.Subscribe(endpoint, handler, types); err != nil {
+	if err := d.Subscribe(endpoint, handler, types, nil); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
 		d.GetApp().CallbackSend(cb)
@@ -13,7 +13,7 @@ func MantleSubscribe(d Domain, endpoint string, cb uint64, eb uint64, handler ui
 }
 
 func MantleRegister(d Domain, endpoint string, cb uint64, eb uint64, handler uint64, types []interface{}) {
-	if err := d.Register(endpoint, handler, types); err != nil {
+	if err := d.Register(endpoint, handler, types, nil); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
 		d.GetApp().CallbackSend(cb)
@@ -21,7 +21,7 @@ func MantleRegister(d Domain, endpoint string, cb uint64, eb uint64, handler uin
 }
 
 func MantlePublish(d Domain, endpoint string, cb uint64, eb uint64, args []interface{}) {
-	if err := d.Publish(endpoint, args); err != nil {
+	if err := d.Publish(endpoint, args, nil); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
 		d.GetApp().CallbackSend(cb)
@@ -29,11 +29,11 @@ func MantlePublish(d Domain, endpoint string, cb uint64, eb uint64, args []inter
 }
 
 func MantleCall(d Domain, endpoint string, cb uint64, eb uint64, args []interface{}) {
-	if results, err := d.Call(endpoint, args); err != nil {
+	if results, err := d.Call(endpoint, args, nil); err != nil {
 		d.RemoveCallExpect(cb)
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
-		if types, ok := d.GetCallExpect(cb); (!ok && CuminLevel != CuminOff) {
+		if types, ok := d.GetCallExpect(cb); !ok && CuminLevel != CuminOff {
 			// We were never asked for types. Don't do anything
 			Info("Call for %v received, but no cumin enforcement present.", endpoint)
 		} else {
@@ -63,16 +63,14 @@ func MantleUnregister(d Domain, endpoint string, cb uint64, eb uint64) {
 	}
 }
 
-// Apply the arguments to the given function on this domain.
-// If the function returns an error, callback with error, otherwise callback with success
-// func (c domain) apply(fn func(*domain, string, uint64, []interface{}) error, endpoint string, cb uint64, eb uint64, hn uint64) {
-//  // TODO: validate the endpoint, else errback
-//  endpoint = makeEndpoint(c.name, endpoint)
-
-//  // with function Subscribe:
-//  if e := fn(&c, endpoint, cb); e != nil {
-//      c.app.CallbackSend(eb, e.Error())
-//  }
-
-//  // Note that the above won't work for unsubscribe and unregister, since their success case returns nil
-// }
+// Access the model object functions. Note these methods have identical interfaces
+// to allow this one method to do all the heavy lifting
+// TODO: implement cuminication of these results
+func MantleModel(d Domain, target func(string, map[string]interface{}) ([]interface{}, error),
+	collection string, query map[string]interface{}, cb uint64, eb uint64) {
+	if r, err := target(collection, query); err != nil {
+		d.GetApp().CallbackSend(eb, err.Error())
+	} else {
+		d.GetApp().CallbackSend(cb, r...)
+	}
+}

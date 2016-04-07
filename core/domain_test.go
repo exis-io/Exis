@@ -1,9 +1,9 @@
 package core
 
 import (
-    "testing"
+	"testing"
 
-    . "github.com/smartystreets/goconvey/convey"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestDomainObjects(t *testing.T) {

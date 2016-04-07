@@ -1,0 +1,28 @@
+"Here at the Academy for Gifted Children, we allow students to explore ________ at their own pace",
+    "id": 2885
+  },
+  {
+    "text": "Well what do you have to say for yourself, Casey? This is the third time you've been sent to the principal's office for ________",
+    "id": 2886
+  },
+  {
+    "text": "In his new action comedy, Jackie Chan must fend off ninjas while also dealing with ________",
+    "id": 2887
+  },
+  {
+    "text": "Armani suit: $1,000. Dinner for two at that swanky restaurant: $300. The look on her face when you surprise her with ________: priceless",
+    "id": 2888
+  },
+  {
+    "text": "Do the Dew ® with our most extreme flavor yet! Get ready for Mountain Dew ________!",
+    "id": 2889
+  },
+  {
+    "text": "Don't forget! Beginning this week, Casual Friday will officially become \"________ Friday.\"",
+    "id": 2873
+  },
+  {
+    "text": "In his farewell address, George Washington famously warned Americans about the dangers of ________",
+    "id": 2874
+  },
+  {

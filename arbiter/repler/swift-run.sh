@@ -27,7 +27,9 @@ EOF
 LOG="`pwd`/logs"
 
 cd main
-swift build >>$LOG 2>&1
+
+# Print build messages to stderr so that we log them.
+swift build 2>&1
 
 echo "___BUILDCOMPLETE___"
 

@@ -1,0 +1,42 @@
+    "id": 2610
+  },
+  {
+    "text": "What is Olivia Pope's secret to removing red wine stains from white clothes?",
+    "id": 2612
+  },
+  {
+    "text": "Why exactly was Alanis so mad at Uncle Joey?",
+    "id": 2616
+  },
+  {
+    "text": "Why do men on the Internet send me pictures of ________?",
+    "id": 2619
+  },
+  {
+    "text": "What's my weapon of choice in the \"War on Women\"?",
+    "id": 2624
+  },
+  {
+    "text": "What's Seth MacFarlane's problem?",
+    "id": 2631
+  },
+  {
+    "text": "I couldn't help but wonder: was it Mr. Big, or was it ________?",
+    "id": 2638
+  },
+  {
+    "text": "Sofia Coppola's new film focuses on a wealthy young white woman feeling alienated by ________",
+    "id": 2648
+  },
+  {
+    "text": "________: the Tori Amos song that changed my life",
+    "id": 2651
+  },
+  {
+    "text": "Something old, something new, something borrowed, and ________",
+    "id": 2653
+  },
+  {
+    "text": "Why can't we have nice things?",
+    "id": 2657
+  },

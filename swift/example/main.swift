@@ -3,11 +3,11 @@ import Foundation
 import Riffle
 
 Riffle.setLogLevelDebug()
-Riffle.setFabricLocal()
+Riffle.setFabricDev()
 
 let app = Domain(name: "xs.test")
-let sender = Sender(name: "sender", superdomain: app)
-let backend = Receiver(name: "receiver", superdomain: app)
+let sender = Client(name: "sender", superdomain: app)
+let backend = Backend(name: "receiver", superdomain: app)
 
 
 if NSProcessInfo.processInfo().environment["MANUAL"] != nil {

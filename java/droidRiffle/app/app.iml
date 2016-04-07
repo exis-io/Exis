@@ -88,10 +88,10 @@
     <orderEntry type="library" exported="" name="gson-2.5" level="project" />
     <orderEntry type="library" exported="" name="jffi-1.2.10-native" level="project" />
     <orderEntry type="library" exported="" name="gson-2.1.8" level="project" />
-    <orderEntry type="library" exported="" name="jffi-1.2.10" level="project" />
     <orderEntry type="library" exported="" name="asm-tree-5.0.3" level="project" />
-    <orderEntry type="library" exported="" name="asm-commons-5.0.3" level="project" />
+    <orderEntry type="library" exported="" name="jffi-1.2.10" level="project" />
     <orderEntry type="library" exported="" name="asm-5.0.3" level="project" />
+    <orderEntry type="library" exported="" name="asm-commons-5.0.3" level="project" />
     <orderEntry type="library" exported="" name="typetools-0.4.4" level="project" />
     <orderEntry type="library" exported="" name="design-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-23.1.1" level="project" />
@@ -100,8 +100,8 @@
     <orderEntry type="library" exported="" name="asm-analysis-5.0.3" level="project" />
     <orderEntry type="library" exported="" name="gradle-retrolambda-3.2.5" level="project" />
     <orderEntry type="library" exported="" name="jnr-ffi-2.0.7" level="project" />
-    <orderEntry type="library" exported="" name="support-annotations-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="jnr-x86asm-1.0.2" level="project" />
+    <orderEntry type="library" exported="" name="support-annotations-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-23.1.1" level="project" />
     <orderEntry type="module" module-name="riffle" exported="" />
   </component>

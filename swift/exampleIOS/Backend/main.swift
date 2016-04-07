@@ -7,8 +7,12 @@
 
 import Foundation
 import Riffle
+import Glibc
+import Dispatch
 
 print("Starting up the backend...")
+Riffle.setFabricDev()
+Riffle.setLogLevelDebug()
 
 //This is your apps backend
 //Change USERNAME to your username that you used to sign up with at my.exis.io
@@ -24,7 +28,7 @@ class Backend: Domain {
     }
 
     //Called when pinged from user
-    func sayHi(name: String) -> AnyObject {
+    func sayHi(name: String) -> Any {
         print("\(name) says hello! Lets let him know Exis is here to help!")
         return "Hi, \(name)! Exis can hear you loud and clear!"
     }
@@ -35,7 +39,7 @@ let container = Backend(name: "container", superdomain: app)
 
 //Joining container with your token
 //Copy from: Auth() -> Authorized Key Management -> 'container' key
-//container.join("XXXXXXXXXXXXXX")
+container.setToken("")
 
 container.join()
 

@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# ./stump.py add-subtree swift/swiftRiffle/Pod/Classes swiftubuntu git@github.com:exis-io/swiftRiffleUbuntu.git
 
 helpstr = '''Riffle maintenance and management.
 
@@ -43,9 +44,8 @@ import arbiter
 # Format: (prefix: remote, url)
 SUBTREES = [
     ("swift/swiftRiffle", "swiftRiffle", "git@github.com:exis-io/swiftRiffle.git"),
-    ("swift/appBackendSeed", "iosAppBackendSeed", "git@github.com:exis-io/iosAppBackendSeed.git"),
-    ("swift/appSeed", "iosAppSeed", "git@github.com:exis-io/iosAppSeed.git"),
-    ("swift/example", "iosExample", "git@github.com:exis-io/iOSExample.git"),
+    ("swift/swiftRiffle/Pod/Classes", "swiftUbuntu", "git@github.com:exis-io/swiftRiffleUbuntu.git"),
+    ("swift/exampleIOS", "iosExample", "git@github.com:exis-io/iOSExample.git"),
 
     ("js/jsRiffle", "jsRiffle", "git@github.com:exis-io/jsRiffle.git"),
     ("js/ngRiffle", "ngRiffle", "git@github.com:exis-io/ngRiffle.git"),
@@ -56,7 +56,17 @@ SUBTREES = [
     ("python/pyRiffle", "pyRiffle", "git@github.com:exis-io/pyRiffle.git"),
 
     ("CardsAgainstHumanityDemo/swiftCardsAgainst", "iosCAH", "git@github.com:exis-io/CardsAgainst.git"),
-    ("CardsAgainstHumanityDemo/ngCardsAgainst", "ngCAH", "git@github.com:exis-io/ionicCardsAgainstEXIStence.git")
+    ("CardsAgainstHumanityDemo/ngCardsAgainst", "ngCAH", "git@github.com:exis-io/ionicCardsAgainstEXIStence.git"),
+    ("CardsAgainstHumanityDemo/droidCardsAgainst", "droidCAH", "git@github.com:exis-io/androidCardsAgainstHumanity.git")
+]
+
+# Subtrees that track binary files in the subtree but not in the branch
+# These are not added as remotes. Prefixes may match true subtrees.
+# Format: (prefix: remote, url)
+SHADOW_SUBTREES = [
+    ("swift/swiftRiffle", 'swiftRiffle', 'git@github.com:exis-io/swiftRiffleCocoapod.git'),
+    ("swift/mantle", 'swiftMantle', 'git@github.com:exis-io/swiftRiffleMantle.git'),
+    ("java/droidRiffle", 'droidRiffle', 'git@github.com:exis-io/droidRiffle.git'),
 ]
 
 
@@ -150,7 +160,7 @@ if __name__ == '__main__':
                 # TODO: seperate by file, and use the files for some reasonable ordering
 
         elif args['all']:
-            arbiter.arbiter.testAll('all')
+            arbiter.arbiter.testAll('all', multithreaded=False)
 
         elif args['<languageOrTestNumber>']:
             target = args['<languageOrTestNumber>']
@@ -165,7 +175,7 @@ if __name__ == '__main__':
 
                 arbiter.repl.executeTaskSet(target)
             else:
-                arbiter.arbiter.testAll(args['<languageOrTestNumber>'])
+                arbiter.arbiter.testAll(args['<languageOrTestNumber>'], multithreaded=False)
 
     elif args['release']:
         found = False
@@ -203,7 +213,7 @@ if __name__ == '__main__':
 
         This is for situations where you want to check in files into the subtree and not the trunk (like big binary files)
         required by a semver dependency manager. Make sure the binary files are ignored at the trunk, not in the local 
-        repo, else they'll be ignored when pushing the shadow. You can also move gitignores too and avoid this problem 
+        repo, else they'll be ignored when pushing the shadow. You can also move gitignores to avoid this problem 
 
         The basics are: 
 
@@ -223,51 +233,46 @@ if __name__ == '__main__':
             git -C swift/swiftRiffle push origin master
 
             rm -rf swift/swiftRiffle/.git
-
-
-        Notes:
-            - This implementation is incomplete. Release option above is better-- add the copy task 
-            - 
         '''
 
         found = False
-        for prefix, remote, url in SUBTREES:
+        for prefix, remote, url in SHADOW_SUBTREES:
             if remote == args['<remote>']:
                 found = True
                 break
 
         if not found:
-            print("Error: unrecognized remote ({})".format(args['<remote>']))
+            print("Error: unrecognized shadow remote ({})".format(args['<remote>']))
             sys.exit(1)
 
-        # Note that the shadows have their own remotes. TODO: consolidate this into the top data
-        # structure
-        if remote == 'swiftRiffle':
-            shadow = 'git@github.com:exis-io/swiftRiffleCocoapod.git'
-        else:
-            print 'Unrecognized remote. Not all remotes have shadows!'
-            sys.exit(1)
-
-        # print("Pushing {} to remote {} ({})...".format(prefix, remote, url))
-        # call("git subtree push --prefix {} {} master".format(prefix, remote), shell=True)
+        # Special hack case for swiftRiffle on Ubuntu
+        # Replaces the development version of Pacakge.swift, which refers to the local mantle, for the production version
+        if remote == 'swiftUbuntu':
+            os.rename('swift/swiftRiffle/Pod/Classes/Package.swift', 'swift/swiftRiffle/Pod/Classes/Package.swift.dev')
+            os.rename('swift/swiftRiffle/Pod/Classes/Package.swift.prod', 'swift/swiftRiffle/Pod/Classes/Package.swift')
 
         tag = args['<version>']
-
         tmp = tempfile.mkdtemp()
 
         # clone without the checkout to just grab the .git directory
-        call("git clone --no-checkout {} {}".format(shadow, tmp), shell=True)
+        call("git clone --no-checkout {} {}".format(url, tmp), shell=True)
 
         # Copy the contents of the real directory
-        copy_tree(prefix, tmp)
+        if os.path.exists(prefix + '/.git'):
+            shutil.rmtree(prefix + '/.git')
+        copy_tree(prefix, tmp, lambda d, files: ['.git'])
 
         call('git -C {0} add --all'.format(tmp), shell=True)
         call('git -C {0} commit -m "Exis shadow subtree push: {1}"'.format(tmp, tag), shell=True)
         call('git -C {0} push origin master'.format(tmp), shell=True)
-        # print 'Shadow set up in ', tmp
 
         print("Creating tag: {}".format(tag))
         call('git -C {0} tag -a {1} -m "Release {1}."'.format(tmp, tag), shell=True)
-        # call('git  tag -a {1}-{0} -m "Release {1}-{0}."'.format(args['<version>'], remote), shell=True)
+        call('git  tag -a {1}-{0} -m "Release {1}-{0}."'.format(args['<version>'], remote), shell=True)
         call("git -C {} push --tags origin master".format(tmp), shell=True)
+        call("git push --tags origin HEAD", shell=True)
         shutil.rmtree(tmp)
+
+        if remote == 'swiftUbuntu':
+            os.rename('swift/swiftRiffle/Pod/Classes/Package.swift', 'swift/swiftRiffle/Pod/Classes/Package.swift.prod')
+            os.rename('swift/swiftRiffle/Pod/Classes/Package.swift.dev', 'swift/swiftRiffle/Pod/Classes/Package.swift')

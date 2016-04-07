@@ -1,0 +1,50 @@
+    "text": "Quintland",
+    "id": 2695
+  },
+  {
+    "text": "Karla Momolka",
+    "id": 2696
+  },
+  {
+    "text": "A depressed tentacle monster",
+    "id": 2707
+  },
+  {
+    "text": "The periodic table of the awesoments",
+    "id": 2712
+  },
+  {
+    "text": "An erotic audio drama, complete with moans and groans",
+    "id": 2713
+  },
+  {
+    "text": "An addictive aerosol aphrodesiac",
+    "id": 2714
+  },
+  {
+    "text": "Debugging nanobot code while hung over",
+    "id": 2715
+  },
+  {
+    "text": "Never being able to touch your lover ever again",
+    "id": 2716
+  },
+  {
+    "text": "Majoring in mad science",
+    "id": 2719
+  },
+  {
+    "text": "Balticon!",
+    "id": 2720
+  },
+  {
+    "text": "A call on the listener feedback line that turns out to be a wrong number",
+    "id": 2721
+  },
+  {
+    "text": "Penis enlargement that actually works",
+    "id": 2722
+  },
+  {
+    "text": "Dirty Mad Libs",
+    "id": 2723

@@ -1,0 +1,47 @@
+[
+  {
+    "text": "________?  There's an app for that",
+    "id": 28
+  },
+  {
+    "text": "Why can't I sleep at night?",
+    "id": 29
+  },
+  {
+    "text": "What's that smell?",
+    "id": 30
+  },
+  {
+    "text": "I got 99 problems but ________ ain't one",
+    "id": 31
+  },
+  {
+    "text": "Maybe she's born with it.  Maybe it's ________",
+    "id": 32
+  },
+  {
+    "text": "What's the next Happy Meal® toy?",
+    "id": 33
+  },
+  {
+    "text": "Anthropologists have recently discovered a primitive tribe that worships ________",
+    "id": 34
+  },
+  {
+    "text": "It's a pity that kids these days are all getting involved with ________",
+    "id": 35
+  },
+  {
+    "text": "Help me doctor, I've got ________ in my butt!",
+    "id": 2881
+  },
+  {
+    "text": "Why am I broke?",
+    "id": 2882
+  },
+  {
+    "text": "I don't mean to brag, but they call me the Michael Jordan of ________",
+    "id": 2883
+  },
+  {
+    "text": 

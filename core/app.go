@@ -35,6 +35,7 @@ type App interface {
 
 	Yield(uint64, []interface{})
 	YieldError(uint64, string, []interface{})
+	YieldOptions(request uint64, args []interface{}, options map[string]interface{})
 
 	Close(string)
 	ConnectionClosed(string)
@@ -47,6 +48,7 @@ type App interface {
 	// Temporary location, will move to security
 	SetToken(string)
 	GetToken() string
+	LoadKey(string) error
 
 	Login(Domain, ...string) (Domain, error)
 	RegisterAccount(Domain, string, string, string, string) (bool, error)
@@ -222,6 +224,16 @@ func (a *app) Yield(request uint64, args []interface{}) {
 	a.Queue(m)
 }
 
+func (a *app) YieldOptions(request uint64, args []interface{}, options map[string]interface{}) {
+	m := &yield{
+		Request:   request,
+		Options:   options,
+		Arguments: args,
+	}
+
+	a.Queue(m)
+}
+
 // Represents an error that ocurred during an invocation in the crust
 func (a *app) YieldError(request uint64, etype string, args []interface{}) {
 	m := &errorMessage{
@@ -260,6 +272,7 @@ func (c *app) handle(msg message) {
 			x.subLock.RLock()
 			if binding, ok := x.subscriptions[msg.Subscription]; ok {
 				x.subLock.RUnlock()
+				Debug("Event %s (%d)", binding.endpoint, binding.callback)
 				go x.handlePublish(msg, binding)
 				return
 			} else {
@@ -275,6 +288,7 @@ func (c *app) handle(msg message) {
 			x.regLock.RLock()
 			if binding, ok := x.registrations[msg.Registration]; ok {
 				x.regLock.RUnlock()
+				Debug("Invoking %s (%d)", binding.endpoint, binding.callback)
 				go x.handleInvocation(msg, binding)
 				return
 			} else {
@@ -294,6 +308,25 @@ func (c *app) handle(msg message) {
 
 		c.Queue(m)
 
+	// Handle call results seperately to account for progressive calls
+	case *result:
+		// If this is a progress call call the handler, do not alert the listener
+		// Listener is only updated once the call completes
+		if p, ok := msg.Details["progress"]; ok {
+			x := p.(bool)
+			if x {
+				for _, x := range c.domains {
+					if binding, ok := x.handlers[msg.Request]; ok {
+						Debug("Result %s (%d)", binding.endpoint, binding.callback)
+						go x.handleResult(msg, binding)
+						return
+					}
+				}
+			}
+		} else {
+			c.findListener(msg)
+		}
+
 	case *welcome:
 		Debug("Received WELCOME, reestablishing state with the fabric")
 		c.open = true
@@ -309,22 +342,27 @@ func (c *app) handle(msg message) {
 		c.Connection.Close("Fabric said goodbye. Closing connection")
 
 	default:
-		id, ok := requestID(msg)
+		c.findListener(msg)
+	}
+}
 
-		// Catch control messages here and replace getMessageTimeout
+// Find the appropriate listener and pass it the message
+func (c *app) findListener(msg message) {
+	id, ok := requestID(msg)
 
-		if ok {
-			c.listenersLock.Lock()
-			if l, found := c.listeners[id]; found {
-				l <- msg
-				c.listenersLock.Unlock()
-			} else {
-				c.listenersLock.Unlock()
-				Error("No listener for message %v", msg)
-			}
+	// Catch control messages here and replace getMessageTimeout
+
+	if ok {
+		c.listenersLock.Lock()
+		if l, found := c.listeners[id]; found {
+			l <- msg
+			c.listenersLock.Unlock()
 		} else {
-			panic("Bad handler picking up requestID!")
+			c.listenersLock.Unlock()
+			Error("No listener for message %v", msg)
 		}
+	} else {
+		panic("Bad handler picking up requestID!")
 	}
 }
 

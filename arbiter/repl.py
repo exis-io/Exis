@@ -15,6 +15,8 @@ import signal
 import glob
 import colorama
 import atexit
+from random import randint
+
 from colorama import Fore, Back, Style
 
 from threading import Thread, Event
@@ -254,10 +256,7 @@ class SwiftCoder(Coder):
         os.mkdir("{}/main".format(tmpdir))
         shutil.copy("{}/example/Package.swift".format(swift), "{}/main".format(tmpdir))
         shutil.copytree("{}/mantle".format(swift), "{}/mantle".format(tmpdir))
-        os.mkdir("{}/swiftRiffle".format(tmpdir))
-        shutil.copytree("{}/swiftRiffle/Riffle".format(swift), "{}/swiftRiffle/Riffle".format(tmpdir))
-        if not os.path.exists("{}/swiftRiffle/Riffle/.git".format(tmpdir)):
-            raise Exception("!! Please run 'make swift' so that swiftRiffle is git tagged properly")
+        shutil.copytree("{}/swiftRiffle".format(swift), "{}/swiftRiffle".format(tmpdir), symlinks=True)
 
     def setupRunComplete(self, code):
         pass  # code.append('print("___RUNCOMPLETE___")')
@@ -419,7 +418,7 @@ class ReplIt:
 
         self.success = None
 
-    def setup(self):
+    def setup(self, domainBase):
         """
         Sets up a temp directory for this task and copies the proper code over (like a fake docker)
         """
@@ -443,7 +442,7 @@ class ReplIt:
         # Setup env vars
         self.env = {
             "WS_URL": WS_URL,
-            "DOMAIN": DOMAIN,
+            "DOMAIN": DOMAIN + domainBase,
             "PATH": os.environ["PATH"],
             "EXIS_REPL_CODE": self.execCode
         }
@@ -552,9 +551,12 @@ def executeTasks(taskList, actionList):
     """
     procs = list()
 
+    # generates a random base domain for this test so all tasks can be parallized
+    randomBaseDomain = str(randint(0, 99999))
+
     for t, a in zip(taskList, actionList):
         r = ReplIt(t, a)
-        r.setup()
+        r.setup(randomBaseDomain)
         r.execute()
         a = r.buildComplete.wait(WAIT_TIME)
         if a is False:

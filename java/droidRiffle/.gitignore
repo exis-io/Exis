@@ -1,5 +1,11 @@
 mantle/mantle.aar
 local.properties
 build/*
-.idea/
+.idea
 *.so
+.gradle
+local.properties
+.idea/workspace.xml
+.idea/libraries
+.DS_Store
+build

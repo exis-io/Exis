@@ -1,0 +1,50 @@
+    "text": "Tom Cruise",
+    "id": 20
+  },
+  {
+    "text": "Stifling a giggle at the mention of Hutus and Tutsis",
+    "id": 21
+  },
+  {
+    "text": "Edible underpants",
+    "id": 22
+  },
+  {
+    "text": "Object permanence",
+    "id": 23
+  },
+  {
+    "text": "Consultants",
+    "id": 24
+  },
+  {
+    "text": "Intelligent design",
+    "id": 25
+  },
+  {
+    "text": "Nocturnal emissions",
+    "id": 26
+  },
+  {
+    "text": "Uppercuts",
+    "id": 27
+  },
+  {
+    "text": "MechaHitler",
+    "id": 44
+  },
+  {
+    "text": "A disappointing birthday party",
+    "id": 46
+  },
+  {
+    "text": "Puppies!",
+    "id": 47
+  },
+  {
+    "text": "A windmill full of corpses",
+    "id": 48
+  },
+  {
+    "text": "Guys who don't call",
+    "id": 49

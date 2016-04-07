@@ -511,7 +511,6 @@ func destination(m *message) (string, error) {
 		return msg.Name, nil
 
 	default:
-		//log.Println("Unhandled message:", msg.messageType())
 		return "", NoDestinationError(msg.messageType())
 	}
 }
