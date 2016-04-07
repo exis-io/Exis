@@ -160,7 +160,10 @@
                 android:textSize="15sp"
                 android:layout_margin="2dp"
                 android:textAlignment="gravity"
-                android:gravity="center_horizontal" />
+                android:gravity="center_horizontal"
+                android:background="#00a2ff"
+                android:textColor="#ffffff"
+                android:padding="3dp" />
             <TextView
                 android:layout_weight="1"
                 android:id="@+id/player_info1"
@@ -170,7 +173,10 @@
                 android:textSize="15sp"
                 android:layout_margin="2dp"
                 android:gravity="center_horizontal"
-                android:textAlignment="gravity" />
+                android:textAlignment="gravity"
+                android:background="#00a2ff"
+                android:textColor="#ffffff"
+                android:padding="3dp"/>
         </TableRow>
         <TableRow
             android:layout_width="match_parent"
@@ -184,7 +190,10 @@
                 android:textSize="15sp"
                 android:layout_margin="2dp"
                 android:gravity="center_horizontal"
-                android:textAlignment="gravity" />
+                android:textAlignment="gravity"
+                android:background="#00a2ff"
+                android:textColor="#ffffff"
+                android:padding="3dp"/>
             <TextView
                 android:layout_weight="1"
                 android:id="@+id/player_info3"
@@ -194,7 +203,10 @@
                 android:textSize="15sp"
                 android:layout_margin="2dp"
                 android:gravity="center_horizontal"
-                android:textAlignment="gravity" />
+                android:textAlignment="gravity"
+                android:background="#00a2ff"
+                android:textColor="#ffffff"
+                android:padding="3dp"/>
         </TableRow>
     </TableLayout>
 

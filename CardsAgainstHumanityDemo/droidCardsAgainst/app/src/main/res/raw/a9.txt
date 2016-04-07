@@ -44,7 +44,7 @@
     "id": 2693
   },
   {
-    "text": "tim Hortons",
+    "text": "Tim Hortons",
     "id": 2694
   },
   {

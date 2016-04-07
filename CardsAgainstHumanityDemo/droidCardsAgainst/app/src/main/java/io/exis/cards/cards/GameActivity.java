@@ -186,11 +186,6 @@ public class GameActivity extends Activity {
                         runOnUiThread(() -> {
                             String str = p.playerID();
                             playerInfos.get(posF).setText(str);
-                            if (currentCzar != null && str.equals(currentCzar)) {
-                                playerInfos.get(posF).setBackgroundColor(Color.parseColor("#00a2ff"));
-                            }else{
-                                playerInfos.get(posF).setBackgroundColor(Color.parseColor("#005688"));
-                            }
                         });
                         pos++;
                     }
@@ -286,16 +281,6 @@ public class GameActivity extends Activity {
         for(TextView v : cardViews){
             v.setBackgroundColor(Color.WHITE);
             v.setTextColor(Color.BLACK);
-        }
-    }
-
-    public void setPlayerBackgrounds(){
-        for(TextView t : playerInfos){
-            if( t.getText().equals( currentCzar )){
-                runOnUiThread(() -> t.setBackgroundColor(Color.parseColor("#00a2ff")));
-            }else{
-                runOnUiThread(() -> t.setBackgroundColor(Color.parseColor("#005688")));
-            }
         }
     }
 

@@ -202,7 +202,6 @@ public class Player {
 
                         player.isCzar = (currentCzar.equals(playerID));
                         activity.currentCzar = currentCzar;
-                        activity.setPlayerBackgrounds();
                         player.question = questionText;
                         player.duration = duration;
                         activity.setQuestion();
