@@ -121,26 +121,27 @@ public class GameActivity extends Activity {
         super.onResume();
         String TAG = "GameActivity::onResume";
 
-        Log.i(TAG, "creating Exec instance");
-        exec = new Exec();
+        Domain execDomain = new Domain("xs.damouse.CardsAgainst");
+        Domain playerDomain = new Domain("xs.damouse.CardsAgainst");
+        Player player = new Player(screenName, playerDomain);
 
-        Domain app = new Domain("xs.damouse.CardsAgainst");
-        Log.i(TAG, "screenname=" + screenName);
-        Player player = new Player(screenName, app);
+        Log.i(TAG, "creating Exec instance");
+        exec = new Exec("Exec", execDomain, player);
+
         player.activity = this;
-        exec.setPlayer(player);
-        exec.join();
+
+        Log.i(TAG, "Exec joining...");
+        exec.join();    // -> dealer.join() -> player.join() -> this.onPlayerJoined()
     }//end onResume method
 
     @Override
     public void onPause(){
         super.onPause();
-
 //         save points here
 
+        player.leave();
         timer.cancel();
         handler.removeCallbacks(dealer.runnable);
-        player.leave();
         dealer = null;
         exec = null;
         timer = null;
@@ -169,14 +170,22 @@ public class GameActivity extends Activity {
         timer.start();
     }//end playGame method
 
-    // called by Player after join
     public void onPlayerJoined(Object[] play){
-        String TAG = "onPlayerJoined()";
+        final String TAG = "onPlayerJoined()";
         phase = "answering";
         int pos = 0;
+
+/*
+        player.domain().call("play").then(Object[].class, (obj)->{
+            // TODO after model objects implemented
+        });
+        */
+
         try {
             player.setHand(Card.buildHand((String[]) play[0]));
             this.players = (Player[]) play[1];
+            phase = (String) play[2];
+            player.setDealer((String) play[3]);
 
             try {
                 // display players in game
@@ -201,7 +210,7 @@ public class GameActivity extends Activity {
             e.printStackTrace();
         }
 
-        this.runOnUiThread(() -> {
+        runOnUiThread(() -> {
             setQuestion();                              //set question TextView
             refreshCards(player.hand());
             playGame();

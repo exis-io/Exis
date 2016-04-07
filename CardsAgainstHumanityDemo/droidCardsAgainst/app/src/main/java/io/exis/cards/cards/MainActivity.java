@@ -64,8 +64,8 @@ public class MainActivity extends Activity {
     protected void onResume(){
         super.onResume();
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        screenName = preferences.getString("screenName", "");
         if(screenName.equals("")){
+            screenName = preferences.getString("screenName", "");
             screenNameDisplay.setVisibility(View.INVISIBLE);
         } else {
             String name = getString(R.string.screen_name, screenName);

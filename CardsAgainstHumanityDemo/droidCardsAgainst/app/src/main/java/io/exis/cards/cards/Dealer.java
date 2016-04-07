@@ -25,7 +25,7 @@ public class Dealer extends Domain{
     private ArrayList<Player> players;                      // keep track of players playing
     private ArrayList<Card> answers;                        // cards sent to czar
     private static ArrayList<Card> questionDeck;
-    private ArrayList<Card> answerDeck;
+    private static ArrayList<Card> answerDeck;
     private String phase;
     private static Player winner;                           // winner
     private static Card winningCard;
@@ -40,8 +40,8 @@ public class Dealer extends Domain{
 
     private Player player;
 
-    public Dealer(int ID){
-        super("dealer" + ID, new Domain("xs.damouse.CardsAgainst"));
+    public Dealer(int ID, Domain domain){
+        super("dealer" + ID, domain);
         dealerID = ID + "";
         czarNum = 0;
         players  = new ArrayList<>();
@@ -49,20 +49,20 @@ public class Dealer extends Domain{
         questionDeck = MainActivity.getQuestions();
         questionCard = generateQuestion();
 
-
         answers = new ArrayList<>();
         dummyCount = 0;
         playerCount = 0;
         duration = 15;
         phase = "answering";
 
-        Looper.prepare();
+//        Looper.prepare();
         handler = GameActivity.handler;
     }//end Dealer constructor
 
     // riffle calls
     @Override
     public void onJoin(){
+        Log.i("dealer onJoin", "entering method");
         register("leave", Player.class, Object.class, this::leave);
         register("pick", String.class, String.class, this::pick);
 
@@ -75,6 +75,9 @@ public class Dealer extends Domain{
             Log.i("choose listener", "received card " + c);
             winningCard = new Card(c);
         });
+
+        Log.i("dealer::onJoin", player.playerID() + " joining");
+        player.join();
     }
 
     public String ID(){
@@ -135,7 +138,7 @@ public class Dealer extends Domain{
         return questionDeck.get(0);
     }//end generateCard method
 
-    private Card generateAnswer(){
+    public static Card generateAnswer(){
         Collections.shuffle(answerDeck);
         return answerDeck.get(0);
     }//end generateCard method
@@ -233,15 +236,12 @@ public class Dealer extends Domain{
     }// end updateCzar method
 
     public Object[] play(){
-        //Returns: string[] cards, Player[] players, string state, string roomName
-
         return new Object[]{
-                Card.handToStrings( getNewHand() ),             // String[]
-                getPlayers(),                                   // Player[]
-                phase,                                          // String
-                dealerID};                                      // String
+                Card.handToStrings( getNewHand() ),             // String[] cards
+                getPlayers(),                                   // Player[] players
+                phase,                                          // String   state
+                dealerID};                                      // String   roomName
     }
-
 
     public String pick(String picked){
         answers.add(new Card(picked));
@@ -293,7 +293,6 @@ public class Dealer extends Domain{
                         duration + "]");
                 publish("answering", czar().playerID(), getQuestion().getText(), duration);
                 Log.i("TAG", "done publishing");
-//                player.danger_pub_answering(players.get(czarNum), getQuestion().getText(), duration);
 
                 setPlayers();                    // deal cards back to each player
                 phase = "picking";
@@ -304,17 +303,18 @@ public class Dealer extends Domain{
                 for(Player p : players){
                     if(p.dummy) {
                         answers.add(generateAnswer());
-                    }else {
-                        // player calls dealer::pick here
-
                     }
+                }
+
+                while(answers.size() < 5){
+                    Log.wtf("padding answers pile", "answers had size " + answers.size());
+                    answers.add(generateAnswer());
                 }
 
                 Log.i(TAG, "publishing [picking, \n" +
                         Card.printHand(answers) +
                         duration + "]");
                 publish("picking", Card.serialize( Card.handToStrings(answers) ), duration);
-//                player.danger_pub_picking(Card.handToStrings(answers), duration);
 
                 phase = "scoring";
                 break;

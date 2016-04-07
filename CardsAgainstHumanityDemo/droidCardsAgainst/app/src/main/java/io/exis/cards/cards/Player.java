@@ -33,11 +33,9 @@ public class Player {
     boolean dummy;
 
     GameActivity activity;
-    Exec exec;
     private Receiver playerDomain;
 
     public Player(String name, Domain app){
-        exec = new Exec();
         playerDomain = new Receiver(name, app);
         playerDomain.player = this;
 
@@ -76,6 +74,7 @@ public class Player {
             picked = hand.get(0);
         }
 
+        Log.i("player", "calling pick with card " + picked.getText());
         playerDomain.call("pick", picked.getText()).then(String.class, (c) -> {
             Log.i("player", "received new card " + c + " from dealer");
             hand.add(new Card(c));
@@ -89,6 +88,10 @@ public class Player {
         return this.hand;
     }//end getCards method
 
+    public Domain domain(){
+        return this.playerDomain;
+    }
+
     public String getWinner(){
         return winnerID;
     }
@@ -98,6 +101,12 @@ public class Player {
     }
 
     public ArrayList<Card> answers(){
+        if(answers == null){
+            Log.wtf("player", "answers is null!");
+            for(int i=0; i<5; i++){
+                answers.add(Dealer.generateAnswer());
+            }
+        }
         return answers;
     }
 
@@ -190,18 +199,14 @@ public class Player {
                         player.duration = duration;
                     });
 
-            Object[] playObject = GameActivity.exec.play();       // TODO
+            Object[] playObject = GameActivity.exec.play();
 
             if(playObject == null){
                 Log.wtf(TAG, "play object is null!");
             }
 
-            player.hand = Card.buildHand( (String[])playObject[0] );
-            setDealer((String) playObject[3]);
-
             activity.onPlayerJoined(playObject);
-        }
-
-    }
+        }// end onJoin method
+    }// end Receiver subclass
 }// end Player class
 
