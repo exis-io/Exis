@@ -15,12 +15,16 @@ module.exports = require('./src/riffle');
  * @namespace jsRiffle
  * @description jsRiffle is the client side JavaScript library for interacting with Exis
  * @example
+ * //**Configuration Example**
  * //via Node.js
  * jsRiffle = require('jsriffle');
  * jsRiffle.Domain('xs.domain');
  *
  * //access globally in browser
  * jsRiffle.Domain('xs.domain');
+ *
+ * //connect to production node
+ * jsRiffle.setFabricProduction();
  */
 
 /**
@@ -323,6 +327,7 @@ module.exports = require('./src/riffle');
  * endpoint that the handler is registered to will look like `xs.demo.user.app/action`.
  * @returns {Promise} a promise that is resolved if the handler is successfully registered or rejected if there is an error.
  * @example
+ * //**Registering a Procedure**
  * //register an action call hello on our top level app domain. i.e. xs.demo.user.app/hello
  * app.register('hello', function(){
  *   console.log('hello');
@@ -338,6 +343,7 @@ module.exports = require('./src/riffle');
  * endpoint that is called to will look like `xs.demo.user.app/action`.
  * @returns {RifflePromise} Returns a regular promise but with an extra {@link RifflePromise.want} function that can be used to specify the expected result type
  * @example
+ * //**Call w/optional type checking**
  * //call an action sum on with two numbers on our top level app domain. i.e. xs.demo.user.app/sum
  * var p = app.call('sum', 1, 1);
  *
@@ -357,6 +363,7 @@ module.exports = require('./src/riffle');
  * @description Publish data to any subscribers listening on a given channel on the domain. If the {@link RiffleDomain domain} represents a domain like `xs.demo.user.app` the 
  * endpoint that is published to will look like `xs.demo.user.app/channel`.
  * @example
+ * //**Publishing**
  * //publish the string 'hello' to the `ping` channel on our top level app domain. i.e. `xs.demo.user.app/ping`
  * app.publish('ping', 'hello');
  */
@@ -370,6 +377,7 @@ module.exports = require('./src/riffle');
  * endpoint that the handler is subscribed to will look like `xs.demo.user.app/channel`.
  * @returns {Promise} a promise that is resolved if the handler is successfully subscribed or rejected if there is an error.
  * @example
+ * //**Subscribing to an Event**
  * //subscribe to events published to hello on our top level app domain. i.e. xs.demo.user.app/hello
  * app.subscribe('hello', function(){
  *   console.log('Received hello event!');
@@ -382,6 +390,7 @@ module.exports = require('./src/riffle');
  * @param {string} channel - The channel that you wish to unsubscribe handlers from under the domain.
  * @description Unsubscribe all handlers subscribe to the channel on this domain. 
  * @example
+ * //**Unsubscribe**
  * //unsubscribe to events published to hello on our top level app domain. i.e. xs.demo.user.app/hello
  * app.unsubscribe('hello');
  */
@@ -392,6 +401,7 @@ module.exports = require('./src/riffle');
  * @param {string} action - The action that you wish to unregister the handler from under the domain.
  * @description Unregister the handler for the specified action on this domain. 
  * @example
+ * //**Unregister**
  * //unregister the 'getData' action handler on our top level app domain. i.e. xs.demo.user.app/getData
  * app.unregister('getData');
  */
@@ -403,7 +413,8 @@ module.exports = require('./src/riffle');
  * @description Create a subdomain from the current {@link RiffleDomain domain} object. 
  * @returns {RiffleDomain} A subdomain representing a domain with name appended to the parent domain. i.e. `xs.demo.user.app` => `xs.demo.user.app.subdomain`
  * @example
- * //if app represents the domain xs.demo.user.app backend is a {@link RiffleDomain} that represents `xs.demo.user.app.backend`
+ * //**Create a subdomain**
+ * //if app represents the domain xs.demo.user.app backend is a RiffleDomain that represents `xs.demo.user.app.backend`
  * var backend = app.subdomain('backend');
  */
 
@@ -414,6 +425,7 @@ module.exports = require('./src/riffle');
  * @description Create a new domain from the current {@link RiffleDomain domain} object that represents the domain specified by fullDomain. 
  * @returns {RiffleDomain} A {@link RiffleDomain} representing a domain specified by the fullDomain argument
  * @example
+ * //**Link A Domain**
  * //create a new domain that represents xs.demo.partner.app
  * var anotherApp = app.linkDomain('xs.demo.partner.app');
  */
@@ -424,6 +436,7 @@ module.exports = require('./src/riffle');
  * @description Attempts to create a connection to the Exis fabric using this domain. If successful a the `app.onJoin` function will be called
  * to notify a successful connection was established.
  * @example
+ * //**Joining a domain**
  *
  * //if the join is successful this function will be triggered
  * app.onJoin = function(){
@@ -440,6 +453,7 @@ module.exports = require('./src/riffle');
  * @description Unregister and unsubscribe anything in the domain and disconnect from Exis if this the the domain that {@link RiffleDomain.join} was called on.
  * If the connection is closed the `onLeave` will be called notifying that the session has been closed.
  * @example
+ * //**Logout/Disconnect**
  *
  * //if the connection is closed this function will be triggered
  * app.onLeave = function(){
@@ -462,6 +476,7 @@ module.exports = require('./src/riffle');
  * if it is available.
  * @returns {RiffleDomain} returns a promise object which is resolved upon success or rejected on failure.
  * @example 
+ * //**Login Example**
  * var user = { username: "example", password: "demo" };
  * //login user 
  * app.login(user).then(function(user_domain){
@@ -481,6 +496,7 @@ module.exports = require('./src/riffle');
  * @description Register a new user with an an Auth appliance attached to the current app domain. Only works with {@link /docs/appliances/Auth Auth} appliances of level 1.
  * @returns {Promise} returns a promise object which is resovled upon success or rejected on failure.
  * @example 
+ * //**Account Registration Example**
  * var user = { username: "example", password: "demo", name: "Johnny D", email: "example@domain.com" };
  * //register the new user 
  * app.registerAccount(user).then(registerHandler, errorHandler);
@@ -505,6 +521,7 @@ module.exports = require('./src/riffle');
  * @description A RifflePromise is a regular Promise object that simply implements an extra {@link RifflePromise.want} function which specifies what the
  * expected result of a {@link RiffleDomain.call} should be.
  * @example
+ * //**Call type checking**
  * //call a function that and only execute our handler if the result is a string
  * app.call('getData').want(String).then(handler);
  */

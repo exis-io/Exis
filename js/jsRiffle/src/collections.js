@@ -9,6 +9,7 @@ exports.Storage = New;
  * @description Creates a new {@link RiffleStorage} class using the given properly formed {@link RiffleDomain}.
  * @returns {RiffleStorage} A new RiffleStorage object that can be used for interacting with a {@link /docs/appliances/Storage Storage} appliance.
  * @example
+ * //**Storage Example**
  * //create a domain
  * var app = jsRiffle.Domain('xs.demo.dev.app');
  *
