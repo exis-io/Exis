@@ -149,10 +149,16 @@ public func genericBullshit<A: PR>(a: A) {
     runner = { a in return A.self <- a }
 }
 
-//public func initializeOSX<T>(t:T.Type) {
-//    print("Setting string type")
-//    typeString = t
-//}
+func recode<A, T>(var value: A) -> T {
+    // encode and decode a value
+    let data = withUnsafePointer(&value) { p in
+        NSData(bytes: p, length: sizeof(A))
+    }
+    
+    let pointer = UnsafeMutablePointer<T>.alloc(sizeof(T.Type))
+    data.getBytes(pointer)
+    return pointer.move()
+}
 
 func bleh<T>(obj: Any, _ t:T.Type) -> T {
     if obj.dynamicType == t {

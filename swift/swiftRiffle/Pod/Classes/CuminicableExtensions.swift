@@ -162,6 +162,7 @@ extension String: Property, Convertible {
     }
     
     public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
+        return recode(from)
         return unsafeBitCast(from, t.self)
     }
 
@@ -186,7 +187,8 @@ extension Double: Property, Convertible {
     }
     
     public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
-        return unsafeBitCast(from, t.self)
+        return recode(from)
+//        return unsafeBitCast(from, t.self)
     }
 
     public static func representation() -> Any {
@@ -212,7 +214,7 @@ extension Float: Property, Convertible {
     }
     
     public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
-        return unsafeBitCast(from, t.self)
+        return recode(from)
     }
 
     public static func representation() -> Any {
@@ -236,6 +238,7 @@ extension Bool: Property, Convertible {
     }
     
     public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
+        return recode(from)
         return unsafeBitCast(from, t.self)
     }
 
