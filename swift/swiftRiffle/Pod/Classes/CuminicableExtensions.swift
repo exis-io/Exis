@@ -244,6 +244,17 @@ extension Bool: Property, Convertible {
     }
 }
 
+// Might work, but don't have time for it now
+//protocol Thing: Property, Convertible {}
+//extension Array: Thing {}
+//
+//
+//extension CollectionType where Self: Thing, Generator.Element : Convertible {
+//    internal static func quietRepresentation() -> Any {
+//        return Generator.Element.representation()
+//    }
+//}
+
 // TODO: Dictionaries
 extension Array : Property, BaseConvertible {
     
@@ -288,6 +299,7 @@ extension Array : Property, BaseConvertible {
     }
 
     public static func representation() -> Any {
+        
         if let child = Generator.Element.self as? Convertible.Type {
             return [child.representation()]
         }
