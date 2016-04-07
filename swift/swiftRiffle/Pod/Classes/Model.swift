@@ -27,6 +27,10 @@ extension Model: Convertible {
         return true
     }
     
+    public func unsafeSerialize() -> Any {
+        return self
+    }
+    
     // Creates a new instance of this model object from the given json
     public static func deserialize(from: Any) -> Any {
         guard let json = from as? [String: Any] else {

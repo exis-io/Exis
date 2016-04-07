@@ -82,8 +82,21 @@ func serializeArguments(args: [Property]) -> [Any] {
     return ret
 }
 
-func swapClassToRiffle(a: Any) -> Any {
-    return 1
+func serializeResults() -> Any {
+    return []
+}
+
+func serializeResults(results: Property...) -> Any {
+    // Swift libraries are not technically supported on OSX targets-- Swift gets linked against twice
+    // Functionally this means that type checks in either the library or the app fail when the 
+    // type originates on the other end
+    // This method switches app types back to library types by checking type strings. Only runs on OSX
+    
+    #if os(OSX)
+        return results.map { $0.unsafeSerialize() }
+    #else
+        return results
+    #endif
 }
 
 // Makes configuration calls a little cleaner when accessed from the top level 

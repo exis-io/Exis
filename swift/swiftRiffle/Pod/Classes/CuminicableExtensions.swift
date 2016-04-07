@@ -25,6 +25,7 @@ public protocol Convertible {
     static func brutalize<T>(from: Any, t: T.Type) -> T?
     
     func serialize() -> Any
+    func unsafeSerialize() -> Any
     
     // Returns a core representation of this type
     static func representation() -> Any
@@ -48,6 +49,10 @@ extension BaseConvertible {
     }
     
     public func serialize() -> Any {
+        return self
+    }
+    
+    public func unsafeSerialize() -> Any {
         return self
     }
 }
@@ -109,6 +114,10 @@ extension Optional : OptionalProperty {
 extension Int: Property, Convertible {
     public func serialize() -> Any { return self }
     
+    public func unsafeSerialize() -> Any {
+        return unsafeBitCast(self, Int.self)
+    }
+    
     public static func deserialize(from: Any) -> Any {
         if let x = from as? Int {
             return x
@@ -149,6 +158,10 @@ extension Int: Property, Convertible {
 extension String: Property, Convertible {
     public func serialize() -> Any { return self }
     
+    public func unsafeSerialize() -> Any {
+        return self
+    }
+    
     public static func deserialize(from: Any) -> Any {
         if let x = from as? String {
             return x
@@ -172,6 +185,10 @@ extension String: Property, Convertible {
 extension Double: Property, Convertible {
     public func serialize() -> Any { return self }
     
+    public func unsafeSerialize() -> Any {
+        return self
+    }
+    
     public static func deserialize(from: Any) -> Any {
         if let x = from as? Double {
             return x
@@ -194,6 +211,10 @@ extension Double: Property, Convertible {
 
 extension Float: Property, Convertible {
     public func serialize() -> Any { return self }
+    
+    public func unsafeSerialize() -> Any {
+        return self
+    }
     
     public static func deserialize(from: Any) -> Any {
         if let x = from as? Float {
@@ -219,6 +240,10 @@ extension Float: Property, Convertible {
 
 extension Bool: Property, Convertible {
     public func serialize() -> Any { return self }
+    
+    public func unsafeSerialize() -> Any {
+        return self
+    }
     
     public static func deserialize(from: Any) -> Any {
         if let x = from as? Bool {
@@ -272,7 +297,10 @@ extension Array : Property, BaseConvertible {
         }
         
         return ret
-//        return self
+    }
+    
+    public func unsafeSerialize() -> Any {
+        return self
     }
     
     public static func brutalize<T>(from: Any, t: T.Type) -> T? {

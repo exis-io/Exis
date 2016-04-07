@@ -109,7 +109,7 @@ class Receiver: Domain {
 //            return (a, c, d, e)
 //        }
         
-        register("registerSinglePrimitive") { (a: Int) -> Any in
+        register("registerSinglePrimitive") { (a: Int) -> Int in
             print("SUCCESS --- 2-5")
             assert(a == 1)
             return a
