@@ -99,6 +99,78 @@ func serializeResults(results: Property...) -> Any {
     #endif
 }
 
+func switchTypes(x: Any) -> Any {
+    // Converts app types to riffle types because of the osx bug (see above)
+    
+    #if os(OSX)
+
+//        print("Size of incoming: \(sizeof(x.dynamicType.self)) reciever: \(sizeof(String.self))")
+        
+//        if let q = z as? Property {
+//            print("Proper")
+//        }
+        
+//        let o = COpaquePointer(x)
+        print("THING: \(x)")
+        
+        
+//        print("Dymanic: \(x.dynamicType), classname: \(x.dynamicType.printClassName())")
+        
+        switch "\(x.dynamicType)" {
+        case "Int":
+            return unsafeBitCast(x, Int.self)
+        case "String":
+            return unsafeBitCast(x, String.self)
+        case "Double":
+            return unsafeBitCast(x, Double.self)
+        case "Float":
+            return unsafeBitCast(x, Float.self)
+        case "Bool":
+            return unsafeBitCast(x, Bool.self)
+        default:
+            Riffle.warn("Unable to switch out app type: \(x.dynamicType)")
+            return x
+        }
+    #else
+        return x
+    #endif
+}
+
+func inferrer() {
+    
+}
+
+public var typeInt: Int.Type = Int.self
+public var typeString: String.Type = String.self
+
+var runner: (Any -> Any)!
+
+public func genericBullshit<A: PR>(a: A) {
+    runner = { a in return A.self <- a }
+}
+
+//public func initializeOSX<T>(t:T.Type) {
+//    print("Setting string type")
+//    typeString = t
+//}
+
+func bleh<T>(obj: Any, _ t:T.Type) -> T {
+    if obj.dynamicType == t {
+        print("Is a string")
+    }
+    
+    let z = unsafeBitCast(obj, t.self)
+    return z as! T
+    
+//    if let z = obj as! t {
+//        print("Yes")
+//    } else {
+//        print("No")
+//    }
+}
+
+
+
 // Makes configuration calls a little cleaner when accessed from the top level 
 // as well as keeping them all in one place
 public class Riffle {

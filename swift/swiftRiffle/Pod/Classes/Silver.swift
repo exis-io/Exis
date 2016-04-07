@@ -49,7 +49,7 @@ extension Silvery {
         var offset = 0
         for child in Mirror(reflecting: self).children {
             guard let property = child.value.dynamicType as? Property.Type else { throw SilverError.TypeDoesNotConformToProperty(type: child.value.dynamicType) }
-            if child.label == key {
+            if child.label == key {//                print("HI")
                 try self.codeValue(value, type: child.value.dynamicType, offset: offset)
                 return
             } else {
@@ -95,9 +95,32 @@ extension Silvery {
         var value: Property?
         for child in Mirror(reflecting: self).children {
             if child.label == key && String(child.value) != "nil" {
-                if let property = child.value as? OptionalProperty {
+                
+                print("Inside the thing: \(child.value)")
+                
+//                let h = bleh(child.value, typeString)
+                let run = runner(child.value)
+                print("Have \(run)")
+                
+                let switched = switchTypes(child.value)
+                
+//                if let q = child.value as? typeString {
+//                    print("PLEASE GOD PLEASE")
+//                }
+                
+//                if child.value is typeString {
+//                    print("asdf")
+//                }
+//
+
+//                var klassName = NSStringFromClass(child.value.dynamicType)
+//                var klass = NSClassFromString("Swift.\(child.value.dynamicType)")
+//                
+//                print("Name: \(child.value.dynamicType) class: \(klass)")
+                
+                if let property = switched as? OptionalProperty {
                     value = property.property()
-                } else if let property = child.value as? Property {
+                } else if let property = switched as? Property {
                     value = property
                 } else {
                     throw SilverError.TypeDoesNotConformToProperty(type: child.value.dynamicType)

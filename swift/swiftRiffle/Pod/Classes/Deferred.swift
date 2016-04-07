@@ -11,7 +11,6 @@
 import Foundation
 import Mantle
 
-
 public class Deferred {
     // Callback and Errback ids
     var cb: UInt64 = 0
