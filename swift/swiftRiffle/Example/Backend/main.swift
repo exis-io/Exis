@@ -9,7 +9,7 @@
 
 import Riffle
 
-Riffle.setLogLevelDebug()
+Riffle.setLogLevelInfo()
 Riffle.setFabricDev()
 
 print("Starting Tests")

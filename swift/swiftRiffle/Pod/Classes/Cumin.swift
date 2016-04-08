@@ -20,6 +20,7 @@ func <- <T: Property> (t:T.Type, object: Any) -> T {
     
     #if os(OSX)
         return T.unsafeDeserialize(object, t: T.self)!
+        //return recode(T.deserialize(object))
     #else
         return T.deserialize(object) as! T
     #endif

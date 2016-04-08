@@ -123,22 +123,7 @@ extension Int: Property, Convertible {
     }
     
     public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
-        var ret: Int? = nil
-        
-        if let x = from as? Int {
-            ret = x
-        } else if let x = from as? String {
-            ret = Int(x)
-        } else if let x = from as? Double {
-            ret = Int(x)
-        }
-        
-        if let ret = ret {
-            return unsafeBitCast(ret, t.self)
-        }
-        
-        print("WARN: Convertible was not able to complete for type \(self) with value \(from)")
-        return nil
+      return recode(deserialize(switchTypes(from)), t.self)
     }
 
     public static func representation() -> Any {
@@ -162,7 +147,7 @@ extension String: Property, Convertible {
     }
     
     public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
-        return recode(from, t.self)
+        return recode(deserialize(switchTypes(from)), t.self)
     }
 
     public static func representation() -> Any {
@@ -186,7 +171,7 @@ extension Double: Property, Convertible {
     }
     
     public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
-        return recode(from, t.self)
+        return recode(deserialize(switchTypes(from)), t.self)
     }
 
     public static func representation() -> Any {
@@ -212,7 +197,7 @@ extension Float: Property, Convertible {
     }
     
     public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
-        return recode(from, t.self)
+        return recode(deserialize(switchTypes(from)), t.self)
     }
 
     public static func representation() -> Any {
@@ -236,7 +221,7 @@ extension Bool: Property, Convertible {
     }
     
     public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
-        return recode(from, t.self)
+        return recode(deserialize(switchTypes(from)), t.self)
     }
 
     public static func representation() -> Any {
@@ -272,7 +257,7 @@ extension Array : Property, BaseConvertible {
             return ret
         }
         
-        // TOOD: This is a silent error case!
+        Riffle.warn("Array deserialize not given an array!")
         return from
     }
     
@@ -290,12 +275,47 @@ extension Array : Property, BaseConvertible {
     }
     
     public func unsafeSerialize() -> Any {
-        // TODO: have to apply to generic (most likely) and recursively
-        return unsafeBitCast(self, Array.self)
+        // TODO: Apply recursive serialization here
+        var ret: [Any] = []
+        
+        for child in self {
+            var switched = switchTypes(child)
+            if let convert = switched as? Convertible {
+                ret.append(convert.serialize())
+            }
+        }
+        
+        return ret
     }
     
     public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
-        return unsafeBitCast(from, t.self)
+        if let arr = from as? [Any] {
+            var ret: [Element] = []
+            
+            // Reconstruct values within the array
+            for element in arr {
+                let switchedType = switchTypeObject(Generator.Element.self)
+                
+                if let child = switchedType as? Convertible.Type {
+                    ret.append(child.unsafeDeserialize(element, t: Generator.Element.self)!)
+                }
+                
+//                print("Have internal array type \(Generator.Element.self)")
+//                
+//                
+//                if let child = Generator.Element.self as? Convertible.Type {
+//                    ret.append(child.deserialize(element) as! Element)
+//                }
+            }
+            
+//            return ret as! T
+            return unsafeBitCast(ret, t.self)
+//            return recode(ret, )
+        }
+        
+        Riffle.warn("Array unsafeDeserialize not given an array!")
+        return from as! T
+//        return unsafeBitCast(from, t.self)
     }
 
     public static func representation() -> Any {
@@ -325,7 +345,7 @@ extension Array : Property, BaseConvertible {
             Riffle.warn("Unable to derive representation of array! Type: \(self), returning \(ret)")
         #endif
         
-        return ret
+        return [ret]
     }
 }
 

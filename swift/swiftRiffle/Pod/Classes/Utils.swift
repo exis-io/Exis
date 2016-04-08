@@ -73,13 +73,12 @@ func serializeArguments(args: [Any]) -> [Any] {
 }
 
 func serializeArguments(args: [Property]) -> [Any] {
-    var ret: [Any] = []
+    #if os(OSX)
+        return args.map { $0.unsafeSerialize() }
+    #else
+        return args.map { $0.serialize() }
+    #endif
     
-    for a in args {
-        ret.append(a.serialize())
-    }
-    
-    return ret
 }
 
 func serializeResults() -> Any {
@@ -99,11 +98,11 @@ func serializeResults(results: Property...) -> Any {
     #endif
 }
 
-func switchTypes(x: Any) -> Any {
+func switchTypes<A>(x: A) -> Any {
     // Converts app types to riffle types because of the osx bug (see above)
     
     #if os(OSX)
-        switch "\(x.dynamicType)" {
+        switch "\(A.self)" {
         case "Int":
             return recode(x, Int.self)
         case "String":
@@ -123,18 +122,67 @@ func switchTypes(x: Any) -> Any {
     #endif
 }
 
-func recode<A, T>(var value: A, _ t: T.Type) -> T {
+func switchTypeObject(x: Any) -> Any.Type {
+    // Same as the function above, but operates on types
+    // Converts app types to riffle types because of the osx bug (see above)
+    
+    #if os(OSX)
+        switch "\(x)" {
+        case "Int":
+            return Int.self
+        case "String":
+            return String.self
+        case "Double":
+            return Double.self
+        case "Float":
+            return Float.self
+        case "Bool":
+            return Bool.self
+        default:
+            Riffle.warn("Unable to switch out type object: \(x)")
+            return x as! Any.Type
+        }
+    #else
+        return x as Any.Type
+    #endif
+    
+}
+
+func encode<A>(var v:A) -> NSData {
+    // Returns the bytes from a swift variable
+    return withUnsafePointer(&v) { p in
+//        print("Original: \(p)")
+        return NSData(bytes: p, length: sizeof(A))
+    }
+}
+
+
+func recode<A, T>(value: A, _ t: T.Type) -> T {
     // encode and decode a value, magically transforming its type to the appropriate version
-    // This is an OSX bandaid
-    let data = withUnsafePointer(&value) { p in
-        NSData(bytes: p, length: sizeof(A))
+    // This is a workaround for OSX crap, again
+    
+    // copy the value as to not disturb the original
+    let copy = value
+    let data = encode(copy)
+    
+    if T.self == Bool.self {
+        let force = unsafeBitCast(value, Bool.self)
+        return force as! T
+    }
+    
+    if T.self == String.self  {
+        let converter = NSString(data: data, encoding: NSUTF8StringEncoding) as! String
+        return converter as! T
     }
     
     let pointer = UnsafeMutablePointer<T>.alloc(sizeof(T.Type))
+    
     data.getBytes(pointer)
-    return pointer.move()
+    var ret: T = pointer.move()
+    
+    print("Converted to \(t). Final: \(ret.dynamicType) \(ret)")
+    return ret
 }
-
 
 
 // Makes configuration calls a little cleaner when accessed from the top level 

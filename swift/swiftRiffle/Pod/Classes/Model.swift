@@ -89,60 +89,9 @@ extension Model: Convertible {
     }
     
     public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
-        // This is temporary-- refactor needed
-        guard let json = from as? [String: Any] else {
-            print("WARN: model wasn't given a json! Instead received type: \(from.dynamicType)")
-            return nil
-        }
-        
-        var ret = self.init()
-        
-        _ = ret.propertyNames().map {
-            //print("Json: \(json[$0]): \(json[$0].dynamicType)")
-            //print("Repr: \(ret[$0]!.dynamicType.representation())")
-            let repr = "\(ret[$0]!.dynamicType.representation())"
-            
-            // JSON is returning ints as doubles. Correct that and this isn't needed: Json.swift line 882
-            if repr == "int" {
-                if let value = json[$0] as? Double {
-                    ret[$0] = Int(value)
-                }
-                else if let value = json[$0] as? Float {
-                    ret[$0] = Int(value)
-                }
-                else {
-                    Riffle.warn("Model deserialization unable to cast property \(json[$0]): \(json[$0].dynamicType)")
-                }
-            }
-                
-                // Silvery cant understand assignments where the asigner is an AnyObject, so
-            else if let value = json[$0] as? Bool where "\(repr)" == "bool" {
-                ret[$0] = value
-            }
-            else if let value = json[$0] as? Double where "\(repr)" == "double" || "\(repr)" == "float" {
-                ret[$0] = value
-            }
-            else if let value = json[$0] as? Float where "\(repr)" == "double" || "\(repr)" == "float" {
-                ret[$0] = value
-            }
-            else if let value = json[$0] as? Int where "\(repr)" == "int" {
-                ret[$0] = value
-            }
-            else if let value = json[$0] as? String {
-                ret[$0] = value
-            }
-            else if let value = json[$0] as? [Any] {
-                ret[$0] = value
-            }
-            else if let value = json[$0] as? [String: Any] {
-                ret[$0] = value
-            }
-            else {
-                Riffle.warn("Model deserialization unable to cast property \(json[$0]): \(json[$0].dynamicType)")
-            }
-        }
-        
-        return unsafeBitCast(ret, t.self)
+        let ret = deserialize(from)
+        return ret as! T
+//        return unsafeBitCast(ret, t.self)
     }
     
     public func serialize() -> Any {
