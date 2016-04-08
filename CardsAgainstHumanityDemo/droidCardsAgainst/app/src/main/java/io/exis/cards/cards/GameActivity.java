@@ -301,6 +301,7 @@ public class GameActivity extends Activity {
         for(int i=0; i<5; i++){
             if(i != c){
                 cardViews.get(i).setBackgroundColor(Color.WHITE);
+                cardViews.get(i).setTextColor(Color.BLACK);
             }
         }
     }//end setBackgrounds method
@@ -348,7 +349,7 @@ public class GameActivity extends Activity {
                 case "picking":                             //next phase will be scoring
                     runOnUiThread(() -> infoText.setText(R.string.scoringInfo));
                     runOnUiThread(() -> resetBackgrounds());
-                    runOnUiThread(() -> refreshCards(player.hand()));
+//                    runOnUiThread(() -> refreshCards(player.hand()));
                     phase = "scoring";
                     setNextTimer("scoring");
                     break;

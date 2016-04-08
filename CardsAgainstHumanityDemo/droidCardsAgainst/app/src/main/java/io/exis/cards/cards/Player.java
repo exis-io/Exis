@@ -190,7 +190,10 @@ public class Player {
                         activity.currentCzar = currentCzar;
                         player.question = questionText;
                         player.duration = duration;
-                        activity.runOnUiThread(activity::setQuestion);
+                        activity.runOnUiThread(()->{
+                            activity.setQuestion();
+                            activity.refreshCards(hand);
+                        });
                     });
 
             riffle.subscribe("picking", String.class, Integer.class,
