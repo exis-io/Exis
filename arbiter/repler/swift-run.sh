@@ -3,14 +3,14 @@
 cat >./main/main.swift <<EOF
 import Riffle
 
-Riffle.SetFabric("$WS_URL")
+Riffle.setFabric("$WS_URL")
 $EXIS_SETUP
 
 func print(msg: String) {
-    Riffle.ApplicationLog(msg)
+    Riffle.application(msg)
 }
 
-class Tester: Riffle.Domain, Riffle.Delegate  {
+class Tester: Domain {
     override func onJoin() {
         var backend = self
 
@@ -20,7 +20,6 @@ class Tester: Riffle.Domain, Riffle.Delegate  {
 }
 
 let tester = Tester(name: "${DOMAIN}.example")
-tester.delegate = tester
 tester.join()
 EOF
 

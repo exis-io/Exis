@@ -53,7 +53,7 @@ dependencies {
 
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'me.tatarka:gradle-retrolambda:3.2.5'
-    compile 'org.immutables:gson:2.1.8'
+    compile 'com.google.code.gson:gson:2.6.2'
     compile 'net.jodah:typetools:0.4.4'
 }
 

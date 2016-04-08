@@ -81,7 +81,7 @@ android:
 	@echo "Building core..."
 	@gomobile bind -target=android github.com/exis-io/core/androidMantle
 
-	# Doesn't use the AAR directly because it screws with distribution
+	@# Doesn't use the AAR directly because it screws with distribution
 	@echo "Moving mantle"
 	@rm -rf .tmp/android
 	@mkdir -p .tmp/android
@@ -90,8 +90,8 @@ android:
 
 	@rm -f java/droidRiffle/riffle/libs/classes.jar
 	@rm -rf java/droidRiffle/riffle/src/main/jniLibs
-	mv .tmp/android/classes.jar java/droidRiffle/riffle/libs/classes.jar
-	mv .tmp/android/jni java/droidRiffle/riffle/src/main/jniLibs
+	@mv .tmp/android/classes.jar java/droidRiffle/riffle/libs/classes.jar
+	@mv .tmp/android/jni java/droidRiffle/riffle/src/main/jniLibs
 
 python: 
 	gopy bind github.com/exis-io/core/pyMantle
