@@ -1,4 +1,4 @@
-//
+
 //  Extensions.swift
 //  SwiftRiffle
 //
@@ -18,13 +18,11 @@ import Foundation
 // All properties implement Convertible, but Models react differently 
 // This allows each property to handle its construction differently
 public protocol Convertible {
-    // Return a constructed form of this object
+    func serialize() -> Any
     static func deserialize(from: Any) -> Any
     
-    // Deserialize, but also coerce output to the given type
-    static func brutalize<T>(from: Any, t: T.Type) -> T?
-    
-    func serialize() -> Any
+    func unsafeSerialize() -> Any
+    static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T?
     
     // Returns a core representation of this type
     static func representation() -> Any
@@ -39,7 +37,7 @@ extension BaseConvertible {
         return from
     }
     
-    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
+    public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
         return unsafeBitCast(from, t.self)
     }
 
@@ -48,6 +46,10 @@ extension BaseConvertible {
     }
     
     public func serialize() -> Any {
+        return self
+    }
+    
+    public func unsafeSerialize() -> Any {
         return self
     }
 }
@@ -103,11 +105,9 @@ extension Optional : OptionalProperty {
     }
 }
 
-// Deprecated or not present in swift 2.2
-// extension AutoreleasingUnsafeMutablePointer : Property, BaseConvertible {}
-
 extension Int: Property, Convertible {
     public func serialize() -> Any { return self }
+    public func unsafeSerialize() -> Any { return unsafeBitCast(self, Int.self) }
     
     public static func deserialize(from: Any) -> Any {
         if let x = from as? Int {
@@ -122,23 +122,8 @@ extension Int: Property, Convertible {
         return from
     }
     
-    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
-        var ret: Int? = nil
-        
-        if let x = from as? Int {
-            ret = x
-        } else if let x = from as? String {
-            ret = Int(x)
-        } else if let x = from as? Double {
-            ret = Int(x)
-        }
-        
-        if let ret = ret {
-            return unsafeBitCast(ret, t.self)
-        }
-        
-        print("WARN: Convertible was not able to complete for type \(self) with value \(from)")
-        return nil
+    public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
+      return recode(deserialize(switchTypes(from)), t.self)
     }
 
     public static func representation() -> Any {
@@ -148,6 +133,7 @@ extension Int: Property, Convertible {
 
 extension String: Property, Convertible {
     public func serialize() -> Any { return self }
+    public func unsafeSerialize() -> Any { return unsafeBitCast(self, String.self) }
     
     public static func deserialize(from: Any) -> Any {
         if let x = from as? String {
@@ -160,8 +146,8 @@ extension String: Property, Convertible {
         return from
     }
     
-    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
-        return unsafeBitCast(from, t.self)
+    public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
+        return recode(deserialize(switchTypes(from)), t.self)
     }
 
     public static func representation() -> Any {
@@ -171,6 +157,7 @@ extension String: Property, Convertible {
 
 extension Double: Property, Convertible {
     public func serialize() -> Any { return self }
+    public func unsafeSerialize() -> Any { return unsafeBitCast(self, Double.self) }
     
     public static func deserialize(from: Any) -> Any {
         if let x = from as? Double {
@@ -183,8 +170,8 @@ extension Double: Property, Convertible {
         return from
     }
     
-    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
-        return unsafeBitCast(from, t.self)
+    public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
+        return recode(deserialize(switchTypes(from)), t.self)
     }
 
     public static func representation() -> Any {
@@ -194,6 +181,7 @@ extension Double: Property, Convertible {
 
 extension Float: Property, Convertible {
     public func serialize() -> Any { return self }
+    public func unsafeSerialize() -> Any { return unsafeBitCast(self, Float.self) }
     
     public static func deserialize(from: Any) -> Any {
         if let x = from as? Float {
@@ -208,8 +196,8 @@ extension Float: Property, Convertible {
         return from
     }
     
-    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
-        return unsafeBitCast(from, t.self)
+    public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
+        return recode(deserialize(switchTypes(from)), t.self)
     }
 
     public static func representation() -> Any {
@@ -219,6 +207,7 @@ extension Float: Property, Convertible {
 
 extension Bool: Property, Convertible {
     public func serialize() -> Any { return self }
+    public func unsafeSerialize() -> Any { return unsafeBitCast(self, Bool.self) }
     
     public static func deserialize(from: Any) -> Any {
         if let x = from as? Bool {
@@ -231,14 +220,25 @@ extension Bool: Property, Convertible {
         return from
     }
     
-    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
-        return unsafeBitCast(from, t.self)
+    public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
+        return recode(deserialize(switchTypes(from)), t.self)
     }
 
     public static func representation() -> Any {
         return "bool"
     }
 }
+
+// Might work, but don't have time for it now
+//protocol Thing: Property, Convertible {}
+//extension Array: Thing {}
+//
+//
+//extension CollectionType where Self: Thing, Generator.Element : Convertible {
+//    internal static func quietRepresentation() -> Any {
+//        return Generator.Element.representation()
+//    }
+//}
 
 // TODO: Dictionaries
 extension Array : Property, BaseConvertible {
@@ -257,7 +257,7 @@ extension Array : Property, BaseConvertible {
             return ret
         }
         
-        // TOOD: This is a silent error case!
+        Riffle.warn("Array deserialize not given an array!")
         return from
     }
     
@@ -272,20 +272,71 @@ extension Array : Property, BaseConvertible {
         }
         
         return ret
-//        return self
     }
     
-    public static func brutalize<T>(from: Any, t: T.Type) -> T? {
-        return unsafeBitCast(from, t.self)
+    public func unsafeSerialize() -> Any {
+        // TODO: Apply recursive serialization here
+        var ret: [Any] = []
+        
+        for child in self {
+            var switched = switchTypes(child)
+            if let convert = switched as? Convertible {
+                ret.append(convert.serialize())
+            }
+        }
+        
+        return ret
+    }
+    
+    public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
+        if let arr = from as? [Any] {
+            var ret: [Element] = []
+            
+            // Reconstruct values within the array
+            for element in arr {
+                let switchedType = switchTypeObject(Generator.Element.self)                
+                if let child = switchedType as? Convertible.Type {
+                    ret.append(child.unsafeDeserialize(element, t: Generator.Element.self)!)
+                }
+            }
+            
+//            return ret as! T
+            return unsafeBitCast(ret, t.self)
+        }
+        
+        Riffle.warn("Array unsafeDeserialize not given an array!")
+        return from as! T
+//        return unsafeBitCast(from, t.self)
     }
 
     public static func representation() -> Any {
+        
         if let child = Generator.Element.self as? Convertible.Type {
             return [child.representation()]
         }
         
-        Riffle.warn("Unable to derive representation of array! Type: \(self)")
-        return "[\(Generator.Element.self)]"
+        // OSX hack for primitive arrays, arrays of models not possible
+        var ret = "\(Generator.Element.self)"
+        #if os(OSX)
+            switch ret {
+            case "Int":
+                ret = "int"
+            case "String":
+                ret = "str"
+            case "Double":
+                ret = "double"
+            case "Float":
+                ret = "float"
+            case "Bool":
+                ret = "bool"
+            default:
+                break
+            }
+        #else
+            Riffle.warn("Unable to derive representation of array! Type: \(self), returning \(ret)")
+        #endif
+        
+        return [ret]
     }
 }
 
