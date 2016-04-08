@@ -14,9 +14,6 @@ Riffle.setFabricDev()
 
 print("Starting Tests")
 
-//typeString = String.self
-//genericBullshit("")
-
 // This is faking two seperate connections by creating another top level domain
 // Not intended for regular use
 let app = Domain(name: "xs.tester")

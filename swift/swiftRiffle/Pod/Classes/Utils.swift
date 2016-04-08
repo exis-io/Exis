@@ -162,6 +162,8 @@ func recode<A, T>(value: A, _ t: T.Type) -> T {
     // encode and decode a value, magically transforming its type to the appropriate version
     // This is a workaround for OSX crap, again
     
+    // print("From \(A.self) \(value) to \(T.self)")
+    
     if T.self == Bool.self {
         func encodeBool<A>(var v:A) -> Bool {
             // Returns the bytes from a swift variable
@@ -173,27 +175,23 @@ func recode<A, T>(value: A, _ t: T.Type) -> T {
         }
 
         return encodeBool(value) as! T
-//        let force = unsafeBitCast(value, Bool.self)
-//        return force as! T
     }
     
     if T.self == String.self  {
+        
+        // Grab the pointer, copy out the bytes into a new string, and return it
         func encodeString<A>(var v:A) -> String {
-            print("before conversion \(v)")
-            
-            // Returns the bytes from a swift variable
             return withUnsafePointer(&v) { p in
+                let s = unsafeBitCast(p, UnsafePointer<String>.self)
                 
-                let s = String(unsafeBitCast(p, UnsafePointer<String>.self))
-                let see = s.cString()
-                let ret = String.fromCString(see)
-
-                return ret!
+                let dat = s.memory.dataUsingEncoding(NSUTF8StringEncoding)!
+                let ret = NSString(data: dat, encoding: NSUTF8StringEncoding)
+                
+                return ret as! String
             }
         }
         
         let r = encodeString(value)
-        print("String conversion from \(value) to \(r)")
         return r as! T
     }
     
@@ -204,10 +202,7 @@ func recode<A, T>(value: A, _ t: T.Type) -> T {
     let pointer = UnsafeMutablePointer<T>.alloc(sizeof(T.Type))
     
     data.getBytes(pointer)
-    var ret: T = pointer.move()
-    
-//    print("Converted to \(t). Final: \(ret.dynamicType) \(ret)")
-    return ret
+    return pointer.move()
 }
 
 

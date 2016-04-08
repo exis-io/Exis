@@ -300,18 +300,10 @@ extension Array : Property, BaseConvertible {
                 if let child = switchedType as? Convertible.Type {
                     ret.append(child.unsafeDeserialize(element, t: Generator.Element.self)!)
                 }
-                
-//                print("Have internal array type \(Generator.Element.self)")
-//                
-//                
-//                if let child = Generator.Element.self as? Convertible.Type {
-//                    ret.append(child.deserialize(element) as! Element)
-//                }
             }
             
 //            return ret as! T
             return unsafeBitCast(ret, t.self)
-//            return recode(ret, )
         }
         
         Riffle.warn("Array unsafeDeserialize not given an array!")
