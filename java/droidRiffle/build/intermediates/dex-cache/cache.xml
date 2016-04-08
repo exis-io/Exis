@@ -1,2 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" />
+<items version="2" >
+
+    <item
+        jar="/home/damouse/code/merged/riffle/java/droidRiffle/app/build/intermediates/exploded-aar/com.exis.riffle/riffle/0.2.44/jars/libs/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="a40eae7088cb52688e0987bbf67fbcd835a0e8f3">
+        <dex dex="/home/damouse/code/merged/riffle/java/droidRiffle/app/build/intermediates/pre-dexed/debug/riffle-0.2.44-jars_20012b2f7f923b4f88b21dd2eee3e434ee923328.jar" />
+    </item>
+    <item
+        jar="/home/damouse/code/merged/riffle/java/droidRiffle/app/build/intermediates/exploded-aar/com.exis.riffle/riffle/0.2.44/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="310ca78e8c32beaf82a9042749149b4ea4fe3eaa">
+        <dex dex="/home/damouse/code/merged/riffle/java/droidRiffle/app/build/intermediates/pre-dexed/debug/com.exis.riffle-riffle-0.2.44_5fb233c59767c9a9f074b4ece0c67dc6bd760d02.jar" />
+    </item>
+
+</items>

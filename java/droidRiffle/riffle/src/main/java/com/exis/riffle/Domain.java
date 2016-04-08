@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.exis.riffle.cumin.Cumin;
 import com.exis.riffle.cumin.Handler;
+import com.google.gson.reflect.TypeToken;
 
 import java.math.BigInteger;
 
