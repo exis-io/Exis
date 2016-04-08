@@ -102,7 +102,8 @@ func switchTypes<A>(x: A) -> Any {
     // Converts app types to riffle types because of the osx bug (see above)
     
     #if os(OSX)
-        switch "\(A.self)" {
+        // return recode(x, switchTypeObject(x))
+        switch "\(x.dynamicType)" {
         case "Int":
             return recode(x, Int.self)
         case "String":
@@ -122,7 +123,7 @@ func switchTypes<A>(x: A) -> Any {
     #endif
 }
 
-func switchTypeObject(x: Any) -> Any.Type {
+func switchTypeObject<A>(x: A) -> Any.Type {
     // Same as the function above, but operates on types
     // Converts app types to riffle types because of the osx bug (see above)
     
@@ -151,8 +152,8 @@ func switchTypeObject(x: Any) -> Any.Type {
 func encode<A>(var v:A) -> NSData {
     // Returns the bytes from a swift variable
     return withUnsafePointer(&v) { p in
-//        print("Original: \(p)")
-        return NSData(bytes: p, length: sizeof(A))
+        // print("Original: \(p), type: \(A.self), size: \(strideof(A.self))")
+        return NSData(bytes: p, length: strideof(A))
     }
 }
 
@@ -161,26 +162,51 @@ func recode<A, T>(value: A, _ t: T.Type) -> T {
     // encode and decode a value, magically transforming its type to the appropriate version
     // This is a workaround for OSX crap, again
     
-    // copy the value as to not disturb the original
-    let copy = value
-    let data = encode(copy)
-    
     if T.self == Bool.self {
-        let force = unsafeBitCast(value, Bool.self)
-        return force as! T
+        func encodeBool<A>(var v:A) -> Bool {
+            // Returns the bytes from a swift variable
+            return withUnsafePointer(&v) { p in
+                let s = unsafeBitCast(p, UnsafePointer<Bool>.self)
+                
+                return s.memory == true
+            }
+        }
+
+        return encodeBool(value) as! T
+//        let force = unsafeBitCast(value, Bool.self)
+//        return force as! T
     }
     
     if T.self == String.self  {
-        let converter = NSString(data: data, encoding: NSUTF8StringEncoding) as! String
-        return converter as! T
+        func encodeString<A>(var v:A) -> String {
+            print("before conversion \(v)")
+            
+            // Returns the bytes from a swift variable
+            return withUnsafePointer(&v) { p in
+                
+                let s = String(unsafeBitCast(p, UnsafePointer<String>.self))
+                let see = s.cString()
+                let ret = String.fromCString(see)
+
+                return ret!
+            }
+        }
+        
+        let r = encodeString(value)
+        print("String conversion from \(value) to \(r)")
+        return r as! T
     }
+    
+    // copy the value as to not disturb the original
+    let copy = value
+    let data = encode(copy)
     
     let pointer = UnsafeMutablePointer<T>.alloc(sizeof(T.Type))
     
     data.getBytes(pointer)
     var ret: T = pointer.move()
     
-    print("Converted to \(t). Final: \(ret.dynamicType) \(ret)")
+//    print("Converted to \(t). Final: \(ret.dynamicType) \(ret)")
     return ret
 }
 

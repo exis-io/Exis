@@ -32,21 +32,21 @@ class Receiver: Domain {
         // Pub Sub Success Cases
         
         // No arguments
-        subscribe("subscribeNothing") {
-            print("SUCCESS --- 1-1")
-        }
-
-        // Primitive Types
-        subscribe("subscribePrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
-            print("SUCCESS --- 1-2")
-            //print("1 : Sub receiving single types:", a, b, c, d, e)
-            
-            assert(a == 1)
-            assert(b == 2.2)
-            assert(c == 3.3)
-            assert(d == "4")
-            assert(e == true)
-        }
+//        subscribe("subscribeNothing") {
+//            print("SUCCESS --- 1-1")
+//        }
+//
+//        // Primitive Types
+//        subscribe("subscribePrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
+//            print("SUCCESS --- 1-2")
+//            //print("1 : Sub receiving single types:", a, b, c, d, e)
+//            
+//            assert(a == 1)
+//            assert(b == 2.2)
+//            assert(c == 3.3)
+//            assert(d == "4")
+//            assert(e == true)
+//        }
 
         // Arrys of simple types
         subscribe("subscribeArrays") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
@@ -56,7 +56,7 @@ class Receiver: Domain {
             assert(a == [1, 2])
             assert(b == [2.2, 3.3])
             assert(c == [4.4, 5.5])
-//            assert(d == ["6", "7"])
+            assert(d == ["6", "7"])
             assert(e == [true, false])
         }
 
