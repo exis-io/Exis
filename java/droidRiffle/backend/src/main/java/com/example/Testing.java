@@ -1,5 +1,17 @@
 package com.example;
 
+import java.lang.reflect.Field;
+
+class Base {
+    int b;
+    public boolean a;
+}
+
+class Dog extends Base {
+    String c;
+    private double d;
+}
+
 /**
  * TODOLIST
  *      Pass cumin args down to the core
@@ -14,6 +26,12 @@ public class Testing {
     public static void main(String[] args) {
         log("Hello, world!");
 
+        for (Field f : Base.class.getDeclaredFields())  {
+            log("Field: " + f.toString());
+        }
 
+        for (Field f : Dog.class.getDeclaredFields())  {
+            log("Field: " + f.toString());
+        }
     }
 }

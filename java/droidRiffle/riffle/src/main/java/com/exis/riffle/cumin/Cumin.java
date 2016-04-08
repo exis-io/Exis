@@ -3,6 +3,8 @@ package com.exis.riffle.cumin;
 import com.exis.riffle.Model;
 import com.exis.riffle.Riffle;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,30 +41,51 @@ public class Cumin {
 	 * Return the representation of the class objects in a format suitable for Cumin in the core.
 	 *
 	 */
-	public static Object[] representation(Class... classes) {
+	public static Object[] representation(Class<?>... classes) {
 		List<Object> ret = new ArrayList();
 
 		for (Class c : classes) {
-			if (c == Integer.class)
-				ret.add("int");
-			else if (c == Boolean.class)
-				ret.add("bool");
-			else if (c == String.class)
-				ret.add("str");
-			else if (c == Float.class)
-				ret.add("float");
-			else if (c == Double.class)
-				ret.add("double");
-			else if (Model.class.isAssignableFrom(c)) {
-				Model model = Model.class.cast(c);
-				ret.add(model.representation());
-			} else {
-				// TODO: throw an exception and fail the domain operation
-				Riffle.warn("Class " + c  + " is not a valid type for the given handler!");
+			Object repr = singleRepresentation(c);
+
+			if (repr != null) {
+				ret.add(repr);
 			}
 		}
 
 		return ret.toArray();
+	}
+
+	// TODO: merge this into the above method, and only return the array if there's more than a single item
+	public static Object singleRepresentation(Class<?> c) {
+		if (c == Integer.class || c == int.class)
+			return "int";
+		else if (c == Boolean.class || c == boolean.class)
+			return "bool";
+		else if (c == String.class)
+			return "str";
+		else if (c == Float.class || c == float.class)
+			return "float";
+		else if (c == Double.class || c == double.class)
+			return "double";
+		else if (Model.class.isAssignableFrom(c)) {
+			try {
+
+				Method m = c.getMethod("representation", Class.class);
+				Object r = m.invoke(null, c);
+				return r;
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		} else {
+			// TODO: throw an exception and fail the domain operation
+			Riffle.error("Class " + c  + " is not a valid type for handler!");
+		}
+
+		return null;
 	}
 
 	//

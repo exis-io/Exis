@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.exis.riffle.Domain;
+import com.exis.riffle.Model;
 import com.exis.riffle.Riffle;
 
 import java.lang.reflect.Type;
@@ -74,6 +75,10 @@ class Receiver extends Domain {
             Log.d(TAG, "I have a publish: " + a);
         });
 
+        subscribe("subscribeModels", Dog.class, (a) -> {
+            Log.d(TAG, "I have a dog: " + a);
+        });
+
         register("reg", String.class, String.class, (name) -> {
             Log.d(TAG, "I have a call from: " + name);
             return "Hey. caller!";
@@ -114,11 +119,6 @@ class Sender extends Domain {
         });
     }
 }
-
-
-
-
-
 
 
 
