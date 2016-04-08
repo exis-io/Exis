@@ -1,6 +1,10 @@
 package com.exis.riffle.cumin;
 
+import com.exis.riffle.Model;
 import com.exis.riffle.Riffle;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by damouse on 2/11/2016.
@@ -31,63 +35,94 @@ public class Cumin {
 	}
 
 
+	/**
+	 * Return the representation of the class objects in a format suitable for Cumin in the core.
+	 *
+	 */
+	public static Object[] representation(Class... classes) {
+		List<Object> ret = new ArrayList();
+
+		for (Class c : classes) {
+			if (c == Integer.class)
+				ret.add("int");
+			else if (c == Boolean.class)
+				ret.add("bool");
+			else if (c == String.class)
+				ret.add("str");
+			else if (c == Float.class)
+				ret.add("float");
+			else if (c == Double.class)
+				ret.add("double");
+			else if (Model.class.isAssignableFrom(c)) {
+				Model model = Model.class.cast(c);
+				ret.add(model.representation());
+			} else {
+				// TODO: throw an exception and fail the domain operation
+				Riffle.warn("Class " + c  + " is not a valid type for the given handler!");
+			}
+		}
+
+		return ret.toArray();
+	}
+
 	//
 	//
 	// Start Generic Shotgun
-	public static  Wrapped cuminicate(Handler.ZeroZero fn) {
-		return (q) -> { fn.run(); return null; };
-	}
 
-	public static <A> Wrapped cuminicate(Class<A> a, Handler.OneZero<A> fn) {
-		return (q) -> { fn.run(convert(a, q[0])); return null; };
-	}
+public static  Wrapped cuminicate(Handler.ZeroZero fn) {
+    return (q) -> { fn.run(); return null; };
+}
 
-	public static <A, B> Wrapped cuminicate(Class<A> a, Class<B> b, Handler.TwoZero<A, B> fn) {
-		return (q) -> { fn.run(convert(a, q[0]), convert(b, q[1])); return null; };
-	}
+public static <A> Wrapped cuminicate(Class<A> a, Handler.OneZero<A> fn) {
+    return (q) -> { fn.run(convert(a, q[0])); return null; };
+}
 
-	public static <A, B, C> Wrapped cuminicate(Class<A> a, Class<B> b, Class<C> c, Handler.ThreeZero<A, B, C> fn) {
-		return (q) -> { fn.run(convert(a, q[0]), convert(b, q[1]), convert(c, q[2])); return null; };
-	}
+public static <A, B> Wrapped cuminicate(Class<A> a, Class<B> b, Handler.TwoZero<A, B> fn) {
+    return (q) -> { fn.run(convert(a, q[0]), convert(b, q[1])); return null; };
+}
 
-	public static <A, B, C, D> Wrapped cuminicate(Class<A> a, Class<B> b, Class<C> c, Class<D> d, Handler.FourZero<A, B, C, D> fn) {
-		return (q) -> { fn.run(convert(a, q[0]), convert(b, q[1]), convert(c, q[2]), convert(d, q[3])); return null; };
-	}
+public static <A, B, C> Wrapped cuminicate(Class<A> a, Class<B> b, Class<C> c, Handler.ThreeZero<A, B, C> fn) {
+    return (q) -> { fn.run(convert(a, q[0]), convert(b, q[1]), convert(c, q[2])); return null; };
+}
 
-	public static <A, B, C, D, E> Wrapped cuminicate(Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<E> e, Handler.FiveZero<A, B, C, D, E> fn) {
-		return (q) -> { fn.run(convert(a, q[0]), convert(b, q[1]), convert(c, q[2]), convert(d, q[3]), convert(e, q[4])); return null; };
-	}
+public static <A, B, C, D> Wrapped cuminicate(Class<A> a, Class<B> b, Class<C> c, Class<D> d, Handler.FourZero<A, B, C, D> fn) {
+    return (q) -> { fn.run(convert(a, q[0]), convert(b, q[1]), convert(c, q[2]), convert(d, q[3])); return null; };
+}
 
-	public static <A, B, C, D, E, F> Wrapped cuminicate(Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<E> e, Class<F> f, Handler.SixZero<A, B, C, D, E, F> fn) {
-		return (q) -> { fn.run(convert(a, q[0]), convert(b, q[1]), convert(c, q[2]), convert(d, q[3]), convert(e, q[4]), convert(f, q[5])); return null; };
-	}
+public static <A, B, C, D, E> Wrapped cuminicate(Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<E> e, Handler.FiveZero<A, B, C, D, E> fn) {
+    return (q) -> { fn.run(convert(a, q[0]), convert(b, q[1]), convert(c, q[2]), convert(d, q[3]), convert(e, q[4])); return null; };
+}
 
-	public static <R> Wrapped cuminicate(Class<R> r, Handler.ZeroOne<R> fn) {
-		return (q) -> { return fn.run(); };
-	}
+public static <A, B, C, D, E, F> Wrapped cuminicate(Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<E> e, Class<F> f, Handler.SixZero<A, B, C, D, E, F> fn) {
+    return (q) -> { fn.run(convert(a, q[0]), convert(b, q[1]), convert(c, q[2]), convert(d, q[3]), convert(e, q[4]), convert(f, q[5])); return null; };
+}
 
-	public static <A, R> Wrapped cuminicate(Class<A> a, Class<R> r, Handler.OneOne<A, R> fn) {
-		return (q) -> { return fn.run(convert(a, q[0])); };
-	}
+public static <R> Wrapped cuminicate(Class<R> r, Handler.ZeroOne<R> fn) {
+    return (q) -> { return fn.run(); };
+}
 
-	public static <A, B, R> Wrapped cuminicate(Class<A> a, Class<B> b, Class<R> r, Handler.TwoOne<A, B, R> fn) {
-		return (q) -> { return fn.run(convert(a, q[0]), convert(b, q[1])); };
-	}
+public static <A, R> Wrapped cuminicate(Class<A> a, Class<R> r, Handler.OneOne<A, R> fn) {
+    return (q) -> { return fn.run(convert(a, q[0])); };
+}
 
-	public static <A, B, C, R> Wrapped cuminicate(Class<A> a, Class<B> b, Class<C> c, Class<R> r, Handler.ThreeOne<A, B, C, R> fn) {
-		return (q) -> { return fn.run(convert(a, q[0]), convert(b, q[1]), convert(c, q[2])); };
-	}
+public static <A, B, R> Wrapped cuminicate(Class<A> a, Class<B> b, Class<R> r, Handler.TwoOne<A, B, R> fn) {
+    return (q) -> { return fn.run(convert(a, q[0]), convert(b, q[1])); };
+}
 
-	public static <A, B, C, D, R> Wrapped cuminicate(Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<R> r, Handler.FourOne<A, B, C, D, R> fn) {
-		return (q) -> { return fn.run(convert(a, q[0]), convert(b, q[1]), convert(c, q[2]), convert(d, q[3])); };
-	}
+public static <A, B, C, R> Wrapped cuminicate(Class<A> a, Class<B> b, Class<C> c, Class<R> r, Handler.ThreeOne<A, B, C, R> fn) {
+    return (q) -> { return fn.run(convert(a, q[0]), convert(b, q[1]), convert(c, q[2])); };
+}
 
-	public static <A, B, C, D, E, R> Wrapped cuminicate(Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<E> e, Class<R> r, Handler.FiveOne<A, B, C, D, E, R> fn) {
-		return (q) -> { return fn.run(convert(a, q[0]), convert(b, q[1]), convert(c, q[2]), convert(d, q[3]), convert(e, q[4])); };
-	}
+public static <A, B, C, D, R> Wrapped cuminicate(Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<R> r, Handler.FourOne<A, B, C, D, R> fn) {
+    return (q) -> { return fn.run(convert(a, q[0]), convert(b, q[1]), convert(c, q[2]), convert(d, q[3])); };
+}
 
-	public static <A, B, C, D, E, F, R> Wrapped cuminicate(Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<E> e, Class<F> f, Class<R> r, Handler.SixOne<A, B, C, D, E, F, R> fn) {
-		return (q) -> { return fn.run(convert(a, q[0]), convert(b, q[1]), convert(c, q[2]), convert(d, q[3]), convert(e, q[4]), convert(f, q[5])); };
-	}
+public static <A, B, C, D, E, R> Wrapped cuminicate(Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<E> e, Class<R> r, Handler.FiveOne<A, B, C, D, E, R> fn) {
+    return (q) -> { return fn.run(convert(a, q[0]), convert(b, q[1]), convert(c, q[2]), convert(d, q[3]), convert(e, q[4])); };
+}
+
+public static <A, B, C, D, E, F, R> Wrapped cuminicate(Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<E> e, Class<F> f, Class<R> r, Handler.SixOne<A, B, C, D, E, F, R> fn) {
+    return (q) -> { return fn.run(convert(a, q[0]), convert(b, q[1]), convert(c, q[2]), convert(d, q[3]), convert(e, q[4]), convert(f, q[5])); };
+}
 	// End Generic Shotgun
 }

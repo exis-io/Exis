@@ -24,51 +24,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
-        fab.setOnClickListener((button) -> {
-            riffleSender();
-        });
-
-        TextView textview = (TextView) findViewById(R.id.mytextview);
-        textview.setText("Reeefle");
-
-        Log.d(TAG, "LOADING LIBRARY");
-//        Native.testLibrary();
+        // Do nothing but start the tests
+        riffleSender();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
+    // Start riffle inline testing
+    // Note that the two-domain setup here is just for testing-- you shouldn't do this!
     Domain app = new Domain("xs.damouse");
     Receiver receiver = new Receiver("alpha", app);
     Sender sender = new Sender("beta", app);
@@ -79,10 +41,9 @@ public class MainActivity extends AppCompatActivity {
 
     void riffleSender() {
         Riffle.setFabricDev();
-        Riffle.setLogLevelDebug();
-        Riffle.setCuminOff();
+        Riffle.setLogLevelInfo();
 
-        Riffle.debug("Starting riffle tests!");
+        Riffle.debug("Starting riffle tests");
 
         receiver.parent = this;
         sender2.parent = this;
@@ -118,7 +79,6 @@ class Receiver extends Domain {
             return "Hey. caller!";
         });
 
-        // Cool. I guess? It would be really nice to do away with the ".class" here
         subscribe("vich", Boolean.class, this::someHandler);
 
         // Bootstrap the sender
@@ -147,7 +107,7 @@ class Sender extends Domain {
     public void onJoin() {
         Log.d(TAG, "Sender joined!");
 
-        parent.receiver2.publish("sub", 1, 2, 3);
+        parent.receiver2.publish("sub", 1);
 
         parent.receiver2.call("reg", "Johnathan").then(String.class, (greeting) -> {
             Log.d(TAG, "I received : " + greeting);
