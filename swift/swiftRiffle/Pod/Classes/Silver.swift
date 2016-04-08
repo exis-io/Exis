@@ -96,27 +96,12 @@ extension Silvery {
         for child in Mirror(reflecting: self).children {
             if child.label == key && String(child.value) != "nil" {
                 
-                print("Inside the thing: \(child.value)")
-                
-//                let h = bleh(child.value, typeString)
-                let run = runner(child.value)
-                print("Have \(run)")
-                
-                let switched = switchTypes(child.value)
-                
-//                if let q = child.value as? typeString {
-//                    print("PLEASE GOD PLEASE")
-//                }
-                
-//                if child.value is typeString {
-//                    print("asdf")
-//                }
-//
-
-//                var klassName = NSStringFromClass(child.value.dynamicType)
-//                var klass = NSClassFromString("Swift.\(child.value.dynamicType)")
-//                
-//                print("Name: \(child.value.dynamicType) class: \(klass)")
+                // OSX bug
+                var switched = child.value
+            
+                #if os(OSX)
+                    switched = switchTypes(child.value)
+                #endif
                 
                 if let property = switched as? OptionalProperty {
                     value = property.property()

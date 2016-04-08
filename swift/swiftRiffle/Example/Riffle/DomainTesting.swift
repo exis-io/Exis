@@ -31,23 +31,22 @@ class Receiver: Domain {
         
         // Pub Sub Success Cases
         
-        
         // No arguments
-        subscribe("subscribeNothing") {
-            print("SUCCESS --- 1-1")
-        }
-
-        // Primitive Types
-        subscribe("subscribePrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
-            print("SUCCESS --- 1-2")
-            //print("1 : Sub receiving single types:", a, b, c, d, e)
-            
-            assert(a == 1)
-            assert(b == 2.2)
-            assert(c == 3.3)
-            assert(d == "4")
-            assert(e == true)
-        }
+//        subscribe("subscribeNothing") {
+//            print("SUCCESS --- 1-1")
+//        }
+//
+//        // Primitive Types
+//        subscribe("subscribePrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
+//            print("SUCCESS --- 1-2")
+//            //print("1 : Sub receiving single types:", a, b, c, d, e)
+//            
+//            assert(a == 1)
+//            assert(b == 2.2)
+//            assert(c == 3.3)
+//            assert(d == "4")
+//            assert(e == true)
+//        }
 
 //        // Arrys of simple types
 //        subscribe("subscribeArrays") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
@@ -61,12 +60,11 @@ class Receiver: Domain {
 //            assert(e == [true, false])
 //        }
 //        
-//        subscribe("subscribeModel") { (d: Dog) in
-//            //print("Recieved:\(d), expecting: \(dog)")
-//            print("SUCESS --- 1-4")
-//            assert(d.name == dog.name && d.age == dog.age)
-//        }
-//        
+        subscribe("subscribeModel") { (d: Dog) in
+            print("SUCESS --- 1-4")
+            assert(d.name == dog.name && d.age == dog.age)
+        }
+        
 //        // TODO: subscribe with model object
 //        // TODO: Dictionaries of simple types
 //        // TODO: Any
@@ -183,7 +181,7 @@ class Sender: Domain {
 //        // Arrys of simple types
 //        receiver.publish("subscribeArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
 //
-//         receiver.publish("subscribeModel", dog)
+         receiver.publish("subscribeModel", dog)
 //
 //        // Reg/Call Success Cases
 //        // No arguments

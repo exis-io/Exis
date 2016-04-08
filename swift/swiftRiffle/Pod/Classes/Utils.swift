@@ -103,30 +103,17 @@ func switchTypes(x: Any) -> Any {
     // Converts app types to riffle types because of the osx bug (see above)
     
     #if os(OSX)
-
-//        print("Size of incoming: \(sizeof(x.dynamicType.self)) reciever: \(sizeof(String.self))")
-        
-//        if let q = z as? Property {
-//            print("Proper")
-//        }
-        
-//        let o = COpaquePointer(x)
-        print("THING: \(x)")
-        
-        
-//        print("Dymanic: \(x.dynamicType), classname: \(x.dynamicType.printClassName())")
-        
         switch "\(x.dynamicType)" {
         case "Int":
-            return unsafeBitCast(x, Int.self)
+            return recode(x, Int.self)
         case "String":
-            return unsafeBitCast(x, String.self)
+            return recode(x, String.self)
         case "Double":
-            return unsafeBitCast(x, Double.self)
+            return recode(x, Double.self)
         case "Float":
-            return unsafeBitCast(x, Float.self)
+            return recode(x, Float.self)
         case "Bool":
-            return unsafeBitCast(x, Bool.self)
+            return recode(x, Bool.self)
         default:
             Riffle.warn("Unable to switch out app type: \(x.dynamicType)")
             return x
@@ -136,21 +123,9 @@ func switchTypes(x: Any) -> Any {
     #endif
 }
 
-func inferrer() {
-    
-}
-
-public var typeInt: Int.Type = Int.self
-public var typeString: String.Type = String.self
-
-var runner: (Any -> Any)!
-
-public func genericBullshit<A: PR>(a: A) {
-    runner = { a in return A.self <- a }
-}
-
-func recode<A, T>(var value: A) -> T {
-    // encode and decode a value
+func recode<A, T>(var value: A, _ t: T.Type) -> T {
+    // encode and decode a value, magically transforming its type to the appropriate version
+    // This is an OSX bandaid
     let data = withUnsafePointer(&value) { p in
         NSData(bytes: p, length: sizeof(A))
     }
@@ -158,21 +133,6 @@ func recode<A, T>(var value: A) -> T {
     let pointer = UnsafeMutablePointer<T>.alloc(sizeof(T.Type))
     data.getBytes(pointer)
     return pointer.move()
-}
-
-func bleh<T>(obj: Any, _ t:T.Type) -> T {
-    if obj.dynamicType == t {
-        print("Is a string")
-    }
-    
-    let z = unsafeBitCast(obj, t.self)
-    return z as! T
-    
-//    if let z = obj as! t {
-//        print("Yes")
-//    } else {
-//        print("No")
-//    }
 }
 
 
