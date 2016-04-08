@@ -294,9 +294,7 @@ extension Array : Property, BaseConvertible {
             
             // Reconstruct values within the array
             for element in arr {
-                let switchedType = switchTypeObject(Generator.Element.self)
-                print("Typewitch: \(Generator.Element.self) to \(switchedType)")
-                
+                let switchedType = switchTypeObject(Generator.Element.self)                
                 if let child = switchedType as? Convertible.Type {
                     ret.append(child.unsafeDeserialize(element, t: Generator.Element.self)!)
                 }
