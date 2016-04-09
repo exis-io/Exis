@@ -48,13 +48,12 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar', '*.so'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'me.tatarka:gradle-retrolambda:3.2.5'
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'net.jodah:typetools:0.4.4'
+    compile files('libs/classes.jar')
 }
 
 retrolambda {
