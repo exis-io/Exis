@@ -10,10 +10,5 @@ import com.exis.riffle.Model;
     }
 
     public int a;
-    public String b = "";
+    public String b = "asdf";
 }
-
-
-
-
-

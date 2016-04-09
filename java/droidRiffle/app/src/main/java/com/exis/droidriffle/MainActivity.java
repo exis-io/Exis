@@ -21,15 +21,6 @@ import java.lang.reflect.Type;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        // Do nothing but start the tests
-        riffleSender();
-    }
-
     // Start riffle inline testing
     // Note that the two-domain setup here is just for testing-- you shouldn't do this!
     Domain app = new Domain("xs.damouse");
@@ -40,7 +31,13 @@ public class MainActivity extends AppCompatActivity {
     Receiver receiver2= new Receiver("alpha", app2);
     Sender sender2 = new Sender("beta", app2);
 
-    void riffleSender() {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Do nothing but start the tests
         Riffle.setFabricDev();
         Riffle.setLogLevelInfo();
 
@@ -113,6 +110,8 @@ class Sender extends Domain {
         Log.d(TAG, "Sender joined!");
 
         parent.receiver2.publish("sub", 1);
+
+        parent.receiver2.publish("subscribeModels", new Dog());
 
         parent.receiver2.call("reg", "Johnathan").then(String.class, (greeting) -> {
             Log.d(TAG, "I received : " + greeting);

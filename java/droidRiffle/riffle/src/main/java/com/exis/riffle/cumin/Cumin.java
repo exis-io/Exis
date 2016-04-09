@@ -2,6 +2,9 @@ package com.exis.riffle.cumin;
 
 import com.exis.riffle.Model;
 import com.exis.riffle.Riffle;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.internal.LinkedTreeMap;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -12,6 +15,7 @@ import java.util.List;
  * Created by damouse on 2/11/2016.
  */
 public class Cumin {
+	private static Gson gson = new GsonBuilder().create();
 
 	// The final state of Cuminicated methods. These are ready to fire as needed
 	public interface Wrapped {
@@ -25,6 +29,17 @@ public class Cumin {
 	static <A> A convert(Class<A> a, Object b) {
 		if (a.isInstance(b))
 			return a.cast(b);
+
+		// TODO: refactor and use GSON all the time
+		// TODO: fails on empty strings, and dosent serialize null fields
+		if (b instanceof LinkedTreeMap) {
+			LinkedTreeMap map = (LinkedTreeMap) b;
+			String json = map.toString();
+			A result = gson.fromJson(json, a);
+			return result;
+		}
+
+		//Riffle.info("Have object: " + b.getClass().toString());
 
 		if (a == Integer.class) {
 			if (b instanceof Double) {

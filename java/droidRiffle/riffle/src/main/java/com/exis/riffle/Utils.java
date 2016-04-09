@@ -28,6 +28,7 @@ public class Utils {
     static Object[] unmarshall(String json) {
 //        Object[] result = gson.fromJson(json, Object[].class);
 //        Riffle.debug("Json from core: " + json + " after: " + result.toString());
+
         return gson.fromJson(json, Object[].class);
     }
 
@@ -37,4 +38,3 @@ public class Utils {
         return id;
     }
 }
-
