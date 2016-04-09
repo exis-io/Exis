@@ -52,14 +52,14 @@ func (d *Domain) MentleLoginDomain(cb string, eb string, username string, passwo
 		args = append(args, password)
 	}
 
+	core.Info("Arguments for the thing and domain: %v, %d", args, d)
+
 	go func() {
 		if ret, err := d.coreDomain.GetApp().Login(d.coreDomain, args...); err != nil {
 			core.Warn("Unable to complete login %s", err.Error())
 			d.coreDomain.GetApp().CallbackSend(idUnmarshal(eb), err.Error())
 		} else {
 			core.Info("Successfully logged in as %s", ret.GetName())
-			// Have to save the token!
-
 			core.Info("Joining on %s", d.coreDomain.GetName())
 
 			if c, err := shared.Open(core.Fabric); err != nil {
@@ -82,7 +82,6 @@ func (d *Domain) MentleRegisterDomain(cb string, eb string, username string, pas
 			d.coreDomain.GetApp().CallbackSend(idUnmarshal(eb), err.Error())
 		} else {
 			core.Info("Successfully registered under account %s", username)
-			//d.coreDomain.GetApp().CallbackSend(idUnmarshal(cb))
 			d.MentleLoginDomain(cb, eb, username, password)
 		}
 	}()

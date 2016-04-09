@@ -148,7 +148,6 @@ func (a *app) Login(d Domain, args ...string) (Domain, error) {
 		a.SetToken(token)
 		return d.LinkDomain(domain), nil
 	}
-	return nil, nil
 }
 
 //takes the domain that register was called on and registration info required by Auth
