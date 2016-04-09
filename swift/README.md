@@ -3,9 +3,54 @@
     </h3>
 </div>
 
-# swiftRiffle (swift 2.2 Open Source)
+All our docs live at [docs.exis.io](http://docs.exis.io). This directory holds both the open source and iOS versions of swiftRiffle. 
 
-All our docs live at [docs.exis.io](http://docs.exis.io). 
+### Setting up a App + Backend Manually
+
+These instructions are for setting up a new or existing project with Riffle with a backend. Tested on Xcode 7.3, cocoapods 1.0.0beta5, and swift 2.1.
+
+- Create a new iOS project.
+- Create a new target with `File > New > Target`. Make sure to set the type of the target as OSX Command Line Application
+- Close the project. Create a new file in the directory you saved the project. Save it as `Podfile` and change it as follows: 
+
+```
+
+use_frameworks!
+
+target :ExisiOSBackend do
+    platform :ios, '9.0'
+    pod "Riffle", :git => 'https://github.com/exis-io/swiftRiffleCocoapod'
+end
+
+target :Backend do
+    platform :osx, '10.11'
+    pod 'Riffle', :git => 'https://github.com/exis-io/swiftRiffleCocoapod'
+end
+
+```
+
+Make sure to replace `App` and `Backend` with your project's target names. The app target is usually the same as the project. The second target name is the same as entered in step 2. 
+
+See the name of all targets by clicking on the blue project icon on the left bar with Xcode open. 
+
+- Run `pod install` in a terminal in the same directory as your project. 
+- Open the workspace, not the project (`.xcworkspace`, not `.xcodeproj`
+- Open settings for the `Pods` project. Under `Build Settings > Runpaths` for `Riffle-OSX` add the following to `Runpath Search Paths`
+
+```
+@executable_path/Riffle-OSX
+```
+
+- Set `Embedded Content Contains Swift Code` to `YES` for `Riffle-OSX` in `Build Settings`
+
+Note: occasionally Xcode can get a little greedy, build the framework ahead of time, and ignore the settings above after. If you'be made these changes and see see errors about linking libraries, delete your derived data directory. 
+
+```
+rm -rf ~/Library/Developer/Xcode/DerivedData
+```
+
+
+# swiftRiffle (swift 2.2 Open Source)
 
 This is for the open source version of swift. This directory is exploratory and subject to change. 
 
@@ -68,82 +113,6 @@ make check
 `make check` doesn't work on my system. Suspect an issue with swiftenv. According to (this)[http://stackoverflow.com/questions/34680816/swift-in-linux-use-of-unresolved-identifier-dispatch-async] SO answer libdispatch doesn't play nicely with `swift build` yet. 
 
 (alwaysrightinstitute)[http://www.alwaysrightinstitute.com/swift-multi-module-dev/] seems to be working on a wrapper around the library so swift build can still be used. 
-
-### iOS Apps
-
-This is only for the development of iOS apps. 
-
-[Download a zip](https://github.com/exis-io/iosAppSeed). 
-
-Clone the project from github:
-
-```
-git clone https://github.com/exis-io/iosAppSeed.git
-```
-
-Install using Cocoapods: 
-
-```
-platform :ios, '9.0'
-use_frameworks!
-pod 'Riffle'
-```
-
-### iOS Apps And Backends
-
-This is for the development of iOS apps and swift backends. 
-
-[Download a zip](https://github.com/exis-io/iosAppBackendSeed/archive/master.zip) 
-
-Clone the project from github:
-
-```
-git clone https://github.com/exis-io/iosAppBackendSeed.git
-```
-
-### Setting up a App + Backend Manually
-
-These instructions are for setting up a new or existing project with Riffle with a backend. Tested on Xcode 7.3, cocoapods 1.0.0beta5, and swift 2.1.
-
-- Create a new iOS project.
-- Create a new target with `File > New > Target`. Make sure to set the type of the target as OSX Command Line Application
-- Close the project. Create a new file in the directory you saved the project. Save it as `Podfile` and change it as follows: 
-
-```
-
-use_frameworks!
-
-target :App do
-    platform :ios, '9.0'
-  pod "Riffle", :path => "../"
-end
-
-target :Backend do
-    platform :osx, '10.11'
-    pod 'Riffle', :path => "../"
-end
-
-```
-
-Make sure to replace `App` and `Backend` with your project's target names. The app target is usually the same as the project. The second target name is the same as entered in step 2. 
-
-See the name of all targets by clicking on the blue project icon on the left bar with Xcode open. 
-
-- Run `pod install` in a terminal in the same directory as your project. 
-- Open the workspace, not the project (`.xcworkspace`, not `.xcodeproj`
-- Open settings for the `Pods` project. Under `Build Settings > Runpaths` for `Riffle-OSX` add the following to `Runpath Search Paths`
-
-```
-@executable_path/Riffle-OSX
-```
-
-- Set `Embedded Content Contains Swift Code` to `YES` for `Riffle-OSX` in `Build Settings`
-
-Note: occasionally Xcode can get a little greedy, build the framework ahead of time, and ignore the settings above after. If you'be made these changes and see see errors about linking libraries, delete your derived data directory. 
-
-```
-rm -rf ~/Library/Developer/Xcode/DerivedData
-```
 
 ## Dev Notes
 
