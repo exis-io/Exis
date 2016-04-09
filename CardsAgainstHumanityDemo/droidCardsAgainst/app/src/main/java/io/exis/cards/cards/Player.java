@@ -86,8 +86,8 @@ public class Player {
             Log.i("player", "calling pick with card " + picked.getText());
             riffle.call("pick", picked.getText()).then(String.class, (c) -> {
                 Log.i("player", "received new card " + c + " from dealer");
-                hand.add(new Card(c));
                 hand.remove(picked);
+                hand.add(new Card(c));
                 activity.runOnUiThread(()->{
                     Log.i("pick", "refreshing cards with pile " + Card.printHand(hand));
                     activity.refreshCards(hand);
@@ -191,9 +191,12 @@ public class Player {
                         player.question = questionText;
                         player.duration = duration;
                         activity.runOnUiThread(()->{
+                            activity.highlightCzar(currentCzar);
                             activity.setQuestion();
                             activity.refreshCards(hand);
                         });
+
+                        // start answering timer
                     });
 
             riffle.subscribe("picking", String.class, Integer.class,
@@ -204,6 +207,8 @@ public class Player {
                         player.answers = Card.buildHand(arr);
                         player.duration = duration;
                         activity.runOnUiThread(() -> activity.refreshCards(player.answers));
+
+                        //start picking timer
                     });
 
             riffle.subscribe("scoring", String.class, String.class, Integer.class,
@@ -215,6 +220,8 @@ public class Player {
                         player.winnerID = winnerID;
                         player.winningCard = winningCard;
                         player.duration = duration;
+
+                        // start scoring timer
                     });
 
             Object[] playObject = GameActivity.exec.play();

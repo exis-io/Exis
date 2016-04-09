@@ -44,7 +44,7 @@ public class GameActivity extends Activity {
     private boolean answerSelected;
     private Card chosen;
     private ArrayList<Card> forCzar;
-    private GameTimer timer;
+    public GameTimer timer;
     private String screenName;
 
     RelativeLayout layout;
@@ -255,12 +255,12 @@ public class GameActivity extends Activity {
         }
     }//end setAnswers method
 
-    public void highlightCzar(){
+    public void highlightCzar(String czar){
         for(TextView t: playerInfos){
-            if(currentCzar.equals(t.getText())){
-                playerInfos.get(3).setBackgroundColor(Color.parseColor("#551A8B"));
+            if(czar.equals(t.getText())){
+                t.setBackgroundColor(Color.parseColor("#551A8B"));
             }else{
-                playerInfos.get(3).setBackgroundColor(Color.parseColor("#00a2ff"));
+                t.setBackgroundColor(Color.parseColor("#00a2ff"));
             }
         }
     }
@@ -360,7 +360,6 @@ public class GameActivity extends Activity {
                         runOnUiThread(() -> infoText.setText(R.string.playersPickingInfo));
                     }else{
                         runOnUiThread(() -> infoText.setText(R.string.answeringInfo));
-                        runOnUiThread(() -> highlightCzar());
                     }
                     String winnerID = player.getWinner();             //give point if player is winner
                     if(winnerID != null && winnerID.equals(player.playerID())){

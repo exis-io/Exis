@@ -255,6 +255,9 @@ public class Dealer extends Domain{
     public String pick(String picked){
         answers.add(new Card(picked));
         Log.i("dealer", "received answer " + picked + " from player");
+
+        // start next phase upon receipt of card
+
         return generateAnswer().getText();
     }
 
@@ -272,14 +275,6 @@ public class Dealer extends Domain{
         };
         handler.postDelayed(runnable, 0);
     }//end start method
-
-    public void danger_pub_chose(Card picked){
-        winningCard = picked;
-    }
-
-    public void danger_pub_picked(Card picked){
-        answers.add(picked);
-    }
 
     /* Main game logic.
      *
