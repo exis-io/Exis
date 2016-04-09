@@ -32,15 +32,21 @@ extension Silvery {
         get {
             do {
                 return try valueForKey(key)
+            } catch let e as SilverError {
+                Riffle.warn("Unable to get \(key) on \(self): \(e)")
+                return nil
             } catch {
+                Riffle.warn("An unrecoverable error occured setting value to model")
                 return nil
             }
         }
         set {
             do {
                 try setValue(newValue, forKey: key)
+            } catch let e as SilverError {
+                Riffle.warn("Unable to set \(key) on \(self): \(e)")
             } catch {
-                
+                Riffle.warn("An unrecoverable error occured setting value to model")
             }
         }
     }
@@ -48,9 +54,17 @@ extension Silvery {
     public mutating func setValue(value: Property?, forKey key: String) throws {
         var offset = 0
         for child in Mirror(reflecting: self).children {
-            guard let property = child.value.dynamicType as? Property.Type else { throw SilverError.TypeDoesNotConformToProperty(type: child.value.dynamicType) }
-            if child.label == key {
-                try self.codeValue(value, type: child.value.dynamicType, offset: offset)
+            
+            // OSX bug
+            var switched = child.value
+            
+            #if os(OSX)
+                switched = switchTypes(child.value)
+            #endif
+            
+            guard let property = switched.dynamicType as? Property.Type else { throw SilverError.TypeDoesNotConformToProperty(type: switched.dynamicType) }
+            if child.label == key {//                print("HI")
+                try self.codeValue(value, type: switched.dynamicType, offset: offset)
                 return
             } else {
                 offset += property.size()
@@ -95,9 +109,17 @@ extension Silvery {
         var value: Property?
         for child in Mirror(reflecting: self).children {
             if child.label == key && String(child.value) != "nil" {
-                if let property = child.value as? OptionalProperty {
+                
+                // OSX bug
+                var switched = child.value
+            
+                #if os(OSX)
+                    switched = switchTypes(child.value)
+                #endif
+                
+                if let property = switched as? OptionalProperty {
                     value = property.property()
-                } else if let property = child.value as? Property {
+                } else if let property = switched as? Property {
                     value = property
                 } else {
                     throw SilverError.TypeDoesNotConformToProperty(type: child.value.dynamicType)
@@ -109,6 +131,17 @@ extension Silvery {
     }
     
     public func propertyNames() -> [String] {
+//        let m = Mirror(reflecting: self)
+//        
+//        print("Children array: \(m.children)")
+//        
+//        for c in m.children {
+//            print("Child: \(c.label): \(c.value)")
+//        }
+        
         return Mirror(reflecting: self).children.filter { $0.label != nil }.map { $0.label! }
     }
 }
+
+
+

@@ -9,6 +9,10 @@ LOG="./build.log"
 SWIFT_EXAMPLE=swift/example
 SWIFT_RIFFLE=swift/swiftRiffle/Pod/Classes
 
+IOS_DIR=-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk
+SIM_DIR=-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.3.sdk 
+CLANG_DIR=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
+
 printcheck:
 	@>$(LOG)
 	@echo "Check $(LOG) for warnings and errors"
@@ -39,43 +43,26 @@ swift_example: printcheck
 	@echo "Now 'cd swift/example' and run './.build/debug/Example', 'SENDER=true ./.build/debug/Example'"
 
 ios:
-	SDK_ROOT='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/'
-	CLANG_DIR=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
-
 	@echo "Building arm7" 
-	@GOOS=darwin GOARCH=arm GOARM=7 \
-	CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
-	CXX=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
-	CGO_CFLAGS='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk -arch armv7' \
-	CGO_LDFLAGS='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk -arch armv7' \
-	CGO_ENABLED=1 \
+	@GOOS=darwin GOARCH=arm GOARM=7 CC=${CLANG_DIR} CXX={CLANG_DIR} CGO_ENABLED=1 \
+	CGO_CFLAGS='${IOS_DIR} -arch armv7' CGO_LDFLAGS='${IOS_DIR} -arch armv7' \
 	go build -p=4 -pkgdir=/Users/damouse/code/go/pkg/gomobile/pkg_darwin_arm -tags="" -buildmode=c-archive -tags=ios -o .tmp/riffle-arm.a core/cMantle/main.go
 
 	@echo "Building arm64" 
-	@GOOS=darwin GOARCH=arm64 \
-	CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
-	CXX=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
-	CGO_CFLAGS='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk -arch arm64' \
-	CGO_LDFLAGS='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk -arch arm64' \
-	CGO_ENABLED=1 \
+	@GOOS=darwin GOARCH=arm64 CC=${CLANG_DIR} CXX={CLANG_DIR} CGO_ENABLED=1 \
+	CGO_CFLAGS='${IOS_DIR} -arch arm64' CGO_LDFLAGS='${IOS_DIR} -arch arm64' \
 	go build -p=4 -pkgdir=/Users/damouse/code/go/pkg/gomobile/pkg_darwin_arm -tags="" -buildmode=c-archive -tags=ios -o .tmp/riffle-arm64.a core/cMantle/main.go
 
 	@echo "Building x86_64 (simulator)" 
-	@GOOS=darwin GOARCH=amd64 \
-	CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
-	CXX=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
-	CGO_CFLAGS="-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.3.sdk -miphoneos-version-min=9.0 -mios-simulator-version-min=6.1 -arch x86_64" \
-	CGO_LDFLAGS="-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.3.sdk -miphoneos-version-min=9.0 -mios-simulator-version-min=6.1 -arch x86_64" \
-	CGO_ENABLED=1 \
+	@GOOS=darwin GOARCH=amd64 CC=${CLANG_DIR} CXX={CLANG_DIR} CGO_ENABLED=1 \
+	CGO_CFLAGS="${SIM_DIR} -miphoneos-version-min=9.0 -mios-simulator-version-min=6.1 -arch x86_64" \
+	CGO_LDFLAGS="${SIM_DIR} -miphoneos-version-min=9.0 -mios-simulator-version-min=6.1 -arch x86_64" \
 	go build -p=4 -pkgdir=/Users/damouse/code/go/pkg/gomobile/pkg_darwin_arm -tags="" -buildmode=c-archive -tags=ios -o .tmp/riffle-x86_64_ios.a core/cMantle/main.go
 
 	@echo "Building i386 (simulator)" 
-	@GOOS=darwin GOARCH=386 \
-	CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
-	CXX=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
-	CGO_CFLAGS="-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.3.sdk -miphoneos-version-min=9.0 -mios-simulator-version-min=6.1 -arch i386" \
-	CGO_LDFLAGS="-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.3.sdk -miphoneos-version-min=9.0 -mios-simulator-version-min=6.1 -arch i386" \
-	CGO_ENABLED=1 \
+	@GOOS=darwin GOARCH=386 CC=${CLANG_DIR} CXX={CLANG_DIR} CGO_ENABLED=1 \
+	CGO_CFLAGS="${SIM_DIR} -miphoneos-version-min=9.0 -mios-simulator-version-min=6.1 -arch i386" \
+	CGO_LDFLAGS="${SIM_DIR} -miphoneos-version-min=9.0 -mios-simulator-version-min=6.1 -arch i386" \
 	go build -p=4 -pkgdir=/Users/damouse/code/go/pkg/gomobile/pkg_darwin_arm -tags="" -buildmode=c-archive -tags=ios -o .tmp/riffle-x86_32_ios.a core/cMantle/main.go
 
 	@echo "Combining with lipo" 
@@ -94,7 +81,7 @@ android:
 	@echo "Building core..."
 	@gomobile bind -target=android github.com/exis-io/core/androidMantle
 
-	# Doesn't use the AAR directly because it screws with distribution
+	@# Doesn't use the AAR directly because it screws with distribution
 	@echo "Moving mantle"
 	@rm -rf .tmp/android
 	@mkdir -p .tmp/android
@@ -103,8 +90,8 @@ android:
 
 	@rm -f java/droidRiffle/riffle/libs/classes.jar
 	@rm -rf java/droidRiffle/riffle/src/main/jniLibs
-	mv .tmp/android/classes.jar java/droidRiffle/riffle/libs/classes.jar
-	mv .tmp/android/jni java/droidRiffle/riffle/src/main/jniLibs
+	@mv .tmp/android/classes.jar java/droidRiffle/riffle/libs/classes.jar
+	@mv .tmp/android/jni java/droidRiffle/riffle/src/main/jniLibs
 
 python: 
 	gopy bind github.com/exis-io/core/pyMantle

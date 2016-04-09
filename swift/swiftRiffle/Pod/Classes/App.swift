@@ -85,21 +85,23 @@ class App {
                     
                     // Optional serialization has some problems. This unwraps the result to avoid that particular issue
                     if let ret = fn(args) {
-                        print("Have result: \(ret)")
+                        Yield(self.mantleDomain, UInt64(resultId), marshall(ret as! [Any]))
                         
                         // Function did not return anything
-                        if let _ = ret as? Void {
-                            Yield(self.mantleDomain, UInt64(resultId), marshall([]))
-                            
-                            // Function returned well known serializable types
-                        } else if let _ = ret as? Property {
-                            Yield(self.mantleDomain, UInt64(resultId), marshall(serializeArguments([ret])))
-                            
-                            // Function returned something we can't check-- assume its a tuple
-                        } else {
-                            let unpacked = unpackTuple(ret)
-                            Yield(self.mantleDomain, UInt64(resultId), marshall(serializeArguments(unpacked)))
-                        }
+//                        if let _ = ret as? Void {
+//                            Yield(self.mantleDomain, UInt64(resultId), marshall([]))
+//                            
+//                            // Function returned well known serializable types
+//                        } else if let _ = ret as? Property {
+//                            Yield(self.mantleDomain, UInt64(resultId), marshall(serializeArguments([ret])))
+//                            
+//                            // Function returned something we can't check-- assume its a tuple
+//                        } else {
+////                            Yield(self.mantleDomain, UInt64(resultId), marshall([ret]))
+//                            let unpacked = unpackTuple(ret)
+//                            //converted = swapClassToRiffle(unpacked)
+//                            Yield(self.mantleDomain, UInt64(resultId), marshall(serializeArguments(unpacked)))
+//                        }
                     } else {
                         let empty: [Any] = []
                         Yield(self.mantleDomain, UInt64(resultId), marshall(empty))

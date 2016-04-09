@@ -263,7 +263,7 @@ class SwiftCoder(Coder):
 
     def setupEnv(self, env):
         if DEBUG:
-            env["EXIS_SETUP"] = "Riffle.LogLevelDebug()"
+            env["EXIS_SETUP"] = "Riffle.setLogLevelDebug()"
 
     def expect2assert(self):
         # TODO
@@ -456,25 +456,24 @@ class ReplIt:
         while(self.executing):
             for line in iter(out.readline, b''):
                 l = line.rstrip()
-                if l.startswith("___"):
-                    if l == "___BUILDCOMPLETE___":
-                        if DEBUG:
-                            stor.append((time.time(), l))
-                        self.buildComplete.set()
-                    elif l == "___SETUPCOMPLETE___":
-                        if DEBUG:
-                            stor.append((time.time(), l))
-                        self.setupComplete.set()
-                    elif l == "___RUNCOMPLETE___" and self.runComplete:
+                if "___BUILDCOMPLETE___" in l:
+                    if DEBUG:
                         stor.append((time.time(), l))
-                        self.runComplete.set()
-                    elif "___NODERESTART___" in l:
-                        if node != None:
-                            if DEBUG:
-                                stor.append((time.time(), l))
-                            node.restart(l)
-                        else:
-                            self.msgs += "-- Node restart found but not running a node\n"
+                    self.buildComplete.set()
+                elif "___SETUPCOMPLETE___" in l:
+                    if DEBUG:
+                        stor.append((time.time(), l))
+                    self.setupComplete.set()
+                elif "___RUNCOMPLETE___" in l and self.runComplete:
+                    stor.append((time.time(), l))
+                    self.runComplete.set()
+                elif "___NODERESTART___" in l:
+                    if node != None:
+                        if DEBUG:
+                            stor.append((time.time(), l))
+                        node.restart(l)
+                    else:
+                        self.msgs += "-- Node restart found but not running a node\n"
                 else:
                     if expect is not None and expect in l:
                         # print Fore.GREEN + "Found Expect value" + Style.RESET_ALL
@@ -646,9 +645,14 @@ def printResult(procs):
 
     for t in procs:
         if not t.success or verbose != f:
+            printOutput = ""
+            if len(t.stdout) > 2:
+                printOutput = "\n".join([a[1] for a in t.stdout])
+            else:
+                printOutput = str([a[1] for a in t.stdout])
             print "\n\t" + Fore.YELLOW + t.action + ' expected: ' + Fore.WHITE \
                 + str(t.coder.getExpect()) + Fore.YELLOW + ", output: " + Fore.WHITE \
-                + str([a[1] for a in t.stdout]),
+                + printOutput,
             print "\n\t" + Fore.YELLOW + "file: " + t.task.fileName.split('/')[-1] \
                 + " lines {}-{}".format(t.task.lineStart, t.task.lineEnd),
             print "\n\t" + "test dir: " + t.testDir
