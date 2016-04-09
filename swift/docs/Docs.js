@@ -126,13 +126,15 @@
  * @param {function} handler - The function that will handle any calls made to the registered endpoint or a valid {@link $riffle.want} function.
  * @description Register a function to handle calls made to action on this domain. If the domain object represents a domain like `xs.demo.user.app` the 
  * endpoint that the handler is registered to will look like `xs.demo.user.app/action`.
- * @returns {Promise} a promise that is resolved if the handler is successfully registered or rejected if there is an error.
+ * @returns {Deferred} a Deferred that is resolved if the handler is successfully registered or rejected if there is an error.
  * @example
  * //**Registering a Procedure**
- * //register an action call hello on our top level app domain. i.e. xs.demo.user.app/hello
- * app.onJoin = {
- *   register("hello") { (s: String) -> String in
- *     print("hello")
+ * class App: Domain {
+ *   override func onJoin() {
+ *     //register an action call hello on our top level app domain. i.e. xs.demo.user.app/hello
+ *     register("hello") { (s: String) -> String in
+ *       print("hello")
+ *     }
  *   }
  * }
  */
@@ -144,12 +146,16 @@
  * @param {...Any} args - The arguments to provide to the function being called.
  * @description Call a function already registered to an action on this domain. If the domain object represents an domain like `xs.demo.user.app` the 
  * endpoint that is called to will look like `xs.demo.user.app/action`.
- * @returns {Promise} Returns a promise
+ * @returns {Deferred} Returns a Deferred
  * @example
  * //**Make a call**
- * //call an action sum on with two numbers on our top level app domain. i.e. xs.demo.user.app/sum
- * app.call("sum", 1).then { (s: String) in 
- *   print("sum returned \(s)")
+ * class App: Domain {
+ *   override func onJoin() {
+ *     //call an action sum on with two numbers on our top level app domain. i.e. xs.demo.user.app/sum
+ *     call("sum", 1).then { (s: String) in 
+ *       print("sum returned \(s)")
+ *     }
+ *   }
  * }
  */
 
@@ -163,7 +169,11 @@
  * @example
  * //**Publishing**
  * //publish the string 'hello' to the `ping` channel on our top level app domain. i.e. `xs.demo.user.app/ping`
- * app.publish("ping", "hello")
+ * class App: Domain {
+ *   override func onJoin() {
+ *     app.publish("ping", "hello")
+ *   }
+ * }
  */
 
 /**
@@ -173,12 +183,16 @@
  * @param {function} handler - The function that will handle any publishes made to the registered endpoint or a valid {@link jsRiffle.want} function.
  * @description Subscribe a function to handle publish events made to the channel on this domain. If the domain object represents an domain like `xs.demo.user.app` the 
  * endpoint that the handler is subscribed to will look like `xs.demo.user.app/channel`.
- * @returns {Promise} a promise that is resolved if the handler is successfully subscribed or rejected if there is an error.
+ * @returns {Deferred} a Deferred that is resolved if the handler is successfully subscribed or rejected if there is an error.
  * @example
  * //**Subscribing to an Event**
  * //subscribe to events published to hello on our top level app domain. i.e. xs.demo.user.app/hello
- * app.subscribe("hello") { (s: String) in
- *   print("Received hello event!")
+ * class App: Domain {
+ *   override func onJoin() {
+ *     subscribe("hello") { (s: String) in
+ *       print("Received hello event!")
+ *     }
+ *   }
  * }
  */
 
@@ -253,7 +267,7 @@
  * If the attached Auth appliance is level 1 then the user object must be provided. For level 0 you can call login with an empty object
  * to connect with at temporary random username. Passing in just the username will attempt to login the user with the given username
  * if it is available.
- * @returns {Domain} returns a promise object which is resolved upon success or rejected on failure.
+ * @returns {Domain} returns a deferred object which is resolved upon success or rejected on failure.
  * @example 
  * //**Login Example**
  * app.login("sender", username, password).then { myName: String

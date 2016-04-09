@@ -167,10 +167,10 @@ let sub = Riffle.Domain('app1', app)
 ```
 
 * [Domain(name, [superdomain])](#Domain) ⇒ <code>[Domain](#Domain)</code>
-    * [.register(action, handler)](#Domain.register) ⇒ <code>Promise</code>
-    * [.call(action, ...args)](#Domain.call) ⇒ <code>Promise</code>
+    * [.register(action, handler)](#Domain.register) ⇒ <code>Deferred</code>
+    * [.call(action, ...args)](#Domain.call) ⇒ <code>Deferred</code>
     * [.publish(channel, ...args)](#Domain.publish)
-    * [.subscribe(channel, handler)](#Domain.subscribe) ⇒ <code>Promise</code>
+    * [.subscribe(channel, handler)](#Domain.subscribe) ⇒ <code>Deferred</code>
     * [.unsubscribe(channel)](#Domain.unsubscribe)
     * [.unregister(action)](#Domain.unregister)
     * [.join()](#Domain.join)
@@ -179,12 +179,12 @@ let sub = Riffle.Domain('app1', app)
 
 <a name="Domain.register"></a>
 
-### Domain.register(action, handler) ⇒ <code>Promise</code>
+### Domain.register(action, handler) ⇒ <code>Deferred</code>
 Register a function to handle calls made to action on this domain. If the domain object represents a domain like `xs.demo.user.app` the 
 endpoint that the handler is registered to will look like `xs.demo.user.app/action`.
 
 **Kind**: static method of <code>[Domain](#Domain)</code>  
-**Returns**: <code>Promise</code> - a promise that is resolved if the handler is successfully registered or rejected if there is an error.  
+**Returns**: <code>Deferred</code> - a Deferred that is resolved if the handler is successfully registered or rejected if there is an error.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -194,21 +194,23 @@ endpoint that the handler is registered to will look like `xs.demo.user.app/acti
 **Example**  
 ```swift
 //**Registering a Procedure**
-//register an action call hello on our top level app domain. i.e. xs.demo.user.app/hello
-app.onJoin = {
-  register("hello") { (s: String) -> String in
-    print("hello")
+class App: Domain {
+  override func onJoin() {
+    //register an action call hello on our top level app domain. i.e. xs.demo.user.app/hello
+    register("hello") { (s: String) -> String in
+      print("hello")
+    }
   }
 }
 ```
 <a name="Domain.call"></a>
 
-### Domain.call(action, ...args) ⇒ <code>Promise</code>
+### Domain.call(action, ...args) ⇒ <code>Deferred</code>
 Call a function already registered to an action on this domain. If the domain object represents an domain like `xs.demo.user.app` the 
 endpoint that is called to will look like `xs.demo.user.app/action`.
 
 **Kind**: static method of <code>[Domain](#Domain)</code>  
-**Returns**: <code>Promise</code> - Returns a promise  
+**Returns**: <code>Deferred</code> - Returns a Deferred  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -218,9 +220,13 @@ endpoint that is called to will look like `xs.demo.user.app/action`.
 **Example**  
 ```swift
 //**Make a call**
-//call an action sum on with two numbers on our top level app domain. i.e. xs.demo.user.app/sum
-app.call("sum", 1).then { (s: String) in 
-  print("sum returned \(s)")
+class App: Domain {
+  override func onJoin() {
+    //call an action sum on with two numbers on our top level app domain. i.e. xs.demo.user.app/sum
+    call("sum", 1).then { (s: String) in 
+      print("sum returned \(s)")
+    }
+  }
 }
 ```
 <a name="Domain.publish"></a>
@@ -240,16 +246,20 @@ endpoint that is published to will look like `xs.demo.user.app/channel`.
 ```swift
 //**Publishing**
 //publish the string 'hello' to the `ping` channel on our top level app domain. i.e. `xs.demo.user.app/ping`
-app.publish("ping", "hello")
+class App: Domain {
+  override func onJoin() {
+    app.publish("ping", "hello")
+  }
+}
 ```
 <a name="Domain.subscribe"></a>
 
-### Domain.subscribe(channel, handler) ⇒ <code>Promise</code>
+### Domain.subscribe(channel, handler) ⇒ <code>Deferred</code>
 Subscribe a function to handle publish events made to the channel on this domain. If the domain object represents an domain like `xs.demo.user.app` the 
 endpoint that the handler is subscribed to will look like `xs.demo.user.app/channel`.
 
 **Kind**: static method of <code>[Domain](#Domain)</code>  
-**Returns**: <code>Promise</code> - a promise that is resolved if the handler is successfully subscribed or rejected if there is an error.  
+**Returns**: <code>Deferred</code> - a Deferred that is resolved if the handler is successfully subscribed or rejected if there is an error.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -260,8 +270,12 @@ endpoint that the handler is subscribed to will look like `xs.demo.user.app/chan
 ```swift
 //**Subscribing to an Event**
 //subscribe to events published to hello on our top level app domain. i.e. xs.demo.user.app/hello
-app.subscribe("hello") { (s: String) in
-  print("Received hello event!")
+class App: Domain {
+  override func onJoin() {
+    subscribe("hello") { (s: String) in
+      print("Received hello event!")
+    }
+  }
 }
 ```
 <a name="Domain.unsubscribe"></a>
@@ -350,7 +364,7 @@ to connect with at temporary random username. Passing in just the username will 
 if it is available.
 
 **Kind**: static method of <code>[Domain](#Domain)</code>  
-**Returns**: <code>[Domain](#Domain)</code> - returns a promise object which is resolved upon success or rejected on failure.  
+**Returns**: <code>[Domain](#Domain)</code> - returns a deferred object which is resolved upon success or rejected on failure.  
 
 | Param | Type | Description |
 | --- | --- | --- |
