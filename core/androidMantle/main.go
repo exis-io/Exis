@@ -11,6 +11,15 @@ type Domain struct {
 	coreDomain core.Domain
 }
 
+func Hello(name string) string {
+	return "Hello, " + name + ", this is patrick"
+}
+
+// Testing what a byte array looks like in swiftland
+func GetBytes(bit []byte) {
+	core.Warn("Got: %v", bit)
+}
+
 func NewDomain(name string) *Domain {
 	return &Domain{coreDomain: core.NewDomain(name, nil)}
 }
@@ -44,41 +53,6 @@ func (d *Domain) Join(cb string, eb string) {
 		}
 	}()
 }
-
-// Called on the app domain, remember!
-// func (d *Domain) Login(username string, password string) string {
-// 	args := []string{username}
-
-// 	if password != "" {
-// 		args = append(args, password)
-// 	}
-
-// 	if ret, err := d.coreDomain.GetApp().Login(d.coreDomain, args...); err != nil {
-// 		core.Warn("Unable to complete login %s", err.Error())
-// 		return ""
-// 	} else {
-// 		core.Info("Successfully logged in as %s", ret.GetName())
-// 		return ret.GetName()
-// 	}
-// }
-
-// func (d *Domain) RegisterDomain(username string, password string, email string, name string) string {
-// 	if _, err := d.coreDomain.GetApp().RegisterAccount(d.coreDomain, username, password, email, name); err != nil {
-// 		core.Warn("Unable to complete login %s", err.Error())
-// 		return err.Error()
-// 	} else {
-// 		core.Info("Successfully registered under account %s", username)
-// 		return "Success"
-// 	}
-// }
-
-// func (d *Domain) REEG(username string, password string, email string, name string) {
-// 	if _, err := d.coreDomain.GetApp().RegisterAccount(d.coreDomain, username, password, email, name); err != nil {
-// 		core.Warn("Unable to complete login %s", err.Error())
-// 	} else {
-// 		core.Info("Successfully registered under account %s", username)
-// 	}
-// }
 
 func (d *Domain) Subscribe(endpoint string, cb string, eb string, fn string, types string) {
 	go core.MantleSubscribe(d.coreDomain, endpoint, idUnmarshal(cb), idUnmarshal(eb), idUnmarshal(fn), core.MantleUnmarshal(types))

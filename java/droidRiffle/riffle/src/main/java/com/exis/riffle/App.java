@@ -17,59 +17,16 @@ import go.mantle.Mantle;
  *
  * Manages a single session, including the connection itself and all domains attached to it.
  */
-class App extends Domain {
+class App {
+    Mantle.Domain mantleDomain;
     Thread thread;
 
     Map<BigInteger, HandlerTuple> handlers;
     Map<BigInteger, Deferred> deferreds;
 
-    // Run the loop once, then close it down. We need to receive control messages
-    private Deferred controlOperation;
-
-
-    protected App() {
-        super();
-    }
-
-    public App(String name) {
-        super(name);
+    App() {
         handlers = new ArrayMap();
         deferreds = new ArrayMap();
-
-        mantleDomain = Mantle.NewDomain(name);
-    }
-
-    /* Connection Management */
-    public void join() {
-        Deferred d = new Deferred(app);
-
-        d.then(() -> {
-            Riffle.debug("Triggering onJoin method");
-            this.onJoin();
-        });
-
-        mantleDomain.Join(d.cb.toString(), d.eb.toString());
-        app.listen(mantleDomain);
-    }
-
-    public void login() {
-
-    }
-
-    public void registerDomain(String username, String password, String email, String name) {
-        String result = this.mantleDomain.RegisterDomain(username, password, email, name);
-
-//        if (result == "Success") {
-//
-//        }
-    }
-
-    public void reconnect() {
-        Riffle.warn("THIS METHOD IS NOT IMPLEMENTED");
-    }
-
-    public void disconnect() {
-        Riffle.warn("THIS METHOD IS NOT IMPLEMENTED");
     }
 
     /**
@@ -148,4 +105,3 @@ class HandlerTuple {
         this.isRegistration = isRegistration;
     }
 }
-

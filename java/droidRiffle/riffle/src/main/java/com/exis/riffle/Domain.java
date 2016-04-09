@@ -19,21 +19,32 @@ import go.mantle.Mantle;
  * TODO: emit different kinds of deferreds based on handlers
  */
 public class Domain {
-    protected Mantle.Domain mantleDomain;
-    protected App app;
-    public String name;
-
-    protected Domain() {}
+    private Mantle.Domain mantleDomain;
+    private App app;
 
     /* Constructurs */
-    protected Domain(String name) {
-        this.name = name;
+    public Domain(String name) {
+        mantleDomain = Mantle.NewDomain(name);
+        app = new App();
     }
 
     public Domain(String name, Domain superdomain) {
         mantleDomain = superdomain.mantleDomain.Subdomain(name);
-        this.name = superdomain.name + "." + name;
         app = superdomain.app;
+    }
+
+
+    /* Connection Management */
+    public void join() {
+        Deferred d = new Deferred(app);
+
+        d.then(() -> {
+            Riffle.debug("Triggering onJoin method");
+            this.onJoin();
+        });
+
+        mantleDomain.Join(d.cb.toString(), d.eb.toString());
+        app.listen(mantleDomain);
     }
 
     public void onJoin() {
