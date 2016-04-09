@@ -14,6 +14,4 @@ func TestCoreModels(m core.Model) {
 	m.Find("Dog", nil)
 
 	m.Create("Dog", map[string]interface{}{"name": "Joe"})
-
-	m.Count("Dog")
 }
