@@ -56,6 +56,8 @@ SUBTREES = [
 
     ("python/pyRiffle", "pyRiffle", "git@github.com:exis-io/pyRiffle.git"),
 
+    ("java/chatDemo", "droidChat", "git@github.com:exis-io/AndroidChatDemo.git"),
+
     ("CardsAgainstHumanityDemo/swiftCardsAgainst", "iosCAH", "git@github.com:exis-io/CardsAgainst.git"),
     ("CardsAgainstHumanityDemo/ngCardsAgainst", "ngCAH", "git@github.com:exis-io/ionicCardsAgainstEXIStence.git"),
     ("CardsAgainstHumanityDemo/droidCardsAgainst", "droidCAH", "git@github.com:exis-io/androidCardsAgainstHumanity.git")
