@@ -26,8 +26,8 @@ type Domain interface {
 	GetToken() string
 	LoadKey(string) error
 
-	Login(...string) (string, error)
-	RegisterDomain(string, string, string, string) bool
+	// Login(...string) (string, error)
+	// RegisterDomain(string, string, string, string) bool
 }
 
 type domain struct {
@@ -96,26 +96,26 @@ func (d domain) Join() error {
 	}
 }
 
-// Called on the app domain, remember!
-func (d domain) Login(args ...string) (string, error) {
-	if ret, err := d.coreDomain.GetApp().Login(d.coreDomain, args...); err != nil {
-		core.Warn("Unable to complete login %s", err.Error())
-		return "", err
-	} else {
-		core.Info("Successfully logged in as %s", ret.GetName())
-		return ret.GetName(), nil
-	}
-}
+// // Called on the app domain, remember!
+// func (d domain) Login(args ...string) (string, error) {
+// 	if ret, err := d.coreDomain.GetApp().Login(d.coreDomain, args...); err != nil {
+// 		core.Warn("Unable to complete login %s", err.Error())
+// 		return "", err
+// 	} else {
+// 		core.Info("Successfully logged in as %s", ret.GetName())
+// 		return ret.GetName(), nil
+// 	}
+// }
 
-func (d domain) RegisterDomain(username string, password string, email string, name string) bool {
-	if ok, err := d.coreDomain.GetApp().RegisterAccount(d.coreDomain, username, password, email, name); err != nil {
-		core.Warn("Unable to complete login %s", err.Error())
-		return false
-	} else {
-		core.Info("Successfully registered under account %s", username)
-		return ok
-	}
-}
+// func (d domain) RegisterDomain(username string, password string, email string, name string) bool {
+// 	if ok, err := d.coreDomain.GetApp().RegisterAccount(d.coreDomain, username, password, email, name); err != nil {
+// 		core.Warn("Unable to complete login %s", err.Error())
+// 		return false
+// 	} else {
+// 		core.Info("Successfully registered under account %s", username)
+// 		return ok
+// 	}
+// }
 
 // Block and listen until the connection closes
 func (d domain) Listen() error {

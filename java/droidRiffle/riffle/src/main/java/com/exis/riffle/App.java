@@ -23,6 +23,10 @@ class App extends Domain {
     Map<BigInteger, HandlerTuple> handlers;
     Map<BigInteger, Deferred> deferreds;
 
+    // Run the loop once, then close it down. We need to receive control messages
+    private Deferred controlOperation;
+
+
     protected App() {
         super();
     }
@@ -53,7 +57,7 @@ class App extends Domain {
     }
 
     public void registerDomain(String username, String password, String email, String name) {
-//        String result = mantleDomain.RegisterDomain(username, password, email, name);
+        String result = this.mantleDomain.RegisterDomain(username, password, email, name);
 
 //        if (result == "Success") {
 //
