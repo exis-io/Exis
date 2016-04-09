@@ -53,6 +53,8 @@ client.GET("users/", 1, 2, 3, (a, b) -> {
 });
 ```
 
+We took care of the implementation of lambdas, dont worry-- but Java 8 is required! [Download it here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+
 ## Using Riffle
 
 Subscribe to an endpoint with a lambda. Note that you have to `Integer.class` to tell the system what kind of types you're expecting.
