@@ -90,6 +90,7 @@ android:
 
 	@rm -f java/droidRiffle/riffle/libs/classes.jar
 	@rm -rf java/droidRiffle/riffle/src/main/jniLibs
+	@mkdir -p java/droidRiffle/riffle/libs/
 	@mv .tmp/android/classes.jar java/droidRiffle/riffle/libs/classes.jar
 	@mv .tmp/android/jni java/droidRiffle/riffle/src/main/jniLibs
 
