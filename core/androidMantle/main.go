@@ -58,18 +58,17 @@ func (d *Domain) MentleLoginDomain(cb string, eb string, username string, passwo
 			d.coreDomain.GetApp().CallbackSend(idUnmarshal(eb), err.Error())
 		} else {
 			core.Info("Successfully logged in as %s", ret.GetName())
-			// d.coreDomain.GetApp().CallbackSend(idUnmarshal(cb), ret.GetName())
-			// Automatically join
+			// Have to save the token!
 
-			// Have to save the token
+			core.Info("Joining on %s", d.coreDomain.GetName())
 
 			if c, err := shared.Open(core.Fabric); err != nil {
 				d.coreDomain.GetApp().CallbackSend(idUnmarshal(eb), err.Error())
 			} else {
-				if err := d.coreDomain.Join(c); err != nil {
+				if err := ret.Join(c); err != nil {
 					d.coreDomain.GetApp().CallbackSend(idUnmarshal(eb), err.Error())
 				} else {
-					d.coreDomain.GetApp().CallbackSend(idUnmarshal(cb), d.coreDomain.GetApp().GetToken())
+					d.coreDomain.GetApp().CallbackSend(idUnmarshal(cb), ret.GetApp().GetToken())
 				}
 			}
 		}

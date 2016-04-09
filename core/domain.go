@@ -164,6 +164,7 @@ func (c *domain) Leave() error {
 
 	// if no domains remain, terminate the connection
 	if len(c.app.domains) == 0 || c.app.agent == c.name {
+		Warn("No domains connected")
 		c.app.Close("No domains connected")
 	}
 

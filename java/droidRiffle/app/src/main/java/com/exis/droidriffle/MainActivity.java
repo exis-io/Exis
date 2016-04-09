@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Do nothing but start the tests
 //        Riffle.setFabricDev();
-        Riffle.setLogLevelInfo();
+        Riffle.setLogLevelDebug();
 
         Riffle.debug("Starting riffle tests");
 
@@ -57,10 +57,10 @@ public class MainActivity extends AppCompatActivity {
 //        });
 
         // Auth level 0
-        app.login("d").then( () -> {
+        app.login("asdf").then( () -> {
             Riffle.info("Successfully registered!");
         }).error( () -> {
-            Riffle.info("Unable to register: ");
+            Riffle.info("Unable to register!");
         });
     }
 

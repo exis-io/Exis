@@ -45,6 +45,7 @@ public class AppDomain extends Domain {
      * Attempts to connect
      */
     public void join() {
+        Riffle.debug("Starting main join method?");
         Deferred d = new Deferred(app);
         controlOperation = d;
 
@@ -133,6 +134,7 @@ public class AppDomain extends Domain {
                             Riffle.error("A control operation was requested, but not found!");
                         }
 
+                        Riffle.debug("AppDomain listen loop terminating");
                         controlOperation = null;
                         break;
                     }
