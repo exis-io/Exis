@@ -11,6 +11,7 @@
 		504D4A521C9C5724006B5579 /* DomainTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507D70E11C8D19070030F9F4 /* DomainTesting.swift */; };
 		505777C81C8E50DE00DE33DF /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505777C71C8E50DE00DE33DF /* main.swift */; };
 		507D70E21C8D19070030F9F4 /* DomainTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507D70E11C8D19070030F9F4 /* DomainTesting.swift */; };
+		50E9BC661CB42A8E00A20965 /* ModelTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E9BC651CB42A8E00A20965 /* ModelTesting.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
@@ -40,6 +41,7 @@
 		505777D71C8F6D1C00DE33DF /* Mantle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Mantle.framework; path = ../Pod/Assets/ios/Mantle.framework; sourceTree = "<group>"; };
 		5063FF051C8F88FA00D0F623 /* Riffle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Riffle.framework; path = "Pods/../build/Debug/Riffle-OSX/Riffle.framework"; sourceTree = "<group>"; };
 		507D70E11C8D19070030F9F4 /* DomainTesting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DomainTesting.swift; sourceTree = "<group>"; };
+		50E9BC651CB42A8E00A20965 /* ModelTesting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelTesting.swift; sourceTree = "<group>"; };
 		6020B0B5C2C0B8481671DAD5 /* Pods-Riffle_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Riffle_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Riffle_Example/Pods-Riffle_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* Riffle_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Riffle_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 			isa = PBXGroup;
 			children = (
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
+				50E9BC651CB42A8E00A20965 /* ModelTesting.swift */,
 				507D70E11C8D19070030F9F4 /* DomainTesting.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				502DDEBB1BE19F57008EC0EB /* MyPlayground.playground */,
@@ -346,6 +349,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50E9BC661CB42A8E00A20965 /* ModelTesting.swift in Sources */,
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				507D70E21C8D19070030F9F4 /* DomainTesting.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,

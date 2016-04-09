@@ -228,6 +228,17 @@ func MantleUnmarshal(a string) []interface{} {
 	}
 }
 
+// Sloppy deserialization, please merge
+func MantleUnmarshalMap(a string) map[string]interface{} {
+	var d map[string]interface{}
+	if e := json.Unmarshal([]byte(a), &d); e == nil {
+		return d
+	} else {
+		Warn("Unable to unmarshall data: %s", e)
+		return nil
+	}
+}
+
 // Marshall data into json as it moves from the core to the crust
 func MantleMarshall(d Callback) string {
 	if r, e := json.Marshal([]interface{}{d.Id, d.Args}); e == nil {

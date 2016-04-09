@@ -5,28 +5,43 @@ all: swift ios python js
 
 LOG="./build.log"
 
+# Directories
+SWIFT_EXAMPLE=swift/example
+SWIFT_RIFFLE=swift/swiftRiffle/Pod/Classes
+
 printcheck:
 	@>$(LOG)
 	@echo "Check $(LOG) for warnings and errors"
 
 swift: printcheck libriffmantle.so
+	@$(MAKE) -C swift/mantle clean >$(LOG) ||:
+	@rm -rf ${SWIFT_RIFFLE}/.git
+
 	@cp utils/assets/libriffmantle.so swift/mantle/libriffmantle.so
 	@cp utils/assets/libriffmantle.h swift/mantle/libriffmantle.h
 
 	@echo "Installing mantle..."
 	@$(MAKE) -C swift/mantle all >>$(LOG)
 
+	# The package has to be tagged to so SPM can resolve a dependency
 	@echo "Installing crust..."
-	@$(MAKE) -C swift/swiftRiffle/Pod/Classes all >>$(LOG)
+	@git -C ${SWIFT_RIFFLE} init
+	@git -C ${SWIFT_RIFFLE} add .
+	@git -C ${SWIFT_RIFFLE} commit -m "Package setup"
+	@git -C ${SWIFT_RIFFLE} tag 1.0.0
 
 	@echo "To build the example, run make swift_example"
 
 swift_example: printcheck 
+	@rm -rf ${SWIFT_EXAMPLE}/Pacakges
 	@echo "Building example..."
 	@swift build --chdir swift/example
 	@echo "Now 'cd swift/example' and run './.build/debug/Example', 'SENDER=true ./.build/debug/Example'"
 
 ios:
+	SDK_ROOT='-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/'
+	CLANG_DIR=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
+
 	@echo "Building arm7" 
 	@GOOS=darwin GOARCH=arm GOARM=7 \
 	CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
@@ -77,8 +92,9 @@ ios:
 
 android:
 	@echo "Building core..."
-	# @gomobile bind -target=android github.com/exis-io/core/androidMantle
+	@gomobile bind -target=android github.com/exis-io/core/androidMantle
 
+	# Doesn't use the AAR directly because it screws with distribution
 	@echo "Moving mantle"
 	@rm -rf .tmp/android
 	@mkdir -p .tmp/android
@@ -89,29 +105,6 @@ android:
 	@rm -rf java/droidRiffle/riffle/src/main/jniLibs
 	mv .tmp/android/classes.jar java/droidRiffle/riffle/libs/classes.jar
 	mv .tmp/android/jni java/droidRiffle/riffle/src/main/jniLibs
-
-android86:
-	@echo "Building core..."
-	@go build -buildmode=c-shared -o java/testing/libmantle.so core/cMantle/main.go
-
-androidtestarm:
-	GOOS=android \
-	GOARCH=arm \
-	GOARM=7 \
-	CC=/home/damouse/code/go/pkg/gomobile/android-ndk-r10e/arm/bin/arm-linux-androideabi-gcc \
-	CXX=/home/damouse/code/go/pkg/gomobile/android-ndk-r10e/arm/bin/arm-linux-androideabi-g++ \
-	CGO_ENABLED=1 \
-	go build -buildmode=c-shared -o java/droidRiffle/app/src/main/jniLibs/armeabi-v7a/libmeth.so java/testing/meth.go
-
-javatest: 
-	@echo "Building core..."
-	@go build -buildmode=c-shared -o java/droidRiffle/app/src/main/jniLibs/x86/libmeth.so java/testing/meth.go
-	@cp java/droidRiffle/app/src/main/jniLibs/x86_64/libmeth.so java/testing/libmeth.so
-	@cp java/droidRiffle/app/src/main/jniLibs/x86_64/libmeth.h java/testing/libmeth.h
-
-java: 
-	@echo "Building core..."
-	@go build -buildmode=c-shared -o libgojni.so core/androidMantle/main.go
 
 python: 
 	gopy bind github.com/exis-io/core/pyMantle
@@ -132,11 +125,10 @@ libriffmantle.so:
 
 clean: 
 	@-rm -f utils/assets/libriffmantle.so utils/assets/libriffmantle.h
-	@-rm -f swift/osxCrust/RiffleTest/riffle.a  swift/osxCrust/RiffleTest/riffle.h
 	@-rm -rf .tmp
 
 	@-rm -f utils/assets/libriffmantle.so utils/assets/libriffmantle.h >$(LOG) ||:
 	@$(MAKE) -C swift/mantle clean >$(LOG) ||:
-	@$(MAKE) -C swift/swiftRiffle/Pod/Classes clean >$(LOG) ||:
+	@rm -rf ${SWIFT_RIFFLE}/.git
 	@rm -rf swift/example/Packages >$(LOG) ||:
 

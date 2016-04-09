@@ -160,7 +160,7 @@ if __name__ == '__main__':
                 # TODO: seperate by file, and use the files for some reasonable ordering
 
         elif args['all']:
-            arbiter.arbiter.testAll('all')
+            arbiter.arbiter.testAll('all', multithreaded=False)
 
         elif args['<languageOrTestNumber>']:
             target = args['<languageOrTestNumber>']
@@ -175,7 +175,7 @@ if __name__ == '__main__':
 
                 arbiter.repl.executeTaskSet(target)
             else:
-                arbiter.arbiter.testAll(args['<languageOrTestNumber>'])
+                arbiter.arbiter.testAll(args['<languageOrTestNumber>'], multithreaded=False)
 
     elif args['release']:
         found = False
@@ -245,6 +245,12 @@ if __name__ == '__main__':
             print("Error: unrecognized shadow remote ({})".format(args['<remote>']))
             sys.exit(1)
 
+        # Special hack case for swiftRiffle on Ubuntu
+        # Replaces the development version of Pacakge.swift, which refers to the local mantle, for the production version
+        if remote == 'swiftUbuntu':
+            os.rename('swift/swiftRiffle/Pod/Classes/Package.swift', 'swift/swiftRiffle/Pod/Classes/Package.swift.dev')
+            os.rename('swift/swiftRiffle/Pod/Classes/Package.swift.prod', 'swift/swiftRiffle/Pod/Classes/Package.swift')
+
         tag = args['<version>']
         tmp = tempfile.mkdtemp()
 
@@ -252,6 +258,8 @@ if __name__ == '__main__':
         call("git clone --no-checkout {} {}".format(url, tmp), shell=True)
 
         # Copy the contents of the real directory
+        if os.path.exists(prefix + '/.git'):
+            shutil.rmtree(prefix + '/.git')
         copy_tree(prefix, tmp, lambda d, files: ['.git'])
 
         call('git -C {0} add --all'.format(tmp), shell=True)
@@ -264,3 +272,7 @@ if __name__ == '__main__':
         call("git -C {} push --tags origin master".format(tmp), shell=True)
         call("git push --tags origin HEAD", shell=True)
         shutil.rmtree(tmp)
+
+        if remote == 'swiftUbuntu':
+            os.rename('swift/swiftRiffle/Pod/Classes/Package.swift', 'swift/swiftRiffle/Pod/Classes/Package.swift.prod')
+            os.rename('swift/swiftRiffle/Pod/Classes/Package.swift.dev', 'swift/swiftRiffle/Pod/Classes/Package.swift')

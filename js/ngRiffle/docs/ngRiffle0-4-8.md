@@ -1,9 +1,11 @@
 # ngRiffle (v0.4.8)
 ngRiffle is an AngularJS service that wraps the [jsRiffle](https://github.com/exis-io/jsRiffle) library and provides an API for connection and interaction with Exis.
 
+
 ## Changes in v0.4.8
 * [Storage API](#RiffleStorage)
 * Bug fix where rejecting a promise that is being returned via a call results in the success handler being called on the receiving end.
+
 
 ## Objects
 
@@ -63,7 +65,7 @@ The functions can be used in a .config block of the application.
 **Kind**: global namespace  
 **Example**  
 ```js
-//config block
+//**Configuration Example**
 angular.module('myapp').config(function($riffleProvider){
   //now set the app domain and node to connect with
   $riffleProvider.setFabricLocal();
@@ -194,6 +196,7 @@ if it is available.
 
 **Example**  
 ```js
+//**Login Example**
 var user = { username: "example", password: "demo" };
 //login user 
 $riffle.login(user).then(loginHandler, errorHandler);
@@ -215,6 +218,7 @@ Register a new user with an an Auth appliance attached to the current app domain
 
 **Example**  
 ```js
+//**Account Registration Example**
 var user = { username: "example", password: "demo", name: "Johnny D", email: "example@domain.com" };
 //register the new user 
 $riffle.registerAccount(user).then(registerHandler, errorHandler);
@@ -315,6 +319,7 @@ Creates a new [RiffleStorage](#RiffleStorage) class using the given properly for
 
 **Example**  
 ```js
+//**Storage Example**
 //create a storage domain
 var storageDomain = $riffle.subdomain('Storage');
 
@@ -342,6 +347,7 @@ endpoint that is called to will look like `xs.demo.user.app/action`.
 
 **Example**  
 ```js
+//**Call w/optional type checking**
 //call an action sum on with two numbers on our top level app domain. i.e. xs.demo.user.app/sum
 var p = $riffle.call('sum', 1, 1);
 
@@ -367,6 +373,7 @@ endpoint that the handler is registered to will look like `xs.demo.user.app/acti
 
 **Example**  
 ```js
+//**Registering a Procedure**
 //register an action call hello on our top level app domain. i.e. xs.demo.user.app/hello
 $riffle.register('hello', function(){
   console.log('hello');
@@ -386,6 +393,7 @@ endpoint that is published to will look like `xs.demo.user.app/channel`.
 
 **Example**  
 ```js
+//**Publishing**
 //publish the string 'hello' to the `ping` channel on our top level app domain. i.e. `xs.demo.user.app/ping`
 $riffle.publish('ping', 'hello');
 ```
@@ -404,6 +412,7 @@ endpoint that the handler is subscribed to will look like `xs.demo.user.app/chan
 
 **Example**  
 ```js
+//**Subscribing to an Event**
 //subscribe to events published to hello on our top level app domain. i.e. xs.demo.user.app/hello
 $riffle.subscribe('hello', function(){
   console.log('Received hello event!');
@@ -424,7 +433,9 @@ Creates a subscription via [subscribe](#RiffleDomain.subscribe) but binds it to 
 
 **Example**  
 ```js
+//**Subscribing on a $scope**
 //subscribe to events published to hello on our top level app domain and bind the subscription to $scope
+//when $scope.$on('$destroy') is triggered the handler will be unsubscribed
 $riffle.subscribeOnScope($scope, 'hello', function(){
   console.log('Received hello event!');
 });
@@ -441,6 +452,7 @@ Unregister the handler for the specified action on this domain.
 
 **Example**  
 ```js
+//**Unregister**
 //unregister the 'getData' action handler on our top level app domain. i.e. xs.demo.user.app/getData
 $riffle.unregister('getData');
 ```
@@ -456,6 +468,7 @@ Unsubscribe all handlers subscribe to the channel on this domain.
 
 **Example**  
 ```js
+//**Unsubscribe**
 //unsubscribe to events published to hello on our top level app domain. i.e. xs.demo.user.app/hello
 $riffle.unsubscribe('hello');
 ```
@@ -472,7 +485,8 @@ Create a subdomain from the current [domain](#RiffleDomain) object.
 
 **Example**  
 ```js
-//if $riffle represents the domain xs.demo.user.app backend is a [RiffleDomain](#RiffleDomain) that represents `xs.demo.user.app.backend`
+//**Create a subdomain**
+//if $riffle represents the domain xs.demo.user.app backend is a RiffleDomain that represents `xs.demo.user.app.backend`
 var backend = $riffle.subdomain('backend');
 ```
 <a name="$riffle.linkDomain"></a>
@@ -488,6 +502,7 @@ Create a new domain from the current [domain](#RiffleDomain) object that represe
 
 **Example**  
 ```js
+//**Link A Domain**
 //create a new domain that represents xs.demo.partner.app
 var anotherApp = $riffle.linkDomain('xs.demo.partner.app');
 ```
@@ -499,6 +514,7 @@ to notify listening handlers that a successful connection was established.
 **Kind**: static method of <code>[$riffle](#$riffle)</code>  
 **Example**  
 ```js
+//**Joining a domain**
 //attempt to join connect to Exis as the top level domain i.e. xs.demo.user.app
 $riffle.join();
 
@@ -515,6 +531,7 @@ If the connection is closed a `$riffle.leave` event will be broadcast thoughout 
 **Kind**: static method of <code>[$riffle](#$riffle)</code>  
 **Example**  
 ```js
+//**Logout/Disconnect**
 //unregister/unsubscribe any handlers on the top level domain and close the connection if it this the the domain join was called on.
 $riffle.leave();
 
@@ -655,6 +672,7 @@ endpoint that is called to will look like `xs.demo.user.app/action`.
 
 **Example**  
 ```js
+//**Call w/optional type checking**
 //call an action sum on with two numbers on our top level app domain. i.e. xs.demo.user.app/sum
 var p = $riffle.call('sum', 1, 1);
 
@@ -680,6 +698,7 @@ endpoint that the handler is registered to will look like `xs.demo.user.app/acti
 
 **Example**  
 ```js
+//**Registering a Procedure**
 //register an action call hello on our top level app domain. i.e. xs.demo.user.app/hello
 $riffle.register('hello', function(){
   console.log('hello');
@@ -699,6 +718,7 @@ endpoint that is published to will look like `xs.demo.user.app/channel`.
 
 **Example**  
 ```js
+//**Publishing**
 //publish the string 'hello' to the `ping` channel on our top level app domain. i.e. `xs.demo.user.app/ping`
 $riffle.publish('ping', 'hello');
 ```
@@ -717,6 +737,7 @@ endpoint that the handler is subscribed to will look like `xs.demo.user.app/chan
 
 **Example**  
 ```js
+//**Subscribing to an Event**
 //subscribe to events published to hello on our top level app domain. i.e. xs.demo.user.app/hello
 $riffle.subscribe('hello', function(){
   console.log('Received hello event!');
@@ -737,7 +758,9 @@ Creates a subscription via [subscribe](#RiffleDomain.subscribe) but binds it to 
 
 **Example**  
 ```js
+//**Subscribing on a $scope**
 //subscribe to events published to hello on our top level app domain and bind the subscription to $scope
+//when $scope.$on('$destroy') is triggered the handler will be unsubscribed
 $riffle.subscribeOnScope($scope, 'hello', function(){
   console.log('Received hello event!');
 });
@@ -754,6 +777,7 @@ Unregister the handler for the specified action on this domain.
 
 **Example**  
 ```js
+//**Unregister**
 //unregister the 'getData' action handler on our top level app domain. i.e. xs.demo.user.app/getData
 $riffle.unregister('getData');
 ```
@@ -769,6 +793,7 @@ Unsubscribe all handlers subscribe to the channel on this domain.
 
 **Example**  
 ```js
+//**Unsubscribe**
 //unsubscribe to events published to hello on our top level app domain. i.e. xs.demo.user.app/hello
 $riffle.unsubscribe('hello');
 ```
@@ -785,7 +810,8 @@ Create a subdomain from the current [domain](#RiffleDomain) object.
 
 **Example**  
 ```js
-//if $riffle represents the domain xs.demo.user.app backend is a [RiffleDomain](#RiffleDomain) that represents `xs.demo.user.app.backend`
+//**Create a subdomain**
+//if $riffle represents the domain xs.demo.user.app backend is a RiffleDomain that represents `xs.demo.user.app.backend`
 var backend = $riffle.subdomain('backend');
 ```
 <a name="$riffle.user.linkDomain"></a>
@@ -801,6 +827,7 @@ Create a new domain from the current [domain](#RiffleDomain) object that represe
 
 **Example**  
 ```js
+//**Link A Domain**
 //create a new domain that represents xs.demo.partner.app
 var anotherApp = $riffle.linkDomain('xs.demo.partner.app');
 ```
@@ -812,6 +839,7 @@ to notify listening handlers that a successful connection was established.
 **Kind**: static method of <code>[user](#$riffle.user)</code>  
 **Example**  
 ```js
+//**Joining a domain**
 //attempt to join connect to Exis as the top level domain i.e. xs.demo.user.app
 $riffle.join();
 
@@ -828,6 +856,7 @@ If the connection is closed a `$riffle.leave` event will be broadcast thoughout 
 **Kind**: static method of <code>[user](#$riffle.user)</code>  
 **Example**  
 ```js
+//**Logout/Disconnect**
 //unregister/unsubscribe any handlers on the top level domain and close the connection if it this the the domain join was called on.
 $riffle.leave();
 
@@ -1128,6 +1157,7 @@ endpoint that the handler is registered to will look like `xs.demo.user.app/acti
 
 **Example**  
 ```js
+//**Registering a Procedure**
 //register an action call hello on our top level app domain. i.e. xs.demo.user.app/hello
 $riffle.register('hello', function(){
   console.log('hello');
@@ -1148,6 +1178,7 @@ endpoint that is called to will look like `xs.demo.user.app/action`.
 
 **Example**  
 ```js
+//**Call w/optional type checking**
 //call an action sum on with two numbers on our top level app domain. i.e. xs.demo.user.app/sum
 var p = $riffle.call('sum', 1, 1);
 
@@ -1172,6 +1203,7 @@ endpoint that is published to will look like `xs.demo.user.app/channel`.
 
 **Example**  
 ```js
+//**Publishing**
 //publish the string 'hello' to the `ping` channel on our top level app domain. i.e. `xs.demo.user.app/ping`
 $riffle.publish('ping', 'hello');
 ```
@@ -1190,6 +1222,7 @@ endpoint that the handler is subscribed to will look like `xs.demo.user.app/chan
 
 **Example**  
 ```js
+//**Subscribing to an Event**
 //subscribe to events published to hello on our top level app domain. i.e. xs.demo.user.app/hello
 $riffle.subscribe('hello', function(){
   console.log('Received hello event!');
@@ -1210,7 +1243,9 @@ Creates a subscription via [subscribe](#RiffleDomain.subscribe) but binds it to 
 
 **Example**  
 ```js
+//**Subscribing on a $scope**
 //subscribe to events published to hello on our top level app domain and bind the subscription to $scope
+//when $scope.$on('$destroy') is triggered the handler will be unsubscribed
 $riffle.subscribeOnScope($scope, 'hello', function(){
   console.log('Received hello event!');
 });
@@ -1227,6 +1262,7 @@ Unsubscribe all handlers subscribe to the channel on this domain.
 
 **Example**  
 ```js
+//**Unsubscribe**
 //unsubscribe to events published to hello on our top level app domain. i.e. xs.demo.user.app/hello
 $riffle.unsubscribe('hello');
 ```
@@ -1242,6 +1278,7 @@ Unregister the handler for the specified action on this domain.
 
 **Example**  
 ```js
+//**Unregister**
 //unregister the 'getData' action handler on our top level app domain. i.e. xs.demo.user.app/getData
 $riffle.unregister('getData');
 ```
@@ -1258,7 +1295,8 @@ Create a subdomain from the current [domain](#RiffleDomain) object.
 
 **Example**  
 ```js
-//if $riffle represents the domain xs.demo.user.app backend is a [RiffleDomain](#RiffleDomain) that represents `xs.demo.user.app.backend`
+//**Create a subdomain**
+//if $riffle represents the domain xs.demo.user.app backend is a RiffleDomain that represents `xs.demo.user.app.backend`
 var backend = $riffle.subdomain('backend');
 ```
 <a name="RiffleDomain.linkDomain"></a>
@@ -1274,6 +1312,7 @@ Create a new domain from the current [domain](#RiffleDomain) object that represe
 
 **Example**  
 ```js
+//**Link A Domain**
 //create a new domain that represents xs.demo.partner.app
 var anotherApp = $riffle.linkDomain('xs.demo.partner.app');
 ```
@@ -1285,6 +1324,7 @@ to notify listening handlers that a successful connection was established.
 **Kind**: static method of <code>[RiffleDomain](#RiffleDomain)</code>  
 **Example**  
 ```js
+//**Joining a domain**
 //attempt to join connect to Exis as the top level domain i.e. xs.demo.user.app
 $riffle.join();
 
@@ -1301,6 +1341,7 @@ If the connection is closed a `$riffle.leave` event will be broadcast thoughout 
 **Kind**: static method of <code>[RiffleDomain](#RiffleDomain)</code>  
 **Example**  
 ```js
+//**Logout/Disconnect**
 //unregister/unsubscribe any handlers on the top level domain and close the connection if it this the the domain join was called on.
 $riffle.leave();
 
@@ -1333,6 +1374,7 @@ A function which returns a promise that is resolved if the return of the call ma
 
 **Example**  
 ```js
+//**Call type checking**
 //call a function that and only execute our handler if the result is a string
 $riffle.call('getData').want(String).then(handler);
 ```

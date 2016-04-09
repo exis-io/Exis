@@ -1,15 +1,10 @@
 
-#if os(Linux)
 import PackageDescription
 
+// This is a "stub" package for local development. The makefile swaps these out when building local
 let package = Package(
     name: "Riffle",
     dependencies: [
-        // For local testing within exis repo
-        //.Package(url: "../../../mantle", majorVersion: 1)
-
-        // For production
-        .Package(url: "https://github.com/exis-io/swiftRiffleMantle.git", majorVersion: 0, minor: 2)
+        .Package(url: "../../../mantle", majorVersion: 1)
     ]
 )
-#endif

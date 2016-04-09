@@ -19,9 +19,10 @@ func CBID() uint64 {
 // Note that with go 1.6 we can't pass pointers back up through the language boundrary.
 // An "unsafe" implementation is going to fail, since the go GC is going to have a bad time.
 
-// So yet another messaging bus. Make sure to destroy domains in the crust.
+// So yet another messaging bus. Make sure to destroy domains in the crust on their deinit
 
 var domainIndex = make(map[uint64]core.Domain)
+var coreModel core.Model
 
 //export Free
 func Free(pdomain uint64) {
@@ -46,8 +47,8 @@ func Subdomain(pdomain uint64, name *C.char) uint64 {
 
 //export SetToken
 func SetToken(pdomain uint64, token *C.char) {
-    d := get(pdomain)
-    d.GetApp().SetToken(C.GoString(token))
+	d := get(pdomain)
+	d.GetApp().SetToken(C.GoString(token))
 }
 
 //export Receive
@@ -134,6 +135,35 @@ func get(i uint64) core.Domain {
 		return d
 	}
 }
+
+// Model Operations
+
+//export ModelAll
+func ModelAll(pdomain uint64, cb uint64, eb uint64, collection *C.char, query *C.char) {
+	go core.MantleModel(get(pdomain), coreModel.All, C.GoString(collection), core.MantleUnmarshalMap(C.GoString(query)), cb, eb)
+}
+
+//export ModelFind
+func ModelFind(pdomain uint64, cb uint64, eb uint64, collection *C.char, query *C.char) {
+	go core.MantleModel(get(pdomain), coreModel.Find, C.GoString(collection), core.MantleUnmarshalMap(C.GoString(query)), cb, eb)
+}
+
+//export ModelCreate
+func ModelCreate(pdomain uint64, cb uint64, eb uint64, collection *C.char, query *C.char) {
+	go core.MantleModel(get(pdomain), coreModel.Create, C.GoString(collection), core.MantleUnmarshalMap(C.GoString(query)), cb, eb)
+}
+
+//export ModelSave
+func ModelSave(pdomain uint64, cb uint64, eb uint64, collection *C.char, query *C.char) {
+	go core.MantleModel(get(pdomain), coreModel.Save, C.GoString(collection), core.MantleUnmarshalMap(C.GoString(query)), cb, eb)
+}
+
+//export ModelCount
+func ModelCount(pdomain uint64, cb uint64, eb uint64, collection *C.char, query *C.char) {
+	go core.MantleModel(get(pdomain), coreModel.Count, C.GoString(collection), core.MantleUnmarshalMap(C.GoString(query)), cb, eb)
+}
+
+// Logging and general Utils
 
 //export MantleSetLogLevelOff
 func MantleSetLogLevelOff() { core.LogLevel = core.LogLevelOff }

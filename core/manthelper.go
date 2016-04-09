@@ -63,16 +63,14 @@ func MantleUnregister(d Domain, endpoint string, cb uint64, eb uint64) {
 	}
 }
 
-// Apply the arguments to the given function on this domain.
-// If the function returns an error, callback with error, otherwise callback with success
-// func (c domain) apply(fn func(*domain, string, uint64, []interface{}) error, endpoint string, cb uint64, eb uint64, hn uint64) {
-//  // TODO: validate the endpoint, else errback
-//  endpoint = makeEndpoint(c.name, endpoint)
-
-//  // with function Subscribe:
-//  if e := fn(&c, endpoint, cb); e != nil {
-//      c.app.CallbackSend(eb, e.Error())
-//  }
-
-//  // Note that the above won't work for unsubscribe and unregister, since their success case returns nil
-// }
+// Access the model object functions. Note these methods have identical interfaces
+// to allow this one method to do all the heavy lifting
+// TODO: implement cuminication of these results
+func MantleModel(d Domain, target func(string, map[string]interface{}) ([]interface{}, error),
+	collection string, query map[string]interface{}, cb uint64, eb uint64) {
+	if r, err := target(collection, query); err != nil {
+		d.GetApp().CallbackSend(eb, err.Error())
+	} else {
+		d.GetApp().CallbackSend(cb, r...)
+	}
+}
