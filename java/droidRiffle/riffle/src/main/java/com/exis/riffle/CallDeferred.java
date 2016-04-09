@@ -3,8 +3,6 @@ package com.exis.riffle;
 import com.exis.riffle.cumin.Cumin;
 import com.exis.riffle.cumin.Handler;
 
-import java.math.BigInteger;
-
 import go.mantle.Mantle;
 
 /**
@@ -15,7 +13,7 @@ import go.mantle.Mantle;
 public class CallDeferred extends Deferred {
     Mantle.Domain domain;
 
-    public CallDeferred(App app, Mantle.Domain domain) {
+    public CallDeferred(AppDomain app, Mantle.Domain domain) {
         super(app);
         this.domain = domain;
     }

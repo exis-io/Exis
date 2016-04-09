@@ -119,8 +119,8 @@
     <orderEntry type="library" exported="" name="gradle-retrolambda-3.2.5" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="junit-4.12" level="project" />
     <orderEntry type="library" exported="" name="jnr-ffi-2.0.7" level="project" />
-    <orderEntry type="library" exported="" name="support-annotations-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="jnr-x86asm-1.0.2" level="project" />
+    <orderEntry type="library" exported="" name="support-annotations-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-23.1.1" level="project" />
     <orderEntry type="module" module-name="riffle" exported="" />
   </component>

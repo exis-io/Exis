@@ -23,7 +23,7 @@ public class Deferred {
         eb = Utils.newID();
     }
 
-    public Deferred(App app) {
+    public Deferred(AppDomain app) {
         this();
 
         app.deferreds.put(cb, this);

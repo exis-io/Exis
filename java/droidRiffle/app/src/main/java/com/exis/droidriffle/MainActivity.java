@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.exis.riffle.AppDomain;
 import com.exis.riffle.Domain;
 import com.exis.riffle.Model;
 import com.exis.riffle.Riffle;
@@ -23,11 +24,11 @@ public class MainActivity extends AppCompatActivity {
 
     // Start riffle inline testing
     // Note that the two-domain setup here is just for testing-- you shouldn't do this!
-    Domain app = new Domain("xs.damouse");
+    AppDomain app = new AppDomain("xs.demo.damouse.dojo");
     Receiver receiver = new Receiver("alpha", app);
     Sender sender = new Sender("beta", app);
 
-    Domain app2 = new Domain("xs.damouse");
+    AppDomain app2 = new AppDomain("xs.demo.damouse.dojo");
     Receiver receiver2= new Receiver("alpha", app2);
     Sender sender2 = new Sender("beta", app2);
 
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Do nothing but start the tests
-        Riffle.setFabricDev();
+//        Riffle.setFabricDev();
         Riffle.setLogLevelInfo();
 
         Riffle.debug("Starting riffle tests");
@@ -46,8 +47,23 @@ public class MainActivity extends AppCompatActivity {
         receiver.parent = this;
         sender2.parent = this;
 
-        receiver.join();
+//        receiver.join();
+
+        // Auth level 1
+//        app.registerDomain("a", "123456778", "asdf@gmail.com", "asdf").then( () -> {
+//            Riffle.info("Successfully registered!");
+//        }).error( () -> {
+//            Riffle.info("Unable to register: ");
+//        });
+
+        // Auth level 0
+        app.login("d").then( () -> {
+            Riffle.info("Successfully registered!");
+        }).error( () -> {
+            Riffle.info("Unable to register: ");
+        });
     }
+
 }
 
 class Receiver extends Domain {
@@ -84,7 +100,7 @@ class Receiver extends Domain {
         subscribe("vich", Boolean.class, this::someHandler);
 
         // Bootstrap the sender
-        parent.sender2.join();
+//        parent.sender2.join();
     }
 
     void someHandler(Boolean c) {

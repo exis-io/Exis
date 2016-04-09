@@ -1,10 +1,7 @@
 package com.exis.riffle;
 
-import android.util.Log;
-
 import com.exis.riffle.cumin.Cumin;
 import com.exis.riffle.cumin.Handler;
-import com.google.gson.reflect.TypeToken;
 
 import java.math.BigInteger;
 
@@ -19,32 +16,21 @@ import go.mantle.Mantle;
  * TODO: emit different kinds of deferreds based on handlers
  */
 public class Domain {
-    private Mantle.Domain mantleDomain;
-    private App app;
+    protected Mantle.Domain mantleDomain;
+    protected AppDomain app;
+    public String name;
+
+    protected Domain() {}
 
     /* Constructurs */
-    public Domain(String name) {
-        mantleDomain = Mantle.NewDomain(name);
-        app = new App();
+    protected Domain(String name) {
+        this.name = name;
     }
 
     public Domain(String name, Domain superdomain) {
         mantleDomain = superdomain.mantleDomain.Subdomain(name);
+        this.name = superdomain.name + "." + name;
         app = superdomain.app;
-    }
-
-
-    /* Connection Management */
-    public void join() {
-        Deferred d = new Deferred(app);
-
-        d.then(() -> {
-            Riffle.debug("Triggering onJoin method");
-            this.onJoin();
-        });
-
-        mantleDomain.Join(d.cb.toString(), d.eb.toString());
-        app.listen(mantleDomain);
     }
 
     public void onJoin() {
@@ -110,60 +96,60 @@ public class Domain {
     //
     // Start Generic Shotgun
 
-public  Deferred subscribe(String endpoint,  Handler.ZeroZero handler) {
-    return _subscribe(endpoint, Cumin.cuminicate(handler), Cumin.representation());
-}
+    public  Deferred subscribe(String endpoint,  Handler.ZeroZero handler) {
+        return _subscribe(endpoint, Cumin.cuminicate(handler), Cumin.representation());
+    }
 
-public <A> Deferred subscribe(String endpoint, Class<A> a,  Handler.OneZero<A> handler) {
-    return _subscribe(endpoint, Cumin.cuminicate(a, handler), Cumin.representation(a));
-}
+    public <A> Deferred subscribe(String endpoint, Class<A> a,  Handler.OneZero<A> handler) {
+        return _subscribe(endpoint, Cumin.cuminicate(a, handler), Cumin.representation(a));
+    }
 
-public <A, B> Deferred subscribe(String endpoint, Class<A> a, Class<B> b,  Handler.TwoZero<A, B> handler) {
-    return _subscribe(endpoint, Cumin.cuminicate(a, b, handler), Cumin.representation(a, b));
-}
+    public <A, B> Deferred subscribe(String endpoint, Class<A> a, Class<B> b,  Handler.TwoZero<A, B> handler) {
+        return _subscribe(endpoint, Cumin.cuminicate(a, b, handler), Cumin.representation(a, b));
+    }
 
-public <A, B, C> Deferred subscribe(String endpoint, Class<A> a, Class<B> b, Class<C> c,  Handler.ThreeZero<A, B, C> handler) {
-    return _subscribe(endpoint, Cumin.cuminicate(a, b, c, handler), Cumin.representation(a, b, c));
-}
+    public <A, B, C> Deferred subscribe(String endpoint, Class<A> a, Class<B> b, Class<C> c,  Handler.ThreeZero<A, B, C> handler) {
+        return _subscribe(endpoint, Cumin.cuminicate(a, b, c, handler), Cumin.representation(a, b, c));
+    }
 
-public <A, B, C, D> Deferred subscribe(String endpoint, Class<A> a, Class<B> b, Class<C> c, Class<D> d,  Handler.FourZero<A, B, C, D> handler) {
-    return _subscribe(endpoint, Cumin.cuminicate(a, b, c, d, handler), Cumin.representation(a, b, c, d));
-}
+    public <A, B, C, D> Deferred subscribe(String endpoint, Class<A> a, Class<B> b, Class<C> c, Class<D> d,  Handler.FourZero<A, B, C, D> handler) {
+        return _subscribe(endpoint, Cumin.cuminicate(a, b, c, d, handler), Cumin.representation(a, b, c, d));
+    }
 
-public <A, B, C, D, E> Deferred subscribe(String endpoint, Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<E> e,  Handler.FiveZero<A, B, C, D, E> handler) {
-    return _subscribe(endpoint, Cumin.cuminicate(a, b, c, d, e, handler), Cumin.representation(a, b, c, d, e));
-}
+    public <A, B, C, D, E> Deferred subscribe(String endpoint, Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<E> e,  Handler.FiveZero<A, B, C, D, E> handler) {
+        return _subscribe(endpoint, Cumin.cuminicate(a, b, c, d, e, handler), Cumin.representation(a, b, c, d, e));
+    }
 
-public <A, B, C, D, E, F> Deferred subscribe(String endpoint, Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<E> e, Class<F> f,  Handler.SixZero<A, B, C, D, E, F> handler) {
-    return _subscribe(endpoint, Cumin.cuminicate(a, b, c, d, e, f, handler), Cumin.representation(a, b, c, d, e, f));
-}
+    public <A, B, C, D, E, F> Deferred subscribe(String endpoint, Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<E> e, Class<F> f,  Handler.SixZero<A, B, C, D, E, F> handler) {
+        return _subscribe(endpoint, Cumin.cuminicate(a, b, c, d, e, f, handler), Cumin.representation(a, b, c, d, e, f));
+    }
 
-public <R> Deferred register(String endpoint, Class<R> r,  Handler.ZeroOne<R> handler) {
-    return _register(endpoint, Cumin.cuminicate(r, handler), Cumin.representation());
-}
+    public <R> Deferred register(String endpoint, Class<R> r,  Handler.ZeroOne<R> handler) {
+        return _register(endpoint, Cumin.cuminicate(r, handler), Cumin.representation());
+    }
 
-public <A, R> Deferred register(String endpoint, Class<A> a, Class<R> r,  Handler.OneOne<A, R> handler) {
-    return _register(endpoint, Cumin.cuminicate(a, r, handler), Cumin.representation(a));
-}
+    public <A, R> Deferred register(String endpoint, Class<A> a, Class<R> r,  Handler.OneOne<A, R> handler) {
+        return _register(endpoint, Cumin.cuminicate(a, r, handler), Cumin.representation(a));
+    }
 
-public <A, B, R> Deferred register(String endpoint, Class<A> a, Class<B> b, Class<R> r,  Handler.TwoOne<A, B, R> handler) {
-    return _register(endpoint, Cumin.cuminicate(a, b, r, handler), Cumin.representation(a, b));
-}
+    public <A, B, R> Deferred register(String endpoint, Class<A> a, Class<B> b, Class<R> r,  Handler.TwoOne<A, B, R> handler) {
+        return _register(endpoint, Cumin.cuminicate(a, b, r, handler), Cumin.representation(a, b));
+    }
 
-public <A, B, C, R> Deferred register(String endpoint, Class<A> a, Class<B> b, Class<C> c, Class<R> r,  Handler.ThreeOne<A, B, C, R> handler) {
-    return _register(endpoint, Cumin.cuminicate(a, b, c, r, handler), Cumin.representation(a, b, c));
-}
+    public <A, B, C, R> Deferred register(String endpoint, Class<A> a, Class<B> b, Class<C> c, Class<R> r,  Handler.ThreeOne<A, B, C, R> handler) {
+        return _register(endpoint, Cumin.cuminicate(a, b, c, r, handler), Cumin.representation(a, b, c));
+    }
 
-public <A, B, C, D, R> Deferred register(String endpoint, Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<R> r,  Handler.FourOne<A, B, C, D, R> handler) {
-    return _register(endpoint, Cumin.cuminicate(a, b, c, d, r, handler), Cumin.representation(a, b, c, d));
-}
+    public <A, B, C, D, R> Deferred register(String endpoint, Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<R> r,  Handler.FourOne<A, B, C, D, R> handler) {
+        return _register(endpoint, Cumin.cuminicate(a, b, c, d, r, handler), Cumin.representation(a, b, c, d));
+    }
 
-public <A, B, C, D, E, R> Deferred register(String endpoint, Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<E> e, Class<R> r,  Handler.FiveOne<A, B, C, D, E, R> handler) {
-    return _register(endpoint, Cumin.cuminicate(a, b, c, d, e, r, handler), Cumin.representation(a, b, c, d, e));
-}
+    public <A, B, C, D, E, R> Deferred register(String endpoint, Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<E> e, Class<R> r,  Handler.FiveOne<A, B, C, D, E, R> handler) {
+        return _register(endpoint, Cumin.cuminicate(a, b, c, d, e, r, handler), Cumin.representation(a, b, c, d, e));
+    }
 
-public <A, B, C, D, E, F, R> Deferred register(String endpoint, Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<E> e, Class<F> f, Class<R> r,  Handler.SixOne<A, B, C, D, E, F, R> handler) {
-    return _register(endpoint, Cumin.cuminicate(a, b, c, d, e, f, r, handler), Cumin.representation(a, b, c, d, e, f));
-}
+    public <A, B, C, D, E, F, R> Deferred register(String endpoint, Class<A> a, Class<B> b, Class<C> c, Class<D> d, Class<E> e, Class<F> f, Class<R> r,  Handler.SixOne<A, B, C, D, E, F, R> handler) {
+        return _register(endpoint, Cumin.cuminicate(a, b, c, d, e, f, r, handler), Cumin.representation(a, b, c, d, e, f));
+    }
     // End Generic Shotgun
 }

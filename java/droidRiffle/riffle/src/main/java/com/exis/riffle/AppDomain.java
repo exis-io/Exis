@@ -12,22 +12,91 @@ import java.util.Map;
 
 import go.mantle.Mantle;
 
-
 /**
  * Created by damouse on 1/23/16.
  *
  * Manages a single session, including the connection itself and all domains attached to it.
  */
-class App {
-    Mantle.Domain mantleDomain;
+public class AppDomain extends Domain {
     Thread thread;
 
     Map<BigInteger, HandlerTuple> handlers;
     Map<BigInteger, Deferred> deferreds;
 
-    App() {
+    private Deferred controlOperation;
+
+    protected AppDomain() {
+        super();
+        app = this;
+    }
+
+    public AppDomain(String name) {
+        super(name);
+        app = this;
         handlers = new ArrayMap();
         deferreds = new ArrayMap();
+
+        mantleDomain = Mantle.NewDomain(name);
+    }
+
+    /* Connection Management */
+
+    /**
+     * Attempts to connect
+     */
+    public void join() {
+        Deferred d = new Deferred(app);
+        controlOperation = d;
+
+        d.then(() -> {
+            Riffle.debug("Triggering onJoin method");
+            app.listen(mantleDomain);
+            this.onJoin();
+        });
+
+        mantleDomain.Join(d.cb.toString(), d.eb.toString());
+    }
+
+    /**
+     * Login with an account. If using Auth 1, pass username and password.
+     * For Auth0 if you are logging in for the first time just pass a username-- if its not your first time
+     * make sure to call join first!
+     * @param credentials
+     */
+    public Deferred login(String... credentials) {
+        if (credentials.length < 1 || credentials.length > 2) {
+            Riffle.warn("You must pass at least a username and optionally a password");
+            return null;
+        }
+
+        String username = credentials[0];
+        String password = "";
+
+        if(credentials.length == 2) {
+            password = credentials[1];
+        }
+
+        Deferred d = new Deferred(this);
+        controlOperation = d;
+        mantleDomain.MentleLoginDomain(d.cb.toString(), d.eb.toString(), username, password);
+        app.listen(mantleDomain);
+        return d;
+    }
+
+    public Deferred registerDomain(String username, String password, String email, String name)  {
+        Deferred d = new Deferred(this);
+        controlOperation = d;
+        mantleDomain.MentleRegisterDomain(d.cb.toString(), d.eb.toString(), username, password, email, name);
+        app.listen(mantleDomain);
+        return d;
+    }
+
+    public void reconnect() {
+        Riffle.warn("THIS METHOD IS NOT IMPLEMENTED");
+    }
+
+    public void disconnect() {
+        Riffle.warn("THIS METHOD IS NOT IMPLEMENTED");
     }
 
     /**
@@ -46,13 +115,26 @@ class App {
                     BigInteger id = Utils.convertCoreInt64(invocation[0]);
 
                     if (id.compareTo(BigInteger.valueOf(0)) == 0) {
-                        Riffle.debug("App listen loop terminating");
+                        Riffle.debug("AppDomain listen loop terminating");
                         break;
                     }
 
                     if (invocation[1] != null) {
                         ArrayList a = (ArrayList) invocation[1];
                         args = a.toArray();
+                    }
+
+                    if (controlOperation != null) {
+                        if (id.compareTo(controlOperation.cb) == 0) {
+                            controlOperation.callback(args);
+                        } else if (id.compareTo(controlOperation.eb) == 0) {
+                            controlOperation.errback(args);
+                        } else {
+                            Riffle.error("A control operation was requested, but not found!");
+                        }
+
+                        controlOperation = null;
+                        break;
                     }
 
                     //Riffle.debug("Got invocation: " + id.toString() + " " + args.toString());
@@ -106,3 +188,4 @@ class HandlerTuple {
         this.isRegistration = isRegistration;
     }
 }
+

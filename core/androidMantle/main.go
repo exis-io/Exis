@@ -12,6 +12,7 @@ type Domain struct {
 }
 
 func NewDomain(name string) *Domain {
+	core.UseUnsafeCert = true
 	return &Domain{coreDomain: core.NewDomain(name, nil)}
 }
 
@@ -39,6 +40,40 @@ func (d *Domain) Join(cb string, eb string) {
 				// core.Warn("Mantle join success! %v", cb)
 				d.coreDomain.GetApp().CallbackSend(idUnmarshal(cb))
 			}
+		}
+	}()
+}
+
+// Called on the app domain, remember-- not the current domain
+func (d *Domain) MentleLoginDomain(cb string, eb string, username string, password string) {
+	args := []string{username}
+
+	if password != "" {
+		args = append(args, password)
+	}
+
+	go func() {
+		if ret, err := d.coreDomain.GetApp().Login(d.coreDomain, args...); err != nil {
+			core.Warn("Unable to complete login %s", err.Error())
+			d.coreDomain.GetApp().CallbackSend(idUnmarshal(eb), err.Error())
+		} else {
+			core.Info("Successfully logged in as %s", ret.GetName())
+			// d.coreDomain.GetApp().CallbackSend(idUnmarshal(cb), ret.GetName())
+			// Automatically join
+			d.Join(cb, eb)
+		}
+	}()
+}
+
+func (d *Domain) MentleRegisterDomain(cb string, eb string, username string, password string, email string, name string) {
+	go func() {
+		if d, err := d.coreDomain.GetApp().RegisterAccount(d.coreDomain, username, password, email, name); err != nil {
+			core.Warn("Unable to complete login %s", err.Error())
+			d.coreDomain.GetApp().CallbackSend(idUnmarshal(eb), err.Error())
+		} else {
+			core.Info("Successfully registered under account %s", username)
+			d.coreDomain.GetApp().CallbackSend(idUnmarshal(cb))
+			d.MentleLoginDomain(cb, eb, username, password)
 		}
 	}()
 }
