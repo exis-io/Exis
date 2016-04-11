@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="riffle-0.2.44">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.exis.riffle/riffle/0.2.44/res" />
+      <root url="jar://$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.exis.riffle/riffle/0.2.44/jars/classes.jar!/" />
+      <root url="jar://$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.exis.riffle/riffle/0.2.44/jars/libs/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.exis.riffle/riffle/0.2.44/95334a39c2b75cf193ab9b6cee86a13e9dcb89dc/riffle-0.2.44-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

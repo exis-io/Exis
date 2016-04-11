@@ -1,0 +1,65 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml:2:1-24:12
+	package
+		ADDED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml:3:5-33
+		INJECTED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml
+		INJECTED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml
+		INJECTED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml:2:11-69
+	android:versionCode
+		INJECTED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml
+		INJECTED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml
+uses-permission#android.permission.INTERNET
+ADDED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml:5:5-6:23
+	android:name
+		ADDED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml:5:22-64
+application
+ADDED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml:8:5-22:19
+MERGED from [com.android.support:appcompat-v7:23.1.1] /home/luke/Documents/Android/Exis/java/RifflePub/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.1.1/AndroidManifest.xml:22:5-20
+MERGED from [com.android.support:support-v4:23.1.1] /home/luke/Documents/Android/Exis/java/RifflePub/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.1/AndroidManifest.xml:22:5-20
+MERGED from [com.exis.riffle:riffle:0.2.44] /home/luke/Documents/Android/Exis/java/RifflePub/app/build/intermediates/exploded-aar/com.exis.riffle/riffle/0.2.44/AndroidManifest.xml:11:5-15:19
+MERGED from [com.android.support:appcompat-v7:23.1.1] /home/luke/Documents/Android/Exis/java/RifflePub/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.1.1/AndroidManifest.xml:22:5-20
+MERGED from [com.android.support:support-v4:23.1.1] /home/luke/Documents/Android/Exis/java/RifflePub/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.1/AndroidManifest.xml:22:5-20
+	android:label
+		ADDED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml:11:9-41
+	android:supportsRtl
+		ADDED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml:12:9-35
+	android:allowBackup
+		ADDED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml:9:9-35
+	android:icon
+		ADDED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml:10:9-40
+	android:theme
+		ADDED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml:13:9-65
+activity#luke.com.rifflepub.MainActivity
+ADDED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml:14:9-21:20
+	android:screenOrientation
+		ADDED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml:15:13-49
+	android:name
+		ADDED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml:14:19-47
+intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
+ADDED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml:16:13-20:29
+action#android.intent.action.MAIN
+ADDED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml:17:17-69
+	android:name
+		ADDED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml:17:25-66
+category#android.intent.category.LAUNCHER
+ADDED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml:19:17-77
+	android:name
+		ADDED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml:19:27-74
+uses-sdk
+INJECTED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+MERGED from [com.android.support:appcompat-v7:23.1.1] /home/luke/Documents/Android/Exis/java/RifflePub/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.1.1/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:support-v4:23.1.1] /home/luke/Documents/Android/Exis/java/RifflePub/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.1/AndroidManifest.xml:20:5-43
+MERGED from [com.exis.riffle:riffle:0.2.44] /home/luke/Documents/Android/Exis/java/RifflePub/app/build/intermediates/exploded-aar/com.exis.riffle/riffle/0.2.44/AndroidManifest.xml:7:5-9:41
+MERGED from [com.android.support:appcompat-v7:23.1.1] /home/luke/Documents/Android/Exis/java/RifflePub/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.1.1/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:support-v4:23.1.1] /home/luke/Documents/Android/Exis/java/RifflePub/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.1/AndroidManifest.xml:20:5-43
+	android:targetSdkVersion
+		INJECTED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml
+		INJECTED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml
+		INJECTED from /home/luke/Documents/Android/Exis/java/RifflePub/app/src/main/AndroidManifest.xml
