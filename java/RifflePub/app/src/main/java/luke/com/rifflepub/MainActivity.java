@@ -1,5 +1,8 @@
 package luke.com.rifflepub;
 
+import android.animation.Animator;
+import android.animation.LayoutTransition;
+import android.animation.TimeInterpolator;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;

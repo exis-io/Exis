@@ -5,7 +5,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#ffffff"
-    android:keepScreenOn="true">
+    android:keepScreenOn="true"
+    android:animateLayoutChanges="true">
 
     <TextView
         android:layout_width="fill_parent"
@@ -41,7 +42,8 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/messageLayout">
+            android:id="@+id/messageLayout"
+            android:animateLayoutChanges="true">
 
         </RelativeLayout>
     </ScrollView>
