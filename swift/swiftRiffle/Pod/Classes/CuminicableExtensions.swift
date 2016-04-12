@@ -454,5 +454,5 @@ extension UnicodeDecodingResult : Property, BaseConvertible {}
 
 extension AnyGenerator : Property, BaseConvertible {}
 extension NonObjectiveCBase : Property, BaseConvertible {}
-//extension NSObject : Property, BaseConvertible {}
+extension NSObject : Property, BaseConvertible {}
 extension VaListBuilder : Property, BaseConvertible {}

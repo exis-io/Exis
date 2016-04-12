@@ -172,10 +172,10 @@
 			buildConfigurationList = 505777CB1C8E50DE00DE33DF /* Build configuration list for PBXNativeTarget "Backend" */;
 			buildPhases = (
 				5060A2989058CDC4F7553D77 /* 📦 Check Pods Manifest.lock */,
-				505777C11C8E50DE00DE33DF /* Sources */,
 				505777C21C8E50DE00DE33DF /* Frameworks */,
 				505777C31C8E50DE00DE33DF /* CopyFiles */,
 				A3DBFBA5C25AC10C43D20F13 /* 📦 Copy Pods Resources */,
+				505777C11C8E50DE00DE33DF /* Sources */,
 			);
 			buildRules = (
 			);
