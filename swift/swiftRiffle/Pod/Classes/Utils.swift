@@ -38,7 +38,6 @@ extension String {
 func decode(p: UnsafePointer<Int8>) -> (UInt64, [Any]) {
     let dataString = String.fromCString(p)!
     
-    
     guard let data = try! JSONParser.parse(dataString) as? [Any] else {
         print("DID NOT RECEIVE ARRAY BACK!")
         return (UInt64(0), [])

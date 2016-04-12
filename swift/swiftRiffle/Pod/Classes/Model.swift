@@ -9,11 +9,11 @@
 import Foundation
 import Mantle
 
-public class Model: Silvery, Property, CustomStringConvertible {
+public class Model: NSObject, Silvery, Property {
     
-    required public init() {}
+    required public override init() {}
     
-    public var description:String {
+    public override var description:String {
         return "\(self.dynamicType){\(self.propertyNames().map { "\($0): \(self[$0])"}.joinWithSeparator(", "))}"
     }
     
