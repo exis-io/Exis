@@ -28,6 +28,7 @@ extension Model: Convertible {
     }
     
     public func unsafeSerialize() -> Any {
+        print("Triggered an unsafe serialze!")
         return self
     }
     

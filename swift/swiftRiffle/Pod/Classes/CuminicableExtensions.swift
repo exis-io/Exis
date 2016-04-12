@@ -268,6 +268,22 @@ extension Array : Property, BaseConvertible {
         for child in self {
             if let convert = child as? Convertible {
                 ret.append(convert.serialize())
+            } else {
+                // bugger my bunghole this still doesnt work
+//                #if os(OSX)
+//                    print("Standard check failed")
+//                    if let converter = osxConvertible {
+//                        print("Converter exists")
+//                        
+//                        if let z = converter(child) {
+//                            print("External typecheck suceeded")
+//                            ret.append(z.serialize())
+//                        } else {
+//                            print("External typecheck failed badly@")
+//                        }
+//                    }
+//                    
+//                #endif
             }
         }
         

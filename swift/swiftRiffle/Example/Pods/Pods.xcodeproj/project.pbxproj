@@ -17,8 +17,8 @@
 		39F8972887912D5D26080D5305D3547C /* Json.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5152DEE2BF9DE0D8C6F4A6793A049F79 /* Json.swift */; };
 		44C14F7BEFEFE877593D63CA150CD318 /* Json.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5152DEE2BF9DE0D8C6F4A6793A049F79 /* Json.swift */; };
 		49F0847A4BE0FBAF202EA1C50C56B7CC /* Riffle-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BBE4EA63C5AF193151F19358C5D5A99 /* Riffle-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		50AFD8631CBD82A80025E5B6 /* OsxBullshit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AFD8611CBD81640025E5B6 /* OsxBullshit.swift */; };
-		50AFD8641CBD82AA0025E5B6 /* OsxBullshit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AFD8611CBD81640025E5B6 /* OsxBullshit.swift */; };
+		50AA4FB41CBDAE8B004288A4 /* OsxBullshit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AA4FB21CBDAE09004288A4 /* OsxBullshit.swift */; };
+		50AA4FB51CBDAE8C004288A4 /* OsxBullshit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AA4FB21CBDAE09004288A4 /* OsxBullshit.swift */; };
 		52F962043A567C8E89D158A76D31F94C /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2287689174A2BC779794A127B49E5EB /* Domain.swift */; };
 		55A65A600415931B61AE3B3AC71FCCEA /* Pods-Backend-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F4BFFB59F906DBC1ED423D4F4936017 /* Pods-Backend-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		614300DD7FD9A2E03735690BFD7CB37A /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A900DE639ED6DBF00B0614D84D4079 /* Model.swift */; };
@@ -77,7 +77,7 @@
 		4875F481C5FE0442F13524F1C07E27D8 /* Pods-Riffle_Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Riffle_Example-dummy.m"; sourceTree = "<group>"; };
 		4BBE4EA63C5AF193151F19358C5D5A99 /* Riffle-iOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "Riffle-iOS-umbrella.h"; path = "../Riffle-iOS/Riffle-iOS-umbrella.h"; sourceTree = "<group>"; };
 		4EFB0D0935F5F7309DDAEFE2B0278EF6 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Info.plist; path = "../Riffle-iOS/Info.plist"; sourceTree = "<group>"; };
-		50AFD8611CBD81640025E5B6 /* OsxBullshit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OsxBullshit.swift; sourceTree = "<group>"; };
+		50AA4FB21CBDAE09004288A4 /* OsxBullshit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OsxBullshit.swift; sourceTree = "<group>"; };
 		5152DEE2BF9DE0D8C6F4A6793A049F79 /* Json.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Json.swift; sourceTree = "<group>"; };
 		53A7E64AFFE718824BCBDB53FB0BDD02 /* Riffle-OSX-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Riffle-OSX-prefix.pch"; sourceTree = "<group>"; };
 		54F1CEA8648812097BE7F5439B2F9243 /* Pods-Riffle_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Riffle_Example-acknowledgements.plist"; sourceTree = "<group>"; };
@@ -253,7 +253,7 @@
 				3C4BD128BF509EAD9CF43F4DE79A1335 /* Package.swift */,
 				6593365D42F256A20DB2DDA284CF6129 /* Silver.swift */,
 				01C39534B0C02CA9D380758F68867151 /* Utils.swift */,
-				50AFD8611CBD81640025E5B6 /* OsxBullshit.swift */,
+				50AA4FB21CBDAE09004288A4 /* OsxBullshit.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -468,7 +468,7 @@
 				FEC0830489962ED67A4F3B86F96C836D /* Model.swift in Sources */,
 				C24EBBBB9220DCDE3579C78216F8CF61 /* Package.swift in Sources */,
 				A1E6C03F217C2E120FF61FA6E353FD0B /* Riffle-iOS-dummy.m in Sources */,
-				50AFD8641CBD82AA0025E5B6 /* OsxBullshit.swift in Sources */,
+				50AA4FB51CBDAE8C004288A4 /* OsxBullshit.swift in Sources */,
 				694663AE6B71008088B6E675CB8FAC25 /* Silver.swift in Sources */,
 				8FB16B391C895838CB7430C164CC6955 /* Utils.swift in Sources */,
 			);
@@ -503,7 +503,7 @@
 				614300DD7FD9A2E03735690BFD7CB37A /* Model.swift in Sources */,
 				9C4C415FF33A314A4DB94243B6A865ED /* Package.swift in Sources */,
 				9F1475D45F6E716EB56E64C21E2231FC /* Riffle-OSX-dummy.m in Sources */,
-				50AFD8631CBD82A80025E5B6 /* OsxBullshit.swift in Sources */,
+				50AA4FB41CBDAE8B004288A4 /* OsxBullshit.swift in Sources */,
 				013FEAE8312A3A84FC5C295420AB59AC /* Silver.swift in Sources */,
 				36C2876A33697B501C9A9E5E621AC62C /* Utils.swift in Sources */,
 			);

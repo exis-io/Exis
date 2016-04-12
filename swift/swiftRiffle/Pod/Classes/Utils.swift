@@ -11,6 +11,16 @@ import CoreFoundation
 import Mantle
 
 
+// An application-exportable converter function that allows osx targets to cast appropriately
+// Does this look silly or wrong to you? Good, you're a sane swift developer.
+// Unfortunatly, type checking with a swift framework on OSX is not a sane endeveour. Trust
+// me when I say there's an outrageous amount of subtle nonsense going on here
+// TODO: put an error log detailing what to put in here if the block hasn't been assigned on OSX
+
+public var osxConvertible: ((Convertible) -> Convertible?)?
+public var osxProperty: ((Property) -> Property?)?
+
+
 extension String {
     func cString() -> UnsafeMutablePointer<Int8> {
         var ret: UnsafeMutablePointer<Int8> = UnsafeMutablePointer<Int8>()
@@ -58,7 +68,7 @@ func marshall(args: [Any]) -> UnsafeMutablePointer<Int8> {
     return jsonString.cString()
 }
 
-// Do we still need this here?
+// Do we still need this here? D
 func serializeArguments(args: [Any]) -> [Any] {
     var ret: [Any] = []
     
@@ -72,12 +82,14 @@ func serializeArguments(args: [Any]) -> [Any] {
 }
 
 func serializeArguments(args: [Property]) -> [Any] {
+//    Riffle.debug("Serializing: \(args.dynamicType) \(args)")
+//    return args.map { $0.serialize() }
+    
     #if os(OSX)
         return args.map { $0.unsafeSerialize() }
     #else
         return args.map { $0.serialize() }
     #endif
-    
 }
 
 func serializeResults() -> Any {
@@ -145,7 +157,6 @@ func switchTypeObject<A>(x: A) -> Any.Type {
     #else
         return x as! Any.Type
     #endif
-    
 }
 
 func encode<A>(var v:A) -> NSData {
@@ -248,6 +259,7 @@ public class Riffle {
     public class func setCuminLoose() { MantleSetCuminLoose() }
     public class func setCuminOff() { MantleSetCuminOff() }
 }
+
 
 
 // Create CBIDs on this side of the boundary. Note this makes them doubles, should be using byte arrays or 
