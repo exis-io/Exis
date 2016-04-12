@@ -143,7 +143,7 @@ func switchTypeObject<A>(x: A) -> Any.Type {
             return x as! Any.Type
         }
     #else
-        return x as Any.Type
+        return x as! Any.Type
     #endif
     
 }

@@ -9,6 +9,9 @@
 
 import Riffle
 
+// Required helper method for OSX targets
+osxTypeHelper = { a in guard let z = a as? Convertible else { return nil }; return z }
+
 Riffle.setLogLevelInfo()
 Riffle.setFabricDev()
 
@@ -30,5 +33,5 @@ receiver.joinFinished = {
 }
 
 receiver.join()
- 
+
 NSRunLoop.currentRunLoop().run()

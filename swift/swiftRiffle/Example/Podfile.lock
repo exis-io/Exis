@@ -1,16 +1,16 @@
 PODS:
-  - Riffle (0.2.01)
+  - Riffle (0.2.41)
 
 DEPENDENCIES:
   - Riffle (from `../`)
 
 EXTERNAL SOURCES:
   Riffle:
-    :path: "../"
+    :path: ../
 
 SPEC CHECKSUMS:
-  Riffle: 5c537351ebc61eb93ee14245eac2ea1102971cb0
+  Riffle: 959c7d957feb3ea8b0f53016944be679a1295551
 
 PODFILE CHECKSUM: 684388b6c080beeaf4998edff2ce5dfbb46f0080
 
-COCOAPODS: 1.0.0.beta.5
+COCOAPODS: 1.0.0.beta.6
