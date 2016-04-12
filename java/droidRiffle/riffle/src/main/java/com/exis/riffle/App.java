@@ -12,6 +12,7 @@ import java.util.Map;
 
 import go.mantle.Mantle;
 
+
 /**
  * Created by damouse on 1/23/16.
  *
@@ -54,8 +55,7 @@ class App {
                         args = a.toArray();
                     }
 
-//                    Riffle.debug("Got invocation: " + id.toString() + " " + args.toString());
-//                    Riffle.debug("Handlers: " + deferreds.toString());
+                    //Riffle.debug("Got invocation: " + id.toString() + " " + args.toString());
 
                     if (deferreds.containsKey(id)) {
                         Deferred d = deferreds.remove(id);
@@ -76,7 +76,7 @@ class App {
                     else if (handlers.containsKey(id)) {
                         HandlerTuple t = handlers.get(id);
 
-                        // TODO: try/catch
+                        // TODO: try/catch their exceptions
 
                         if (t.isRegistration) {
                             BigInteger yieldId = Utils.convertCoreInt64(args[0]);

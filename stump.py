@@ -26,6 +26,7 @@ Release Example:
     ./stump release pyRiffle 0.2.1
 '''
 
+
 import os
 import sys
 import docopt

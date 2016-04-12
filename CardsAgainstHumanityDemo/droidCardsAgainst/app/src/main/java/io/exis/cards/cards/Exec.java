@@ -13,25 +13,43 @@ import java.util.ArrayList;
 public class Exec extends Domain{
     static ArrayList<Dealer> dealers = new ArrayList<>();
     private Player player;
+    Domain superdomain;
+    Domain dealerDomain;
+    Domain riffle;
+    Dealer dealer;
+    int ID;
 
-    public Exec() {
-        super("Exec", new Domain("xs.damouse.CardsAgainst"));
+    public Exec(String name, Domain superdomain, Player player) {
+        super(name, superdomain);
+        this.superdomain = superdomain;
+        this.dealerDomain = new Domain("xs.damouse.CardsAgainst");
+        ID = getNewID();
+        this.riffle = new Domain("dealer" + ID, new Domain("xs.damouse.CardsAgainst")){
+            @Override
+            public void onJoin(){
+                dealer.join();
+            }
+        };
+        this.player = player;
+        dealer = findDealer();
+        GameActivity.dealer = dealer;                   // TODO danger, maybe unnecessary
     }
 
     @Override
     public void onJoin(){
-        register("play", Object[].class, this::play);
-        player.join();
+//        register("play", Object[].class, this::play);
+
+        Log.i("Exec", "dealer " + dealer.ID() + " joining");
+        riffle.join();
     }
 
     public Object[] play(){
-        Dealer dealer = findDealer();
-        GameActivity.dealer = dealer;                   // TODO danger
-        return dealer.play();
+        Object[] playObject = dealer.play();
+        return playObject;
     }
 
-    public void setPlayer(Player p){
-        this.player = p;
+    public void start(){
+        dealer.start();
     }
 
     public static void removeDealer(Dealer dealer){
@@ -51,9 +69,8 @@ public class Exec extends Domain{
         Log.i(TAG, "found dealer " + dealer.ID());
         dealer.addPlayer(player);
         Log.i(TAG, "added player " + player.playerID());
-        dealer.join();
-        Log.i(TAG, "dealer " + dealer.ID() + " joining");
-        dealer.start();
+
+        player.setRiffle(riffle);
 
         return dealer;
     }// end findDealer method
@@ -64,8 +81,8 @@ public class Exec extends Domain{
 
     //create new dealer and add to dealer list
     //return dealer ID
-    private static Dealer addDealer(){
-        Dealer dealer = new Dealer(getNewID());
+    private Dealer addDealer(){
+        Dealer dealer = new Dealer(ID, dealerDomain, riffle);
         dealers.add(dealer);
         return dealer;
     }//end addDealer method

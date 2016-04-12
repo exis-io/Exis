@@ -83,6 +83,16 @@ extern void Unregister(GoUint64 p0, char* p1, GoUint64 p2, GoUint64 p3);
 
 extern void Leave(GoUint64 p0);
 
+extern void ModelAll(GoUint64 p0, GoUint64 p1, char* p2, char* p3);
+
+extern void ModelFind(GoUint64 p0, GoUint64 p1, char* p2, char* p3);
+
+extern void ModelCreate(GoUint64 p0, GoUint64 p1, char* p2, char* p3);
+
+extern void ModelSave(GoUint64 p0, GoUint64 p1, char* p2, char* p3);
+
+extern void ModelCount(GoUint64 p0, GoUint64 p1, char* p2, char* p3);
+
 extern void MantleSetLogLevelOff();
 
 extern void MantleSetLogLevelApp();

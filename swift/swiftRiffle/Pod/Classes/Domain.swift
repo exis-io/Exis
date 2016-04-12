@@ -24,6 +24,8 @@ public protocol Delegate {
     func onLeave()
 }
 
+// For testing initial initial implementation of model objects, not a permanent fixture
+var globalConnectionReference: Domain?
 
 public class Domain {
     public var delegate: Delegate?
@@ -34,6 +36,7 @@ public class Domain {
     public init(name: String) {
         mantleDomain = NewDomain(name.cString())
         app = App(domain: mantleDomain)
+        globalConnectionReference = self
     }
     
     public init(name: String, superdomain: Domain) {

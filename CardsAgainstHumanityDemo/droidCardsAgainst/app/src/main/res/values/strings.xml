@@ -21,4 +21,5 @@
     <string name="playersPickingInfo">Players are submitting cards\n</string>
     <string name="change_name">Change Screen Name:</string>
     <string name="edit_name">&gt; Update screen name</string>
+    <string name="screen_name">Hi, %1$s</string>
 </resources>

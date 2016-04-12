@@ -11,15 +11,6 @@ type Domain struct {
 	coreDomain core.Domain
 }
 
-func Hello(name string) string {
-	return "Hello, " + name + ", this is patrick"
-}
-
-// Testing what a byte array looks like in swiftland
-func GetBytes(bit []byte) {
-	core.Warn("Got: %v", bit)
-}
-
 func NewDomain(name string) *Domain {
 	return &Domain{coreDomain: core.NewDomain(name, nil)}
 }
@@ -32,12 +23,10 @@ func (d *Domain) LinkDomain(name string) *Domain {
 	return &Domain{coreDomain: d.coreDomain.LinkDomain(name)}
 }
 
-// Blocks on callbacks from the core
 func (d *Domain) Receive() string {
 	return core.MantleMarshall(d.coreDomain.GetApp().CallbackListen())
 }
 
-// TODO: Move this to the mantle helper
 func (d *Domain) Join(cb string, eb string) {
 	go func() {
 		if c, err := shared.Open(core.Fabric); err != nil {

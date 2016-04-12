@@ -31,7 +31,6 @@ class Receiver: Domain {
         
         // Pub Sub Success Cases
         
-        
         // No arguments
 //        subscribe("subscribeNothing") {
 //            print("SUCCESS --- 1-1")
@@ -48,25 +47,24 @@ class Receiver: Domain {
 //            assert(d == "4")
 //            assert(e == true)
 //        }
-//
-//        // Arrys of simple types
-//        subscribe("subscribeArrays") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
-//            print("SUCCESS --- 1-3 ")
-//            //print("Received: \(a) \(b) \(c) \(d) \(e), expecting 1 2.2 3.3 4 true")
-//            
-//            assert(a == [1, 2])
-//            assert(b == [2.2, 3.3])
-//            assert(c == [4.4, 5.5])
-//            assert(d == ["6", "7"])
-//            assert(e == [true, false])
-//        }
-//        
+
+        // Arrys of simple types
+        subscribe("subscribeArrays") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
+            print("SUCCESS --- 1-3 ")
+            //print("Received: \(a) \(b) \(c) \(d) \(e), expecting 1 2.2 3.3 4 true")
+            
+            assert(a == [1, 2])
+            assert(b == [2.2, 3.3])
+            assert(c == [4.4, 5.5])
+            assert(d == ["6", "7"])
+            assert(e == [true, false])
+        }
+
 //        subscribe("subscribeModel") { (d: Dog) in
-//            //print("Recieved:\(d), expecting: \(dog)")
 //            print("SUCESS --- 1-4")
 //            assert(d.name == dog.name && d.age == dog.age)
 //        }
-//        
+        
 //        // TODO: subscribe with model object
 //        // TODO: Dictionaries of simple types
 //        // TODO: Any
@@ -77,12 +75,12 @@ class Receiver: Domain {
 //        register("registerNothing") {
 //            print("SUCCESS --- 2-1")
 //        }
-//        
-//        
-//        // Simple Types
-//        // FAIL when returning the types back to the client
-//        // FAIL with no cumin enforcement present
-//        // FAIL with floats
+        
+        
+        // Simple Types
+        // FAIL when returning the types back to the client
+        // FAIL with no cumin enforcement present
+        // FAIL with floats
 //        register("registerPrimitives") { (a: Int, c: Double, d: String, e: Bool) -> Any in
 //            print("SUCCESS --- 2-2")
 //            
@@ -109,13 +107,13 @@ class Receiver: Domain {
 //            return (a, c, d, e)
 //        }
         
-        register("registerSinglePrimitive") { (a: Int) -> Any in
-            print("SUCCESS --- 2-5")
-            assert(a == 1)
-            return a
-        }
-        
-        // Riffle Model objects with returns
+//        register("registerSinglePrimitive") { (a: Int) -> Int in
+//            print("SUCCESS --- 2-5")
+//            assert(a == 1)
+//            return a
+//        }
+//        
+//        // Riffle Model objects with returns
 //        register("registerModel") { (d: Dog) -> Dog in
 //            print("SUCCESS --- 2-11")
 //            assert(d.name == dog.name && d.age == dog.age)
@@ -129,17 +127,17 @@ class Receiver: Domain {
 //            return d
 //        }
 
-            // Test both sending and receiving types
-            // Test receiving collections in invocation
-//
-//            // WARNING: cant receive 5 elements in return
+        //Test both sending and receiving types
+        //Test receiving collections in invocation
+
+             //WARNING: cant receive 5 elements in return
 //            receiver.call("registerModelArrays", [Dog(), Dog(), Dog()]).then { (dogs: [Dog]) in
 //                print("\(t) : Call receiving object collection:", dogs)
 //                print("                      expecting: 1 2.0 3.0 4\n")
 //            })
-//
-//
-//            // Leave
+
+
+            // Leave
 //            self.leave()
         
         
@@ -179,24 +177,24 @@ class Sender: Domain {
 //
 //        // Primitive Types
 //        receiver.publish("subscribePrimitives", 1, 2.2, 3.3, "4", true)
-//
+
 //        // Arrys of simple types
-//        receiver.publish("subscribeArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
+        receiver.publish("subscribeArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
 //
 //         receiver.publish("subscribeModel", dog)
-
-//        // Reg/Call Success Cases
-//        // No arguments
+//
+        // Reg/Call Success Cases
+        // No arguments
 //        receiver.call("registerNothing").then {
 //            assert(true)
 //        }
-        
+//        
 //        receiver.call("registerModel", dog).then { (d: Dog) in
 //            assert(d.age == 21)
 //            print("SUCESS --- 2-12")
 //        }
 
-//        // Primitive Types
+        // Primitive Types
 //        receiver.call("registerPrimitives", 1, 2.2, 3.3, "4", true).then { (a: Int, c: Double, d: String, e: Bool) in
 //            assert(a == 1)
 //            //assert(b == 2.2)
@@ -230,15 +228,15 @@ class Sender: Domain {
 //            print("FAILURE ON CALL RETURN --- 2-9")
 //            print("\tREASON: \(reason)")
 //        }
-//
-        receiver.call("registerSinglePrimitive", 1).then { (a: Int) in
-            assert(a == 1)
-            print("SUCCCES --- 2-6")
-        }.error { reason in
-            print("FAIL --- 2-6")
-            print(reason)
-        }
-        
+////
+//        receiver.call("registerSinglePrimitive", 1).then { (a: Int) in
+//            assert(a == 1)
+//            print("SUCCCES --- 2-6")
+//        }.error { reason in
+//            print("FAIL --- 2-6")
+//            print(reason)
+//        }
+//        
 //        receiver.call("subDeferred", 1).then { (a: Int) in
 //            print("SUCCESS --- 3-2")
 //        }.then {

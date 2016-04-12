@@ -26,12 +26,13 @@ import java.util.ArrayList;
  *
  * Created by luke on 10/22/15.
  */
+
 public class GameActivity extends Activity {
     public int points;
     public Player player;
     public static Dealer dealer;
     public static Exec exec;
-    public static Player currentCzar;
+    public static String currentCzar;
     public static Handler handler;
     public static String phase;
     public Player[] players;
@@ -43,7 +44,7 @@ public class GameActivity extends Activity {
     private boolean answerSelected;
     private Card chosen;
     private ArrayList<Card> forCzar;
-    private GameTimer timer;
+    public GameTimer timer;
     private String screenName;
 
     RelativeLayout layout;
@@ -54,7 +55,7 @@ public class GameActivity extends Activity {
     public GameActivity(){
         Log.i("GameActivity", "entered constructor");
         Riffle.setFabricDev();
-//        Riffle.setLogLevelInfo();
+//        Riffle.setLogLevelDebug();
         Riffle.setCuminOff();
 
         this.context = MainActivity.getAppContext();
@@ -120,26 +121,27 @@ public class GameActivity extends Activity {
         super.onResume();
         String TAG = "GameActivity::onResume";
 
-        Log.i(TAG, "creating Exec instance");
-        exec = new Exec();
+        Domain execDomain = new Domain("xs.damouse.CardsAgainst");
+        Domain playerDomain = new Domain("xs.damouse.CardsAgainst");
+        Player player = new Player(screenName, playerDomain);
 
-        Domain app = new Domain("xs.damouse.CardsAgainst");
-        Log.i(TAG, "screenname=" + screenName);
-        Player player = new Player(screenName, app);
+        Log.i(TAG, "creating Exec instance");
+        exec = new Exec("Exec", execDomain, player);
+
         player.activity = this;
-        exec.setPlayer(player);
-        exec.join();
+
+        Log.i(TAG, "Exec joining...");
+        exec.join();    // -> dealer.join() -> player.join() -> this.onPlayerJoined()
     }//end onResume method
 
     @Override
     public void onPause(){
         super.onPause();
-
 //         save points here
 
+        player.leave();
         timer.cancel();
         handler.removeCallbacks(dealer.runnable);
-        player.leave();
         dealer = null;
         exec = null;
         timer = null;
@@ -162,20 +164,28 @@ public class GameActivity extends Activity {
 
     public void playGame(){
         answerSelected = false;
-        setQuestion();
+        runOnUiThread(this::setQuestion);
 
         timer.setType("answering");
         timer.start();
     }//end playGame method
 
-    // called by Player after join
     public void onPlayerJoined(Object[] play){
-        String TAG = "onPlayerJoined()";
+        final String TAG = "onPlayerJoined()";
         phase = "answering";
         int pos = 0;
+
+/*
+        player.domain().call("play").then(Object[].class, (obj)->{
+            // TODO after model objects implemented
+        });
+        */
+
         try {
             player.setHand(Card.buildHand((String[]) play[0]));
             this.players = (Player[]) play[1];
+            phase = (String) play[2];
+            //player.setDealer((String) play[3]);
 
             try {
                 // display players in game
@@ -185,11 +195,6 @@ public class GameActivity extends Activity {
                         runOnUiThread(() -> {
                             String str = p.playerID();
                             playerInfos.get(posF).setText(str);
-                            if (currentCzar != null && str.equals(currentCzar.playerID())) {
-                                playerInfos.get(posF).setBackgroundColor(Color.parseColor("#00a2ff"));
-                            }else{
-                                playerInfos.get(posF).setBackgroundColor(Color.parseColor("#005688"));
-                            }
                         });
                         pos++;
                     }
@@ -205,11 +210,24 @@ public class GameActivity extends Activity {
             e.printStackTrace();
         }
 
-        this.runOnUiThread(() -> {
+        Thread thread = new Thread(){
+            public void run(){
+                exec.start();
+            }
+        };
+        thread.start();
+
+        runOnUiThread(() -> {
             setQuestion();                              //set question TextView
             refreshCards(player.hand());
-            playGame();
         });
+
+        Thread gameThread = new Thread(){
+            public void run(){
+                playGame();
+            }
+        };
+        gameThread.start();
     }//end onPlayerJoin method
 
     public void setQuestion(){
@@ -237,12 +255,19 @@ public class GameActivity extends Activity {
         }
     }//end setAnswers method
 
+    public void highlightCzar(String czar){
+        for(TextView t: playerInfos){
+            if(czar.equals(t.getText())){
+                t.setBackgroundColor(Color.parseColor("#551A8B"));
+            }else{
+                t.setBackgroundColor(Color.parseColor("#00a2ff"));
+            }
+        }
+    }
+
     public void addPlayer(String player){
         runOnUiThread(() -> {
             playerInfos.get( playerInfos.size() - 1 ).setText(player);
-            if(player.startsWith("dummy")){
-                playerInfos.get(3).setBackgroundColor(Color.parseColor("#551A8B"));
-            }
         });
     }
 
@@ -276,6 +301,7 @@ public class GameActivity extends Activity {
         for(int i=0; i<5; i++){
             if(i != c){
                 cardViews.get(i).setBackgroundColor(Color.WHITE);
+                cardViews.get(i).setTextColor(Color.BLACK);
             }
         }
     }//end setBackgrounds method
@@ -285,16 +311,6 @@ public class GameActivity extends Activity {
         for(TextView v : cardViews){
             v.setBackgroundColor(Color.WHITE);
             v.setTextColor(Color.BLACK);
-        }
-    }
-
-    public void setPlayerBackgrounds(){
-        for(TextView t : playerInfos){
-            if( t.getText().equals( currentCzar.playerID() )){
-                runOnUiThread(() -> t.setBackgroundColor(Color.parseColor("#00a2ff")));
-            }else{
-                runOnUiThread(() -> t.setBackgroundColor(Color.parseColor("#005688")));
-            }
         }
     }
 
@@ -308,11 +324,11 @@ public class GameActivity extends Activity {
 
         @Override
         public void onFinish(){
-            progressBar.setProgress(progressBar.getMax());
+            runOnUiThread(() -> progressBar.setProgress(progressBar.getMax()));
             switch(type){
                 case "answering":                           //next phase will be picking
                     try {
-                        refreshCards(player.answers());
+//                        runOnUiThread(() -> refreshCards(player.answers()));
                     }catch(NullPointerException e){
                         Log.wtf("GameActivity", "answers array is null");
                     }
@@ -321,11 +337,9 @@ public class GameActivity extends Activity {
                         forCzar = player.answers();
                         chosen = forCzar.get(0);            //default submit first card
                     }else{
-                        resetBackgrounds();
-                        infoText.setText(R.string.pickingInfo);
-                        if(!answerSelected){
-                            submitCard(0, cardViews.get(0));
-                        }
+                        runOnUiThread(() -> resetBackgrounds());
+                        runOnUiThread(() -> infoText.setText(R.string.pickingInfo));
+                        player.pick();
                     }
 
                     answerSelected = false;
@@ -333,28 +347,27 @@ public class GameActivity extends Activity {
                     setNextTimer("picking");
                     break;
                 case "picking":                             //next phase will be scoring
-                    infoText.setText(R.string.scoringInfo);
-                    resetBackgrounds();
-                    refreshCards(player.hand());
+                    runOnUiThread(() -> infoText.setText(R.string.scoringInfo));
+                    runOnUiThread(() -> resetBackgrounds());
+//                    runOnUiThread(() -> refreshCards(player.hand()));
                     phase = "scoring";
                     setNextTimer("scoring");
                     break;
                 case "scoring":                                 //next phase will be answering
                     setQuestion();                              //update question card
                     if(player.isCzar()){
-                        resetBackgrounds();
-                        infoText.setText(R.string.playersPickingInfo);
+                        runOnUiThread(() -> resetBackgrounds());
+                        runOnUiThread(() -> infoText.setText(R.string.playersPickingInfo));
                     }else{
-                        infoText.setText(R.string.answeringInfo);
+                        runOnUiThread(() -> infoText.setText(R.string.answeringInfo));
                     }
                     String winnerID = player.getWinner();             //give point if player is winner
                     if(winnerID != null && winnerID.equals(player.playerID())){
-                        Toast.makeText(context, "You won this round!", Toast.LENGTH_SHORT).show();
+                        runOnUiThread(() -> Toast.makeText(context, "You won this round!", Toast.LENGTH_SHORT).show());
                         player.addPoint();
                     }
-                    Log.i("Player's cards", Card.printHand( player.hand() ));
 
-                    refreshCards(player.hand());
+                    runOnUiThread(() -> refreshCards(player.hand()));
                     phase = "answering";
                     setNextTimer("answering");
                     break;
@@ -371,7 +384,7 @@ public class GameActivity extends Activity {
             long timeRemaining = (millisUntilFinished / 1000);
             int progress = (int) (progressBar.getMax() * timeRemaining / 15);
 
-            progressBar.setProgress(progress);
+            runOnUiThread(() -> progressBar.setProgress(progress));
         }//end onTick method
 
         public void setType(String timerType){
