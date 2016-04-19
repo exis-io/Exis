@@ -58,15 +58,13 @@ public class NameActivity extends Activity {
             leaveTextField();
         });
 
-        nameField.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    leaveTextField();
-                    return true;
-                }
-                return false;
+        nameField.setOnKeyListener((v, keyCode, event) -> {
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                    (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                leaveTextField();
+                return true;
             }
+            return false;
         });
     }
 
@@ -90,7 +88,6 @@ public class NameActivity extends Activity {
         super.onResume();
         Bundle bundle = getIntent().getExtras();
         screenName = bundle.getString("key_screen_name", "");
-
         screenName = preferences.getString("screenName", "");
 
         if(!screenName.equals("")){
