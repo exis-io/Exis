@@ -8,7 +8,8 @@
     tools:context=".GameActivity"
     android:background="#000"
     android:keepScreenOn="true"
-    android:id="@+id/game_bg">
+    android:id="@+id/game_bg"
+    android:animateLayoutChanges="true">
 
     <TextView android:text="@string/question"
         android:layout_width="fill_parent"

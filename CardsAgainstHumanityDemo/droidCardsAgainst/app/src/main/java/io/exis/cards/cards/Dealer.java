@@ -332,7 +332,7 @@ public class Dealer extends Domain{
                 }else{
                     ArrayList<Card> a = new ArrayList<Card>(answers.values());
                     Log.i(TAG, "publishing [picking, \n" +
-                            Card.printHand(a) +
+                            Card.printHand(a) + "\n" +
                             duration + "]");
                     publish("picking", Card.serialize(Card.handToStrings(a)), duration);
 
