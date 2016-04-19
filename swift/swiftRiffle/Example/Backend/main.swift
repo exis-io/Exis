@@ -16,7 +16,7 @@ osxProperty = { a in guard let z = a as? Property else { return nil }; return z 
 //let a = 1
 //updownTypes(a)
 
-Riffle.setLogLevelInfo()
+Riffle.setLogLevelDebug()
 Riffle.setFabricDev()
 
 print("Starting Tests")

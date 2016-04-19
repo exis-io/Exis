@@ -80,7 +80,6 @@ class Receiver: Domain {
         // Simple Types
         // FAIL when returning the types back to the client
         // FAIL with no cumin enforcement present
-        // FAIL with floats
         register("registerPrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) -> (Int, Float, Double, String, Bool) in
             print("SUCCESS --- 2-2")
             
@@ -95,17 +94,17 @@ class Receiver: Domain {
         
 //
 //        // Collections of simple types
-//        register("registerArrays") { (a: [Int], c: [Double], d: [String], e: [Bool]) -> Any in
-//            print("SUCCESS --- 2-3")
-//            
-//            assert(a == [1, 2])
-//            //assert(b == [2.2, 3.3])
-//            assert(c == [4.4, 5.5])
-//            assert(d == ["6", "7"])
-//            assert(e == [true, false])
-//            
-//            return (a, c, d, e)
-//        }
+        register("registerArrays") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) -> ([Int], [Float], [Double], [String], [Bool]) in
+            print("SUCCESS --- 2-3")
+            
+            assert(a == [1, 2])
+            assert(b == [2.2, 3.3])
+            assert(c == [4.4, 5.5])
+            assert(d == ["6", "7"])
+            assert(e == [true, false])
+            
+            return (a, b, c, d, e)
+        }
         
         register("registerSinglePrimitive") { (a: Int) -> Int in
             print("SUCCESS --- 2-5")
@@ -176,7 +175,7 @@ class Sender: Domain {
         receiver.publish("subscribeArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
         
         
-        // Reg/Call Success Cases
+        // Reg/Call
         receiver.call("registerNothing").then {
             assert(true)
         }
@@ -198,9 +197,6 @@ class Sender: Domain {
     
         // receiver.publish("subscribeModel", dog)
 
-        // Reg/Call Success Cases
-        // No arguments
-
 //
 //        receiver.call("registerModel", dog).then { (d: Dog) in
 //            assert(d.age == 21)
@@ -211,19 +207,19 @@ class Sender: Domain {
 
 //
 //        // Collections of simple types
-//        receiver.call("registerArrays", [1, 2], [4.4, 5.5], ["6", "7"], [true, false]).then { (a: [Int], c: [Double], d: [String], e: [Bool]) in
-//            assert(a == [1, 2])
-//            //assert(b == [2.2, 3.3])
-//            assert(c == [4.4, 5.5])
-//            assert(d == ["6", "7"])
-//            assert(e == [true, false])
-//            print("SUCCESS --- 2-7")
-//            
-//        }.error { reason in
-//            // TODO: the reason itself is not given, instead its the class of argument
-//            print("FAILURE ON CALL RETURN --- 2-2")
-//            print("\tREASON: \(reason)")
-//        }
+        receiver.call("registerArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false]).then { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
+            assert(a == [1, 2])
+            assert(b == [2.2, 3.3])
+            assert(c == [4.4, 5.5])
+            assert(d == ["6", "7"])
+            assert(e == [true, false])
+            print("SUCCESS --- 2-7")
+            
+        }.error { reason in
+            // TODO: the reason itself is not given, instead its the class of argument
+            print("FAILURE ON CALL RETURN --- 2-2")
+            print("\tREASON: \(reason)")
+        }
         
         // Collections of model objects
 //        receiver.call("registerModelArrays", dogs).then { (d: [Dog]) in
