@@ -10,17 +10,6 @@ import Foundation
 import CoreFoundation
 import Mantle
 
-
-// An application-exportable converter function that allows osx targets to cast appropriately
-// Does this look silly or wrong to you? Good, you're a sane swift developer.
-// Unfortunatly, type checking with a swift framework on OSX is not a sane endeveour. Trust
-// me when I say there's an outrageous amount of subtle nonsense going on here
-// TODO: put an error log detailing what to put in here if the block hasn't been assigned on OSX
-
-public var osxConvertible: ((Convertible) -> Convertible?)?
-public var osxProperty: ((Property) -> Property?)?
-
-
 extension String {
     func cString() -> UnsafeMutablePointer<Int8> {
         var ret: UnsafeMutablePointer<Int8> = UnsafeMutablePointer<Int8>()

@@ -26,7 +26,7 @@ func <- <T: Property> (t:T.Type, object: Any) -> T {
     // Deserialize is implemented as part of the Convertible protocol. All properties implement Convertible
     
     #if os(OSX)
-        return T.brutalize(object, t: T.self)!
+        return T.unsafeDeserialize(object, t: T.self)!
     #else
         return T.deserialize(object) as! T
     #endif

@@ -266,6 +266,16 @@ extension Array : Property, BaseConvertible {
         var ret: [Any] = []
         
         for child in self {
+            print("Converting child \(child) \(child.dynamicType)")
+            
+//            if let z = child as? Convertible {
+//                print("Can convert convertible")
+//            }
+//            
+//            if let z = child as? Property {
+//                print("Can convert property")
+//            }
+       
             if let convert = child as? Convertible {
                 ret.append(convert.serialize())
             } else {
