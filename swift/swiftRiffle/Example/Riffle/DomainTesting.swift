@@ -60,10 +60,10 @@ class Receiver: Domain {
             assert(e == [true, false])
         }
 
-        subscribe("subscribeModel") { (d: Dog) in
-            print("SUCESS --- 1-4")
-            assert(d.name == dog.name && d.age == dog.age)
-        }
+//        subscribe("subscribeModel") { (d: Dog) in
+//            print("SUCESS --- 1-4")
+//            assert(d.name == dog.name && d.age == dog.age)
+//        }
         
         // TODO: subscribe with model object
         // TODO: Dictionaries of simple types
@@ -81,19 +81,20 @@ class Receiver: Domain {
         // FAIL when returning the types back to the client
         // FAIL with no cumin enforcement present
         // FAIL with floats
-//        register("registerPrimitives") { (a: Int, c: Double, d: String, e: Bool) -> Any in
-//            print("SUCCESS --- 2-2")
-//            
-//            assert(a == 1)
-//            //assert(b == 2.2)
-//            assert(c == 3.3)
-//            assert(d == "4")
-//            assert(e == true)
-//
+        register("registerPrimitives") { (a: Int, c: Double, d: String, e: Bool) -> (Int, Double) in
+            print("SUCCESS --- 2-2")
+            
+            assert(a == 1)
+            //assert(b == 2.2)
+            assert(c == 3.3)
+            assert(d == "4")
+            assert(e == true)
+
 //            return (a, c, d, e)
-//        }
-//        
-//        
+            return (a, c)
+        }
+        
+//
 //        // Collections of simple types
 //        register("registerArrays") { (a: [Int], c: [Double], d: [String], e: [Bool]) -> Any in
 //            print("SUCCESS --- 2-3")
@@ -168,27 +169,30 @@ class Receiver: Domain {
 class Sender: Domain {
     var receiver: Receiver!
     
+    func passingTests() {
+        receiver.publish("subscribeNothing")
+        
+        receiver.publish("subscribePrimitives", 1, 2.2, 3.3, "4", true)
+        
+        receiver.publish("subscribeArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
+        
+        
+        // Reg/Call Success Cases
+        receiver.call("registerNothing").then {
+            assert(true)
+        }
+    }
+    
     override func onJoin() {
         print("Sender joined")
-        
-        // Pub Sub Success Cases
-        // No args
-        receiver.publish("subscribeNothing")
+        passingTests()
+    
+        // receiver.publish("subscribeModel", dog)
 
-        // Primitive Types
-        receiver.publish("subscribePrimitives", 1, 2.2, 3.3, "4", true)
+        // Reg/Call Success Cases
+        // No arguments
 
-        // Arrys of simple types
-        receiver.publish("subscribeArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false])
-////
-////         receiver.publish("subscribeModel", dog)
-////
-//        // Reg/Call Success Cases
-//        // No arguments
-//        receiver.call("registerNothing").then {
-//            assert(true)
-//        }
-//        
+//
 //        receiver.call("registerModel", dog).then { (d: Dog) in
 //            assert(d.age == 21)
 //            print("SUCESS --- 2-12")

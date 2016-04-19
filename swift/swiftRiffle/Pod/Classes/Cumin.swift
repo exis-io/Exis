@@ -78,6 +78,11 @@ public extension Domain {
 	public func register<A: PR, B: PR, C: PR, D: PR, R: PR>(endpoint: String, _ fn: (A, B, C, D) -> (R)) -> Deferred {
 		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3])) }
 	}
+    
+    public func register<A: PR, B: PR, C: PR, D: PR, R: PR, S: PR>(endpoint: String, _ fn: (A, B, C, D) -> (R, S)) -> Deferred {
+        return Deferred()
+//        return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3])) }
+    }
 
 	public func register<A: PR, B: PR, C: PR, D: PR, E: PR, R: PR>(endpoint: String, _ fn: (A, B, C, D, E) -> (R)) -> Deferred {
 		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation(), E.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4])) }

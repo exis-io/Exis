@@ -11,11 +11,12 @@
 
 import Foundation
 
-public func updownTypes(a: Any) {
+// Just playing around with the OSX bug
+public func updownTypes<A: Convertible>(a: A) {
     // Interestingly, this may work reasonably well when typechecking for our reflection
     // Generates a unique thingy
-    let z = ObjectIdentifier(a.dynamicType)
-    print("Suck it: \(z)")
+    // let z = ObjectIdentifier(a.dynamicType)
+    // print("Suck it: \(z)")
     
     if let z = a as? Int {
         print("Got the int")
@@ -23,6 +24,10 @@ public func updownTypes(a: Any) {
     
     else if let z = a as? Convertible {
         print("Convertible Check ")
+    }
+        
+    else if let z = osxConvertible!(a) {
+        print("Caught the check on external")
     }
     
     else {

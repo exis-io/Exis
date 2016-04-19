@@ -93,7 +93,8 @@ func serializeArguments(args: [Property]) -> [Any] {
 }
 
 func serializeResults() -> Any {
-    return []
+    let ret: [Any] = []
+    return ret
 }
 
 func serializeResults(results: Property...) -> Any {
