@@ -92,9 +92,31 @@ func serializeArguments(args: [Property]) -> [Any] {
     #endif
 }
 
-func serializeResults() -> Any {
-    let ret: [Any] = []
-    return ret
+
+// Technically this is part of the generic shotgun-- please merge
+// Convert any kind of handler return to an array of Any
+func serializeResults(args: ()) -> [Any] {
+    return []
+}
+
+func serializeResults<A: PR>(args: (A)) -> [Any] {
+    return [args.serialize()]
+}
+
+func serializeResults<A: PR, B: PR>(args: (A, B)) -> [Any] {
+    return [args.0.serialize(), args.1.serialize()]
+}
+
+func serializeResults<A: PR, B: PR, C: PR>(args: (A, B, C)) -> [Any] {
+    return [args.0.serialize(), args.1.serialize(), args.2.serialize()]
+}
+
+func serializeResults<A: PR, B: PR, C: PR, D: PR>(args: (A, B, C, D)) -> [Any] {
+    return [args.0.serialize(), args.1.serialize(), args.2.serialize(), args.3.serialize()]
+}
+
+func serializeResults<A: PR, B: PR, C: PR, D: PR, E: PR>(args: (A, B, C, D, E)) -> [Any] {
+    return [args.0.serialize(), args.1.serialize(), args.2.serialize(), args.3.serialize(), args.4.serialize()]
 }
 
 func serializeResults(results: Property...) -> Any {
@@ -127,7 +149,7 @@ func switchTypes<A>(x: A) -> Any {
         case "Bool":
             return recode(x, Bool.self)
         default:
-            Riffle.warn("Unable to switch out app type: \(x.dynamicType)")
+            Riffle.warn("Unable to switch o/Applications/Utilities/Script Editor.apput app type: \(x.dynamicType)")
             return x
         }
     #else

@@ -81,17 +81,16 @@ class Receiver: Domain {
         // FAIL when returning the types back to the client
         // FAIL with no cumin enforcement present
         // FAIL with floats
-        register("registerPrimitives") { (a: Int, c: Double, d: String, e: Bool) -> (Int, Double) in
+        register("registerPrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) -> (Int, Float, Double, String, Bool) in
             print("SUCCESS --- 2-2")
             
             assert(a == 1)
-            //assert(b == 2.2)
+            assert(b == 2.2)
             assert(c == 3.3)
             assert(d == "4")
             assert(e == true)
 
-//            return (a, c, d, e)
-            return (a, c)
+            return (a, b, c, d, e)
         }
         
 //
@@ -181,11 +180,21 @@ class Sender: Domain {
         receiver.call("registerNothing").then {
             assert(true)
         }
+        
+        receiver.call("registerPrimitives", 1, 2.2, 3.3, "4", true).then { (a: Int, b: Float, c: Double, d: String, e: Bool) in
+            assert(a == 1)
+            assert(b == 2.2)
+            assert(c == 3.3)
+            assert(d == "4")
+            assert(e == true)
+            
+            print("SUCCCES --- 2-4")
+        }
     }
     
     override func onJoin() {
         print("Sender joined")
-        passingTests()
+        //passingTests()
     
         // receiver.publish("subscribeModel", dog)
 
@@ -199,16 +208,8 @@ class Sender: Domain {
 //        }
 
         // Primitive Types
-//        receiver.call("registerPrimitives", 1, 2.2, 3.3, "4", true).then { (a: Int, c: Double, d: String, e: Bool) in
-//            assert(a == 1)
-//            //assert(b == 2.2)
-//            assert(c == 3.3)
-//            assert(d == "4")
-//            assert(e == true)
-//            
-//            print("SUCCCES --- 2-4")
-//        }
-//        
+
+//
 //        // Collections of simple types
 //        receiver.call("registerArrays", [1, 2], [4.4, 5.5], ["6", "7"], [true, false]).then { (a: [Int], c: [Double], d: [String], e: [Bool]) in
 //            assert(a == [1, 2])

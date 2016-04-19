@@ -53,7 +53,7 @@ public class Domain {
         return d
     }
     
-    public func _register(endpoint: String, _ types: [Any], fn: [Any] -> Any) -> Deferred {
+    public func _register(endpoint: String, _ types: [Any], fn: [Any] -> [Any]) -> Deferred {
         let hn = CBID()
         let d = Deferred(domain: self)
         

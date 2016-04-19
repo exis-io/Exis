@@ -180,7 +180,7 @@ extension Double: Property, Convertible {
 }
 
 extension Float: Property, Convertible {
-    public func serialize() -> Any { return self }
+    public func serialize() -> Any { return Double(self) }
     public func unsafeSerialize() -> Any { return unsafeBitCast(self, Float.self) }
     
     public static func deserialize(from: Any) -> Any {

@@ -20,7 +20,6 @@ func <- <T: Property> (t:T.Type, object: Any) -> T {
     
     #if os(OSX)
         return T.unsafeDeserialize(object, t: T.self)!
-        //return recode(T.deserialize(object))
     #else
         return T.deserialize(object) as! T
     #endif
@@ -78,17 +77,124 @@ public extension Domain {
 	public func register<A: PR, B: PR, C: PR, D: PR, R: PR>(endpoint: String, _ fn: (A, B, C, D) -> (R)) -> Deferred {
 		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3])) }
 	}
-    
-    public func register<A: PR, B: PR, C: PR, D: PR, R: PR, S: PR>(endpoint: String, _ fn: (A, B, C, D) -> (R, S)) -> Deferred {
-        return Deferred()
-//        return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3])) }
-    }
 
 	public func register<A: PR, B: PR, C: PR, D: PR, E: PR, R: PR>(endpoint: String, _ fn: (A, B, C, D, E) -> (R)) -> Deferred {
 		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation(), E.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4])) }
 	}
 
 	public func register<A: PR, B: PR, C: PR, D: PR, E: PR, F: PR, R: PR>(endpoint: String, _ fn: (A, B, C, D, E, F) -> (R)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation(), E.representation(), F.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5])) }
+	}
+
+	public func register<R: PR, S: PR>(endpoint: String, _ fn: () -> (R, S)) -> Deferred {
+		return _register(endpoint, []) { a in return serializeResults(fn()) }
+	}
+
+	public func register<A: PR, R: PR, S: PR>(endpoint: String, _ fn: (A) -> (R, S)) -> Deferred {
+		return _register(endpoint, [A.representation()]) { a in return serializeResults(fn(A.self <- a[0])) }
+	}
+
+	public func register<A: PR, B: PR, R: PR, S: PR>(endpoint: String, _ fn: (A, B) -> (R, S)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1])) }
+	}
+
+	public func register<A: PR, B: PR, C: PR, R: PR, S: PR>(endpoint: String, _ fn: (A, B, C) -> (R, S)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation(), C.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2])) }
+	}
+
+	public func register<A: PR, B: PR, C: PR, D: PR, R: PR, S: PR>(endpoint: String, _ fn: (A, B, C, D) -> (R, S)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3])) }
+	}
+
+	public func register<A: PR, B: PR, C: PR, D: PR, E: PR, R: PR, S: PR>(endpoint: String, _ fn: (A, B, C, D, E) -> (R, S)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation(), E.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4])) }
+	}
+
+	public func register<A: PR, B: PR, C: PR, D: PR, E: PR, F: PR, R: PR, S: PR>(endpoint: String, _ fn: (A, B, C, D, E, F) -> (R, S)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation(), E.representation(), F.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5])) }
+	}
+
+	public func register<R: PR, S: PR, T: PR>(endpoint: String, _ fn: () -> (R, S, T)) -> Deferred {
+		return _register(endpoint, []) { a in return serializeResults(fn()) }
+	}
+
+	public func register<A: PR, R: PR, S: PR, T: PR>(endpoint: String, _ fn: (A) -> (R, S, T)) -> Deferred {
+		return _register(endpoint, [A.representation()]) { a in return serializeResults(fn(A.self <- a[0])) }
+	}
+
+	public func register<A: PR, B: PR, R: PR, S: PR, T: PR>(endpoint: String, _ fn: (A, B) -> (R, S, T)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1])) }
+	}
+
+	public func register<A: PR, B: PR, C: PR, R: PR, S: PR, T: PR>(endpoint: String, _ fn: (A, B, C) -> (R, S, T)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation(), C.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2])) }
+	}
+
+	public func register<A: PR, B: PR, C: PR, D: PR, R: PR, S: PR, T: PR>(endpoint: String, _ fn: (A, B, C, D) -> (R, S, T)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3])) }
+	}
+
+	public func register<A: PR, B: PR, C: PR, D: PR, E: PR, R: PR, S: PR, T: PR>(endpoint: String, _ fn: (A, B, C, D, E) -> (R, S, T)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation(), E.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4])) }
+	}
+
+	public func register<A: PR, B: PR, C: PR, D: PR, E: PR, F: PR, R: PR, S: PR, T: PR>(endpoint: String, _ fn: (A, B, C, D, E, F) -> (R, S, T)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation(), E.representation(), F.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5])) }
+	}
+
+	public func register<R: PR, S: PR, T: PR, U: PR>(endpoint: String, _ fn: () -> (R, S, T, U)) -> Deferred {
+		return _register(endpoint, []) { a in return serializeResults(fn()) }
+	}
+
+	public func register<A: PR, R: PR, S: PR, T: PR, U: PR>(endpoint: String, _ fn: (A) -> (R, S, T, U)) -> Deferred {
+		return _register(endpoint, [A.representation()]) { a in return serializeResults(fn(A.self <- a[0])) }
+	}
+
+	public func register<A: PR, B: PR, R: PR, S: PR, T: PR, U: PR>(endpoint: String, _ fn: (A, B) -> (R, S, T, U)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1])) }
+	}
+
+	public func register<A: PR, B: PR, C: PR, R: PR, S: PR, T: PR, U: PR>(endpoint: String, _ fn: (A, B, C) -> (R, S, T, U)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation(), C.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2])) }
+	}
+
+	public func register<A: PR, B: PR, C: PR, D: PR, R: PR, S: PR, T: PR, U: PR>(endpoint: String, _ fn: (A, B, C, D) -> (R, S, T, U)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3])) }
+	}
+
+	public func register<A: PR, B: PR, C: PR, D: PR, E: PR, R: PR, S: PR, T: PR, U: PR>(endpoint: String, _ fn: (A, B, C, D, E) -> (R, S, T, U)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation(), E.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4])) }
+	}
+
+	public func register<A: PR, B: PR, C: PR, D: PR, E: PR, F: PR, R: PR, S: PR, T: PR, U: PR>(endpoint: String, _ fn: (A, B, C, D, E, F) -> (R, S, T, U)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation(), E.representation(), F.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5])) }
+	}
+
+	public func register<R: PR, S: PR, T: PR, U: PR, V: PR>(endpoint: String, _ fn: () -> (R, S, T, U, V)) -> Deferred {
+		return _register(endpoint, []) { a in return serializeResults(fn()) }
+	}
+
+	public func register<A: PR, R: PR, S: PR, T: PR, U: PR, V: PR>(endpoint: String, _ fn: (A) -> (R, S, T, U, V)) -> Deferred {
+		return _register(endpoint, [A.representation()]) { a in return serializeResults(fn(A.self <- a[0])) }
+	}
+
+	public func register<A: PR, B: PR, R: PR, S: PR, T: PR, U: PR, V: PR>(endpoint: String, _ fn: (A, B) -> (R, S, T, U, V)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1])) }
+	}
+
+	public func register<A: PR, B: PR, C: PR, R: PR, S: PR, T: PR, U: PR, V: PR>(endpoint: String, _ fn: (A, B, C) -> (R, S, T, U, V)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation(), C.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2])) }
+	}
+
+	public func register<A: PR, B: PR, C: PR, D: PR, R: PR, S: PR, T: PR, U: PR, V: PR>(endpoint: String, _ fn: (A, B, C, D) -> (R, S, T, U, V)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3])) }
+	}
+
+	public func register<A: PR, B: PR, C: PR, D: PR, E: PR, R: PR, S: PR, T: PR, U: PR, V: PR>(endpoint: String, _ fn: (A, B, C, D, E) -> (R, S, T, U, V)) -> Deferred {
+		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation(), E.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4])) }
+	}
+
+	public func register<A: PR, B: PR, C: PR, D: PR, E: PR, F: PR, R: PR, S: PR, T: PR, U: PR, V: PR>(endpoint: String, _ fn: (A, B, C, D, E, F) -> (R, S, T, U, V)) -> Deferred {
 		return _register(endpoint, [A.representation(), B.representation(), C.representation(), D.representation(), E.representation(), F.representation()]) { a in return serializeResults(fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5])) }
 	}
 

@@ -73,7 +73,7 @@ def renderCaller(template, name, args, ret, renderingArrays, serializeResults=Fa
 def main():
     r, s, c = [], [], []
 
-    for j in range(2):  # The number of return types
+    for j in range(6):  # The number of return types
         for i in range(0, 7):  # Number of parameters
             if j == 0:
                 s.append(renderCaller(handlerTemplate, 'subscribe', generics[:i], returns[:j], False))

@@ -14,7 +14,7 @@ class App {
     
     var deferreds: [UInt64: Deferred] = [:]
     var handlers: [UInt64: [Any] -> ()] = [:]
-    var registrations: [UInt64: [Any] -> Any?] = [:]
+    var registrations: [UInt64: [Any] -> [Any]] = [:]
     
     
     init(domain: UInt64) {
@@ -82,30 +82,31 @@ class App {
                     fn(args)
                 } else if let fn = self.registrations[i] {
                     let resultId = args.removeAtIndex(0) as! Double
+                    Yield(self.mantleDomain, UInt64(resultId), marshall(fn(args)))
                     
                     // Optional serialization has some problems. This unwraps the result to avoid that particular issue
-                    if let ret = fn(args) {
-                        Yield(self.mantleDomain, UInt64(resultId), marshall(ret as! [Any]))
-                        
-                        // Function did not return anything
-//                        if let _ = ret as? Void {
-//                            Yield(self.mantleDomain, UInt64(resultId), marshall([]))
-//                            
-//                            // Function returned well known serializable types
-//                        } else if let _ = ret as? Property {
-//                            Yield(self.mantleDomain, UInt64(resultId), marshall(serializeArguments([ret])))
-//                            
-//                            // Function returned something we can't check-- assume its a tuple
-//                        } else {
-////                            Yield(self.mantleDomain, UInt64(resultId), marshall([ret]))
-//                            let unpacked = unpackTuple(ret)
-//                            //converted = swapClassToRiffle(unpacked)
-//                            Yield(self.mantleDomain, UInt64(resultId), marshall(serializeArguments(unpacked)))
-//                        }
-                    } else {
-                        let empty: [Any] = []
-                        Yield(self.mantleDomain, UInt64(resultId), marshall(empty))
-                    }
+//                    if let ret = fn(args) {
+//                        Yield(self.mantleDomain, UInt64(resultId), marshall(ret as! [Any]))
+//                        
+//                        // Function did not return anything
+////                        if let _ = ret as? Void {
+////                            Yield(self.mantleDomain, UInt64(resultId), marshall([]))
+////                            
+////                            // Function returned well known serializable types
+////                        } else if let _ = ret as? Property {
+////                            Yield(self.mantleDomain, UInt64(resultId), marshall(serializeArguments([ret])))
+////                            
+////                            // Function returned something we can't check-- assume its a tuple
+////                        } else {
+//////                            Yield(self.mantleDomain, UInt64(resultId), marshall([ret]))
+////                            let unpacked = unpackTuple(ret)
+////                            //converted = swapClassToRiffle(unpacked)
+////                            Yield(self.mantleDomain, UInt64(resultId), marshall(serializeArguments(unpacked)))
+////                        }
+//                    } else {
+//                        let empty: [Any] = []
+//                        Yield(self.mantleDomain, UInt64(resultId), marshall(empty))
+//                    }
                 }
             }
             #endif
