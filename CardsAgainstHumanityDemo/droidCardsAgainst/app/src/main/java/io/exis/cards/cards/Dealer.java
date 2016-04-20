@@ -2,6 +2,8 @@ package io.exis.cards.cards;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.content.Context;
 import android.os.CountDownTimer;
@@ -23,7 +25,7 @@ public class Dealer extends Domain{
 
     final int ROOMCAP = 5;
     private ArrayList<Player> players;                      // keep track of players playing
-    private ArrayList<Card> answers;                        // cards sent to czar
+    private Map answers;                                    // cards sent to czar
     private static ArrayList<Card> questionDeck;
     private static ArrayList<Card> answerDeck;
     private String phase;
@@ -51,7 +53,7 @@ public class Dealer extends Domain{
         questionDeck = MainActivity.getQuestions();
         questionCard = generateQuestion();
 
-        answers = new ArrayList<>();
+        answers = new HashMap<String, Card>();
         dummyCount = 0;
         playerCount = 0;
         duration = 15;
@@ -68,7 +70,6 @@ public class Dealer extends Domain{
         register("leave", String.class, Object.class, (p) -> {
             return this.leave(p);
         });
-        register("pick", String.class, String.class, this::pick);
 
         Log.i("dealer::onJoin", player.playerID() + " joining");
         player.join();
@@ -101,13 +102,15 @@ public class Dealer extends Domain{
             this.player = player;
             player.domain().subscribe("picked", String.class, (c) -> {
                 Log.i("picked listener", "received card " + c);
-                answers.add(new Card(c));
+                answers.put(player.playerID(), new Card(c));
             });
 
+/*
             player.domain().subscribe("chose", String.class, (c) -> {
                 Log.i("choose listener", "received card " + c);
                 winningCard = new Card(c);
             });
+*/
         }
         players.add(player);
         publish("joined", player.playerID());
@@ -221,14 +224,21 @@ public class Dealer extends Domain{
     }//end setPlayers method
 
     // dummies pick random winner
-    private void setWinner(){
-        int num = (int) (Math.random()*5);
-
-        if(!players.get(num).isCzar()){
-            winningCard = answers.get(num);
+    private void setWinner(String winningCard){
+        if(player.isCzar()){
+            for(Player p:players){
+                if( winningCard.equals( answers.get(p.playerID()) ) ){
+                    winner = p;
+                }
+            }
+        }else{ // choose random player
+            int num = (int)(Math.random()*5);
+            while(players.get(num).isCzar()){
+                num = (int)(Math.random()*5);
+            }
             winner = players.get(num);
-        }else{
-            setWinner();
+            this.winningCard = (Card) answers.get(winner.playerID());
+            Log.i("setWinner", "winner=" + winner.playerID() + ", num=" + num);
         }
     }
 
@@ -250,15 +260,6 @@ public class Dealer extends Domain{
                 getPlayers(),                                   // Player[] players
                 phase,                                          // String   state
                 dealerID};                                      // String   roomName
-    }
-
-    public String pick(String picked){
-        answers.add(new Card(picked));
-        Log.i("dealer", "received answer " + picked + " from player");
-
-        // start next phase upon receipt of card
-
-        return generateAnswer().getText();
     }
 
     public void start(){
@@ -299,40 +300,81 @@ public class Dealer extends Domain{
 
                 setPlayers();                    // deal cards back to each player
                 phase = "picking";
+
                 break;
             case "picking":
                 answers.clear();
                 Log.i(TAG, "gathering answers from " + players.size() + " players");
                 for(Player p : players){
-                    if(p.dummy) {
-                        answers.add(generateAnswer());
+                    if(p.dummy && !p.isCzar()) {
+                        answers.put(p.playerID(), generateAnswer());
                     }
                 }
 
-                while(answers.size() < 5){
-                    Log.wtf("padding answers pile", "answers had size " + answers.size());
-                    answers.add(generateAnswer());
+                if(!player.isCzar()) {
+                    Card card = generateAnswer();
+                    Log.i("dealer picking phase", "calling pick with card " + card.getText());
+                    player.domain().call("pick", card.getText()).then(String.class, (c) -> {
+                        answers.put(player.playerID(), new Card(c));
+                        while (answers.size() < 4) {
+                            Log.wtf("padding answers pile", "answers had size " + answers.size());
+                            answers.put(player.playerID(), generateAnswer());
+                        }
+
+                        ArrayList<Card> a = new ArrayList<Card>(answers.values());
+                        Log.i(TAG, "publishing [picking, " +
+                                Card.printHand(a) +
+                                duration + "]");
+                        publish("picking", Card.serialize(Card.handToStrings(a)), duration);
+
+                        phase = "scoring";
+                    });
+                }else{
+                    ArrayList<Card> a = new ArrayList<Card>(answers.values());
+                    Log.i(TAG, "publishing [picking, \n" +
+                            Card.printHand(a) + "\n" +
+                            duration + "]");
+                    publish("picking", Card.serialize(Card.handToStrings(a)), duration);
+
+                    phase = "scoring";
                 }
 
-                ArrayList<Card> a = answers;
-                Log.i(TAG, "publishing [picking, \n" +
-                        Card.printHand(a) +
-                        duration + "]");
-                publish("picking", Card.serialize(Card.handToStrings(answers)), duration);
-
-                phase = "scoring";
                 break;
             case "scoring":
-                setWinner();
+                if(player.isCzar()){
+                    call("pick", "").then(String.class, (c)->{
+                        setWinner(c);
 
-                Log.i(TAG, "publishing [scoring, " +
-                        winner.playerID() + ", " +
-                        winningCard.getText() + ", " +
-                        duration + "]");
-                publish("scoring", winner.playerID(), winningCard.getText(), duration);
+                        Log.i(TAG, "publishing [scoring, " +
+                                winner.playerID() + ", " +
+                                winningCard.getText() + ", " +
+                                duration + "]");
+                        publish("scoring", winner.playerID(), winningCard.getText(), duration);
 
-                answers.clear();
-                phase = "answering";
+                        answers.clear();
+                        phase = "answering";
+                        return;
+                    });
+                }else{
+                    setWinner("");
+
+                    if(winningCard == null){                // danger
+                        Log.wtf("dealer scoring phase", "setWinner produced null card");
+                        winningCard = generateAnswer();
+                    }
+
+                    Log.i(TAG, "publishing [scoring, " +
+                            winner.playerID() + ", " +
+                            winningCard.getText() + ", " +
+                            duration + "]");
+                    publish("scoring", winner.playerID(), winningCard.getText(), duration);
+
+                    answers.clear();
+                    phase = "answering";
+                }
+
+
+
                 break;
         }
     }// end playGame method

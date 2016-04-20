@@ -107,7 +107,7 @@ public class Card {
     public static String printHand(ArrayList<Card> hand){
         String s = "";
         for(Card c : hand){
-            s += c.getText() + "\n";
+            s += "\n" + c.getText();
         }
         return s;
     }
@@ -115,7 +115,7 @@ public class Card {
     public static String printHand(String[] hand){
         String s = "";
         for(String c : hand){
-            s += c + "\n";
+            s += "\n" + c;
         }
         return s;
     }
