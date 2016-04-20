@@ -30,8 +30,6 @@ public protocol Convertible {
 
 public protocol BaseConvertible: Convertible {}
 
-    
-
 extension BaseConvertible {
     public static func deserialize(from: Any) -> Any {
         return from

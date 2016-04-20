@@ -22,80 +22,119 @@ import Foundation
 public var osxConvertible: ((Convertible) -> Convertible?)?
 public var osxProperty: ((Property) -> Property?)?
 
-var externalInt: Int.Type = Int.self
-public var externalString: Any.Type? = String.self
-var externalBool: Bool.Type = Bool.self
-var externalDouble: Double.Type = Double.self
-var externalFloat: Float.Type = Float.self
+public var collectionConvertible: (() -> ())?
 
-// The publics CANNOT be typed as library types-- have to be Any.Type. We still need to retain this variable
-// for the unsafebitcast
-public var externalStringAny: String.Type = String.self
 
-public func setup(a: Int.Type, _ b: String.Type, _ c: Bool.Type, _ d: Double.Type, _ e: Float.Type) {
-    externalInt = a
-    externalString = b
-    externalBool = c
-    externalDouble = d
-    externalFloat = e
+public protocol ExternalType {
+    var ambiguousType: Any.Type { get }
+    var name: String { get }
+    
+    func cast<A>(arg: A) -> Convertible?
+    func castType<A>(a: A.Type) -> Convertible.Type?
 }
 
-
-// Just playing around with the OSX bug
-public func updownTypes<A>(a: A) {
-    // Interestingly, this may work reasonably well when typechecking for our reflection
-    // Generates a unique thingy
-    // let z = ObjectIdentifier(a.dynamicType)
-    // print("Suck it: \(z)")
+// We can use the constraint to automatically infer type for deserialization-- gives access to the class methods
+// What about serialization?
+public class External<T: Convertible>: ExternalType {
+    public var name: String
+    var typedType: T.Type
+    public var ambiguousType: Any.Type
     
-    var c: Convertible?
     
-    if A.self == externalInt {
-        c = unsafeBitCast(a, externalInt)
-    } else if A.self == externalString {
-        c = unsafeBitCast(a, externalStringAny)
-    } else if a.dynamicType == externalBool {
-        print("Have Int!")
-    } else if a.dynamicType == externalDouble {
-        print("Have Int!")
-    } else if a.dynamicType == externalFloat {
-        print("Have Int!")
-    } else {
-        print("Type not found!")
+    public init(_ typed: T.Type, _ ambiguous: Any.Type) {
+        typedType = typed
+        ambiguousType = ambiguous
+        name = "\(typed)"
     }
     
-    print("Have final convertible: \(c)")
-
-//    print("Incoming type is the same as the other type: \(A.self) \(externalString!.self) \(A.self == externalString!)")
+    public func cast<A>(arg: A) -> Convertible? {
+        print("Converting types: \(arg.dynamicType) to \(T.self)")
+        let ret = unsafeBitCast(arg, T.self)
+        
+        if let ret = ret as? Convertible {
+            print("conversion succeeded")
+            return ret
+        }
+        
+        return nil
+    }
     
-    // Ok, we can import external types on OSX and do a hard check between the types
-//    let z = unsafeBitCast(a, externalString!)
-//    let q = unsafeBitCast(a, String.self)
-//    
-//    print("Hard cast worked! \(z)")
-//    
-//    if let q = z as? Convertible {
-//        print("Hard cast convertible check ok!")
-//    }
-//    
-//    let type = externalTypes.filter { $0 == a.dynamicType }
-//    print("Found type: \(type)")
-//    let cast = unsafeBitCast(a, type[0])
-//    print("A convertible was found: \(cast)")
-//    
-//    if let z = a as? Int {
-//        print("Got the int")
-//    }
-//    
-//    else if let z = a as? Convertible {
-//        print("Convertible Check")
-//    }
-//        
-////    else if let z = osxConvertible!(a) {
-////        print("Caught the check on external")
-////    }
-////    
-//    else {
-//        print("Check failed!")
-//    }
+    public func castType<A>(a: A.Type) -> Convertible.Type? {
+        // print("Checking \(ambiguousType) and named types against Convertible")
+        
+        // This allows us to return the given type as a convertible... is this enough?
+        if let z = T.self as? Convertible.Type {
+            // print("Convertible type check successful!")
+            return z
+        }
+        
+        return nil
+    }
 }
+
+var externals: [ExternalType] = []
+
+public func initTypes(types: ExternalType...) {
+    externals = types
+}
+
+public func checkConvertible<A>(a: A) {
+    // Check to make sure the given object is correctly recognized as a convertible
+    
+    if let a = a as? Convertible {
+        print("Initial cast")
+        return
+    }
+    
+    for type in externals {
+        if A.self == type.ambiguousType {
+            let c = type.cast(a) as! Convertible
+            print("Caught external type \(type.name)")
+            return
+        }
+    }
+    
+    print("Failed on \(a.dynamicType)")
+}
+
+public func checkCollection<A: CollectionType>(a: A) {
+    let elementType = A.Generator.Element.self
+    
+    if let z = elementType as? Convertible {
+        print("Convertible")
+    }
+    
+    if let z = elementType as? Int {
+        print("Int")
+    }
+    
+    if elementType == Int.self {
+        print("Direct Type Int")
+    }
+    
+    if let z = elementType as? Convertible.Type {
+        print("Recognized internal convertible type")
+    }
+    
+    // direct type equality still works to check the internal part of the type, but the cast isnt going 
+    // to work
+    for type in externals {
+        if elementType == type.ambiguousType {
+            // This is a success case, right? Implicit detection of internal type comformance AND the type itself
+            print("Caught external type \(type.name)")
+            
+            if let t = type.castType(elementType) {
+                print("Have convertible generator type!")
+            }
+
+            
+            return
+        }
+    }
+    
+    print("Done")
+}
+
+
+
+

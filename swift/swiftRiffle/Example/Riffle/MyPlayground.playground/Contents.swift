@@ -1,8 +1,12 @@
 import Foundation
 
-let a = (1, 2)
-a.0
+let a: String.Type = String.self
+let b: Any.Type = String.self
 
-let v = String.self
+struct ExternalType<T> {
+    var name: String
+    var typedType: T.Type
+    var ambiguousType: Any.Type
+}
 
-v == String.self
+let externalString = ExternalType(name: "string", typedType: a, ambiguousType: b)
