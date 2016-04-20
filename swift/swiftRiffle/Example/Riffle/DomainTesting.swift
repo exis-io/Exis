@@ -85,6 +85,10 @@ class Receiver: Domain {
             return d
         }
         
+        register("regDeferred") { (a: Int) -> Int in
+            return a
+        }
+        
         joinFinished()
     }
     
@@ -133,23 +137,27 @@ class Sender: Domain {
             print("FAILURE ON CALL RETURN --- 2-9")
             print("\tREASON: \(reason)")
         }
+        
+        // Deferreds
+        // Make sure deferreds correctly chain callbacks
+        var firedFirstCallback = false
+        receiver.call("regDeferred", 1).then { (a: Int) in
+            firedFirstCallback = true
+        }.then {
+            assert(firedFirstCallback)
+        }
+        
+        var firedFirstErrback = false
+        receiver.call("regDeferred", "a").error { reason in
+            firedFirstErrback = true
+        }.error { reason in
+            assert(firedFirstErrback)
+        }
     }
     
     override func onJoin() {
         print("Sender joined")
         // passingTests()
-        
-        //        receiver.call("subDeferred", 1).then { (a: Int) in
-        //            print("SUCCESS --- 3-2")
-        //        }.then {
-        //            print("SUCCESS --- 3-3")
-        //        }
-        //        
-        //        receiver.call("subDeferred", "a").error { reason in
-        //            print("SUCCESS --- 3-4")
-        //        }.error { reason in 
-        //            print("SUCCESS --- 3-5")
-        //        }
     }
     
     override func onLeave() {
