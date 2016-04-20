@@ -26,7 +26,7 @@ initTypes(External(String.self, String.self), External(Int.self, Int.self), Exte
 //checkCollection(arr)
 
 
-Riffle.setLogLevelInfo()
+Riffle.setLogLevelDebug()
 Riffle.setFabricDev()
 
 print("Starting Tests")

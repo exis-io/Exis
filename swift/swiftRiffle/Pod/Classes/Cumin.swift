@@ -203,7 +203,12 @@ public extension Domain {
 	}
 
 	public func subscribe<A: PR>(endpoint: String, _ fn: (A) -> ()) -> Deferred {
-		return _subscribe(endpoint, [A.representation()]) { a in return fn(A.self <- a[0]) }
+		return _subscribe(endpoint, [A.representation()]) { a in
+            let c = A.self <- a[0]
+            print("Converted model: \(c)")
+            print("INVOKING FUNCTION")
+            return fn(A.self <- a[0])
+        }
 	}
 
 	public func subscribe<A: PR, B: PR>(endpoint: String, _ fn: (A, B) -> ()) -> Deferred {

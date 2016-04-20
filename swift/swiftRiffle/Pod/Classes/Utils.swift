@@ -75,7 +75,8 @@ func serializeArguments(args: [Property]) -> [Any] {
 //    return args.map { $0.serialize() }
     
     #if os(OSX)
-        return args.map { $0.unsafeSerialize() }
+        let c =  args.map { $0.unsafeSerialize() }
+        return c
     #else
         return args.map { $0.serialize() }
     #endif

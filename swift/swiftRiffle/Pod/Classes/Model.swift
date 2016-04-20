@@ -28,8 +28,7 @@ extension Model: Convertible {
     }
     
     public func unsafeSerialize() -> Any {
-        print("Triggered an unsafe serialze!")
-        return self
+        return serialize()
     }
     
     // Creates a new instance of this model object from the given json
@@ -42,8 +41,6 @@ extension Model: Convertible {
         var ret = self.init()
         
         _ = ret.propertyNames().map {
-            //print("Json: \(json[$0]): \(json[$0].dynamicType)")
-            //print("Repr: \(ret[$0]!.dynamicType.representation())")
             let repr = "\(ret[$0]!.dynamicType.representation())"
             
             // JSON is returning ints as doubles. Correct that and this isn't needed: Json.swift line 882
@@ -92,7 +89,6 @@ extension Model: Convertible {
     public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
         let ret = deserialize(from)
         return ret as! T
-//        return unsafeBitCast(ret, t.self)
     }
     
     public func serialize() -> Any {
