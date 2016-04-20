@@ -83,7 +83,7 @@ func NewSession() *session {
 	return s
 }
 
-func (sess *session) Receiver() chan Callback {
+func (sess *session) Receive() chan Callback {
 	return sess.dispatch
 }
 

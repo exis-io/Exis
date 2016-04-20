@@ -131,9 +131,6 @@ func SetLogLevelWarn()  { LogLevel = LogLevelWarn }
 func SetLogLevelInfo()  { LogLevel = LogLevelInfo }
 func SetLogLevelDebug() { LogLevel = LogLevelDebug }
 
-func SetFabric(url string)    { Fabric = url }
-func SetRegistrar(url string) { Registrar = url }
-
 func SetFabricSandbox() {
 	Fabric = FabricSandbox
 }

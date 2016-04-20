@@ -18,11 +18,11 @@ func CBID() uint64 {
 	return core.NewID()
 }
 
-var sess = NewSession
+var sess = core.NewSession()
 
 //export Send
 func Send(i *C.char) {
-	go sess.Send(C.CString(i))
+	go sess.Send(C.GoString(i))
 }
 
 //export Receive

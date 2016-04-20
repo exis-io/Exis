@@ -52,87 +52,13 @@ extern "C" {
 #endif
 
 
+// This is still here temporarily. Removed once client-generation is up and running
+
 extern GoUint64 CBID();
 
-extern void Free(GoUint64 p0);
+extern void Send(char* p0);
 
-extern GoUint64 NewDomain(char* p0);
-
-extern GoUint64 Subdomain(GoUint64 p0, char* p1);
-
-extern void SetToken(GoUint64 p0, char* p1);
-
-extern char* Receive(GoUint64 p0);
-
-extern void Join(GoUint64 p0, GoUint64 p1, GoUint64 p2);
-
-extern void Subscribe(GoUint64 p0, char* p1, GoUint64 p2, GoUint64 p3, GoUint64 p4, char* p5);
-
-extern void Register(GoUint64 p0, char* p1, GoUint64 p2, GoUint64 p3, GoUint64 p4, char* p5);
-
-extern void Publish(GoUint64 p0, char* p1, GoUint64 p2, GoUint64 p3, char* p4);
-
-extern void Call(GoUint64 p0, char* p1, GoUint64 p2, GoUint64 p3, char* p4);
-
-extern void Yield(GoUint64 p0, GoUint64 p1, char* p2);
-
-extern void CallExpects(GoUint64 p0, GoUint64 p1, char* p2);
-
-extern void Unsubscribe(GoUint64 p0, char* p1, GoUint64 p2, GoUint64 p3);
-
-extern void Unregister(GoUint64 p0, char* p1, GoUint64 p2, GoUint64 p3);
-
-extern void Leave(GoUint64 p0);
-
-extern void ModelAll(GoUint64 p0, GoUint64 p1, char* p2, char* p3);
-
-extern void ModelFind(GoUint64 p0, GoUint64 p1, char* p2, char* p3);
-
-extern void ModelCreate(GoUint64 p0, GoUint64 p1, char* p2, char* p3);
-
-extern void ModelSave(GoUint64 p0, GoUint64 p1, char* p2, char* p3);
-
-extern void ModelCount(GoUint64 p0, GoUint64 p1, char* p2, char* p3);
-
-extern void MantleSetLogLevelOff();
-
-extern void MantleSetLogLevelApp();
-
-extern void MantleSetLogLevelErr();
-
-extern void MantleSetLogLevelWarn();
-
-extern void MantleSetLogLevelInfo();
-
-extern void MantleSetLogLevelDebug();
-
-extern void MantleSetFabricDev();
-
-extern void MantleSetFabricSandbox();
-
-extern void MantleSetFabricProduction();
-
-extern void MantleSetFabricLocal();
-
-extern void MantleSetFabric(char* p0);
-
-extern void MantleSetRegistrar(char* p0);
-
-extern void MantleApplication(char* p0);
-
-extern void MantleDebug(char* p0);
-
-extern void MantleInfo(char* p0);
-
-extern void MantleWarn(char* p0);
-
-extern void MantleError(char* p0);
-
-extern void MantleSetCuminStrict();
-
-extern void MantleSetCuminLoose();
-
-extern void MantleSetCuminOff();
+extern char* Receive();
 
 #ifdef __cplusplus
 }

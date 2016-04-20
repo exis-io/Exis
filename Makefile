@@ -43,6 +43,9 @@ swift_example: printcheck
 	@echo "Now 'cd swift/example' and run './.build/debug/Example', 'SENDER=true ./.build/debug/Example'"
 
 ios:
+	@echo "Rebuilding core api"
+	@pkgreflect core 
+
 	@echo "Building arm7" 
 	@GOOS=darwin GOARCH=arm GOARM=7 CC=${CLANG_DIR} CXX={CLANG_DIR} CGO_ENABLED=1 \
 	CGO_CFLAGS='${IOS_DIR} -arch armv7' CGO_LDFLAGS='${IOS_DIR} -arch armv7' \
@@ -74,7 +77,7 @@ ios:
 	@mv .tmp/riffle-x86_64_osx.h swift/swiftRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Headers/Mantle.h
 	@mv .tmp/riffle-x86_64_osx.a swift/swiftRiffle/Pod/Assets/osx/Mantle.framework/Versions/A/Mantle
 
-	@# make sure this doesnt cause problem on vanilla arm7
+	@# extraneous check for size
 	@sed -i.gobak '/_check_for_32/d' ./swift/swiftRiffle/Pod/Assets/ios/Mantle.framework/Versions/A/Headers/Mantle.h
 
 android:
