@@ -29,17 +29,22 @@ var globalConnectionReference: Domain?
 
 public class Domain {
     public var delegate: Delegate?
+    
     var mantleDomain: UInt64
     var app: App
     
+    public private(set) var name: String
+    
     
     public init(name: String) {
+        self.name = name
         mantleDomain = NewDomain(name.cString())
         app = App(domain: mantleDomain)
         globalConnectionReference = self
     }
     
     public init(name: String, superdomain: Domain) {
+        self.name = "\(superdomain.name).\(name)"
         mantleDomain = Subdomain(superdomain.mantleDomain, name.cString())
         app = superdomain.app
     }

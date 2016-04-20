@@ -19,7 +19,7 @@ import IHKeyboardAvoiding
 import LTMorphingLabel
 
 
-class LandingViewController: UIViewController, RiffleDelegate {
+class LandingViewController: UIViewController, Delegate {
     @IBOutlet weak var textfieldUsername: UITextField!
     @IBOutlet weak var buttonLogin: UIButton!
     @IBOutlet weak var viewLogo: SpringView!
@@ -27,13 +27,13 @@ class LandingViewController: UIViewController, RiffleDelegate {
     @IBOutlet weak var viewLogin: SpringView!
     @IBOutlet weak var labelTips: LTMorphingLabel!
     
-    var app: RiffleDomain!
-    var me: RiffleDomain!
-    var container: RiffleDomain!
+    var app: Domain!
+    var me: Domain!
+    var container: Domain!
     
     
     override func viewWillAppear(animated: Bool) {
-        NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: Selector("rotateText"), userInfo: nil, repeats: true)
+        NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: #selector(rotateText), userInfo: nil, repeats: true)
         textfieldUsername.layer.borderColor = UIColor.whiteColor().CGColor
         textfieldUsername.attributedPlaceholder = NSAttributedString(string: "Username", attributes: [NSForegroundColorAttributeName: UIColor.whiteColor()])
         
@@ -44,25 +44,6 @@ class LandingViewController: UIViewController, RiffleDelegate {
         labelTips.morphingEffect = .Scale
         labelTips.text = tips[0]
     }
-    
-    
-    func startPlaying(cards: [String], players: [Player], state: String, room: String) {
-        
-        let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("game") as! GameViewController
-        controller.currentPlayer = getPlayer(players, domain: self.me.domain)
-        controller.currentPlayer.hand = cards
-        controller.players = players
-        
-        controller.state = state
-        controller.me = self.me
-        controller.app = self.app
-        controller.room = RiffleDomain(name: room, superdomain: container)
-        
-        // Gives the dealer permission to call "/draw" on us as needed
-        self.app.call("xs.demo.Bouncer/setPerm", self.container.domain, self.me.domain + "/draw", handler: nil)
-        presentControllerTranslucent(self, target: controller)
-    }
-    
     
     func onJoin() {
         viewLogin.animation = "zoomOut"
@@ -78,17 +59,32 @@ class LandingViewController: UIViewController, RiffleDelegate {
     @IBAction func login(sender: AnyObject) {
         textfieldUsername.resignFirstResponder()
 
-        app = RiffleDomain(domain: "xs.demo.exis.cardsagainst")
-        container = RiffleDomain(name: "Osxcontainer.gamelogic", superdomain: app)
+        app = Domain(name: "xs.demo.exis.cardsagainst")
+        container = Domain(name: "Osxcontainer.gamelogic", superdomain: app)
         
-        me = RiffleDomain(name: textfieldUsername.text!, superdomain: app)
+        me = Domain(name: textfieldUsername.text!, superdomain: app)
         me.delegate = self
         me.join()
 
     }
     
     @IBAction func play(sender: AnyObject) {
-        container.call("play", handler: startPlaying)
+        container.call("play").then { (cards: [String], players: [Player], state: String, room: String) in
+            
+            let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("game") as! GameViewController
+            controller.currentPlayer = getPlayer(players, domain: self.me.name)
+            controller.currentPlayer.hand = cards
+            controller.players = players
+            
+            controller.state = state
+            controller.me = self.me
+            controller.app = self.app
+            controller.room = Domain(name: room, superdomain: self.container)
+            
+            // Gives the dealer permission to call "/draw" on us as needed
+            self.app.call("xs.demo.Bouncer/setPerm", self.container.name, self.me.name + "/draw")
+            presentControllerTranslucent(self, target: controller)
+        }
     }
     
     func rotateText() {

@@ -12,7 +12,7 @@ import Foundation
 import Riffle
 
 
-class Player: RiffleModel {
+class Player: Model {
     var domain = ""
     var score = 0
     
@@ -23,9 +23,9 @@ class Player: RiffleModel {
     var demo = true
     var zombie = false
     
-    override class func ignoreProperties() -> [String] {
-        return ["hand", "pick", "zombie"]
-    }
+//    override class func ignoreProperties() -> [String] {
+//        return ["hand", "pick", "zombie"]
+//    }
 }
 
 

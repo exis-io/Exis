@@ -187,7 +187,6 @@ class PlayerCollectionDelegate: NSObject, UICollectionViewDataSource, UICollecti
     }
 }
 
-
 class CardCell: RMSwipeTableViewCell {
     @IBOutlet weak var labelTitle: UILabel!
     @IBOutlet weak var viewHolder: UIView!
@@ -232,7 +231,7 @@ class TickingView: M13ProgressViewBar {
         current = 1.0
         self.setProgress(CGFloat(current), animated: true)
         
-        timer = NSTimer.scheduledTimerWithTimeInterval(tickRate, target: self, selector: Selector("tick"), userInfo: nil, repeats: true)
+        timer = NSTimer.scheduledTimerWithTimeInterval(tickRate, target: self, selector: #selector(tick), userInfo: nil, repeats: true)
     }
     
     func tick() {

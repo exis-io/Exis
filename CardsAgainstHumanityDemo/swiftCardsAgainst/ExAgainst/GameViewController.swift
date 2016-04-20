@@ -30,14 +30,14 @@ class GameViewController: UIViewController {
     var currentPlayer: Player!
     var state: String!
     
-    var app: RiffleDomain!
-    var room: RiffleDomain!
-    var me: RiffleDomain!
+    var app: Domain!
+    var room: Domain!
+    var me: Domain!
     
     
     override func viewDidLoad() {
         tableDelegate = CardTableDelegate(tableview: tableCard, parent: self)
-        collectionDelegate = PlayerCollectionDelegate(collectionview: collectionPlayers, parent: self, baseAppName: app.domain)
+        collectionDelegate = PlayerCollectionDelegate(collectionview: collectionPlayers, parent: self, baseAppName: app.name)
         
         buttonBack.imageView?.contentMode = .ScaleAspectFit
         blur(viewRound)
@@ -52,7 +52,7 @@ class GameViewController: UIViewController {
     }
     
     override func viewWillDisappear(animated: Bool) {
-        room.call("leave", handler: nil)
+        room.call("leave")
         room.leave()
         me.leave()
     }
@@ -69,7 +69,7 @@ class GameViewController: UIViewController {
         _ = players.map { $0.czar = $0 == newCzar }
         
         collectionDelegate.setCzar(newCzar)
-        tableDelegate.refreshCards(newCzar.domain == me.domain ? [] : currentPlayer.hand)
+        tableDelegate.refreshCards(newCzar.domain == me.name ? [] : currentPlayer.hand)
         viewProgress.countdown(time)
         flashView(viewRound, label: labelRound, text: currentPlayer.czar ? "You're the czar" : "Choose a card")
     }
@@ -97,7 +97,7 @@ class GameViewController: UIViewController {
     }
     
     func scoring(player: Player, card: String, time: Double) {
-        let prettyName = player.domain.stringByReplacingOccurrencesOfString(app.domain + ".", withString: "")
+        let prettyName = player.domain.stringByReplacingOccurrencesOfString(app.name + ".", withString: "")
         flashView(viewRound, label: labelRound, text: "\(prettyName) won!")
         state = "Scoring"
         
@@ -121,7 +121,7 @@ class GameViewController: UIViewController {
             tableDelegate.removeCellsExcept([card])
         }
         
-        room.call("pick", card, handler: nil)
+        room.call("pick", card)
     }
     
     func playerJoined(player: Player) {
