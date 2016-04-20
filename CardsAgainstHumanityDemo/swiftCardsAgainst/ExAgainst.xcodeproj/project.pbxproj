@@ -523,6 +523,7 @@
 			baseConfigurationReference = 45FA57FF1F3350FC58E05242 /* Pods-Backend.debug.xcconfig */;
 			buildSettings = {
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
@@ -535,6 +536,7 @@
 			baseConfigurationReference = 1E6305915394224386A0A09F /* Pods-Backend.release.xcconfig */;
 			buildSettings = {
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_INSTALL_OBJC_HEADER = YES;

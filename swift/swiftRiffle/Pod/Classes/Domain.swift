@@ -131,6 +131,12 @@ public class Domain {
     }
 }
 
+extension Domain: Equatable {}
+
+public func ==(lhs: Domain, rhs: Domain) -> Bool {
+    return lhs.name == rhs.name
+}
+
 /*
  The Auth api
  

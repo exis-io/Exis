@@ -129,6 +129,28 @@ extension Model {
     }
 }
 
+//extension Model: Equatable {}
+//
+//public func ==(lhs: Model, rhs: Model) -> Bool {
+//    // returns true iff every property matches in both 
+//    if lhs.propertyNames().count != rhs.propertyNames().count {
+//        return false
+//    }
+//    
+//    for name in lhs.propertyNames() {
+//        if lhs[name]! != rhs[name]! {
+//            return false
+//        }
+//    }
+//    
+//    return true
+//}
+
+
+
+
+
+
 
 
 

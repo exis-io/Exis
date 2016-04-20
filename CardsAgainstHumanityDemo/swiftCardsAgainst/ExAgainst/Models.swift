@@ -28,6 +28,7 @@ class Player: Model {
 //    }
 }
 
+extension Player: Equatable {}
 
 // Used to compare two players together
 func ==(lhs: Player, rhs: Player) -> Bool {
