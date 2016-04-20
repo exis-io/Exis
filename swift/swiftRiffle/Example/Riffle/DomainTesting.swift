@@ -29,23 +29,16 @@ class Receiver: Domain {
         dog.name = "Trump"
         dog.something = 56.4
         
-        // Pub Sub Success Cases
-        
-        // No arguments
+        // Pub Sub
         subscribe("subscribeNothing") {
-            print("SUCCESS --- 1-1")
+            assert(true)
         }
         
-        // Primitive Types
         subscribe("subscribePrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
-            print("SUCCESS --- 1-2")
             assert(a == 1 && b == 2.2 && c == 3.3 && d == "4" && e == true)
         }
         
-        // Arrys of simple types
         subscribe("subscribeArrays") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
-            print("SUCCESS --- 1-3 ")
-            
             assert(a == [1, 2])
             //            assert(b == [2.2, 3.3])
             assert(c == [4.4, 5.5])
@@ -53,15 +46,9 @@ class Receiver: Domain {
             assert(e == [true, false])
         }
         
-//        subscribe("subscribeModel") { (d: Dog) in
-//            print("SUCESS --- 1-4")
-//            assert(d.name == dog.name && d.age == dog.age)
-//        }
-        
-        // TODO: subscribe with model object
-        // TODO: Dictionaries of simple types
-        // TODO: Any
-        
+        subscribe("subscribeModel") { (d: Dog) in
+            assert(d.name == dog.name && d.age == dog.age)
+        }
         
         // Reg/Call
         register("registerNothing") {
@@ -85,7 +72,6 @@ class Receiver: Domain {
             return a
         }
         
-        // Riffle Model objects with returns
         register("registerModel") { (d: Dog) -> Dog in
             print("SUCCESS --- 2-11")
             assert(d.name == dog.name && d.age == dog.age)
@@ -151,15 +137,13 @@ class Sender: Domain {
         print("Sender joined")
         // passingTests()
         
-        
-        
-        // receiver.publish("subscribeModel", dog)
-        //
-        //        receiver.call("registerModel", dog).then { (d: Dog) in
-        //            assert(d.age == 21)
-        //            print("SUCESS --- 2-12")
-        //        }
-        
+        receiver.publish("subscribeModel", dog)
+    
+//            receiver.call("registerModel", dog).then { (d: Dog) in
+//                assert(d.age == 21)
+//                print("SUCESS --- 2-12")
+//            }
+//    
         
         // Collections of model objects
         //        receiver.call("registerModelArrays", dogs).then { (d: [Dog]) in
