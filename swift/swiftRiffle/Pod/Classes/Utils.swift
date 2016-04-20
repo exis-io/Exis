@@ -10,7 +10,6 @@ import Foundation
 import CoreFoundation
 import Mantle
 
-
 extension String {
     func cString() -> UnsafeMutablePointer<Int8> {
         var ret: UnsafeMutablePointer<Int8> = UnsafeMutablePointer<Int8>()
@@ -38,7 +37,6 @@ extension String {
 func decode(p: UnsafePointer<Int8>) -> (UInt64, [Any]) {
     let dataString = String.fromCString(p)!
     
-    
     guard let data = try! JSONParser.parse(dataString) as? [Any] else {
         print("DID NOT RECEIVE ARRAY BACK!")
         return (UInt64(0), [])
@@ -59,7 +57,7 @@ func marshall(args: [Any]) -> UnsafeMutablePointer<Int8> {
     return jsonString.cString()
 }
 
-// Do we still need this here?
+// Do we still need this here? D
 func serializeArguments(args: [Any]) -> [Any] {
     var ret: [Any] = []
     
@@ -73,16 +71,42 @@ func serializeArguments(args: [Any]) -> [Any] {
 }
 
 func serializeArguments(args: [Property]) -> [Any] {
+//    Riffle.debug("Serializing: \(args.dynamicType) \(args)")
+//    return args.map { $0.serialize() }
+    
     #if os(OSX)
-        return args.map { $0.unsafeSerialize() }
+        let c =  args.map { $0.unsafeSerialize() }
+        return c
     #else
         return args.map { $0.serialize() }
     #endif
-    
 }
 
-func serializeResults() -> Any {
+
+// Technically this is part of the generic shotgun-- please merge
+// Convert any kind of handler return to an array of Any
+func serializeResults(args: ()) -> [Any] {
     return []
+}
+
+func serializeResults<A: PR>(args: (A)) -> [Any] {
+    return [args.serialize()]
+}
+
+func serializeResults<A: PR, B: PR>(args: (A, B)) -> [Any] {
+    return [args.0.serialize(), args.1.serialize()]
+}
+
+func serializeResults<A: PR, B: PR, C: PR>(args: (A, B, C)) -> [Any] {
+    return [args.0.serialize(), args.1.serialize(), args.2.serialize()]
+}
+
+func serializeResults<A: PR, B: PR, C: PR, D: PR>(args: (A, B, C, D)) -> [Any] {
+    return [args.0.serialize(), args.1.serialize(), args.2.serialize(), args.3.serialize()]
+}
+
+func serializeResults<A: PR, B: PR, C: PR, D: PR, E: PR>(args: (A, B, C, D, E)) -> [Any] {
+    return [args.0.serialize(), args.1.serialize(), args.2.serialize(), args.3.serialize(), args.4.serialize()]
 }
 
 func serializeResults(results: Property...) -> Any {
@@ -115,7 +139,7 @@ func switchTypes<A>(x: A) -> Any {
         case "Bool":
             return recode(x, Bool.self)
         default:
-            Riffle.warn("Unable to switch out app type: \(x.dynamicType)")
+            Riffle.warn("Unable to switch o/Applications/Utilities/Script Editor.apput app type: \(x.dynamicType)")
             return x
         }
     #else
@@ -144,9 +168,8 @@ func switchTypeObject<A>(x: A) -> Any.Type {
             return x as! Any.Type
         }
     #else
-        return x as Any.Type
+        return x as! Any.Type
     #endif
-    
 }
 
 func encode<A>(var v:A) -> NSData {
@@ -249,6 +272,8 @@ public class Riffle {
     public class func setCuminLoose() { MantleSetCuminLoose() }
     public class func setCuminOff() { MantleSetCuminOff() }
 }
+
+
 
 
 // Create CBIDs on this side of the boundary. Note this makes them doubles, should be using byte arrays or 

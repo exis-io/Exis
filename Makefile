@@ -43,7 +43,7 @@ swift_example: printcheck
 	@echo "Now 'cd swift/example' and run './.build/debug/Example', 'SENDER=true ./.build/debug/Example'"
 
 ios:
-	@echo "Rebuilding core api"
+	@echo "Reflecting core API"
 	@pkgreflect core 
 
 	@echo "Building arm7" 

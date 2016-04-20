@@ -30,17 +30,3 @@ func Receive() *C.char {
 	cb := <-sess.Receive()
 	return C.CString(core.MantleMarshall(cb))
 }
-
-// func Join(pdomain uint64, cb uint64, eb uint64) {
-// 	d := get(pdomain)
-
-// 	if c, err := shared.Open(core.Fabric); err != nil {
-// 		d.GetApp().CallbackSend(eb, err.Error())
-// 	} else {
-// 		if err := d.Join(c); err != nil {
-// 			d.GetApp().CallbackSend(eb, err.Error())
-// 		} else {
-// 			d.GetApp().CallbackSend(cb)
-// 		}
-// 	}
-// }

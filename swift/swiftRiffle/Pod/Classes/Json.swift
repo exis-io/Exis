@@ -240,6 +240,9 @@ public enum JSON {
             else if let value = value as? Double {
                 jsonArray.append(JSON.from(value))
             }
+            else if let value = value as? Float {
+                jsonArray.append(JSON.from(Double(value)))
+            }
             else if let value = value as? Int {
                 jsonArray.append(JSON.from(Double(value)))
             }

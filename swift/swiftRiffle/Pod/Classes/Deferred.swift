@@ -51,7 +51,7 @@ public class Deferred {
         var ret: Any?
         
         if let handler = callbackFuntion {
-             // if the next result is a deferred, wait for it to complete before returning (?)
+            // if the next result is a deferred, wait for it to complete before returning (?)
             ret = handler(args)
         }
         

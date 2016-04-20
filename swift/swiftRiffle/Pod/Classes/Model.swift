@@ -17,8 +17,14 @@ public class Model: Silvery, Property, CustomStringConvertible {
         return "\(self.dynamicType){\(self.propertyNames().map { "\($0): \(self[$0])"}.joinWithSeparator(", "))}"
     }
     
-    func _serialize() {
-        
+    // Pass a set of strings to ignore when serializing this model
+    public func ignoreProperties() -> [String] {
+        return []
+    }
+    
+    public func propertyNames() -> [String] {
+        let ignored = ignoreProperties()
+        return Mirror(reflecting: self).children.filter { $0.label != nil && !ignored.contains($0.label!) }.map { $0.label! }
     }
 }
 
@@ -28,7 +34,7 @@ extension Model: Convertible {
     }
     
     public func unsafeSerialize() -> Any {
-        return self
+        return serialize()
     }
     
     // Creates a new instance of this model object from the given json
@@ -41,8 +47,6 @@ extension Model: Convertible {
         var ret = self.init()
         
         _ = ret.propertyNames().map {
-            //print("Json: \(json[$0]): \(json[$0].dynamicType)")
-            //print("Repr: \(ret[$0]!.dynamicType.representation())")
             let repr = "\(ret[$0]!.dynamicType.representation())"
             
             // JSON is returning ints as doubles. Correct that and this isn't needed: Json.swift line 882
@@ -91,7 +95,6 @@ extension Model: Convertible {
     public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
         let ret = deserialize(from)
         return ret as! T
-//        return unsafeBitCast(ret, t.self)
     }
     
     public func serialize() -> Any {
@@ -131,6 +134,28 @@ extension Model {
         return d
     }
 }
+
+//extension Model: Equatable {}
+//
+//public func ==(lhs: Model, rhs: Model) -> Bool {
+//    // returns true iff every property matches in both 
+//    if lhs.propertyNames().count != rhs.propertyNames().count {
+//        return false
+//    }
+//    
+//    for name in lhs.propertyNames() {
+//        if lhs[name]! != rhs[name]! {
+//            return false
+//        }
+//    }
+//    
+//    return true
+//}
+
+
+
+
+
 
 
 

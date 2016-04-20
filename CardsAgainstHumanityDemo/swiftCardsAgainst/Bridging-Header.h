@@ -9,9 +9,7 @@
 #ifndef Bridging_Header_h
 #define Bridging_Header_h
 
-#import "IHKeyboardAvoiding.h"
 #import "RMSwipingTableViewCell.h"
-#import "M13ProgressViewBar.h"
 #import <stdio.h>
 
 #endif /* Bridging_Header_h */
