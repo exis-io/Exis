@@ -48,11 +48,11 @@ public class External<T: Convertible>: ExternalType {
     }
     
     public func cast<A>(arg: A) -> Convertible? {
-        print("Converting types: \(arg.dynamicType) to \(T.self)")
+        // print("Converting types: \(arg.dynamicType) to \(T.self)")
         let ret = unsafeBitCast(arg, T.self)
         
         if let ret = ret as? Convertible {
-            print("conversion succeeded")
+            // print("conversion succeeded")
             return ret
         }
         
@@ -71,6 +71,26 @@ public class External<T: Convertible>: ExternalType {
         return nil
     }
 }
+
+func asConvertible<A>(a: A) -> Convertible? {
+    // Try to cast the given argument to convertible
+    if let a = a as? Convertible {
+        print("Initial cast")
+        return a
+    }
+    
+    for type in externals {
+        if A.self == type.ambiguousType {
+            let c = type.cast(a)
+            
+            return c
+        }
+    }
+    
+    return nil 
+}
+
+
 
 var externals: [ExternalType] = []
 
