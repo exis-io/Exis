@@ -9,24 +9,10 @@
 
 import Riffle
 
-// Required helper method for OSX targets
-osxConvertible = { a in guard let z = a as? Convertible else { return nil }; return z }
-osxProperty = { a in guard let z = a as? Property else { return nil }; return z }
-
+// Required helper method for OSX backends
 initTypes(External(String.self, String.self), External(Int.self, Int.self), External(Double.self, Double.self), External(Float.self, Float.self), External(Bool.self, Bool.self))
 
-//let str = "12345"
-//let i = 1234
-//
-////checkConvertible(str)
-////checkConvertible(i)
-//
-//let arr: [Int] = [1, 2, 3]
-//
-//checkCollection(arr)
-
-
-Riffle.setLogLevelDebug()
+Riffle.setLogLevelInfo()
 Riffle.setFabricDev()
 
 print("Starting Tests")

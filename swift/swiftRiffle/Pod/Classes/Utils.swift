@@ -106,7 +106,6 @@ func serializeResults<A: PR, B: PR, C: PR, D: PR>(args: (A, B, C, D)) -> [Any] {
 }
 
 func serializeResults<A: PR, B: PR, C: PR, D: PR, E: PR>(args: (A, B, C, D, E)) -> [Any] {
-    print("Have results: \(args)")
     return [args.0.serialize(), args.1.serialize(), args.2.serialize(), args.3.serialize(), args.4.serialize()]
 }
 

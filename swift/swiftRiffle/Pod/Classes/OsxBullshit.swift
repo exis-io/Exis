@@ -11,19 +11,11 @@
 
 import Foundation
 
-
 // An application-exportable converter function that allows osx targets to cast appropriately
 // Does this look silly or wrong to you? Good, you're a sane swift developer.
 // Unfortunatly, type checking with a swift framework on OSX is not a sane endeveour. Trust
 // me when I say there's an outrageous amount of subtle nonsense going on here
 // TODO: put an error log detailing what to put in here if the block hasn't been assigned on OSX
-
-// This isn't needed anymore, but crashes
-public var osxConvertible: ((Convertible) -> Convertible?)?
-public var osxProperty: ((Property) -> Property?)?
-
-public var collectionConvertible: (() -> ())?
-
 
 public protocol ExternalType {
     var ambiguousType: Any.Type { get }
@@ -48,11 +40,9 @@ public class External<T: Convertible>: ExternalType {
     }
     
     public func cast<A>(arg: A) -> Convertible? {
-        // print("Converting types: \(arg.dynamicType) to \(T.self)")
         let ret = unsafeBitCast(arg, T.self)
         
         if let ret = ret as? Convertible {
-            // print("conversion succeeded")
             return ret
         }
         
@@ -60,11 +50,8 @@ public class External<T: Convertible>: ExternalType {
     }
     
     public func castType<A>(a: A.Type) -> Convertible.Type? {
-        // print("Checking \(ambiguousType) and named types against Convertible")
-        
         // This allows us to return the given type as a convertible... is this enough?
         if let z = T.self as? Convertible.Type {
-            // print("Convertible type check successful!")
             return z
         }
         
@@ -116,45 +103,6 @@ public func checkConvertible<A>(a: A) {
     
     print("Failed on \(a.dynamicType)")
 }
-
-public func checkCollection<A: CollectionType>(a: A) {
-    let elementType = A.Generator.Element.self
-    
-    if let z = elementType as? Convertible {
-        print("Convertible")
-    }
-    
-    if let z = elementType as? Int {
-        print("Int")
-    }
-    
-    if elementType == Int.self {
-        print("Direct Type Int")
-    }
-    
-    if let z = elementType as? Convertible.Type {
-        print("Recognized internal convertible type")
-    }
-    
-    // direct type equality still works to check the internal part of the type, but the cast isnt going 
-    // to work
-    for type in externals {
-        if elementType == type.ambiguousType {
-            // This is a success case, right? Implicit detection of internal type comformance AND the type itself
-            print("Caught external type \(type.name)")
-            
-            if let t = type.castType(elementType) {
-                print("Have convertible generator type!")
-            }
-
-            
-            return
-        }
-    }
-    
-    print("Done")
-}
-
 
 
 

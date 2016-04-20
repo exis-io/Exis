@@ -132,7 +132,6 @@ class Sender: Domain {
         
         receiver.call("registerModelArrays", dogs).then { (d: [Dog]) in
             assert(d[0].name == dog.name && d[0].age == dog.age && d[0].something == dog.something)
-            print("SUCCESS --- 2-13")
         }.error { reason in
             print("FAILURE ON CALL RETURN --- 2-9")
             print("\tREASON: \(reason)")
@@ -157,7 +156,7 @@ class Sender: Domain {
     
     override func onJoin() {
         print("Sender joined")
-        // passingTests()
+        passingTests()
     }
     
     override func onLeave() {
