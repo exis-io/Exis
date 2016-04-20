@@ -35,24 +35,24 @@ class Receiver: Domain {
         subscribe("subscribeNothing") {
             print("SUCCESS --- 1-1")
         }
-
+        
         // Primitive Types
         subscribe("subscribePrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
             print("SUCCESS --- 1-2")
             assert(a == 1 && b == 2.2 && c == 3.3 && d == "4" && e == true)
         }
-
+        
         // Arrys of simple types
         subscribe("subscribeArrays") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
             print("SUCCESS --- 1-3 ")
             
             assert(a == [1, 2])
-//            assert(b == [2.2, 3.3])
+            //            assert(b == [2.2, 3.3])
             assert(c == [4.4, 5.5])
             assert(d == ["6", "7"])
             assert(e == [true, false])
         }
-
+        
 //        subscribe("subscribeModel") { (d: Dog) in
 //            print("SUCESS --- 1-4")
 //            assert(d.name == dog.name && d.age == dog.age)
@@ -63,39 +63,19 @@ class Receiver: Domain {
         // TODO: Any
         
         
-        // Reg/Call Success Cases
-        // No arguments
+        // Reg/Call
         register("registerNothing") {
             print("SUCCESS --- 2-1")
         }
         
-        
-        // Simple Types
-        // FAIL when returning the types back to the client
         // FAIL with no cumin enforcement present
         register("registerPrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) -> (Int, Float, Double, String, Bool) in
-            print("SUCCESS --- 2-2")
-            
-            assert(a == 1)
-            assert(b == 2.2)
-            assert(c == 3.3)
-            assert(d == "4")
-            assert(e == true)
-
+            assert(a == 1 && b == 2.2 && c == 3.3 && d == "4" && e == true)
             return (a, b, c, d, e)
         }
         
-//
-//        // Collections of simple types
         register("registerArrays") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) -> ([Int], [Float], [Double], [String], [Bool]) in
-            print("SUCCESS --- 2-3")
-            
-            assert(a == [1, 2])
-            assert(b == [2.2, 3.3])
-            assert(c == [4.4, 5.5])
-            assert(d == ["6", "7"])
-            assert(e == [true, false])
-            
+            assert(a == [1, 2] && b == [2.2, 3.3] && c == [4.4, 5.5] && d == ["6", "7"] && e == [true, false])
             return (a, b, c, d, e)
         }
         
@@ -111,43 +91,23 @@ class Receiver: Domain {
             assert(d.name == dog.name && d.age == dog.age)
             return d
         }
-
-//        register("registerModelArrays") { (d: [Dog]) -> [Dog] in
-//            print("SUCCESS --- 2-10")
-//            assert(d.count == 3)
-//            assert(d[0].name == dog.name && d[0].age == dog.age && d[0].something == dog.something)
-//            return d
-//        }
-
+        
+        //        register("registerModelArrays") { (d: [Dog]) -> [Dog] in
+        //            print("SUCCESS --- 2-10")
+        //            assert(d.count == 3)
+        //            assert(d[0].name == dog.name && d[0].age == dog.age && d[0].something == dog.something)
+        //            return d
+        //        }
+        
         //Test both sending and receiving types
         //Test receiving collections in invocation
-
-             //WARNING: cant receive 5 elements in return
-//            receiver.call("registerModelArrays", [Dog(), Dog(), Dog()]).then { (dogs: [Dog]) in
-//                print("\(t) : Call receiving object collection:", dogs)
-//                print("                      expecting: 1 2.0 3.0 4\n")
-//            })
-
-
-            // Leave
-//            self.leave()
         
+        //WARNING: cant receive 5 elements in return
+        //            receiver.call("registerModelArrays", [Dog(), Dog(), Dog()]).then { (dogs: [Dog]) in
+        //                print("\(t) : Call receiving object collection:", dogs)
+        //                print("                      expecting: 1 2.0 3.0 4\n")
+        //            })
         
-        // Unsub
-        
-        // Unreg
-        
-        // Test call doesnt exist
-        
-        // Test Receiver Cumin Error
-        
-        // Test Caller Cumin Error
-        
-        // Deferreds
-//        register("subDeferred") { (a: Int) -> Any in
-//            print("SUCCESS --- 3-1")
-//            return a
-//        }
         
         joinFinished()
     }
@@ -174,14 +134,17 @@ class Sender: Domain {
         }
         
         receiver.call("registerPrimitives", 1, 2.2, 3.3, "4", true).then { (a: Int, b: Float, c: Double, d: String, e: Bool) in
-            assert(a == 1)
-            assert(b == 2.2)
-            assert(c == 3.3)
-            assert(d == "4")
-            assert(e == true)
-            
-            print("SUCCCES --- 2-4")
+            assert(a == 1 && b == 2.2 && c == 3.3 && d == "4" && e == true)
         }
+        
+        receiver.call("registerArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false]).then { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
+            assert(a == [1, 2] && b == [2.2, 3.3] && c == [4.4, 5.5] && d == ["6", "7"] && e == [true, false])
+        }.error { reason in
+            // TODO: the reason itself is not given, instead its the class of argument
+            print("FAILURE ON CALL RETURN --- registerArrays")
+            print("\tREASON: \(reason)")
+        }
+        
     }
     
     override func onJoin() {
@@ -189,61 +152,43 @@ class Sender: Domain {
         // passingTests()
         
         
-    
+        
         // receiver.publish("subscribeModel", dog)
-
-//
-//        receiver.call("registerModel", dog).then { (d: Dog) in
-//            assert(d.age == 21)
-//            print("SUCESS --- 2-12")
-//        }
-
-        // Primitive Types
-
-//
-//        // Collections of simple types
-        receiver.call("registerArrays", [1, 2], [2.2, 3.3], [4.4, 5.5], ["6", "7"], [true, false]).then { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
-            assert(a == [1, 2])
-            assert(b == [2.2, 3.3])
-            assert(c == [4.4, 5.5])
-            assert(d == ["6", "7"])
-            assert(e == [true, false])
-            print("SUCCESS --- 2-7")
-            
-        }.error { reason in
-            // TODO: the reason itself is not given, instead its the class of argument
-            print("FAILURE ON CALL RETURN --- 2-2")
-            print("\tREASON: \(reason)")
-        }
+        //
+        //        receiver.call("registerModel", dog).then { (d: Dog) in
+        //            assert(d.age == 21)
+        //            print("SUCESS --- 2-12")
+        //        }
+        
         
         // Collections of model objects
-//        receiver.call("registerModelArrays", dogs).then { (d: [Dog]) in
-//            assert(d[0].name == dog.name && d[0].age == dog.age && d[0].something == dog.something)
-//            print("SUCCESS --- 2-13")
-//        }.error { reason in
-//            print("FAILURE ON CALL RETURN --- 2-9")
-//            print("\tREASON: \(reason)")
-//        }
-////
-//        receiver.call("registerSinglePrimitive", 1).then { (a: Int) in
-//            assert(a == 1)
-//            print("SUCCCES --- 2-6")
-//        }.error { reason in
-//            print("FAIL --- 2-6")
-//            print(reason)
-//        }
-//        
-//        receiver.call("subDeferred", 1).then { (a: Int) in
-//            print("SUCCESS --- 3-2")
-//        }.then {
-//            print("SUCCESS --- 3-3")
-//        }
-//        
-//        receiver.call("subDeferred", "a").error { reason in
-//            print("SUCCESS --- 3-4")
-//        }.error { reason in 
-//            print("SUCCESS --- 3-5")
-//        }
+        //        receiver.call("registerModelArrays", dogs).then { (d: [Dog]) in
+        //            assert(d[0].name == dog.name && d[0].age == dog.age && d[0].something == dog.something)
+        //            print("SUCCESS --- 2-13")
+        //        }.error { reason in
+        //            print("FAILURE ON CALL RETURN --- 2-9")
+        //            print("\tREASON: \(reason)")
+        //        }
+        ////
+        //        receiver.call("registerSinglePrimitive", 1).then { (a: Int) in
+        //            assert(a == 1)
+        //            print("SUCCCES --- 2-6")
+        //        }.error { reason in
+        //            print("FAIL --- 2-6")
+        //            print(reason)
+        //        }
+        //
+        //        receiver.call("subDeferred", 1).then { (a: Int) in
+        //            print("SUCCESS --- 3-2")
+        //        }.then {
+        //            print("SUCCESS --- 3-3")
+        //        }
+        //        
+        //        receiver.call("subDeferred", "a").error { reason in
+        //            print("SUCCESS --- 3-4")
+        //        }.error { reason in 
+        //            print("SUCCESS --- 3-5")
+        //        }
     }
     
     override func onLeave() {
