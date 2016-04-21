@@ -9,6 +9,9 @@
 import Foundation
 import Riffle
 
+// Required helper method for OSX backends
+initTypes(External(String.self, String.self), External(Int.self, Int.self), External(Double.self, Double.self), External(Float.self, Float.self), External(Bool.self, Bool.self))
+
 // Testing locally 
 Riffle.setFabricDev()
 Riffle.setLogLevelDebug()
@@ -49,6 +52,10 @@ class Container: Domain {
         if emptyRooms.count == 0 {
             let room = Room(name: randomStringWithLength(6), superdomain: self)
             self.rooms.append(room)
+            
+            // TEMP: here until join logic is rebuilt
+            room.onJoin()
+            
             return room.addPlayer(details.caller)
             
 //            let d = Deferred()

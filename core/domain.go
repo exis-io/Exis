@@ -234,7 +234,7 @@ func (c domain) Call(endpoint string, args []interface{}, options map[string]int
     Info("Calling %s %v", endpoint, args)
 
     // This is a call, so setup to listen for a yield message with our return values
-    if msg, err := c.app.requestListenType(call, "*core.rsult"); err != nil {
+    if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
 		return nil, err
 	} else {
 		return msg.(*result).Arguments, nil

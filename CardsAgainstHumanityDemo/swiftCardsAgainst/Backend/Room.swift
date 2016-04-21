@@ -63,10 +63,10 @@ class Room: Domain {
         publish("joined", newPlayer)
 
         // Add dynamic role
-        app.call("xs.demo.Bouncer/assignDynamicRole", self.dynamicRoleId, "player", container.name, [domain])
+        // app.call("xs.demo.Bouncer/assignDynamicRole", self.dynamicRoleId, "player", container.name, [domain])
         
         if state == "Empty" {
-            timer.startTimer(EMPTY_TIME, selector: "startAnswering")
+            timer.startTimer(EMPTY_TIME, selector: #selector(startAnswering))
             roomMaintenance()
         }
         
@@ -83,13 +83,13 @@ class Room: Domain {
             
         } else if state == "Picking" && player.czar {
             let winner = players.filter { $0.pick == card }[0]
-            timer.startTimer(0.0, selector: "startScoring:", info: winner.domain)
+            timer.startTimer(0.0, selector: #selector(startScoring), info: winner.domain)
         }
     }
     
     
     // MARK: Round Transitions
-    func startAnswering() {
+    @objc func startAnswering() {
         // Close the room if there are only demo players left
         if players.reduce(0, combine: { $0 + ($1.demo ? 0 : 1) }) == 0 {
             container.rooms.removeObject(self)
@@ -103,10 +103,10 @@ class Room: Domain {
         roomMaintenance()
 
         publish("answering", czar!, questions.randomElements(1, remove: false)[0], PICK_TIME)
-        timer.startTimer(PICK_TIME, selector: "startPicking")
+        timer.startTimer(PICK_TIME, selector: #selector(startPicking))
     }
     
-    func startPicking() {
+    @objc func startPicking() {
         print("    Picking -- ")
         state = "Picking"
         let pickers = players.filter { !$0.czar }
@@ -119,10 +119,10 @@ class Room: Domain {
         }
         
         publish("picking", pickers.map({ $0.pick! }), PICK_TIME)
-        timer.startTimer(PICK_TIME, selector: "startScoring:")
+        timer.startTimer(PICK_TIME, selector: #selector(startScoring))
     }
     
-    func startScoring(t: NSTimer) {
+    @objc func startScoring(t: NSTimer) {
         print("    Scoring -- ")
         state = "Scoring"
         
@@ -156,7 +156,7 @@ class Room: Domain {
             }
         }
         
-        timer.startTimer(SCORE_TIME, selector: "startAnswering")
+        timer.startTimer(SCORE_TIME, selector: #selector(startAnswering))
     }
     
     

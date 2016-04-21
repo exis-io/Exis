@@ -74,6 +74,7 @@ class LandingViewController: UIViewController, Delegate {
     
     @IBAction func play(sender: AnyObject) {
         container.call("play").then { (cards: [String], players: [Player], state: String, room: String) in
+            print("Play call returned!")
             
             let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("game") as! GameViewController
             controller.currentPlayer = getPlayer(players, domain: self.me.name)
@@ -88,6 +89,8 @@ class LandingViewController: UIViewController, Delegate {
             // Gives the dealer permission to call "/draw" on us as needed
             self.app.call("xs.demo.Bouncer/setPerm", self.container.name, self.me.name + "/draw")
             presentControllerTranslucent(self, target: controller)
+        }.error { reason in
+            print("Play call failed: \(reason)")
         }
     }
     
