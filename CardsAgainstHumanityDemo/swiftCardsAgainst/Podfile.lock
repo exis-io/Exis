@@ -3,7 +3,6 @@ PODS:
   - LTMorphingLabel (0.0.9)
   - M13ProgressSuite (1.2.7)
   - Riffle (0.2.47)
-  - RMSwipeTableViewCell (0.6)
   - Spring (1.0.3)
 
 DEPENDENCIES:
@@ -11,7 +10,6 @@ DEPENDENCIES:
   - LTMorphingLabel (~> 0.0.9)
   - M13ProgressSuite
   - Riffle (from `../../swift/swiftRiffle`)
-  - RMSwipeTableViewCell
   - Spring (from `https://github.com/MengTo/Spring.git`, branch `swift2`)
 
 EXTERNAL SOURCES:
@@ -31,9 +29,8 @@ SPEC CHECKSUMS:
   LTMorphingLabel: 4235a403f99f0e0e503389da660e0fec324549d9
   M13ProgressSuite: 03d194af6359da440641ba758aed5a18b0386a86
   Riffle: 2d88a5d9edb8de3ccaa73716c876ca2014add52f
-  RMSwipeTableViewCell: ef3a5fc804cf0d5fb70fe1195c088cc40b3fde3c
   Spring: 3f02b5dc3308572ef177b3cad0fa7bbc4b0706f7
 
-PODFILE CHECKSUM: 27db75f4120f577aff8f8926e26aee5680de666e
+PODFILE CHECKSUM: b25078c4058c4ddec3850d77c3fda30281a59f71
 
 COCOAPODS: 1.0.0.beta.8

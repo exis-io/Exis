@@ -11,7 +11,7 @@ import Foundation
 import Riffle
 import M13ProgressSuite
 import Spring
-import RMSwipeTableViewCell
+//import RMSwipeTableViewCell
 
 
 let tips = [

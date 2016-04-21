@@ -8,7 +8,7 @@ target :ExAgainst do
 
     pod 'Spring', :git => 'https://github.com/MengTo/Spring.git', :branch => 'swift2'
     pod 'IHKeyboardAvoiding'
-    pod 'RMSwipeTableViewCell'
+    # pod 'RMSwipeTableViewCell'
     pod 'M13ProgressSuite'
     pod 'LTMorphingLabel', '~> 0.0.9'
 end

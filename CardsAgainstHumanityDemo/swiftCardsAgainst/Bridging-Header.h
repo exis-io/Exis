@@ -9,7 +9,7 @@
 #ifndef Bridging_Header_h
 #define Bridging_Header_h
 
-//#import "RMSwipingTableViewCell.h"
+#import "RMSwipingTableViewCell.h"
 #import <stdio.h>
 
 #endif /* Bridging_Header_h */
