@@ -129,10 +129,6 @@ extension Silvery {
         }
         return value
     }
-    
-    public func propertyNames() -> [String] {
-        return Mirror(reflecting: self).children.filter { $0.label != nil }.map { $0.label! }
-    }
 }
 
 

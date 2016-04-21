@@ -44,19 +44,19 @@ func (d *Domain) Join(cb string, eb string) {
 }
 
 func (d *Domain) Subscribe(endpoint string, cb string, eb string, fn string, types string) {
-	go core.MantleSubscribe(d.coreDomain, endpoint, idUnmarshal(cb), idUnmarshal(eb), idUnmarshal(fn), core.MantleUnmarshal(types))
+	go core.MantleSubscribe(d.coreDomain, endpoint, idUnmarshal(cb), idUnmarshal(eb), idUnmarshal(fn), core.MantleUnmarshal(types), make(map[string]interface{}))
 }
 
 func (d *Domain) Register(endpoint string, cb string, eb string, fn string, types string) {
-	go core.MantleRegister(d.coreDomain, endpoint, idUnmarshal(cb), idUnmarshal(eb), idUnmarshal(fn), core.MantleUnmarshal(types))
+	go core.MantleRegister(d.coreDomain, endpoint, idUnmarshal(cb), idUnmarshal(eb), idUnmarshal(fn), core.MantleUnmarshal(types), make(map[string]interface{}))
 }
 
 func (d *Domain) Publish(endpoint string, cb string, eb string, args string) {
-	go core.MantlePublish(d.coreDomain, endpoint, idUnmarshal(cb), idUnmarshal(eb), core.MantleUnmarshal(args))
+	go core.MantlePublish(d.coreDomain, endpoint, idUnmarshal(cb), idUnmarshal(eb), core.MantleUnmarshal(args), make(map[string]interface{}))
 }
 
 func (d *Domain) Call(endpoint string, cb string, eb string, args string) {
-	go core.MantleCall(d.coreDomain, endpoint, idUnmarshal(cb), idUnmarshal(eb), core.MantleUnmarshal(args))
+	go core.MantleCall(d.coreDomain, endpoint, idUnmarshal(cb), idUnmarshal(eb), core.MantleUnmarshal(args), make(map[string]interface{}))
 }
 
 func (d *Domain) CallExpects(cb string, types string) {

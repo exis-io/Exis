@@ -4,32 +4,32 @@ package core
 // error callbacks based on the intended functionality. These functions are here to cut down
 // on the redundancy of mantles
 
-func MantleSubscribe(d Domain, endpoint string, cb uint64, eb uint64, handler uint64, types []interface{}) {
-	if err := d.Subscribe(endpoint, handler, types, nil); err != nil {
+func MantleSubscribe(d Domain, endpoint string, cb uint64, eb uint64, handler uint64, types []interface{}, options map[string]interface{}) {
+	if err := d.Subscribe(endpoint, handler, types, options); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
 		d.GetApp().CallbackSend(cb)
 	}
 }
 
-func MantleRegister(d Domain, endpoint string, cb uint64, eb uint64, handler uint64, types []interface{}) {
-	if err := d.Register(endpoint, handler, types, nil); err != nil {
+func MantleRegister(d Domain, endpoint string, cb uint64, eb uint64, handler uint64, types []interface{}, options map[string]interface{}) {
+	if err := d.Register(endpoint, handler, types, options); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
 		d.GetApp().CallbackSend(cb)
 	}
 }
 
-func MantlePublish(d Domain, endpoint string, cb uint64, eb uint64, args []interface{}) {
-	if err := d.Publish(endpoint, args, nil); err != nil {
+func MantlePublish(d Domain, endpoint string, cb uint64, eb uint64, args []interface{}, options map[string]interface{}) {
+	if err := d.Publish(endpoint, args, options); err != nil {
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {
 		d.GetApp().CallbackSend(cb)
 	}
 }
 
-func MantleCall(d Domain, endpoint string, cb uint64, eb uint64, args []interface{}) {
-	if results, err := d.Call(endpoint, args, nil); err != nil {
+func MantleCall(d Domain, endpoint string, cb uint64, eb uint64, args []interface{}, options map[string]interface{}) {
+	if results, err := d.Call(endpoint, args, options); err != nil {
 		d.RemoveCallExpect(cb)
 		d.GetApp().CallbackSend(eb, err.Error())
 	} else {

@@ -53,6 +53,11 @@ class Receiver: Domain {
             assert(d.name == dog.name && d.age == dog.age)
         }
         
+        // This doesnt work! Node doesn't implement it
+        subscribe("subscribeOptions", options: Options(details: true)) { (details: Details) in
+            print("Have Details: \(details.caller)")
+        }
+        
         // Reg/Call
         register("registerNothing") {
             assert(true)
@@ -87,6 +92,10 @@ class Receiver: Domain {
         
         register("regDeferred") { (a: Int) -> Int in
             return a
+        }
+        
+        register("registerOptions", options: Options(details: true)) { (details: Details) in
+            print("Have details: \(details.caller)")
         }
         
         joinFinished()
@@ -137,6 +146,8 @@ class Sender: Domain {
             print("\tREASON: \(reason)")
         }
         
+        receiver.call("registerOptions")
+        
         // Deferreds
         // Make sure deferreds correctly chain callbacks
         var firedFirstCallback = false
@@ -156,7 +167,9 @@ class Sender: Domain {
     
     override func onJoin() {
         print("Sender joined")
-        passingTests()
+        //passingTests()
+        
+        receiver.publish("subscribeOptions")
     }
     
     override func onLeave() {

@@ -9,6 +9,10 @@
 import Foundation
 import Riffle
 
+// Testing locally 
+Riffle.setFabricDev()
+Riffle.setLogLevelDebug()
+
 let app = Domain(name: "xs.demo.exis.cardsagainst")
 
 // How long each round takes, in seconds
@@ -25,18 +29,18 @@ class Container: Domain {
     override func onJoin() {
         print("Container joined as \(name)")
         app.subscribe("sessionLeft", playerLeft)
-        register("play#details", play)
+        register("play", options: Options(details: true), play)
         
         // Create a dynamic role to give to players later
-        app.call("xs.demo.Bouncer/addDynamicRole", "player", name, [
-            ["target": "\(name)/$/pick", "verb":"c"],
-            ["target": "\(name)/$/leave", "verb":"c"],
-            ["target": "\(name)/$/answering", "verb":"s"],
-            ["target": "\(name)/$/picking", "verb":"s"],
-            ["target": "\(name)/$/scoring", "verb":"s"],
-            ["target": "\(name)/$/left", "verb":"s"],
-            ["target": "\(name)/$/joined", "verb":"s"]
-        ])
+//        app.call("xs.demo.Bouncer/addDynamicRole", "player", name, [
+//            ["target": "\(name)/$/pick", "verb":"c"],
+//            ["target": "\(name)/$/leave", "verb":"c"],
+//            ["target": "\(name)/$/answering", "verb":"s"],
+//            ["target": "\(name)/$/picking", "verb":"s"],
+//            ["target": "\(name)/$/scoring", "verb":"s"],
+//            ["target": "\(name)/$/left", "verb":"s"],
+//            ["target": "\(name)/$/joined", "verb":"s"]
+//        ])
     }
     
     

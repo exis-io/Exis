@@ -80,27 +80,27 @@ func Join(pdomain uint64, cb uint64, eb uint64) {
 }
 
 //export Subscribe
-func Subscribe(pdomain uint64, endpoint *C.char, cb uint64, eb uint64, hn uint64, types *C.char) {
+func Subscribe(pdomain uint64, endpoint *C.char, cb uint64, eb uint64, hn uint64, types *C.char, options *C.char) {
 	d := get(pdomain)
-	go core.MantleSubscribe(d, C.GoString(endpoint), cb, eb, hn, core.MantleUnmarshal(C.GoString(types)))
+	go core.MantleSubscribe(d, C.GoString(endpoint), cb, eb, hn, core.MantleUnmarshal(C.GoString(types)), core.MantleUnmarshalMap(C.GoString(options)))
 }
 
 //export Register
-func Register(pdomain uint64, endpoint *C.char, cb uint64, eb uint64, hn uint64, types *C.char) {
+func Register(pdomain uint64, endpoint *C.char, cb uint64, eb uint64, hn uint64, types *C.char, options *C.char) {
 	d := get(pdomain)
-	go core.MantleRegister(d, C.GoString(endpoint), cb, eb, hn, core.MantleUnmarshal(C.GoString(types)))
+	go core.MantleRegister(d, C.GoString(endpoint), cb, eb, hn, core.MantleUnmarshal(C.GoString(types)), core.MantleUnmarshalMap(C.GoString(options)))
 }
 
 //export Publish
-func Publish(pdomain uint64, endpoint *C.char, cb uint64, eb uint64, args *C.char) {
+func Publish(pdomain uint64, endpoint *C.char, cb uint64, eb uint64, args *C.char, options *C.char) {
 	d := get(pdomain)
-	go core.MantlePublish(d, C.GoString(endpoint), cb, eb, core.MantleUnmarshal(C.GoString(args)))
+	go core.MantlePublish(d, C.GoString(endpoint), cb, eb, core.MantleUnmarshal(C.GoString(args)), core.MantleUnmarshalMap(C.GoString(options)))
 }
 
 //export Call
-func Call(pdomain uint64, endpoint *C.char, cb uint64, eb uint64, args *C.char) {
+func Call(pdomain uint64, endpoint *C.char, cb uint64, eb uint64, args *C.char, options *C.char) {
 	d := get(pdomain)
-	go core.MantleCall(d, C.GoString(endpoint), cb, eb, core.MantleUnmarshal(C.GoString(args)))
+	go core.MantleCall(d, C.GoString(endpoint), cb, eb, core.MantleUnmarshal(C.GoString(args)), core.MantleUnmarshalMap(C.GoString(options)))
 }
 
 //export Yield

@@ -21,73 +21,37 @@ class App {
         mantleDomain = domain
     }
     
+    func handleInvocation(i: UInt64, arguments: [Any]) {
+        var args = arguments
+        
+        if let d = self.deferreds[i] {
+            self.deferreds[d.cb] = nil
+            self.deferreds[d.eb] = nil
+            
+            if d.cb == i {
+                d.callback(args)
+            } else if d.eb == i {
+                d.errback(args)
+            }
+            
+        } else if let fn = self.handlers[i] {
+            fn(args)
+        } else if let fn = self.registrations[i] {
+            let resultId = args.removeAtIndex(0) as! Double
+            Yield(self.mantleDomain, UInt64(resultId), marshall(fn(args)))
+        }
+    }
+    
     func receive() {
         while true {
             var (i, args) = decode(Receive(self.mantleDomain))
-            
             #if os(Linux)
-            if let d = deferreds[i] {
-                // remove the deferred (should this ever be optional?)
-                deferreds[d.cb] = nil
-                deferreds[d.eb] = nil
-                
-                if d.cb == i {
-                    d.callback(args)
-                }
-                
-                if d.eb == i {
-                    d.errback(args)
-                }
-            } else if let fn = handlers[i] {
-                fn(args)
-            } else if let fn = registrations[i] {
-                let resultId = args.removeAtIndex(0) as! Double
-                
-                // Optional serialization has some problems. This unwraps the result to avoid that particular issue
-                if let ret = fn(args) {
-                    // Function did not return anything
-                    if let _ = ret as? Void {
-                        Yield(mantleDomain, UInt64(resultId), marshall([]))
-                        
-                    // Function returned well known serializable types
-                    } else if let _ = ret as? Property {
-                        Yield(mantleDomain, UInt64(resultId), marshall(serializeArguments([ret])))
-                        
-                    // Function returned something we can't check-- assume its a tuple
-                    } else {
-                        let unpacked = unpackTuple(ret)
-                        Yield(mantleDomain, UInt64(resultId), marshall(serializeArguments(unpacked)))
-                    }
-                } else {
-                    let empty: [Any] = []
-                    Yield(mantleDomain, UInt64(resultId), marshall(empty))
-                }
-            }
-                
+                handleInvocation(i, arguments: args)
             #else
             dispatch_async(dispatch_get_main_queue()) {
-                if let d = self.deferreds[i] {
-                    // remove the deferred (should this ever be optional?)
-                    self.deferreds[d.cb] = nil
-                    self.deferreds[d.eb] = nil
-                    
-                    if d.cb == i {
-                        d.callback(args)
-                    }
-                    
-                    if d.eb == i {
-                        d.errback(args)
-                    }
-                } else if let fn = self.handlers[i] {
-                    fn(args)
-                } else if let fn = self.registrations[i] {
-                    let resultId = args.removeAtIndex(0) as! Double
-                    // NOTE: implementation of registration calling was moved out of the receive loop. Please update ubuntu method
-                    Yield(self.mantleDomain, UInt64(resultId), marshall(fn(args)))
-                }
+                self.handleInvocation(i, arguments: args)
             }
             #endif
-            
         }
     }
 }

@@ -40,19 +40,19 @@ func (d *Domain) Join(cb uint64, eb uint64) {
 }
 
 func (d *Domain) Subscribe(endpoint string, cb uint64, eb uint64, fn uint64, types string) {
-	go core.MantleSubscribe(d.coreDomain, endpoint, cb, eb, fn, core.MantleUnmarshal(types))
+	go core.MantleSubscribe(d.coreDomain, endpoint, cb, eb, fn, core.MantleUnmarshal(types), make(map[string]interface{}))
 }
 
 func (d *Domain) Register(endpoint string, cb uint64, eb uint64, fn uint64, types string) {
-	go core.MantleRegister(d.coreDomain, endpoint, cb, eb, fn, core.MantleUnmarshal(types))
+	go core.MantleRegister(d.coreDomain, endpoint, cb, eb, fn, core.MantleUnmarshal(types), make(map[string]interface{}))
 }
 
 func (d *Domain) Publish(endpoint string, cb uint64, eb uint64, args string) {
-	go core.MantlePublish(d.coreDomain, endpoint, cb, eb, core.MantleUnmarshal(args))
+	go core.MantlePublish(d.coreDomain, endpoint, cb, eb, core.MantleUnmarshal(args), make(map[string]interface{}))
 }
 
 func (d *Domain) Call(endpoint string, cb uint64, eb uint64, args string) {
-	go core.MantleCall(d.coreDomain, endpoint, cb, eb, core.MantleUnmarshal(args))
+	go core.MantleCall(d.coreDomain, endpoint, cb, eb, core.MantleUnmarshal(args), make(map[string]interface{}))
 }
 
 func (d *Domain) CallExpects(cb uint64, types string) {

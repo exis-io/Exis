@@ -26,6 +26,7 @@ class Room: Domain {
     
     override func onJoin() {
         timer = DelayedCaller(target: self)
+        
         register("pick#details", pick)
         register("leave#details", removePlayer)
     }

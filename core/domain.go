@@ -179,7 +179,8 @@ func (c *domain) Leave() error {
 
 func (c domain) Subscribe(endpoint string, requestId uint64, types []interface{}, options map[string]interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
-	sub := &subscribe{Request: requestId, Options: options, Name: endpoint}
+    opts, optionsEndpoint := c.ProcessOptions(requestId, endpoint, options)
+	sub := &subscribe{Request: requestId, Options: opts, Name: optionsEndpoint}
 
 	if msg, err := c.app.requestListenType(sub, "*core.subscribed"); err != nil {
 		return err
@@ -195,8 +196,8 @@ func (c domain) Subscribe(endpoint string, requestId uint64, types []interface{}
 
 func (c domain) Register(endpoint string, requestId uint64, types []interface{}, options map[string]interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
-	options = c.ProcessOptions(requestId, options)
-	register := &register{Request: requestId, Options: options, Name: endpoint}
+	options, optionsEndpoint := c.ProcessOptions(requestId, endpoint, options)
+	register := &register{Request: requestId, Options: options, Name: optionsEndpoint}
 
 	if msg, err := c.app.requestListenType(register, "*core.registered"); err != nil {
 		return err
@@ -226,14 +227,14 @@ func (c domain) Publish(endpoint string, args []interface{}, options map[string]
 }
 
 func (c domain) Call(endpoint string, args []interface{}, options map[string]interface{}) ([]interface{}, error) {
-	id := NewID()
-	endpoint = makeEndpoint(c.name, endpoint)
-	options = c.ProcessOptions(id, options)
-	call := &call{Request: id, Name: endpoint, Options: options, Arguments: args}
-	Info("Calling %s %v", endpoint, args)
+    id := NewID()
+    endpoint = makeEndpoint(c.name, endpoint)
+    options, _ = c.ProcessOptions(id, endpoint, options)
+    call := &call{Request: id, Name: endpoint, Options: options, Arguments: args}
+    Info("Calling %s %v", endpoint, args)
 
-	// This is a call, so setup to listen for a yield message with our return values
-	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
+    // This is a call, so setup to listen for a yield message with our return values
+    if msg, err := c.app.requestListenType(call, "*core.rsult"); err != nil {
 		return nil, err
 	} else {
 		return msg.(*result).Arguments, nil
@@ -241,7 +242,8 @@ func (c domain) Call(endpoint string, args []interface{}, options map[string]int
 }
 
 // Handles any generalized intialization that has to happen before options pass through
-func (c domain) ProcessOptions(requestId uint64, options map[string]interface{}) map[string]interface{} {
+// Returns a modified endpoint in the case of a details options
+func (c domain) ProcessOptions(requestId uint64, endpoint string, options map[string]interface{}) (map[string]interface{}, string) {
 	// If the key exists, the value is the handler id. Replace it with "true" and set up the handler
 	if id, ok := options["progress"]; ok {
 		handlerId := id.(uint64)
@@ -251,11 +253,16 @@ func (c domain) ProcessOptions(requestId uint64, options map[string]interface{})
 		c.handlers[requestId] = &boundEndpoint{handlerId, "", nil}
 	}
 
+    // This is a hack leftover from the original swift implementation 
+    if details, ok := options["details"]; ok && details.(bool) == true {
+        endpoint = endpoint + "#details"
+    }
+
 	if options == nil {
 		options = make(map[string]interface{})
 	}
 
-	return options
+	return options, endpoint
 }
 
 func (c domain) Unsubscribe(endpoint string) error {

@@ -23,9 +23,11 @@ class Player: Model {
     var demo = true
     var zombie = false
     
-//    override class func ignoreProperties() -> [String] {
-//        return ["hand", "pick", "zombie"]
-//    }
+    override func ignoreProperties() -> [String] {
+        var ignored = super.ignoreProperties()
+        ignored.appendContentsOf(["hand", "pick", "zombie"])
+        return ignored
+    }
 }
 
 extension Player: Equatable {}
@@ -114,7 +116,7 @@ func randomStringWithLength (len : Int) -> String {
 }
 
 
-// Routinely calls a function
+// Routinely calls a function with some delay 
 class DelayedCaller {
     var timer: NSTimer?
     var target: AnyObject

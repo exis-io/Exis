@@ -52,7 +52,7 @@ DEV = 'cumin.txt'
 generics = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
 returns = ['R', 'S', 'T', 'U', 'V', 'X', 'Y', 'Z']
 
-handlerTemplate = '\tpublic func %s<%s>(endpoint: String, _ fn: (%s) -> (%s)) -> Deferred {\n\t\treturn _%s(endpoint, [%s]) { a in return %s }\n\t}'
+handlerTemplate = '\tpublic func %s<%s>(endpoint: String, options: Options = Options(), _ fn: (%s) -> (%s)) -> Deferred {\n\t\treturn _%s(endpoint, [%s], options: options) { a in return %s }\n\t}'
 callTemplate = '\tpublic func %s<%s>(fn: (%s) -> (%s)) -> Deferred {\n\t\treturn _%s([%s]) { a in return %s }\n\t}'
 
 

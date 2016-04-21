@@ -5,7 +5,7 @@
 //  Created by Damouse on 10/9/15.
 //  Copyright © 2015 paradrop. All rights reserved.
 //
-//  This is UI and UX code. It does not rely on any fabric functionality.
+//  This is UI and UX code. It does not rely on any exis functionality.
 
 import Foundation
 import Riffle

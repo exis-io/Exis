@@ -17,8 +17,14 @@ public class Model: Silvery, Property, CustomStringConvertible {
         return "\(self.dynamicType){\(self.propertyNames().map { "\($0): \(self[$0])"}.joinWithSeparator(", "))}"
     }
     
-    func _serialize() {
-        
+    // Pass a set of strings to ignore when serializing this model
+    public func ignoreProperties() -> [String] {
+        return []
+    }
+    
+    public func propertyNames() -> [String] {
+        let ignored = ignoreProperties()
+        return Mirror(reflecting: self).children.filter { $0.label != nil && !ignored.contains($0.label!) }.map { $0.label! }
     }
 }
 
