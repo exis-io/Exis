@@ -24,6 +24,7 @@
 		50CAC8591BEEA2BB005E605F /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50CAC83A1BEE9FBB005E605F /* Models.swift */; };
 		50F70DB61BF0B20F006E7384 /* a13.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 50F70DB41BF099CD006E7384 /* a13.json */; };
 		50F70DB71BF0B20F006E7384 /* q13.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 50F70DB51BF099CD006E7384 /* q13.json */; };
+		50FB86EC1CC98B080096407D /* RMSwipingTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 50FB86EB1CC98B080096407D /* RMSwipingTableViewCell.m */; };
 		50FE3E411BFEB00D00E3BC29 /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50FE3E3F1BFEAE6800E3BC29 /* Room.swift */; };
 		772141A3DEFE8E59566BB74E /* Pods_Backend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F13BF387814D32B38564ED6 /* Pods_Backend.framework */; };
 /* End PBXBuildFile section */
@@ -64,6 +65,8 @@
 		50CAC84C1BEEA0B2005E605F /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		50F70DB41BF099CD006E7384 /* a13.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = a13.json; sourceTree = "<group>"; };
 		50F70DB51BF099CD006E7384 /* q13.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = q13.json; sourceTree = "<group>"; };
+		50FB86EA1CC98B080096407D /* RMSwipingTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMSwipingTableViewCell.h; sourceTree = "<group>"; };
+		50FB86EB1CC98B080096407D /* RMSwipingTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMSwipingTableViewCell.m; sourceTree = "<group>"; };
 		50FE3E3F1BFEAE6800E3BC29 /* Room.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
 		75DFAEB66BC406F039456B41 /* Pods-ExAgainst.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExAgainst.release.xcconfig"; path = "Pods/Target Support Files/Pods-ExAgainst/Pods-ExAgainst.release.xcconfig"; sourceTree = "<group>"; };
 		7F47D8FF981D0CCF67222859 /* Pods_ExAgainst.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExAgainst.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -137,8 +140,10 @@
 			isa = PBXGroup;
 			children = (
 				50CAC8251BEE9763005E605F /* LaunchScreen.storyboard */,
-				50CAC8431BEE9FEE005E605F /* LiberationSans-Bold.ttf */,
+				50FB86EA1CC98B080096407D /* RMSwipingTableViewCell.h */,
+				50FB86EB1CC98B080096407D /* RMSwipingTableViewCell.m */,
 				50CAC84C1BEEA0B2005E605F /* Bridging-Header.h */,
+				50CAC8431BEE9FEE005E605F /* LiberationSans-Bold.ttf */,
 				50CAC8441BEE9FEE005E605F /* LiberationSans-BoldItalic.ttf */,
 				50CAC8451BEE9FEE005E605F /* LiberationSans-Italic.ttf */,
 				50CAC8461BEE9FEE005E605F /* LiberationSans-Regular.ttf */,
@@ -220,6 +225,7 @@
 		50CAC8111BEE9763005E605F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0730;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = exis;
 				TargetAttributes = {
@@ -366,6 +372,7 @@
 			files = (
 				50CAC8401BEE9FBB005E605F /* GameViewController.swift in Sources */,
 				50CAC83E1BEE9FBB005E605F /* Models.swift in Sources */,
+				50FB86EC1CC98B080096407D /* RMSwipingTableViewCell.m in Sources */,
 				50CAC8411BEE9FBB005E605F /* Views.swift in Sources */,
 				50CAC83F1BEE9FBB005E605F /* LandingViewController.swift in Sources */,
 				50CAC81D1BEE9763005E605F /* AppDelegate.swift in Sources */,
@@ -493,13 +500,16 @@
 			baseConfigurationReference = F0903F3E1C158723378C2E23 /* Pods-ExAgainst.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = ExAgainst/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.paradrop.ExAgainst;
+				PRODUCT_BUNDLE_IDENTIFIER = com.exis.ExAgainst;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -508,13 +518,15 @@
 			baseConfigurationReference = 75DFAEB66BC406F039456B41 /* Pods-ExAgainst.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = ExAgainst/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.paradrop.ExAgainst;
+				PRODUCT_BUNDLE_IDENTIFIER = com.exis.ExAgainst;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 			};
 			name = Release;
 		};

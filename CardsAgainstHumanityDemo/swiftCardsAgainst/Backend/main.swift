@@ -44,12 +44,12 @@ class Container: Domain {
     }
     
     
-    func play(player: String) -> ([String], [Player], String, String) {
+    func play(details: Details) -> ([String], [Player], String, String) {
         var emptyRooms = rooms.filter { $0.players.count < 6 }
         if emptyRooms.count == 0 {
             let room = Room(name: randomStringWithLength(6), superdomain: self)
             self.rooms.append(room)
-            return room.addPlayer(player)
+            return room.addPlayer(details.caller)
             
 //            let d = Deferred()
 //            
@@ -63,7 +63,7 @@ class Container: Domain {
 //            return d
         } else {
             let room = emptyRooms.randomElements(1)[0]
-            return room.addPlayer(player as String)
+            return room.addPlayer(details.caller)
         }
     }
     

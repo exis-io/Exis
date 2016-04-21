@@ -9,9 +9,9 @@
 
 import Foundation
 import Riffle
-import RMSwipeTableViewCell
 import M13ProgressSuite
 import Spring
+import RMSwipeTableViewCell
 
 
 let tips = [

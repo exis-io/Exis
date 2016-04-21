@@ -28,7 +28,7 @@ class Room: Domain {
         timer = DelayedCaller(target: self)
         
         register("pick#details", pick)
-        register("leave#details", removePlayer)
+        register("leave", options: Options(details: true)) { (details: Details) in self.removePlayer(details.caller) }
     }
     
     func removePlayer(domain: String) {

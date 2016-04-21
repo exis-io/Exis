@@ -9,7 +9,6 @@
 
 import UIKit
 import Riffle
-import RMSwipeTableViewCell
 import M13ProgressSuite
 import Spring
 
