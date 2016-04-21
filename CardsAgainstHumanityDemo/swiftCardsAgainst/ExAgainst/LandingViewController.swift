@@ -43,10 +43,6 @@ class LandingViewController: UIViewController, Delegate {
         
         labelTips.morphingEffect = .Scale
         labelTips.text = tips[0]
-        
-        // Testing
-        Riffle.setFabricDev()
-        Riffle.setLogLevelInfo()
     }
     
     func onJoin() {

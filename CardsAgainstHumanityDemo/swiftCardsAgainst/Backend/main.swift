@@ -14,7 +14,7 @@ initTypes(External(String.self, String.self), External(Int.self, Int.self), Exte
 
 // Testing locally 
 Riffle.setFabricDev()
-Riffle.setLogLevelDebug()
+Riffle.setLogLevelInfo()
 
 let app = Domain(name: "xs.demo.exis.cardsagainst")
 
