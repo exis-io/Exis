@@ -8,4 +8,12 @@ START__0.4.8
 
 END__0.4.8
 
+START__0.4.9
+## Changes in v0.4.9
+* [Auth](#Auth) Appliance API added.
+* [Bouncer](#Bouncer) Appliance API added.
+* [Container](#Container) Appliance API added.
+* [Replay](#Replay) Appliance API added.
+
+END__0.4.9
 ## Changes in later upcoming versions
