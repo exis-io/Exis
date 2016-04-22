@@ -7,19 +7,28 @@ import (
 	"github.com/exis-io/core"
 )
 
+// TODO: Passing in the connection, AppDomain and regular domain refactoring
+
 // Required main method
 func main() {}
 
+// This is still here temporarily. Removed once client-generation is up and running
 //export CBID
 func CBID() uint64 {
 	return core.NewID()
 }
 
+var sess = NewSession
+
+//export Send
+func Send(i *C.char) {
+	go sess.Send(C.CString(i))
+}
+
 //export Receive
-func Receive(dptr uint64) *C.char {
-	// Used to be a byte slice, but 1.6 cgo checks will not allow that
-	d := get(dptr)
-	return C.CString(core.MantleMarshall(d.GetApp().CallbackListen()))
+func Receive() *C.char {
+	cb := <-sess.Receive()
+	return C.CString(core.MantleMarshall(cb))
 }
 
 // func Join(pdomain uint64, cb uint64, eb uint64) {

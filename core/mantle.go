@@ -58,7 +58,7 @@ type Callback struct {
 type Session interface {
 	Free(uint64)
 	Send(string)
-	Receive() Callback
+	Receive() chan Callback
 }
 
 type session struct {
@@ -81,6 +81,10 @@ func NewSession() *session {
 
 	s.memory[1] = s
 	return s
+}
+
+func (sess *session) Receiver() chan Callback {
+	return sess.dispatch
 }
 
 func (sess *session) Send(line string) {
@@ -164,11 +168,6 @@ func handleConstructor(target string, address uint64, memory map[uint64]interfac
 	}
 
 	return false
-}
-
-// Dispatch a callback to the given session
-func dispatch(id uint64, arg interface{}) {
-	fmt.Printf("Dispatching id: %d value: %v\n", id, arg)
 }
 
 func deserialize(j string) (*rpc, error) {
