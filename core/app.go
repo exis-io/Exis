@@ -9,26 +9,6 @@ import (
 	"time"
 )
 
-const (
-	Disconnected = iota
-	Connected
-	Ready
-	Leaving
-)
-
-// Exponential backoff settings
-//
-// initialRetryDelay is used for the first reconnection after startup and after
-// a successful connection (0 means try again immediately).
-//
-// Subsequent retries will use delays that grow exponentially between
-// minRetryDelay and maxRetryDelay.
-const (
-	initialRetryDelay = 0 * time.Second
-	minRetryDelay     = 1 * time.Second
-	maxRetryDelay     = 30 * time.Second
-)
-
 type App interface {
 	ReceiveBytes([]byte)
 	ReceiveMessage(message)
@@ -88,12 +68,6 @@ type app struct {
 	key    string
 
 	retryDelay time.Duration
-}
-
-// Sent up to the mantle and then the crust as callbacks are triggered
-type Callback struct {
-	Id   uint64
-	Args []interface{}
 }
 
 func NewApp() *app {

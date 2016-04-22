@@ -36,6 +36,30 @@ const (
 	CuminStrict = 2
 	CuminLoose  = 1
 	CuminOff    = 0
+
+	LogLevelOff   int = 0
+	LogLevelApp   int = 1
+	LogLevelErr   int = 2
+	LogLevelWarn  int = 3
+	LogLevelInfo  int = 4
+	LogLevelDebug int = 5
+
+	Disconnected = iota
+	Connected
+	Ready
+	Leaving
+
+	// Exponential backoff settings
+	//
+	// initialRetryDelay is used for the first reconnection after startup and after
+	// a successful connection (0 means try again immediately).
+	//
+	// Subsequent retries will use delays that grow exponentially between
+	// minRetryDelay and maxRetryDelay.
+
+	initialRetryDelay = 0 * time.Second
+	minRetryDelay     = 1 * time.Second
+	maxRetryDelay     = 30 * time.Second
 )
 
 var (
@@ -44,6 +68,8 @@ var (
 	Registrar     string = RegistrarProduction
 	CuminLevel    int    = CuminLoose
 	UseUnsafeCert bool   = false
+
+	ShouldLogLineNumber = true // Print the line that emitted the log
 )
 
 func NewID() uint64 {
@@ -96,4 +122,33 @@ func removeDomain(domains []*domain, target *domain) ([]*domain, bool) {
 	}
 
 	return nil, false
+}
+
+func SetLogLevelOff()   { LogLevel = LogLevelOff }
+func SetLogLevelApp()   { LogLevel = LogLevelApp }
+func SetLogLevelErr()   { LogLevel = LogLevelErr }
+func SetLogLevelWarn()  { LogLevel = LogLevelWarn }
+func SetLogLevelInfo()  { LogLevel = LogLevelInfo }
+func SetLogLevelDebug() { LogLevel = LogLevelDebug }
+
+func SetFabric(url string)    { Fabric = url }
+func SetRegistrar(url string) { Registrar = url }
+
+func SetFabricSandbox() {
+	Fabric = FabricSandbox
+}
+
+func SetFabricDev() {
+	Fabric = FabricDev
+	Registrar = RegistrarDev
+}
+
+func SetFabricProduction() {
+	Fabric = FabricProduction
+	Registrar = RegistrarProduction
+}
+
+func SetFabricLocal() {
+	Fabric = FabricLocal
+	Registrar = RegistrarLocal
 }

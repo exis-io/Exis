@@ -19,7 +19,7 @@ import (
 //      Address is unused. If exactly one argument is passed the mantle will try to assign it
 //      to the variable. The current value of the variable is always returned.
 //
-//      Handle(`["CuminLevel", 0, 1, 0, 2]`) // Changes the CuminLevel
+//      Send(`["CuminLevel", 0, 1, 0, 2]`) // Changes the CuminLevel
 //
 // Function:
 //      Address is unused for normal functions. All arguments are passed into that function.
@@ -27,19 +27,19 @@ import (
 //      type. In this case the address field is used to refer to that instance in the future.
 //      Clients are expected to pick well-distrubted random values for address
 //
-//      mantle.Handle(`["NewID", 10, 11, 0]`) // Normal Function
-//      mantle.Handle(`["NewApp", 10, 11, 12345]`) // Constructor for an App at address 12345
+//      mantle.Send(`["NewID", 10, 11, 0]`) // Normal Function
+//      mantle.Send(`["NewApp", 10, 11, 12345]`) // Constructor for an App at address 12345
 //
 // Method:
 //      Target refers to the name of the method, address is the same as previously generated.
 //      All arguments are passed in as given.
 //
-//      mantle.Handle(`["SetState", 10, 11, 12345, 1]`) // calls SetState on App created previously
+//      mantle.Send(`["SetState", 10, 11, 12345, 1]`) // calls SetState on App created previously
 //
 // Control:
 //      The current session is always at address 0. It implements control methods.
 //
-//      mantle.Handle(`["Free", 10, 11, 0, 12345]`) // dealloc an instance
+//      mantle.Send(`["Free", 10, 11, 0, 12345]`) // dealloc an instance
 
 type rpc struct {
 	target  string        // A type, function, variable, or constant
@@ -49,14 +49,21 @@ type rpc struct {
 	args    []interface{} // Arguments to pass to the target
 }
 
+// Sent up to the mantle and then the crust as callbacks are triggered
+type Callback struct {
+	Id   uint64
+	Args []interface{}
+}
+
 type Session interface {
 	Free(uint64)
-	// Close()
-	Handle(string) // This shouldn't really be an exported method, defer until the server
+	Send(string)
+	Receive() Callback
 }
 
 type session struct {
-	memory map[uint64]interface{} // "heap" space for this session
+	memory   map[uint64]interface{} // "heap" space for this session
+	dispatch chan Callback
 }
 
 // Free the given object from memory. Does not check for presence
@@ -65,14 +72,18 @@ func (s *session) Free(id uint64) {
 	delete(s.memory, id)
 }
 
-// Creates a new session. The session has itself as the first memory address
+// Creates a new session. The session has itself as the second memory address
 func NewSession() *session {
-	s := &session{make(map[uint64]interface{})}
-	s.memory[0] = s
+	s := &session{
+		memory:   make(map[uint64]interface{}),
+		dispatch: make(chan Callback, 0),
+	}
+
+	s.memory[1] = s
 	return s
 }
 
-func (sess *session) Handle(line string) {
+func (sess *session) Send(line string) {
 	n, err := deserialize(line)
 
 	if err != nil {
@@ -80,59 +91,55 @@ func (sess *session) Handle(line string) {
 		return
 	}
 
-	var result interface{}
-	var resultingId = n.cb
-
-	// Note: Types are used only for the sake of method reading-- instantiate types through their
-	// public constructors!
+	result := Callback{Id: n.cb}
 
 	if m, ok := Variables[n.target]; ok {
-		result = handleVariable(m, n.args)
+		result.Args = handleVariable(m, n.args)
 	} else if m, ok := Consts[n.target]; ok {
-		result = m.Interface()
+		result.Args = []interface{}{m.Interface()}
 	} else if m, ok := Functions[n.target]; ok {
 		if ret, err := handleFunction(m, n.args); err != nil {
-			resultingId = n.eb
-			result = err.Error()
+			result.Id = n.eb
+			result.Args = []interface{}{err.Error()}
 		} else {
 			if handleConstructor(n.target, n.address, sess.memory, ret) {
-				result = n.address
+				result.Args = []interface{}{n.address}
 			} else {
-				result = ret
+				result.Args = ret
 			}
 
-			resultingId = n.cb
+			result.Id = n.cb
 		}
 	} else if m, ok := sess.memory[n.address]; ok {
 		v := reflect.ValueOf(m).MethodByName(n.target)
 
-		var err error
-		if result, err = handleFunction(v, n.args); err != nil {
+		if ret, err := handleFunction(v, n.args); err != nil {
 			fmt.Printf("Method not successful: %s\n", err.Error())
-			resultingId = n.eb
-			result = err.Error()
+			result.Id = n.eb
+			result.Args = []interface{}{err.Error()}
 		} else {
-			resultingId = n.cb
+			result.Id = n.cb
+			result.Args = ret
 		}
 	} else {
 		fmt.Printf("Unknown invocation: %v\n", n)
 		return
 	}
 
-	dispatch(resultingId, result)
+	sess.dispatch <- result
 }
 
 // Assign the given value to a variable and return its value. If we are passed "nil" as a
 // new value this is just a read-- dont try and set the value. Obviously this means nil is
 // not allowed as a variable value.
 // TODO: handle bad type conversions
-func handleVariable(v reflect.Value, n []interface{}) interface{} {
+func handleVariable(v reflect.Value, n []interface{}) []interface{} {
 	if len(n) == 1 {
 		c := reflect.ValueOf(n[0]).Convert(v.Elem().Type())
 		v.Elem().Set(c)
 	}
 
-	return v.Elem()
+	return []interface{}{v.Elem()}
 }
 
 func handleFunction(fn reflect.Value, args []interface{}) ([]interface{}, error) {

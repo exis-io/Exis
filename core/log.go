@@ -6,23 +6,18 @@ import (
 	"strings"
 )
 
-const (
-	LogLevelOff   int = 0
-	LogLevelApp   int = 1
-	LogLevelErr   int = 2
-	LogLevelWarn  int = 3
-	LogLevelInfo  int = 4
-	LogLevelDebug int = 5
-)
-
-var (
-	ShouldLogLineNumber = true // Print the line that emitted the log
-)
+func MantleDebug(s string) {
+	Debug("%s", s)
+}
 
 func Debug(format string, a ...interface{}) {
 	if LogLevel >= LogLevelDebug {
 		out(fmt.Sprintf("%s", fmt.Sprintf(format, a...)))
 	}
+}
+
+func MantleInfo(s string) {
+	Info("%s", s)
 }
 
 func Info(format string, a ...interface{}) {
@@ -31,16 +26,28 @@ func Info(format string, a ...interface{}) {
 	}
 }
 
+func MantleWarn(s string) {
+	Warn("%s", s)
+}
+
 func Warn(format string, a ...interface{}) {
 	if LogLevel >= LogLevelWarn {
 		out(fmt.Sprintf("WARN: %s", fmt.Sprintf(format, a...)))
 	}
 }
 
+func MantleError(s string) {
+	Error("%s", s)
+}
+
 func Error(format string, a ...interface{}) {
 	if LogLevel >= LogLevelErr {
 		out(fmt.Sprintf("ERROR: %s", fmt.Sprintf(format, a...)))
 	}
+}
+
+func MantleApplication(s string) {
+	Application("%s", s)
 }
 
 func Application(format string, a ...interface{}) {

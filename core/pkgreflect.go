@@ -13,6 +13,7 @@ var Types = map[string]reflect.Type{
 	"Model": reflect.TypeOf((*Model)(nil)).Elem(),
 	"NoDestinationError": reflect.TypeOf((*NoDestinationError)(nil)).Elem(),
 	"Serialization": reflect.TypeOf((*Serialization)(nil)).Elem(),
+	"Session": reflect.TypeOf((*Session)(nil)).Elem(),
 }
 
 var Functions = map[string]reflect.Value{
@@ -23,7 +24,11 @@ var Functions = map[string]reflect.Value{
 	"Error": reflect.ValueOf(Error),
 	"GetValueOf": reflect.ValueOf(GetValueOf),
 	"Info": reflect.ValueOf(Info),
+	"MantleApplication": reflect.ValueOf(MantleApplication),
 	"MantleCall": reflect.ValueOf(MantleCall),
+	"MantleDebug": reflect.ValueOf(MantleDebug),
+	"MantleError": reflect.ValueOf(MantleError),
+	"MantleInfo": reflect.ValueOf(MantleInfo),
 	"MantleMarshall": reflect.ValueOf(MantleMarshall),
 	"MantleModel": reflect.ValueOf(MantleModel),
 	"MantlePublish": reflect.ValueOf(MantlePublish),
@@ -33,9 +38,11 @@ var Functions = map[string]reflect.Value{
 	"MantleUnmarshalMap": reflect.ValueOf(MantleUnmarshalMap),
 	"MantleUnregister": reflect.ValueOf(MantleUnregister),
 	"MantleUnsubscribe": reflect.ValueOf(MantleUnsubscribe),
+	"MantleWarn": reflect.ValueOf(MantleWarn),
 	"NewApp": reflect.ValueOf(NewApp),
 	"NewDomain": reflect.ValueOf(NewDomain),
 	"NewID": reflect.ValueOf(NewID),
+	"NewSession": reflect.ValueOf(NewSession),
 	"SetSession": reflect.ValueOf(SetSession),
 	"SignString": reflect.ValueOf(SignString),
 	"SoftCumin": reflect.ValueOf(SoftCumin),
