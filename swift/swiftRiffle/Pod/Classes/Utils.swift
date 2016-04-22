@@ -71,8 +71,8 @@ func serializeArguments(args: [Any]) -> [Any] {
 }
 
 func serializeArguments(args: [Property]) -> [Any] {
-//    Riffle.debug("Serializing: \(args.dynamicType) \(args)")
-//    return args.map { $0.serialize() }
+    //    Riffle.debug("Serializing: \(args.dynamicType) \(args)")
+    //    return args.map { $0.serialize() }
     
     #if os(OSX)
         let c =  args.map { $0.unsafeSerialize() }
@@ -111,7 +111,7 @@ func serializeResults<A: PR, B: PR, C: PR, D: PR, E: PR>(args: (A, B, C, D, E)) 
 
 func serializeResults(results: Property...) -> Any {
     // Swift libraries are not technically supported on OSX targets-- Swift gets linked against twice
-    // Functionally this means that type checks in either the library or the app fail when the 
+    // Functionally this means that type checks in either the library or the app fail when the
     // type originates on the other end
     // This method switches app types back to library types by checking type strings. Only runs on OSX
     
@@ -196,7 +196,7 @@ func recode<A, T>(value: A, _ t: T.Type) -> T {
                 return s.memory == true
             }
         }
-
+        
         return encodeBool(value) as! T
     }
     
@@ -229,54 +229,54 @@ func recode<A, T>(value: A, _ t: T.Type) -> T {
 }
 
 
-// Makes configuration calls a little cleaner when accessed from the top level 
+// Makes configuration calls a little cleaner when accessed from the top level
 // as well as keeping them all in one place
 public class Riffle {
     public class func setFabric(url: String) {
-        MantleSetFabric(url.cString())
+        sendCore("Fabric", [url])
     }
-
+    
     public class func application(s: String){
-        MantleApplication(s.cString())
+        sendCore("MantleApplication", [s])
     }
-
+    
     public class func debug(s: String){
-        MantleDebug(s.cString())
+        sendCore("MantleDebug", [s])
     }
-
+    
     public class func info(s: String){
-        MantleInfo(s.cString())
+        sendCore("MantleInfo", [s])
     }
-
+    
     public class func warn(s: String){
-        MantleWarn(s.cString())
+        sendCore("MantleWarn", [s])
     }
-
+    
     public class func error(s: String){
-        MantleError(s.cString())
+        sendCore("MantleError", [s])
     }
-
-    public class func setLogLevelApp() { MantleSetLogLevelApp() }
-    public class func setLogLevelOff() { MantleSetLogLevelOff() }
-    public class func setLogLevelErr() { MantleSetLogLevelErr() }
-    public class func setLogLevelWarn() { MantleSetLogLevelWarn() }
-    public class func setLogLevelInfo() { MantleSetLogLevelInfo() }
-    public class func setLogLevelDebug() { MantleSetLogLevelDebug() }
-
-    public class func setFabricDev() { MantleSetFabricDev() }
-    public class func setFabricSandbox() { MantleSetFabricSandbox() }
-    public class func setFabricProduction() { MantleSetFabricProduction() }
-    public class func setFabricLocal() { MantleSetFabricLocal() }
-
-    public class func setCuminStrict() { MantleSetCuminStrict() }
-    public class func setCuminLoose() { MantleSetCuminLoose() }
-    public class func setCuminOff() { MantleSetCuminOff() }
+    
+    public class func setLogLevelApp() { sendCore("SetLogLevelApp", [])  }
+    public class func setLogLevelOff() { sendCore("SetLogLevelOff", [])  }
+    public class func setLogLevelErr() { sendCore("SetLogLevelErr", [])  }
+    public class func setLogLevelWarn() { sendCore("SetLogLevelWarn", [])  }
+    public class func setLogLevelInfo() { sendCore("SetLogLevelInfo", [])  }
+    public class func setLogLevelDebug() { sendCore("SetLogLevelDebug", [])  }
+    
+    public class func setFabricDev() { sendCore("SetFabricDev", []) }
+    public class func setFabricSandbox() { sendCore("SetFabricSandbox", []) }
+    public class func setFabricProduction() { sendCore("SetFabricProduction", []) }
+    public class func setFabricLocal() { sendCore("SetFabricLocal", []) }
+    
+    public class func setCuminStrict() { sendCore("SetCuminStrict", []) }
+    public class func setCuminLoose() { sendCore("SetCuminLoose", []) }
+    public class func setCuminOff() { sendCore("SetCuminOff", []) }
 }
 
 
 
 
-// Create CBIDs on this side of the boundary. Note this makes them doubles, should be using byte arrays or 
+// Create CBIDs on this side of the boundary. Note this makes them doubles, should be using byte arrays or
 // uint64
 // TODO: Use this but convert to byte slices first
 //// Biggest random number that can be choosen

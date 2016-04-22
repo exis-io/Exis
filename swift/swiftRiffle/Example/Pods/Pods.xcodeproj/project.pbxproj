@@ -19,6 +19,8 @@
 		49F0847A4BE0FBAF202EA1C50C56B7CC /* Riffle-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BBE4EA63C5AF193151F19358C5D5A99 /* Riffle-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50AA4FB41CBDAE8B004288A4 /* OsxBullshit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AA4FB21CBDAE09004288A4 /* OsxBullshit.swift */; };
 		50AA4FB51CBDAE8C004288A4 /* OsxBullshit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AA4FB21CBDAE09004288A4 /* OsxBullshit.swift */; };
+		50F06E781CCAC4E90073D532 /* Crust.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F06E761CCAC1B30073D532 /* Crust.swift */; };
+		50F06E791CCAC4EA0073D532 /* Crust.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F06E761CCAC1B30073D532 /* Crust.swift */; };
 		50FB86E81CC97A420096407D /* Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50FB86E61CC979790096407D /* Options.swift */; };
 		50FB86E91CC97A430096407D /* Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50FB86E61CC979790096407D /* Options.swift */; };
 		52F962043A567C8E89D158A76D31F94C /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2287689174A2BC779794A127B49E5EB /* Domain.swift */; };
@@ -80,6 +82,7 @@
 		4BBE4EA63C5AF193151F19358C5D5A99 /* Riffle-iOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "Riffle-iOS-umbrella.h"; path = "../Riffle-iOS/Riffle-iOS-umbrella.h"; sourceTree = "<group>"; };
 		4EFB0D0935F5F7309DDAEFE2B0278EF6 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Info.plist; path = "../Riffle-iOS/Info.plist"; sourceTree = "<group>"; };
 		50AA4FB21CBDAE09004288A4 /* OsxBullshit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OsxBullshit.swift; sourceTree = "<group>"; };
+		50F06E761CCAC1B30073D532 /* Crust.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Crust.swift; sourceTree = "<group>"; };
 		50FB86E61CC979790096407D /* Options.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Options.swift; sourceTree = "<group>"; };
 		5152DEE2BF9DE0D8C6F4A6793A049F79 /* Json.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Json.swift; sourceTree = "<group>"; };
 		53A7E64AFFE718824BCBDB53FB0BDD02 /* Riffle-OSX-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Riffle-OSX-prefix.pch"; sourceTree = "<group>"; };
@@ -249,15 +252,16 @@
 				5BDA28F8110D8581FAE7340A7AB0F62F /* App.swift */,
 				1865A67516433B63F48F9D023D69DC23 /* Cumin.swift */,
 				9AB6A79D0ECD1C46D29B759166BE8001 /* CuminicableExtensions.swift */,
+				50F06E761CCAC1B30073D532 /* Crust.swift */,
 				55E9069C5C1F37FF182E57F021677A8C /* Deferred.swift */,
 				A2287689174A2BC779794A127B49E5EB /* Domain.swift */,
 				5152DEE2BF9DE0D8C6F4A6793A049F79 /* Json.swift */,
-				50FB86E61CC979790096407D /* Options.swift */,
 				E4A900DE639ED6DBF00B0614D84D4079 /* Model.swift */,
+				50FB86E61CC979790096407D /* Options.swift */,
+				50AA4FB21CBDAE09004288A4 /* OsxBullshit.swift */,
 				3C4BD128BF509EAD9CF43F4DE79A1335 /* Package.swift */,
 				6593365D42F256A20DB2DDA284CF6129 /* Silver.swift */,
 				01C39534B0C02CA9D380758F68867151 /* Utils.swift */,
-				50AA4FB21CBDAE09004288A4 /* OsxBullshit.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -464,6 +468,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AB8589688AE36FADDA3A5BEBE53066BD /* App.swift in Sources */,
+				50F06E791CCAC4EA0073D532 /* Crust.swift in Sources */,
 				AE5B9A242D27C357AB86BFD5CBA656EC /* Cumin.swift in Sources */,
 				50FB86E91CC97A430096407D /* Options.swift in Sources */,
 				7B5989EF273D9329EFB4F1BA5EDE362C /* CuminicableExtensions.swift in Sources */,
@@ -500,6 +505,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D4C84EBE3AEF7F31E650D5ED2462C4B7 /* App.swift in Sources */,
+				50F06E781CCAC4E90073D532 /* Crust.swift in Sources */,
 				7461AA0469A37FEFF984EDE34F4A8CEB /* Cumin.swift in Sources */,
 				50FB86E81CC97A420096407D /* Options.swift in Sources */,
 				0E194E76B38A72759ED4401492726553 /* CuminicableExtensions.swift in Sources */,

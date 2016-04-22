@@ -122,17 +122,17 @@ extension Model: Convertible {
 
 // Core-based persistence
 extension Model {
-    public class func count() -> Deferred {
-        guard let connection = globalConnectionReference else {
-            Riffle.warn("Cannot access model object persistence until after joining")
-            // TODO: return an erred differ that fires once assigned
-            return Deferred()
-        }
-        
-        let d = Deferred(domain: connection)
-        ModelCount(d.cb, d.eb, "\(self.dynamicType)".cString(), "".cString())
-        return d
-    }
+//    public class func count() -> Deferred {
+//        guard let connection = globalConnectionReference else {
+//            Riffle.warn("Cannot access model object persistence until after joining")
+//            // TODO: return an erred differ that fires once assigned
+//            return Deferred()
+//        }
+//        
+//        let d = Deferred(domain: connection)
+//        ModelCount(d.cb, d.eb, "\(self.dynamicType)".cString(), "".cString())
+//        return d
+//    }
 }
 
 //extension Model: Equatable {}

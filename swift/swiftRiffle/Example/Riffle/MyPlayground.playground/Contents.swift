@@ -1,5 +1,14 @@
 import Foundation
 
-func a() {}
+class Base {
+    class func create() {
+        print("\(self)")
+    }
+}
 
-let b = #selector(a)
+class Subclass: Base {
+    
+}
+
+Subclass.create()
+

@@ -91,10 +91,11 @@ func (sess *session) Send(line string) {
 	n, err := deserialize(line)
 
 	if err != nil {
-		fmt.Printf("Ignoring message %b. Error: %s\n", line, err.Error())
+		Warn("Ignoring message %b. Error: %s\n", line, err.Error())
 		return
 	}
 
+    //fmt.Printf("Invoking %v\n", n)
 	result := Callback{Id: n.cb}
 
 	if m, ok := Variables[n.target]; ok {
@@ -118,7 +119,6 @@ func (sess *session) Send(line string) {
 		v := reflect.ValueOf(m).MethodByName(n.target)
 
 		if ret, err := handleFunction(v, n.args); err != nil {
-			fmt.Printf("Method not successful: %s\n", err.Error())
 			result.Id = n.eb
 			result.Args = []interface{}{err.Error()}
 		} else {
@@ -126,7 +126,7 @@ func (sess *session) Send(line string) {
 			result.Args = ret
 		}
 	} else {
-		fmt.Printf("Unknown invocation: %v\n", n)
+		Warn("Unknown invocation: %v\n", n)
 		return
 	}
 
@@ -138,6 +138,8 @@ func (sess *session) Send(line string) {
 // not allowed as a variable value.
 // TODO: handle bad type conversions
 func handleVariable(v reflect.Value, n []interface{}) []interface{} {
+    //Debug("Variable: setting %v to %v", v.Type(), n)
+
 	if len(n) == 1 {
 		c := reflect.ValueOf(n[0]).Convert(v.Elem().Type())
 		v.Elem().Set(c)
@@ -147,6 +149,7 @@ func handleVariable(v reflect.Value, n []interface{}) []interface{} {
 }
 
 func handleFunction(fn reflect.Value, args []interface{}) ([]interface{}, error) {
+    //Debug("Function: calling %v with %v", fn.Type(), args)
 	return Cumin(fn.Interface(), args)
 }
 
@@ -162,6 +165,7 @@ func handleConstructor(target string, address uint64, memory map[uint64]interfac
 		split := strings.Split(target, "New")
 
 		if len(split) == 2 && split[0] == "" {
+            //Debug("Object: instantiated %s", split[1])
 			memory[address] = invocationResult[0]
 			return true
 		}

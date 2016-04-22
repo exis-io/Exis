@@ -246,6 +246,9 @@ public enum JSON {
             else if let value = value as? Int {
                 jsonArray.append(JSON.from(Double(value)))
             }
+            else if let value = value as? UInt64 {
+                jsonArray.append(JSON.from(Double(value)))
+            }
             else if let value = value as? String {
                 jsonArray.append(JSON.from(value))
             }

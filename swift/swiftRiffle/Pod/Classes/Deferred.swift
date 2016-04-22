@@ -11,7 +11,7 @@
 import Foundation
 import Mantle
 
-public class Deferred {
+public class Deferred: Handler {
     // Callback and Errback ids
     var cb: UInt64 = 0
     var eb: UInt64 = 0
@@ -22,15 +22,28 @@ public class Deferred {
     var next: Deferred?
     
     
-    public init() {}
-    
-    init(domain: Domain) {
-        // Automatically creates and sets callback and errback assignments for the given domain
+    public init() {
         cb = CBID()
         eb = CBID()
         
-        domain.app.deferreds[eb] = self
-        domain.app.deferreds[cb] = self
+         Session.handlers[cb] = self
+         Session.handlers[eb] = self
+    }
+    
+    // Session has deemed its our time to shine
+    func invoke(id: UInt64, args: [Any]) {
+        if cb == id {
+            callback(args)
+        } else if eb == id {
+            errback(args)
+        }
+        
+        destroy()
+    }
+    
+    func destroy() {
+        Session.handlers[cb] = nil
+        Session.handlers[eb] = nil
     }
     
     // Final, internal implementation of addCallback
@@ -87,11 +100,6 @@ public class Deferred {
 // Contains handler "then"s to replace handler functions
 public class HandlerDeferred: Deferred {
     public var mantleDomain: UInt64!
-    
-    override init(domain: Domain) {
-        super.init(domain: domain)
-        mantleDomain = domain.mantleDomain
-    }
     
     public override func then(fn: () -> ()) -> Deferred {
         // this override is a special case. It overrides the base then, but cant go in the extension

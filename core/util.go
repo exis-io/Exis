@@ -17,9 +17,6 @@ type IdGenerator interface {
 	NewID() uint64
 }
 
-// If this is set, core relies on this to generate IDs instead of its own logic
-var ExternalGenerator IdGenerator = nil
-
 const (
 	maxId          int64         = 1 << 53
 	MessageTimeout time.Duration = 3 * time.Hour
@@ -70,6 +67,9 @@ var (
 	UseUnsafeCert bool   = false
 
 	ShouldLogLineNumber = true // Print the line that emitted the log
+
+    // If this is set, core relies on this to generate IDs instead of its own logic
+    ExternalGenerator IdGenerator = nil
 )
 
 func NewID() uint64 {
@@ -130,6 +130,10 @@ func SetLogLevelErr()   { LogLevel = LogLevelErr }
 func SetLogLevelWarn()  { LogLevel = LogLevelWarn }
 func SetLogLevelInfo()  { LogLevel = LogLevelInfo }
 func SetLogLevelDebug() { LogLevel = LogLevelDebug }
+
+func SetCuminStrict() { CuminLevel = CuminStrict }
+func SetCuminLoose() { CuminLevel = CuminLoose }
+func SetCuminOff() { CuminLevel = CuminOff }
 
 func SetFabricSandbox() {
 	Fabric = FabricSandbox
