@@ -30,7 +30,7 @@ var globalConnectionReference: Domain?
 public class Domain {
     public var delegate: Delegate?
     
-    var mantleDomain: UInt64
+    var mantleDomain: UInt64 = 0
     var app: App
     
     public private(set) var name: String
@@ -38,14 +38,14 @@ public class Domain {
     
     public init(name: String) {
         self.name = name
-        mantleDomain = NewDomain(name.cString())
+        //mantleDomain = NewDomain(name.cString())
         app = App(domain: mantleDomain)
         globalConnectionReference = self
     }
     
     public init(name: String, superdomain: Domain) {
         self.name = "\(superdomain.name).\(name)"
-        mantleDomain = Subdomain(superdomain.mantleDomain, name.cString())
+        //mantleDomain = Subdomain(superdomain.mantleDomain, name.cString())
         app = superdomain.app
     }
     
@@ -54,7 +54,7 @@ public class Domain {
         let d = Deferred(domain: self)
         
         app.handlers[hn] = fn
-        Subscribe(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(serializeArguments(types)), options.marshall())
+        //Subscribe(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(serializeArguments(types)), options.marshall())
         return d
     }
     
@@ -63,35 +63,35 @@ public class Domain {
         let d = Deferred(domain: self)
         
         app.registrations[hn] = fn
-        Register(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(types), options.marshall())
+        //Register(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(types), options.marshall())
         return d
     }
     
     public func publish(endpoint: String, _ args: Property...) -> Deferred {
         let d = Deferred(domain: self)
-        Publish(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)), Options().marshall())
+        //Publish(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)), Options().marshall())
         return d
     }
     
     public func call(endpoint: String, _ args: Property...) -> HandlerDeferred {
         let d = HandlerDeferred(domain: self)
-        Call(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)), Options().marshall())
+        //Call(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)), Options().marshall())
         return d
     }
     
     public func leave() {
-        Leave(self.mantleDomain)
+        //Leave(self.mantleDomain)
     }
     
     public func setToken(token: String) {
-        SetToken(self.mantleDomain, token.cString())
+        //SetToken(self.mantleDomain, token.cString())
     }
     
     public func join() {
         let cb = CBID()
         let eb = CBID()
         
-        Join(mantleDomain, cb, eb)
+        //Join(mantleDomain, cb, eb)
         
         app.handlers[cb] = { a in
             if let d = self.delegate {

@@ -22,37 +22,42 @@ class App {
     }
     
     func handleInvocation(i: UInt64, arguments: [Any]) {
-        var args = arguments
-        
-        if let d = self.deferreds[i] {
-            self.deferreds[d.cb] = nil
-            self.deferreds[d.eb] = nil
-            
-            if d.cb == i {
-                d.callback(args)
-            } else if d.eb == i {
-                d.errback(args)
-            }
-            
-        } else if let fn = self.handlers[i] {
-            fn(args)
-        } else if let fn = self.registrations[i] {
-            let resultId = args.removeAtIndex(0) as! Double
-            Yield(self.mantleDomain, UInt64(resultId), marshall(fn(args)))
-        }
+//        var args = arguments
+//        
+//        if let d = self.deferreds[i] {
+//            self.deferreds[d.cb] = nil
+//            self.deferreds[d.eb] = nil
+//            
+//            if d.cb == i {
+//                d.callback(args)
+//            } else if d.eb == i {
+//                d.errback(args)
+//            }
+//            
+//        } else if let fn = self.handlers[i] {
+//            fn(args)
+//        } else if let fn = self.registrations[i] {
+//            let resultId = args.removeAtIndex(0) as! Double
+//            Yield(self.mantleDomain, UInt64(resultId), marshall(fn(args)))
+//        }
     }
     
     func receive() {
-        while true {
-            var (i, args) = decode(Receive(self.mantleDomain))
-            #if os(Linux)
-                handleInvocation(i, arguments: args)
-            #else
-            dispatch_async(dispatch_get_main_queue()) {
-                self.handleInvocation(i, arguments: args)
-            }
-            #endif
-        }
+//        while true {
+//            var (i, args) = decode(Receive(self.mantleDomain))
+//            
+//            if i == 0 {
+//                break
+//            }
+//            
+//            #if os(Linux)
+//                handleInvocation(i, arguments: args)
+//            #else
+//            dispatch_async(dispatch_get_main_queue()) {
+//                self.handleInvocation(i, arguments: args)
+//            }
+//            #endif
+//        }
     }
 }
 

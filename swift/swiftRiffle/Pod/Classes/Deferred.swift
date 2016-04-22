@@ -100,7 +100,7 @@ public class HandlerDeferred: Deferred {
     
     public func _then(types: [Any], _ fn: [Any] -> ()) -> Deferred {
         next = Deferred()
-        CallExpects(mantleDomain, self.cb, marshall(types))
+        // CallExpects(mantleDomain, self.cb, marshall(types))
         callbackFuntion = { a in return fn(a) }
         return next!
     }
