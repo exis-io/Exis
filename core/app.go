@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+// TODO: set the connection class seperately 
+
 type App interface {
 	ReceiveBytes([]byte)
 	ReceiveMessage(message)
@@ -23,15 +25,19 @@ type App interface {
 	CallbackListen() Callback
 	CallbackSend(uint64, ...interface{})
 
+    Join() error
 	SendHello() error
 
-	// Temporary location, will move to security
 	SetToken(string)
 	GetToken() string
 	LoadKey(string) error
 
 	Login(Domain, ...string) (Domain, error)
 	RegisterAccount(Domain, string, string, string, string) (bool, error)
+
+    // Updated for new auth api
+    BetterLogin([]string) (string, error)
+    BetterRegister(string, string, string, string) (string, error)
 
 	SetState(int)
 	ShouldReconnect() bool
@@ -46,11 +52,11 @@ type app struct {
 	in   chan message
 	out  chan message
 	up   chan Callback
-	open bool
 
 	// Set to true if we are leaving.
 	// It tells the lower layer not to try to reconnect.
 	leaving bool
+    open bool
 
 	state       int
 	stateMutex  sync.Mutex
@@ -59,9 +65,7 @@ type app struct {
 	listeners     map[uint64]chan message
 	listenersLock sync.Mutex
 
-	// authentication options
-	// TODO: store as a list of credentials
-	// TODO: include username/password as a type
+    appDomain string
 	agent  string
 	authid string
 	token  string
@@ -70,7 +74,7 @@ type app struct {
 	retryDelay time.Duration
 }
 
-func NewApp() *app {
+func NewApp(name string) *app {
 	a := &app{
 		domains:    make([]*domain, 0),
 		serializer: new(jSONSerializer),
@@ -81,6 +85,7 @@ func NewApp() *app {
 		up:         make(chan Callback, 10),
 		listeners:  make(map[uint64]chan message),
 		token:      "",
+        appDomain: name,
 		retryDelay: initialRetryDelay,
 	}
 
@@ -93,6 +98,56 @@ func NewApp() *app {
 	a.key = os.Getenv("EXIS_KEY")
 
 	return a
+}
+
+func (a *app) Join() error {
+    if  a.state != Disconnected {
+        return fmt.Errorf("Trying to connect, expecting connection state to be Disconnected, but is %s", a.state)
+    }
+
+    // Handshake between the connection and the app
+    a.Connection = conn
+    conn.SetApp(a)
+    a.open = true
+
+    err := a.SendHello()
+    if err != nil {
+        c.app.Close("ERR: could not send a hello message")
+        return err
+    }
+
+    receivedWelcome := false
+    for !receivedWelcome {
+        msg, err := a.getMessageTimeout()
+        if err != nil {
+            a.Close(err.Error())
+            return err
+        }
+
+        switch msg := msg.(type) {
+        case *welcome:
+            receivedWelcome = true
+        case *challenge:
+            a.handleChallenge(msg)
+        default:
+            a.Send(&abort{Details: map[string]interface{}{}, Reason: "Error- unexpected_message_type"})
+            a.Close("Error- unexpected_message_type")
+            return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME.String()))
+        }
+    }
+
+    a.SetState(Ready)
+    go a.receiveLoop()
+
+    // This is deprecapted. Trigger joins manually
+    for _, x := range a.domains {
+        if !x.joined {
+            x.joined = true
+        }
+    }
+
+    Info("Connection established")
+    return nil
 }
 
 func (a *app) CallbackListen() Callback {
@@ -132,8 +187,6 @@ func (c *app) Close(reason string) {
 	c.leaving = true
 
 	if !c.open {
-		// TODO: JS calls close one to many times. Please stop it.
-		// Warn("JS specific bandaid triggered!")
 		return
 	} else {
 		Info("Closing internally: ", reason)
@@ -144,8 +197,6 @@ func (c *app) Close(reason string) {
 	}
 
 	c.open = false
-	//close(c.in)
-	//close(c.up)
 	c.in = make(chan message, 10)
 	c.up = make(chan Callback, 10)
 
@@ -167,17 +218,6 @@ func (a *app) SendHello() error {
 	helloDetails := make(map[string]interface{})
 	helloDetails["authid"] = a.getAuthID()
 	helloDetails["authmethods"] = a.getAuthMethods()
-
-	// Duct tape for js demo
-	// if Fabric == FabricProduction && c.app.token == "" {
-	//  Info("No token found on production. Attempting to auth from scratch")
-
-	//  if token, err := tokenLogin(c.app.agent); err != nil {
-	//      return err
-	//  } else {
-	//      c.app.token = token
-	//  }
-	// }
 
 	msg := hello{
 		Realm:   a.agent,

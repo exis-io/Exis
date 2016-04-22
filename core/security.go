@@ -148,7 +148,6 @@ func (a *app) Login(d Domain, args ...string) (Domain, error) {
 		a.SetToken(token)
 		return d.LinkDomain(domain), nil
 	}
-	return nil, nil
 }
 
 //takes the domain that register was called on and registration info required by Auth
@@ -196,6 +195,98 @@ func (a *app) RegisterAccount(d Domain, username string, password string, email 
 
 	return false, nil
 }
+
+// Login version 2-- take an explicit string and an array instead of a variadic
+// Returns the name the login returned
+func (a *app) BetterLogin(args []string) (string, error) {
+    username := ""
+    password := ""
+
+    if len(args) == 2 {
+        username = args[0]
+        password = args[1]
+    } else if len(args) == 1 {
+        username = args[0]
+    } else if len(args) != 0 {
+        return "", fmt.Errorf("Login must be called with 0, 1 or 2 arguments. ([username [, password]]).")
+    }
+
+    if Fabric == FabricSandbox || Fabric == FabricDev {
+        if err := a.Join(); err != nil {
+            return agent, nil 
+        } else {
+            return nil, err
+        }
+    }
+
+    if token, domain, err := tokenLogin(a.appDomain, username, password); err != nil {
+        return nil, err
+    } else {
+        a.SetToken(token)
+        a.agent = a.appDomain + "." + username
+
+        // Establish our connection to the fabric
+        if err := a.Join(); err != nil {
+            return agent, nil 
+        } else {
+            return nil, err
+        }
+    }
+}
+
+// Register version 2-- takes explicit agent string and automatically calls login internally
+func (a *app) BetterRegister(username string, password string, email string, name string) (string, error) {
+    agent := a.appDomain + "." + username
+
+    if Fabric == FabricSandbox || Fabric == FabricDev {
+        return "", fmt.Errorf("Registration is not available on the sandbox node.")
+    }
+
+    Info("Attempting to register")
+    url := Registrar + "/register"
+
+    jsonString, err := json.Marshal(map[string]interface{}{
+        "domain": agent,
+        "domain-password": password,
+        "requestingdomain": a.agent,
+        "domain-email": email,
+        "Name": name,
+    })
+
+    if err != nil {
+        return "", err
+    }
+
+    var resp *http.Response
+    var postErr error
+
+    // Registrar still shows bad cert...
+    if UseUnsafeCert {
+        tr := &http.Transport{
+            TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+        }
+        client := &http.Client{Transport: tr}
+        resp, postErr = client.Post(url, "application/x-www-form-urlencoded", bytes.NewBuffer(jsonString))
+    } else {
+        resp, postErr = http.Post(url, "application/x-www-form-urlencoded", bytes.NewBuffer(jsonString))
+    }
+
+    if postErr != nil {
+        return "", postErr
+    } else {
+        defer resp.Body.Close()
+        if resp.StatusCode != 200 {
+            body, _ := ioutil.ReadAll(resp.Body)
+            result := string(body)
+            return "", fmt.Errorf(result)
+        } else {
+            return a.BetterLogin(username, []string{username, password})
+        }
+    }
+
+    return "", nil
+}
+
 
 // Attempt a token login.
 func tokenLogin(domain string, username string, password string) (string, string, error) {

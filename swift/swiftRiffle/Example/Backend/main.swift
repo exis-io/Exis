@@ -16,7 +16,12 @@ Riffle.setFabricDev()
 
 //// This is faking two seperate connections by creating another top level domain
 //// Not intended for regular use
-//let app = Domain(name: "xs.tester")
+
+let app = AppDomain(name: "xs.tester")
+
+app.login()
+
+
 //let receiver = Receiver(name: "receiver", superdomain: app)
 //
 //let app2 = Domain(name: "xs.tester")
@@ -31,4 +36,5 @@ Riffle.setFabricDev()
 //
 //receiver.join()
 //
-NSRunLoop.currentRunLoop().run()
+
+app.listen()

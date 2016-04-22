@@ -11,23 +11,17 @@ import CoreFoundation
 import Mantle
 
 
-#if os(Linux)
-    import SwiftGlibc
-    import Glibc
-#else
-    import Darwin.C
-#endif
-
-
-public protocol Delegate {
+public protocol DomainDelegate {
     func onJoin()
     func onLeave()
 }
 
+
 public class Domain: CoreClass {
-    var app: CoreApp
-    public var delegate: Delegate?
+    public var delegate: DomainDelegate?
     public private(set) var name: String
+    
+    var app: CoreApp
     
     
     init(name: String, app: CoreApp) {
@@ -75,10 +69,6 @@ public class Domain: CoreClass {
     
     public func leave() {
         callCore("Leave", [])
-    }
-    
-    public func setToken(token: String) {
-        //SetToken(self.mantleDomain, token.cString())
     }
     
     public func join() -> Deferred {
