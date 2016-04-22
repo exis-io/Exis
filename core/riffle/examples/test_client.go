@@ -41,6 +41,7 @@ func main() {
 	ret5, _ := receiver.Call("reg5", "test", riffle.Options{Progress: func(p string) {
 		fmt.Println("Got prog: ", p)
 	}})
+    
 	fmt.Println("reg5 ", ret5)
 
 	// Handle until the connection closes

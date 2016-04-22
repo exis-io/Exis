@@ -94,9 +94,9 @@ public class Deferred: Handler {
         return _then() { a in fn() }
     }
     
-    public func then(fn: () -> (Deferred)) -> Deferred {
-        return _then() { a in fn() }
-    }
+//    public func then(fn: () -> (Deferred)) -> Deferred {
+//        return _then() { a in fn() }
+//    }
     
     public func error(fn: (String) -> ()) -> Deferred {
         return _error(fn)

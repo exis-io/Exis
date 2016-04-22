@@ -22,9 +22,9 @@ class OsxBugPlayground {
         let d = Deferred()
         let m = Deferred()
         
-        d.then { () -> Deferred in
+        d.then {
             print("In d")
-            return m
+            // return m
         }.then {
             print("d is done")
         }
