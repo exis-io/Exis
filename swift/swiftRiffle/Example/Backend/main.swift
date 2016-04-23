@@ -17,35 +17,17 @@ Riffle.setFabricDev()
 // This is faking two seperate connections by creating another top level domain
 // Not intended for regular use
 
-class TesterDomain: Domain {
-    override func onJoin() {
-        print("Joined!")
-    }
-    
-    override func onLeave() {
-        print("Left!")
-    }
-}
+//let app = AppDomain(name: "xs.tester")
+//app.login()
+
+let app2 = AppDomain(name: "xs.tester")
+let receiver2 = Domain(name: "receiver", superdomain: app2)
+let sender2 = Sender(name: "sender", superdomain: app2, peer: receiver2)
 
 let app = AppDomain(name: "xs.tester")
-let t = TesterDomain(name: "test", superdomain: app)
+let receiver = Receiver(name: "receiver", superdomain: app, done: {
+    app2.login()
+})
 
 app.login()
-
-
-//let receiver = Receiver(name: "receiver", superdomain: app)
-//
-//let app2 = Domain(name: "xs.tester")
-//let sender2 = Sender(name: "sender", superdomain: app2)
-//let receiver2 = Receiver(name: "receiver", superdomain: app2)
-//
-//sender2.receiver = receiver2
-//
-//receiver.joinFinished = {
-//    sender2.join()
-//}
-//
-//receiver.join()
-//
-
 app.listen()

@@ -324,7 +324,6 @@ func (c *app) handle(msg message) {
 			x.regLock.RLock()
 			if binding, ok := x.registrations[msg.Registration]; ok {
 				x.regLock.RUnlock()
-				Debug("Invoking %s (%d)", binding.endpoint, binding.callback)
 				go x.handleInvocation(msg, binding)
 				return
 			} else {
@@ -353,7 +352,7 @@ func (c *app) handle(msg message) {
 			if x {
 				for _, x := range c.domains {
 					if binding, ok := x.handlers[msg.Request]; ok {
-						Debug("Result %s (%d)", binding.endpoint, binding.callback)
+						// Debug("Result %s (%d)", binding.endpoint, binding.callback)
 						go x.handleResult(msg, binding)
 						return
 					}

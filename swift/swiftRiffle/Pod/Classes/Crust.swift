@@ -78,27 +78,18 @@ class Session {
         
         while true {
             var (i, args) = decode(Receive())
-
+            print("Crust session has \(i): \(args)")
+            
             if i == 0 {
                 receiving = false
                 break
             }
-
-            #if os(Linux)
-                handleInvocation(i, arguments: args)
-            #else
-            dispatch_async(dispatch_get_main_queue()) {
-                self.handleInvocation(i, arguments: args)
+            
+            if let handler = handlers[i] {
+                handler.invoke(i, args: args)
+            } else {
+                print("Unhandled invocation: \(i), \(args)")
             }
-            #endif
-        }
-    }
-    
-    class func handleInvocation(i: UInt64, arguments: [Any]) {
-        if let handler = handlers[i] {
-            handler.invoke(i, args: arguments)
-        } else {
-            Riffle.warn("Unhandled invocation: \(i), \(arguments)")
         }
     }
 }
@@ -119,7 +110,17 @@ class DomainHandler: Handler {
     }
     
     func invoke(id: UInt64, args: [Any]) {
-        curriedHandler(args)
+        self.curriedHandler(args)
+
+        // This is never called if the runloop is processing. Be careful with this
+//        #if os(Linux)
+//            curriedHandler(args)
+//        #else
+//            dispatch_async(dispatch_get_main_queue()) {
+//                print(1)
+//                self.curriedHandler(args)
+//            }
+//        #endif
     }
     
     func destroy() {

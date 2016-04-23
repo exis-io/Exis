@@ -263,8 +263,10 @@ func (c domain) Unregister(endpoint string) error {
 
 func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 	if err := SoftCumin(binding.expectedTypes, msg.Arguments); err == nil {
+        Info("Calling %s", binding.endpoint)
 		c.app.CallbackSend(binding.callback, append([]interface{}{msg.Request}, msg.Arguments...)...)
 	} else {
+        Info("Call failed: %s", err.Error())
 		errorArguments := make([]interface{}, 0)
 		errorArguments = append(errorArguments, err.Error())
 
@@ -282,6 +284,7 @@ func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 
 func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
 	if err := SoftCumin(binding.expectedTypes, msg.Arguments); err == nil {
+        Info("Calling %s", binding.endpoint)
 		c.app.CallbackSend(binding.callback, msg.Arguments...)
 	} else {
 		Warn("%v", err)

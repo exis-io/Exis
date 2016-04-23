@@ -46,8 +46,6 @@ public class Domain: CoreClass {
     func _subscribe(endpoint: String, _ types: [Any], options: Options, fn: [Any] -> ()) -> Deferred {
         let hn = DomainHandler() { a in fn(a) }
         return callCore("Subscribe", [endpoint, hn.id, types, options.marshall()])
-        
-        // Subscribe(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(serializeArguments(types)), options.marshall())
     }
     
     func _register(endpoint: String, _ types: [Any], options: Options, fn: [Any] -> [Any]) -> Deferred {
@@ -58,18 +56,15 @@ public class Domain: CoreClass {
         }
         
         return callCore("Register", [endpoint, hn.id, types, options.marshall()])
-        //Register(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(types), options.marshall())
     }
     
     public func publish(endpoint: String, _ args: Property...) -> Deferred {
-        //Publish(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)), Options().marshall())
-        return callCore("Publish", [endpoint, args])
+        return callCore("Publish", [endpoint, serializeArguments(args), Options().marshall()])
     }
     
     public func call(endpoint: String, _ args: Property...) -> HandlerDeferred {
         let d = HandlerDeferred()
-        //Call(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)), Options().marshall())
-        callCore("Call", deferred: d, [endpoint, args])
+        callCore("Call", deferred: d, [endpoint, serializeArguments(args), Options().marshall()])
         return d
     }
     

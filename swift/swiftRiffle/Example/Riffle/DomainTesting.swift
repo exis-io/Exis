@@ -21,7 +21,12 @@ let dogs = [dog, dog, dog]
 
 
 class Receiver: Domain {
-    var joinFinished: (() -> ())!
+    var joinFinished: (() -> ())
+    
+    init(name: String, superdomain: Domain, done: () -> ()) {
+        joinFinished = done
+        super.init(name: name, superdomain: superdomain)
+    }
     
     override func onJoin() {
         print("Recever joined")
@@ -36,68 +41,69 @@ class Receiver: Domain {
             assert(true)
         }
         
-        subscribe("subscribePrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
-            assert(a == 1 && b == 2.2 && c == 3.3 && d == "4" && e == true)
-        }
-        
-        subscribe("subscribeArrays") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
-            assert(a == [1, 2])
-            // assert(b == [2.2, 3.3])
-            assert(c == [4.4, 5.5])
-            assert(d == ["6", "7"])
-            assert(e == [true, false])
-        }
-        
-        // FAIL on double check-- change in precision
-        subscribe("subscribeModel") { (d: Dog) in
-            assert(d.name == dog.name && d.age == dog.age)
-        }
-        
-        // This doesnt work! Node doesn't implement it
-        subscribe("subscribeOptions", options: Options(details: true)) { (details: Details) in
-            print("Have Details: \(details.caller)")
-        }
-        
-        // Reg/Call
+//        subscribe("subscribePrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
+//            assert(a == 1 && b == 2.2 && c == 3.3 && d == "4" && e == true)
+//        }
+//        
+//        subscribe("subscribeArrays") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) in
+//            assert(a == [1, 2])
+//            // assert(b == [2.2, 3.3])
+//            assert(c == [4.4, 5.5])
+//            assert(d == ["6", "7"])
+//            assert(e == [true, false])
+//        }
+//        
+//        // FAIL on double check-- change in precision
+//        subscribe("subscribeModel") { (d: Dog) in
+//            assert(d.name == dog.name && d.age == dog.age)
+//        }
+//        
+//        // This doesnt work! Node doesn't implement it
+//        subscribe("subscribeOptions", options: Options(details: true)) { (details: Details) in
+//            print("Have Details: \(details.caller)")
+//        }
+//        
+//        // Reg/Call
         register("registerNothing") {
+            print("Success registerNothing")
             assert(true)
         }
-        
-        // FAIL with no cumin enforcement present
-        register("registerPrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) -> (Int, Float, Double, String, Bool) in
-            assert(a == 1 && b == 2.2 && c == 3.3 && d == "4" && e == true)
-            return (a, b, c, d, e)
-        }
-        
-        register("registerArrays") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) -> ([Int], [Float], [Double], [String], [Bool]) in
-            assert(a == [1, 2] && b == [2.2, 3.3] && c == [4.4, 5.5] && d == ["6", "7"] && e == [true, false])
-            return (a, b, c, d, e)
-        }
-        
-        register("registerSinglePrimitive") { (a: Int) -> Int in
-            assert(a == 1)
-            return a
-        }
-        
-        register("registerModel") { (d: Dog) -> Dog in
-            assert(d.name == dog.name && d.age == dog.age)
-            return d
-        }
-        
-        register("registerModelArrays") { (d: [Dog]) -> [Dog] in
-            assert(d.count == 3)
-            assert(d[0].name == dog.name && d[0].age == dog.age && d[0].something == dog.something)
-            return d
-        }
-        
-        register("regDeferred") { (a: Int) -> Int in
-            return a
-        }
-        
-        register("registerOptions", options: Options(details: true)) { (details: Details) in
-            print("Have details: \(details.caller)")
-        }
-        
+//
+//        // FAIL with no cumin enforcement present
+//        register("registerPrimitives") { (a: Int, b: Float, c: Double, d: String, e: Bool) -> (Int, Float, Double, String, Bool) in
+//            assert(a == 1 && b == 2.2 && c == 3.3 && d == "4" && e == true)
+//            return (a, b, c, d, e)
+//        }
+//        
+//        register("registerArrays") { (a: [Int], b: [Float], c: [Double], d: [String], e: [Bool]) -> ([Int], [Float], [Double], [String], [Bool]) in
+//            assert(a == [1, 2] && b == [2.2, 3.3] && c == [4.4, 5.5] && d == ["6", "7"] && e == [true, false])
+//            return (a, b, c, d, e)
+//        }
+//        
+//        register("registerSinglePrimitive") { (a: Int) -> Int in
+//            assert(a == 1)
+//            return a
+//        }
+//        
+//        register("registerModel") { (d: Dog) -> Dog in
+//            assert(d.name == dog.name && d.age == dog.age)
+//            return d
+//        }
+//        
+//        register("registerModelArrays") { (d: [Dog]) -> [Dog] in
+//            assert(d.count == 3)
+//            assert(d[0].name == dog.name && d[0].age == dog.age && d[0].something == dog.something)
+//            return d
+//        }
+//        
+//        register("regDeferred") { (a: Int) -> Int in
+//            return a
+//        }
+//        
+//        register("registerOptions", options: Options(details: true)) { (details: Details) in
+//            print("Have details: \(details.caller)")
+//        }
+//        
         joinFinished()
     }
     
@@ -107,7 +113,12 @@ class Receiver: Domain {
 }
 
 class Sender: Domain {
-    var receiver: Receiver!
+    var receiver: Domain
+    
+    init(name: String, superdomain: Domain, peer: Domain) {
+        receiver = peer
+        super.init(name: name, superdomain: superdomain)
+    }
     
     func passingTests() {
         receiver.publish("subscribeNothing")
@@ -169,7 +180,15 @@ class Sender: Domain {
         print("Sender joined")
         //passingTests()
         
-        receiver.publish("subscribeOptions")
+        receiver.call("registerNothing").then {
+            print("Success registerNothing then")
+            assert(true)
+        }.error { error in
+            print("Error registerNothing: \(error)")
+        }
+        
+        // Fails- not enforced at the node
+        // receiver.publish("subscribeOptions")
     }
     
     override func onLeave() {

@@ -93,7 +93,7 @@ func (sess *session) Send(line string) {
 		return
 	}
 
-	Debug("Mantle invoking %v", n)
+	// Debug("Mantle invoking %v", n)
 	result := Callback{Id: n.cb}
 
 	if m, ok := Variables[n.target]; ok {
