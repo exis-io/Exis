@@ -17,7 +17,18 @@ Riffle.setFabricDev()
 // This is faking two seperate connections by creating another top level domain
 // Not intended for regular use
 
+class TesterDomain: Domain {
+    override func onJoin() {
+        print("Joined!")
+    }
+    
+    override func onLeave() {
+        print("Left!")
+    }
+}
+
 let app = AppDomain(name: "xs.tester")
+let t = TesterDomain(name: "test", superdomain: app)
 
 app.login()
 

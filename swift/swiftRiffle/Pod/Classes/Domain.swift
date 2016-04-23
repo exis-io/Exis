@@ -28,15 +28,19 @@ public class Domain: CoreClass {
         self.name = name
         self.app = app
         super.init()
-        // initCore("Domain", [name])
+        
+        let (join, leave) = assignDeletegateHandlers()
 
-        sendCore("NewDomain", handler: address, address: app.address, [name])
+        sendCore("NewDomain", handler: address, address: app.address, [name, join, leave])
     }
     
     public init(name: String, superdomain: Domain) {
         app = superdomain.app
         self.name = "\(superdomain.name).\(name)"
-        //mantleDomain = Subdomain(superdomain.mantleDomain, name.cString())
+        super.init()
+        
+        let (join, leave) = assignDeletegateHandlers()
+        sendCore("Subdomain", handler: address, address: superdomain.address, [name, join, leave])
     }
     
     func _subscribe(endpoint: String, _ types: [Any], options: Options, fn: [Any] -> ()) -> Deferred {
@@ -74,33 +78,28 @@ public class Domain: CoreClass {
     }
     
     public func join() -> Deferred {
-        // Should turn join into a handler method and register onJoin and onLeave, i think
-        // We don't really want a deferred here with the new Auth API
         return callCore("Join", [])
+    }
+    
+    // Creates a pair of delegate handlers and registers them with the session
+    func assignDeletegateHandlers() -> (UInt64, UInt64) {
+        let join = DomainHandler() { a in
+            self.onJoin()
+            
+            if let delegate = self.delegate {
+                delegate.onJoin()
+            }
+        }
         
-        //Join(mantleDomain, cb, eb)
+        let leave = DomainHandler() { a in
+            self.onLeave()
+            
+            if let delegate = self.delegate {
+                delegate.onLeave()
+            }
+        }
         
-//        app.handlers[cb] = { a in
-//            if let d = self.delegate {
-//                d.onJoin()
-//            } else {
-//                self.onJoin()
-//            }
-//        }
-        
-//        app.handlers[eb] = { (a: Any) in
-//            print("Unable to join: \(a)")
-//        }
-//        
-//        // Implementation differences in open source swift and apple swift. Should come together soon
-//        // based on swift 2.2 Grand Central Dispatch progress
-//        #if os(Linux)
-//            self.app.receive()
-//        #else
-//            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-//                self.app.receive()
-//            }
-//        #endif
+        return (join.id, leave.id)
     }
     
     
