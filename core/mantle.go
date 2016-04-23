@@ -43,7 +43,7 @@ type rpc struct {
 	cb      uint64        // The callback id to deliver the result on
 	eb      uint64        // errback id to deliver failure on
 	address uint64        // Multi use field- handler id and intended memory address for instantiations
-    object  uint64        // If this is an method call, use this field as the memory address
+	object  uint64        // If this is an method call, use this field as the memory address
 	args    []interface{} // Arguments to pass to the target
 }
 
@@ -74,7 +74,7 @@ func (s *session) Free(id uint64) {
 func NewSession() *session {
 	s := &session{
 		memory:   make(map[uint64]interface{}),
-		dispatch: make(chan Callback, 10),
+		dispatch: make(chan Callback, 100),
 	}
 
 	s.memory[1] = s
@@ -93,7 +93,7 @@ func (sess *session) Send(line string) {
 		return
 	}
 
-    Debug("Mantle invoking %v", n)
+	Debug("Mantle invoking %v", n)
 	result := Callback{Id: n.cb}
 
 	if m, ok := Variables[n.target]; ok {
@@ -119,9 +119,9 @@ func (sess *session) Send(line string) {
 	} else {
 		Warn("Unknown invocation: %v\n", n)
 
-        for address, ptr := range sess.memory {
-            Debug("Address: %d, pointer: %d", address, ptr)
-        }
+		for address, ptr := range sess.memory {
+			Debug("Address: %d, pointer: %d", address, ptr)
+		}
 
 		return
 	}
@@ -134,7 +134,7 @@ func (sess *session) Send(line string) {
 // not allowed as a variable value.
 // TODO: handle bad type conversions
 func handleVariable(v reflect.Value, n []interface{}) []interface{} {
-    //Debug("Variable: setting %v to %v", v.Type(), n)
+	//Debug("Variable: setting %v to %v", v.Type(), n)
 
 	if len(n) == 1 {
 		c := reflect.ValueOf(n[0]).Convert(v.Elem().Type())
@@ -145,33 +145,47 @@ func handleVariable(v reflect.Value, n []interface{}) []interface{} {
 }
 
 func (s *session) handleFunction(fn reflect.Value, n *rpc) ([]interface{}, error) {
-    ret, err := Cumin(fn.Interface(), n.args)
+	ret, err := Cumin(fn.Interface(), n.args)
 
-    if err != nil {
-        Warn("Function %v err: %s", fn, err.Error())
-        return nil , err
-    }
+	if err != nil {
+		Warn("Function %v err: %s", fn, err.Error())
+		return nil, err
+	}
 
-    // Debug("Function %v completed with %v %v", fn, ret, err)
+	//Debug("Function %v completed with %v %v", fn, ret, err)
 
-    // Check if any of the results returned are new instances. If so, allocate them memory 
-    for _, r := range ret {
-        i := reflect.TypeOf(r)
-        if i == nil {
-            break
-        }
+	// Check if any of the results returned are new instances. If so, allocate them memory
+	for _, r := range ret {
+		i := reflect.TypeOf(r)
+		if i == nil {
+			break
+		}
 
-        for _, t := range Types {
-            //fmt.Printf("Comparing %v to %v\n", i, t)
-            
-            if i.AssignableTo(t){
-               s.memory[n.address] = r
-               break
-            }
-        }
-    }
+		// Special case: if we get an app back we have to bind its callback channel to ours
+		if app, ok := r.(*app); ok {
+			go s.bindAppCallbacks(app)
+		}
 
-    return ret, nil
+		for _, t := range Types {
+			// fmt.Printf("Comparing %v to %v\n", i, t)
+
+			if i.AssignableTo(t) {
+				s.memory[n.address] = r
+				break
+			}
+		}
+	}
+
+	return ret, nil
+}
+
+// Tie the app's callbacks to our callbacks
+// TODO: when does this end?
+func (s *session) bindAppCallbacks(a *app) {
+	for {
+		c := <-a.up
+		s.dispatch <- c
+	}
 }
 
 func deserialize(j string) (*rpc, error) {
@@ -206,11 +220,11 @@ func deserialize(j string) (*rpc, error) {
 		n.address = uint64(s)
 	}
 
-    if s, ok := d[4].(float64); !ok {
-        return nil, fmt.Errorf("Couldn't parse message-- incorrect type at position 3. Got %v", d[4])
-    } else {
-        n.object = uint64(s)
-    }
+	if s, ok := d[4].(float64); !ok {
+		return nil, fmt.Errorf("Couldn't parse message-- incorrect type at position 3. Got %v", d[4])
+	} else {
+		n.object = uint64(s)
+	}
 
 	n.args = d[5:]
 	return n, nil
