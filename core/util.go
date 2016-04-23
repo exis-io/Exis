@@ -77,7 +77,7 @@ var (
 
 	// If this is set, core relies on this to generate IDs instead of its own logic
 	ExternalGenerator        IdGenerator       = nil
-	DefaultConnectionFactory ConnectionFactory = nil
+    DefaultConnectionFactory ConnectionFactory = nil
 )
 
 func NewID() uint64 {
@@ -164,6 +164,5 @@ func SetFabricLocal() {
 
 func SetConnectionFactory(f ConnectionFactory) error {
 	DefaultConnectionFactory = f
-	fmt.Printf("Setting connection factory to %v\n", DefaultConnectionFactory)
 	return nil
 }

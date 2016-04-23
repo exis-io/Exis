@@ -145,16 +145,22 @@ func handleVariable(v reflect.Value, n []interface{}) []interface{} {
 }
 
 func (s *session) handleFunction(fn reflect.Value, n *rpc) ([]interface{}, error) {
-	ret, err := Cumin(fn.Interface(), n.args)
+    ret, err := Cumin(fn.Interface(), n.args)
 
     if err != nil {
         Warn("Function %v err: %s", fn, err.Error())
         return nil , err
     }
 
+    // Debug("Function %v completed with %v %v", fn, ret, err)
+
     // Check if any of the results returned are new instances. If so, allocate them memory 
     for _, r := range ret {
         i := reflect.TypeOf(r)
+        if i == nil {
+            break
+        }
+
         for _, t := range Types {
             //fmt.Printf("Comparing %v to %v\n", i, t)
             

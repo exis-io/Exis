@@ -120,7 +120,6 @@ func (a *app) Join() error {
 		if DefaultConnectionFactory == nil {
 			return fmt.Errorf("App does not have a connection set. Call SetConnection(Connection) or set DefaultConnectionFactory")
 		} else {
-			fmt.Printf("Default connection is nil: %v\n", DefaultConnectionFactory)
 			if conn, err := DefaultConnectionFactory.Open(Fabric); err != nil {
 				return err
 			} else {

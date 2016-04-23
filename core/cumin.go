@@ -40,6 +40,7 @@ func Cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 		ret = append(ret, x.Interface())
 	}
 
+    //Debug("Cumin returning %v", ret)
 	// Catch any exceptions this produces and pass them to the function that sent them, or some kind of handler
 
 	return ret, nil
