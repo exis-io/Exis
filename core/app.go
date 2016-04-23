@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-// TODO: set the connection class seperately 
+// TODO: set the connection class seperately
 
 type App interface {
 	ReceiveBytes([]byte)
@@ -25,8 +25,9 @@ type App interface {
 	CallbackListen() Callback
 	CallbackSend(uint64, ...interface{})
 
-    Join() error
+	Join() error
 	SendHello() error
+	SetConnection(Connection)
 
 	SetToken(string)
 	GetToken() string
@@ -35,9 +36,9 @@ type App interface {
 	Login(Domain, ...string) (Domain, error)
 	RegisterAccount(Domain, string, string, string, string) (bool, error)
 
-    // Updated for new auth api
-    BetterLogin([]string) (string, error)
-    BetterRegister(string, string, string, string) (string, error)
+	// Updated for new auth api
+	BetterLogin([]string) (string, error)
+	BetterRegister(string, string, string, string) (string, error)
 
 	SetState(int)
 	ShouldReconnect() bool
@@ -49,14 +50,14 @@ type app struct {
 	Connection
 	serializer
 
-	in   chan message
-	out  chan message
-	up   chan Callback
+	in  chan message
+	out chan message
+	up  chan Callback
 
 	// Set to true if we are leaving.
 	// It tells the lower layer not to try to reconnect.
 	leaving bool
-    open bool
+	open    bool
 
 	state       int
 	stateMutex  sync.Mutex
@@ -65,11 +66,11 @@ type app struct {
 	listeners     map[uint64]chan message
 	listenersLock sync.Mutex
 
-    appDomain string
-	agent  string
-	authid string
-	token  string
-	key    string
+	appDomain string
+	agent     string
+	authid    string
+	token     string
+	key       string
 
 	retryDelay time.Duration
 }
@@ -85,7 +86,7 @@ func NewApp(name string) *app {
 		up:         make(chan Callback, 10),
 		listeners:  make(map[uint64]chan message),
 		token:      "",
-        appDomain: name,
+		appDomain:  name,
 		retryDelay: initialRetryDelay,
 	}
 
@@ -100,54 +101,68 @@ func NewApp(name string) *app {
 	return a
 }
 
+func (a *app) SetConnection(conn Connection) {
+	a.Connection = conn
+	conn.SetApp(a)
+}
+
 func (a *app) Join() error {
-    if  a.state != Disconnected {
-        return fmt.Errorf("Trying to connect, expecting connection state to be Disconnected, but is %s", a.state)
-    }
+	if a.state != Disconnected {
+		return fmt.Errorf("Trying to connect, expecting connection state to be Disconnected, but is %d", a.state)
+	}
 
-    // Handshake between the connection and the app
-    a.Connection = conn
-    conn.SetApp(a)
-    a.open = true
+	if a.Connection == nil {
+		return fmt.Errorf("App does not have a connection set. Call SetConnection(Connection) before join")
+	}
 
-    err := a.SendHello()
-    if err != nil {
-        c.app.Close("ERR: could not send a hello message")
-        return err
-    }
+	// Javascript connections will already be opened, so only open if not already opened
+	if !a.Connection.IsOpen() {
+		if err := a.Connection.Open(Fabric); err != nil {
+			return err
+		}
+	}
 
-    receivedWelcome := false
-    for !receivedWelcome {
-        msg, err := a.getMessageTimeout()
-        if err != nil {
-            a.Close(err.Error())
-            return err
-        }
+	// Merge this functionality with the state enum
+	a.open = true
 
-        switch msg := msg.(type) {
-        case *welcome:
-            receivedWelcome = true
-        case *challenge:
-            a.handleChallenge(msg)
-        default:
-            a.Send(&abort{Details: map[string]interface{}{}, Reason: "Error- unexpected_message_type"})
-            a.Close("Error- unexpected_message_type")
-            return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME.String()))
-        }
-    }
+	err := a.SendHello()
+	if err != nil {
+		a.Close("Could not send a hello message")
+		return err
+	}
 
-    a.SetState(Ready)
-    go a.receiveLoop()
+	receivedWelcome := false
+	for !receivedWelcome {
+		msg, err := a.getMessageTimeout()
+		if err != nil {
+			a.Close(err.Error())
+			return err
+		}
 
-    // This is deprecapted. Trigger joins manually
-    for _, x := range a.domains {
-        if !x.joined {
-            x.joined = true
-        }
-    }
+		switch msg := msg.(type) {
+		case *welcome:
+			receivedWelcome = true
+		case *challenge:
+			a.handleChallenge(msg)
+		default:
+			a.Send(&abort{Details: map[string]interface{}{}, Reason: "Error- unexpected_message_type"})
+			a.Close("Error- unexpected_message_type")
+			return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME.String()))
+		}
+	}
 
-    Info("Connection established")
-    return nil
+	a.SetState(Ready)
+	go a.receiveLoop()
+
+	// This is deprecapted. Trigger joins manually
+	for _, x := range a.domains {
+		if !x.joined {
+			x.joined = true
+		}
+	}
+
+	Info("Connection established")
+	return nil
 }
 
 func (a *app) CallbackListen() Callback {

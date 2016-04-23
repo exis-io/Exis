@@ -7,9 +7,11 @@ import (
 )
 
 type Connection interface {
+	Open(string) error
 	Send([]byte) error
 	Close(string) error
 	SetApp(App)
+	IsOpen() bool
 }
 
 // An external generator of ids based on platform differences
@@ -68,8 +70,9 @@ var (
 
 	ShouldLogLineNumber = true // Print the line that emitted the log
 
-    // If this is set, core relies on this to generate IDs instead of its own logic
-    ExternalGenerator IdGenerator = nil
+	// If this is set, core relies on this to generate IDs instead of its own logic
+	ExternalGenerator IdGenerator = nil
+	DefaultConnection Connection  = nil
 )
 
 func NewID() uint64 {
@@ -132,8 +135,8 @@ func SetLogLevelInfo()  { LogLevel = LogLevelInfo }
 func SetLogLevelDebug() { LogLevel = LogLevelDebug }
 
 func SetCuminStrict() { CuminLevel = CuminStrict }
-func SetCuminLoose() { CuminLevel = CuminLoose }
-func SetCuminOff() { CuminLevel = CuminOff }
+func SetCuminLoose()  { CuminLevel = CuminLoose }
+func SetCuminOff()    { CuminLevel = CuminOff }
 
 func SetFabricSandbox() {
 	Fabric = FabricSandbox

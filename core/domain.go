@@ -50,9 +50,9 @@ type boundEndpoint struct {
 func NewDomain(name string, a *app) Domain {
 	Debug("Creating domain %s", name)
 
-	if a == nil {
-		a = NewApp()
-	}
+	// if a == nil {
+	// 	a = NewApp()
+	// }
 
 	d := &domain{
 		app:               a,
@@ -90,8 +90,7 @@ func (d domain) GetName() string {
 	return d.name
 }
 
-// Accepts a connection that has just been opened. This method should only
-// be called once, to initialize the fabric
+// This method is deprecated
 func (c domain) Join(conn Connection) error {
 	if c.joined {
 		return fmt.Errorf("Domain %s is already joined", c.name)
@@ -148,6 +147,8 @@ func (c domain) Join(conn Connection) error {
 }
 
 func (c *domain) Leave() error {
+	// TODO: return an appropriate error if the app is not currently connected
+	// invoke crust onLeave
 	for _, v := range c.registrations {
 		c.Unregister(v.endpoint)
 	}
@@ -156,20 +157,6 @@ func (c *domain) Leave() error {
 		c.Unsubscribe(v.endpoint)
 	}
 
-	if dems, ok := removeDomain(c.app.domains, c); !ok {
-		return fmt.Errorf("WARN: couldn't find %v to remove!", c)
-	} else {
-		c.app.domains = dems
-	}
-
-	// if no domains remain, terminate the connection
-	if len(c.app.domains) == 0 || c.app.agent == c.name {
-		c.app.Close("No domains connected")
-	}
-
-	// TODO: If the domain representing the agent name leaves, should the entire conection be taken down?
-
-	// TODO: Trigger closing callbacks in the crust as needed
 	return nil
 }
 
@@ -179,7 +166,7 @@ func (c *domain) Leave() error {
 
 func (c domain) Subscribe(endpoint string, requestId uint64, types []interface{}, options map[string]interface{}) error {
 	endpoint = makeEndpoint(c.name, endpoint)
-    opts, optionsEndpoint := c.ProcessOptions(requestId, endpoint, options)
+	opts, optionsEndpoint := c.ProcessOptions(requestId, endpoint, options)
 	sub := &subscribe{Request: requestId, Options: opts, Name: optionsEndpoint}
 
 	if msg, err := c.app.requestListenType(sub, "*core.subscribed"); err != nil {
@@ -227,14 +214,14 @@ func (c domain) Publish(endpoint string, args []interface{}, options map[string]
 }
 
 func (c domain) Call(endpoint string, args []interface{}, options map[string]interface{}) ([]interface{}, error) {
-    id := NewID()
-    endpoint = makeEndpoint(c.name, endpoint)
-    options, _ = c.ProcessOptions(id, endpoint, options)
-    call := &call{Request: id, Name: endpoint, Options: options, Arguments: args}
-    Info("Calling %s %v", endpoint, args)
+	id := NewID()
+	endpoint = makeEndpoint(c.name, endpoint)
+	options, _ = c.ProcessOptions(id, endpoint, options)
+	call := &call{Request: id, Name: endpoint, Options: options, Arguments: args}
+	Info("Calling %s %v", endpoint, args)
 
-    // This is a call, so setup to listen for a yield message with our return values
-    if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
+	// This is a call, so setup to listen for a yield message with our return values
+	if msg, err := c.app.requestListenType(call, "*core.result"); err != nil {
 		return nil, err
 	} else {
 		return msg.(*result).Arguments, nil
@@ -253,10 +240,10 @@ func (c domain) ProcessOptions(requestId uint64, endpoint string, options map[st
 		c.handlers[requestId] = &boundEndpoint{handlerId, "", nil}
 	}
 
-    // This is a hack leftover from the original swift implementation 
-    if details, ok := options["details"]; ok && details.(bool) == true {
-        endpoint = endpoint + "#details"
-    }
+	// This is a hack leftover from the original swift implementation
+	if details, ok := options["details"]; ok && details.(bool) == true {
+		endpoint = endpoint + "#details"
+	}
 
 	if options == nil {
 		options = make(map[string]interface{})
