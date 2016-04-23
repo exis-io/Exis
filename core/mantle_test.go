@@ -13,9 +13,9 @@ func TestConstructors(t *testing.T) {
 		s.Send(`["NewApp", 10, 11, 12345, 0, "xs.test"]`)
 
 		Convey("Should create a memory reference to the new object", func() {
-			So(len(s.memory), ShouldEqual, 2)
+			So(s.memory.Count(), ShouldEqual, 2)
 
-			_, ok := s.memory[12345]
+			_, ok := s.memory.Get(12345)
 			So(ok, ShouldBeTrue)
 		})
 	})
@@ -28,7 +28,9 @@ func TestCallbacks(t *testing.T) {
 		s.Send(`["NewApp", 10, 11, 12345, 0, "xs.test"]`)
 		<-s.dispatch
 
-		app := s.memory[12345].(*app)
+		a, _ := s.memory.Get(12345)
+		app := a.(*app)
+
 		app.CallbackSend(999, "Alpha")
 
 		c := <-s.dispatch

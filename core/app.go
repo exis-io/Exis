@@ -305,29 +305,19 @@ func (c *app) handle(msg message) {
 
 	case *event:
 		for _, x := range c.domains {
-			x.subLock.RLock()
-			if binding, ok := x.subscriptions[msg.Subscription]; ok {
-				x.subLock.RUnlock()
-				Debug("Event %s (%d)", binding.endpoint, binding.callback)
+			if binding, ok := x.subscriptions.Get(msg.Subscription); ok {
 				go x.handlePublish(msg, binding)
 				return
-			} else {
-				x.subLock.RUnlock()
 			}
 		}
 
-		// We can't be delivered to a sub we don't have... right?
 		Warn("No handler registered for subscription:", msg.Subscription)
 
 	case *invocation:
 		for _, x := range c.domains {
-			x.regLock.RLock()
-			if binding, ok := x.registrations[msg.Registration]; ok {
-				x.regLock.RUnlock()
+			if binding, ok := x.registrations.Get(msg.Registration); ok {
 				go x.handleInvocation(msg, binding)
 				return
-			} else {
-				x.regLock.RUnlock()
 			}
 		}
 
@@ -351,8 +341,7 @@ func (c *app) handle(msg message) {
 			x := p.(bool)
 			if x {
 				for _, x := range c.domains {
-					if binding, ok := x.handlers[msg.Request]; ok {
-						// Debug("Result %s (%d)", binding.endpoint, binding.callback)
+					if binding, ok := x.handlers.Get(msg.Request); ok {
 						go x.handleResult(msg, binding)
 						return
 					}
@@ -466,7 +455,10 @@ func (c *app) requestListenType(outgoing message, expecting string) (message, er
 
 func (c *app) replayRegistrations() error {
 	for _, dom := range c.domains {
-		for oldregid, boundep := range dom.registrations {
+		for t := range dom.registrations.Iter() {
+			oldregid := t.Key
+			boundep := t.Val
+
 			register := &register{
 				Request: boundep.callback,
 				Options: make(map[string]interface{}),
@@ -477,13 +469,10 @@ func (c *app) replayRegistrations() error {
 				return err
 			} else {
 				reg := msg.(*registered)
-
 				Info("Registered: %s %v", boundep.endpoint, boundep.expectedTypes)
 
-				dom.regLock.Lock()
-				delete(dom.registrations, oldregid)
-				dom.registrations[reg.Registration] = boundep
-				dom.regLock.Unlock()
+				dom.registrations.RemoveKey(oldregid)
+				dom.registrations.Set(reg.Registration, boundep)
 			}
 		}
 	}
@@ -493,7 +482,10 @@ func (c *app) replayRegistrations() error {
 
 func (c *app) replaySubscriptions() error {
 	for _, dom := range c.domains {
-		for oldsubid, boundep := range dom.subscriptions {
+		for t := range dom.subscriptions.Iter() {
+			oldsubid := t.Key
+			boundep := t.Val
+
 			subscribe := &subscribe{
 				Request: boundep.callback,
 				Options: make(map[string]interface{}),
@@ -504,13 +496,10 @@ func (c *app) replaySubscriptions() error {
 				return err
 			} else {
 				sub := msg.(*subscribed)
-
 				Info("Subscribed: %s %v", boundep.endpoint, boundep.expectedTypes)
 
-				dom.subLock.Lock()
-				delete(dom.subscriptions, oldsubid)
-				dom.subscriptions[sub.Subscription] = boundep
-				dom.subLock.Unlock()
+				dom.subscriptions.RemoveKey(oldsubid)
+				dom.subscriptions.Set(sub.Subscription, boundep)
 			}
 		}
 	}

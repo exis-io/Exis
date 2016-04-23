@@ -77,7 +77,7 @@ var (
 
 	// If this is set, core relies on this to generate IDs instead of its own logic
 	ExternalGenerator        IdGenerator       = nil
-    DefaultConnectionFactory ConnectionFactory = nil
+	DefaultConnectionFactory ConnectionFactory = nil
 )
 
 func NewID() uint64 {
@@ -109,17 +109,6 @@ func formatUnknownMap(m map[string]interface{}) string {
 		s += fmt.Sprintf(" %s=%v", k, v)
 	}
 	return s
-}
-
-// Some data structure utility methods
-func bindingForEndpoint(bindings map[uint64]*boundEndpoint, endpoint string) (uint64, *boundEndpoint, bool) {
-	for id, p := range bindings {
-		if p.endpoint == endpoint {
-			return id, p, true
-		}
-	}
-
-	return 0, nil, false
 }
 
 func removeDomain(domains []*domain, target *domain) ([]*domain, bool) {

@@ -1,9 +1,6 @@
 package core
 
-import (
-	"fmt"
-	"sync"
-)
+import "fmt"
 
 type Domain interface {
 	Subdomain(string, uint64, uint64) Domain
@@ -34,12 +31,10 @@ type domain struct {
 	joined            bool
 	onJoin            uint64
 	onLeave           uint64
-	subscriptions     map[uint64]*boundEndpoint
-	registrations     map[uint64]*boundEndpoint
-	handlers          map[uint64]*boundEndpoint // generalized handlers for other purposes
+	subscriptions     BindingConcurrentMap
+	registrations     BindingConcurrentMap
+	handlers          BindingConcurrentMap // generalized handlers for other purposes
 	callResponseTypes map[uint64][]interface{}
-	subLock           sync.RWMutex
-	regLock           sync.RWMutex
 }
 
 type boundEndpoint struct {
@@ -58,9 +53,9 @@ func (a *app) NewDomain(name string, joincb uint64, leavecb uint64) Domain {
 		joined:            false,
 		onJoin:            joincb,
 		onLeave:           leavecb,
-		subscriptions:     make(map[uint64]*boundEndpoint),
-		registrations:     make(map[uint64]*boundEndpoint),
-		handlers:          make(map[uint64]*boundEndpoint),
+		subscriptions:     NewConcurrentBindingMap(),
+		registrations:     NewConcurrentBindingMap(),
+		handlers:          NewConcurrentBindingMap(),
 		callResponseTypes: make(map[uint64][]interface{}),
 	}
 
@@ -107,12 +102,12 @@ func (c *domain) Leave() error {
 		return fmt.Errorf("Cant leave while no connection is present")
 	}
 
-	for _, v := range c.registrations {
-		c.Unregister(v.endpoint)
+	for t := range c.registrations.Iter() {
+		c.Unregister(t.Val.endpoint)
 	}
 
-	for _, v := range c.subscriptions {
-		c.Unsubscribe(v.endpoint)
+	for t := range c.subscriptions.Iter() {
+		c.Unsubscribe(t.Val.endpoint)
 	}
 
 	c.app.CallbackSend(c.onLeave)
@@ -134,9 +129,7 @@ func (c domain) Subscribe(endpoint string, requestId uint64, types []interface{}
 	} else {
 		Info("Subscribed: %s %v", endpoint, types)
 		subbed := msg.(*subscribed)
-		c.subLock.Lock()
-		c.subscriptions[subbed.Subscription] = &boundEndpoint{requestId, endpoint, types}
-		c.subLock.Unlock()
+		c.subscriptions.Set(subbed.Subscription, &boundEndpoint{requestId, endpoint, types})
 		return nil
 	}
 }
@@ -151,9 +144,7 @@ func (c domain) Register(endpoint string, requestId uint64, types []interface{},
 	} else {
 		Info("Registered: %s %v", endpoint, types)
 		reg := msg.(*registered)
-		c.regLock.Lock()
-		c.registrations[reg.Registration] = &boundEndpoint{requestId, endpoint, types}
-		c.regLock.Unlock()
+		c.registrations.Set(reg.Registration, &boundEndpoint{requestId, endpoint, types})
 		return nil
 	}
 }
@@ -197,7 +188,7 @@ func (c domain) ProcessOptions(requestId uint64, endpoint string, options map[st
 		options["progress"] = true
 
 		// TODO: dont just pass the handler id, pass the types too for cumin enforcement
-		c.handlers[requestId] = &boundEndpoint{handlerId, "", nil}
+		c.handlers.Set(requestId, &boundEndpoint{handlerId, "", nil})
 	}
 
 	// This is a hack leftover from the original swift implementation
@@ -213,26 +204,18 @@ func (c domain) ProcessOptions(requestId uint64, endpoint string, options map[st
 }
 
 func (c domain) Unsubscribe(endpoint string) error {
-	// Return an error if not connected
-	// Delete crust registration
-
 	endpoint = makeEndpoint(c.name, endpoint)
 
-	c.subLock.RLock()
-	if id, _, ok := bindingForEndpoint(c.subscriptions, endpoint); !ok {
-		c.subLock.RUnlock()
+	if id, _, ok := c.subscriptions.GetWithEndpoint(endpoint); !ok {
 		return fmt.Errorf("domain %s is not registered with this client.", endpoint)
 	} else {
-		c.subLock.RUnlock()
 		sub := &unsubscribe{Request: NewID(), Subscription: id}
 
 		if _, err := c.app.requestListenType(sub, "*core.unsubscribed"); err != nil {
 			return err
 		} else {
 			Info("Unsubscribed: %s", endpoint)
-			c.subLock.Lock()
-			delete(c.subscriptions, id)
-			c.subLock.Unlock()
+			c.subscriptions.RemoveKey(id)
 			return nil
 		}
 	}
@@ -241,21 +224,16 @@ func (c domain) Unsubscribe(endpoint string) error {
 func (c domain) Unregister(endpoint string) error {
 	endpoint = makeEndpoint(c.name, endpoint)
 
-	c.regLock.RLock()
-	if id, _, ok := bindingForEndpoint(c.registrations, endpoint); !ok {
-		c.regLock.RUnlock()
+	if id, _, ok := c.registrations.GetWithEndpoint(endpoint); !ok {
 		return fmt.Errorf("domain %s is not registered with this domain.", endpoint)
 	} else {
-		c.regLock.RUnlock()
 		unregister := &unregister{Request: NewID(), Registration: id}
 
 		if _, err := c.app.requestListenType(unregister, "*core.unregistered"); err != nil {
 			return err
 		} else {
 			Info("Unregistered: %s", endpoint)
-			c.regLock.Lock()
-			delete(c.registrations, id)
-			c.regLock.Unlock()
+			c.registrations.RemoveKey(id)
 			return nil
 		}
 	}
@@ -263,10 +241,10 @@ func (c domain) Unregister(endpoint string) error {
 
 func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 	if err := SoftCumin(binding.expectedTypes, msg.Arguments); err == nil {
-        Info("Calling %s", binding.endpoint)
+		Info("Calling %s", binding.endpoint)
 		c.app.CallbackSend(binding.callback, append([]interface{}{msg.Request}, msg.Arguments...)...)
 	} else {
-        Info("Call failed: %s", err.Error())
+		Info("Call failed: %s", err.Error())
 		errorArguments := make([]interface{}, 0)
 		errorArguments = append(errorArguments, err.Error())
 
@@ -284,7 +262,7 @@ func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 
 func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
 	if err := SoftCumin(binding.expectedTypes, msg.Arguments); err == nil {
-        Info("Calling %s", binding.endpoint)
+		Info("Calling %s", binding.endpoint)
 		c.app.CallbackSend(binding.callback, msg.Arguments...)
 	} else {
 		Warn("%v", err)

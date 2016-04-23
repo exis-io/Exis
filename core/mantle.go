@@ -60,24 +60,23 @@ type Session interface {
 }
 
 type session struct {
-	memory   map[uint64]interface{} // "heap" space for this session
+	memory   ConcurrentMap // "heap" space for this session
 	dispatch chan Callback
 }
 
 // Free the given object from memory. Does not check for presence
 func (s *session) Free(id uint64) {
-	fmt.Println("Freeing memory: ", id)
-	delete(s.memory, id)
+	s.memory.RemoveKey(id)
 }
 
 // Creates a new session. The session has itself as the second memory address
 func NewSession() *session {
 	s := &session{
-		memory:   make(map[uint64]interface{}),
+		memory:   NewConcurrentMap(),
 		dispatch: make(chan Callback, 100),
 	}
 
-	s.memory[1] = s
+	s.memory.Set(1, s)
 	return s
 }
 
@@ -107,7 +106,7 @@ func (sess *session) Send(line string) {
 		} else {
 			result.Args = ret
 		}
-	} else if m, ok := sess.memory[n.object]; ok {
+	} else if m, ok := sess.memory.Get(n.object); ok {
 		v := reflect.ValueOf(m).MethodByName(n.target)
 
 		if ret, err := sess.handleFunction(v, n); err != nil {
@@ -119,8 +118,8 @@ func (sess *session) Send(line string) {
 	} else {
 		Warn("Unknown invocation: %v\n", n)
 
-		for address, ptr := range sess.memory {
-			Debug("Address: %d, pointer: %d", address, ptr)
+		for t := range sess.memory.Iter() {
+			Debug("Address: %d, pointer: %d", t.Key, t.Val)
 		}
 
 		return
@@ -170,7 +169,7 @@ func (s *session) handleFunction(fn reflect.Value, n *rpc) ([]interface{}, error
 			// fmt.Printf("Comparing %v to %v\n", i, t)
 
 			if i.AssignableTo(t) {
-				s.memory[n.address] = r
+				s.memory.Set(n.address, r)
 				break
 			}
 		}
