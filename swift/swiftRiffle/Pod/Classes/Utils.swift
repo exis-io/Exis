@@ -139,7 +139,7 @@ func switchTypes<A>(x: A) -> Any {
         case "Bool":
             return recode(x, Bool.self)
         default:
-            Riffle.warn("Unable to switch o/Applications/Utilities/Script Editor.apput app type: \(x.dynamicType)")
+            Riffle.warn("Unable to switch type: \(x.dynamicType)")
             return x
         }
     #else

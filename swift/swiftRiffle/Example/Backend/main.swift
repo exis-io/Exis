@@ -11,7 +11,7 @@ import Riffle
 // Required helper method for OSX backends
 initTypes(External(String.self, String.self), External(Int.self, Int.self), External(Double.self, Double.self), External(Float.self, Float.self), External(Bool.self, Bool.self))
 
-Riffle.setLogLevelDebug()
+Riffle.setLogLevelInfo()
 Riffle.setFabricDev()
 
 // This is faking two seperate connections by creating another top level domain
