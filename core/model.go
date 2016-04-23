@@ -22,7 +22,7 @@ type Model interface {
 func SetSession(appDomain Domain) Model {
 	// Note the hardcoded storage domain endpoint. Temporary!
 	s := "Storage"
-	return &model{storage: appDomain.Subdomain(s)}
+	return &model{storage: appDomain.Subdomain(s, 0, 0)}
 }
 
 // Executes the query against the collection

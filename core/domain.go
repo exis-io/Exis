@@ -6,7 +6,7 @@ import (
 )
 
 type Domain interface {
-	Subdomain(string) Domain
+	Subdomain(string, uint64, uint64) Domain
 	LinkDomain(string) Domain
 
 	Subscribe(string, uint64, []interface{}, map[string]interface{}) error
@@ -21,8 +21,9 @@ type Domain interface {
 	GetCallExpect(uint64) ([]interface{}, bool)
 	RemoveCallExpect(uint64)
 
-	Join(Connection) error
+	Join() error
 	Leave() error
+
 	GetApp() App
 	GetName() string
 }
@@ -31,6 +32,8 @@ type domain struct {
 	app               *app
 	name              string
 	joined            bool
+	onJoin            uint64
+	onLeave           uint64
 	subscriptions     map[uint64]*boundEndpoint
 	registrations     map[uint64]*boundEndpoint
 	handlers          map[uint64]*boundEndpoint // generalized handlers for other purposes
@@ -45,15 +48,16 @@ type boundEndpoint struct {
 	expectedTypes []interface{}
 }
 
-// Create a new domain. If no superdomain is provided, creates an app as well
-// If the app exists, has a connection, and is connected then immediately call onJoin on that domain
-func (a *app) NewDomain(name string) Domain {
+// Create a new domain. The handlers passed in are handlers for onLeave and onJoin, respectively
+func (a *app) NewDomain(name string, joincb uint64, leavecb uint64) Domain {
 	Debug("Creating domain %s", name)
 
 	d := &domain{
 		app:               a,
 		name:              name,
 		joined:            false,
+		onJoin:            joincb,
+		onLeave:           leavecb,
 		subscriptions:     make(map[uint64]*boundEndpoint),
 		registrations:     make(map[uint64]*boundEndpoint),
 		handlers:          make(map[uint64]*boundEndpoint),
@@ -64,16 +68,16 @@ func (a *app) NewDomain(name string) Domain {
 	return d
 }
 
-func (d domain) Subdomain(name string) Domain {
+func (d domain) Subdomain(name string, joincb uint64, leavecb uint64) Domain {
 	if name == "" {
-		return d.app.NewDomain(d.name)
+		return d.app.NewDomain(d.name, joincb, leavecb)
 	} else {
-		return d.app.NewDomain(d.name+"."+name)
+		return d.app.NewDomain(d.name+"."+name, joincb, leavecb)
 	}
 }
 
 func (d domain) LinkDomain(name string) Domain {
-	return d.app.NewDomain(name)
+	return d.app.NewDomain(name, 0, 0)
 }
 
 func (d domain) GetApp() App {
@@ -84,67 +88,24 @@ func (d domain) GetName() string {
 	return d.name
 }
 
-// This method is deprecated
-func (c domain) Join(conn Connection) error {
-	if c.joined {
-		return fmt.Errorf("Domain %s is already joined", c.name)
+// Join this domain, triggering its onJoin method
+func (c domain) Join() error {
+	if !c.app.open {
+		return fmt.Errorf("Cant join while no connection is present")
 	}
 
-	// Handshake between the connection and the app
-	c.app.Connection = conn
-	conn.SetApp(c.app)
-	c.app.open = true
+	c.joined = true
+	c.app.CallbackSend(c.onJoin)
 
-	// Set the agent string, or who WE are. When this domain leaves, termintate the connection
-	c.app.agent = c.name
-
-	err := c.app.SendHello()
-	if err != nil {
-		c.app.Close("ERR: could not send a hello message")
-		return err
-	}
-
-	receivedWelcome := false
-	for !receivedWelcome {
-		msg, err := c.app.getMessageTimeout()
-		if err != nil {
-			c.app.Close(err.Error())
-			return err
-		}
-
-		switch msg := msg.(type) {
-		case *welcome:
-			receivedWelcome = true
-		case *challenge:
-			c.app.handleChallenge(msg)
-		default:
-			c.app.Send(&abort{Details: map[string]interface{}{}, Reason: "Error- unexpected_message_type"})
-			c.app.Close("Error- unexpected_message_type")
-			return fmt.Errorf(formatUnexpectedMessage(msg, wELCOME.String()))
-		}
-	}
-
-	c.app.SetState(Ready)
-
-	// This is super dumb, and the reason its in here was fixed. Please revert
-	go c.app.receiveLoop()
-
-	// old contents of app.join. This functionality isn't needed anymore. Please revert
-	for _, x := range c.app.domains {
-		if !x.joined {
-			x.joined = true
-		}
-	}
-
-	Info("Domain %s joined", c.name)
 	return nil
 }
 
 // Disconnect this domain from the app connection. Removes all registrations
 // and subscriptions from this domain and calls its crust onLeave method
 func (c *domain) Leave() error {
-	// Return an error if not connected
-	// Call the crust onLeave
+	if !c.app.open {
+		return fmt.Errorf("Cant leave while no connection is present")
+	}
 
 	for _, v := range c.registrations {
 		c.Unregister(v.endpoint)
@@ -153,6 +114,8 @@ func (c *domain) Leave() error {
 	for _, v := range c.subscriptions {
 		c.Unsubscribe(v.endpoint)
 	}
+
+	c.app.CallbackSend(c.onLeave)
 
 	return nil
 }

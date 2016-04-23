@@ -138,7 +138,7 @@ func (a *app) Login(d Domain, args ...string) (Domain, error) {
 		if username == "" {
 			return d, nil
 		} else {
-			return d.Subdomain(username), nil
+			return d.Subdomain(username, 0, 0), nil
 		}
 	}
 

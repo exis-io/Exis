@@ -9,8 +9,6 @@ import (
 	"time"
 )
 
-// TODO: set the connection class seperately
-
 type App interface {
 	ReceiveBytes([]byte)
 	ReceiveMessage(message)
@@ -44,7 +42,7 @@ type App interface {
 	ShouldReconnect() bool
 	NextRetryDelay() time.Duration
 
-	NewDomain(string) Domain
+	NewDomain(string, uint64, uint64) Domain
 }
 
 type app struct {
@@ -165,11 +163,9 @@ func (a *app) Join() error {
 	a.SetState(Ready)
 	go a.receiveLoop()
 
-	// This is deprecapted. Trigger joins manually
+	// Go through each domain and trigger their onJoin methods
 	for _, x := range a.domains {
-		if !x.joined {
-			x.joined = true
-		}
+		x.Join()
 	}
 
 	Info("Fabric connection established")
