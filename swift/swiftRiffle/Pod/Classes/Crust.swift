@@ -28,6 +28,7 @@ func sendCore(target: String, deferred: Deferred, handler: UInt64, _ args: [Any]
     
     let json = JSON.from(invocation)
     let jsonString = json.serialize(DefaultJSONSerializer())
+    // print("Serialized string: \(jsonString)")
     
     Send(jsonString.cString())
     
@@ -39,7 +40,7 @@ public class CoreClass {
     let address = CBID()
     
     // Calls this class's constrcutor
-    func initCore(klass: String, _ args: Any...) {
+    func initCore(klass: String, _ args: [Any]) {
         sendCore("New\(klass)", handler: address, args)
     }
     

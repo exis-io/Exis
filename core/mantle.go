@@ -94,7 +94,7 @@ func (sess *session) Send(line string) {
 		return
 	}
 
-    //fmt.Printf("Invoking %v\n", n)
+    fmt.Printf("Invoking %v\n", n)
 	result := Callback{Id: n.cb}
 
 	if m, ok := Variables[n.target]; ok {
@@ -146,10 +146,10 @@ func handleVariable(v reflect.Value, n []interface{}) []interface{} {
 }
 
 func (s *session) handleFunction(fn reflect.Value, n *rpc) ([]interface{}, error) {
-    //Debug("Function: calling %v with %v", fn.Type(), args)
 	ret, err := Cumin(fn.Interface(), n.args)
 
     if err != nil {
+        fmt.Printf("Error detected %s", err.Error())
         return nil , err
     }
 
@@ -157,9 +157,11 @@ func (s *session) handleFunction(fn reflect.Value, n *rpc) ([]interface{}, error
     for _, r := range ret {
         i := reflect.TypeOf(r)
         for _, t := range Types {
+            //fmt.Printf("Comparing %v to %v\n", i, t)
+            
             if i.AssignableTo(t){
-               // fmt.Println("Instance detected ", i)
                s.memory[n.address] = r
+               break
             }
         }
     }

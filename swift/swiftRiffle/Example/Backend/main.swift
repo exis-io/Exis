@@ -19,7 +19,7 @@ Riffle.setFabricDev()
 
 let app = AppDomain(name: "xs.tester")
 
-app.login()
+//app.login()
 
 
 //let receiver = Receiver(name: "receiver", superdomain: app)

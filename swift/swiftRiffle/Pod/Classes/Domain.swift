@@ -28,7 +28,7 @@ public class Domain: CoreClass {
         self.name = name
         self.app = app
         super.init()
-        initCore("Domain", name)
+        initCore("Domain", [name])
     }
     
     public init(name: String, superdomain: Domain) {
