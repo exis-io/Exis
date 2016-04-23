@@ -22,27 +22,28 @@ type WebsocketConnection struct {
 	url         string
 }
 
-func NewConnection() *WebsocketConnection {
-	return &WebsocketConnection{closed: true}
-}
+type ConnectionFactory struct{}
 
-func (ep *WebsocketConnection) Open(url string) error {
+func (c ConnectionFactory) Open(url string) (*WebsocketConnection, error) {
 	core.Debug("Opening ws connection to %s", url)
 	dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
 
 	if conn, _, err := dialer.Dial(url, nil); err != nil {
 		core.Debug("Cant dial connection: %e", err)
-		return err
+		return nil, err
 	} else {
 
-		ep.closed = false
-		ep.conn = conn
-		ep.lock = &sync.Mutex{}
-		ep.payloadType = websocket.TextMessage
-		ep.url = url
+		connection := &WebsocketConnection{
+			conn:        conn,
+			closed:      false,
+			conn:        conn,
+			lock:        &sync.Mutex{},
+			payloadType: websocket.TextMessage,
+			url:         url,
+		}
 
 		go connection.run()
-		return nil
+		return connection, nil
 	}
 }
 

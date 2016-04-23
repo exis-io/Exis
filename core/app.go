@@ -101,6 +101,8 @@ func NewApp(name string) *app {
 	return a
 }
 
+// This method is specific for javascript since the connection is injected there
+// Call this before calling Join with an opened connection
 func (a *app) SetConnection(conn Connection) {
 	a.Connection = conn
 	conn.SetApp(a)
@@ -111,14 +113,20 @@ func (a *app) Join() error {
 		return fmt.Errorf("Trying to connect, expecting connection state to be Disconnected, but is %d", a.state)
 	}
 
+	// Make sure the connection is opened
 	if a.Connection == nil {
-		return fmt.Errorf("App does not have a connection set. Call SetConnection(Connection) before join")
-	}
-
-	// Javascript connections will already be opened, so only open if not already opened
-	if !a.Connection.IsOpen() {
-		if err := a.Connection.Open(Fabric); err != nil {
-			return err
+		if DefaultConnectionFactory == nil {
+			return fmt.Errorf("App does not have a connection set. Call SetConnection(Connection) or set DefaultConnectionFactory")
+		} else {
+			if conn, err := DefaultConnectionFactory.Open(Fabric); err != nil {
+				return err
+			} else {
+				a.Connection = conn
+			}
+		}
+	} else {
+		if !a.Connection.IsOpen() {
+			return fmt.Errorf("App does not have an opened connection. Was SetConnection(Connection) called with an opened connection?")
 		}
 	}
 
@@ -161,7 +169,7 @@ func (a *app) Join() error {
 		}
 	}
 
-	Info("Connection established")
+	Info("Fabric connection established")
 	return nil
 }
 

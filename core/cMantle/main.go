@@ -5,6 +5,7 @@ import (
 	"C"
 
 	"github.com/exis-io/core"
+    "github.com/exis-io/core/shared"
 )
 
 // TODO: Passing in the connection, AppDomain and regular domain refactoring
@@ -19,6 +20,7 @@ func CBID() uint64 {
 }
 
 var sess = core.NewSession()
+core.DefaultConnectionFactory = shared.ConnectionFactory{}
 
 //export Send
 func Send(i *C.char) {

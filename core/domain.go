@@ -146,9 +146,12 @@ func (c domain) Join(conn Connection) error {
 	return nil
 }
 
+// Disconnect this domain from the app connection. Removes all registrations
+// and subscriptions from this domain and calls its crust onLeave method
 func (c *domain) Leave() error {
-	// TODO: return an appropriate error if the app is not currently connected
-	// invoke crust onLeave
+	// Return an error if not connected
+	// Call the crust onLeave
+
 	for _, v := range c.registrations {
 		c.Unregister(v.endpoint)
 	}
@@ -253,6 +256,9 @@ func (c domain) ProcessOptions(requestId uint64, endpoint string, options map[st
 }
 
 func (c domain) Unsubscribe(endpoint string) error {
+	// Return an error if not connected
+	// Delete crust registration
+
 	endpoint = makeEndpoint(c.name, endpoint)
 
 	c.subLock.RLock()
@@ -321,7 +327,6 @@ func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
 	if err := SoftCumin(binding.expectedTypes, msg.Arguments); err == nil {
 		c.app.CallbackSend(binding.callback, msg.Arguments...)
 	} else {
-		// TODO: warn application level code at some well-known location
 		Warn("%v", err)
 	}
 }
@@ -332,7 +337,6 @@ func (c *domain) handleResult(msg *result, binding *boundEndpoint) {
 	if err := SoftCumin(binding.expectedTypes, msg.Arguments); err == nil {
 		c.app.CallbackSend(binding.callback, msg.Arguments...)
 	} else {
-		// TODO: warn application level code at some well-known location
 		Warn("%v", err)
 	}
 }

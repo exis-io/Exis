@@ -7,11 +7,16 @@ import (
 )
 
 type Connection interface {
-	Open(string) error
 	Send([]byte) error
 	Close(string) error
 	SetApp(App)
 	IsOpen() bool
+}
+
+// Factory for creating new connections. If the AppDomain is not
+// explictly passed an open connection it invokes this factory to create new connections
+type ConnectionFactory interface {
+	Open(string) (Connection, error)
 }
 
 // An external generator of ids based on platform differences
@@ -71,8 +76,8 @@ var (
 	ShouldLogLineNumber = true // Print the line that emitted the log
 
 	// If this is set, core relies on this to generate IDs instead of its own logic
-	ExternalGenerator IdGenerator = nil
-	DefaultConnection Connection  = nil
+	ExternalGenerator        IdGenerator       = nil
+	DefaultConnectionFactory ConnectionFactory = nil
 )
 
 func NewID() uint64 {
