@@ -54,13 +54,12 @@ func (ep *WebsocketConnection) Send(data []byte) error {
 	ep.lock.Lock()
 	defer ep.lock.Unlock()
 
-    core.Debug("Trying to send data %v", data)
 	if err := ep.conn.WriteMessage(ep.payloadType, data); err != nil {
 		core.Warn("Error writing to socket: %s", err)
-        return err
+		return err
 	}
 
-	return nil 
+	return nil
 }
 
 func (ep *WebsocketConnection) SetApp(app core.App) {

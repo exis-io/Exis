@@ -163,6 +163,7 @@ func SetFabricLocal() {
 }
 
 func SetConnectionFactory(f ConnectionFactory) error {
-    DefaultConnectionFactory = f
-    return nil 
+	DefaultConnectionFactory = f
+	fmt.Printf("Setting connection factory to %v\n", DefaultConnectionFactory)
+	return nil
 }

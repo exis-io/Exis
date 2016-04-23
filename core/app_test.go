@@ -1,11 +1,10 @@
 package core
 
 import (
-    "testing"
+	"testing"
 
-    . "github.com/smartystreets/goconvey/convey"
+	. "github.com/smartystreets/goconvey/convey"
 )
-
 
 //
 // Below is a test RSA key for validating our CRA implementation.  This key is
@@ -70,24 +69,4 @@ func TestSigning(t *testing.T) {
 			So(sig, ShouldEqual, TEST_SIGNATURE)
 		})
 	})
-}
-
-
-func TestDefaultConnection(t *testing.T) {
-    Convey("Decoding private key", t, func() {
-        Convey("Should produce rsa.PrivateKey object", func() {
-            _, err := DecodePrivateKey([]byte(TEST_RSA_PRIVATEKEY))
-            So(err, ShouldBeNil)
-        })
-
-        Convey("Should fail for junk data", func() {
-            _, err := DecodePrivateKey([]byte("aoeu"))
-            So(err, ShouldNotBeNil)
-        })
-
-        Convey("Should fail for public key", func() {
-            _, err := DecodePrivateKey([]byte(TEST_RSA_PUBLICKEY))
-            So(err, ShouldNotBeNil)
-        })
-    })
 }

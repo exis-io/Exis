@@ -1,6 +1,11 @@
 package riffle
 
-import "github.com/exis-io/core"
+import (
+	"github.com/exis-io/core"
+	"github.com/exis-io/core/shared"
+)
+
+var n = core.SetConnectionFactory(shared.ConnectionFactory{})
 
 // Mantle only wrapper that holds onto handlers
 // TODO: merge the handlers into one data structure, store reg/sub data in the boundHandler stuct

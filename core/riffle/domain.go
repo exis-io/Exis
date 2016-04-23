@@ -1,9 +1,6 @@
 package riffle
 
-import (
-	"github.com/exis-io/core"
-	"github.com/exis-io/core/shared"
-)
+import "github.com/exis-io/core"
 
 // A wrapper around the core domain. Re-exposes the methods from the core
 
@@ -51,7 +48,7 @@ func NewDomain(name string) Domain {
 		closing:       make(chan bool, 1),
 	}
 
-	d := domain{core.NewDomain(name, nil), &a}
+	d := domain{app.NewDomain(name), &a}
 	a.coreApp = d.coreDomain.GetApp()
 
 	// TEMPORARY TESTING FOR MODELS
@@ -78,17 +75,17 @@ func (d domain) Subdomain(name string) Domain {
 }
 
 func (d domain) Join() error {
-	if c, err := shared.Open(core.Fabric); err != nil {
-		return err
-	} else if err := d.coreDomain.Join(c); err != nil {
-		return err
-	} else {
-		// TEMPORARY TESTING
-		//TestCoreModels(core.SetSession(appDomain))
+	// if c, err := shared.Open(core.Fabric); err != nil {
+	// 	return err
+	// } else if err := d.coreDomain.Join(c); err != nil {
+	// 	return err
+	// } else {
+	// 	// TEMPORARY TESTING
+	// 	//TestCoreModels(core.SetSession(appDomain))
 
-		go d.mantleApp.run()
-		return nil
-	}
+	// 	go d.mantleApp.run()
+	return nil
+	// }
 }
 
 // Block and listen until the connection closes

@@ -11,9 +11,9 @@ import (
 func TestCoreModels(m core.Model) {
 	// m.Query("collection/find", "Dog", nil)
 
-	m.Find("Dog", nil)
+	// m.Find("Dog", nil)
 
-	m.Create("Dog", map[string]interface{}{"name": "Joe"})
+	// m.Create("Dog", map[string]interface{}{"name": "Joe"})
 
-	m.Count("Dog")
+	// m.Count("Dog")
 }
