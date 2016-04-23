@@ -30,4 +30,8 @@ let receiver = Receiver(name: "receiver", superdomain: app, done: {
 })
 
 app.login()
-app.listen()
+
+//app.listen()
+
+print("And now the backround loop freezes")
+NSRunLoop.currentRunLoop().run()

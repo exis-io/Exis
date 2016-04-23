@@ -78,7 +78,7 @@ class Session {
         
         while true {
             var (i, args) = decode(Receive())
-            print("Crust session has \(i): \(args)")
+            // print("Crust session has \(i): \(args)")
             
             if i == 0 {
                 receiving = false
@@ -91,6 +91,8 @@ class Session {
                 print("Unhandled invocation: \(i), \(args)")
             }
         }
+        
+        print("Crust session closing")
     }
 }
 
@@ -110,17 +112,19 @@ class DomainHandler: Handler {
     }
     
     func invoke(id: UInt64, args: [Any]) {
-        self.curriedHandler(args)
-
         // This is never called if the runloop is processing. Be careful with this
-//        #if os(Linux)
-//            curriedHandler(args)
-//        #else
+        #if os(Linux)
+            curriedHandler(args)
+        #else
 //            dispatch_async(dispatch_get_main_queue()) {
-//                print(1)
+//                print("Async invocation triggering")
 //                self.curriedHandler(args)
 //            }
-//        #endif
+            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
+                self.curriedHandler(args)
+            })
+        #endif
     }
     
     func destroy() {
