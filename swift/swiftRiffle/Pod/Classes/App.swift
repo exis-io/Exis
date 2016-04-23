@@ -12,6 +12,14 @@ import Mantle
 public class AppDomain: Domain {
     public init(name: String) {
         super.init(name: name, app: CoreApp(name: name))
+        
+        // Kick off the session receive loop if it isn't already started
+        // TODO: figure out threading implementation for Ubuntu
+        if !Session.receiving {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
+                Session.receive()
+            })
+        }
     }
     
     // If a previous session was suspended attempt to log back in with those same credentials

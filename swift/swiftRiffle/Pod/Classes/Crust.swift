@@ -64,12 +64,16 @@ public class CoreClass {
 // the core push us messages wrt removing handlers. Seems reasonable?
 class Session {
     static var handlers: [UInt64: Handler] = [:]
+    static var receiving = false
     
     class func receive() {
+        receiving = true
+        
         while true {
             var (i, args) = decode(Receive())
 
             if i == 0 {
+                receiving = false
                 break
             }
 

@@ -161,3 +161,8 @@ func SetFabricLocal() {
 	Fabric = FabricLocal
 	Registrar = RegistrarLocal
 }
+
+func SetConnectionFactory(f ConnectionFactory) error {
+    DefaultConnectionFactory = f
+    return nil 
+}

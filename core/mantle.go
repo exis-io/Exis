@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
-	"strings"
 )
 
 // Mentle version 2. Reflects the core, handles invocations, and manages memory based on the reflected
@@ -76,7 +75,7 @@ func (s *session) Free(id uint64) {
 func NewSession() *session {
 	s := &session{
 		memory:   make(map[uint64]interface{}),
-		dispatch: make(chan Callback, 0),
+		dispatch: make(chan Callback, 10),
 	}
 
 	s.memory[1] = s
@@ -103,30 +102,28 @@ func (sess *session) Send(line string) {
 	} else if m, ok := Consts[n.target]; ok {
 		result.Args = []interface{}{m.Interface()}
 	} else if m, ok := Functions[n.target]; ok {
-		if ret, err := handleFunction(m, n.args); err != nil {
+		if ret, err := sess.handleFunction(m, n); err != nil {
 			result.Id = n.eb
 			result.Args = []interface{}{err.Error()}
 		} else {
-			if handleConstructor(n.target, n.address, sess.memory, ret) {
-				result.Args = []interface{}{n.address}
-			} else {
-				result.Args = ret
-			}
-
-			result.Id = n.cb
+			result.Args = ret
 		}
 	} else if m, ok := sess.memory[n.address]; ok {
 		v := reflect.ValueOf(m).MethodByName(n.target)
 
-		if ret, err := handleFunction(v, n.args); err != nil {
+		if ret, err := sess.handleFunction(v, n); err != nil {
 			result.Id = n.eb
 			result.Args = []interface{}{err.Error()}
 		} else {
-			result.Id = n.cb
 			result.Args = ret
 		}
 	} else {
 		Warn("Unknown invocation: %v\n", n)
+
+        for address, ptr := range sess.memory {
+            Debug("Address: %d, pointer: %d", address, ptr)
+        }
+
 		return
 	}
 
@@ -148,30 +145,26 @@ func handleVariable(v reflect.Value, n []interface{}) []interface{} {
 	return []interface{}{v.Elem()}
 }
 
-func handleFunction(fn reflect.Value, args []interface{}) ([]interface{}, error) {
+func (s *session) handleFunction(fn reflect.Value, n *rpc) ([]interface{}, error) {
     //Debug("Function: calling %v with %v", fn.Type(), args)
-	return Cumin(fn.Interface(), args)
-}
+	ret, err := Cumin(fn.Interface(), n.args)
 
-// Checks to see if a function invocation instantiated an object by checking the string of the target.
-// By convention constructors must be named "New[TypeName]" and return pointers.
-// If found and memory has been allocated for the given pointer, return true
-func handleConstructor(target string, address uint64, memory map[uint64]interface{}, invocationResult []interface{}) bool {
-	if len(invocationResult) != 1 {
-		return false
-	}
+    if err != nil {
+        return nil , err
+    }
 
-	if strings.Index(target, "New") != -1 {
-		split := strings.Split(target, "New")
+    // Check if any of the results returned are new instances. If so, allocate them memory 
+    for _, r := range ret {
+        i := reflect.TypeOf(r)
+        for _, t := range Types {
+            if i.AssignableTo(t){
+               // fmt.Println("Instance detected ", i)
+               s.memory[n.address] = r
+            }
+        }
+    }
 
-		if len(split) == 2 && split[0] == "" {
-            //Debug("Object: instantiated %s", split[1])
-			memory[address] = invocationResult[0]
-			return true
-		}
-	}
-
-	return false
+    return ret, nil
 }
 
 func deserialize(j string) (*rpc, error) {

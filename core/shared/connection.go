@@ -24,7 +24,7 @@ type WebsocketConnection struct {
 
 type ConnectionFactory struct{}
 
-func (c ConnectionFactory) Open(url string) (*WebsocketConnection, error) {
+func (c ConnectionFactory) Open(url string) (core.Connection, error) {
 	core.Debug("Opening ws connection to %s", url)
 	dialer := websocket.Dialer{Subprotocols: []string{"wamp.2.json"}}
 
@@ -36,7 +36,6 @@ func (c ConnectionFactory) Open(url string) (*WebsocketConnection, error) {
 		connection := &WebsocketConnection{
 			conn:        conn,
 			closed:      false,
-			conn:        conn,
 			lock:        &sync.Mutex{},
 			payloadType: websocket.TextMessage,
 			url:         url,

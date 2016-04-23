@@ -19,8 +19,9 @@ func CBID() uint64 {
 	return core.NewID()
 }
 
+// The results of this are not used, but we'd like to call it at the top level 
+var n = core.SetConnectionFactory(shared.ConnectionFactory{})
 var sess = core.NewSession()
-core.DefaultConnectionFactory = shared.ConnectionFactory{}
 
 //export Send
 func Send(i *C.char) {

@@ -7,6 +7,7 @@ var Types = map[string]reflect.Type{
 	"App": reflect.TypeOf((*App)(nil)).Elem(),
 	"Callback": reflect.TypeOf((*Callback)(nil)).Elem(),
 	"Connection": reflect.TypeOf((*Connection)(nil)).Elem(),
+	"ConnectionFactory": reflect.TypeOf((*ConnectionFactory)(nil)).Elem(),
 	"Domain": reflect.TypeOf((*Domain)(nil)).Elem(),
 	"IdGenerator": reflect.TypeOf((*IdGenerator)(nil)).Elem(),
 	"InvalidURIError": reflect.TypeOf((*InvalidURIError)(nil)).Elem(),
@@ -43,6 +44,7 @@ var Functions = map[string]reflect.Value{
 	"NewDomain": reflect.ValueOf(NewDomain),
 	"NewID": reflect.ValueOf(NewID),
 	"NewSession": reflect.ValueOf(NewSession),
+	"SetConnectionFactory": reflect.ValueOf(SetConnectionFactory),
 	"SetCuminLoose": reflect.ValueOf(SetCuminLoose),
 	"SetCuminOff": reflect.ValueOf(SetCuminOff),
 	"SetCuminStrict": reflect.ValueOf(SetCuminStrict),
@@ -64,6 +66,7 @@ var Functions = map[string]reflect.Value{
 
 var Variables = map[string]reflect.Value{
 	"CuminLevel": reflect.ValueOf(&CuminLevel),
+	"DefaultConnectionFactory": reflect.ValueOf(&DefaultConnectionFactory),
 	"ExternalGenerator": reflect.ValueOf(&ExternalGenerator),
 	"Fabric": reflect.ValueOf(&Fabric),
 	"LogLevel": reflect.ValueOf(&LogLevel),

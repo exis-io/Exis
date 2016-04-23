@@ -14,8 +14,8 @@ initTypes(External(String.self, String.self), External(Int.self, Int.self), Exte
 Riffle.setLogLevelDebug()
 Riffle.setFabricDev()
 
-//// This is faking two seperate connections by creating another top level domain
-//// Not intended for regular use
+// This is faking two seperate connections by creating another top level domain
+// Not intended for regular use
 
 let app = AppDomain(name: "xs.tester")
 
