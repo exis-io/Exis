@@ -14,16 +14,22 @@ import Mantle
 // This overload does not take a handler id
 func sendCore(target: String, _ args: [Any]) -> Deferred {
     let d = Deferred()
-    return sendCore(target, deferred: d, handler: 1, args)
+    return sendCore(target, deferred: d, handler: 0, address: 0, args)
 }
 
 func sendCore(target: String, handler: UInt64, _ args: [Any]) -> Deferred {
     let d = Deferred()
-    return sendCore(target, deferred: d, handler: handler, args)
+    return sendCore(target, deferred: d, handler: handler, address: 0, args)
 }
 
-func sendCore(target: String, deferred: Deferred, handler: UInt64, _ args: [Any]) -> Deferred {
-    var invocation: [Any] = [target, deferred.cb, deferred.eb, handler]
+
+func sendCore(target: String, handler: UInt64, address: UInt64, _ args: [Any]) -> Deferred {
+    let d = Deferred()
+    return sendCore(target, deferred: d, handler: handler, address: address, args)
+}
+
+func sendCore(target: String, deferred: Deferred, handler: UInt64, address: UInt64, _ args: [Any]) -> Deferred {
+    var invocation: [Any] = [target, deferred.cb, deferred.eb, handler, address]
     invocation.appendContentsOf(args)
     
     let json = JSON.from(invocation)
@@ -46,15 +52,15 @@ public class CoreClass {
     
     // Call a core method on this object
     func callCore(target: String, _ args: [Any]) -> Deferred {
-        return sendCore(target, handler: address, args)
+        return sendCore(target, handler: 0, address: address, args)
     }
     
     func callCore(target: String, deferred: Deferred, _ args: [Any]) -> Deferred {
-        return sendCore(target, deferred: deferred, handler: address, args)
+        return sendCore(target, deferred: deferred, handler: 0, address: address, args)
     }
     
     deinit {
-        // We may have to manually call "leave" on domains and app domains
+        // We may have to manually call "leave" on domains and app domains, they have reference cycles in the core
         sendCore("Free", handler: 1, [address])
     }
 }
@@ -92,7 +98,7 @@ class Session {
         if let handler = handlers[i] {
             handler.invoke(i, args: arguments)
         } else {
-            Riffle.warn("Unhandled invocation: \(i)")
+            Riffle.warn("Unhandled invocation: \(i), \(arguments)")
         }
     }
 }

@@ -198,15 +198,15 @@ func (a *app) RegisterAccount(d Domain, username string, password string, email 
 
 // Login version 2-- take an explicit string and an array instead of a variadic
 // Returns the name the login returned
-func (a *app) BetterLogin(args []string) (string, error) {
+func (a *app) BetterLogin(args []interface{}) (string, error) {
 	username := ""
 	password := ""
 
 	if len(args) == 2 {
-		username = args[0]
-		password = args[1]
+		username = args[0].(string)
+		password = args[1].(string)
 	} else if len(args) == 1 {
-		username = args[0]
+		username = args[0].(string)
 	} else if len(args) != 0 {
 		return "", fmt.Errorf("Login must be called with 0, 1 or 2 arguments. ([username [, password]]).")
 	}
@@ -281,7 +281,7 @@ func (a *app) BetterRegister(username string, password string, email string, nam
 			result := string(body)
 			return "", fmt.Errorf(result)
 		} else {
-			return a.BetterLogin([]string{username, password})
+			return a.BetterLogin([]interface{}{username, password})
 		}
 	}
 

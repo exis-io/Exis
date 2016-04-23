@@ -37,12 +37,14 @@ type App interface {
 	RegisterAccount(Domain, string, string, string, string) (bool, error)
 
 	// Updated for new auth api
-	BetterLogin([]string) (string, error)
+	BetterLogin([]interface{}) (string, error)
 	BetterRegister(string, string, string, string) (string, error)
 
 	SetState(int)
 	ShouldReconnect() bool
 	NextRetryDelay() time.Duration
+
+    NewDomain(string) Domain
 }
 
 type app struct {

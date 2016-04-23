@@ -151,28 +151,11 @@ func toList(msg message) []interface{} {
 // Serialize encodes a Message into a msgpack payload.
 func (s *messagePackSerializer) serialize(msg message) ([]byte, error) {
 	return nil, nil
-	// var b []byte
-	// return b, codec.NewEncoderBytes(&b, new(codec.MsgpackHandle)).Encode(toList(msg))
 }
 
 // Deserialize decodes a msgpack payload into a Message.
 func (s *messagePackSerializer) deserialize(data []byte) (message, error) {
 	return nil, nil
-	// var arr []interface{}
-	// if err := codec.NewDecoderBytes(data, new(codec.MsgpackHandle)).Decode(&arr); err != nil {
-	// 	return nil, err
-	// } else if len(arr) == 0 {
-	// 	return nil, fmt.Errorf("Invalid message")
-	// }
-
-	// var msgType messageType
-	// if typ, ok := arr[0].(int64); ok {
-	// 	msgType = messageType(typ)
-	// } else {
-	// 	return nil, fmt.Errorf("Unsupported message format")
-	// }
-
-	// return apply(msgType, arr)
 }
 
 // Deserialize decodes a msgpack payload into a Message.

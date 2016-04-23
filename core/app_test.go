@@ -71,3 +71,23 @@ func TestSigning(t *testing.T) {
 		})
 	})
 }
+
+
+func TestDefaultConnection(t *testing.T) {
+    Convey("Decoding private key", t, func() {
+        Convey("Should produce rsa.PrivateKey object", func() {
+            _, err := DecodePrivateKey([]byte(TEST_RSA_PRIVATEKEY))
+            So(err, ShouldBeNil)
+        })
+
+        Convey("Should fail for junk data", func() {
+            _, err := DecodePrivateKey([]byte("aoeu"))
+            So(err, ShouldNotBeNil)
+        })
+
+        Convey("Should fail for public key", func() {
+            _, err := DecodePrivateKey([]byte(TEST_RSA_PUBLICKEY))
+            So(err, ShouldNotBeNil)
+        })
+    })
+}

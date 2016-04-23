@@ -47,12 +47,8 @@ type boundEndpoint struct {
 
 // Create a new domain. If no superdomain is provided, creates an app as well
 // If the app exists, has a connection, and is connected then immediately call onJoin on that domain
-func NewDomain(name string, a *app) Domain {
+func (a *app) NewDomain(name string) Domain {
 	Debug("Creating domain %s", name)
-
-	// if a == nil {
-	// 	a = NewApp()
-	// }
 
 	d := &domain{
 		app:               a,
@@ -64,22 +60,20 @@ func NewDomain(name string, a *app) Domain {
 		callResponseTypes: make(map[uint64][]interface{}),
 	}
 
-	// TODO: trigger onJoin if the superdomain has joined
-
 	a.domains = append(a.domains, d)
 	return d
 }
 
 func (d domain) Subdomain(name string) Domain {
 	if name == "" {
-		return NewDomain(d.name, d.app)
+		return d.app.NewDomain(d.name)
 	} else {
-		return NewDomain(d.name+"."+name, d.app)
+		return d.app.NewDomain(d.name+"."+name)
 	}
 }
 
 func (d domain) LinkDomain(name string) Domain {
-	return NewDomain(name, d.app)
+	return d.app.NewDomain(name)
 }
 
 func (d domain) GetApp() App {

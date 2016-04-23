@@ -10,7 +10,7 @@ func TestConstructors(t *testing.T) {
     s := NewSession()
 
     Convey("Functions that return a reference", t, func() {
-        s.Send(`["NewApp", 10, 11, 12345, "xs.test"]`)
+        s.Send(`["NewApp", 10, 11, 12345, 0, "xs.test"]`)
 
         Convey("Should create a memory reference to the new object", func() {
             So(len(s.memory), ShouldEqual, 2)

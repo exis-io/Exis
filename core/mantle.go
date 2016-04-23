@@ -18,33 +18,32 @@ import (
 //      Address is unused. If exactly one argument is passed the mantle will try to assign it
 //      to the variable. The current value of the variable is always returned.
 //
-//      Send(`["CuminLevel", 0, 1, 0, 2]`) // Changes the CuminLevel
+//      Send(`["CuminLevel", 0, 1, 0, 0, 2]`) // Changes the CuminLevel
 //
 // Function:
 //      Address is unused for normal functions. All arguments are passed into that function.
-//      Constructors are functions named New[TypeName] and must return a pointer to the constructed
-//      type. In this case the address field is used to refer to that instance in the future.
 //      Clients are expected to pick well-distrubted random values for address
 //
-//      mantle.Send(`["NewID", 10, 11, 0]`) // Normal Function
-//      mantle.Send(`["NewApp", 10, 11, 12345]`) // Constructor for an App at address 12345
+//      mantle.Send(`["NewID", 10, 11, 0, 0]`) // Normal Function
+//      mantle.Send(`["NewApp", 10, 11, 0, 12345]`) // Constructor for an App at address 12345
 //
 // Method:
 //      Target refers to the name of the method, address is the same as previously generated.
 //      All arguments are passed in as given.
 //
-//      mantle.Send(`["SetState", 10, 11, 12345, 1]`) // calls SetState on App created previously
+//      mantle.Send(`["SetState", 10, 11, 0, 12345, 1]`) // calls SetState on App created previously
 //
 // Control:
-//      The current session is always at address 0. It implements control methods.
+//      The current session is always at address 1. It implements control methods.
 //
-//      mantle.Send(`["Free", 10, 11, 0, 12345]`) // dealloc an instance
+//      mantle.Send(`["Free", 10, 11, 0, 1, 12345]`) // dealloc an instance
 
 type rpc struct {
 	target  string        // A type, function, variable, or constant
 	cb      uint64        // The callback id to deliver the result on
 	eb      uint64        // errback id to deliver failure on
-	address uint64        // multiple-use field: "Pointer" when dealing with types, handler id for domain operations
+	address uint64        // Multi use field- handler id and intended memory address for instantiations
+    object  uint64        // If this is an method call, use this field as the memory address
 	args    []interface{} // Arguments to pass to the target
 }
 
@@ -94,7 +93,7 @@ func (sess *session) Send(line string) {
 		return
 	}
 
-    fmt.Printf("Invoking %v\n", n)
+    Debug("Mantle invoking %v", n)
 	result := Callback{Id: n.cb}
 
 	if m, ok := Variables[n.target]; ok {
@@ -108,7 +107,7 @@ func (sess *session) Send(line string) {
 		} else {
 			result.Args = ret
 		}
-	} else if m, ok := sess.memory[n.address]; ok {
+	} else if m, ok := sess.memory[n.object]; ok {
 		v := reflect.ValueOf(m).MethodByName(n.target)
 
 		if ret, err := sess.handleFunction(v, n); err != nil {
@@ -149,7 +148,7 @@ func (s *session) handleFunction(fn reflect.Value, n *rpc) ([]interface{}, error
 	ret, err := Cumin(fn.Interface(), n.args)
 
     if err != nil {
-        fmt.Printf("Error detected %s", err.Error())
+        Warn("Function %v err: %s", fn, err.Error())
         return nil , err
     }
 
@@ -196,11 +195,17 @@ func deserialize(j string) (*rpc, error) {
 	}
 
 	if s, ok := d[3].(float64); !ok {
-		return nil, fmt.Errorf("Couldn't parse message-- incorrect type at position 3. Got %v", d[2])
+		return nil, fmt.Errorf("Couldn't parse message-- incorrect type at position 3. Got %v", d[3])
 	} else {
 		n.address = uint64(s)
 	}
 
-	n.args = d[4:]
+    if s, ok := d[4].(float64); !ok {
+        return nil, fmt.Errorf("Couldn't parse message-- incorrect type at position 3. Got %v", d[4])
+    } else {
+        n.object = uint64(s)
+    }
+
+	n.args = d[5:]
 	return n, nil
 }

@@ -52,7 +52,7 @@ public class AppDomain: Domain {
         }
         
         // TODO: call and save GetToken and after a successful login and register
-        return app.callCore("BetterLogin", args)
+        return app.callCore("BetterLogin", [args])
     }
     
     public func register(name: String, email: String, password: String) -> Deferred {

@@ -41,7 +41,6 @@ var Functions = map[string]reflect.Value{
 	"MantleUnsubscribe": reflect.ValueOf(MantleUnsubscribe),
 	"MantleWarn": reflect.ValueOf(MantleWarn),
 	"NewApp": reflect.ValueOf(NewApp),
-	"NewDomain": reflect.ValueOf(NewDomain),
 	"NewID": reflect.ValueOf(NewID),
 	"NewSession": reflect.ValueOf(NewSession),
 	"SetConnectionFactory": reflect.ValueOf(SetConnectionFactory),
