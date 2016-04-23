@@ -31,7 +31,7 @@ public class Domain: CoreClass {
         
         let (join, leave) = assignDeletegateHandlers()
 
-        sendCore("NewDomain", handler: address, address: app.address, [name, join, leave])
+        sendCore("NewDomain", address: address, object: app.address, args: [name, join, leave], synchronous: true)
     }
     
     public init(name: String, superdomain: Domain) {
@@ -40,40 +40,40 @@ public class Domain: CoreClass {
         super.init()
         
         let (join, leave) = assignDeletegateHandlers()
-        sendCore("Subdomain", handler: address, address: superdomain.address, [name, join, leave])
+        sendCore("Subdomain", address: address, object: superdomain.address, args: [name, join, leave], synchronous: true)
     }
     
     func _subscribe(endpoint: String, _ types: [Any], options: Options, fn: [Any] -> ()) -> Deferred {
         let hn = DomainHandler() { a in fn(a) }
-        return callCore("Subscribe", [endpoint, hn.id, types, options.marshall()])
+        return callCore("Subscribe", args: [endpoint, hn.id, types, options.marshall()])
     }
     
     func _register(endpoint: String, _ types: [Any], options: Options, fn: [Any] -> [Any]) -> Deferred {
         let hn = DomainHandler() { a in
             var args = a
             let resultId = args.removeAtIndex(0) as! Double
-            self.app.callCore("Yield", [UInt64(resultId), serializeArguments(fn(args))])
+            self.app.callCore("Yield", args: [UInt64(resultId), serializeArguments(fn(args))])
         }
         
-        return callCore("Register", [endpoint, hn.id, types, options.marshall()])
+        return callCore("Register", args: [endpoint, hn.id, types, options.marshall()])
     }
     
     public func publish(endpoint: String, _ args: Property...) -> Deferred {
-        return callCore("Publish", [endpoint, serializeArguments(args), Options().marshall()])
+        return callCore("Publish", args: [endpoint, serializeArguments(args), Options().marshall()])
     }
     
     public func call(endpoint: String, _ args: Property...) -> HandlerDeferred {
         let d = HandlerDeferred()
-        callCore("Call", deferred: d, [endpoint, serializeArguments(args), Options().marshall()])
+        callCore("Call", deferred: d, args: [endpoint, serializeArguments(args), Options().marshall()])
         return d
     }
     
     public func leave() {
-        callCore("Leave", [])
+        callCore("Leave", args: [])
     }
     
     public func join() -> Deferred {
-        return callCore("Join", [])
+        return callCore("Join", args: [])
     }
     
     // Creates a pair of delegate handlers and registers them with the session

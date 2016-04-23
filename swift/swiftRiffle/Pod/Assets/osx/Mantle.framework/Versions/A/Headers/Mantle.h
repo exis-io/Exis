@@ -58,6 +58,8 @@ extern GoUint64 CBID();
 
 extern void Send(char* p0);
 
+extern void SendSync(char* p0);
+
 extern char* Receive();
 
 #ifdef __cplusplus

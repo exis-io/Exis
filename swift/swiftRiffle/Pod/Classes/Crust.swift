@@ -12,31 +12,18 @@ import Mantle
 
 // Send some message to the core. Automatically creates a Deferred object.
 // This overload does not take a handler id
-func sendCore(target: String, _ args: [Any]) -> Deferred {
-    let d = Deferred()
-    return sendCore(target, deferred: d, handler: 0, address: 0, args)
-}
-
-func sendCore(target: String, handler: UInt64, _ args: [Any]) -> Deferred {
-    let d = Deferred()
-    return sendCore(target, deferred: d, handler: handler, address: 0, args)
-}
-
-
-func sendCore(target: String, handler: UInt64, address: UInt64, _ args: [Any]) -> Deferred {
-    let d = Deferred()
-    return sendCore(target, deferred: d, handler: handler, address: address, args)
-}
-
-func sendCore(target: String, deferred: Deferred, handler: UInt64, address: UInt64, _ args: [Any]) -> Deferred {
-    var invocation: [Any] = [target, deferred.cb, deferred.eb, handler, address]
+func sendCore(target: String, deferred: Deferred = Deferred(), address: UInt64 = 0, object: UInt64 = 0, args: [Any] = [], synchronous: Bool = false) -> Deferred {
+    var invocation: [Any] = [target, deferred.cb, deferred.eb, address, object]
     invocation.appendContentsOf(args)
     
     let json = JSON.from(invocation)
     let jsonString = json.serialize(DefaultJSONSerializer())
-    // print("Serialized string: \(jsonString)")
     
-    Send(jsonString.cString())
+    if synchronous {
+        SendSync(jsonString.cString())
+    } else {
+        Send(jsonString.cString())
+    }
     
     return deferred
 }
@@ -47,21 +34,16 @@ public class CoreClass {
     
     // Calls this class's constrcutor
     func initCore(klass: String, _ args: [Any]) {
-        sendCore("New\(klass)", handler: address, args)
+        sendCore("New\(klass)", address: address, args: args, synchronous: true)
     }
     
-    // Call a core method on this object
-    func callCore(target: String, _ args: [Any]) -> Deferred {
-        return sendCore(target, handler: 0, address: address, args)
-    }
-    
-    func callCore(target: String, deferred: Deferred, _ args: [Any]) -> Deferred {
-        return sendCore(target, deferred: deferred, handler: 0, address: address, args)
+    func callCore(target: String, deferred: Deferred = Deferred(), args: [Any] = [], synchronous: Bool = false) -> Deferred {
+        return sendCore(target, deferred: deferred, object: address, args: args, synchronous: synchronous)
     }
     
     deinit {
         // We may have to manually call "leave" on domains and app domains, they have reference cycles in the core
-        sendCore("Free", handler: 1, [address])
+        sendCore("Free", address: 1, args: [address])
     }
 }
 

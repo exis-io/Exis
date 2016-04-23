@@ -25,7 +25,12 @@ var sess = core.NewSession()
 
 //export Send
 func Send(i *C.char) {
-	sess.Send(C.GoString(i))
+	go sess.Send(C.GoString(i))
+}
+
+//export SendSync
+func SendSync(i *C.char) {
+    sess.Send(C.GoString(i))
 }
 
 //export Receive

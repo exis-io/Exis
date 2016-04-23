@@ -36,7 +36,7 @@ public class AppDomain: Domain {
     
     // Close the connection
     public func disconnect() {
-        app.callCore("Close", ["AppDomain closing"])
+        app.callCore("Close", args: ["AppDomain closing"])
     }
     
     // Login domain is the target domain for this session
@@ -52,15 +52,15 @@ public class AppDomain: Domain {
         }
         
         // TODO: call and save GetToken and after a successful login and register
-        return app.callCore("BetterLogin", [args])
+        return app.callCore("BetterLogin", args: [args])
     }
     
     public func register(name: String, email: String, password: String) -> Deferred {
-        return app.callCore("BetterRegister", [name, password, email, name])
+        return app.callCore("BetterRegister", args: [name, password, email, name])
     }
     
     public func setToken(token: String) {
-        app.callCore("SetToken", [token])
+        app.callCore("SetToken", args: [token])
     }
     
     // Block until the connection is closed. Only call this on backends!

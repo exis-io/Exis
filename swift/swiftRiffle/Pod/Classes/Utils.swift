@@ -233,44 +233,44 @@ func recode<A, T>(value: A, _ t: T.Type) -> T {
 // as well as keeping them all in one place
 public class Riffle {
     public class func setFabric(url: String) {
-        sendCore("Fabric", [url])
+        sendCore("Fabric", args: [url])
     }
     
     public class func application(s: String){
-        sendCore("MantleApplication", [s])
+        sendCore("MantleApplication", args: [s])
     }
     
     public class func debug(s: String){
-        sendCore("MantleDebug", [s])
+        sendCore("MantleDebug", args: [s])
     }
     
     public class func info(s: String){
-        sendCore("MantleInfo", [s])
+        sendCore("MantleInfo", args: [s])
     }
     
     public class func warn(s: String){
-        sendCore("MantleWarn", [s])
+        sendCore("MantleWarn", args: [s])
     }
     
     public class func error(s: String){
-        sendCore("MantleError", [s])
+        sendCore("MantleError", args: [s])
     }
     
-    public class func setLogLevelApp() { sendCore("SetLogLevelApp", [])  }
-    public class func setLogLevelOff() { sendCore("SetLogLevelOff", [])  }
-    public class func setLogLevelErr() { sendCore("SetLogLevelErr", [])  }
-    public class func setLogLevelWarn() { sendCore("SetLogLevelWarn", [])  }
-    public class func setLogLevelInfo() { sendCore("SetLogLevelInfo", [])  }
-    public class func setLogLevelDebug() { sendCore("SetLogLevelDebug", [])  }
+    public class func setLogLevelApp() { sendCore("SetLogLevelApp")  }
+    public class func setLogLevelOff() { sendCore("SetLogLevelOff")  }
+    public class func setLogLevelErr() { sendCore("SetLogLevelErr")  }
+    public class func setLogLevelWarn() { sendCore("SetLogLevelWarn")  }
+    public class func setLogLevelInfo() { sendCore("SetLogLevelInfo")  }
+    public class func setLogLevelDebug() { sendCore("SetLogLevelDebug")  }
     
-    public class func setFabricDev() { sendCore("SetFabricDev", []) }
-    public class func setFabricSandbox() { sendCore("SetFabricSandbox", []) }
-    public class func setFabricProduction() { sendCore("SetFabricProduction", []) }
-    public class func setFabricLocal() { sendCore("SetFabricLocal", []) }
+    public class func setFabricDev() { sendCore("SetFabricDev") }
+    public class func setFabricSandbox() { sendCore("SetFabricSandbox") }
+    public class func setFabricProduction() { sendCore("SetFabricProduction") }
+    public class func setFabricLocal() { sendCore("SetFabricLocal") }
     
-    public class func setCuminStrict() { sendCore("SetCuminStrict", []) }
-    public class func setCuminLoose() { sendCore("SetCuminLoose", []) }
-    public class func setCuminOff() { sendCore("SetCuminOff", []) }
+    public class func setCuminStrict() { sendCore("SetCuminStrict") }
+    public class func setCuminLoose() { sendCore("SetCuminLoose") }
+    public class func setCuminOff() { sendCore("SetCuminOff") }
 }
 
 

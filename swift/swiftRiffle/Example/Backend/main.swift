@@ -33,5 +33,4 @@ app.login()
 
 //app.listen()
 
-print("And now the backround loop freezes")
 NSRunLoop.currentRunLoop().run()
