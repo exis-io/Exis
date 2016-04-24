@@ -52,9 +52,10 @@ public class AppDomain: Domain {
         }
         
         // TODO: call and save GetToken and after a successful login and register
-        let d = app.callCore("BetterLogin", args: [args])
+        let d = TwoDeferred<String, String>()
+        app.callCore("BetterLogin", deferred: d, args: [args])
         
-        d.then {
+        d.then { token, domain in
             print("login has completed")
         }
         
