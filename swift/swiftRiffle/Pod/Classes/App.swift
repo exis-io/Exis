@@ -137,7 +137,6 @@ class Persistence {
         #else
             store.setObject(value, forKey: key)
         #endif
-        
     }
     
     class func get(key: String) -> String? {

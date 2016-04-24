@@ -10,40 +10,41 @@ import Riffle
 
 // Change me to change the current set of inline tests
 enum Test { case Auth0, Auth1, Domain, Model }
-let CURRENTTEST = Test.Auth0
+let CURRENTTEST = Test.Auth1
 
 // Required helper method for OSX backends
 initTypes(External(String.self, String.self), External(Int.self, Int.self), External(Double.self, Double.self), External(Float.self, Float.self), External(Bool.self, Bool.self), External(Model.self, Model.self))
 
-Riffle.setLogLevelDebug()
+Riffle.setLogLevelInfo()
 
 switch CURRENTTEST {
     
-    
+
+// NOTE: Each "test case" has to be run on its own. Comment out the other examples
 case .Auth0:
     let app = AppDomain(name: "xs.demo.damouse.auth0test")
     
     // Auth 0 without a domain
-//    app.login().then { (domain: String) in
-//        print("Successfully connected as ", domain)
-//    }.error { reason in
-//        print("Login failed: ", reason)
-//    }
-//    
-    // Auth 0 with a domain
-    app.login("asdfasdf").then { (domain: String) in
+    app.login().then { (domain: String) in
         print("Successfully connected as ", domain)
     }.error { reason in
         print("Login failed: ", reason)
     }
-//
-//    // Auth 0 resuming a connection
-//    app.login("asdfasdf").then { (domain: String) in
-//        print("Successfully connected as ", domain)
-//    }.error { reason in
-//        print("Login failed: ", reason)
-//    }
-//    
+    
+    // Auth 0 with a domain
+    app.login("username").then { (domain: String) in
+        print("Successfully connected as ", domain)
+    }.error { reason in
+        print("Login failed: ", reason)
+    }
+
+    // Auth 0 resuming a connection
+    app.reconnect().then { (domain: String) in
+        print("Successfully reconnected as ", domain)
+    }.error { reason in
+        print("Cannot reconnect: ", reason)
+    }
+    
     app.listen()
     
 
