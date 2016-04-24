@@ -1,7 +1,9 @@
 package shared
 
 import (
+	"math/rand"
 	"testing"
+	"time"
 
 	"github.com/exis-io/core"
 	. "github.com/smartystreets/goconvey/convey"
@@ -16,7 +18,43 @@ func TestDefaultConnection(t *testing.T) {
 		a := core.NewApp("xs.test")
 
 		Convey("Should connect successfully", func() {
-			e := a.Join()
+			e := a.Connect()
+			So(e, ShouldBeNil)
+		})
+	})
+}
+
+// "Manually" here meaning the domain being used should be set up outside of this test
+func TestAuthManually(t *testing.T) {
+	app, username, password, email, name := "xs.demo.damouse.auth0test", "alpha", "12345678", "alpha@gmail.com", "alpha"
+	a := core.NewApp(app)
+
+	core.SetLogLevelDebug()
+	core.SetSafeSSLOff()
+	core.SetConnectionFactory(ConnectionFactory{})
+
+	Convey("When the auth level is 0", t, func() {
+		Convey("Register should always fail", func() {
+			e := a.Register(username, password, email, name)
+			So(e, ShouldNotBeNil)
+			So(e.Error(), ShouldEqual, "Incorrect auth level")
+		})
+
+		Convey("Login should succeed when given a domain name", func() {
+			n := randString(5)
+			_, domain, e := a.Login([]interface{}{n})
+			So(e, ShouldBeNil)
+			So(domain, ShouldEqual, app+"."+n)
+		})
+
+		Convey("Join should suceed after a login", func() {
+			c := core.NewApp(app)
+			n := randString(5)
+
+			_, _, e := c.Login([]interface{}{n})
+			So(e, ShouldBeNil)
+
+			e = c.Connect()
 			So(e, ShouldBeNil)
 		})
 	})
@@ -28,46 +66,58 @@ func TestYields(t *testing.T) {
 		core.SetLogLevelDebug()
 
 		// Convey("Should connect successfully manually", func() {
-		// 	a := core.NewApp("xs.a")
-		// 	b := core.NewApp("xs.a")
+		//  a := core.NewApp("xs.a")
+		//  b := core.NewApp("xs.a")
 
-		// 	a2 := a.NewDomain("b", 0, 0)
-		// 	b1 := b.NewDomain("b", 0, 0)
+		//  a2 := a.NewDomain("b", 0, 0)
+		//  b1 := b.NewDomain("b", 0, 0)
 
-		// 	a.Join()
-		// 	b.Join()
+		//  a.Join()
+		//  b.Join()
 
-		// 	b1.Register("fun", 1, []interface{}{"int"}, make(map[string]interface{}))
+		//  b1.Register("fun", 1, []interface{}{"int"}, make(map[string]interface{}))
 
-		// 	a2.Call("fun", []interface{}{1}, make(map[string]interface{}))
+		//  a2.Call("fun", []interface{}{1}, make(map[string]interface{}))
 		// })
 
 		// Convey("Should connect successfully through the mantle", func() {
-		// 	s := core.NewSession()
+		//  s := core.NewSession()
 
-		// 	s.Send(`["NewApp", 10, 11, 11, 0, "xs.a"]`)
-		// 	s.Send(`["NewApp", 10, 11, 12, 0, "xs.a"]`)
+		//  s.Send(`["NewApp", 10, 11, 11, 0, "xs.a"]`)
+		//  s.Send(`["NewApp", 10, 11, 12, 0, "xs.a"]`)
 
-		// 	s.Send(`["NewDomain", 10, 11, 13, 12, "a", 13, 14]`)
-		// 	s.Send(`["NewDomain", 10, 11, 14, 11, "a", 14, 15]`)
+		//  s.Send(`["NewDomain", 10, 11, 13, 12, "a", 13, 14]`)
+		//  s.Send(`["NewDomain", 10, 11, 14, 11, "a", 14, 15]`)
 
-		// 	s.Send(`["Join", 10, 11, 0, 11]`)
-		// 	s.Send(`["Join", 10, 11, 0, 12]`)
+		//  s.Send(`["Join", 10, 11, 0, 11]`)
+		//  s.Send(`["Join", 10, 11, 0, 12]`)
 
-		// 	s.Send(`["Register", 10, 11, 0, 13, "fun", 16, ["int"], {}]`)
+		//  s.Send(`["Register", 10, 11, 0, 13, "fun", 16, ["int"], {}]`)
 
-		// 	fmt.Println("Making the call")
-		// 	go s.Send(`["Call", 10, 11, 0, 14, "fun", [1], {}]`)
-		// 	fmt.Println("Starting the return")
+		//  fmt.Println("Making the call")
+		//  go s.Send(`["Call", 10, 11, 0, 14, "fun", [1], {}]`)
+		//  fmt.Println("Starting the return")
 
-		// 	time.Sleep(30 * time.Millisecond)
+		//  time.Sleep(30 * time.Millisecond)
 
-		// 	s.Send(`["Yield", 10, 11, 0, 12, 10, [1]]`)
+		//  s.Send(`["Yield", 10, 11, 0, 12, 10, [1]]`)
 
-		// 	for {
-		// 		d := <-s.Receive()
-		// 		core.Debug("%v", d)
-		// 	}
+		//  for {
+		//      d := <-s.Receive()
+		//      core.Debug("%v", d)
+		//  }
 		// })
 	})
+}
+
+var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+func randString(n int) string {
+	rand.Seed(time.Now().Unix())
+
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
 }

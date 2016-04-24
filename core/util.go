@@ -78,6 +78,8 @@ var (
 	// If this is set, core relies on this to generate IDs instead of its own logic
 	ExternalGenerator        IdGenerator       = nil
 	DefaultConnectionFactory ConnectionFactory = nil
+
+	HardAuthentication = true // Does this fabric expect authentication?
 )
 
 func NewID() uint64 {
@@ -132,11 +134,18 @@ func SetCuminStrict() { CuminLevel = CuminStrict }
 func SetCuminLoose()  { CuminLevel = CuminLoose }
 func SetCuminOff()    { CuminLevel = CuminOff }
 
+func SetAuthenticationOff() { HardAuthentication = false }
+func SetAuthenticationOn()  { HardAuthentication = true }
+func SetSafeSSLOn()         { UseUnsafeCert = false }
+func SetSafeSSLOff()        { UseUnsafeCert = true }
+
 func SetFabricSandbox() {
+	HardAuthentication = false
 	Fabric = FabricSandbox
 }
 
 func SetFabricDev() {
+	HardAuthentication = false
 	Fabric = FabricDev
 	Registrar = RegistrarDev
 }
@@ -147,8 +156,15 @@ func SetFabricProduction() {
 }
 
 func SetFabricLocal() {
+	Application("Local fabric detected, authentication is turned off. To turn it on on local call core.SetAuthenticationOn() after calling core.SetFabricLocal()")
+	HardAuthentication = false
 	Fabric = FabricLocal
 	Registrar = RegistrarLocal
+}
+
+func SetFabric(url string) {
+	Application("Fabric url override detected, authentication is currently %v. core.SetAuthenticationOn() or core.SetAuthenticationOff() can change this", HardAuthentication)
+	Fabric = url
 }
 
 func SetConnectionFactory(f ConnectionFactory) error {

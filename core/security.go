@@ -19,89 +19,89 @@ import (
 // Login version 2-- take an explicit string and an array instead of a variadic
 // Attempts to obtain a token and a domain with the given credentials. Does not call Connect on the app.
 // Pass a list of 0, 1, or 2 arguments: [username, password] based on the type of authentication for this app
-// Returns the token and domain name as strings when successful 
+// Returns the token and domain name as strings when successful
 func (a *app) Login(args []interface{}) (string, string, error) {
-    username := ""
-    password := ""
+	username, password := "", ""
 
-    if len(args) == 2 {
-        username = args[0].(string)
-        password = args[1].(string)
-    } else if len(args) == 1 {
-        username = args[0].(string)
-    } else if len(args) != 0 {
-        return "", "", fmt.Errorf("Login must be called with 0, 1 or 2 arguments. ([username [, password]]).")
-    }
+	if len(args) == 2 {
+		username = args[0].(string)
+		password = args[1].(string)
+	} else if len(args) == 1 {
+		username = args[0].(string)
+	} else if len(args) != 0 {
+		return "", "", fmt.Errorf("Login must be called with 0, 1 or 2 arguments. ([username [, password]]).")
+	}
 
-    if Fabric == FabricSandbox || Fabric == FabricDev {
-        if err := a.Join(); err != nil {
-            a.agent = a.appDomain + "." + username
-            return "", a.agent, nil
-        } else {
-            return "", "", err
-        }
-    }
+	// This is set manually or when the fabric is selected
+	if !HardAuthentication {
+		if username == "" {
+			return "", "", fmt.Errorf("You are connecting to a fabric that does not have auth. Login requires a name to authenticate with. Please pass as username.")
+		}
 
-    if token, domain, err := tokenLogin(a.appDomain, username, password); err != nil {
-        return "", "", err
-    } else {
-        a.SetToken(token)
-        a.agent = a.appDomain + "." + domain
-        return a.token, a.agent, nil
-    }
+		a.agent = a.appDomain + "." + username
+		return "", a.agent, nil
+	}
+
+	if token, agent, err := tokenLogin(a.appDomain, username, password); err != nil {
+		return "", "", err
+	} else {
+		a.token = token
+		a.agent = agent
+		return a.token, a.agent, nil
+	}
 }
 
 // Register version 2-- takes explicit agent string and automatically calls login internally
 // Attempts to register with the given credentials. Returns an error if any part of the process failed
 // or the registration itself failed
-func (a *app) Register(username string, password string, email string, name string) (error) {
-    agent := a.appDomain + "." + username
+func (a *app) Register(username string, password string, email string, name string) error {
+	Info("Registering as username %s with name %s", username, name)
 
-    if Fabric == FabricSandbox || Fabric == FabricDev {
-        return fmt.Errorf("Registration is not available on the sandbox node.")
-    }
+	// This is set manually or when the fabric is selecte
+	if !HardAuthentication {
+		return nil
+	}
 
-    Info("Attempting to register")
-    url := Registrar + "/register"
+	_, err := jsonPost(Registrar+"/register", map[string]interface{}{
+		"domain":           username,
+		"domain-password":  password,
+		"requestingdomain": a.appDomain,
+		"domain-email":     email,
+		"Name":             name,
+	})
 
-    jsonString, err := json.Marshal(map[string]interface{}{
-        "domain":           agent,
-        "domain-password":  password,
-        "requestingdomain": a.agent,
-        "domain-email":     email,
-        "Name":             name,
-    })
+	return err
 
-    if err != nil {
-        return err
-    }
+	// if err != nil {
+	// 	return err
+	// }
 
-    var resp *http.Response
-    var postErr error
+	// var resp *http.Response
+	// var postErr error
 
-    // Registrar still shows bad cert...
-    if UseUnsafeCert {
-        tr := &http.Transport{
-            TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-        }
-        client := &http.Client{Transport: tr}
-        resp, postErr = client.Post(url, "application/x-www-form-urlencoded", bytes.NewBuffer(jsonString))
-    } else {
-        resp, postErr = http.Post(url, "application/x-www-form-urlencoded", bytes.NewBuffer(jsonString))
-    }
+	// // Registrar still shows bad cert...
+	// if UseUnsafeCert {
+	// 	tr := &http.Transport{
+	// 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	// 	}
+	// 	client := &http.Client{Transport: tr}
+	// 	resp, postErr = client.Post(url, "application/x-www-form-urlencoded", bytes.NewBuffer(jsonString))
+	// } else {
+	// 	resp, postErr = http.Post(url, "application/x-www-form-urlencoded", bytes.NewBuffer(jsonString))
+	// }
 
-    if postErr != nil {
-        return postErr
-    } else {
-        defer resp.Body.Close()
-        if resp.StatusCode != 200 {
-            body, _ := ioutil.ReadAll(resp.Body)
-            result := string(body)
-            return fmt.Errorf(result)
-        }
-    }
+	// if postErr != nil {
+	// 	return postErr
+	// } else {
+	// 	defer resp.Body.Close()
+	// 	if resp.StatusCode != 200 {
+	// 		body, _ := ioutil.ReadAll(resp.Body)
+	// 		result := string(body)
+	// 		return fmt.Errorf(result)
+	// 	}
+	// }
 
-    return nil
+	// return nil
 }
 
 func DecodePrivateKey(data []byte) (*rsa.PrivateKey, error) {
@@ -210,96 +210,119 @@ func (a *app) LoadKey(p string) error {
 
 // Attempt a token login.
 func tokenLogin(domain string, username string, password string) (string, string, error) {
-    Info("Attempting to obtain a token")
-    url := Registrar + "/login"
+	Info("Token authentication requested as username %s from domain %s", username, domain)
+	payload := map[string]interface{}{"domain": username, "password": password, "requestingdomain": domain}
 
-    payload := map[string]interface{}{"domain": username, "password": password, "requestingdomain": domain}
-    jsonString, err := json.Marshal(payload)
+	if result, err := jsonPost(Registrar+"/login", payload); err != nil {
+		return "", "", err
+	} else {
+		var name, token interface{}
+		var ok bool
 
-    if err != nil {
-        return "", "", err
-    }
+		if name, ok = result["domain"]; !ok {
+			return "", "", fmt.Errorf("Token authentication failed: could not find key \"domain\" in reply: %v")
+		}
 
-    var resp *http.Response
-    var postErr error
+		if token, ok = result["login_token"]; !ok {
+			return "", "", fmt.Errorf("Token authentication failed: could not find login_token key in reply")
+		}
 
-    // Registrar still shows bad cert...
-    if UseUnsafeCert {
-        tr := &http.Transport{
-            TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-        }
-        client := &http.Client{Transport: tr}
-        resp, postErr = client.Post(url, "application/x-www-form-urlencoded", bytes.NewBuffer(jsonString))
-    } else {
-        resp, postErr = http.Post(url, "application/x-www-form-urlencoded", bytes.NewBuffer(jsonString))
-    }
+		return token.(string), name.(string), nil
+	}
 
-    if postErr != nil {
-        return "", "", postErr
-    } else {
-        defer resp.Body.Close()
-        if resp.StatusCode != 200 {
-            body, _ := ioutil.ReadAll(resp.Body)
-            result := string(body)
-            return "", "", fmt.Errorf(result)
-        }
-        body, _ := ioutil.ReadAll(resp.Body)
+	// jsonString, err := json.Marshal(payload)
 
-        var result map[string]interface{}
+	// if err != nil {
+	// 	return "", "", err
+	// }
 
-        if err := json.Unmarshal(body, &result); err != nil {
-            return "", "", err
-        } else {
-            name, ok := result["domain"]
-            if !ok {
-                return "", "", fmt.Errorf("no domain returned")
-            }
-            if token, ok := result["login_token"]; !ok {
-                return "", "", fmt.Errorf("Server error: could not find login_token key in reply")
-            } else {
-                return token.(string), name.(string), nil
-            }
-        }
-    }
+	// var resp *http.Response
+	// var postErr error
 
-    return "", "", nil
+	// // Registrar still shows bad cert...
+	// if UseUnsafeCert {
+	// 	tr := &http.Transport{
+	// 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	// 	}
+	// 	client := &http.Client{Transport: tr}
+	// 	resp, postErr = client.Post(url, "application/x-www-form-urlencoded", bytes.NewBuffer(jsonString))
+	// } else {
+	// 	resp, postErr = http.Post(url, "application/x-www-form-urlencoded", bytes.NewBuffer(jsonString))
+	// }
+
+	// if postErr != nil {
+	// 	return "", "", postErr
+	// } else {
+	// 	defer resp.Body.Close()
+	// 	if resp.StatusCode != 200 {
+	// 		body, _ := ioutil.ReadAll(resp.Body)
+	// 		result := string(body)
+	// 		return "", "", fmt.Errorf(result)
+	// 	}
+	// 	body, _ := ioutil.ReadAll(resp.Body)
+
+	// 	var result map[string]interface{}
+
+	// 	if err := json.Unmarshal(body, &result); err != nil {
+	// 		return "", "", err
+	// 	} else {
+	// 		name, ok := result["domain"]
+	// 		if !ok {
+	// 			return "", "", fmt.Errorf("no domain returned")
+	// 		}
+	// 		if token, ok := result["login_token"]; !ok {
+	// 			return "", "", fmt.Errorf("Server error: could not find login_token key in reply")
+	// 		} else {
+	// 			return token.(string), name.(string), nil
+	// 		}
+	// 	}
+	// }
+
+	// return "", "", nil
 }
 
-// Sends an HTTP post, turning off SSL if global UseUnsafeCert is set. Returns an error if the 
-// response code is not 200, else the results decoded as a json 
-func unsafePost(url string, arguments map[string]interface{}) (map[string]interface{}, error) {
-    var resp *http.Response
-    var postErr error
-    p := bytes.NewBuffer(json.Marshal(arguments))
+// Sends an HTTP post, turning off SSL if global UseUnsafeCert is set. Returns an error if the
+// response code is not 200, else the results decoded as a json
+func jsonPost(url string, arguments map[string]interface{}) (map[string]interface{}, error) {
+	var resp *http.Response
+	var postErr error
+	var payload *bytes.Buffer
 
-    if UseUnsafeCert {
-        tr := &http.Transport{
-            TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-        }
+	Debug("Post: %s, %v", url, arguments)
 
-        client := &http.Client{Transport: tr}
-        resp, postErr = client.Post(url, "application/x-www-form-urlencoded", p)
-    } else {
-        resp, postErr = http.Post(url, "application/x-www-form-urlencoded", p)
-    }
+	if j, err := json.Marshal(arguments); err != nil {
+		return nil, err
+	} else {
+		payload = bytes.NewBuffer(j)
+	}
 
-    if postErr != nil {
-        return nil, postErr
-    } else {
-        defer resp.Body.Close()
-        body, _ := ioutil.ReadAll(resp.Body)
+	if UseUnsafeCert {
+		client := &http.Client{Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}}
 
-        if resp.StatusCode != 200 {
-            return nil, fmt.Errorf(string(body))
-        }
+		resp, postErr = client.Post(url, "application/x-www-form-urlencoded", payload)
+	} else {
+		resp, postErr = http.Post(url, "application/x-www-form-urlencoded", payload)
+	}
 
-        var result map[string]interface{}
-        if err := json.Unmarshal(body, &result); err != nil {
-            return nil, err
-        } else {
-            return result, nil
-        }
-    }
+	if postErr != nil {
+		return nil, postErr
+	} else {
+		defer resp.Body.Close()
+		body, _ := ioutil.ReadAll(resp.Body)
+
+		if resp.StatusCode != 200 {
+			return nil, fmt.Errorf(string(body))
+		}
+
+		var result map[string]interface{}
+		if err := json.Unmarshal(body, &result); err != nil {
+			return nil, err
+		} else {
+			return result, nil
+		}
+	}
 }
 
 // //takes the domain that login was called on and then 0-2 strings which correspond to username and password
