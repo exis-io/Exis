@@ -106,7 +106,11 @@ extension Silvery {
     public func valueForKey(key: String) throws -> Property? {
         var value: Property?
         for child in Mirror(reflecting: self).children {
-            if child.label == key && String(child.value) != "nil" {
+            if let _ = child.value as? NSNull {
+                continue
+            }
+            
+            if child.label == key {
                 
                 // OSX bug
                 var switched = child.value

@@ -192,7 +192,7 @@ class Sender: Domain {
     
     override func onJoin() {
         print("Sender joined")
-         passingTests()
+        passingTests()
 
         // Stress Testing
 //        for _ in 0...20 {

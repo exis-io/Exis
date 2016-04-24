@@ -23,12 +23,23 @@ public class AppDomain: Domain {
     }
     
     // If a previous session was suspended attempt to log back in with those same credentials
-    public func reconnect() -> Deferred {
-        let d = Deferred()
+    public func reconnect() -> OneDeferred<String> {
+        let d = OneDeferred<String>()
         
-        defer {
-            d.errback(["No saved session found."])
-            d.destroy()
+        // Check and see if there's a last session saved
+        if let domain = Persistence.get("_lastConnectionDomain"), token = Persistence.get("_lastConnectionToken") {
+            app.callCore("SetToken", args: [token])
+            app.callCore("SetAgent", args: [domain])
+            
+            self.app.callCore("Connect").then {
+                let subbed  = self.name + "."
+                d.callback([domain.stringByReplacingOccurrencesOfString(subbed, withString: "")])
+            }.error { reason in
+                d.errback([reason])
+            }
+            
+        } else {
+            d.errback(["No connection information stored. Connection information is only stored after a successful login"])
         }
         
         return d
@@ -39,7 +50,8 @@ public class AppDomain: Domain {
         app.callCore("Close", args: ["AppDomain closing"])
     }
     
-    // Login domain is the target domain for this session
+    // Attempt to login and connect with the given credentials. If successful the connection is automatically
+    // opened.
     public func login(name: String? = nil, password: String? = nil) -> OneDeferred<String> {
         var args: [String] = []
         
@@ -51,23 +63,28 @@ public class AppDomain: Domain {
             args.append(p)
         }
         
-        // TODO: call and save GetToken and after a successful login and register
+        // TODO: check for saved tokens for the given domain name and re-use that token
+        // as appropriate
+        
         let d = TwoDeferred<String, String>()
         let r = OneDeferred<String>()
         
         app.callCore("Login", deferred: d, args: [args])
         
         d.then { token, domain in
-            // Save the token and domain for future logins
-            
-            // Connect to the fabric
             self.app.callCore("Connect").then {
                 let subbed  = self.name + "."
                 r.callback([domain.stringByReplacingOccurrencesOfString(subbed, withString: "")])
+                
+                Persistence.set("_lastConnectionDomain", value: domain)
+                Persistence.set("_lastConnectionToken", value: token)
+                Persistence.set(domain, value: token)
             }.error { reason in
                 r.errback([reason])
             }
-        }.error { reason in r.errback([reason]) }
+        }.error { reason in
+            r.errback([reason])
+        }
         
         return r
     }
@@ -105,3 +122,41 @@ class CoreApp: CoreClass {
         initCore("App",[name])
     }
 }
+
+// Persistence implementation based on current platform
+class Persistence {
+    #if os(Linux)
+    #else
+        static let store = NSUserDefaults.standardUserDefaults()
+    #endif
+    
+    
+    class func set(key: String, value: String) {
+        #if os(Linux)
+            Riffle.warn("Persistence is not implemented on linux!")
+        #else
+            store.setObject(value, forKey: key)
+        #endif
+        
+    }
+    
+    class func get(key: String) -> String? {
+        #if os(Linux)
+            Riffle.warn("Persistence is not implemented on linux!")
+            return nil
+        #else
+            guard let data = store.objectForKey(key) as? String else { return nil }
+            return data
+        #endif
+    }
+}
+
+
+
+
+
+
+
+
+
+

@@ -32,6 +32,7 @@ type App interface {
 
 	SetToken(string)
 	GetToken() string
+    SetAgent(string)
 	GetAgent() string
 	LoadKey(string) error
 
@@ -105,6 +106,10 @@ func (a *app) SetConnection(conn Connection) {
 
 func (a *app) GetAgent() string {
 	return a.agent
+}
+
+func (a *app) SetAgent(g string) {
+    a.agent = g
 }
 
 func (a *app) Connect() error {

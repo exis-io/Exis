@@ -219,7 +219,13 @@ extension Bool: Property, Convertible {
     }
     
     public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
-        return recode(deserialize(switchTypes(from)), t.self)
+        // Occasional segfault within recode
+//        if let b = from as? Bool {
+//            let r =  b ? true : false
+//            return r as! T
+//        }
+        
+        return recode(deserialize(from), t.self)
     }
 
     public static func representation() -> Any {
