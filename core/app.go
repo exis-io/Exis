@@ -23,7 +23,7 @@ type App interface {
 	CallbackListen() Callback
 	CallbackSend(uint64, ...interface{})
 
-	Join() error
+	Connect() error
 	SendHello() error
 	SetConnection(Connection)
 
@@ -31,12 +31,8 @@ type App interface {
 	GetToken() string
 	LoadKey(string) error
 
-	Login(Domain, ...string) (Domain, error)
-	RegisterAccount(Domain, string, string, string, string) (bool, error)
-
-	// Updated for new auth api
-	BetterLogin([]interface{}) (string, error)
-	BetterRegister(string, string, string, string) (string, error)
+	Login([]interface{}) (string, string, error)
+	Register(string, string, string, string) (error)
 
 	SetState(int)
 	ShouldReconnect() bool
@@ -108,7 +104,7 @@ func (a *app) SetConnection(conn Connection) {
 	conn.SetApp(a)
 }
 
-func (a *app) Join() error {
+func (a *app) Connect() error {
 	if a.state != Disconnected {
 		return fmt.Errorf("Trying to connect, expecting connection state to be Disconnected, but is %d", a.state)
 	}

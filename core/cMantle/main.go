@@ -23,11 +23,6 @@ func Send(i *C.char, sync bool) {
     }
 }
 
-//export SendSync
-func SendSync(i *C.char) {
-    sess.Send(C.GoString(i))
-}
-
 //export Receive
 func Receive() *C.char {
 	cb := <-sess.Receive()

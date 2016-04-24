@@ -53,8 +53,6 @@ extern "C" {
 
 extern void Send(char* p0, GoUint8 p1);
 
-extern void SendSync(char* p0);
-
 extern char* Receive();
 
 #ifdef __cplusplus
