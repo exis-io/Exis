@@ -188,9 +188,12 @@ func (c *app) Send(m message) error {
 		return fmt.Errorf("Could not send on closed connection")
 	}
 
+    Info("Something with serialization?")
 	if b, err := c.serializer.serialize(m); err != nil {
+        Info("Bad cereal")
 		return err
 	} else {
+        Info("Good cereal")
 		return c.Connection.Send(b)
 	}
 }

@@ -43,7 +43,7 @@ public class CoreClass {
     
     deinit {
         // We may have to manually call "leave" on domains and app domains, they have reference cycles in the core
-        sendCore("Free", address: 1, args: [address])
+        // sendCore("Free", address: 1, args: [address])
     }
 }
 
@@ -60,7 +60,7 @@ class Session {
         
         while true {
             var (i, args) = decode(Receive())
-            // print("Crust session has \(i): \(args)")
+            print("Crust session has \(i): \(args)")
             
             if i == 0 {
                 receiving = false
@@ -95,18 +95,20 @@ class DomainHandler: Handler {
     
     func invoke(id: UInt64, args: [Any]) {
         // This is never called if the runloop is processing. Be careful with this
-        #if os(Linux)
-            curriedHandler(args)
-        #else
-//            dispatch_async(dispatch_get_main_queue()) {
-//                print("Async invocation triggering")
+        self.curriedHandler(args)
+        
+//        #if os(Linux)
+//            curriedHandler(args)
+//        #else
+////            dispatch_async(dispatch_get_main_queue()) {
+////                print("Async invocation triggering")
+////                self.curriedHandler(args)
+////            }
+//            
+//            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
 //                self.curriedHandler(args)
-//            }
-            
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
-                self.curriedHandler(args)
-            })
-        #endif
+//            })
+//        #endif
     }
     
     func destroy() {
