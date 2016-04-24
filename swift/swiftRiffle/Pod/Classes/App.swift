@@ -56,7 +56,7 @@ public class AppDomain: Domain {
         app.callCore("BetterLogin", deferred: d, args: [args])
         
         d.then { token, domain in
-            print("login has completed")
+            print("login has completed with \(token), \(domain)")
         }
         
         return d

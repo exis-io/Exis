@@ -10,36 +10,34 @@ import (
 )
 
 type App interface {
-	ReceiveBytes([]byte)
-	ReceiveMessage(message)
-
-	Yield(uint64, []interface{})
-	YieldError(uint64, string, []interface{})
-	YieldOptions(request uint64, args []interface{}, options map[string]interface{})
-
+    Connect() error
 	Close(string)
+
+    SendHello() error
+    SetConnection(Connection)
 	ConnectionClosed(string)
+    ReceiveBytes([]byte)
+    ReceiveMessage(message)
 
-	CallbackListen() Callback
-	CallbackSend(uint64, ...interface{})
+    NewDomain(string, uint64, uint64) Domain
+    Login([]interface{}) (string, string, error)
+    Register(string, string, string, string) error
 
-	Connect() error
-	SendHello() error
-	SetConnection(Connection)
+    Yield(uint64, []interface{})
+    YieldError(uint64, string, []interface{})
+    YieldOptions(request uint64, args []interface{}, options map[string]interface{})
+
+    CallbackListen() Callback
+    CallbackSend(uint64, ...interface{})
 
 	SetToken(string)
 	GetToken() string
 	GetAgent() string
 	LoadKey(string) error
 
-	Login([]interface{}) (string, string, error)
-	Register(string, string, string, string) error
-
 	SetState(int)
 	ShouldReconnect() bool
 	NextRetryDelay() time.Duration
-
-	NewDomain(string, uint64, uint64) Domain
 }
 
 type app struct {
@@ -164,7 +162,6 @@ func (a *app) Connect() error {
 	a.SetState(Ready)
 	go a.receiveLoop()
 
-	// Go through each domain and trigger their onJoin methods
 	for _, x := range a.domains {
 		x.Join()
 	}
