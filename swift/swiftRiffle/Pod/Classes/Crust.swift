@@ -56,11 +56,12 @@ class Session {
     static var receiving = false
     
     class func receive() {
+        if receiving { return }
+        sendCore("SetSafeSSLOff", synchronous:true)
         receiving = true
         
         while true {
             var (i, args) = decode(Receive())
-            // print("Crust session has \(i): \(args)")
             
             if i == 0 {
                 receiving = false

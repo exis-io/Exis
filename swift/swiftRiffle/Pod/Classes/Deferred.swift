@@ -23,6 +23,7 @@ public class Deferred: Handler {
     var pendingErrback: [Any]?
     
     var next: Deferred?
+    var root: Deferred!
     
     
     public init() {
@@ -31,6 +32,13 @@ public class Deferred: Handler {
         
         Session.handlers[cb] = self
         Session.handlers[eb] = self
+        
+        root = self
+    }
+    
+    convenience init(d: Deferred) {
+        self.init()
+        root = d.root
     }
     
     // Session has deemed its our time to shine. Fire off this deferred
@@ -64,6 +72,7 @@ public class Deferred: Handler {
         if let args = pendingCallback {
             pendingCallback = nil
             callback(args)
+            next!.callback(args)
         }
         
         return next!
@@ -76,6 +85,7 @@ public class Deferred: Handler {
         if let args = pendingErrback {
             pendingErrback = nil
             errback(args)
+            next!.errback(args)
         }
         
         return next!

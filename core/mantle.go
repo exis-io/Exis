@@ -152,11 +152,10 @@ func (s *session) handleFunction(fn reflect.Value, n *rpc) ([]interface{}, error
 	ret, err := Cumin(fn.Interface(), n.args)
 
 	if err != nil {
-		// Warn("Function %v err: %v", fn, err)
+		Warn("Function %v err: %v", fn, err)
 		return nil, err
 	}
 
-	// I think errs are getting sent back on accident as part of the whole deal
 	// Debug("Function %v completed with %v %v", fn, ret, err)
 
 	// Check if any of the results returned are new instances. If so, allocate them memory

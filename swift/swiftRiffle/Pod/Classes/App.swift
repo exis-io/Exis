@@ -57,12 +57,18 @@ public class AppDomain: Domain {
         
         d.then { token, domain in
             print("login has completed with \(token), \(domain)")
+            // Save the token and domain
+            
+            // Connect
+            self.app.callCore("Connect")
+        }.error { reason in
+            print("Failed login: \(reason)")
         }
         
         return d
     }
     
-    public func register(name: String, email: String, password: String) -> Deferred {
+    public func registerAccount(name: String, email: String, password: String) -> Deferred {
         return app.callCore("Register", args: [name, password, email, name])
     }
     
