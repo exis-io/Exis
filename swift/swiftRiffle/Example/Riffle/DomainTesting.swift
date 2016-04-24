@@ -193,6 +193,7 @@ class Sender: Domain {
         // passingTests()
         
         receiver.call("registerPrimitives", 1, 2.2, 3.3, "4", true).then { (a: Int, b: Float, c: Double, d: String, e: Bool) in
+            print("Please.")
             assert(a == 1 && b == 2.2 && c == 3.3 && d == "4" && e == true)
         }
         
