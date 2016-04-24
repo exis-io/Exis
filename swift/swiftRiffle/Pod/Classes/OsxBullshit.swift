@@ -143,7 +143,7 @@ func switchTypes<A>(x: A) -> Any {
         case "Bool":
             return recode(x, Bool.self)
         default:
-            Riffle.warn("Unable to switch type: \(x.dynamicType)")
+            print("WARN: Unable to switch type: \(x.dynamicType)")
             return x
         }
     #else
@@ -166,7 +166,7 @@ func switchTypeObject<A>(x: A) -> Any.Type {
         case "Bool":
             return Bool.self
         default:
-            Riffle.warn("Unable to switch out type object: \(x)")
+           print("WARN: Unable to switch out type object: \(x)")
             return x as! Any.Type
         }
     #else

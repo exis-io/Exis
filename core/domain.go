@@ -244,7 +244,7 @@ func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 		Info("Calling %s", binding.endpoint)
 		c.app.CallbackSend(binding.callback, append([]interface{}{msg.Request}, msg.Arguments...)...)
 	} else {
-		Info("Call failed: %s/%s, %s", c.name, binding.endpoint, err.Error())
+		Info("Call failed: %s, %s", binding.endpoint, err.Error())
 		errorArguments := make([]interface{}, 0)
 		errorArguments = append(errorArguments, err.Error())
 

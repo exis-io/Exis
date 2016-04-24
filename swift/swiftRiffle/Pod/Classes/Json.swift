@@ -105,7 +105,7 @@ public class DefaultJSONSerializer: JSONSerializer {
         if n == Double(Int64(n)) {
             return Int64(n).description
         } else {
-            return n.description
+            return "\(n)"
         }
     }
     

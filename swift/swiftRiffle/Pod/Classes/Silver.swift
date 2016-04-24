@@ -54,8 +54,6 @@ extension Silvery {
     public mutating func setValue(value: Property?, forKey key: String) throws {
         var offset = 0
         for child in Mirror(reflecting: self).children {
-            
-            // OSX bug
             var switched = child.value
             
             #if os(OSX)
