@@ -34,28 +34,35 @@ func TestAuthManually(t *testing.T) {
 	core.SetConnectionFactory(ConnectionFactory{})
 
 	Convey("When the auth level is 0", t, func() {
-		Convey("Register should always fail", func() {
-			e := a.Register(username, password, email, name)
-			So(e, ShouldNotBeNil)
-			So(e.Error(), ShouldEqual, "Incorrect auth level")
-		})
+		// Convey("Register should always fail", func() {
+		// 	e := a.Register(username, password, email, name)
+		// 	So(e, ShouldNotBeNil)
+		// 	So(e.Error(), ShouldEqual, "Incorrect auth level")
+		// })
 
-		Convey("Login should succeed when given a domain name", func() {
-			n := randString(5)
-			_, domain, e := a.Login([]interface{}{n})
+		// Convey("Login should succeed when given a domain name", func() {
+		// 	n := randString(5)
+		// 	_, domain, e := a.Login([]interface{}{n})
+		// 	So(e, ShouldBeNil)
+		// 	So(domain, ShouldEqual, app+"."+n)
+		// })
+
+		// Convey("Join should suceed after a login", func() {
+		// 	c := core.NewApp(app)
+		// 	n := randString(5)
+
+		// 	_, _, e := c.Login([]interface{}{n})
+		// 	So(e, ShouldBeNil)
+
+		// 	e = c.Connect()
+		// 	So(e, ShouldBeNil)
+		// })
+
+		Convey("Login should succeed with a random name if not given one", func() {
+			_, domain, e := a.Login([]interface{}{})
 			So(e, ShouldBeNil)
-			So(domain, ShouldEqual, app+"."+n)
-		})
-
-		Convey("Join should suceed after a login", func() {
-			c := core.NewApp(app)
-			n := randString(5)
-
-			_, _, e := c.Login([]interface{}{n})
-			So(e, ShouldBeNil)
-
-			e = c.Connect()
-			So(e, ShouldBeNil)
+			core.Debug("%s", app.agent)
+			// So(domain, ShouldEqual, app+"."+n)
 		})
 	})
 }
