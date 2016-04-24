@@ -12,25 +12,35 @@ import Riffle
 initTypes(External(String.self, String.self), External(Int.self, Int.self), External(Double.self, Double.self), External(Float.self, Float.self), External(Bool.self, Bool.self), External(Model.self, Model.self))
 
 Riffle.setLogLevelDebug()
+//Riffle.setFabricDev()
 
 // Auth tests: level 0
-// let app = AppDomain(name: "xs.demo.damouse.auth0test")
-// app.login() // Auth 0 without a domain
-// app.login("asdf") // Auth 0 with a domain
+let app = AppDomain(name: "xs.demo.damouse.auth0test")
 
-// Auth tests: level 1
-let app = AppDomain(name: "xs.demo.damouse.auth1test")
+// Auth 0 without a domain
+//app.login().then { (domain: String) in
+//    print("Successfully connected as ", domain)
+//}.error { reason in
+//    print("Login failed: ", reason)
+//}
 
-app.registerAccount("bananas", email: "asdf@gmail.com", password: "123456789").then {
-    print("Registration succeeded")
-}.error { reason in
-    print("Registration failed \(reason)")
-}
+// Auth 0 with a domain
+//app.login("asdfasdf").then { (domain: String) in
+//    print("Successfully connected as ", domain)
+//}.error { reason in
+//    print("Login failed: ", reason)
+//}
 
-app.listen()
 
-//Riffle.setLogLevelInfo()
-//Riffle.setFabricDev()
+
+//// Auth tests: level 1
+//let app = AppDomain(name: "xs.demo.damouse.auth1test")
+//
+//app.registerAccount("bananas", email: "asdf@gmail.com", password: "123456789").then {
+//    print("Registration succeeded")
+//}.error { reason in
+//    print("Registration failed \(reason)")
+//}
 
 // This is faking two seperate connections by creating another AppDomain. This is not intended for user functionality
 //let app2 = AppDomain(name: "xs.tester")
@@ -43,4 +53,6 @@ app.listen()
 //})
 //
 //app.login()
-//app.listen()
+
+
+app.listen()

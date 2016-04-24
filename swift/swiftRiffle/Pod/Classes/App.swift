@@ -40,7 +40,7 @@ public class AppDomain: Domain {
     }
     
     // Login domain is the target domain for this session
-    public func login(name: String? = nil, password: String? = nil) -> Deferred {        
+    public func login(name: String? = nil, password: String? = nil) -> OneDeferred<String> {
         var args: [String] = []
         
         if let n = name {
@@ -53,23 +53,39 @@ public class AppDomain: Domain {
         
         // TODO: call and save GetToken and after a successful login and register
         let d = TwoDeferred<String, String>()
+        let r = OneDeferred<String>()
+        
         app.callCore("Login", deferred: d, args: [args])
         
         d.then { token, domain in
-            print("login has completed with \(token), \(domain)")
-            // Save the token and domain
+            // Save the token and domain for future logins
             
-            // Connect
-            self.app.callCore("Connect")
-        }.error { reason in
-            print("Failed login: \(reason)")
-        }
+            // Connect to the fabric
+            self.app.callCore("Connect").then {
+                let subbed  = self.name + "."
+                r.callback([domain.stringByReplacingOccurrencesOfString(subbed, withString: "")])
+            }.error { reason in
+                r.errback([reason])
+            }
+        }.error { reason in r.errback([reason]) }
         
-        return d
+        return r
     }
     
     public func registerAccount(name: String, email: String, password: String) -> Deferred {
-        return app.callCore("Register", args: [name, password, email, name])
+        let d = Deferred()
+        
+        app.callCore("Register", args: [name, password, email, name]).then {
+            self.login(name, password: password).then {
+                d.callback([])
+            }.error { reason in
+                d.errback([reason])
+            }
+        }.error { reason in
+            d.errback([reason])
+        }
+        
+        return d
     }
     
     public func setToken(token: String) {
@@ -89,49 +105,3 @@ class CoreApp: CoreClass {
         initCore("App",[name])
     }
 }
-
-/*
- The Auth api
- 
- // Represents the connection in addition to the domain itself
- app = AppDomain(name: "xs.test")
- you = Domain(name: "alpha", superdomain: app)
- 
- // myName comes back as a string
- // join checks persistence for a token then presents it to the fabric. Fails if the
- // token can't be found or the fabric rejects the token
- app.join().then { myName: String
- let me = Domain(myDomain, superdomain: app)
- 
- // Blocks and runs the reactor loop
- app.listen()
- 
- }.error {
- // Username and password is obtained from some input source-- ui, cli prompt, etc
- let username = "someUsernameFromInput"
- let password = "somePasswordFromInput"
- 
- // Attempt to obtain a token to auth on the fabric. Returns the name of this domain
- // If the login  succeeded the token is persisted under the name presented when the
- // login request was started
- app.login("sender", username, password).then { myName: String
- me= Domain(myDomain, superdomain: app)
- app.listen()
- 
- // Returns whatever error the Auth appliance returned as a string
- }.error { reason: String
- print("reason: \(reason)") // Waiting on email...
- }
- 
- // Attempt to register with the given credentials.
- // If the login  succeeded the token is persisted under the name presented when the
- // login request was started
- app.register("sender", username, password).then { myDomain in
- me = Domain(myDomain, superdomain: app)
- app.listen()
- 
- }.error { reason in
- print(reason) // Username taken, password too short
- }
- }
- */
