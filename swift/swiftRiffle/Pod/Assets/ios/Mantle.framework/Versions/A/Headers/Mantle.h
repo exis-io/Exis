@@ -51,7 +51,7 @@ extern "C" {
 #endif
 
 
-extern void Send(char* p0);
+extern void Send(char* p0, GoUint8 p1);
 
 extern void SendSync(char* p0);
 

@@ -19,15 +19,14 @@ Riffle.setFabricDev()
 //let app = AppDomain(name: "xs.tester")
 //app.login()
 
-//let app2 = AppDomain(name: "xs.tester")
-//let receiver2 = Domain(name: "receiver", superdomain: app2)
-//let sender2 = Sender(name: "sender", superdomain: app2, peer: receiver2)
-//
-//let app = AppDomain(name: "xs.tester")
-//let receiver = Receiver(name: "receiver", superdomain: app, done: {
-//    app2.login()
-//})
-//
-//app.login()
-//
-//app.listen()
+let app2 = AppDomain(name: "xs.tester")
+let receiver2 = Domain(name: "receiver", superdomain: app2)
+let sender2 = Sender(name: "sender", superdomain: app2, peer: receiver2)
+
+let app = AppDomain(name: "xs.tester")
+let receiver = Receiver(name: "receiver", superdomain: app, done: {
+    app2.login()
+})
+
+app.login()
+app.listen()

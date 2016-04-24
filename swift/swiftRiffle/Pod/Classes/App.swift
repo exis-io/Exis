@@ -40,7 +40,7 @@ public class AppDomain: Domain {
     }
     
     // Login domain is the target domain for this session
-    public func login(name: String? = nil, password: String? = nil) -> Deferred {
+    public func login(name: String? = nil, password: String? = nil) -> Deferred {        
         var args: [String] = []
         
         if let n = name {
@@ -52,7 +52,13 @@ public class AppDomain: Domain {
         }
         
         // TODO: call and save GetToken and after a successful login and register
-        return app.callCore("BetterLogin", args: [args])
+        let d = app.callCore("BetterLogin", args: [args])
+        
+        d.then {
+            print("login has completed")
+        }
+        
+        return d
     }
     
     public func register(name: String, email: String, password: String) -> Deferred {

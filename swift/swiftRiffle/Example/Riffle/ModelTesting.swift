@@ -22,8 +22,8 @@ class Modeler: Domain {
         print("Recever joined")
 
         // No support for generic handlers except for the pure operations-- no .then!
-        Cat.count().error { reason in
-            print("An error occured: \(reason)")
-        }
+//        Cat.count().error { reason in
+//            print("An error occured: \(reason)")
+//        }
     }
 }

@@ -136,4 +136,9 @@ public class HandlerDeferred: Deferred {
     }
 }
 
+// A deferred with set types
+public class GenericDeferred: Deferred {
+    
+}
+
 

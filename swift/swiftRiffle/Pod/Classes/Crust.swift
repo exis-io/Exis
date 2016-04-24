@@ -10,21 +10,21 @@
 import Foundation
 import Mantle
 
-// Send some message to the core. Automatically creates a Deferred object.
-// This overload does not take a handler id
+/**
+ Interact with the Riffle core through the Mantle, a reflective RPC-like messaging bus.
+ 
+ - returns: Deferred
+ - parameter target:        The name of the thing being accessed
+ - parameter deferred:      Invoked with the results of an operation
+ - parameter address:       If this operation creates an object, assign it this address
+ - parameter object:        If "target" refers to a method (a function on a struct) then this is the address of that object
+ - parameter args:          Arguments to call the function with 
+ - parameter synchronous:   If set then "Send" will not return until the core finishes the operation, else it returns immediately
+*/
 func sendCore(target: String, deferred: Deferred = Deferred(), address: UInt64 = 0, object: UInt64 = 0, args: [Any] = [], synchronous: Bool = false) -> Deferred {
     var invocation: [Any] = [target, deferred.cb, deferred.eb, address, object]
     invocation.appendContentsOf(args)
-    
-    let json = JSON.from(invocation)
-    let jsonString = json.serialize(DefaultJSONSerializer())
-    
-    if synchronous {
-        SendSync(jsonString.cString())
-    } else {
-        Send(jsonString.cString())
-    }
-    
+    Send(JSON.from(invocation).serialize(DefaultJSONSerializer()).cString(), synchronous ? 1 : 0)
     return deferred
 }
 
