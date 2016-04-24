@@ -16,7 +16,7 @@ import (
 	"net/http"
 )
 
-// Get a domain name and authentication token by presenting a list of credentials. 
+// Get a domain name and authentication token by presenting a list of credentials.
 // This token is presented to the fabric during App.Connect() and is given to the app
 // with App.SetToken(). Get the current token with App.GetToken().
 //
@@ -25,21 +25,21 @@ import (
 //      0, args is []
 //      1, args must be [username]
 //      2, args must be [username, password]
-// 
+//
 // Returns the token and the domain name authenticated with.
 //
 // Subsequent login attempts will not always succeed-- the crust is expected
 // to persist the token after a login success and set it with App.GetToken().
 //
 // The number of credentials depends on the Auth appliance attached to this app. This app is
-// identified by app.agent or App.GetAgent() and is set when App is constructed. 
+// identified by app.agent or App.GetAgent() and is set when App is constructed.
 // when the auth level is...
 //      0: password not needed. Username optional; if not included the Auth randomly generates one
 //      1: username and password are both required
 //
-// If HardAuthentication = false, which is automatically the case when SetFabricDev() or SetFabricSandbox() 
-// is called, this method will always suceed with a username and fail without one. Random 
-// usernames are assigned by Auth-- without HardAuthentication there's no auth to create the name. 
+// If HardAuthentication = false, which is automatically the case when SetFabricDev() or SetFabricSandbox()
+// is called, this method will always suceed with a username and fail without one. Random
+// usernames are assigned by Auth-- without HardAuthentication there's no auth to create the name.
 func (a *app) Login(args []interface{}) (string, string, error) {
 	username, password := "", ""
 
@@ -56,28 +56,39 @@ func (a *app) Login(args []interface{}) (string, string, error) {
 
 	if !HardAuthentication {
 		if username != "" {
-            a.agent = a.appDomain + "." + username
-            return "", a.agent, nil
-        } else {
+			a.agent = a.appDomain + "." + username
+			return "", a.agent, nil
+		} else {
 			return "", "", fmt.Errorf("You are connecting to a fabric that does not have auth. Login requires a name to authenticate with. Please pass as username.")
 		}
 	}
 
-	if token, agent, err := tokenLogin(a.appDomain, username, password); err != nil {
+	payload := map[string]interface{}{"domain": username, "password": password, "requestingdomain": a.appDomain}
+
+	if result, err := jsonPost(Registrar+"/login", payload); err != nil {
 		return "", "", err
 	} else {
-		a.token = token
-		a.agent = agent
+		if d, ok := result["domain"]; !ok {
+			return "", "", fmt.Errorf("Token authentication failed: could not find key \"domain\" in reply: %v")
+		} else {
+			a.agent = d.(string)
+		}
+
+		if t, ok := result["login_token"]; !ok {
+			return "", "", fmt.Errorf("Token authentication failed: could not find login_token key in reply")
+		} else {
+			a.token = t.(string)
+		}
+
 		return a.token, a.agent, nil
 	}
 }
 
 // Attempts to register with the given credentials. Returns an error if any part of the process failed
-// or the registration itself failed. Lack of an error means the operation suceeded. 
+// or the registration itself failed. Lack of an error means the operation suceeded.
 func (a *app) Register(username string, password string, email string, name string) error {
 	Info("Registering as username \"%s\" with name \"%s\"", username, name)
 
-	
 	if !HardAuthentication {
 		return nil
 	}
@@ -193,29 +204,6 @@ func (a *app) LoadKey(p string) error {
 	}
 
 	return nil
-}
-
-// Attempt a token login. Returns token and name on success
-func tokenLogin(domain string, username string, password string) (string, string, error) {
-	Info("Token authentication requested as username %s from domain %s", username, domain)
-	payload := map[string]interface{}{"domain": username, "password": password, "requestingdomain": domain}
-
-	if result, err := jsonPost(Registrar+"/login", payload); err != nil {
-		return "", "", err
-	} else {
-		var name, token interface{}
-		var ok bool
-
-		if name, ok = result["domain"]; !ok {
-			return "", "", fmt.Errorf("Token authentication failed: could not find key \"domain\" in reply: %v")
-		}
-
-		if token, ok = result["login_token"]; !ok {
-			return "", "", fmt.Errorf("Token authentication failed: could not find login_token key in reply")
-		}
-
-		return token.(string), name.(string), nil
-	}
 }
 
 // Sends an HTTP post, turning off SSL if global UseUnsafeCert is set. Returns an error if the
