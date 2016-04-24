@@ -16,9 +16,30 @@ import (
 	"net/http"
 )
 
-// Attempts to obtain a token and a domain with the given credentials. Does not call Connect on the app.
-// Pass a list of 0, 1, or 2 arguments: [username, password] based on the type of authentication for this app
-// Returns the token and domain name as strings when successful
+// Get a domain name and authentication token by presenting a list of credentials. 
+// This token is presented to the fabric during App.Connect() and is given to the app
+// with App.SetToken(). Get the current token with App.GetToken().
+//
+// Takes a list of strings cast to []interface{} of length 0, 1, or 2.
+// when len(args) is...
+//      0, args is []
+//      1, args must be [username]
+//      2, args must be [username, password]
+// 
+// Returns the token and the domain name authenticated with.
+//
+// Subsequent login attempts will not always succeed-- the crust is expected
+// to persist the token after a login success and set it with App.GetToken().
+//
+// The number of credentials depends on the Auth appliance attached to this app. This app is
+// identified by app.agent or App.GetAgent() and is set when App is constructed. 
+// when the auth level is...
+//      0: password not needed. Username optional; if not included the Auth randomly generates one
+//      1: username and password are both required
+//
+// If HardAuthentication = false, which is automatically the case when SetFabricDev() or SetFabricSandbox() 
+// is called, this method will always suceed with a username and fail without one. Random 
+// usernames are assigned by Auth-- without HardAuthentication there's no auth to create the name. 
 func (a *app) Login(args []interface{}) (string, string, error) {
 	username, password := "", ""
 
@@ -33,14 +54,13 @@ func (a *app) Login(args []interface{}) (string, string, error) {
 
 	Info("Logging in as \"%s\"", username)
 
-	// This is set manually or when the fabric is selected
 	if !HardAuthentication {
-		if username == "" {
+		if username != "" {
+            a.agent = a.appDomain + "." + username
+            return "", a.agent, nil
+        } else {
 			return "", "", fmt.Errorf("You are connecting to a fabric that does not have auth. Login requires a name to authenticate with. Please pass as username.")
 		}
-
-		a.agent = a.appDomain + "." + username
-		return "", a.agent, nil
 	}
 
 	if token, agent, err := tokenLogin(a.appDomain, username, password); err != nil {
@@ -53,11 +73,11 @@ func (a *app) Login(args []interface{}) (string, string, error) {
 }
 
 // Attempts to register with the given credentials. Returns an error if any part of the process failed
-// or the registration itself failed
+// or the registration itself failed. Lack of an error means the operation suceeded. 
 func (a *app) Register(username string, password string, email string, name string) error {
 	Info("Registering as username \"%s\" with name \"%s\"", username, name)
 
-	// This is set manually or when the fabric is selecte
+	
 	if !HardAuthentication {
 		return nil
 	}
