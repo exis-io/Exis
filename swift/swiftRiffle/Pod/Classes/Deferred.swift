@@ -33,7 +33,7 @@ public class Deferred: Handler {
         Session.handlers[eb] = self
     }
     
-    // Session has deemed its our time to shine
+    // Session has deemed its our time to shine. Fire off this deferred
     func invoke(id: UInt64, args: [Any]) {
         if cb == id {
             callback(args)
@@ -49,10 +49,17 @@ public class Deferred: Handler {
         Session.handlers[eb] = nil
     }
     
-    // Final, internal implementation of addCallback
     public func then(fn: () -> ()) -> Deferred {
+        return _then() { a in fn() }
+    }
+    
+    public func error(fn: (String) -> ()) -> Deferred {
+        return _error(fn)
+    }
+    
+    func _then(fn: [Any] -> ()) -> Deferred {
         next = Deferred()
-        callbackFuntion = { a in return fn() }
+        callbackFuntion = { a in return fn(a) }
         
         if let args = pendingCallback {
             pendingCallback = nil
@@ -62,7 +69,7 @@ public class Deferred: Handler {
         return next!
     }
     
-    public func error(fn: (String) -> ()) -> Deferred {
+    func _error(fn: (String) -> ()) -> Deferred {
         next = Deferred()
         errbackFunction = { a in fn(a[0] as! String) }
         
@@ -128,17 +135,49 @@ public class HandlerDeferred: Deferred {
         return _then([]) { a in return fn() }
     }
     
-    public func _then(types: [Any], _ fn: [Any] -> ()) -> Deferred {
-        next = Deferred()
+    func _then(types: [Any], _ fn: [Any] -> ()) -> Deferred {
         domain.callCore("CallExpects", args: [cb, types])
-        callbackFuntion = { a in return fn(a) }
-        return next!
+        return _then(fn)
     }
 }
 
-// A deferred with set types
-public class GenericDeferred: Deferred {
-    
+// A deferred that callsback with a fixed number of arguments and types
+public class OneDeferred<A: PR>: Deferred {
+    public func then(fn: (A) -> ()) -> Deferred {
+        return _then() { a in return fn(A.self <- a[0]) }
+    }
 }
+
+public class TwoDeferred<A: PR, B: PR>: Deferred {
+    public func then(fn: (A, B) -> ()) -> Deferred {
+        return _then() { a in return fn(A.self <- a[0], B.self <- a[1]) }
+    }
+}
+
+public class ThreeDeferred<A: PR, B: PR, C: PR>: Deferred {
+    public func then(fn: (A, B, C) -> ()) -> Deferred {
+        return _then() { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
+    }
+}
+
+public class FourDeferred<A: PR, B: PR, C: PR, D: PR>: Deferred {
+    public func then(fn: (A, B, C, D) -> ()) -> Deferred {
+        return _then() { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3]) }
+    }
+}
+
+public class FiveDeferred<A: PR, B: PR, C: PR, D: PR, E: PR>: Deferred {
+    public func then(fn: (A, B, C, D, E) -> ()) -> Deferred {
+        return _then() { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4]) }
+    }
+}
+
+public class SixDeferred<A: PR, B: PR, C: PR, D: PR, E: PR, F: PR>: Deferred {
+    public func then(fn: (A, B, C, D, E, F) -> ()) -> Deferred {
+        return _then() { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5]) }
+    }
+}
+
+
 
 

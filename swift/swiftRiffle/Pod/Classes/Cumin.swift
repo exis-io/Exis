@@ -231,13 +231,11 @@ public extension Domain {
 
 // Deferred handler overloads
 public extension HandlerDeferred {
-
 	public func then<A: PR>(fn: (A) -> ()) -> Deferred {
-
 		return _then([A.representation()]) { f in
             if let nullsli = f[0] as? NSNull {
                 return fn(A.self <- f[0])
-            }else {
+            } else {
                 let a: [Any] = f[0] as! [Any]
                 return fn(A.self <- a[0])
             }
@@ -277,6 +275,5 @@ public extension HandlerDeferred {
 		return _then([A.representation(), B.representation(), C.representation(), D.representation(), E.representation(), F.representation()]) { a in
             return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5]) }
 	}
-
 }
 

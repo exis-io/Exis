@@ -51,9 +51,11 @@ DEV = 'cumin.txt'
 
 generics = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
 returns = ['R', 'S', 'T', 'U', 'V', 'X', 'Y', 'Z']
+stringIntegers = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight']
 
 handlerTemplate = '\tpublic func %s<%s>(endpoint: String, options: Options = Options(), _ fn: (%s) -> (%s)) -> Deferred {\n\t\treturn _%s(endpoint, [%s], options: options) { a in return %s }\n\t}'
 callTemplate = '\tpublic func %s<%s>(fn: (%s) -> (%s)) -> Deferred {\n\t\treturn _%s([%s]) { a in return %s }\n\t}'
+deferredTemplate = 'public class %sDeferred<%s>: Deferred {\n\tpublic func then(fn: (%s) -> ()) -> Deferred {\n\t\treturn _then() { a in return %s }\n\t}\n}'
 
 
 def renderCaller(template, name, args, ret, renderingArrays, serializeResults=False):
@@ -70,20 +72,32 @@ def renderCaller(template, name, args, ret, renderingArrays, serializeResults=Fa
     return (template % (name, both, args, ret, name, types, invokcation)).replace("<>", "")
 
 
+def renderDeferred(template, args, ret):
+    name = stringIntegers[len(args)]
+    cumin = ', '.join(["%s.self <- a[%s]" % (x, i) for i, x in enumerate(args)])
+    both = ', '.join([x + ": PR" for x in args] + [x + ": PR" for x in ret])
+    args = ', '.join(args)
+    invokcation = "fn(%s)" % cumin
+
+    return (template % (name, both, args, invokcation,)).replace("<>", "")
+
 def main():
-    r, s, c = [], [], []
+    r, s, c, d = [], [], [], []
 
     for j in range(6):  # The number of return types
         for i in range(0, 7):  # Number of parameters
             if j == 0:
                 s.append(renderCaller(handlerTemplate, 'subscribe', generics[:i], returns[:j], False))
 
+                if i != 0:
+                    d.append(renderDeferred(deferredTemplate, generics[:i], returns[:j]))
+
                 if i > 0:
                     c.append(renderCaller(callTemplate, 'then', generics[:i], returns[:j], False))
 
             r.append(renderCaller(handlerTemplate, 'register', generics[:i], returns[:j], False, serializeResults=True))
 
-    with open(os.path.join(os.getcwd(), PRODUCTION), 'w') as f:
+    with open(os.path.join(os.getcwd(), DEV), 'w') as f:
         f.write(header)
         [f.write(x + '\n\n') for x in (r + s)]
         f.write("}\n")
@@ -91,6 +105,9 @@ def main():
         f.write(deferredHeader)
         [f.write(x + '\n\n') for x in c]
         f.write("}\n\n")
+
+        [f.write(x + '\n\n') for x in d]
+        f.write("\n\n")
 
 if __name__ == '__main__':
     main()
