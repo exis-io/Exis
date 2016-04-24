@@ -92,13 +92,15 @@ func (sess *session) Send(line string) {
 		return
 	}
 
-	// Debug("Mantle invoking %v", n)
+	Debug("Mantle invoking %v", n)
 	result := Callback{Id: n.cb}
 
 	if m, ok := Variables[n.target]; ok {
 		result.Args = handleVariable(m, n.args)
+
 	} else if m, ok := Consts[n.target]; ok {
 		result.Args = []interface{}{m.Interface()}
+
 	} else if m, ok := Functions[n.target]; ok {
 		if ret, err := sess.handleFunction(m, n); err != nil {
 			result.Id = n.eb
@@ -106,22 +108,23 @@ func (sess *session) Send(line string) {
 		} else {
 			result.Args = ret
 		}
+
 	} else if m, ok := sess.memory.Get(n.object); ok {
+        Debug("1")
 		v := reflect.ValueOf(m).MethodByName(n.target)
+        Debug("2")
 
 		if ret, err := sess.handleFunction(v, n); err != nil {
+            Debug("3")
 			result.Id = n.eb
 			result.Args = []interface{}{err.Error()}
 		} else {
+            Debug("4")
 			result.Args = ret
 		}
+
 	} else {
 		Warn("Unknown invocation: %v\n", n)
-
-		for t := range sess.memory.Iter() {
-			Debug("Address: %d, pointer: %d", t.Key, t.Val)
-		}
-
 		return
 	}
 
@@ -152,7 +155,7 @@ func (s *session) handleFunction(fn reflect.Value, n *rpc) ([]interface{}, error
 	}
 
     // I think errs are getting sent back on accident as part of the whole deal 
-	Debug("Function %v completed with %v %v", fn, ret, err)
+	// Debug("Function %v completed with %v %v", fn, ret, err)
 
 	// Check if any of the results returned are new instances. If so, allocate them memory
 	for _, r := range ret {
@@ -184,6 +187,7 @@ func (s *session) handleFunction(fn reflect.Value, n *rpc) ([]interface{}, error
 func (s *session) bindAppCallbacks(a *app) {
 	for {
 		c := <-a.up
+        Debug("Piping callback: %v", c)
 		s.dispatch <- c
 	}
 }

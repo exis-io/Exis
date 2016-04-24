@@ -19,10 +19,6 @@ func sendCore(target: String, deferred: Deferred = Deferred(), address: UInt64 =
     let json = JSON.from(invocation)
     let jsonString = json.serialize(DefaultJSONSerializer())
     
-    if target == "Yield" {
-        print("Yielding!")
-    }
-    
     if synchronous {
         SendSync(jsonString.cString())
     } else {

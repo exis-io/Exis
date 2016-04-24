@@ -251,7 +251,8 @@ public extension HandlerDeferred {
 	public func then<A: PR, B: PR, C: PR, D: PR, E: PR>(fn: (A, B, C, D, E) -> ()) -> Deferred {
 		return _then([A.representation(), B.representation(), C.representation(), D.representation(), E.representation()]) { a in
             print("Invoking handler with \(a)")
-            return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4])
+//            return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4])
+            
         }
 	}
 

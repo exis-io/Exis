@@ -51,9 +51,8 @@ public class Domain: CoreClass {
     func _register(endpoint: String, _ types: [Any], options: Options, fn: [Any] -> [Any]) -> Deferred {
         let hn = DomainHandler() { a in
             var args = a
-            let resultId = args.removeAtIndex(0) as! Double
+            let resultId = args.removeAtIndex(0) as! Double            
             self.app.callCore("Yield", args: [resultId, fn(args)])
-            print("Done")
         }
         
         return callCore("Register", args: [endpoint, hn.id, types, options.marshall()])
@@ -65,6 +64,8 @@ public class Domain: CoreClass {
     
     public func call(endpoint: String, _ args: Property...) -> HandlerDeferred {
         let d = HandlerDeferred()
+        d.domain = self
+        
         callCore("Call", deferred: d, args: [endpoint, serializeArguments(args), Options().marshall()])
         return d
     }
