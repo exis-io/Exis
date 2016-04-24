@@ -54,8 +54,6 @@ func (ep *WebsocketConnection) Send(data []byte) error {
 	ep.lock.Lock()
 	defer ep.lock.Unlock()
 
-    core.Info("About to write %v", data)
-
 	if err := ep.conn.WriteMessage(ep.payloadType, data); err != nil {
 		core.Warn("Error writing to socket: %s", err)
 		return err

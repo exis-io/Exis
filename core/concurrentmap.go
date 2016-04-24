@@ -29,9 +29,7 @@ func NewConcurrentMap() ConcurrentMap {
 
 // Returns shard under given key
 func (m ConcurrentMap) GetShard(key uint64) *ConcurrentMapShared {
-	Debug("Before Shard")
     k := m[key%uint64(SHARD_COUNT)]
-    Debug("After Shard")
 
     return k
 }

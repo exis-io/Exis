@@ -25,9 +25,7 @@ var sess = core.NewSession()
 
 //export Send
 func Send(i *C.char) {
-    core.Debug("Mantle: %v", C.GoString(i))
 	go sess.Send(C.GoString(i))
-    core.Debug("After mantle send")
 }
 
 //export SendSync
@@ -37,8 +35,6 @@ func SendSync(i *C.char) {
 
 //export Receive
 func Receive() *C.char {
-    core.Info("Aboiut to receive")
 	cb := <-sess.Receive()
-    core.Info("About to feed callback:  %v", core.MantleMarshall(cb))
 	return C.CString(core.MantleMarshall(cb))
 }

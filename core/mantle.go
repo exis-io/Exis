@@ -85,16 +85,14 @@ func (sess *session) Receive() chan Callback {
 }
 
 func (sess *session) Send(line string) {
-    Debug("Before cereal")
 	n, err := deserialize(line)
-    Debug("After cereal")
 
 	if err != nil {
 		Warn("Ignoring message %b. Error: %s\n", line, err.Error())
 		return
 	}
 
-	Debug("Mantle invoking %v", n)
+	// Debug("Mantle invoking %v", n)
 	result := Callback{Id: n.cb}
 
 	if m, ok := Variables[n.target]; ok {
@@ -120,11 +118,10 @@ func (sess *session) Send(line string) {
 		}
 
 		if ret, err := sess.handleFunction(v, n); err != nil {
-            Info("Fail block after handle function")
 			result.Id = n.eb
 			result.Args = []interface{}{err.Error()}
 		} else {
-            Info("Success block handle function, %v", ret)
+    
 			result.Args = ret
 		}
 
@@ -133,9 +130,7 @@ func (sess *session) Send(line string) {
 		return
 	}
 
-    Info("About to dispatch %v", result)
 	sess.dispatch <- result 
-    Info("After dispatch %v", sess.dispatch)
 }
 
 // Assign the given value to a variable and return its value. If we are passed "nil" as a
