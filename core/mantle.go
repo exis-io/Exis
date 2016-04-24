@@ -73,7 +73,7 @@ func (s *session) Free(id uint64) {
 func NewSession() *session {
 	s := &session{
 		memory:   NewConcurrentMap(),
-		dispatch: make(chan Callback, 100),
+		dispatch: make(chan Callback, 1000),
 	}
 
 	s.memory.Set(1, s)
@@ -110,16 +110,12 @@ func (sess *session) Send(line string) {
 		}
 
 	} else if m, ok := sess.memory.Get(n.object); ok {
-        Debug("1")
 		v := reflect.ValueOf(m).MethodByName(n.target)
-        Debug("2")
 
 		if ret, err := sess.handleFunction(v, n); err != nil {
-            Debug("3")
 			result.Id = n.eb
 			result.Args = []interface{}{err.Error()}
 		} else {
-            Debug("4")
 			result.Args = ret
 		}
 
@@ -154,7 +150,7 @@ func (s *session) handleFunction(fn reflect.Value, n *rpc) ([]interface{}, error
 		return nil, err
 	}
 
-    // I think errs are getting sent back on accident as part of the whole deal 
+	// I think errs are getting sent back on accident as part of the whole deal
 	// Debug("Function %v completed with %v %v", fn, ret, err)
 
 	// Check if any of the results returned are new instances. If so, allocate them memory
@@ -187,7 +183,7 @@ func (s *session) handleFunction(fn reflect.Value, n *rpc) ([]interface{}, error
 func (s *session) bindAppCallbacks(a *app) {
 	for {
 		c := <-a.up
-        Debug("Piping callback: %v", c)
+		Debug("Piping callback: %v", c)
 		s.dispatch <- c
 	}
 }

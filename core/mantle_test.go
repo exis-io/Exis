@@ -37,18 +37,4 @@ func TestCallbacks(t *testing.T) {
 
 		So(c.Args[0], ShouldEqual, "Alpha")
 	})
-
-    Convey("App should handle yields well", t, func() {
-        s.Send(`["NewApp", 10, 11, 12345, 0, "xs.test"]`)
-        <-s.dispatch
-
-        a, _ := s.memory.Get(12345)
-        app := a.(*app)
-
-        app.CallbackSend(999, "Alpha")
-
-        c := <-s.dispatch
-
-        So(c.Args[0], ShouldEqual, "Alpha")
-    })
 }
