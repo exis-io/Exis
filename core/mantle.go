@@ -189,7 +189,6 @@ func (s *session) handleFunction(fn reflect.Value, n *rpc) ([]interface{}, error
 func (s *session) bindAppCallbacks(a *app) {
 	for {
 		c := <-a.up
-		Debug("Piping callback: %v", c)
 		s.dispatch <- c
 	}
 }

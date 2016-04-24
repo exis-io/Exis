@@ -131,10 +131,7 @@ public class HandlerDeferred: Deferred {
     public func _then(types: [Any], _ fn: [Any] -> ()) -> Deferred {
         next = Deferred()
         domain.callCore("CallExpects", args: [cb, types])
-        callbackFuntion = { a in
-            print("Triggering nested callback")
-            return fn(a)
-        }
+        callbackFuntion = { a in return fn(a) }
         return next!
     }
 }

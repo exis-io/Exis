@@ -233,32 +233,49 @@ public extension Domain {
 public extension HandlerDeferred {
 
 	public func then<A: PR>(fn: (A) -> ()) -> Deferred {
-		return _then([A.representation()]) { a in return fn(A.self <- a[0]) }
+
+		return _then([A.representation()]) { f in
+            if let nullsli = f[0] as? NSNull {
+                return fn(A.self <- f[0])
+            }else {
+                let a: [Any] = f[0] as! [Any]
+                return fn(A.self <- a[0])
+            }
+        }
 	}
 
 	public func then<A: PR, B: PR>(fn: (A, B) -> ()) -> Deferred {
-		return _then([A.representation(), B.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1]) }
+		return _then([A.representation(), B.representation()]) { f in
+            let a: [Any] = f[0] as! [Any]
+            return fn(A.self <- a[0], B.self <- a[1])
+        }
 	}
 
 	public func then<A: PR, B: PR, C: PR>(fn: (A, B, C) -> ()) -> Deferred {
-		return _then([A.representation(), B.representation(), C.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2]) }
+		return _then([A.representation(), B.representation(), C.representation()]) { f in
+            let a: [Any] = f[0] as! [Any]
+            return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2])
+        }
 	}
 
 	public func then<A: PR, B: PR, C: PR, D: PR>(fn: (A, B, C, D) -> ()) -> Deferred {
-		return _then([A.representation(), B.representation(), C.representation(), D.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3]) }
+		return _then([A.representation(), B.representation(), C.representation(), D.representation()]) { f in
+            let a: [Any] = f[0] as! [Any]
+            return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3])
+        }
 	}
 
 	public func then<A: PR, B: PR, C: PR, D: PR, E: PR>(fn: (A, B, C, D, E) -> ()) -> Deferred {
 		return _then([A.representation(), B.representation(), C.representation(), D.representation(), E.representation()]) { a in
             let f: [Any] = a[0] as! [Any]
-            print("Invoking handler with \(a)")
             return fn(A.self <- f[0], B.self <- f[1], C.self <- f[2], D.self <- f[3], E.self <- f[4])
             
         }
 	}
 
 	public func then<A: PR, B: PR, C: PR, D: PR, E: PR, F: PR>(fn: (A, B, C, D, E, F) -> ()) -> Deferred {
-		return _then([A.representation(), B.representation(), C.representation(), D.representation(), E.representation(), F.representation()]) { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5]) }
+		return _then([A.representation(), B.representation(), C.representation(), D.representation(), E.representation(), F.representation()]) { a in
+            return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5]) }
 	}
 
 }
