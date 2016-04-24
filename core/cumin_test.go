@@ -2,24 +2,40 @@ package core
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestCuminUnpacking(t *testing.T) {
-    Convey("Functions that return arguments", t, func() {
-        f := func() []interface{} {
-            return []interface{}{1, 2, 3}
-        }
+	Convey("Functions that return arguments", t, func() {
+		f := func() []interface{} {
+			return []interface{}{1, 2, 3}
+		}
 
-        Convey("Should output just those arguments", func() {
-            q := []interface{}{1, 2, 3}
+		Convey("Should output just those arguments", func() {
+			q := []interface{}{1, 2, 3}
 
-            r, e := Cumin(f, []interface{}{})
-            So(len(r), ShouldEqual, len(q))
-        })
-    })
+			r, _ := Cumin(f, []interface{}{})
+			fmt.Printf("%v\n", r)
+			So(len(r[0].([]interface{})), ShouldEqual, len(q))
+		})
+	})
+
+	// Convey("Functions that return an error", t, func() {
+	// 	f := func() ([]interface{}, error) {
+	// 		return []interface{}{1, 2, 3}
+	// 	}
+
+	// 	Convey("Should not return that error when completing", func() {
+	// 		q := []interface{}{1, 2, 3}
+
+	// 		r, _ := Cumin(f, []interface{}{})
+	// 		fmt.Printf("%v\n", r)
+	// 		So(len(r[0].([]interface{})), ShouldEqual, len(q))
+	// 	})
+	// })
 }
 
 func TestCuminXNone(t *testing.T) {
