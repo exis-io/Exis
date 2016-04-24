@@ -29,10 +29,11 @@ type App interface {
 
 	SetToken(string)
 	GetToken() string
+	GetAgent() string
 	LoadKey(string) error
 
 	Login([]interface{}) (string, string, error)
-	Register(string, string, string, string) (error)
+	Register(string, string, string, string) error
 
 	SetState(int)
 	ShouldReconnect() bool
@@ -102,6 +103,10 @@ func NewApp(name string) *app {
 func (a *app) SetConnection(conn Connection) {
 	a.Connection = conn
 	conn.SetApp(a)
+}
+
+func (a *app) GetAgent() string {
+	return a.agent
 }
 
 func (a *app) Connect() error {

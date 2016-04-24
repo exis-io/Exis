@@ -11,10 +11,8 @@ import (
 
 func TestDefaultConnection(t *testing.T) {
 	Convey("Using the default connection factory", t, func() {
-		// DefaultConnectionFactory = stubConnection{}
 		core.SetConnectionFactory(ConnectionFactory{})
 		core.SetFabricDev()
-		core.SetLogLevelDebug()
 		a := core.NewApp("xs.test")
 
 		Convey("Should connect successfully", func() {
@@ -26,43 +24,61 @@ func TestDefaultConnection(t *testing.T) {
 
 // "Manually" here meaning the domain being used should be set up outside of this test
 func TestAuthManually(t *testing.T) {
-	app, username, password, email, name := "xs.demo.damouse.auth0test", "alpha", "12345678", "alpha@gmail.com", "alpha"
-	a := core.NewApp(app)
-
-	core.SetLogLevelDebug()
 	core.SetSafeSSLOff()
 	core.SetConnectionFactory(ConnectionFactory{})
 
 	Convey("When the auth level is 0", t, func() {
-		// Convey("Register should always fail", func() {
-		// 	e := a.Register(username, password, email, name)
-		// 	So(e, ShouldNotBeNil)
-		// 	So(e.Error(), ShouldEqual, "Incorrect auth level")
-		// })
+		app, username, password, email, name := "xs.demo.damouse.auth0test", "alpha", "12345678", "alpha@gmail.com", "alpha"
+		a := core.NewApp(app)
 
-		// Convey("Login should succeed when given a domain name", func() {
-		// 	n := randString(5)
-		// 	_, domain, e := a.Login([]interface{}{n})
-		// 	So(e, ShouldBeNil)
-		// 	So(domain, ShouldEqual, app+"."+n)
-		// })
+		Convey("Register should always fail", func() {
+			e := a.Register(username, password, email, name)
+			So(e, ShouldNotBeNil)
+			So(e.Error(), ShouldEqual, "Incorrect auth level")
+		})
 
-		// Convey("Join should suceed after a login", func() {
-		// 	c := core.NewApp(app)
-		// 	n := randString(5)
+		Convey("Login should succeed when given a domain name", func() {
+			n := randString(5)
+			_, domain, e := a.Login([]interface{}{n})
+			So(e, ShouldBeNil)
+			So(domain, ShouldEqual, app+"."+n)
+		})
 
-		// 	_, _, e := c.Login([]interface{}{n})
-		// 	So(e, ShouldBeNil)
+		Convey("Join should suceed after a login", func() {
+			c := core.NewApp(app)
+			n := randString(5)
 
-		// 	e = c.Connect()
-		// 	So(e, ShouldBeNil)
-		// })
+			_, _, e := c.Login([]interface{}{n})
+			So(e, ShouldBeNil)
+
+			e = c.Connect()
+			So(e, ShouldBeNil)
+		})
 
 		Convey("Login should succeed with a random name if not given one", func() {
 			_, domain, e := a.Login([]interface{}{})
 			So(e, ShouldBeNil)
-			core.Debug("%s", app.agent)
-			// So(domain, ShouldEqual, app+"."+n)
+			So(a.GetAgent(), ShouldEqual, domain)
+		})
+	})
+
+	Convey("When the auth level is 1", t, func() {
+		app, password := "xs.demo.damouse.auth1test", randString(10)
+		a := core.NewApp(app)
+
+		Convey("Register should succeed", func() {
+			email, name := randString(5)+"@gmail.com", randString(10)
+			e := a.Register(name, password, email, name)
+			So(e, ShouldBeNil)
+		})
+
+		Convey("Login should succeed after registering", func() {
+			email, name := randString(5)+"@gmail.com", randString(10)
+			e := a.Register(name, password, email, name)
+			So(e, ShouldBeNil)
+
+			_, _, err := a.Login([]interface{}{name, password})
+			So(err, ShouldBeNil)
 		})
 	})
 }
@@ -117,7 +133,7 @@ func TestYields(t *testing.T) {
 	})
 }
 
-var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+var letters = []rune("abcdefghijklmnopqrstuvwxyz")
 
 func randString(n int) string {
 	rand.Seed(time.Now().Unix())
