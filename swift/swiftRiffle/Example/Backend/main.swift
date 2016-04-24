@@ -9,7 +9,7 @@
 import Riffle
 
 // Required helper method for OSX backends
-initTypes(External(String.self, String.self), External(Int.self, Int.self), External(Double.self, Double.self), External(Float.self, Float.self), External(Bool.self, Bool.self))
+initTypes(External(String.self, String.self), External(Int.self, Int.self), External(Double.self, Double.self), External(Float.self, Float.self), External(Bool.self, Bool.self), External(Model.self, Model.self))
 
 Riffle.setLogLevelDebug()
 Riffle.setFabricDev()

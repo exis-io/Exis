@@ -296,19 +296,21 @@ extension Array : Property, BaseConvertible {
             
             // Reconstruct values within the array
             for element in arr {
-                let switchedType = switchTypeObject(Generator.Element.self)                
-                if let child = switchedType as? Convertible.Type {
+                if let child = Generator.Element.self as? Convertible.Type {
                     ret.append(child.unsafeDeserialize(element, t: Generator.Element.self)!)
+                } else {
+                    let switchedType = switchTypeObject(Generator.Element.self)
+                    if let child = switchedType as? Convertible.Type {
+                        ret.append(child.unsafeDeserialize(element, t: Generator.Element.self)!)
+                    }
                 }
             }
-            
-//            return ret as! T
+
             return unsafeBitCast(ret, t.self)
         }
         
         Riffle.warn("Array unsafeDeserialize not given an array!")
         return from as! T
-//        return unsafeBitCast(from, t.self)
     }
 
     public static func representation() -> Any {

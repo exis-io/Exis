@@ -15,7 +15,7 @@ func Cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 	}
 
 	if reciever.NumIn() != len(args) {
-		return ret, fmt.Errorf("Cumin: expected %d args for function %s, got %d", reciever.NumIn(), reciever, len(args))
+		return ret, fmt.Errorf("Cumin Type Error: expected %d args for function %s, got %d", reciever.NumIn(), reciever, len(args))
 	}
 
 	// Iterate over the params listed in the method and try their casts
@@ -30,18 +30,15 @@ func Cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 		} else if arg.Type().ConvertibleTo(param) {
 			values[i] = arg.Convert(param)
 		} else {
-			return ret, fmt.Errorf("Cumin: expected %s for arg[%d] in (%s), got %s.", param, i, reciever, arg.Type())
+			return ret, fmt.Errorf("Cumin Type Error: expected %s for arg[%d] in (%s), got %s.", param, i, reciever, arg.Type())
 		}
 	}
 
-	// Perform the call
+	// Perform the call, collect the results, and return them 
 	result := reflect.ValueOf(fn).Call(values)
 	for _, x := range result {
 		ret = append(ret, x.Interface())
 	}
-
-    //Debug("Cumin returning %v", ret)
-	// Catch any exceptions this produces and pass them to the function that sent them, or some kind of handler
 
 	return ret, nil
 }
@@ -116,12 +113,12 @@ func _softCumin(expected interface{}, x interface{}, i int, description string) 
 	// If the expected type is a string, we're looking for a primitive
 	if s, ok := expected.(string); ok {
 		if e := primitiveCheck(s, argument.Kind()); e != nil {
-			return e
+			return fmt.Errorf("%s at position %d", e.Error(), i)
 		}
 
 	} else if nestedSlice, ok := expected.([]interface{}); ok {
 		if len(nestedSlice) != 1 {
-			return fmt.Errorf("Cumin: array expected at position #%d is not homogenous. %s", i, expected)
+			return fmt.Errorf("Cumin Type Error: array expected at for argument #%d is not homogenous. %s", i, expected)
 		}
 
 		if argumentList, ok := x.([]interface{}); !ok {
@@ -137,14 +134,14 @@ func _softCumin(expected interface{}, x interface{}, i int, description string) 
 	} else if nestedMap, ok := expected.(map[string]interface{}); ok {
 
 		if argumentMap, ok := x.(map[string]interface{}); !ok {
-			return fmt.Errorf("Cumin: expected dictionary at position %d, got %v", i, reflect.TypeOf(x))
+			return fmt.Errorf("Cumin Type Error: expected dictionary for argument #%d, got %v", i, reflect.TypeOf(x))
 		} else {
 			if e := mapCheck(nestedMap, argumentMap); e != nil {
 				return e
 			}
 		}
 	} else {
-		return fmt.Errorf("Cumin: couldnt find primitive, list, or dictionary at #%d. %v", i, description)
+		return fmt.Errorf("Cumin Type Error: couldnt find primitive, list, or dictionary at argument #%d. %v", i, description)
 	}
 
 	return nil
@@ -160,13 +157,13 @@ func primitiveCheck(expected string, argument reflect.Kind) error {
 		return nil
 	}
 
-	return fmt.Errorf("Cumin: expecting primitive %s, got %s", expected, argument)
+	return fmt.Errorf("Cumin Type Error: expecting primitive %s, got %s", expected, argument)
 }
 
 // Recursively check an object. Return nil if the object matches the expected types
 func mapCheck(expected map[string]interface{}, argument map[string]interface{}) error {
 	if len(expected) != len(argument) {
-		return fmt.Errorf("Cumin: object invalid number of keys, expected %d, receieved %d", len(expected), len(argument))
+		return fmt.Errorf("Cumin Type Error: object invalid number of keys, expected %d, receieved %d", len(expected), len(argument))
 	}
 
 	// TODO: nested collections and objects

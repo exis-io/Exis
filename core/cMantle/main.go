@@ -14,7 +14,7 @@ import (
 func main() {}
 
 // This is still here temporarily. Removed once client-generation is up and running
-//export CBID
+// export CBID
 func CBID() uint64 {
 	return core.NewID()
 }

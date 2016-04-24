@@ -60,7 +60,7 @@ class Session {
         
         while true {
             var (i, args) = decode(Receive())
-            // print("Crust session has \(i): \(args)")
+            print("Crust session has \(i): \(args)")
             
             if i == 0 {
                 receiving = false
@@ -68,6 +68,7 @@ class Session {
             }
             
             if let handler = handlers[i] {
+                print("Handler: \(handler)")
                 handler.invoke(i, args: args)
             } else {
                 print("Unhandled invocation: \(i), \(args)")

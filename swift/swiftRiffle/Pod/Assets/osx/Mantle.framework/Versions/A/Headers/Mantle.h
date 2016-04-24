@@ -52,10 +52,6 @@ extern "C" {
 #endif
 
 
-// This is still here temporarily. Removed once client-generation is up and running
-
-extern GoUint64 CBID();
-
 extern void Send(char* p0);
 
 extern void SendSync(char* p0);
