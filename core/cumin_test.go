@@ -23,19 +23,32 @@ func TestCuminUnpacking(t *testing.T) {
 		})
 	})
 
-	// Convey("Functions that return an error", t, func() {
-	// 	f := func() ([]interface{}, error) {
-	// 		return []interface{}{1, 2, 3}
-	// 	}
+	Convey("Functions that return an error", t, func() {
+		// A function that conditionally returns an error
+		f := func(t bool) ([]interface{}, error) {
+			if t {
+				return nil, fmt.Errorf("An error")
+			} else {
+				return []interface{}{1, 2, 3}, nil
+			}
+		}
 
-	// 	Convey("Should not return that error when completing", func() {
-	// 		q := []interface{}{1, 2, 3}
+		// The arguments for that function
+		q := []interface{}{1, 2, 3}
 
-	// 		r, _ := Cumin(f, []interface{}{})
-	// 		fmt.Printf("%v\n", r)
-	// 		So(len(r[0].([]interface{})), ShouldEqual, len(q))
-	// 	})
-	// })
+		Convey("Should not return that error if it was nil ", func() {
+			r, _ := Cumin(f, []interface{}{false})
+			fmt.Printf("%v\n", r)
+			So(len(r[0].([]interface{})), ShouldEqual, len(q))
+			So(len(r), ShouldEqual, 1)
+		})
+
+		Convey("Should only return the error if one occured", func() {
+			r, e := Cumin(f, []interface{}{true})
+			So(e.Error(), ShouldEqual, "An error")
+			So(len(r), ShouldEqual, 0)
+		})
+	})
 }
 
 func TestCuminXNone(t *testing.T) {

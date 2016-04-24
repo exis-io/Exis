@@ -5,6 +5,8 @@ import (
 	"reflect"
 )
 
+var errorInterface = reflect.TypeOf((*error)(nil)).Elem()
+
 // Convert and apply args to arbitrary function fn
 func Cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 	reciever := reflect.TypeOf(fn)
@@ -34,8 +36,20 @@ func Cumin(fn interface{}, args []interface{}) ([]interface{}, error) {
 		}
 	}
 
-	// Perform the call, collect the results, and return them 
+	// Perform the call, collect the results, and return them
 	result := reflect.ValueOf(fn).Call(values)
+
+	// If the last value is an error type check its value and finish early
+	if len(result) > 0 && result[len(result)-1].Type().Implements(errorInterface) {
+		if e := result[len(result)-1]; !e.IsNil() {
+			m := e.MethodByName("Error").Call([]reflect.Value{})
+			return nil, fmt.Errorf("%v", m[0])
+		} else {
+			result = result[:len(result)-1]
+		}
+	}
+
+	// Else return the actual results
 	for _, x := range result {
 		ret = append(ret, x.Interface())
 	}
