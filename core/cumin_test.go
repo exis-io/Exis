@@ -7,6 +7,21 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+func TestCuminUnpacking(t *testing.T) {
+    Convey("Functions that return arguments", t, func() {
+        f := func() []interface{} {
+            return []interface{}{1, 2, 3}
+        }
+
+        Convey("Should output just those arguments", func() {
+            q := []interface{}{1, 2, 3}
+
+            r, e := Cumin(f, []interface{}{})
+            So(len(r), ShouldEqual, len(q))
+        })
+    })
+}
+
 func TestCuminXNone(t *testing.T) {
 	Convey("Functions that return nothing", t, func() {
 		Convey("Should accept no args", func() {

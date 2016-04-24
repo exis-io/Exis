@@ -151,7 +151,8 @@ func (s *session) handleFunction(fn reflect.Value, n *rpc) ([]interface{}, error
 		return nil, err
 	}
 
-	//Debug("Function %v completed with %v %v", fn, ret, err)
+    // I think errs are getting sent back on accident as part of the whole deal 
+	Debug("Function %v completed with %v %v", fn, ret, err)
 
 	// Check if any of the results returned are new instances. If so, allocate them memory
 	for _, r := range ret {

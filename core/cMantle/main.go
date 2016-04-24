@@ -25,6 +25,7 @@ var sess = core.NewSession()
 
 //export Send
 func Send(i *C.char) {
+    // core.Debug("Mantle: %v", C.GoString(i))
 	go sess.Send(C.GoString(i))
 }
 

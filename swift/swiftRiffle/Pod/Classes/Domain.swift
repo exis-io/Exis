@@ -52,7 +52,8 @@ public class Domain: CoreClass {
         let hn = DomainHandler() { a in
             var args = a
             let resultId = args.removeAtIndex(0) as! Double
-            self.app.callCore("Yield", args: [UInt64(resultId), serializeArguments(fn(args))])
+            self.app.callCore("Yield", args: [resultId, fn(args)])
+            print("Done")
         }
         
         return callCore("Register", args: [endpoint, hn.id, types, options.marshall()])

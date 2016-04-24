@@ -5,7 +5,11 @@ import "reflect"
 
 var Types = map[string]reflect.Type{
 	"App": reflect.TypeOf((*App)(nil)).Elem(),
+	"BindingConcurrentMap": reflect.TypeOf((*BindingConcurrentMap)(nil)).Elem(),
+	"BindingTuple": reflect.TypeOf((*BindingTuple)(nil)).Elem(),
 	"Callback": reflect.TypeOf((*Callback)(nil)).Elem(),
+	"ConcurrentMap": reflect.TypeOf((*ConcurrentMap)(nil)).Elem(),
+	"ConcurrentMapShared": reflect.TypeOf((*ConcurrentMapShared)(nil)).Elem(),
 	"Connection": reflect.TypeOf((*Connection)(nil)).Elem(),
 	"ConnectionFactory": reflect.TypeOf((*ConnectionFactory)(nil)).Elem(),
 	"Domain": reflect.TypeOf((*Domain)(nil)).Elem(),
@@ -15,6 +19,7 @@ var Types = map[string]reflect.Type{
 	"NoDestinationError": reflect.TypeOf((*NoDestinationError)(nil)).Elem(),
 	"Serialization": reflect.TypeOf((*Serialization)(nil)).Elem(),
 	"Session": reflect.TypeOf((*Session)(nil)).Elem(),
+	"Tuple": reflect.TypeOf((*Tuple)(nil)).Elem(),
 }
 
 var Functions = map[string]reflect.Value{
@@ -41,6 +46,8 @@ var Functions = map[string]reflect.Value{
 	"MantleUnsubscribe": reflect.ValueOf(MantleUnsubscribe),
 	"MantleWarn": reflect.ValueOf(MantleWarn),
 	"NewApp": reflect.ValueOf(NewApp),
+	"NewConcurrentBindingMap": reflect.ValueOf(NewConcurrentBindingMap),
+	"NewConcurrentMap": reflect.ValueOf(NewConcurrentMap),
 	"NewID": reflect.ValueOf(NewID),
 	"NewSession": reflect.ValueOf(NewSession),
 	"SetConnectionFactory": reflect.ValueOf(SetConnectionFactory),
@@ -70,6 +77,7 @@ var Variables = map[string]reflect.Value{
 	"Fabric": reflect.ValueOf(&Fabric),
 	"LogLevel": reflect.ValueOf(&LogLevel),
 	"Registrar": reflect.ValueOf(&Registrar),
+	"SHARD_COUNT": reflect.ValueOf(&SHARD_COUNT),
 	"ShouldLogLineNumber": reflect.ValueOf(&ShouldLogLineNumber),
 	"UseUnsafeCert": reflect.ValueOf(&UseUnsafeCert),
 }
