@@ -66,8 +66,10 @@ func (a *app) Login(args []interface{}) (string, string, error) {
 	payload := map[string]interface{}{"domain": username, "password": password, "requestingdomain": a.appDomain}
 
 	if result, err := jsonPost(Registrar+"/login", payload); err != nil {
+		Debug("Token login faild: %s", err.Error())
 		return "", "", err
 	} else {
+		Debug("Token login success: %s", result)
 		if d, ok := result["domain"]; !ok {
 			return "", "", fmt.Errorf("Token authentication failed: could not find key \"domain\" in reply: %v")
 		} else {
@@ -80,7 +82,6 @@ func (a *app) Login(args []interface{}) (string, string, error) {
 			a.token = t.(string)
 		}
 
-        Debug("Login success. %s %s", a.token, a.agent)
 		return a.token, a.agent, nil
 	}
 }
