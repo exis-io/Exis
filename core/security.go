@@ -80,6 +80,7 @@ func (a *app) Login(args []interface{}) (string, string, error) {
 			a.token = t.(string)
 		}
 
+        Debug("Login success. %s %s", a.token, a.agent)
 		return a.token, a.agent, nil
 	}
 }

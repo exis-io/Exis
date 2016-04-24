@@ -53,7 +53,7 @@ public class AppDomain: Domain {
         
         // TODO: call and save GetToken and after a successful login and register
         let d = TwoDeferred<String, String>()
-        app.callCore("BetterLogin", deferred: d, args: [args])
+        app.callCore("Login", deferred: d, args: [args])
         
         d.then { token, domain in
             print("login has completed with \(token), \(domain)")
@@ -63,7 +63,7 @@ public class AppDomain: Domain {
     }
     
     public func register(name: String, email: String, password: String) -> Deferred {
-        return app.callCore("BetterRegister", args: [name, password, email, name])
+        return app.callCore("Register", args: [name, password, email, name])
     }
     
     public func setToken(token: String) {
