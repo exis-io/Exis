@@ -60,6 +60,10 @@ func TestYields(t *testing.T) {
 		// 	go s.Send(`["Call", 10, 11, 0, 14, "fun", [1], {}]`)
 		// 	fmt.Println("Starting the return")
 
+		// 	time.Sleep(30 * time.Millisecond)
+
+		// 	s.Send(`["Yield", 10, 11, 0, 12, 10, [1]]`)
+
 		// 	for {
 		// 		d := <-s.Receive()
 		// 		core.Debug("%v", d)

@@ -112,6 +112,11 @@ func (sess *session) Send(line string) {
 	} else if m, ok := sess.memory.Get(n.object); ok {
 		v := reflect.ValueOf(m).MethodByName(n.target)
 
+		if !v.IsValid() {
+			Warn("Method %s does not exist on %v", n.target, reflect.ValueOf(m).Type())
+			return
+		}
+
 		if ret, err := sess.handleFunction(v, n); err != nil {
 			result.Id = n.eb
 			result.Args = []interface{}{err.Error()}
@@ -146,7 +151,7 @@ func (s *session) handleFunction(fn reflect.Value, n *rpc) ([]interface{}, error
 	ret, err := Cumin(fn.Interface(), n.args)
 
 	if err != nil {
-		Warn("Function %v err: %s", fn, err.Error())
+		Warn("Function %v err: %s", fn.Type(), err.Error())
 		return nil, err
 	}
 
