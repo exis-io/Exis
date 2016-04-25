@@ -33,7 +33,7 @@ case .Auth0:
         print("Successfully reconnected as ", domain)
     }.error { reason in
         
-        // Reconnection failed, most likely because there wasn't a saved connection. Now we log in
+        // Reconnection failed, most likely because there wasn't a saved connection. Lets try a login
         app.login(name).then {
             print("Successfully connected as ", name)
         }.error { reason in

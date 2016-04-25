@@ -51,8 +51,9 @@ public class Domain: CoreClass {
     func _register(endpoint: String, _ types: [Any], options: Options, fn: [Any] -> [Any]) -> Deferred {
         let hn = DomainHandler() { a in
             var args = a
-            let resultId = args.removeAtIndex(0) as! Double            
-            self.app.callCore("Yield", args: [resultId, fn(args)])
+            let resultId = args.removeAtIndex(0) as! Double
+            let yieldOptions: [String: Any] = [:]
+            self.app.callCore("Yield", args: [resultId, fn(args), yieldOptions])
         }
         
         return callCore("Register", args: [endpoint, hn.id, types, options.marshall()])
