@@ -19,7 +19,8 @@ class OsxBugPlayground {
     
     func test() {
         let r = dmtest(Rat.self)
-//        print("Result \(r?.description)")
+        print("Result \(r?.description)")
+        
 //        for i in 0...5 {
 //            let r = dmtest(Rat.self)
 //            print("Result \(i): \(r?.name)")

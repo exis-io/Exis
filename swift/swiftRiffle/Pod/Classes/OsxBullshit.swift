@@ -230,14 +230,14 @@ public func dmtest<A: Model>(a: A.Type) -> A? {
     let j: [String: Any] = ["name": "Anna"]
     print("Starting decereal")
 
-    let q = Tat.deserialize(j)
-    print("Regular decereal: \(q)")
+    let q = Tat.deserialize(j) as! Tat
+    print("Is ID assigned: \(q.xsid)")
     
     let c = Tat.decereal(j)
     print("Crust decereal Tat: \(c)")
     
-//    let z = a.decereal(j)
-//    print("Crust decereal \(a): \(z)")
+    let z = a.decereal(j)
+    print("Crust decereal \(a): \(z)")
     
     return nil
 }

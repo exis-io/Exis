@@ -74,9 +74,9 @@ extension Silvery {
     
     mutating func pointerAdvancedBy(offset: Int) -> UnsafePointer<Int> {
         if let object = self as? AnyObject {
-            return UnsafePointer(bitPattern: unsafeAddressOf(object).hashValue).advancedBy(offset + 2)
+            return UnsafePointer(bitPattern: unsafeAddressOf(object).hashValue).advancedBy(offset + 2 + 1)
         } else {
-            return withUnsafePointer(&self) { UnsafePointer($0).advancedBy(offset) }
+            return withUnsafePointer(&self) { UnsafePointer($0).advancedBy(offset + 1) }
         }
     }
     

@@ -10,7 +10,7 @@ import Foundation
 import Mantle
 
 public class Model: Silvery, Property, CustomStringConvertible {
-    var _xsid = CBID()
+    public var xsid = CBID()
     
     required public init() {}
     
@@ -25,7 +25,13 @@ public class Model: Silvery, Property, CustomStringConvertible {
     
     public func propertyNames() -> [String] {
         let ignored = ignoreProperties()
+        
+//        var ret = ["xsid"]
+        
         return Mirror(reflecting: self).children.filter { $0.label != nil && !ignored.contains($0.label!) }.map { $0.label! }
+        
+//        ret.appendContentsOf(Mirror(reflecting: self).children.filter { $0.label != nil && !ignored.contains($0.label!) }.map { $0.label! })
+//        return ret
     }
 }
 
@@ -148,12 +154,12 @@ extension Model {
         return r
     }
 }
-
-extension Model: Equatable {}
-
-public func ==(lhs: Model, rhs: Model) -> Bool {
-    return lhs._xsid == rhs._xsid
-}
+//
+//extension Model: Equatable {}
+//
+//public func ==(lhs: Model, rhs: Model) -> Bool {
+//    return lhs._xsid == rhs._xsid
+//}
 
 
 
