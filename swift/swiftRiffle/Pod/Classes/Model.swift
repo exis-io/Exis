@@ -50,6 +50,7 @@ extension Model: Convertible {
         for n in ret.propertyNames() {
             let repr = "\(ret[n]!.dynamicType.representation())"
             
+            
             // JSON is returning ints as doubles. Correct that and this isn't needed: Json.swift line 882
             if repr == "int" {
                 if let value = json[n] as? Double {
@@ -77,18 +78,6 @@ extension Model: Convertible {
                 ret[n] = value
             }
             else if let value = json[n] as? String {
-//                #if os(OSX)
-//                    let p = ret[n] as! Optional<Property>
-//                    ret[n] = caster!.recode(value, t: externals[0].ambiguousType)
-//                #else
-//                    ret[n] = value
-//                #endif
-
-//                let r = caster!.recodeString(value)
-//                print("Recoding \(value) into string \(r)")
-//                let p = String.fromCString(r.cString())!
-//                ret[n] = p
-                
                 ret[n] = value
             }
             else if let value = json[n] as? [Any] {
@@ -104,7 +93,6 @@ extension Model: Convertible {
         
         return ret
     }
-    
     public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
         let ret = deserialize(from)
         return ret as! T

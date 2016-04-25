@@ -196,6 +196,7 @@ func encodeString<A>(var v:A) -> String {
     }
 }
 
+
 public func loop() {
     let s = "TARGET"
     let y = true
@@ -207,7 +208,7 @@ var count = 0
 
 public protocol ExternalCaster {
     func recodeString(a: String) -> String
-//    func recode<T>(a: Bool, t: T.Type) -> T
+    //    func recode<T>(a: Bool, t: T.Type) -> T
     
     func recode<A, T>(a: A, t: T.Type) -> T
 }
@@ -223,6 +224,132 @@ public func rfloop<A>(a: A)  {
     
     print("Uh")
 }
+
+
+public func dmtest<A: Model>(a: A.Type) -> A? {
+    let j: [String: Any] = ["name": "Anna"]
+    print("Starting decereal")
+
+    let q = Tat.deserialize(j)
+    print("Regular decereal: \(q)")
+    
+    let c = Tat.decereal(j)
+    print("Crust decereal Tat: \(c)")
+    
+//    let z = a.decereal(j)
+//    print("Crust decereal \(a): \(z)")
+    
+    return nil
+}
+
+
+public protocol StubbedModel {
+    static func decereal(from: [String: Any]) -> Any
+}
+
+class Tat: Model {
+    var name = "Bob"
+}
+
+extension Model: StubbedModel {
+    // Creates a new instance of this model object from the given json
+    public static func decereal(from: [String: Any]) -> Any {
+        guard let json = from as? [String: Any] else {
+            print("WARN: model wasn't given a json! Instead received type: \(from.dynamicType)")
+            return from
+        }
+        
+        var ret = self.init()
+
+        let n = "name"
+        
+        ret["name"] = json["name"] as! String
+        print("Set \(n) on ret: \(ret["name"])")
+        
+        return ret
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

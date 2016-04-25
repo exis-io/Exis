@@ -31,10 +31,9 @@ class Receiver: Domain {
     override func onJoin() {
         passingTests()
         
-//        subscribe("stress") { (a: Int, b: Float, c: Double, d: String, e: Bool) in
-//            print("Success stress \(a) \(b) \(c) \(d) \(e)")
-//            assert(a == 1 && b == 2.2 && c == 3.3 && d == "4" && e == true)
-//        }
+        subscribe("stress") { (a: String) in
+            print("Success stress \(a)")
+        }
         
         joinFinished()
     }
@@ -180,39 +179,34 @@ class Sender: Domain {
            print("\tREASON: \(reason)")
         }
 
-//        receiver.call("registerOptions")
+        receiver.call("registerOptions")
 
         // Deferreds
         // Make sure deferreds correctly chain callbacks
-//        var firedFirstCallback = false
-//        receiver.call("regDeferred", 1).then { (a: Int) in
-//           firedFirstCallback = true
-//        }.then {
-//           assert(firedFirstCallback)
-//        }
-//
-//        var firedFirstErrback = false
-//        receiver.call("regDeferred", "a").error { reason in
-//           firedFirstErrback = true
-//        }.error { reason in
-//           assert(firedFirstErrback)
-//        }
+        var firedFirstCallback = false
+        receiver.call("regDeferred", 1).then { (a: Int) in
+           firedFirstCallback = true
+        }.then {
+           assert(firedFirstCallback)
+        }
+
+        var firedFirstErrback = false
+        receiver.call("regDeferred", "a").error { reason in
+           firedFirstErrback = true
+        }.error { reason in
+           assert(firedFirstErrback)
+        }
     }
     
     override func onJoin() {
         print("Sender joined")
-        //passingTests()
-        
-        receiver.call("registerModel", dog).then { (d: Dog) in
-            assert(d.age == 21 && d.name == "Trump")
-        }
+        passingTests()
 
         // Stress Testing
-        for _ in 0...2 {
-            // receiver.publish("stress",  1, 2.2, 3.3, "4", true)
-            // passingTests()
-        }
-
+        // for _ in 0...50 {
+        //    receiver.publish("stress", "asdfasdfasdf")
+        // }
+        
         print("done")
         
         // Fails- not enforced at the node

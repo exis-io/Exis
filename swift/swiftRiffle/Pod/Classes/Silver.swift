@@ -27,6 +27,7 @@ public enum SilverError : ErrorType, CustomStringConvertible {
 
 
 extension Silvery {
+    
     public subscript (key: String) -> Property? {
         get {
             do {
@@ -53,22 +54,17 @@ extension Silvery {
     public mutating func setValue(value: Property?, forKey key: String) throws {
         var offset = 0
         for child in Mirror(reflecting: self).children {
+            
+            // OSX bug
             var switched = child.value
             
             #if os(OSX)
                 switched = switchTypes(child.value)
             #endif
             
-            print("Setting value on a child type: \(child.value.dynamicType)")
-            
             guard let property = switched.dynamicType as? Property.Type else { throw SilverError.TypeDoesNotConformToProperty(type: switched.dynamicType) }
-            if child.label == key {
-                
-                if let z = value as? String {
-                    print("Coder has string")
-                } else {
-                    try self.codeValue(value, type: child.value.dynamicType, offset: offset)
-                }
+            if child.label == key {//                print("HI")
+                try self.codeValue(value, type: switched.dynamicType, offset: offset)
                 return
             } else {
                 offset += property.size()
@@ -88,7 +84,7 @@ extension Silvery {
         let pointer = pointerAdvancedBy(offset)
         if let optionalPropertyType = type as? OptionalProperty.Type, let propertyType = optionalPropertyType.propertyType() {
             if let unwrap = value {
-                var optionalValue = unwrap 
+                var optionalValue = unwrap
                 try x(optionalValue, isY: propertyType)
                 optionalValue.codeOptionalInto(pointer)
             } else if let nilValue = type as? OptionalProperty.Type {
@@ -96,31 +92,14 @@ extension Silvery {
             }
         } else if let optionalValue = value {
             var sureValue = optionalValue
-            
-            print("Try is going to fail on \(sureValue) of type \(type)")
-            
-            if type == externals[0].ambiguousType {
-                if let q = sureValue as? String {
-                    print("Detected internal string")
-                }
-                
-                sureValue = caster!.recodeString(sureValue as! String)
-                try! x(sureValue, isY: type)
-                print("Coding \(sureValue) of type \(type)")
-                sureValue.codeInto(pointer)
-            } else {
-            
-            try! x(sureValue, isY: type)
-            print("Coding \(sureValue) of type \(type)")
-            
+            try x(sureValue, isY: type)
             sureValue.codeInto(pointer)
-            }
         }
     }
     
     func x(x: Any, isY y: Any.Type) throws {
         if x.dynamicType == y {
-        // } else if let x = x as? AnyObject, let y = y as? AnyClass where x.isKindOfClass(y) {
+            // } else if let x = x as? AnyObject, let y = y as? AnyClass where x.isKindOfClass(y) {
         } else {
             throw SilverError.CannotSetTypeAsType(x: x.dynamicType, y: y)
         }
@@ -129,15 +108,11 @@ extension Silvery {
     public func valueForKey(key: String) throws -> Property? {
         var value: Property?
         for child in Mirror(reflecting: self).children {
-            if let _ = child.value as? NSNull {
-                continue
-            }
-            
-            if child.label == key {
+            if child.label == key && String(child.value) != "nil" {
                 
                 // OSX bug
                 var switched = child.value
-            
+                
                 #if os(OSX)
                     switched = switchTypes(child.value)
                 #endif
