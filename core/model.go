@@ -98,43 +98,37 @@ func (m *modelManager) All(collection string) ([]map[string]interface{}, error) 
 }
 
 func (m *modelManager) Create(collection string, query map[string]interface{}) error {
-	if r, err := m.query("collection/insert_one", collection, query, nil); err != nil {
-		return "", err
-	} else {
-		if f, ok := r.(map[string]interface{}); !ok {
-			return "", fmt.Errorf("Model create failed for %s. No dictionary present %s", collection, f)
-		} else if id, ok := f["inserted_id"]; !ok {
-			return "", fmt.Errorf("Model create failed for %s. Could not parse %s", collection, f)
-		} else {
-			return id.(string), nil
-		}
-	}
+	_, err := m.query("collection/insert_one", collection, query, nil)
+	return err
 }
 
-func (m *modelManager) CreateMany(collection string, query []map[string]interface{}) ([]string, error) {
-	if r, err := m.query("collection/insert_many", collection, query, nil); err != nil {
-		return nil, err
-	} else {
-		if f, ok := r.(map[string]interface{}); !ok {
-			return nil, fmt.Errorf("Model create failed for %s. No dictionary present %s", collection, f)
-		} else if idArray, ok := f["inserted_ids"]; !ok {
-			return nil, fmt.Errorf("Model create failed for %s. Could not parse %s", collection, f)
-		} else if ids, ok := idArray.([]interface{}); !ok {
-			return nil, fmt.Errorf("Model create failed for %s. Could not parse %s", collection, f)
-		} else {
-			var ret []string
+func (m *modelManager) CreateMany(collection string, query []map[string]interface{}) error {
+	_, err := m.query("collection/insert_many", collection, query, nil)
+	return err
 
-			for _, v := range ids {
-				if j := v.(string); !ok {
-					return nil, fmt.Errorf("Model create failed for %s. Expected string, got %v", collection, v)
-				} else {
-					ret = append(ret, j)
-				}
-			}
+	// if r, err := m.query("collection/insert_many", collection, query, nil); err != nil {
+	// 	return nil, err
+	// } else {
+	// 	if f, ok := r.(map[string]interface{}); !ok {
+	// 		return nil, fmt.Errorf("Model create failed for %s. No dictionary present %s", collection, f)
+	// 	} else if idArray, ok := f["inserted_ids"]; !ok {
+	// 		return nil, fmt.Errorf("Model create failed for %s. Could not parse %s", collection, f)
+	// 	} else if ids, ok := idArray.([]interface{}); !ok {
+	// 		return nil, fmt.Errorf("Model create failed for %s. Could not parse %s", collection, f)
+	// 	} else {
+	// 		var ret []string
 
-			return ret, nil
-		}
-	}
+	// 		for _, v := range ids {
+	// 			if j := v.(string); !ok {
+	// 				return nil, fmt.Errorf("Model create failed for %s. Expected string, got %v", collection, v)
+	// 			} else {
+	// 				ret = append(ret, j)
+	// 			}
+	// 		}
+
+	// 		return ret, nil
+	// 	}
+	// }
 }
 
 func (m *modelManager) Destroy(collection string, id uint64) error {
