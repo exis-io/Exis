@@ -177,7 +177,7 @@ func (a *app) Connect() error {
 		x.Join()
 	}
 
-	Info("Connected to fabric as %s", a.agent)
+	Info("Connection established. Hello, %s", a.agent)
 	return nil
 }
 

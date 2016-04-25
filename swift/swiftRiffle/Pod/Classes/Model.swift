@@ -12,7 +12,7 @@ import Mantle
 public class Model: Silvery, Property, CustomStringConvertible {
     // This changes the offsets of pointers in Silvery and as such is very dangerous. If removed
     // subtract one from the literall offsets in pointerByOffset in Silver
-    public var xsid = CBID()
+    public var _xsid = CBID()
     
     required public init() {}
     
@@ -130,37 +130,44 @@ extension Model: Convertible {
 
 // Core-based persistence
 extension Model {
-    private static var managerAddress: UInt64?
+    private static var manager: ModelManager?
     
-    // Returns a failing deferred if no initialized
-    class func checkInitialized() -> Deferred? {
-        guard let a = managerAddress else {
-            let d = Deferred()
-            d.errback(["Cannot access model object persistence without a connection! Instantiate an AppDomain first!"])
-            return d
-        }
-        
-        return nil
+    static func setConnection(app: AppDomain) {
+        manager = ModelManager(app: app.app)
     }
     
-    public class func count() -> OneDeferred<Int> {
-        guard let address = managerAddress else {
-            let d = OneDeferred<Int>()
-            d.errback(["Cannot access model object persistence without a connection! Instantiate an AppDomain first!"])
-            return d
+    static func ready() -> Bool {
+        return manager != nil
+    }
+    
+    public class func count() -> OneDeferred<Int>! {
+        guard let m = manager else {
+            Riffle.warn("Cannot access model object persistence without a connection! Instantiate an AppDomain first!")
+            return nil
         }
         
         let r = OneDeferred<Int>()
-        sendCore("Count", deferred: r, address: address, args: ["\(self)"])
+        m.callCore("Count", deferred: r, args: ["\(self)"])
         return r
     }
 }
-//
-//extension Model: Equatable {}
-//
-//public func ==(lhs: Model, rhs: Model) -> Bool {
-//    return lhs._xsid == rhs._xsid
-//}
+
+extension Model: Equatable {}
+
+public func ==(lhs: Model, rhs: Model) -> Bool {
+    return lhs._xsid == rhs._xsid
+}
+
+class ModelManager: CoreClass {
+    init(app: CoreApp) {
+        super.init()
+        sendCore("InitModels", address: address, object: app.address, args: [], synchronous: false).then {
+            print("Successfully initialized models")
+        }.error { r in
+            print("Initialization failed: \(r)")
+        }
+    }
+}
 
 
 

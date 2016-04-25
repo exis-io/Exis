@@ -19,9 +19,8 @@ class Cat: Model {
 class Modeler: Domain {
     
     override func onJoin() {
-        print("Modeler joined")
-        Riffle.setLogLevelDebug()
-
+        print("Modeler joined!")
+        
         Cat.count().then { (number: Int) in
             print("Have \(number) cats")
         }.error { reason in

@@ -62,6 +62,7 @@ class Session {
         
         while true {
             var (i, args) = decode(Receive())
+            print("Crust has invocation \(i) \(args)")
             
             if i == 0 {
                 receiving = false

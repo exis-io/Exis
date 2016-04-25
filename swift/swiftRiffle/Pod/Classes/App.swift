@@ -10,15 +10,9 @@ import Foundation
 import Mantle
 
 public class AppDomain: Domain {
-    static var connectedApp: CoreApp?
     
     public init(name: String) {
         super.init(name: name, app: CoreApp(name: name))
-        
-        // Eek
-        if AppDomain.connectedApp == nil {
-            AppDomain.connectedApp = app
-        }
         
         // Kick off the session receive loop if it isn't already started
         // TODO: figure out threading implementation for Ubuntu
@@ -39,6 +33,11 @@ public class AppDomain: Domain {
             app.callCore("SetAgent", args: [domain])
             
             self.app.callCore("Connect").then {
+                // "Static" initialization for all models and model connections
+                if !Model.ready() {
+                    Model.setConnection(self)
+                }
+                
                 let subbed  = self.name + "."
                 d.callback([domain.stringByReplacingOccurrencesOfString(subbed, withString: "")])
             }.error { reason in
@@ -73,6 +72,11 @@ public class AppDomain: Domain {
         
         d.then { token, domain in
             self.app.callCore("Connect").then {
+                // "Static" initialization for all models and model connections
+                if !Model.ready() {
+                    Model.setConnection(self)
+                }
+                
                 Riffle.save(SUSPENDED_DOMAIN, value: domain)
                 Riffle.save(SUSPENDED_TOKEN, value: token)
                 Riffle.save(name, value: token)

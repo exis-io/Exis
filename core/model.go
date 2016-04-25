@@ -36,10 +36,12 @@ func (a *app) InitModels() (ModelManager, error) {
 	// NOTE: storage appliance endpoint should by dynamic
 	storageName := "Storage"
 
-	if a.state != Ready {
-		return nil, fmt.Errorf("Must be connected to the fabric before persisting model objects")
+	if a.appDomain == "" {
+        Debug("Failing InitModels!")
+		return nil, fmt.Errorf("Model initialization error: AppDomain doesn't have a domain set!")
 	}
 
+    Debug("Returning a new model manager")
 	return &modelManager{storage: a.NewDomain(a.appDomain+"."+storageName, 0, 0)}, nil
 }
 

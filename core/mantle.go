@@ -92,7 +92,7 @@ func (sess *session) Send(line string) {
 		return
 	}
 
-	// Debug("Mantle invoking %v", n)
+	Debug("Mantle invoking %v", n)
 	result := Callback{Id: n.cb}
 
 	if m, ok := Variables[n.target]; ok {
@@ -138,8 +138,6 @@ func (sess *session) Send(line string) {
 // not allowed as a variable value.
 // TODO: handle bad type conversions
 func handleVariable(v reflect.Value, n []interface{}) []interface{} {
-	//Debug("Variable: setting %v to %v", v.Type(), n)
-
 	if len(n) == 1 {
 		c := reflect.ValueOf(n[0]).Convert(v.Elem().Type())
 		v.Elem().Set(c)
@@ -152,11 +150,11 @@ func (s *session) handleFunction(fn reflect.Value, n *rpc) ([]interface{}, error
 	ret, err := Cumin(fn.Interface(), n.args)
 
 	if err != nil {
-		// Warn("Function %v err: %v", fn, err)
+		Warn("Function %v err: %v", fn, err)
 		return nil, err
 	}
 
-	// Debug("Function %v completed with %v %v", fn, ret, err)
+	Debug("Function %v completed with %v %v", fn, ret, err)
 
 	// Check if any of the results returned are new instances. If so, allocate them memory
 	for _, r := range ret {
