@@ -9,7 +9,6 @@ import (
 
 func TestBasicModelOperations(t *testing.T) {
 	core.SetConnectionFactory(ConnectionFactory{})
-	// core.SetLogLevelDebug()
 	core.SetSafeSSLOff()
 
 	a := core.NewApp("xs.demo.damouse.model")
@@ -45,10 +44,10 @@ func TestBasicModelOperations(t *testing.T) {
 		})
 
 		Convey("Can be updated", func() {
-			e := m.Save(name, r1, map[string]interface{}{"name": "steve", "age": 99})
+			e := m.Save(name, map[string]interface{}{"name": "steve", "age": 99, "_xsid": i1})
 			So(e, ShouldBeNil)
 
-			r, _ := m.Find(name, map[string]interface{}{"_id": r1})
+			r, _ := m.Find(name, map[string]interface{}{"_xsid": i1})
 			So(len(r), ShouldEqual, 1)
 			So(r[0]["age"], ShouldEqual, 99)
 
@@ -66,38 +65,55 @@ func TestBasicModelOperations(t *testing.T) {
 			c2, _ := m.Count(name)
 			So(c2, ShouldEqual, 0)
 		})
-
-		// Convey("Can all be destroyed at once", func() {
-		// 	So(m.DestroyMany(name, []string{r1, r2}), ShouldBeNil)
-
-		// 	c, _ := m.Count(name)
-		// 	So(c, ShouldEqual, 0)
-		// })
 	})
+}
 
-	// Convey("Collections of model objects", t, func() {
-	// 	r, e := m.CreateMany(name, []map[string]interface{}{j1, j2})
-	// 	So(e, ShouldBeNil)
+func TestModelCollectionOperations(t *testing.T) {
+	core.SetConnectionFactory(ConnectionFactory{})
+	core.SetSafeSSLOff()
 
-	// 	Convey("Can be created as a list", func() {
-	// 		c, _ := m.Count(name)
-	// 		So(c, ShouldEqual, 2)
-	// 	})
+	a := core.NewApp("xs.demo.damouse.model")
+	a.Login([]interface{}{})
+	a.Connect()
+	m, _ := a.InitModels()
 
-	// 	Convey("Can be updated as a list", func() {
-	// 		j1["_id"] = r[0]
-	// 		j2["_id"] = r[1]
-	// 		j1["age"] = 99
-	// 		j2["age"] = 88
+	name := randString(6)
+	i1, i2 := core.NewID(), core.NewID()
+	j1 := map[string]interface{}{"name": "steve", "age": 14, "_xsid": i1}
+	j2 := map[string]interface{}{"name": "bob", "age": 96, "_xsid": i2}
 
-	// 		_, e := m.SaveMany(name, []map[string]interface{}{j1, j2})
-	// 		So(e, ShouldBeNil)
-	// 		c, _ := m.Count(name)
-	// 		So(c, ShouldEqual, 2)
+	m.CreateMany(name, []map[string]interface{}{j1, j2})
 
-	// 		all, _ := m.All(name)
-	// 		So(len(all), ShouldEqual, 2)
+	Convey("Collections of model objects", t, func() {
+		Convey("Can be created as a list", func() {
+			c, _ := m.Count(name)
+			So(c, ShouldEqual, 2)
+		})
 
-	// 	})
-	// })
+		Convey("Can be updated as a list", func() {
+			j1["age"] = 99
+			j2["age"] = 88
+
+			e := m.SaveMany(name, []map[string]interface{}{j1, j2})
+			So(e, ShouldBeNil)
+
+			c, _ := m.Count(name)
+			So(c, ShouldEqual, 2)
+
+			all, _ := m.All(name)
+			So(len(all), ShouldEqual, 2)
+
+			f, e := m.Find(name, map[string]interface{}{"_xsid": i1})
+			So(e, ShouldBeNil)
+			So(len(f), ShouldEqual, 1)
+			So(f[0]["age"], ShouldEqual, 99)
+		})
+
+		Convey("Can all be destroyed at once", func() {
+			So(m.DestroyMany(name, []uint64{i1, i2}), ShouldBeNil)
+
+			c, _ := m.Count(name)
+			So(c, ShouldEqual, 0)
+		})
+	})
 }
