@@ -24,6 +24,7 @@ import Mantle
 func sendCore(target: String, deferred: Deferred = Deferred(), address: UInt64 = 0, object: UInt64 = 0, args: [Any] = [], synchronous: Bool = false) -> Deferred {
     var invocation: [Any] = [target, deferred.cb, deferred.eb, address, object]
     invocation.appendContentsOf(args)
+    // print("Serialization before: \(args) after: \(JSON.from(invocation).serialize(DefaultJSONSerializer()))")
     Send(JSON.from(invocation).serialize(DefaultJSONSerializer()).cString(), synchronous ? 1 : 0)
     return deferred
 }
@@ -38,6 +39,7 @@ public class CoreClass {
     }
     
     func callCore(target: String, deferred: Deferred = Deferred(), args: [Any] = [], synchronous: Bool = false) -> Deferred {
+        // print("Calling to core with args: \(args)")
         return sendCore(target, deferred: deferred, object: address, args: args, synchronous: synchronous)
     }
     
@@ -62,7 +64,7 @@ class Session {
         
         while true {
             var (i, args) = decode(Receive())
-            print("Crust has invocation \(i) \(args)")
+            // print("Crust has invocation \(i) \(args)")
             
             if i == 0 {
                 receiving = false

@@ -278,7 +278,8 @@ public enum JSON {
                 jsonArray.append(JSON.from(rebuild))
             }
             else if let value = value as? [String: Any] {
-                jsonArray.append(JSON.from(value))
+                let v = JSON.from(value)
+                jsonArray.append(v)
             }
                 
             // Good old fashioned Objective-C hacks. Careful with this on ubuntu
@@ -300,26 +301,32 @@ public enum JSON {
     public static func from(value: [String: Any]) -> JSON {
         var jsonDictionary: [String: JSON] = [:]
         for (key, value) in value {
+            
+            print("Dictionary checking \(key) \(value) \(value.dynamicType)")
+
+            
             if let value = value as? Bool {
                 jsonDictionary[key] = JSON.from(value)
             }
-            if let value = value as? Double {
+            else if let value = value as? Double {
                 jsonDictionary[key] = JSON.from(value)
             }
-            if let value = value as? Float {
+            else if let value = value as? Float {
                 jsonDictionary[key] = JSON.from(Double(value))
             }
-            if let value = value as? Int {
+            else if let value = value as? Int {
                 jsonDictionary[key] = JSON.from(Double(value))
             }
-            if let value = value as? String {
+            else if let value = value as? String {
                 jsonDictionary[key] = JSON.from(value)
             }
-            if let value = value as? [Any] {
+            else if let value = value as? [Any] {
                 jsonDictionary[key] = JSON.from(value)
             }
-            if let value = value as? [String: Any] {
+            else if let value = value as? [String: Any] {
                 jsonDictionary[key] = JSON.from(value)
+            } else {
+                print("WARN: dictionary cant check type of \(value) \(value.dynamicType)")
             }
         }
         

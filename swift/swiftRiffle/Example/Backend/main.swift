@@ -22,7 +22,7 @@ class Caster: ExternalCaster {
 }
 
 caster = Caster()
-Riffle.setLogLevelDebug()
+Riffle.setLogLevelInfo()
 
 
 switch CURRENTTEST {
