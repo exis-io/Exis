@@ -15,7 +15,7 @@ var Types = map[string]reflect.Type{
 	"Domain": reflect.TypeOf((*Domain)(nil)).Elem(),
 	"IdGenerator": reflect.TypeOf((*IdGenerator)(nil)).Elem(),
 	"InvalidURIError": reflect.TypeOf((*InvalidURIError)(nil)).Elem(),
-	"Model": reflect.TypeOf((*Model)(nil)).Elem(),
+	"ModelManager": reflect.TypeOf((*ModelManager)(nil)).Elem(),
 	"NoDestinationError": reflect.TypeOf((*NoDestinationError)(nil)).Elem(),
 	"Serialization": reflect.TypeOf((*Serialization)(nil)).Elem(),
 	"Session": reflect.TypeOf((*Session)(nil)).Elem(),
@@ -69,7 +69,6 @@ var Functions = map[string]reflect.Value{
 	"SetLogLevelWarn": reflect.ValueOf(SetLogLevelWarn),
 	"SetSafeSSLOff": reflect.ValueOf(SetSafeSSLOff),
 	"SetSafeSSLOn": reflect.ValueOf(SetSafeSSLOn),
-	"SetSession": reflect.ValueOf(SetSession),
 	"SignString": reflect.ValueOf(SignString),
 	"SoftCumin": reflect.ValueOf(SoftCumin),
 	"Warn": reflect.ValueOf(Warn),
@@ -115,6 +114,6 @@ var Consts = map[string]reflect.Value{
 	"RegistrarProduction": reflect.ValueOf(RegistrarProduction),
 }
 
-var Interfaces = map[string]reflect.Value{
+var Methods = map[string][]reflect.Value{
 }
 

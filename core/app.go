@@ -10,35 +10,38 @@ import (
 )
 
 type App interface {
-    Connect() error
+	Connect() error
 	Close(string)
 
-    SendHello() error
-    SetConnection(Connection)
+	SendHello() error
+	SetConnection(Connection)
 	ConnectionClosed(string)
-    ReceiveBytes([]byte)
-    ReceiveMessage(message)
+	ReceiveBytes([]byte)
+	ReceiveMessage(message)
 
-    NewDomain(string, uint64, uint64) Domain
-    Login([]interface{}) (string, string, error)
-    Register(string, string, string, string) error
+	NewDomain(string, uint64, uint64) Domain
+	Login([]interface{}) (string, string, error)
+	Register(string, string, string, string) error
 
-    Yield(uint64, []interface{})
-    YieldError(uint64, string, []interface{})
-    YieldOptions(request uint64, args []interface{}, options map[string]interface{})
+	Yield(uint64, []interface{})
+	YieldError(uint64, string, []interface{})
+	YieldOptions(request uint64, args []interface{}, options map[string]interface{})
 
-    CallbackListen() Callback
-    CallbackSend(uint64, ...interface{})
+	CallbackListen() Callback
+	CallbackSend(uint64, ...interface{})
 
 	SetToken(string)
 	GetToken() string
-    SetAgent(string)
+	SetAgent(string)
 	GetAgent() string
 	LoadKey(string) error
 
 	SetState(int)
+	GetState() int
 	ShouldReconnect() bool
 	NextRetryDelay() time.Duration
+
+	InitModels() (ModelManager, error)
 }
 
 type app struct {
@@ -109,7 +112,11 @@ func (a *app) GetAgent() string {
 }
 
 func (a *app) SetAgent(g string) {
-    a.agent = g
+	a.agent = g
+}
+
+func (a *app) GetState() int {
+	return a.state
 }
 
 func (a *app) Connect() error {
