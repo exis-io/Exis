@@ -162,17 +162,12 @@ extension Model {
     public class func find<T: CollectionType where T.Generator.Element: Model>(query: [String: AnyObject]) -> OneDeferred<T>! {
         let r = OneDeferred<T>()
         
-        var q: [String: Any] = [:]
-        
-        let data = try! NSJSONSerialization.dataWithJSONObject(query, options: .PrettyPrinted)
-        let repacked = try! NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
-        
-        let j = NSString(data: data, encoding: NSUTF8StringEncoding)
-        print("Repacked: \(repacked)")
+        // let q = jsonRepack(query)!
 
-        //for (k, v) in query { q[k] = switchTypes(v) }
+        var q: [String: Any] = [:]
+        for (k, v) in query { q[k] = switchTypes(v) }
         
-        manager.callCore("Find", deferred: r, args: [modelName(), repacked])
+        manager.callCore("Find", deferred: r, args: [modelName(), q])
         return r
     }
     

@@ -109,6 +109,15 @@ extension String {
     }
 }
 
+// Repack arguments by converting to json and back
+func jsonRepack<A>(a: A) -> A? {
+    guard let a = a as? AnyObject else { return nil }
+    
+    let data = try! NSJSONSerialization.dataWithJSONObject(a, options: .PrettyPrinted)
+    let repacked = try! NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
+    return repacked as? A
+}
+
 // Decode arbitrary returns from the mantle
 func decode(p: UnsafePointer<Int8>) -> (UInt64, [Any]) {
     let dataString = String.fromCString(p)!

@@ -108,10 +108,10 @@ case .Domain:
     
 case .Model:
     let app = AppDomain(name: "xs.demo.damouse.model")
-    let modeler = Modeler(name: "morning", superdomain:app)
+    let modeler = Modeler(name: "moeerning", superdomain:app)
     
     app.reconnect().error { reason in
-        app.login("morning").error { reason in
+        app.login("moeerning").error { reason in
             print("Login failed: ", reason)
         }
     }
