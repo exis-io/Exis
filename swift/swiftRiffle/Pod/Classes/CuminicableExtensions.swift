@@ -66,9 +66,7 @@ extension Property {
     }
     
     mutating func codeInto(pointer: UnsafePointer<Int>) {
-        print("Coding \(self) into \(pointer)")
         (UnsafeMutablePointer(pointer) as UnsafeMutablePointer<Self>).memory = self
-        print("Coding finished: \((UnsafeMutablePointer(pointer) as UnsafeMutablePointer<Self>).memory)")
     }
     
     mutating func codeOptionalInto(pointer: UnsafePointer<Int>) {

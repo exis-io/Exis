@@ -11,7 +11,7 @@ import Riffle
 
 class Rat: Model {
     var name = "Joe"
-//    var age = 100
+    var age = 100
 }
 
 class OsxBugPlayground {

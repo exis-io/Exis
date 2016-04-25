@@ -25,11 +25,9 @@ public class Model: Silvery, Property, CustomStringConvertible {
     
     public func propertyNames() -> [String] {
         let ignored = ignoreProperties()
+         return Mirror(reflecting: self).children.filter { $0.label != nil && !ignored.contains($0.label!) }.map { $0.label! }
         
 //        var ret = ["xsid"]
-        
-        return Mirror(reflecting: self).children.filter { $0.label != nil && !ignored.contains($0.label!) }.map { $0.label! }
-        
 //        ret.appendContentsOf(Mirror(reflecting: self).children.filter { $0.label != nil && !ignored.contains($0.label!) }.map { $0.label! })
 //        return ret
     }
@@ -99,6 +97,7 @@ extension Model: Convertible {
         
         return ret
     }
+    
     public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
         let ret = deserialize(from)
         return ret as! T
