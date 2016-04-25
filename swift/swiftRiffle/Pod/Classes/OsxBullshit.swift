@@ -198,25 +198,27 @@ func encodeString<A>(var v:A) -> String {
 
 public func loop() {
     let s = "TARGET"
+    let y = true
     rfloop(s)
 }
 
 public var crloop: ((Any) -> ())? = nil
 var count = 0
 
-public protocol Boot {
-    // typealias T
-    // func trir(a: T) -> T?
+public protocol ExternalCaster {
+    func recodeString(a: String) -> String
+//    func recode<T>(a: Bool, t: T.Type) -> T
     
-    func trir<T>(a: String, t: T.Type) -> T
+    func recode<A, T>(a: A, t: T.Type) -> T
 }
 
-public var boot: Boot? = nil
+public var caster: ExternalCaster? = nil
 
 public func rfloop<A>(a: A)  {
     if let z = a as? String {
-//        let s = boot!.trir(z)
-//        print("Riffle has \(s)")
+        print("Riffle has String")
+        let s = caster!.recodeString(z)
+        print("Riffle has \(s)")
     }
     
     print("Uh")

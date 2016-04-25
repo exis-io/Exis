@@ -27,7 +27,6 @@ public enum SilverError : ErrorType, CustomStringConvertible {
 
 
 extension Silvery {
-
     public subscript (key: String) -> Property? {
         get {
             do {
@@ -60,9 +59,16 @@ extension Silvery {
                 switched = switchTypes(child.value)
             #endif
             
+            print("Setting value on a child type: \(child.value.dynamicType)")
+            
             guard let property = switched.dynamicType as? Property.Type else { throw SilverError.TypeDoesNotConformToProperty(type: switched.dynamicType) }
-            if child.label == key {//                print("HI")
-                try self.codeValue(value, type: switched.dynamicType, offset: offset)
+            if child.label == key {
+                
+                if let z = value as? String {
+                    print("Coder has string")
+                } else {
+                    try self.codeValue(value, type: child.value.dynamicType, offset: offset)
+                }
                 return
             } else {
                 offset += property.size()
@@ -90,8 +96,25 @@ extension Silvery {
             }
         } else if let optionalValue = value {
             var sureValue = optionalValue
-            try x(sureValue, isY: type)
+            
+            print("Try is going to fail on \(sureValue) of type \(type)")
+            
+            if type == externals[0].ambiguousType {
+                if let q = sureValue as? String {
+                    print("Detected internal string")
+                }
+                
+                sureValue = caster!.recodeString(sureValue as! String)
+                try! x(sureValue, isY: type)
+                print("Coding \(sureValue) of type \(type)")
+                sureValue.codeInto(pointer)
+            } else {
+            
+            try! x(sureValue, isY: type)
+            print("Coding \(sureValue) of type \(type)")
+            
             sureValue.codeInto(pointer)
+            }
         }
     }
     
