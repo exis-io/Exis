@@ -49,11 +49,9 @@ func (m *modelManager) query(endpoint string, collection string, query interface
 		return nil, fmt.Errorf("No open connections found. You must be connected to access model persistence.")
 	}
 
-	var args []interface{}
+	args := []interface{}{collection, query}
 
-	if filter == nil {
-		args = []interface{}{collection, query}
-	} else {
+	if filter != nil {
 		args = []interface{}{collection, filter, query}
 	}
 
