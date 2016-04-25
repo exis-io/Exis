@@ -17,20 +17,13 @@ initTypes(External(String.self, String.self), External(Int.self, Int.self), Exte
 Riffle.setLogLevelInfo()
 
 
-class Caster: ExternalCaster {
-//    func recode<T>(a: String, t: T.Type) -> T { return unsafeBitCast(a, T.self) }
-//    func recode<T>(a: Bool, t: T.Type) -> T { return unsafeBitCast(a, T.self) }
-    
-    func recode<A, T>(a: A, t: T.Type) -> T {
+class Toot: Boot {
+    func trir<T>(a: String, t: T.Type) -> T {
         return unsafeBitCast(a, T.self)
-    }
-    
-    func recodeString(a: String) -> String {
-        return unsafeBitCast(a, String.self)
     }
 }
 
-caster = Caster()
+boot = Toot()
 
 
 switch CURRENTTEST {
@@ -146,8 +139,9 @@ case .OsxBugs:
 //        }
 //    }
 
-//    boot = Toot()
+    boot = Toot()
     loop()
+    
     
 default:
     break
