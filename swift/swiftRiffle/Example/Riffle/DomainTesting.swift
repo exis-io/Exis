@@ -31,7 +31,7 @@ class Receiver: Domain {
     override func onJoin() {
         // passingTests()
         
-        subscribe("stress") { (a: String) in
+        subscribe("stress") { (a: Bool) in
             print("Success stress \(a)")
         }
         
@@ -203,10 +203,10 @@ class Sender: Domain {
         // passingTests()
 
         // Stress Testing
-        for _ in 0...50 {
-            receiver.publish("stress", "asdfasdfasdf")
+        for _ in 0...100 {
+            receiver.publish("stress", true)
         }
-        
+
         print("done")
         
         // Fails- not enforced at the node

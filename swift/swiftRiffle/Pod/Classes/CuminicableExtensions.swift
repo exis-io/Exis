@@ -146,15 +146,6 @@ extension String: Property, Convertible {
     
     public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
         return boot!.trir(from as! String, t: t)
-        
-//        if let z = m {
-//            print("Have the generic \(z)")
-//            return z
-//        } else {
-//            print("Dont have the generic")
-//        }
-//        
-//        return recode(deserialize(switchTypes(from)), t.self)
     }
 
     public static func representation() -> Any {
