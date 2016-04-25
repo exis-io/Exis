@@ -114,6 +114,6 @@ var Consts = map[string]reflect.Value{
 	"RegistrarProduction": reflect.ValueOf(RegistrarProduction),
 }
 
-var Methods = map[string][]reflect.Value{
+var Interfaces = map[string]reflect.Value{
 }
 

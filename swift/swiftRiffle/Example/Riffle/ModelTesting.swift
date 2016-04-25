@@ -19,11 +19,13 @@ class Cat: Model {
 class Modeler: Domain {
     
     override func onJoin() {
-        print("Recever joined")
+        print("Modeler joined")
+        Riffle.setLogLevelDebug()
 
-        // No support for generic handlers except for the pure operations-- no .then!
-//        Cat.count().error { reason in
-//            print("An error occured: \(reason)")
-//        }
+        Cat.count().then { (number: Int) in
+            print("Have \(number) cats")
+        }.error { reason in
+            print("An error occured: \(reason)")
+        }
     }
 }

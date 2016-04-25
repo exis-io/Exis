@@ -119,13 +119,7 @@ func recode<A, T>(value: A, _ t: T.Type) -> T {
         return r as! T
     }
     
-    // copy the value as to not disturb the original
-    let copy = value
-    let data = encode(copy)
-    
-    let pointer = UnsafeMutablePointer<T>.alloc(sizeof(T.Type))
-    data.getBytes(pointer)
-    return pointer.move()
+    return encode(value, t)
 }
 
 // Switches the types of a primitive from app type to library types
@@ -175,9 +169,12 @@ func switchTypeObject<A>(x: A) -> Any.Type {
 }
 
 // Returns the bytes from a swift as NSData
-func encode<A>(var v:A) -> NSData {
+func encode<A, T>(var v:A, _ t: T.Type) -> T {
     return withUnsafePointer(&v) { p in
-        return NSData(bytes: p, length: strideof(A))
+        let d =  NSData(bytes: p, length: strideof(A))
+        let pointer = UnsafeMutablePointer<T>.alloc(sizeof(T.Type))
+        d.getBytes(pointer)
+        return pointer.move()
     }
 }
 
@@ -185,7 +182,7 @@ func encode<A>(var v:A) -> NSData {
 func encodeBool<A>(var v:A) -> Bool {
     return withUnsafePointer(&v) { p in
         let s = unsafeBitCast(p, UnsafePointer<Bool>.self)
-        return s.memory == true
+        return s.memory ? true : false
     }
 }
 

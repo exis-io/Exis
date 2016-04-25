@@ -8,9 +8,8 @@
 
 import Riffle
 
-// Change me to change the current set of inline tests
 enum Test { case Auth0, Auth1, Domain, Model }
-let CURRENTTEST = Test.Auth1
+let CURRENTTEST = Test.Model  // Change me to change the current set of inline tests
 
 // Required helper method for OSX backends
 initTypes(External(String.self, String.self), External(Int.self, Int.self), External(Double.self, Double.self), External(Float.self, Float.self), External(Bool.self, Bool.self), External(Model.self, Model.self))
@@ -98,6 +97,20 @@ case .Domain:
     
     app.listen()
 
+    
+case .Model:
+    let app = AppDomain(name: "xs.demo.damouse.model")
+    let modeler = Modeler(name: "modeler", superdomain: app)
+    
+    // If a login attempt in the past succeeded then reconnect will connect with that information
+    // The domain name used in that login is returned to you immediately
+    app.reconnect().error { reason in
+        app.login("billiy").error { reason in
+            print("Login failed: ", reason)
+        }
+    }
+
+    app.listen()
     
 default:
     break

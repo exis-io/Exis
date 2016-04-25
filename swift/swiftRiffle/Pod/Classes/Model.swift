@@ -10,6 +10,7 @@ import Foundation
 import Mantle
 
 public class Model: Silvery, Property, CustomStringConvertible {
+    var _xsid = CBID()
     
     required public init() {}
     
@@ -122,17 +123,30 @@ extension Model: Convertible {
 
 // Core-based persistence
 extension Model {
-//    public class func count() -> Deferred {
-//        guard let connection = globalConnectionReference else {
-//            Riffle.warn("Cannot access model object persistence until after joining")
-//            // TODO: return an erred differ that fires once assigned
-//            return Deferred()
-//        }
-//        
-//        let d = Deferred(domain: connection)
-//        ModelCount(d.cb, d.eb, "\(self.dynamicType)".cString(), "".cString())
-//        return d
-//    }
+    private static var managerAddress: UInt64?
+    
+    // Returns a failing deferred if no initialized
+    class func checkInitialized() -> Deferred? {
+        guard let a = managerAddress else {
+            let d = Deferred()
+            d.errback(["Cannot access model object persistence without a connection! Instantiate an AppDomain first!"])
+            return d
+        }
+        
+        return nil
+    }
+    
+    public class func count() -> OneDeferred<Int> {
+        guard let address = managerAddress else {
+            let d = OneDeferred<Int>()
+            d.errback(["Cannot access model object persistence without a connection! Instantiate an AppDomain first!"])
+            return d
+        }
+        
+        let r = OneDeferred<Int>()
+        sendCore("Count", deferred: r, address: address, args: ["\(self)"])
+        return r
+    }
 }
 
 //extension Model: Equatable {}

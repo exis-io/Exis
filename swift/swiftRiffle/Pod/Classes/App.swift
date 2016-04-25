@@ -10,8 +10,15 @@ import Foundation
 import Mantle
 
 public class AppDomain: Domain {
+    static var connectedApp: CoreApp?
+    
     public init(name: String) {
         super.init(name: name, app: CoreApp(name: name))
+        
+        // Eek
+        if AppDomain.connectedApp == nil {
+            AppDomain.connectedApp = app
+        }
         
         // Kick off the session receive loop if it isn't already started
         // TODO: figure out threading implementation for Ubuntu

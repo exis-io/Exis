@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0C24B4F536F5D45B0B3E7D3C /* Pods_Riffle_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FED052EAEC69AD7A5134688 /* Pods_Riffle_Example.framework */; };
+		503FD8C31CCDE6F7001D3B00 /* ModelTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E9BC651CB42A8E00A20965 /* ModelTesting.swift */; };
 		504D4A521C9C5724006B5579 /* DomainTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507D70E11C8D19070030F9F4 /* DomainTesting.swift */; };
 		505777C81C8E50DE00DE33DF /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505777C71C8E50DE00DE33DF /* main.swift */; };
 		507D70E21C8D19070030F9F4 /* DomainTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507D70E11C8D19070030F9F4 /* DomainTesting.swift */; };
@@ -342,6 +343,7 @@
 			files = (
 				504D4A521C9C5724006B5579 /* DomainTesting.swift in Sources */,
 				505777C81C8E50DE00DE33DF /* main.swift in Sources */,
+				503FD8C31CCDE6F7001D3B00 /* ModelTesting.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
