@@ -93,9 +93,18 @@ z.append(AnyMythicalType(kraken))
 //    }
 //}
 
+let json: [String: AnyObject] = ["ame": "spot"]
+let nsd = NSDictionary(dictionary: json)
+
+NSJSONSerialization.isValidJSONObject(nsd)
 
 
-
+//let data = try! NSJSONSerialization.dataWithJSONObject(json as! AnyObject, options: .PrettyPrinted)
+//print("Json done: \(data)")
+//
+//NSString(data: data, encoding: NSUTF8StringEncoding)
+//
+//
 
 
 

@@ -34,6 +34,7 @@ class Modeler: Domain {
 //        
 //        // Find all models that match the given query
 //        // In other words: get all cats where cat.name == "Spot"
+        
         Cat.find(["name": "Spot"]).then { (cats: [Cat]) in
             print("Found: \(cats.count)")
             for c in cats { print(c.description, c._xsid) }

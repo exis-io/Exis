@@ -159,14 +159,20 @@ extension Model {
         return Model.manager.callCore("Create", args: [modelName(), self.serialize()])
     }
     
-    public class func find<T: CollectionType where T.Generator.Element: Model>(query: [String: Any]) -> OneDeferred<T>! {
+    public class func find<T: CollectionType where T.Generator.Element: Model>(query: [String: AnyObject]) -> OneDeferred<T>! {
         let r = OneDeferred<T>()
         
         var q: [String: Any] = [:]
         
-        for (k, v) in query { q[k] = switchTypes(v) }
+        let data = try! NSJSONSerialization.dataWithJSONObject(query, options: .PrettyPrinted)
+        let repacked = try! NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
         
-        manager.callCore("Find", deferred: r, args: [modelName(), q])
+        let j = NSString(data: data, encoding: NSUTF8StringEncoding)
+        print("Repacked: \(repacked)")
+
+        //for (k, v) in query { q[k] = switchTypes(v) }
+        
+        manager.callCore("Find", deferred: r, args: [modelName(), repacked])
         return r
     }
     
@@ -195,9 +201,6 @@ class ModelManager: CoreClass {
 
 
 // guard let m = manager else { Riffle.warn("Cannot access model object persistence without a connection! Instantiate an AppDomain first!"); return nil }
-
-
-
 
 
 
