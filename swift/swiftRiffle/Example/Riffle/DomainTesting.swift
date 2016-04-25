@@ -192,14 +192,12 @@ class Sender: Domain {
     
     override func onJoin() {
         print("Sender joined")
-        passingTests()
+        // passingTests()
 
         // Stress Testing
-//        for _ in 0...20 {
-//            receiver.call("registerPrimitives", 1, 2.2, 3.3, "4", true).then { (a: Int, b: Float, c: Double, d: String, e: Bool) in
-//                assert(a == 1 && b == 2.2 && c == 3.3 && d == "4" && e == true)
-//            }
-//        }
+        for _ in 0...100 {
+            receiver.publish("subscribeNothing")
+        }
         
         // Fails- not enforced at the node
         // receiver.publish("subscribeOptions")

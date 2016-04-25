@@ -262,7 +262,7 @@ func (c domain) handleInvocation(msg *invocation, binding *boundEndpoint) {
 
 func (c *domain) handlePublish(msg *event, binding *boundEndpoint) {
 	if err := SoftCumin(binding.expectedTypes, msg.Arguments); err == nil {
-		Info("Calling %s", binding.endpoint)
+		Info("Publishing %s", binding.endpoint)
 		c.app.CallbackSend(binding.callback, msg.Arguments...)
 	} else {
 		Warn("%v", err)
