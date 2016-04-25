@@ -77,12 +77,12 @@ public class Deferred: Handler {
             errback(args)
         }
         
-        destroy()
+//        destroy()
     }
     
     func destroy() {
-        Session.handlers[cb] = nil
-        Session.handlers[eb] = nil
+//        Session.handlers[cb] = nil
+//        Session.handlers[eb] = nil
     }
     
     public func then(fn: () -> ()) -> Deferred {

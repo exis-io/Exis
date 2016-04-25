@@ -29,6 +29,16 @@ class Receiver: Domain {
     }
     
     override func onJoin() {
+        // passingTests()
+        
+        subscribe("stress") { (a: String) in
+            print("Success stress \(a)")
+        }
+        
+        joinFinished()
+    }
+    
+     func passingTests() {
         print("Recever joined")
         
         // Set some non-default values so we can check
@@ -117,8 +127,6 @@ class Receiver: Domain {
             print("Success registerOptions")
             print("Have details: \(details.caller)")
         }
-        
-        joinFinished()
     }
     
     override func onLeave() {
@@ -195,9 +203,11 @@ class Sender: Domain {
         // passingTests()
 
         // Stress Testing
-        for _ in 0...100 {
-            receiver.publish("subscribeNothing")
+        for _ in 0...50 {
+            receiver.publish("stress", "asdfasdfasdf")
         }
+        
+        print("done")
         
         // Fails- not enforced at the node
         // receiver.publish("subscribeOptions")

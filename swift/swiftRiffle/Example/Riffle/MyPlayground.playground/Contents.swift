@@ -12,3 +12,4 @@ import Foundation
 //pp(Double(1))
 //pp(Float(1))
 
+NSString(string: "")

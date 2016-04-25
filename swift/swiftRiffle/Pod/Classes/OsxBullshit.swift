@@ -25,7 +25,7 @@ import Foundation
 // Does this look silly or wrong to you? Good, you're a sane swift developer.
 // TODO: put an error log detailing what to put in here if the block hasn't been assigned on OSX
 
-var externals: [ExternalType] = []
+public var externals: [ExternalType] = []
 
 public func initTypes(types: ExternalType...) {
     externals = types
@@ -195,6 +195,38 @@ func encodeString<A>(var v:A) -> String {
         return ret as! String
     }
 }
+
+public func loop() {
+    let s = "TARGET"
+    rfloop(s)
+}
+
+public var crloop: ((Any) -> ())? = nil
+var count = 0
+
+public protocol Boot {
+    // typealias T
+    // func trir(a: T) -> T?
+    
+    func trir<T>(a: String, t: T.Type) -> T
+}
+
+public var boot: Boot? = nil
+
+public func rfloop<A>(a: A)  {
+    if let z = a as? String {
+//        let s = boot!.trir(z)
+//        print("Riffle has \(s)")
+    }
+    
+    print("Uh")
+}
+
+
+
+
+
+
 
 
 

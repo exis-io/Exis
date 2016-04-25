@@ -8,7 +8,7 @@
 
 import Riffle
 
-enum Test { case Auth0, Auth1, Domain, Model }
+enum Test { case Auth0, Auth1, Domain, Model, OsxBugs}
 let CURRENTTEST = Test.Domain  // Change me to change the current set of inline tests
 
 // Required helper method for OSX backends
@@ -16,8 +16,17 @@ initTypes(External(String.self, String.self), External(Int.self, Int.self), Exte
 
 Riffle.setLogLevelInfo()
 
+
+class Toot: Boot {
+    func trir<T>(a: String, t: T.Type) -> T {
+        return unsafeBitCast(a, T.self)
+    }
+}
+
+boot = Toot()
+
+
 switch CURRENTTEST {
-    
 
 case .Auth0:
     // The name you'd like to login as
@@ -109,6 +118,30 @@ case .Model:
     }
 
     app.listen()
+    
+
+// Manual testing for the OSX Types bug
+case .OsxBugs:
+    
+    var count = 0
+    
+//    class Toot: Boot {
+//        func trir(a: String) -> String {
+//            // return a as! String
+//
+//            if let z = a as? String {
+//                print("HAVE APP STRING \(z)")
+//                return z
+//            } else {
+//                print("DO NOT HAVE APP STRING")
+//                return a
+//            }
+//        }
+//    }
+
+    boot = Toot()
+    loop()
+    
     
 default:
     break
