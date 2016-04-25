@@ -23,9 +23,8 @@ type App interface {
 	Login([]interface{}) (string, string, error)
 	Register(string, string, string, string) error
 
-	Yield(uint64, []interface{})
+	Yield(uint64, []interface{}, map[string]interface{})
 	YieldError(uint64, string, []interface{})
-	YieldOptions(request uint64, args []interface{}, options map[string]interface{})
 
 	CallbackListen() Callback
 	CallbackSend(uint64, ...interface{})
@@ -261,18 +260,7 @@ func (a *app) SendHello() error {
 	return a.Send(&msg)
 }
 
-// Represents the result of an invokation in the crust
-func (a *app) Yield(request uint64, args []interface{}) {
-	m := &yield{
-		Request:   request,
-		Options:   make(map[string]interface{}),
-		Arguments: args,
-	}
-
-	a.Queue(m)
-}
-
-func (a *app) YieldOptions(request uint64, args []interface{}, options map[string]interface{}) {
+func (a *app) Yield(request uint64, args []interface{}, options map[string]interface{}) {
 	m := &yield{
 		Request:   request,
 		Options:   options,
