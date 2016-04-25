@@ -145,15 +145,10 @@ extension String: Property, Convertible {
     }
     
     public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
-//        return boot!.trir(from as! String, t: t)
+        if let s = from as? String {
+            return caster!.recode(from as! String, t: t)
+        }
         
-//        if let z = m {
-//            print("Have the generic \(z)")
-//            return z
-//        } else {
-//            print("Dont have the generic")
-//        }
-//        
         return recode(deserialize(switchTypes(from)), t.self)
     }
 
@@ -229,10 +224,9 @@ extension Bool: Property, Convertible {
     
     public static func unsafeDeserialize<T>(from: Any, t: T.Type) -> T? {
         // Occasional segfault within recode
-//        if let b = from as? Bool {
-//            let r =  b ? true : false
-//            return r as! T
-//        }
+        if let b = from as? Bool {
+            return caster!.recode(b, t: t)
+        }
         
         return recode(deserialize(from), t.self)
     }
@@ -241,17 +235,6 @@ extension Bool: Property, Convertible {
         return "bool"
     }
 }
-
-// Might work, but don't have time for it now
-//protocol Thing: Property, Convertible {}
-//extension Array: Thing {}
-//
-//
-//extension CollectionType where Self: Thing, Generator.Element : Convertible {
-//    internal static func quietRepresentation() -> Any {
-//        return Generator.Element.representation()
-//    }
-//}
 
 // TODO: Dictionaries
 extension Array : Property, BaseConvertible {

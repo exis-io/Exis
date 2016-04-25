@@ -197,6 +197,20 @@ func encodeString<A>(var v:A) -> String {
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+// Playground
+
 public func loop() {
     let s = "TARGET"
     let y = true

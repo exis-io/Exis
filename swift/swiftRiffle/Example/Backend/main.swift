@@ -124,9 +124,7 @@ case .Model:
 case .OsxBugs:
     OsxBugPlayground().test()
     
-    
-default:
-    break
+
 }
 
 

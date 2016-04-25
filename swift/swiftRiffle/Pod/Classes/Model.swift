@@ -10,6 +10,8 @@ import Foundation
 import Mantle
 
 public class Model: Silvery, Property, CustomStringConvertible {
+    // This changes the offsets of pointers in Silvery and as such is very dangerous. If removed
+    // subtract one from the literall offsets in pointerByOffset in Silver
     public var xsid = CBID()
     
     required public init() {}
