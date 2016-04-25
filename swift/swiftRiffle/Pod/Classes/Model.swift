@@ -47,58 +47,46 @@ extension Model: Convertible {
         
         var ret = self.init()
         
-        for n in ret.propertyNames() {
-            let repr = "\(ret[n]!.dynamicType.representation())"
+        _ = ret.propertyNames().map {
+            let repr = "\(ret[$0]!.dynamicType.representation())"
             
             // JSON is returning ints as doubles. Correct that and this isn't needed: Json.swift line 882
             if repr == "int" {
-                if let value = json[n] as? Double {
-                    ret[n] = Int(value)
+                if let value = json[$0] as? Double {
+                    ret[$0] = Int(value)
                 }
-                else if let value = json[n] as? Float {
-                    ret[n] = Int(value)
+                else if let value = json[$0] as? Float {
+                    ret[$0] = Int(value)
                 }
                 else {
-                    Riffle.warn("Model deserialization unable to cast property \(json[n]): \(json[n].dynamicType)")
+                    Riffle.warn("Model deserialization unable to cast property \(json[$0]): \(json[$0].dynamicType)")
                 }
             }
                 
-                // Silvery cant understand assignments where the asigner is an AnyObject, so
-            else if let value = json[n] as? Bool where "\(repr)" == "bool" {
-                ret[n] = value
+            // Silvery cant understand assignments where the asigner is an AnyObject, so 
+            else if let value = json[$0] as? Bool where "\(repr)" == "bool" {
+                ret[$0] = value
             }
-            else if let value = json[n] as? Double where "\(repr)" == "double" || "\(repr)" == "float" {
-                ret[n] = value
+            else if let value = json[$0] as? Double where "\(repr)" == "double" || "\(repr)" == "float" {
+                ret[$0] = value
             }
-            else if let value = json[n] as? Float where "\(repr)" == "double" || "\(repr)" == "float" {
-                ret[n] = value
+            else if let value = json[$0] as? Float where "\(repr)" == "double" || "\(repr)" == "float" {
+                ret[$0] = value
             }
-            else if let value = json[n] as? Int where "\(repr)" == "int" {
-                ret[n] = value
+            else if let value = json[$0] as? Int where "\(repr)" == "int" {
+                ret[$0] = value
             }
-            else if let value = json[n] as? String {
-//                #if os(OSX)
-//                    let p = ret[n] as! Optional<Property>
-//                    ret[n] = caster!.recode(value, t: externals[0].ambiguousType)
-//                #else
-//                    ret[n] = value
-//                #endif
-
-//                let r = caster!.recodeString(value)
-//                print("Recoding \(value) into string \(r)")
-//                let p = String.fromCString(r.cString())!
-//                ret[n] = p
-                
-                ret[n] = value
+            else if let value = json[$0] as? String {
+                ret[$0] = value
             }
-            else if let value = json[n] as? [Any] {
-                ret[n] = value
+            else if let value = json[$0] as? [Any] {
+                ret[$0] = value
             }
-            else if let value = json[n] as? [String: Any] {
-                ret[n] = value
+            else if let value = json[$0] as? [String: Any] {
+                ret[$0] = value
             }
             else {
-                Riffle.warn("Model deserialization unable to cast property \(json[n]): \(json[n].dynamicType)")
+                Riffle.warn("Model deserialization unable to cast property \(json[$0]): \(json[$0].dynamicType)")
             }
         }
         
