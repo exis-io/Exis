@@ -150,8 +150,6 @@ extension Model {
     }
     
     public class func count() -> OneDeferred<Int> {
-
-        
         let r = OneDeferred<Int>()
         manager.callCore("Count", deferred: r, args: ["\(self)"])
         return r
@@ -163,7 +161,12 @@ extension Model {
     
     public class func find<T: CollectionType where T.Generator.Element: Model>(query: [String: Any]) -> OneDeferred<T>! {
         let r = OneDeferred<T>()
-        manager.callCore("Find", deferred: r, args: [modelName(), query])
+        
+        var q: [String: Any] = [:]
+        
+        for (k, v) in query { q[k] = switchTypes(v) }
+        
+        manager.callCore("Find", deferred: r, args: [modelName(), q])
         return r
     }
     
@@ -191,7 +194,7 @@ class ModelManager: CoreClass {
 
 
 
-        // guard let m = manager else { Riffle.warn("Cannot access model object persistence without a connection! Instantiate an AppDomain first!"); return nil }
+// guard let m = manager else { Riffle.warn("Cannot access model object persistence without a connection! Instantiate an AppDomain first!"); return nil }
 
 
 
