@@ -10,7 +10,8 @@ import Foundation
 import CoreFoundation
 import Mantle
 
-
+let SUSPENDED_TOKEN = "_lastConnectionToken"
+let SUSPENDED_DOMAIN = "_lastConnectionDomain"
 let ID_UPPER_BOUND = UInt64(pow(Double(2), Double(53)))
 
 // Generate random uint64 values
@@ -22,30 +23,53 @@ func CBID() -> UInt64 {
 
 // All public static configuration and library access
 public class Riffle {
-    public class func setFabric(url: String) {
-        sendCore("Fabric", args: [url])
+    #if os(Linux)
+    #else
+    static let store = NSUserDefaults.standardUserDefaults()
+    #endif
+    
+    class func save(key: String, value: String) {
+        #if os(Linux)
+            Riffle.warn("Persistence is not implemented on linux!")
+        #else
+            store.setObject(value, forKey: key)
+        #endif
     }
     
-    public class func application(s: String){
-        sendCore("MantleApplication", args: [s])
+    class func load(key: String) -> String? {
+        #if os(Linux)
+            Riffle.warn("Persistence is not implemented on linux!")
+            return nil
+        #else
+            guard let data = store.objectForKey(key) as? String else { return nil }
+            return data
+        #endif
     }
     
-    public class func debug(s: String){
-        sendCore("MantleDebug", args: [s])
+    // Clear past saved authentication data
+    public class func clearAuthenticationStore() {
+        #if os(Linux)
+            Riffle.warn("Persistence is not implemented on linux!")
+        #else
+            store.removeObjectForKey(SUSPENDED_TOKEN)
+            store.removeObjectForKey(SUSPENDED_DOMAIN)
+        #endif
     }
     
-    public class func info(s: String){
-        sendCore("MantleInfo", args: [s])
-    }
+    // Log the given message with the riffle core
+    public class func application(s: String){ sendCore("MantleApplication", args: [s]) }
+    public class func debug(s: String){ sendCore("MantleDebug", args: [s]) }
+    public class func info(s: String){ sendCore("MantleInfo", args: [s]) }
+    public class func warn(s: String){ sendCore("MantleWarn", args: [s]) }
+    public class func error(s: String){ sendCore("MantleError", args: [s]) }
     
-    public class func warn(s: String){
-        sendCore("MantleWarn", args: [s])
-    }
-    
-    public class func error(s: String){
-        sendCore("MantleError", args: [s])
-    }
-    
+    // Set the current log level, filtering out logged messages *below* the set priority. Defaults to Error.
+    // From highest to lowest priority:
+    //      App:    developer messages
+    //      Error:  critical errors
+    //      Warn:   non-critical errors
+    //      Info:   information about domain operations, connection state, and performance
+    //      Debug:  full logging of all riffle protocol messages
     public class func setLogLevelApp() { sendCore("SetLogLevelApp")  }
     public class func setLogLevelOff() { sendCore("SetLogLevelOff")  }
     public class func setLogLevelErr() { sendCore("SetLogLevelErr")  }
@@ -53,14 +77,12 @@ public class Riffle {
     public class func setLogLevelInfo() { sendCore("SetLogLevelInfo")  }
     public class func setLogLevelDebug() { sendCore("SetLogLevelDebug")  }
     
+    // Change the URL of the fabric you'd like to connect to. Defaults to Production (node.exis.io)
+    public class func setFabric(url: String) { sendCore("Fabric", args: [url]) }
     public class func setFabricDev() { sendCore("SetFabricDev") }
     public class func setFabricSandbox() { sendCore("SetFabricSandbox") }
     public class func setFabricProduction() { sendCore("SetFabricProduction") }
     public class func setFabricLocal() { sendCore("SetFabricLocal") }
-    
-    public class func setCuminStrict() { sendCore("SetCuminStrict") }
-    public class func setCuminLoose() { sendCore("SetCuminLoose") }
-    public class func setCuminOff() { sendCore("SetCuminOff") }
 }
 
 

@@ -27,7 +27,7 @@ public class AppDomain: Domain {
         let d = OneDeferred<String>()
         
         // Check and see if there's a last session saved
-        if let domain = Persistence.get("_lastConnectionDomain"), token = Persistence.get("_lastConnectionToken") {
+        if let domain = Riffle.load(SUSPENDED_DOMAIN), token = Riffle.load(SUSPENDED_TOKEN) {
             app.callCore("SetToken", args: [token])
             app.callCore("SetAgent", args: [domain])
             
@@ -50,35 +50,27 @@ public class AppDomain: Domain {
         app.callCore("Close", args: ["AppDomain closing"])
     }
     
-    // Attempt to login and connect with the given credentials. If successful the connection is automatically
-    // opened.
-    public func login(name: String? = nil, password: String? = nil) -> OneDeferred<String> {
-        var args: [String] = []
-        
-        if let n = name {
-            args.append(n)
-        }
+    // Attempt to login and connect with the given credentials. If successful the connection is automatically opened
+    public func login(name: String, password: String? = nil) -> Deferred {
+        var args: [String] = [name]
         
         if let p = password {
             args.append(p)
         }
         
-        // TODO: check for saved tokens for the given domain name and re-use that token
-        // as appropriate
+        // TODO: check for saved tokens for the given domain name and re-use that token as appropriate
         
         let d = TwoDeferred<String, String>()
-        let r = OneDeferred<String>()
-        
+        let r = Deferred()
         app.callCore("Login", deferred: d, args: [args])
         
         d.then { token, domain in
             self.app.callCore("Connect").then {
-                let subbed  = self.name + "."
-                r.callback([domain.stringByReplacingOccurrencesOfString(subbed, withString: "")])
+                Riffle.save(SUSPENDED_DOMAIN, value: domain)
+                Riffle.save(SUSPENDED_TOKEN, value: token)
+                Riffle.save(name, value: token)
                 
-                Persistence.set("_lastConnectionDomain", value: domain)
-                Persistence.set("_lastConnectionToken", value: token)
-                Persistence.set(domain, value: token)
+                r.callback([])
             }.error { reason in
                 r.errback([reason])
             }
@@ -122,35 +114,6 @@ class CoreApp: CoreClass {
         initCore("App",[name])
     }
 }
-
-// Persistence implementation based on current platform
-class Persistence {
-    #if os(Linux)
-    #else
-        static let store = NSUserDefaults.standardUserDefaults()
-    #endif
-    
-    
-    class func set(key: String, value: String) {
-        #if os(Linux)
-            Riffle.warn("Persistence is not implemented on linux!")
-        #else
-            store.setObject(value, forKey: key)
-        #endif
-    }
-    
-    class func get(key: String) -> String? {
-        #if os(Linux)
-            Riffle.warn("Persistence is not implemented on linux!")
-            return nil
-        #else
-            guard let data = store.objectForKey(key) as? String else { return nil }
-            return data
-        #endif
-    }
-}
-
-
 
 
 

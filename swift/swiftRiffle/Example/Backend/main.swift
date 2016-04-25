@@ -20,45 +20,66 @@ Riffle.setLogLevelInfo()
 switch CURRENTTEST {
     
 
-// NOTE: Each "test case" has to be run on its own. Comment out the other examples
 case .Auth0:
+    // The name you'd like to login as
+    let name = "asdfasdf"
+    
+    // Your app's name, as set at exis.io
     let app = AppDomain(name: "xs.demo.damouse.auth0test")
     
-    // Auth 0 without a domain
-    app.login().then { (domain: String) in
-        print("Successfully connected as ", domain)
-    }.error { reason in
-        print("Login failed: ", reason)
-    }
-    
-    // Auth 0 with a domain
-    app.login("username").then { (domain: String) in
-        print("Successfully connected as ", domain)
-    }.error { reason in
-        print("Login failed: ", reason)
-    }
-
-    // Auth 0 resuming a connection
+    // If a login attempt in the past succeeded then reconnect will connect with that information
+    // The domain name used in that login is returned to you immediately
     app.reconnect().then { (domain: String) in
         print("Successfully reconnected as ", domain)
     }.error { reason in
-        print("Cannot reconnect: ", reason)
+        
+        // Reconnection failed, most likely because there wasn't a saved connection. Now we log in
+        app.login(name).then {
+            print("Successfully connected as ", name)
+        }.error { reason in
+            print("Login failed: ", reason)
+        }
     }
     
+    // Run forever. Only needed on backends.
     app.listen()
     
 
 case .Auth1:
+    // User credentials
+    let name = "asdfasdf"
+    let password = "12345678"
+    let email = "\(name)@gmail.com"
+    
+    // Your app's name, as set at exis.io
     let app = AppDomain(name: "xs.demo.damouse.auth1test")
     
-    app.registerAccount("bananas", email: "asdf@gmail.com", password: "123456789").then {
-        print("Registration succeeded")
+    // Checking if the user logged in before and is reconnecting
+    // If a connection to the fabric was successfully made in the past this resumes it
+    // use this to check if the app's user can be logged in right now
+    app.reconnect().then { (domain: String) in
+        print("Successfully reconnected as ", domain)
     }.error { reason in
-        print("Registration failed \(reason)")
+        print("Unable to reconnect")
     }
     
-    app.listen()
+    // Logging in
+    app.login(name, password: password).then {
+        print("Successfully connected as ", name)
+    }.error { reason in
+        print("Login failed: ", reason)
+    }
+    
+    // Registering
+    app.registerAccount(name, email: email, password: password).then {
+        print("Successfully connected as ", name)
+    }.error { reason in
+        print("Login failed: ", reason)
+    }
 
+    // Run forever. Only needed on backends.
+    app.listen()
+    
     
 case .Domain:
     Riffle.setFabricDev()

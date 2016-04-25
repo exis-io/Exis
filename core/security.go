@@ -89,7 +89,7 @@ func (a *app) Login(args []interface{}) (string, string, error) {
 // Attempts to register with the given credentials. Returns an error if any part of the process failed
 // or the registration itself failed. Lack of an error means the operation suceeded.
 func (a *app) Register(username string, password string, email string, name string) error {
-	Info("Registering as username \"%s\" with name \"%s\"", username, name)
+	Info("Registering as \"%s\"", username)
 
 	if !HardAuthentication {
 		return nil
