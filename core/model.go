@@ -121,9 +121,6 @@ func (m *modelManager) Save(collection string, query map[string]interface{}) err
 	if filter, err := createIdFilter([]map[string]interface{}{query}); err != nil {
 		return err
 	} else {
-        fmt.Printf("Query: \n\t%v\n", query)
-        fmt.Printf("Filter: \n\t%v\n", filter)
-
         e := fmt.Errorf("Couldn't find the model to update given %v", query)
 
 		if ret, err := m.query("collection/replace_one", collection, query, filter); err != nil {

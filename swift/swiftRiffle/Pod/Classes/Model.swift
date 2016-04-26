@@ -169,6 +169,10 @@ extension Model {
         return Model.manager.callCore("Create", args: [modelName(), self.serialize()])
     }
     
+    public func destroy() -> Deferred {
+        return Model.manager.callCore("Destroy", args: [modelName(), String(self._xsid)])
+    }
+    
     public class func find<T: CollectionType where T.Generator.Element: Model>(query: [String: Any]) -> OneDeferred<T>! {
         let r = OneDeferred<T>()
         

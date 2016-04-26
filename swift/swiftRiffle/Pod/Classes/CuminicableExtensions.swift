@@ -309,7 +309,7 @@ extension Array : Property, BaseConvertible {
         
         Riffle.warn("Array unsafeDeserialize not given an array!")
         let failsafe: [Generator.Element] = []
-        return failsafe as! T
+        return unsafeBitCast(failsafe, T.self)
         // return from as! T
     }
 
