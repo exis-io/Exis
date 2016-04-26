@@ -172,7 +172,7 @@ class Modeler: Domain {
         jungle.create().then { () -> Deferred in
             for cat in jungle { cat.age = 1000 }
             
-            return jungle.save().then() {
+            jungle.save().then() {
                 Panther.find(["age": 1000]).then { (cats: [Panther]) in
                     logCats(cats)
                 }

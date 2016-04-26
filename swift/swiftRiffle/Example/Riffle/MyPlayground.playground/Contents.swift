@@ -20,25 +20,39 @@ protocol ClosureType {
 }
 
 // Concrete and invokable. Doesn't care about types
-struct BaseClosure<A, B>: AnyClosureType, ClosureType {
+class BaseClosure<A, B>: AnyClosureType, ClosureType {
     let handler: A -> B
     let curried: [AnyObject] -> [AnyObject]
     func call(args: [AnyObject]) -> [AnyObject] { return curried(args) }
+    
+    init(fn: A -> B, curry: [AnyObject] -> [AnyObject]) {
+        handler = fn
+        curried = curry
+    }
 }
 
 // Generates constrained and concrete closures. Conversion is done here
-func generateConstrainedFunction<A: CN, B: CN, C: CN>(fn: (A, B) -> C)  -> BaseClosure<(A, B), C> {
-    return BaseClosure(handler: fn, curried: { a in return [fn(a[0] as! A, a[1] as! B) as! AnyObject]})
+func constrainFunction<A: CN, B: CN, C: CN>(fn: (A, B) -> C)  -> BaseClosure<(A, B), C> {
+    return BaseClosure(fn: fn, curry: { a in return [fn(a[0] as! A, a[1] as! B) as! AnyObject]})
 }
 
-let d = generateConstrainedFunction() { (a: String, b: Bool) -> String in
+func constrainFunction(fn: () -> ())  -> BaseClosure<Void, Void> {
+    return BaseClosure(fn: fn, curry: { a in return [fn() as! AnyObject]})
+}
+
+//func constrainFunction<A: CN>(fn: A -> ())   {
+//    BaseClosure(fn: fn, curry: { a in return [fn() as! AnyObject]})
+//}
+
+
+let d = constrainFunction() { (a: String, b: Bool) -> String in
     print("Hello!")
     return "Done"
 }
 
 
 
-protocol BaseDeferred {
+protocol Deferred {
     associatedtype NextDeferred
     
     var next: NextDeferred { get }
@@ -47,38 +61,77 @@ protocol BaseDeferred {
     var callbackArgs: [AnyObject]? { get set }
     var errbackArgs: [AnyObject]? { get set }
     
-    mutating func callback(args: [AnyObject])
-    mutating func errback(args: [AnyObject])
+    var _callback: AnyClosureType? { get set }
+    var _errback: AnyClosureType? { get set }
+    
+    func callback(args: [AnyObject])
+    func errback(args: [AnyObject])
 }
 
 // The generic kind is the type of the next deferred
-struct Deferred<T>: BaseDeferred {
-    var next: T
-    var fired: Bool
+class AbstractDeferred: Deferred {
+    var next: AbstractDeferred?
+    var fired: Bool = false
     
     var callbackArgs: [AnyObject]?
     var errbackArgs: [AnyObject]?
     
+    var _callback: AnyClosureType?
+    var _errback: AnyClosureType?
     
-    mutating func callback(args: [AnyObject]) {
-        // apply(args, &callbackArgs, t.callback, t.err)
+    
+    init() {}
+    
+    func callback(args: [AnyObject]) {
         callbackArgs = args
-    }
-    
-    mutating func errback(args: [AnyObject]) {
-        errbackArgs = args
-    }
-    
-    mutating func apply(args: [AnyObject], inout target: [AnyObject]?, handler: [AnyObject] -> [AnyObject], then: ([AnyObject] -> [AnyObject])?) {
-        target = args
         fired = true
-        let ret = handler(args)
-        if let t = then { t(ret) }
+        let ret = _callback?.call(args)
+        if let nextDeferred = next { nextDeferred.callback(ret!) }
+    }
+    
+    func errback(args: [AnyObject]) {
+        errbackArgs = args
+        fired = true
+        let ret = _errback?.call(args)
+        if let nextDeferred = next { nextDeferred.errback(ret!) }
     }
 }
 
+class BaseDeferred<A, B>: AbstractDeferred {
+    func _then(fn: BaseClosure<A, B>) {
+        _callback = fn
+    }
+    
+    func _error(fn: BaseClosure<A, B>) {
+        _errback = fn
+    }
+}
 
-//protocol ClosureType {
+// A deferred that doesn't take arguments
+protocol DeferredZero {
+    func then(fn: () -> ())
+}
+
+protocol DeferredBaseError {
+    func error(fn: (String) -> ())
+}
+
+class _DeferredZero: BaseDeferred<Void, Void> {}
+
+extension _DeferredZero: DeferredZero {
+    func then(fn: () -> ())  {
+        _then(constrainFunction(fn))
+    }
+}
+
+extension _DeferredZero: DeferredBaseError {
+    func error(fn: (String) -> ())  {
+//        _error(BaseClosure<String, Void>(fn: fn, curry: { a in return [] }))
+//        _error(constrainFunction(fn))
+    }
+}
+
+//protocol FunctionType {
 //    associatedtype ParameterTypes
 //    associatedtype ReturnTypes
 //    
@@ -87,7 +140,7 @@ struct Deferred<T>: BaseDeferred {
 //}
 //
 //
-//class AbstractClosure<P, R>: ClosureType {
+//class AbstractClosure<P, R>: FunctionType {
 //    var handler: P -> R
 //    init(fn: P -> R) { handler = fn }
 //    func invoke(args: P) -> R { return handler(args) }
