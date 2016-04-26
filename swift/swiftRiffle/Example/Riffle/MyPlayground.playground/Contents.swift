@@ -1,110 +1,48 @@
-import Foundation
 
 import Foundation
 
-protocol FoodType {}
-protocol Human: FoodType {}
-protocol Vegetable: FoodType {}
 
-protocol MythicalType {
-    associatedtype FoodType
-    
-    func prepareFood() -> [FoodType]
-    func devour(edible: FoodType)
+protocol Convertible {}
+typealias CN = Convertible
+
+extension String : Convertible {}
+extension Bool : Convertible {}
+
+
+protocol AnyFunction {
+    func call(args: [AnyObject]) -> [AnyObject]
 }
 
-class Kraken: MythicalType {
-    func prepareFood() -> [Human] {
-        //attack the village. Gather all the humans for DINNER TIME!
-        return []
-    }
-    
-    func devour(edible: Human) {
-        //It's DINNER TIME YO. Nom nom nom.
-    }
+protocol FunctionType {
+    associatedtype ParameterTypes
+    associatedtype ReturnTypes
+    var handler: ParameterTypes -> ReturnTypes { get set }
 }
 
-class Elf: MythicalType {
-    func prepareFood() -> [Vegetable] {
-        //Elves are vegetarian. Obvi.
-        return []
-    }
-    
-    func devour(edible: Vegetable) {
-        //Yum. Greens. How tasty.
-    }
+struct UnconstrainedFunction<A, B>: FunctionType {
+    var handler: A -> B
+    func invoke(args: A) -> B? { return handler(args) }
 }
 
-protocol AnyAnyMythicalType {
-    func hello()
-}
+// Concrete and constrained. Might as well use the method below, though, and override it
+struct ConstrainedFunction: AnyFunction {
+    var curriedHandler: ([AnyObject]) -> ([AnyObject])
 
-//By making this class a generic class, we can define a type T that we forward to our dependency injected MythicalType.
-//Since this class conforms to our MythicalType protocol, we can call MythicalType's functions regularly.
-
-class AnyMythicalType<T>: MythicalType, AnyAnyMythicalType {
-    //These variables are private, preventing others from assigning to them or calling them directly.
-    //Since each type is the exact same type as the functions in our MythicalType, we can assign a MythicalType instance's function signatures to these variables.
-    //By assigning a MythicalType instance's function signatures to these variables, we can effectively forward any calls made to AnyMythicalType's functions to the original Spaceship instance.
-    private let _prepareFood: (Void -> [T])
-    private let _devour: (T -> Void)
-    
-    //By creating only one required init, we ensure that we can only initialize this class one way.
-    required init<U: MythicalType where U.FoodType == T>(_ mythicalCreature: U) {
-        _prepareFood = mythicalCreature.prepareFood
-        _devour = mythicalCreature.devour
-    }
-    
-    //Because this forwarding class does conform to the MythicalType protocol, we can call the MythicalType functions directly on this class. This class, as you can see, will forward that message to the function signatures that we assigned at the time of initialization.
-    func prepareFood() -> [T] {
-        return _prepareFood()
-    }
-    
-    //Here is the second function in the MythicalType protocol and the forwarded message.
-    func devour(edible: T) {
-        _devour(edible)
-    }
-    
-    func hello() {
-        
+    func call(args: [AnyObject]) -> [AnyObject] {
+        return curriedHandler(args)
     }
 }
 
+func generateConstrainedFunction<A: CN, B: CN, C: CN>(fn: (A, B) -> C)  {
+    UnconstrainedFunction<(A, B), C>(handler: fn)
+    
+    ConstrainedFunction() { a in return fn(a[0] as! A, a[1] as! B) }
+}
 
-let kraken = Kraken()
-
-//Here is the magic at work! We can now define our generic `MythicalType`'s FoodType explicitly.
-let mythicalCreature: AnyMythicalType<Human>
-
-mythicalCreature = AnyMythicalType(kraken)
-
-var z: [AnyAnyMythicalType] = []
-z.append(AnyMythicalType(kraken))
-
-
-// Might work, but don't have time for it now
-//protocol Thing: Property, Convertible {}
-//extension Array: Thing {}
-//
-//
-//extension CollectionType where Self: Thing, Generator.Element : Convertible {
-//    internal static func quietRepresentation() -> Any {
-//        return Generator.Element.representation()
-//    }
-//}
-
-let json: [String: AnyObject] = ["ame": "spot"]
-let nsd = NSDictionary(dictionary: json)
-
-NSJSONSerialization.isValidJSONObject(nsd)
-
-
-//let data = try! NSJSONSerialization.dataWithJSONObject(json as! AnyObject, options: .PrettyPrinted)
-//print("Json done: \(data)")
-//
-//NSString(data: data, encoding: NSUTF8StringEncoding)
-//
-//
+generateConstrainedFunction() { (a: String, b: Bool) -> String in
+    print("Hello!")
+    return ""
+}
 
 
 
@@ -117,6 +55,49 @@ NSJSONSerialization.isValidJSONObject(nsd)
 
 
 
+
+
+
+
+
+
+protocol ClosureType {
+    associatedtype ParameterTypes
+    associatedtype ReturnTypes
+    
+    var handler: ParameterTypes -> ReturnTypes { get set }
+    func invoke(args: ParameterTypes) -> ReturnTypes
+}
+
+
+class AbstractClosure<P, R>: ClosureType {
+    var handler: P -> R
+    init(fn: P -> R) { handler = fn }
+    func invoke(args: P) -> R { return handler(args) }
+    
+    func parameterTypes() -> P.Type { return P.self }
+    func returnTypes() -> R.Type { return R.self }
+}
+
+
+// How to use AbstractClosure
+let t = AbstractClosure() { (a: String, b: String, c: String) -> String in return "asdf" }
+let p = AbstractClosure() { (c: Int) in }
+
+t.invoke(("asdf", "asdf", "asdf"))
+t.parameterTypes()
+t.returnTypes()
+
+
+
+// Accepts any function. Now just to constrain the types...
+func accept<A, B>(fn: A -> B) {
+    let closure = AbstractClosure(fn: fn)
+    print("Have closure: \(closure)")
+}
+
+accept() { (a: String) in }
+accept() { (b: Bool, c: Bool) -> String in return "asdf" }
 
 
 

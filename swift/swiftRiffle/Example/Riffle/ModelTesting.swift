@@ -26,6 +26,7 @@ class Modeler: Domain {
     var loadedCats: [Panther] = []
     
     override func onJoin() {
+        
         var count = 0
         // How many objects do we have?
         Panther.count().then { (number: Int) in

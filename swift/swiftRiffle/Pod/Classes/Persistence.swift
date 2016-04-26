@@ -39,15 +39,6 @@ extension Model: Persistable {
 extension Model {
     static var manager: ModelManager!
     
-//    private func modelName() -> String {
-//        let fullNameArr = "\(self.dynamicType)".characters.split{$0 == "."}.map(String.init)
-//        return fullNameArr[fullNameArr.count - 1]
-//    }
-//    
-//    private class func modelName() -> String {
-//        return "\(self)"
-//    }
-    
     static func setConnection(app: AppDomain) {
         manager = ModelManager(app: app.app)
     }
