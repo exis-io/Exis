@@ -13,6 +13,12 @@ class Panther: Model {
     var name = "Spot"
     var age = 43
     var something: Double = 1.0
+    
+    convenience init(name: String) {
+        self.init()
+        
+        self.name = name
+    }
 }
 
 
@@ -135,6 +141,16 @@ class Modeler: Domain {
 //                }
 //            }
 //        }
+        
+        
+        // You can also work with collections of model types
+        let jungle = [Panther(name: "Anna"), Panther(name: "Beatrice"), Panther(name: "Caroline")]
+        
+        jungle.create().then {
+            Panther.count().then { (number: Int) in
+                print("Have \(number))")
+            }
+        }
     }
 }
 
@@ -142,6 +158,26 @@ func logCats(cats: [Panther]) {
     print("\nFound: \(cats.count)")
     for c in cats { print("\t", c.description, c._xsid) }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

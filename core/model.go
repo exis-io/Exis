@@ -102,6 +102,7 @@ func (m *modelManager) Create(collection string, query map[string]interface{}) e
 }
 
 func (m *modelManager) CreateMany(collection string, query []map[string]interface{}) error {
+    fmt.Println("Creating many!")
 	_, err := m.query("collection/insert_many", collection, query, nil)
 	return err
 }

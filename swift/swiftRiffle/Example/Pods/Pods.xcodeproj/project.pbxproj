@@ -19,6 +19,8 @@
 		49F0847A4BE0FBAF202EA1C50C56B7CC /* Riffle-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BBE4EA63C5AF193151F19358C5D5A99 /* Riffle-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50AA4FB41CBDAE8B004288A4 /* OsxBullshit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AA4FB21CBDAE09004288A4 /* OsxBullshit.swift */; };
 		50AA4FB51CBDAE8C004288A4 /* OsxBullshit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AA4FB21CBDAE09004288A4 /* OsxBullshit.swift */; };
+		50C7A9D11CCEEC5C00B3F3B3 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C7A9CF1CCEEC3800B3F3B3 /* Persistence.swift */; };
+		50C7A9D21CCEEC5C00B3F3B3 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C7A9CF1CCEEC3800B3F3B3 /* Persistence.swift */; };
 		50F06E781CCAC4E90073D532 /* Crust.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F06E761CCAC1B30073D532 /* Crust.swift */; };
 		50F06E791CCAC4EA0073D532 /* Crust.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F06E761CCAC1B30073D532 /* Crust.swift */; };
 		50FB86E81CC97A420096407D /* Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50FB86E61CC979790096407D /* Options.swift */; };
@@ -82,6 +84,7 @@
 		4BBE4EA63C5AF193151F19358C5D5A99 /* Riffle-iOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "Riffle-iOS-umbrella.h"; path = "../Riffle-iOS/Riffle-iOS-umbrella.h"; sourceTree = "<group>"; };
 		4EFB0D0935F5F7309DDAEFE2B0278EF6 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Info.plist; path = "../Riffle-iOS/Info.plist"; sourceTree = "<group>"; };
 		50AA4FB21CBDAE09004288A4 /* OsxBullshit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OsxBullshit.swift; sourceTree = "<group>"; };
+		50C7A9CF1CCEEC3800B3F3B3 /* Persistence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		50F06E761CCAC1B30073D532 /* Crust.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Crust.swift; sourceTree = "<group>"; };
 		50FB86E61CC979790096407D /* Options.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Options.swift; sourceTree = "<group>"; };
 		5152DEE2BF9DE0D8C6F4A6793A049F79 /* Json.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Json.swift; sourceTree = "<group>"; };
@@ -256,6 +259,7 @@
 				55E9069C5C1F37FF182E57F021677A8C /* Deferred.swift */,
 				A2287689174A2BC779794A127B49E5EB /* Domain.swift */,
 				5152DEE2BF9DE0D8C6F4A6793A049F79 /* Json.swift */,
+				50C7A9CF1CCEEC3800B3F3B3 /* Persistence.swift */,
 				E4A900DE639ED6DBF00B0614D84D4079 /* Model.swift */,
 				50FB86E61CC979790096407D /* Options.swift */,
 				50AA4FB21CBDAE09004288A4 /* OsxBullshit.swift */,
@@ -476,6 +480,7 @@
 				06EEE028E204F8C11065C01ED81FB28E /* Domain.swift in Sources */,
 				39F8972887912D5D26080D5305D3547C /* Json.swift in Sources */,
 				FEC0830489962ED67A4F3B86F96C836D /* Model.swift in Sources */,
+				50C7A9D21CCEEC5C00B3F3B3 /* Persistence.swift in Sources */,
 				C24EBBBB9220DCDE3579C78216F8CF61 /* Package.swift in Sources */,
 				A1E6C03F217C2E120FF61FA6E353FD0B /* Riffle-iOS-dummy.m in Sources */,
 				50AA4FB51CBDAE8C004288A4 /* OsxBullshit.swift in Sources */,
@@ -513,6 +518,7 @@
 				52F962043A567C8E89D158A76D31F94C /* Domain.swift in Sources */,
 				44C14F7BEFEFE877593D63CA150CD318 /* Json.swift in Sources */,
 				614300DD7FD9A2E03735690BFD7CB37A /* Model.swift in Sources */,
+				50C7A9D11CCEEC5C00B3F3B3 /* Persistence.swift in Sources */,
 				9C4C415FF33A314A4DB94243B6A865ED /* Package.swift in Sources */,
 				9F1475D45F6E716EB56E64C21E2231FC /* Riffle-OSX-dummy.m in Sources */,
 				50AA4FB41CBDAE8B004288A4 /* OsxBullshit.swift in Sources */,
