@@ -11,11 +11,16 @@ import Foundation
 
 public protocol Persistable {
     func modelName() -> String
+    func getId() -> UInt64
     static func modelName() -> String
     static func getManager() -> ModelManager?
 }
 
 extension Model: Persistable {
+    public func getId() -> UInt64 {
+        return _xsid
+    }
+    
     public func modelName() -> String {
         let fullNameArr = "\(self.dynamicType)".characters.split{$0 == "."}.map(String.init)
         return fullNameArr[fullNameArr.count - 1]
@@ -91,12 +96,18 @@ extension Model {
 // Allow some operations to be perfromed on collections of models
 extension CollectionType where Generator.Element: Convertible, Generator.Element: Persistable {
     
-    func save() -> Deferred {
-        return Deferred()
+    public func save() -> Deferred {
+        let manager = Generator.Element.getManager()!
+        let name = Generator.Element.modelName()
+        let serialized = self.map { $0.serialize() }
+        return manager.callCore("SaveMany", args: [name, serialized])
     }
     
-    func destroy() -> Deferred {
-        return Deferred()
+    public func destroy() -> Deferred {
+        let manager = Generator.Element.getManager()!
+        let name = Generator.Element.modelName()
+        let serialized = self.map { String($0.getId()) }
+        return manager.callCore("DestroyMany", args: [name, serialized])
     }
     
     public func create() -> Deferred {

@@ -21,13 +21,13 @@ type ModelManager interface {
 	All(string) ([]map[string]interface{}, error)
 
 	Create(string, map[string]interface{}) error
-	CreateMany(string, []map[string]interface{}) error
+	CreateMany(string, []interface{}) error
 
 	Save(string, map[string]interface{}) error
-	SaveMany(string, []map[string]interface{}) error
+	SaveMany(string, []interface{}) error
 
 	Destroy(string, string) error
-	DestroyMany(string, []string) error
+	DestroyMany(string, []interface{}) error
 }
 
 // Initialize the model manager with an opened connection and the Storage appliance's
@@ -61,7 +61,7 @@ func (m *modelManager) query(endpoint string, collection string, query interface
 	} else if len(r) != 1 {
 		return nil, fmt.Errorf("Model query failed. Received unexpected result: %v", r)
 	} else {
-		fmt.Printf(" %s/%s \n\tfilter: %s\n\tquery: %s\n\tresult: %v\n", collection, endpoint, filter, query, r)
+		Debug(" %s/%s \n\tfilter: %s\n\tquery: %s\n\tresult: %v\n", collection, endpoint, filter, query, r)
 		return r[0], nil
 	}
 }
@@ -101,8 +101,7 @@ func (m *modelManager) Create(collection string, query map[string]interface{}) e
 	return err
 }
 
-func (m *modelManager) CreateMany(collection string, query []map[string]interface{}) error {
-    fmt.Println("Creating many!")
+func (m *modelManager) CreateMany(collection string, query []interface{}) error {
 	_, err := m.query("collection/insert_many", collection, query, nil)
 	return err
 }
@@ -112,14 +111,14 @@ func (m *modelManager) Destroy(collection string, id string) error {
 	return err
 }
 
-func (m *modelManager) DestroyMany(collection string, id []string) error {
+func (m *modelManager) DestroyMany(collection string, id []interface{}) error {
 	filter := map[string]interface{}{"_xsid": map[string]interface{}{"$in": id}}
 	_, err := m.query("collection/delete_many", collection, filter, nil)
 	return err
 }
 
 func (m *modelManager) Save(collection string, query map[string]interface{}) error {
-	if filter, err := createIdFilter([]map[string]interface{}{query}); err != nil {
+	if filter, err := createIdFilter([]interface{}{query}); err != nil {
 		return err
 	} else {
         e := fmt.Errorf("Couldn't find the model to update given %v", query)
@@ -140,7 +139,7 @@ func (m *modelManager) Save(collection string, query map[string]interface{}) err
 	}
 }
 
-func (m *modelManager) SaveMany(collection string, query []map[string]interface{}) error {
+func (m *modelManager) SaveMany(collection string, query []interface{}) error {
 	if ids, err := fetchIds(query); err != nil {
 		return err
 	} else {
@@ -166,11 +165,13 @@ func (m *modelManager) Count(collection string) (uint, error) {
 
 // goes through the fields in the query and retrieves their _id fields, returning them.
 // The query is not modified
-func fetchIds(query []map[string]interface{}) ([]string, error) {
-	var ret []string
+func fetchIds(query []interface{}) ([]interface{}, error) {
+	var ret []interface{}
 
-	for _, v := range query {
-		if id, ok := v["_xsid"]; !ok {
+	for _, json := range query {
+        if v, ok := json.(map[string]interface{}); !ok {
+            return nil, fmt.Errorf("Expected JSON, got %v", json)
+		} else if id, ok := v["_xsid"]; !ok {
 			return nil, fmt.Errorf("Unable to find _xsid field in json %v", v)
 		} else if cast, ok := id.(string); !ok {
 			return nil, fmt.Errorf("Model _xsid fields must be strings. Got %v", cast)
@@ -182,7 +183,7 @@ func fetchIds(query []map[string]interface{}) ([]string, error) {
 	return ret, nil
 }
 
-func createIdFilter(query []map[string]interface{}) (interface{}, error) {
+func createIdFilter(query []interface{}) (interface{}, error) {
 	if ids, err := fetchIds(query); err != nil {
 		return nil, err
 	} else {

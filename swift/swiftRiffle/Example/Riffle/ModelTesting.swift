@@ -143,14 +143,41 @@ class Modeler: Domain {
 //        }
         
         
-        // You can also work with collections of model types
-        let jungle = [Panther(name: "Anna"), Panther(name: "Beatrice"), Panther(name: "Caroline")]
+//        // Creating multiple models at once
+//        let jungle = [Panther(name: "Anna"), Panther(name: "Beatrice"), Panther(name: "Caroline")]
+//        
+//        jungle.create().then {
+//            Panther.count().then { (number: Int) in
+//                print("Have \(number))")
+//            }
+//        }
+//        
+//        
+//        // Destroying collections of models
+//        Panther.all().then { (cats: [Panther]) in
+//            logCats(cats)
+//
+//            cats.destroy().then {
+//                Panther.count().then { (number: Int) in
+//                    print("Destoryed all the cats, have: \(count)") // The count should have gone down by one!
+//                }
+//            }
+//        }
         
+        
+        // Saving lots of models at once
+        let jungle = [Panther(name: "Anna"), Panther(name: "Beatrice"), Panther(name: "Caroline")]
+
         jungle.create().then {
-            Panther.count().then { (number: Int) in
-                print("Have \(number))")
+            for cat in jungle { cat.age = 1000 }
+            
+            jungle.save().then() {
+                Panther.find(["age": 1000]).then { (cats: [Panther]) in
+                    logCats(cats)
+                }
             }
         }
+        
     }
 }
 
