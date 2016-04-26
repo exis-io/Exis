@@ -18,9 +18,27 @@ class OsxBugPlayground {
     init() {}
     
     func test() {
-        let r = dmtest(Rat.self)
-        print("Result \(r?.description)")
         
+        let d = Deferred()
+        let m = Deferred()
+        
+        d.then { () -> Deferred in
+            print("In d")
+            return m
+        }.then {
+            print("d is done")
+        }
+        
+        m.then {
+            print("In m")
+        }
+        
+        m.callback([])
+        d.callback([])
+        
+//        let r = dmtest(Rat.self)
+//        print("Result \(r?.description)")
+//        
 //        for i in 0...5 {
 //            let r = dmtest(Rat.self)
 //            print("Result \(i): \(r?.name)")

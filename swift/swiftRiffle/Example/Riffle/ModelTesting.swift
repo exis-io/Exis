@@ -169,10 +169,10 @@ class Modeler: Domain {
         // Saving lots of models at once
         let jungle = [Panther(name: "Anna"), Panther(name: "Beatrice"), Panther(name: "Caroline")]
 
-        jungle.create().then {
+        jungle.create().then { () -> Deferred in
             for cat in jungle { cat.age = 1000 }
             
-            jungle.save().then() {
+            return jungle.save().then() {
                 Panther.find(["age": 1000]).then { (cats: [Panther]) in
                     logCats(cats)
                 }

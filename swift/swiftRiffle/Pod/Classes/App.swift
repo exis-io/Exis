@@ -32,7 +32,7 @@ public class AppDomain: Domain {
             app.callCore("SetToken", args: [token])
             app.callCore("SetAgent", args: [domain])
             
-            self.app.callCore("Connect").then {
+            self.app.callCore("Connect").then { () -> () in
                 // "Static" initialization for all models and model connections
                 if !Model.ready() {
                     Model.setConnection(self)
@@ -71,7 +71,7 @@ public class AppDomain: Domain {
         app.callCore("Login", deferred: d, args: [args])
         
         d.then { token, domain in
-            self.app.callCore("Connect").then {
+            self.app.callCore("Connect").then { () -> () in
                 // "Static" initialization for all models and model connections
                 if !Model.ready() {
                     Model.setConnection(self)

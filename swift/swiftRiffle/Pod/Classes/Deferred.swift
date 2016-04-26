@@ -57,7 +57,12 @@ public class Deferred: Handler {
 
     public func callback(args: [Any]) -> Any? {
         callbackOccured = args
-        if let f = callbackFuntion { f(args) }
+        print(args)
+        if let f = callbackFuntion {
+            if let d = f(args) as? Deferred {
+                print("Have a deferred")
+            }
+        }
         if let n = next { n.callback(args) }
         return nil
     }
@@ -86,6 +91,10 @@ public class Deferred: Handler {
     }
     
     public func then(fn: () -> ()) -> Deferred {
+        return _then() { a in fn() }
+    }
+    
+    public func then(fn: () -> (Deferred)) -> Deferred {
         return _then() { a in fn() }
     }
     
