@@ -213,15 +213,29 @@ extension Deferred: VoidOne {
 }
 
 
-// Callback: Void -> T where subsequent callbacks must return T
-protocol ConstrainedVoidOne {
-    associatedtype ReturnType: Convertible
-    func then<B: CN>(fn: B -> ReturnType) -> DeferredResultsConstrained<ReturnType>
+protocol VoidDeferred {
+    func then<A: Deferred>(fn: () -> A) -> DeferredParams<A>
 }
 
-class DeferredResultsConstrained<A: CN>: Deferred, ConstrainedVoidOne {
-    func then<B: CN>(fn: B -> A)  -> DeferredResultsConstrained<A> {
-        let d = DeferredResultsConstrained<A>()
+extension Deferred: VoidDeferred {
+    func then<A: Deferred>(fn: () -> A)  -> DeferredParams<A> {
+        let d = DeferredParams<A>()
+        next.append(d)
+        _then(constrainVoidOne(fn))
+        return d
+    }
+}
+
+
+// Callback: Void -> T where subsequent callbacks must return T
+protocol ConstrainedVoidOne {
+    associatedtype T: Convertible
+    func then<B: CN>(fn: B -> T) -> DeferredResults<T>
+}
+
+class DeferredResults<A: CN>: Deferred, ConstrainedVoidOne {
+    func then<B: CN>(fn: B -> A)  -> DeferredResults<A> {
+        let d = DeferredResults<A>()
         next.append(d)
         _then(constrain(fn))
         return d
@@ -230,31 +244,35 @@ class DeferredResultsConstrained<A: CN>: Deferred, ConstrainedVoidOne {
 
 // Callback: A -> B where B is known and subsequent callbacks must accept B
 protocol ConstrainedOneVoid {
-    func then<B: CN>(fn: A -> B)  -> DeferredParamConstrained<B>
+    associatedtype T: Convertible
     
-    func then(fn: A -> ()) -> DeferredContinuing {
-    let d = DeferredContinuing()
-    next.append(d)
-    _then(constrainOneVoid(fn))
-    return d
-    }
+    func then<A: CN>(fn: T -> A)  -> DeferredParams<A>
+    func then(fn: T -> ()) -> DeferredChain
 }
 
-class DeferredParamConstrained<A: CN>: Deferred {
-    func then<B: CN>(fn: A -> B)  -> DeferredParamConstrained<B> {
-        let d = DeferredParamConstrained<B>()
+class DeferredParams<A: CN>: Deferred {
+    func then<B: CN>(fn: A -> B)  -> DeferredParams<B> {
+        let d = DeferredParams<B>()
         next.append(d)
         _then(constrain(fn))
         return d
     }
     
-    func then(fn: A -> ()) -> DeferredContinuing {
-        let d = DeferredContinuing()
+    func then(fn: A -> ()) -> DeferredChain {
+        let d = Deferred()
         next.append(d)
         _then(constrainOneVoid(fn))
         return d
     }
 }
+
+// Allows users or developers to invoke callbacks
+protocol Invokable {
+    func callback(args: [AnyObject])
+    func errback(args: [AnyObject])
+}
+
+extension Deferred: Invokable {}
 
 
 // Composition
@@ -262,18 +280,20 @@ class DeferredParamConstrained<A: CN>: Deferred {
 // by mixing and matching the protocols above to create useful interfaces
 
 // A boring deferred that doesn't return anything terribly useful
-protocol DeferredVoid: EBStringVoid, VoidVoid {}
+protocol DeferredVoid: EBStringVoid, VoidVoid, Invokable {}
 extension Deferred: DeferredVoid {}
 
 // Allows deferred objects to be returned from within then blocks
 protocol DeferredChain: EBStringVoid, VoidVoid {}
 extension Deferred: DeferredChain {}
 
+// Results of then are constrained to the given type
+protocol DeferredConstrainedResults: ConstrainedVoidOne, EBStringVoid {}
+extension DeferredResults: DeferredConstrainedResults {}
+
 // Parameters of then are constrained by the return of previous signature
-protocol DeferredConstrained: ConstrainedVoidOne, EBStringVoid {}
-extension DeferredResultsConstrained: DeferredConstrained {}
-
-
+protocol DeferredConstrainedParams: ConstrainedOneVoid, EBStringVoid {}
+extension DeferredParams: DeferredConstrainedParams {}
 
 
 // From here on out we build up specialized deferred classes.
@@ -311,7 +331,7 @@ extension DeferredResultsConstrained: DeferredConstrained {}
 // Exmaples and inline tests follow
 
 // Default, no args errback and callback
-//let d = DeferredDefault()
+//let d: DeferredVoid = Deferred()
 //
 //d.then {
 //    print("Default Then")
@@ -329,7 +349,7 @@ extension DeferredResultsConstrained: DeferredConstrained {}
 
 
 // Default chaining
-//var d = DefaultDeferred()
+//let d: DeferredVoid = Deferred()
 //
 //d.then {
 //    let a = 1
@@ -349,7 +369,7 @@ extension DeferredResultsConstrained: DeferredConstrained {}
 
 
 // Lazy callbacks- immediately fire callback handler if the chain has already been called back
-//var d = DeferredDefault()
+//var d: DeferredVoid = Deferred()
 //d.callback([])
 //
 //d.then {
@@ -358,7 +378,7 @@ extension DeferredResultsConstrained: DeferredConstrained {}
 //    let b = 2
 //}
 //
-//d = DeferredDefault()
+//d = Deferred()
 //d.errback([""])
 //
 //d.error { e in
@@ -368,42 +388,43 @@ extension DeferredResultsConstrained: DeferredConstrained {}
 //}
 
 
+
 // Waiting for an internal deferred to resolve
-//var d = DeferredContinuing()
-//let fakeOperation = DeferredDefault() // Some operation that returns a deferred, mocked
-//
-//fakeOperation.then {
-//    let a = 2
-//    print(a)
-//}
-//
-//d.then {
-//    let a = 1
-//    print(a)
-//    return fakeOperation
-//}.then {
-//    let b = 3
-//    print(b)
-//}
-//
-//d.callback([])
-//fakeOperation.callback([])
+var d: DeferredChain = Deferred()
+let fakeOperation = Deferred() // Some operation that returns a deferred, mocked
+
+fakeOperation.then {
+    let a = 2
+    print(a)
+}
+
+d.then {
+    let a = 1
+    print(a)
+    return fakeOperation
+}.then {
+    let b = 3
+    print(b)
+}
+
+d.callback([])
+fakeOperation.callback([])
 
 
 
 // Chain the results of one deferred to another in a type safe way
-let d = DeferredContinuing()
-
-d.then {
-    return "Hello"
-    }.then { s in
-        print("Have string \(s)!")
-        print("I dont return anything!")
-    }.then {
-        print("Done")
-}
-
-d.callback([])
+//let d = DeferredContinuing()
+//
+//d.then {
+//    return "Hello"
+//    }.then { s in
+//        print("Have string \(s)!")
+//        print("I dont return anything!")
+//    }.then {
+//        print("Done")
+//}
+//
+//d.callback([])
 
 
 
