@@ -17,6 +17,8 @@
 		39F8972887912D5D26080D5305D3547C /* Json.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5152DEE2BF9DE0D8C6F4A6793A049F79 /* Json.swift */; };
 		44C14F7BEFEFE877593D63CA150CD318 /* Json.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5152DEE2BF9DE0D8C6F4A6793A049F79 /* Json.swift */; };
 		49F0847A4BE0FBAF202EA1C50C56B7CC /* Riffle-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BBE4EA63C5AF193151F19358C5D5A99 /* Riffle-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5051DAC31CD01C4300AC786A /* AnyFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5051DAC01CD01A8A00AC786A /* AnyFunction.swift */; };
+		5051DAC41CD01C4300AC786A /* AnyFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5051DAC01CD01A8A00AC786A /* AnyFunction.swift */; };
 		50AA4FB41CBDAE8B004288A4 /* OsxBullshit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AA4FB21CBDAE09004288A4 /* OsxBullshit.swift */; };
 		50AA4FB51CBDAE8C004288A4 /* OsxBullshit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AA4FB21CBDAE09004288A4 /* OsxBullshit.swift */; };
 		50C7A9D11CCEEC5C00B3F3B3 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C7A9CF1CCEEC3800B3F3B3 /* Persistence.swift */; };
@@ -83,6 +85,7 @@
 		4875F481C5FE0442F13524F1C07E27D8 /* Pods-Riffle_Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Riffle_Example-dummy.m"; sourceTree = "<group>"; };
 		4BBE4EA63C5AF193151F19358C5D5A99 /* Riffle-iOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "Riffle-iOS-umbrella.h"; path = "../Riffle-iOS/Riffle-iOS-umbrella.h"; sourceTree = "<group>"; };
 		4EFB0D0935F5F7309DDAEFE2B0278EF6 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Info.plist; path = "../Riffle-iOS/Info.plist"; sourceTree = "<group>"; };
+		5051DAC01CD01A8A00AC786A /* AnyFunction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnyFunction.swift; sourceTree = "<group>"; };
 		50AA4FB21CBDAE09004288A4 /* OsxBullshit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OsxBullshit.swift; sourceTree = "<group>"; };
 		50C7A9CF1CCEEC3800B3F3B3 /* Persistence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		50F06E761CCAC1B30073D532 /* Crust.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Crust.swift; sourceTree = "<group>"; };
@@ -204,6 +207,15 @@
 			path = Pod;
 			sourceTree = "<group>";
 		};
+		5051DABF1CD01A7800AC786A /* Deferred */ = {
+			isa = PBXGroup;
+			children = (
+				55E9069C5C1F37FF182E57F021677A8C /* Deferred.swift */,
+				5051DAC01CD01A8A00AC786A /* AnyFunction.swift */,
+			);
+			name = Deferred;
+			sourceTree = "<group>";
+		};
 		7B4BD60578EA4EC36F4B01E3B856429A /* Pods-Backend */ = {
 			isa = PBXGroup;
 			children = (
@@ -252,11 +264,11 @@
 		9A26864B76E5C269F63E7A4D5D822103 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				5051DABF1CD01A7800AC786A /* Deferred */,
 				5BDA28F8110D8581FAE7340A7AB0F62F /* App.swift */,
 				1865A67516433B63F48F9D023D69DC23 /* Cumin.swift */,
 				9AB6A79D0ECD1C46D29B759166BE8001 /* CuminicableExtensions.swift */,
 				50F06E761CCAC1B30073D532 /* Crust.swift */,
-				55E9069C5C1F37FF182E57F021677A8C /* Deferred.swift */,
 				A2287689174A2BC779794A127B49E5EB /* Domain.swift */,
 				5152DEE2BF9DE0D8C6F4A6793A049F79 /* Json.swift */,
 				50C7A9CF1CCEEC3800B3F3B3 /* Persistence.swift */,
@@ -481,6 +493,7 @@
 				39F8972887912D5D26080D5305D3547C /* Json.swift in Sources */,
 				FEC0830489962ED67A4F3B86F96C836D /* Model.swift in Sources */,
 				50C7A9D21CCEEC5C00B3F3B3 /* Persistence.swift in Sources */,
+				5051DAC31CD01C4300AC786A /* AnyFunction.swift in Sources */,
 				C24EBBBB9220DCDE3579C78216F8CF61 /* Package.swift in Sources */,
 				A1E6C03F217C2E120FF61FA6E353FD0B /* Riffle-iOS-dummy.m in Sources */,
 				50AA4FB51CBDAE8C004288A4 /* OsxBullshit.swift in Sources */,
@@ -519,6 +532,7 @@
 				44C14F7BEFEFE877593D63CA150CD318 /* Json.swift in Sources */,
 				614300DD7FD9A2E03735690BFD7CB37A /* Model.swift in Sources */,
 				50C7A9D11CCEEC5C00B3F3B3 /* Persistence.swift in Sources */,
+				5051DAC41CD01C4300AC786A /* AnyFunction.swift in Sources */,
 				9C4C415FF33A314A4DB94243B6A865ED /* Package.swift in Sources */,
 				9F1475D45F6E716EB56E64C21E2231FC /* Riffle-OSX-dummy.m in Sources */,
 				50AA4FB41CBDAE8B004288A4 /* OsxBullshit.swift in Sources */,

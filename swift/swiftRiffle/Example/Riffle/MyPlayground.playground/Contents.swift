@@ -2,11 +2,28 @@
 import Foundation
 
 
-protocol Convertible {}
+protocol Convertible {
+    // Convert the given argument to this type
+    static func to<T: AnyObject>(from: T) -> Self
+    
+    // Get a serializable value from this type
+    func from() -> AnyObject
+}
+
+// By creating a base "implementation" of the protocol we can inject
+// CN into a lot of stuff without having to implement each individually
+protocol BaseConvertible: Convertible {}
+
+extension BaseConvertible {
+    static func to<T: AnyObject>(from: T) -> Self { return from as! Self }
+    func from() -> AnyObject { return self as! AnyObject }
+}
+
 typealias CN = Convertible
 
-extension String : Convertible {}
-extension Bool : Convertible {}
+extension String : BaseConvertible { }
+extension Bool : BaseConvertible { }
+
 
 
 protocol AnyClosureType {
@@ -22,55 +39,64 @@ protocol ClosureType {
 // Concrete and invokable. Doesn't care about types
 class BaseClosure<A, B>: AnyClosureType, ClosureType {
     let handler: A -> B
-    let curried: [AnyObject] -> [AnyObject]
-    func call(args: [AnyObject]) -> [AnyObject] { return curried(args) }
+    var curried: ([AnyObject] -> [AnyObject])!
     
-    init(fn: A -> B, curry: [AnyObject] -> [AnyObject]) {
+    // For some reason the generic constraints aren't forwarded correctly when
+    // the curried function is passed along, so it gets its own method below
+    // You must call setCurry immediately after init!
+    init(fn: A -> B) {
         handler = fn
-        curried = curry
+    }
+    
+    func call(args: [AnyObject]) -> [AnyObject] {
+        return curried(args)
+    }
+    
+    func setCurry(fn: [AnyObject] -> [AnyObject]) -> Self {
+        curried = fn
+        return self
     }
 }
 
-// Generates constrained and concrete closures. Conversion is done here
-func constrainFunction<A: CN, B: CN, C: CN>(fn: (A, B) -> C)  -> BaseClosure<(A, B), C> {
-    return BaseClosure(fn: fn, curry: { a in return [fn(a[0] as! A, a[1] as! B) as! AnyObject]})
+// Generates constrained concrete closures. Some of these methods have different names
+// instead of overloads to cases where non-generic overrides get called instead of the generic ones
+func constrainVoidVoid(fn: () -> ())  -> BaseClosure<Void, Void> {
+    return BaseClosure(fn: fn).setCurry { a in fn(); return [] }
 }
 
-func constrainFunction(fn: () -> ())  -> BaseClosure<Void, Void> {
-    return BaseClosure(fn: fn, curry: { a in return [fn() as! AnyObject]})
+func constrainOneVoid<A>(fn: (A) -> ()) -> BaseClosure<A, Void> {
+    return BaseClosure(fn: fn).setCurry { a in fn(a[0] as! A); return [] }
 }
 
-//func constrainFunction<A: CN>(fn: A -> ())   {
-//    BaseClosure(fn: fn, curry: { a in return [fn() as! AnyObject]})
-//}
+func constrainVoidOne<A>(fn: () -> A) -> BaseClosure<Void, A> {
+    return BaseClosure(fn: fn).setCurry { a in [fn() as! AnyObject] }
+}
 
+func constrain<A: CN, B: CN, C: CN>(fn: (A, B) -> C)  -> BaseClosure<(A, B), C> {
+    return BaseClosure(fn: fn).setCurry { a in return [fn(A.to(a[0]), B.to(a[1])) as! AnyObject]}
+}
 
-let d = constrainFunction() { (a: String, b: Bool) -> String in
-    print("Hello!")
-    return "Done"
+func constrain<A: CN, B: CN>(fn: A -> B)  -> BaseClosure<A, B> {
+    return BaseClosure(fn: fn).setCurry { a in return [fn(A.to(a[0])) as! AnyObject]}
 }
 
 
 
-protocol Deferred {
-    associatedtype NextDeferred
-    
-    var next: NextDeferred { get }
+
+protocol DeferredType {
     var fired: Bool { get set }
     
     var callbackArgs: [AnyObject]? { get set }
     var errbackArgs: [AnyObject]? { get set }
     
-    var _callback: AnyClosureType? { get set }
-    var _errback: AnyClosureType? { get set }
-    
     func callback(args: [AnyObject])
     func errback(args: [AnyObject])
 }
 
+
 // The generic kind is the type of the next deferred
-class AbstractDeferred: Deferred {
-    var next: AbstractDeferred?
+class Deferred: DeferredType {
+    var next: [Deferred] = []
     var fired: Bool = false
     
     var callbackArgs: [AnyObject]?
@@ -86,132 +112,298 @@ class AbstractDeferred: Deferred {
         callbackArgs = args
         fired = true
         let ret = _callback?.call(args)
-        if let nextDeferred = next { nextDeferred.callback(ret!) }
+        
+        // If we detect a continuation from our callback then we don't follow the deferred chain
+        // Instead, we slip that deferred into the chain between us and next, disconect the rest of the
+        // chain from us and connect it to the new deferred
+        if ret != nil && ret!.count == 1 {
+            if let continuation = ret![0] as? Deferred {
+                continuation.callbackArgs = callbackArgs
+                continuation.errbackArgs = errbackArgs
+                continuation.next = next
+                next = []
+            } else {
+                for n in next { n.callback(ret == nil ? [] : ret!) }
+            }
+        } else {
+            for n in next { n.callback(ret == nil ? [] : ret!) }
+        }
     }
     
+    // Note that callbacks pipe previous results into subsequent callbacks,
+    // but errbacks pass the same error string to each. This will be changed.
     func errback(args: [AnyObject]) {
         errbackArgs = args
         fired = true
-        let ret = _errback?.call(args)
-        if let nextDeferred = next { nextDeferred.errback(ret!) }
-    }
-}
-
-class BaseDeferred<A, B>: AbstractDeferred {
-    func _then(fn: BaseClosure<A, B>) {
-        _callback = fn
+        _errback?.call(args)
+        for n in next { n.errback(args) }
     }
     
-    func _error(fn: BaseClosure<A, B>) {
+    func _then(fn: AnyClosureType) {
+        _callback = fn
+        if let a = callbackArgs { callback(a) }
+    }
+    
+    func _error(fn: AnyClosureType) {
         _errback = fn
+        if let a = errbackArgs { errback(a) }
     }
 }
 
-// A deferred that doesn't take arguments
-protocol DeferredZero {
-    func then(fn: () -> ())
+
+// These are the specializations possible for deferreds. By mixing and matching these
+// into named protocols you can constrain how a deferred behaves. These guys mostly just declare new 
+// signatures for then and error
+
+
+// Errback: String -> Void
+protocol EBStringVoid {
+    func error(fn: (String) -> ()) -> Deferred
 }
 
-protocol DeferredBaseError {
-    func error(fn: (String) -> ())
-}
-
-class _DeferredZero: BaseDeferred<Void, Void> {}
-
-extension _DeferredZero: DeferredZero {
-    func then(fn: () -> ())  {
-        _then(constrainFunction(fn))
+extension Deferred: EBStringVoid {
+    func error(fn: String -> ())  -> Deferred {
+        let d = Deferred()
+        next.append(d)
+        _error(constrainOneVoid(fn))
+        return d
     }
 }
 
-extension _DeferredZero: DeferredBaseError {
-    func error(fn: (String) -> ())  {
-//        _error(BaseClosure<String, Void>(fn: fn, curry: { a in return [] }))
-//        _error(constrainFunction(fn))
+
+// Callback: Void -> Void
+protocol VoidVoid {
+    func then(fn: () -> ()) -> Deferred
+}
+
+extension Deferred: VoidVoid {
+    func then(fn: () -> ())  -> Deferred {
+        let d = Deferred()
+        next.append(d)
+        _then(constrainVoidVoid(fn))
+        return d
     }
 }
 
-//protocol FunctionType {
-//    associatedtype ParameterTypes
-//    associatedtype ReturnTypes
-//    
-//    var handler: ParameterTypes -> ReturnTypes { get set }
-//    func invoke(args: ParameterTypes) -> ReturnTypes
-//}
-//
-//
-//class AbstractClosure<P, R>: FunctionType {
-//    var handler: P -> R
-//    init(fn: P -> R) { handler = fn }
-//    func invoke(args: P) -> R { return handler(args) }
-//    
-//    func parameterTypes() -> P.Type { return P.self }
-//    func returnTypes() -> R.Type { return R.self }
-//}
-//
-//
-//// How to use AbstractClosure
-//let t = AbstractClosure() { (a: String, b: String, c: String) -> String in return "asdf" }
-//let p = AbstractClosure() { (c: Int) in }
-//
-//t.invoke(("asdf", "asdf", "asdf"))
-//t.parameterTypes()
-//t.returnTypes()
-//
-//
-//
-//// Accepts any function. Now just to constrain the types...
-//func accept<A, B>(fn: A -> B) {
-//    let closure = AbstractClosure(fn: fn)
-//    print("Have closure: \(closure)")
-//}
-//
-//accept() { (a: String) in }
-//accept() { (b: Bool, c: Bool) -> String in return "asdf" }
+// Callback: Void -> Void
+protocol OneVoid {
+    func then<A: CN>(fn: A -> ()) -> Deferred
+}
+
+extension Deferred: OneVoid {
+    func then<A: CN>(fn: A -> ())  -> Deferred {
+        let d = Deferred()
+        next.append(d)
+        _then(constrainOneVoid(fn))
+        return d
+    }
+}
+
+protocol VoidOne {
+    func then(fn: () -> ()) -> Deferred
+}
+
+extension Deferred: VoidOne {
+    func then<A: CN>(fn: () -> A)  -> Deferred {
+        let d = Deferred()
+        next.append(d)
+        _then(constrainVoidOne(fn))
+        return d
+    }
+}
+
+
+// Callback: Void -> T where subsequent callbacks must return T
+protocol ConstrainedVoidOne {
+    associatedtype ReturnType: Convertible
+    func then<B: CN>(fn: B -> ReturnType) -> DeferredResultsConstrained<ReturnType>
+}
+
+class DeferredResultsConstrained<A: CN>: Deferred, ConstrainedVoidOne {
+    func then<B: CN>(fn: B -> A)  -> DeferredResultsConstrained<A> {
+        let d = DeferredResultsConstrained<A>()
+        next.append(d)
+        _then(constrain(fn))
+        return d
+    }
+}
+
+// Callback: A -> B where B is known and subsequent callbacks must accept B
+protocol ConstrainedOneVoid {
+    func then<B: CN>(fn: A -> B)  -> DeferredParamConstrained<B>
+    
+    func then(fn: A -> ()) -> DeferredContinuing {
+    let d = DeferredContinuing()
+    next.append(d)
+    _then(constrainOneVoid(fn))
+    return d
+    }
+}
+
+class DeferredParamConstrained<A: CN>: Deferred {
+    func then<B: CN>(fn: A -> B)  -> DeferredParamConstrained<B> {
+        let d = DeferredParamConstrained<B>()
+        next.append(d)
+        _then(constrain(fn))
+        return d
+    }
+    
+    func then(fn: A -> ()) -> DeferredContinuing {
+        let d = DeferredContinuing()
+        next.append(d)
+        _then(constrainOneVoid(fn))
+        return d
+    }
+}
+
+
+// Composition
+// Here protocols from above are combined into useful sets of functionality
+// by mixing and matching the protocols above to create useful interfaces
+
+// A boring deferred that doesn't return anything terribly useful
+protocol DeferredVoid: EBStringVoid, VoidVoid {}
+extension Deferred: DeferredVoid {}
+
+// Allows deferred objects to be returned from within then blocks
+protocol DeferredChain: EBStringVoid, VoidVoid {}
+extension Deferred: DeferredChain {}
+
+// Parameters of then are constrained by the return of previous signature
+protocol DeferredConstrained: ConstrainedVoidOne, EBStringVoid {}
+extension DeferredResultsConstrained: DeferredConstrained {}
 
 
 
-//protocol ClosureType {
-//    associatedtype ParameterTypes
-//    associatedtype ReturnTypes
-//    
-//    var handler: ParameterTypes -> ReturnTypes { get set }
-//    func invoke(args: ParameterTypes) -> ReturnTypes
-//}
-//
-//
-//class AbstractClosure<P, R>: ClosureType {
-//    var handler: P -> R
-//    init(fn: P -> R) { handler = fn }
-//    func invoke(args: P) -> R { return handler(args) }
-//    
-//    func parameterTypes() -> P.Type { return P.self }
-//    func returnTypes() -> R.Type { return R.self }
-//}
-//
-//
-//// How to use AbstractClosure
-//let t = AbstractClosure() { (a: String, b: String, c: String) -> String in return "asdf" }
-//let p = AbstractClosure() { (c: Int) in }
-//
-//t.invoke(("asdf", "asdf", "asdf"))
-//t.parameterTypes()
-//t.returnTypes()
-//
-//
-//
-//// Accepts any function. Now just to constrain the types...
-//func accept<A, B>(fn: A -> B) {
-//    let closure = AbstractClosure(fn: fn)
-//    print("Have closure: \(closure)")
-//}
-//
-//accept() { (a: String) in }
-//accept() { (b: Bool, c: Bool) -> String in return "asdf" }
-//
-//
+
+// From here on out we build up specialized deferred classes.
+// Each class represents some known kind of response. The protocols
+// are built out to constrain the types of deferreds that can be passed
 
 
+// Returns generically typed deferreds
+//
+//extension DeferredContinuing: DeferredStringError {
+//
+//    func then<T: CN>(fn: () -> T) -> DeferredParamConstrained<T> {
+//        let d = DeferredParamConstrained<T>()
+//        next.append(d)
+//        _then(constrainVoidOne(fn))
+//        return d
+//    }
+//
+//    func error(fn: (String) -> ()) -> DeferredDefault {
+//        let d = DeferredDefault()
+//        next.append(d)
+//        _error(constrainOneVoid(fn))
+//        return d
+//    }
+//
+//    func then(fn: () -> ()) -> DeferredContinuing {
+//        let d = DeferredContinuing()
+//        next.append(d)
+//        _then(constrainVoidVoid(fn))
+//        return d
+//    }
+//}
+
+
+// Exmaples and inline tests follow
+
+// Default, no args errback and callback
+//let d = DeferredDefault()
+//
+//d.then {
+//    print("Default Then")
+//    let a = 1
+//}
+//
+//d.callback([])
+//
+//d.error { r in
+//    print("DefaultError")
+//    let b = 2
+//}
+//
+//d.errback(["Asdf"])
+
+
+// Default chaining
+//var d = DefaultDeferred()
+//
+//d.then {
+//    let a = 1
+//}.then {
+//    let b = 2
+//}
+//
+//d.callback([])
+//
+//d.error { e in
+//    let a = 3
+//}.error { e in
+//    let b = 4
+//}
+//
+//d.errback(["Asdf"])
+
+
+// Lazy callbacks- immediately fire callback handler if the chain has already been called back
+//var d = DeferredDefault()
+//d.callback([])
+//
+//d.then {
+//    let a = 1
+//}.then {
+//    let b = 2
+//}
+//
+//d = DeferredDefault()
+//d.errback([""])
+//
+//d.error { e in
+//    let a = 1
+//}.error { e in
+//    let b = 2
+//}
+
+
+// Waiting for an internal deferred to resolve
+//var d = DeferredContinuing()
+//let fakeOperation = DeferredDefault() // Some operation that returns a deferred, mocked
+//
+//fakeOperation.then {
+//    let a = 2
+//    print(a)
+//}
+//
+//d.then {
+//    let a = 1
+//    print(a)
+//    return fakeOperation
+//}.then {
+//    let b = 3
+//    print(b)
+//}
+//
+//d.callback([])
+//fakeOperation.callback([])
+
+
+
+// Chain the results of one deferred to another in a type safe way
+let d = DeferredContinuing()
+
+d.then {
+    return "Hello"
+    }.then { s in
+        print("Have string \(s)!")
+        print("I dont return anything!")
+    }.then {
+        print("Done")
+}
+
+d.callback([])
 
 
 
