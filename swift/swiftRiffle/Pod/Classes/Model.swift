@@ -46,13 +46,21 @@ extension Model: Convertible {
     
     // Creates a new instance of this model object from the given json
     public static func deserialize(from: Any) -> Any {
-        guard let json = from as? [String: Any] else {
+        guard var json = from as? [String: Any] else {
             print("WARN: model wasn't given a json! Instead received type: \(from.dynamicType)")
             return from
         }
         
         var ret = self.init()
         
+        // Handle the id seperately
+        if let id = json["_xsid"] {
+            json["_xsid"] = nil
+            ret._xsid = UInt64(id as! String)!
+        } else {
+            print("WARN: xsid not found!")
+        }
+    
         for n in ret.propertyNames() {
             let repr = "\(ret[n]!.dynamicType.representation())"
             
@@ -70,7 +78,7 @@ extension Model: Convertible {
                 }
             }
                 
-                // Silvery cant understand assignments where the asigner is an AnyObject, so
+            // Silvery cant understand assignments where the asigner is an AnyObject, so
             else if let value = json[n] as? Bool where "\(repr)" == "bool" {
                 ret[n] = value
             }
@@ -111,6 +119,8 @@ extension Model: Convertible {
         for property in self.propertyNames() {
             ret[property] = self[property]!
         }
+        
+        ret["_xsid"] = String(_xsid)
         
         return ret
     }
@@ -159,9 +169,10 @@ extension Model {
         return Model.manager.callCore("Create", args: [modelName(), self.serialize()])
     }
     
-    public class func find<T: CollectionType where T.Generator.Element: Model>(query: [String: AnyObject]) -> OneDeferred<T>! {
+    public class func find<T: CollectionType where T.Generator.Element: Model>(query: [String: Any]) -> OneDeferred<T>! {
         let r = OneDeferred<T>()
         
+        // OSX Final
         // let q = jsonRepack(query)!
 
         var q: [String: Any] = [:]

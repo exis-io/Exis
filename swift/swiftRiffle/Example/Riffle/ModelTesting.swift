@@ -9,7 +9,7 @@
 import Foundation
 import Riffle
 
-class Cat: Model {
+class Panther: Model {
     var name = "Spot"
     var age = 43
     var something: Double = 1.0
@@ -17,51 +17,121 @@ class Cat: Model {
 
 
 class Modeler: Domain {
-    var loadedCats: [Cat] = []
+    var loadedCats: [Panther] = []
     
     override func onJoin() {
         
         // How many objects do we have?
-//        Cat.count().then { (number: Int) in
+//        Panther.count().then { (number: Int) in
 //            print("Count: \(number)")
 //        }
         
         // Load all saved cats
-//        Cat.all().then { (cats: [Cat]) in
+//        Panther.all().then { (cats: [Panther]) in
 //            print("All cats: #\(cats.count)")
 //            for c in cats { print(c.description) }
 //        }
-//        
+//
 //        // Find all models that match the given query
 //        // In other words: get all cats where cat.name == "Spot"
+
         
-        Cat.find(["name": "Spot"]).then { (cats: [Cat]) in
-            print("Found: \(cats.count)")
-            for c in cats { print(c.description, c._xsid) }
+//        Panther.find(["name": "Spot"]).then { (cats: [Panther]) in
+//            logCats(cats)
+//
+//            // Update a saved cat
+//            let updating = cats[0]
+//            updating.age = 600
+//            updating.save().then {
+//                // Find the cat that was just created to double-check the save succeeded
+//                Panther.find(["age": 600]).then { (cats: [Panther]) in
+//                    logCats(cats)
+//                }
+//            }.error { reason in
+//                print("Save failed: \(reason)")
+//            }
+//        }
+        
+        616248138496414
+        616248138496414
+        Panther.find(["name": "Till"]).then { (cats: [Panther]) in
+            
+            cats[0].age = 900
+            cats[0].save().then {
+                Panther.find(["age": 900]).then { (cats: [Panther]) in
+                    logCats(cats)
+                    }.error { error in
+                        print(error)
+                }
+            }
         }
         
+        
         // Create a single new model object
-//        let c = Cat()
-//        c.name = "Bill"
+//        let c = Panther()
+//        c.name = "Till"
 //        
 //        c.create().then {
 //            
 //            // Find the cat that was just created to double-check it worked
-//            Cat.find(["name": "Bill"]).then { (cats: [Cat]) in
-//                print("Found: \(cats.count)")
-//                for c in cats { print(c.description, c._xsid) }
+//            Panther.find(["name": "Till"]).then { (cats: [Panther]) in
+//                logCats(cats)
+//                
+//                cats[0].age = 900
+//                cats[0].save().then {
+//                    Panther.find(["age": 900]).then { (cats: [Panther]) in
+//                        logCats(cats)
+//                    }.error { error in
+//                        print(error)
+//                    }
+//                }
 //            }
 //            
-//            // Update a saved cat
+            // Update a saved cat
 //            c.age = 600
 //            c.save().then {
+//                
 //                // Find the cat that was just created to double-check it worked
-//                Cat.find(["name": "Bill"]).then { (cats: [Cat]) in
+//                Panther.find(["name": "Bill"]).then { (cats: [Panther]) in
 //                    print("Found: \(cats.count)")
 //                    
 //                    for c in cats { print(c.description, c._xsid) }
 //                }
+//                
 //            }
+//        }
+        
+        // Find the cat that was just created to double-check it worked
+//        Panther.find(["name": "Bill"]).then { (cats: [Panther]) in
+//            logCats(cats)
+//
+//            let c = cats[0]
+//            print("ID: \(c._xsid) \(Double(c._xsid))")
+//            
+//            // Update a saved cat
+//            c.age = 600
+//            c.save().then {
+//                print("Saved")
+//                
+//                // Look for cats that match that age to double-check the save worked
+//                Panther.find(["age": 600]).then { (cats: [Panther]) in
+//                    logCats(cats)
+//                }.error { error in
+//                    print(error)
+//                }
+//            }
+//        }
+//        
+//        Panther.find(["age": 600]).then { (cats: [Panther]) in
+//            logCats(cats)
 //        }
     }
 }
+
+func logCats(cats: [Panther]) {
+    print("\nFound: \(cats.count)")
+    for c in cats { print("\t", c.description, c._xsid) }
+}
+
+
+

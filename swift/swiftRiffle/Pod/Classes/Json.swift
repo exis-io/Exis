@@ -302,9 +302,6 @@ public enum JSON {
         var jsonDictionary: [String: JSON] = [:]
         for (key, value) in value {
             
-            print("Dictionary checking \(key) \(value) \(value.dynamicType)")
-
-            
             if let value = value as? Bool {
                 jsonDictionary[key] = JSON.from(value)
             }

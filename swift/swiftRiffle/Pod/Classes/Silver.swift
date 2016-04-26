@@ -63,7 +63,7 @@ extension Silvery {
             #endif
             
             guard let property = switched.dynamicType as? Property.Type else { throw SilverError.TypeDoesNotConformToProperty(type: switched.dynamicType) }
-            if child.label == key {//                print("HI")
+            if child.label == key {
                 try self.codeValue(value, type: switched.dynamicType, offset: offset)
                 return
             } else {

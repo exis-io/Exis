@@ -2,6 +2,7 @@ package core
 
 import "fmt"
 
+
 // High level, ORM-like bindings. Like Domain, the models here mirror crust objects. Unlike
 // the crust, Models do not store their mirror's data-- this interface is much more functional.
 // All functions return the model's "contents"
@@ -25,8 +26,8 @@ type ModelManager interface {
 	Save(string, map[string]interface{}) error
 	SaveMany(string, []map[string]interface{}) error
 
-	Destroy(string, uint64) error
-	DestroyMany(string, []uint64) error
+	Destroy(string, string) error
+	DestroyMany(string, []string) error
 }
 
 // Initialize the model manager with an opened connection and the Storage appliance's
@@ -60,7 +61,7 @@ func (m *modelManager) query(endpoint string, collection string, query interface
 	} else if len(r) != 1 {
 		return nil, fmt.Errorf("Model query failed. Received unexpected result: %v", r)
 	} else {
-		// fmt.Printf(" %s/%s \n\tfilter: %s\n\tquery: %s\n\tresult: %v\n", collection, endpoint, filter, query, r)
+		fmt.Printf(" %s/%s \n\tfilter: %s\n\tquery: %s\n\tresult: %v\n", collection, endpoint, filter, query, r)
 		return r[0], nil
 	}
 }
@@ -105,12 +106,12 @@ func (m *modelManager) CreateMany(collection string, query []map[string]interfac
 	return err
 }
 
-func (m *modelManager) Destroy(collection string, id uint64) error {
+func (m *modelManager) Destroy(collection string, id string) error {
 	_, err := m.query("collection/delete_one", collection, map[string]interface{}{"_xsid": id}, nil)
 	return err
 }
 
-func (m *modelManager) DestroyMany(collection string, id []uint64) error {
+func (m *modelManager) DestroyMany(collection string, id []string) error {
 	filter := map[string]interface{}{"_xsid": map[string]interface{}{"$in": id}}
 	_, err := m.query("collection/delete_many", collection, filter, nil)
 	return err
@@ -120,8 +121,24 @@ func (m *modelManager) Save(collection string, query map[string]interface{}) err
 	if filter, err := createIdFilter([]map[string]interface{}{query}); err != nil {
 		return err
 	} else {
-		_, err := m.query("collection/replace_one", collection, query, filter)
-		return err
+        fmt.Printf("Query: \n\t%v\n", query)
+        fmt.Printf("Filter: \n\t%v\n", filter)
+
+        e := fmt.Errorf("Couldn't find the model to update given %v", query)
+
+		if ret, err := m.query("collection/replace_one", collection, query, filter); err != nil {
+            return err
+        } else if m, ok := ret.(map[string]interface{}); !ok {
+            return e
+        } else if updated, ok := m["matched_count"]; !ok {
+            return e
+        } else if cast, ok := updated.(float64); !ok {
+            return e
+        } else if cast != 1 {
+            return e
+        }
+
+		return nil
 	}
 }
 
@@ -151,14 +168,14 @@ func (m *modelManager) Count(collection string) (uint, error) {
 
 // goes through the fields in the query and retrieves their _id fields, returning them.
 // The query is not modified
-func fetchIds(query []map[string]interface{}) ([]uint64, error) {
-	var ret []uint64
+func fetchIds(query []map[string]interface{}) ([]string, error) {
+	var ret []string
 
 	for _, v := range query {
 		if id, ok := v["_xsid"]; !ok {
-			return nil, fmt.Errorf("Unable to find _id field in json %v", v)
-		} else if cast, ok := id.(uint64); !ok {
-			return nil, fmt.Errorf("Model _id fields must be strings. Got %v", cast)
+			return nil, fmt.Errorf("Unable to find _xsid field in json %v", v)
+		} else if cast, ok := id.(string); !ok {
+			return nil, fmt.Errorf("Model _xsid fields must be strings. Got %v", cast)
 		} else {
 			ret = append(ret, cast)
 		}

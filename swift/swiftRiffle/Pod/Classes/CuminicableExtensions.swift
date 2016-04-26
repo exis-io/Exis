@@ -308,7 +308,9 @@ extension Array : Property, BaseConvertible {
         }
         
         Riffle.warn("Array unsafeDeserialize not given an array!")
-        return from as! T
+        let failsafe: [Generator.Element] = []
+        return failsafe as! T
+        // return from as! T
     }
 
     public static func representation() -> Any {
