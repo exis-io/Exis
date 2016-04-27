@@ -13,6 +13,7 @@ class Panther: Model {
     var name = "Spot"
     var age = 43
     var something: Double = 1.0
+
     
     convenience init(name: String) {
         self.init()

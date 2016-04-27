@@ -149,7 +149,7 @@ func (s *session) handleFunction(fn reflect.Value, n *rpc) ([]interface{}, error
 	ret, err := Cumin(fn.Interface(), n.args)
 
 	if err != nil {
-		Warn("Function %v err: %v", n.target, err)
+		Warn("Mantle error invoking \"%v\"- %v", n.target, err)
 		return nil, err
 	}
 

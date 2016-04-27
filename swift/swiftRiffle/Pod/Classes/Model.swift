@@ -57,8 +57,6 @@ extension Model: Convertible {
         if let id = json["_xsid"] {
             json["_xsid"] = nil
             ret._xsid = UInt64(id as! String)!
-        } else {
-            print("WARN: xsid not found!")
         }
     
         for n in ret.propertyNames() {
@@ -120,7 +118,8 @@ extension Model: Convertible {
             ret[property] = self[property]!
         }
         
-        ret["_xsid"] = String(_xsid)
+        // Dont always serialize this
+        // ret["_xsid"] = String(_xsid)
         
         return ret
     }

@@ -24,8 +24,8 @@ public struct Options {
     
     // Marshall the dictionary into a format suitible for the core
     // Returns true if the call requires a Details object in the handler
-    func marshall() -> [String: AnyObject] {
-        var ret: [String: AnyObject] = [:]
+    func marshall() -> [String: Any] {
+        var ret: [String: Any] = [:]
         
         // TODO: implement me
         if let p = progressive {
