@@ -11,15 +11,20 @@
 import Foundation
 import Mantle
 
+// Here to brige between new and old deferreds
+public protocol InvokableDeferred {
+    func callback(args: [Any]) -> Any?
+    func errback(args: [Any]) -> Any?
+}
 
-public class Deferred: Handler {
+public class Deferred: Handler, InvokableDeferred {
     // Callback and Errback ids
     let cb = CBID()
     let eb = CBID()
 
     var callbackFuntion: ([Any] -> Any?)? = nil
     var errbackFunction: ([Any] -> Any?)? = nil
-    var next: Deferred?
+    var next: InvokableDeferred?
     
     var callbackOccured: [Any]? = nil
     var errbackOccured: [Any]? = nil
@@ -31,8 +36,16 @@ public class Deferred: Handler {
         Session.handlers[eb] = self
     }
     
+    
+    // A bridge between the new deferreds and the old deferreds
+    func link<A>(d: Defered<A>) -> Defered<A> {
+        next = d
+        return d
+    }
+    
     func _then(fn: [Any] -> ()) -> Deferred {
-        next = Deferred()
+        let d = Deferred()
+        next = d
         callbackFuntion = { a in return fn(a) }
 
         if let args = callbackOccured {
@@ -41,11 +54,13 @@ public class Deferred: Handler {
             next!.callback(args)
         }
 
-        return next!
+        return d
     }
 
     func _error(fn: (String) -> ()) -> Deferred {
-        next = Deferred()
+        let d = Deferred()
+        next = d
+        
         errbackFunction = { a in fn(a[0] as! String) }
         
         if let args = errbackOccured {
@@ -53,7 +68,7 @@ public class Deferred: Handler {
             next!.errback(args)
         }
 
-        return next!
+        return d
     }
 
     public func callback(args: [Any]) -> Any? {
@@ -89,13 +104,6 @@ public class Deferred: Handler {
     func destroy() {
         Session.handlers[cb] = nil
         Session.handlers[eb] = nil
-    }
-    
-    public func then<A>(fn: () -> A) -> Deferred {
-        return _then() {a in
-            print("Caught Deferred")
-            fn()
-        }
     }
     
     public func then(fn: () -> ()) -> Deferred {
@@ -158,88 +166,3 @@ public class SixDeferred<A: PR, B: PR, C: PR, D: PR, E: PR, F: PR>: Deferred {
         return _then() { a in return fn(A.self <- a[0], B.self <- a[1], C.self <- a[2], D.self <- a[3], E.self <- a[4], F.self <- a[5]) }
     }
 }
-
-
-// Saved old code
-
-//    var callbackFuntion: ([Any] -> Any?)? = nil
-//    var errbackFunction: ([Any] -> Any?)? = nil
-//
-//    var pendingCallback: [Any]?
-//    var pendingErrback: [Any]?
-//
-//    var next: Deferred?
-//    var root: Deferred!
-
-
-//    func _then(fn: [Any] -> ()) -> Deferred {
-//        next = Deferred()
-//        callbackFuntion = { a in return fn(a) }
-//
-//        if let args = pendingCallback {
-//            pendingCallback = nil
-//            callback(args)
-//            next!.callback(args)
-//        }
-//
-//        return next!
-//    }
-//
-//    func _error(fn: (String) -> ()) -> Deferred {
-//        next = Deferred()
-//        errbackFunction = { a in fn(a[0] as! String) }
-//
-//        if let args = pendingErrback {
-//            pendingErrback = nil
-//            errback(args)
-//            next!.errback(args)
-//        }
-//
-//        return next!
-//    }
-//
-//    public func callback(args: [Any]) -> Any? {
-//        // Fires off a deferred chain recursively. TODO: work in error logic, recovery, propogation, etc
-//        var ret: Any?
-//
-//        if let handler = callbackFuntion {
-//            // if the next result is a deferred, wait for it to complete before returning (?)
-//            ret = handler(args)
-//
-//            // follow the chain
-//            if let n = next {
-//                if let arrayReturn = ret as? [Any] {
-//                    return n.callback(arrayReturn)
-//                }
-//
-//                return n.callback([ret])
-//            } else {
-//                return ret
-//            }
-//        } else {
-//            pendingCallback = args
-//            return nil
-//        }
-//    }
-//
-//    public func errback(args: [Any]) -> Any? {
-//        if let handler = errbackFunction {
-//            // if the next result is a deferred, wait for it to complete before returning (?)
-//            let ret = handler(args)
-//
-//            // follow the chain, propogate the calback to the next deferred
-//            if let n = next {
-//                return n.errback(args)
-//            } else {
-//                return ret
-//            }
-//        } else {
-//            // No chain exists. TODO: Send the error to some well-known place
-//            // Riffle.warn("Unhandled error: \(args)")
-//
-//            pendingErrback = args
-//            return nil
-//        }
-//    }
-
-

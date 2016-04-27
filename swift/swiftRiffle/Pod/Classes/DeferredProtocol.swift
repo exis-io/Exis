@@ -39,17 +39,19 @@ public class AbstractDeferred {
         return nextDeferred
     }
     
-    public func callback(args: [Any]) {
+    public func callback(args: [Any]) -> Any? {
         callbackArgs = args
         var ret: [Any] = []
         if let cb = _callback { ret = cb.call(args) }
         for n in next { n.callback(ret) }
+        return nil
     }
     
-    public func errback(args: [Any]) {
+    public func errback(args: [Any]) -> Any? {
         errbackArgs = args
         if let eb = _errback { eb.call(args) }
         for n in next { n.errback(args) }
+        return nil
     }
     
     public func error(fn: String -> ()) -> Defered<Void> {
@@ -57,8 +59,8 @@ public class AbstractDeferred {
     }
 }
 
-
-public class Defered<A>: AbstractDeferred {
+// The basic deferred class with no extra code specific to riffle
+public class Defered<A>: AbstractDeferred, InvokableDeferred {
     public override init() {}
     
     public func then(fn: A -> ())  -> Defered<Void> {
@@ -89,5 +91,15 @@ public class Defered<A>: AbstractDeferred {
         return next
     }
 }
+
+
+
+
+
+
+
+
+
+
 
 

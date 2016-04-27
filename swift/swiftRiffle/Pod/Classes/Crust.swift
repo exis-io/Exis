@@ -26,7 +26,6 @@ func sendCore(target: String, deferred: Deferred = Deferred(), address: UInt64 =
     invocation.appendContentsOf(args)
     
     // print("Serialization before: \(args) after: \(JSON.from(invocation).serialize(DefaultJSONSerializer()))")
-    
     // let data = try! NSJSONSerialization.dataWithJSONObject(args as! AnyObject, options: .PrettyPrinted)
     // let repacked = try! NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
     // print("Repacked: \(repacked)")
