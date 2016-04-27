@@ -27,20 +27,9 @@ class Modeler: Domain {
     
     override func onJoin() {
         
-        let d = DeferredParams<Int>()
-        
-        d.then { s in
-            print("Have s!")
-        }.then {
-            let b = 2
-        }.error { err in
-            print(err)
-        }
-        
         // How many objects do we have?
-        Panther.count().then {
-            print("Count: ", $0)
-            return d
+        Panther.count().then { (count: Int) in
+            print("Count: ", count)
         }
         
         // Panther.count().then

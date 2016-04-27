@@ -38,17 +38,17 @@ class OsxBugPlayground {
 //        }
 //        
         
-        let d = DeferredParams<Int>()
-        
-        d.then { s in
-            print("Have s!")
-        }.then {
-            let b = 2
-        }.error { err in
-            print(err)
-        }
-        
-        d.callback(["asdf"])
+//        let d = DeferredParams<Int>()
+//        
+//        d.then { s in
+//            print("Have s!")
+//        }.then {
+//            let b = 2
+//        }.error { err in
+//            print(err)
+//        }
+//        
+//        d.callback(["asdf"])
 
 //        
 //        d.callback([])

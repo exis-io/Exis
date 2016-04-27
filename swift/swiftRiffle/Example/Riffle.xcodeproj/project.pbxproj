@@ -11,6 +11,7 @@
 		503FD8C31CCDE6F7001D3B00 /* ModelTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E9BC651CB42A8E00A20965 /* ModelTesting.swift */; };
 		504D4A521C9C5724006B5579 /* DomainTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507D70E11C8D19070030F9F4 /* DomainTesting.swift */; };
 		505777C81C8E50DE00DE33DF /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505777C71C8E50DE00DE33DF /* main.swift */; };
+		5078AEE61CD1660400E74E96 /* DeferredTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5078AEE51CD1660400E74E96 /* DeferredTesting.swift */; };
 		507D70E21C8D19070030F9F4 /* DomainTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507D70E11C8D19070030F9F4 /* DomainTesting.swift */; };
 		50CFFD531CCE8B430014BFDC /* OsxBug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50CFFD521CCE8B430014BFDC /* OsxBug.swift */; };
 		50E9BC661CB42A8E00A20965 /* ModelTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E9BC651CB42A8E00A20965 /* ModelTesting.swift */; };
@@ -42,6 +43,7 @@
 		505777C71C8E50DE00DE33DF /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		505777D71C8F6D1C00DE33DF /* Mantle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Mantle.framework; path = ../Pod/Assets/ios/Mantle.framework; sourceTree = "<group>"; };
 		5063FF051C8F88FA00D0F623 /* Riffle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Riffle.framework; path = "Pods/../build/Debug/Riffle-OSX/Riffle.framework"; sourceTree = "<group>"; };
+		5078AEE51CD1660400E74E96 /* DeferredTesting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeferredTesting.swift; sourceTree = "<group>"; };
 		507D70E11C8D19070030F9F4 /* DomainTesting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DomainTesting.swift; sourceTree = "<group>"; };
 		50CFFD521CCE8B430014BFDC /* OsxBug.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OsxBug.swift; sourceTree = "<group>"; };
 		50E9BC651CB42A8E00A20965 /* ModelTesting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelTesting.swift; sourceTree = "<group>"; };
@@ -86,6 +88,7 @@
 			children = (
 				505777C71C8E50DE00DE33DF /* main.swift */,
 				50CFFD521CCE8B430014BFDC /* OsxBug.swift */,
+				5078AEE51CD1660400E74E96 /* DeferredTesting.swift */,
 			);
 			path = Backend;
 			sourceTree = "<group>";
@@ -346,6 +349,7 @@
 			files = (
 				504D4A521C9C5724006B5579 /* DomainTesting.swift in Sources */,
 				505777C81C8E50DE00DE33DF /* main.swift in Sources */,
+				5078AEE61CD1660400E74E96 /* DeferredTesting.swift in Sources */,
 				503FD8C31CCDE6F7001D3B00 /* ModelTesting.swift in Sources */,
 				50CFFD531CCE8B430014BFDC /* OsxBug.swift in Sources */,
 			);

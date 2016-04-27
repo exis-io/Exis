@@ -94,40 +94,6 @@ func accept<A, B>(fn: A -> B)  -> BaseClosure<A, B> {
 }
 
 
-
-struct DeferredData {
-    // The chain of next deferreds
-    var next: [AbstractDeferred] = []
-    
-    // Automatically invoke callbacks and errbacks if not nil when given arguments
-    var callbackArgs: [AnyObject]?
-    var errbackArgs: [AnyObject]?
-    
-    // If an invocation has already occured then the args properties are already set
-    // We should invoke immediately
-    var _callback: AnyClosureType? {
-        didSet { if let a = callbackArgs { invokeCallback(a) } }
-    }
-    
-    var _errback: AnyClosureType? {
-        didSet { if let a = errbackArgs { invokeErrback(a) } }
-    }
-    
-    // Fire the function stored as callback/errback and inform the next deferred of the results
-    mutating func invokeCallback(args: [AnyObject]) {
-        callbackArgs = args
-        var ret: [AnyObject] = []
-        if let cb = _callback { ret = cb.call(args) }
-        for n in next { n.callback(ret) }
-    }
-    
-    mutating func invokeErrback(args: [AnyObject]) {
-        errbackArgs = args
-        if let eb = _errback { eb.call(args) }
-        for n in next { n.errback(args) }
-    }
-}
-
 class AbstractDeferred {
     // Automatically invoke callbacks and errbacks if not nil when given arguments
     var callbackArgs: [AnyObject]?
@@ -206,7 +172,9 @@ class Deferred<A>: AbstractDeferred {
 }
 
 
+///
 // Exmaples and inline tests follow
+///
 
 // Default, no args errback and callback
 _ = {
@@ -309,7 +277,7 @@ _ = {
     d.callback([1])
     e.callback(["Done!"])
  }()
-*/
+
 
 // A Mix of the above two. Given a deferred that returns value in some known
 // type, returning that deferred should chain the following then as a callback of the appropriate type
@@ -335,7 +303,7 @@ _ = {
 }()
 
 
-// Returning a nested deferred twice
+// Chaining deferreds twice
 _ = {
     var d = Deferred<Void>()
     let f = Deferred<String>()
