@@ -133,16 +133,30 @@
         android:layout_height="wrap_content"
         android:id="@+id/info"
         android:textSize="20sp"
-        android:background="#000"
         android:textColor="#fff"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:textAlignment="center"
+        android:textAlignment="gravity"
         android:textStyle="italic"
         android:layout_centerHorizontal="true"
-        android:gravity="center"
+        android:gravity="center_vertical|center_horizontal"
         android:baselineAligned="false"
         android:layout_below="@+id/card5" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/czar_alert"
+        android:id="@+id/czarAlert"
+        android:layout_alignTop="@+id/player_infos"
+        android:layout_alignBottom="@+id/player_infos"
+        android:background="#551A8B"
+        android:translationZ="2dp"
+        android:visibility="invisible"
+        android:textAlignment="gravity"
+        android:gravity="center_vertical|center_horizontal"
+        android:textSize="20sp" />
 
     <TableLayout
         android:id="@+id/player_infos"

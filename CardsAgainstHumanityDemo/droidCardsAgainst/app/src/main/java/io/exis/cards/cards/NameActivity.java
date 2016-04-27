@@ -2,12 +2,14 @@ package io.exis.cards.cards;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -48,9 +50,10 @@ public class NameActivity extends Activity {
 
         nameField.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
-                Log.i("name activity", "onFocusChangeListener fired");
                 nameField.setText("");
                 border.setBackgroundColor(Color.parseColor("#00a2ff"));
+            }else{
+                leaveTextField();
             }
         });
 
@@ -75,41 +78,30 @@ public class NameActivity extends Activity {
                 !nameField.getText().toString().equals("Enter Screen Name")) {
             screenName = nameField.getText().toString();
         }
-        MainActivity.setScreenName(screenName);
         border.setBackgroundColor(Color.parseColor("#ffffff"));
     }
 
-    public void backClicked(View view){
-        this.finish();
+    @Override
+    public boolean onTouchEvent(MotionEvent event){
+        return super.onTouchEvent(event);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Bundle bundle = getIntent().getExtras();
-        screenName = bundle.getString("key_screen_name", "");
-        screenName = preferences.getString("screenName", "");
+        screenName = bundle.getString("screenName", "");
 
         if(!screenName.equals("")){
             nameField.setText(screenName);
+        }else{
+            Log.i("onResume", "Unable to load screen name");
         }
     }
 
     @Override
     protected void onPause(){
         super.onPause();
-        if(!nameField.getText().toString().equals("") &&
-                !nameField.getText().toString().equals("Enter Screen Name")) {
-            screenName = nameField.getText().toString();
-        }
-        Log.i("onPause", "saving screen name " + screenName);
-        MainActivity.setScreenName(screenName);
-
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("screenName", screenName);
-        editor.apply();
-
-        Log.i("onPause", "Screen Name saved as " + preferences.getString("screenName", ""));
     }
 
     @Override
@@ -122,4 +114,25 @@ public class NameActivity extends Activity {
         super.onDestroy();
 
     }
-}
+
+    @Override
+    public void onBackPressed(){
+        setName();
+        finish();
+    }
+
+    public void backClicked(View view){
+        setName();
+        finish();
+    }
+    void setName(){
+        if(!nameField.getText().toString().equals("") &&
+                !nameField.getText().toString().equals("Enter Screen Name")) {
+            screenName = nameField.getText().toString();
+        }
+
+        Intent intent = new Intent();
+        intent.putExtra("screenName",screenName);
+        setResult(RESULT_OK, intent);
+    }
+}// end NameActivity class

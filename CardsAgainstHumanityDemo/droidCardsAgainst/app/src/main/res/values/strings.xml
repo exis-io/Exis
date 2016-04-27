@@ -22,4 +22,5 @@
     <string name="change_name">Change Screen Name:</string>
     <string name="edit_name">&gt; Update screen name</string>
     <string name="screen_name">Hi, %1$s</string>
+    <string name="czar_alert">You are the czar!</string>
 </resources>

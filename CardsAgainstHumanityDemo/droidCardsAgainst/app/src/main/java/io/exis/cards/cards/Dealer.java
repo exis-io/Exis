@@ -342,7 +342,7 @@ public class Dealer extends Domain{
                 break;
             case "scoring":
                 if(player.isCzar()){
-                    call("pick", "").then(String.class, (c)->{
+                    player.domain().call("pick", "").then(String.class, (c)->{
                         setWinner(c);
 
                         Log.i(TAG, "publishing [scoring, " +
@@ -353,7 +353,6 @@ public class Dealer extends Domain{
 
                         answers.clear();
                         phase = "answering";
-                        return;
                     });
                 }else{
                     setWinner("");
