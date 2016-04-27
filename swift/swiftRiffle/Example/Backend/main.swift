@@ -6,10 +6,12 @@
 //  Copyright © 2016 CocoaPods. All rights reserved.
 //
 
-
 import Riffle
 
-Riffle.setLogLevelInfo()
+// Required helper method for OSX backends
+initTypes(External(String.self, String.self), External(Int.self, Int.self), External(Double.self, Double.self), External(Float.self, Float.self), External(Bool.self, Bool.self))
+
+Riffle.setLogLevelDebug()
 Riffle.setFabricDev()
 
 print("Starting Tests")
@@ -30,5 +32,5 @@ receiver.joinFinished = {
 }
 
 receiver.join()
- 
+
 NSRunLoop.currentRunLoop().run()

@@ -9,8 +9,12 @@ global.WsFactory = require('./websocket').Factory;
 
 exports.want = want.want;
 exports.modelObject = want.ModelObject;
-exports.xsStorage = storage.Storage;
 exports.xsPromises = global.Q;
+exports.xsStorage = storage.Storage;
+exports.xsAuth = require('./auth.js');
+exports.xsBouncer = require('./bouncer.js');
+exports.xsContainers = require('./container.js');
+exports.xsReplay = require('./replay.js');
 
 exports.Domain = global.Domain.New;
 exports.version = pjson.version;

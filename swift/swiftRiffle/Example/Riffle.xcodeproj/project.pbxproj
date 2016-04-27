@@ -94,7 +94,6 @@
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD11AFB9204008FA782 /* Products */,
 				E68CD4094F9862266055B9F5 /* Frameworks */,
-				EA5FAB4A2DFDAB116A2DC024 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -135,6 +134,7 @@
 		607FACF51AFB993E008FA782 /* Podspec Metadata */ = {
 			isa = PBXGroup;
 			children = (
+				EA5FAB4A2DFDAB116A2DC024 /* Pods */,
 				2746608C820598D2354B96A9 /* Riffle.podspec */,
 				9132A5CDD02D8D8A52024B31 /* README.md */,
 				4A282C0909F4D17C0D412CE2 /* LICENSE */,
@@ -172,10 +172,10 @@
 			buildConfigurationList = 505777CB1C8E50DE00DE33DF /* Build configuration list for PBXNativeTarget "Backend" */;
 			buildPhases = (
 				5060A2989058CDC4F7553D77 /* 📦 Check Pods Manifest.lock */,
-				505777C11C8E50DE00DE33DF /* Sources */,
 				505777C21C8E50DE00DE33DF /* Frameworks */,
 				505777C31C8E50DE00DE33DF /* CopyFiles */,
 				A3DBFBA5C25AC10C43D20F13 /* 📦 Copy Pods Resources */,
+				505777C11C8E50DE00DE33DF /* Sources */,
 			);
 			buildRules = (
 			);

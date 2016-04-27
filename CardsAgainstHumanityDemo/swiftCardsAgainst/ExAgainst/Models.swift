@@ -12,7 +12,7 @@ import Foundation
 import Riffle
 
 
-class Player: RiffleModel {
+class Player: Model {
     var domain = ""
     var score = 0
     
@@ -23,11 +23,14 @@ class Player: RiffleModel {
     var demo = true
     var zombie = false
     
-    override class func ignoreProperties() -> [String] {
-        return ["hand", "pick", "zombie"]
+    override func ignoreProperties() -> [String] {
+        var ignored = super.ignoreProperties()
+        ignored.appendContentsOf(["hand", "pick", "zombie"])
+        return ignored
     }
 }
 
+extension Player: Equatable {}
 
 // Used to compare two players together
 func ==(lhs: Player, rhs: Player) -> Bool {
@@ -113,7 +116,7 @@ func randomStringWithLength (len : Int) -> String {
 }
 
 
-// Routinely calls a function
+// Routinely calls a function with some delay 
 class DelayedCaller {
     var timer: NSTimer?
     var target: AnyObject
@@ -122,7 +125,7 @@ class DelayedCaller {
         target = t
     }
     
-    func startTimer(time: NSTimeInterval, selector: String, info: AnyObject? = nil) {
+    func startTimer(time: NSTimeInterval, selector: Selector, info: AnyObject? = nil) {
         // Calls the given function after (time) seconds. Used to count down the seconds on the current round
         
         if timer != nil {
@@ -130,7 +133,7 @@ class DelayedCaller {
             timer = nil
         }
         
-        timer = NSTimer.scheduledTimerWithTimeInterval(time, target: target, selector: Selector(selector), userInfo: info, repeats: false)
+        timer = NSTimer.scheduledTimerWithTimeInterval(time, target: target, selector: selector, userInfo: info, repeats: false)
     }
     
     func cancel() {

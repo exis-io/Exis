@@ -29,48 +29,53 @@ var globalConnectionReference: Domain?
 
 public class Domain {
     public var delegate: Delegate?
+    
     var mantleDomain: UInt64
     var app: App
     
+    public private(set) var name: String
+    
     
     public init(name: String) {
+        self.name = name
         mantleDomain = NewDomain(name.cString())
         app = App(domain: mantleDomain)
         globalConnectionReference = self
     }
     
     public init(name: String, superdomain: Domain) {
+        self.name = "\(superdomain.name).\(name)"
         mantleDomain = Subdomain(superdomain.mantleDomain, name.cString())
         app = superdomain.app
     }
     
-    public func _subscribe(endpoint: String, _ types: [Any], fn: [Any] -> ()) -> Deferred {
+    func _subscribe(endpoint: String, _ types: [Any], options: Options, fn: [Any] -> ()) -> Deferred {
         let hn = CBID()
         let d = Deferred(domain: self)
         
         app.handlers[hn] = fn
-        Subscribe(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(serializeArguments(types)))
+        Subscribe(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(serializeArguments(types)), options.marshall())
         return d
     }
     
-    public func _register(endpoint: String, _ types: [Any], fn: [Any] -> Any) -> Deferred {
+    func _register(endpoint: String, _ types: [Any], options: Options, fn: [Any] -> [Any]) -> Deferred {
         let hn = CBID()
         let d = Deferred(domain: self)
         
         app.registrations[hn] = fn
-        Register(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(types))
+        Register(self.mantleDomain, endpoint.cString(), d.cb, d.eb, hn, marshall(types), options.marshall())
         return d
     }
     
     public func publish(endpoint: String, _ args: Property...) -> Deferred {
         let d = Deferred(domain: self)
-        Publish(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)))
+        Publish(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)), Options().marshall())
         return d
     }
     
     public func call(endpoint: String, _ args: Property...) -> HandlerDeferred {
         let d = HandlerDeferred(domain: self)
-        Call(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)))
+        Call(self.mantleDomain, endpoint.cString(), d.cb, d.eb, marshall(serializeArguments(args)), Options().marshall())
         return d
     }
     
@@ -125,6 +130,13 @@ public class Domain {
         
     }
 }
+
+extension Domain: Equatable {}
+
+public func ==(lhs: Domain, rhs: Domain) -> Bool {
+    return lhs.name == rhs.name
+}
+
 
 /*
  The Auth api

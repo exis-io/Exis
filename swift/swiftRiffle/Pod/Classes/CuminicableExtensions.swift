@@ -30,8 +30,6 @@ public protocol Convertible {
 
 public protocol BaseConvertible: Convertible {}
 
-    
-
 extension BaseConvertible {
     public static func deserialize(from: Any) -> Any {
         return from
@@ -180,7 +178,7 @@ extension Double: Property, Convertible {
 }
 
 extension Float: Property, Convertible {
-    public func serialize() -> Any { return self }
+    public func serialize() -> Any { return Double(self) }
     public func unsafeSerialize() -> Any { return unsafeBitCast(self, Float.self) }
     
     public static func deserialize(from: Any) -> Any {
@@ -268,6 +266,10 @@ extension Array : Property, BaseConvertible {
         for child in self {
             if let convert = child as? Convertible {
                 ret.append(convert.serialize())
+            } else if let convert = asConvertible(child) {
+                ret.append(convert.serialize())
+            } else {
+                Riffle.warn("UNALBE TO SERIALIZE \(child) \(child.dynamicType)")
             }
         }
         

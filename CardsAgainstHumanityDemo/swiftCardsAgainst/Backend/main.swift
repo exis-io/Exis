@@ -9,7 +9,14 @@
 import Foundation
 import Riffle
 
-let app = RiffleDomain(domain: "xs.demo.exis.cardsagainst")
+// Required helper method for OSX backends
+initTypes(External(String.self, String.self), External(Int.self, Int.self), External(Double.self, Double.self), External(Float.self, Float.self), External(Bool.self, Bool.self))
+
+// Testing locally 
+Riffle.setFabricDev()
+Riffle.setLogLevelInfo()
+
+let app = Domain(name: "xs.demo.exis.cardsagainst")
 
 // How long each round takes, in seconds
 let ANSWER_TIME = 10.0
@@ -18,44 +25,52 @@ let SCORE_TIME = 5.0
 let EMPTY_TIME = 1.0
 
 
-class Container: RiffleDomain {
+class Container: Domain {
     var rooms: [Room] = []
     
     
     override func onJoin() {
-        print("Container joined as \(domain)")
+        print("Container joined as \(name)")
         app.subscribe("sessionLeft", playerLeft)
-        register("play#details", play)
+        register("play", options: Options(details: true), play)
         
         // Create a dynamic role to give to players later
-        app.call("xs.demo.Bouncer/addDynamicRole", "player", self.domain, [
-            ["target": "\(domain)/$/pick", "verb":"c"],
-            ["target": "\(domain)/$/leave", "verb":"c"],
-            ["target": "\(domain)/$/answering", "verb":"s"],
-            ["target": "\(domain)/$/picking", "verb":"s"],
-            ["target": "\(domain)/$/scoring", "verb":"s"],
-            ["target": "\(domain)/$/left", "verb":"s"],
-            ["target": "\(domain)/$/joined", "verb":"s"]
-        ], handler: nil)
+//        app.call("xs.demo.Bouncer/addDynamicRole", "player", name, [
+//            ["target": "\(name)/$/pick", "verb":"c"],
+//            ["target": "\(name)/$/leave", "verb":"c"],
+//            ["target": "\(name)/$/answering", "verb":"s"],
+//            ["target": "\(name)/$/picking", "verb":"s"],
+//            ["target": "\(name)/$/scoring", "verb":"s"],
+//            ["target": "\(name)/$/left", "verb":"s"],
+//            ["target": "\(name)/$/joined", "verb":"s"]
+//        ])
     }
     
     
-    func play(player: String) -> AnyObject {
+    func play(details: Details) -> ([String], [Player], String, String) {
         var emptyRooms = rooms.filter { $0.players.count < 6 }
         if emptyRooms.count == 0 {
-            let d = Deferred()
+            let room = Room(name: randomStringWithLength(6), superdomain: self)
+            self.rooms.append(room)
             
-            app.call("xs.demo.Bouncer/newDynamicRole", "player", self.domain, handler: { (res: String) in
-                let room = Room(name: "/" + res, superdomain: self)
-                room.dynamicRoleId = res
-                self.rooms.append(room)
-                d.callback(room.addPlayer(player as String))
-            })
+            // TEMP: here until join logic is rebuilt
+            room.onJoin()
             
-            return d
+            return room.addPlayer(details.caller)
+            
+//            let d = Deferred()
+//            
+//            app.call("xs.demo.Bouncer/newDynamicRole", "player", name).then { (res: String) in
+//                let room = Room(name: "/" + res, superdomain: self)
+//                room.dynamicRoleId = res
+//                self.rooms.append(room)
+//                d.callback(room.addPlayer(player))
+//            }
+//            
+//            return d
         } else {
             let room = emptyRooms.randomElements(1)[0]
-            return room.addPlayer(player as String)
+            return room.addPlayer(details.caller)
         }
     }
     

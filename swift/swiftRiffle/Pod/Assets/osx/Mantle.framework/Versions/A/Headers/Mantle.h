@@ -66,13 +66,13 @@ extern char* Receive(GoUint64 p0);
 
 extern void Join(GoUint64 p0, GoUint64 p1, GoUint64 p2);
 
-extern void Subscribe(GoUint64 p0, char* p1, GoUint64 p2, GoUint64 p3, GoUint64 p4, char* p5);
+extern void Subscribe(GoUint64 p0, char* p1, GoUint64 p2, GoUint64 p3, GoUint64 p4, char* p5, char* p6);
 
-extern void Register(GoUint64 p0, char* p1, GoUint64 p2, GoUint64 p3, GoUint64 p4, char* p5);
+extern void Register(GoUint64 p0, char* p1, GoUint64 p2, GoUint64 p3, GoUint64 p4, char* p5, char* p6);
 
-extern void Publish(GoUint64 p0, char* p1, GoUint64 p2, GoUint64 p3, char* p4);
+extern void Publish(GoUint64 p0, char* p1, GoUint64 p2, GoUint64 p3, char* p4, char* p5);
 
-extern void Call(GoUint64 p0, char* p1, GoUint64 p2, GoUint64 p3, char* p4);
+extern void Call(GoUint64 p0, char* p1, GoUint64 p2, GoUint64 p3, char* p4, char* p5);
 
 extern void Yield(GoUint64 p0, GoUint64 p1, char* p2);
 

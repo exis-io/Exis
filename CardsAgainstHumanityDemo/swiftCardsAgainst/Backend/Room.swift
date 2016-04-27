@@ -13,7 +13,7 @@ var baseQuestions = loadCards("q13")
 var baseAnswers = loadCards("a13")
 
 
-class Room: RiffleDomain {
+class Room: Domain {
     var timer: DelayedCaller!
     var dynamicRoleId: String!
     var state: String = "Empty"
@@ -26,8 +26,9 @@ class Room: RiffleDomain {
     
     override func onJoin() {
         timer = DelayedCaller(target: self)
+        
         register("pick#details", pick)
-        register("leave#details", removePlayer)
+        register("leave", options: Options(details: true)) { (details: Details) in self.removePlayer(details.caller) }
     }
     
     func removePlayer(domain: String) {
@@ -40,7 +41,7 @@ class Room: RiffleDomain {
         }
     }
     
-    func addPlayer(domain: String) -> AnyObject {
+    func addPlayer(domain: String) -> ([String], [Player], String, String) {
         // Add the new player and draw them a hand. Let everyone else in the room know theres a new player
         print("Adding Player \(domain)")
         
@@ -50,7 +51,7 @@ class Room: RiffleDomain {
         if let existingPlayer = getPlayer(players, domain: domain) {
             existingPlayer.zombie = false
             existingPlayer.demo = false
-            return [existingPlayer.hand, players, state, self.name!]
+            return (existingPlayer.hand, players, state, self.name)
         }
         
         let newPlayer = Player()
@@ -62,14 +63,14 @@ class Room: RiffleDomain {
         publish("joined", newPlayer)
 
         // Add dynamic role
-        app.call("xs.demo.Bouncer/assignDynamicRole", self.dynamicRoleId, "player", container.domain, [domain], handler: nil)
+        // app.call("xs.demo.Bouncer/assignDynamicRole", self.dynamicRoleId, "player", container.name, [domain])
         
         if state == "Empty" {
-            timer.startTimer(EMPTY_TIME, selector: "startAnswering")
+            timer.startTimer(EMPTY_TIME, selector: #selector(startAnswering))
             roomMaintenance()
         }
         
-        return [newPlayer.hand, players, state, self.name!]
+        return (newPlayer.hand, players, state, self.name)
     }
     
     func pick(domain: String, card: String) {
@@ -82,13 +83,13 @@ class Room: RiffleDomain {
             
         } else if state == "Picking" && player.czar {
             let winner = players.filter { $0.pick == card }[0]
-            timer.startTimer(0.0, selector: "startScoring:", info: winner.domain)
+            timer.startTimer(0.0, selector: #selector(startScoring), info: winner.domain)
         }
     }
     
     
     // MARK: Round Transitions
-    func startAnswering() {
+    @objc func startAnswering() {
         // Close the room if there are only demo players left
         if players.reduce(0, combine: { $0 + ($1.demo ? 0 : 1) }) == 0 {
             container.rooms.removeObject(self)
@@ -102,10 +103,10 @@ class Room: RiffleDomain {
         roomMaintenance()
 
         publish("answering", czar!, questions.randomElements(1, remove: false)[0], PICK_TIME)
-        timer.startTimer(PICK_TIME, selector: "startPicking")
+        timer.startTimer(PICK_TIME, selector: #selector(startPicking))
     }
     
-    func startPicking() {
+    @objc func startPicking() {
         print("    Picking -- ")
         state = "Picking"
         let pickers = players.filter { !$0.czar }
@@ -118,10 +119,10 @@ class Room: RiffleDomain {
         }
         
         publish("picking", pickers.map({ $0.pick! }), PICK_TIME)
-        timer.startTimer(PICK_TIME, selector: "startScoring:")
+        timer.startTimer(PICK_TIME, selector: #selector(startScoring))
     }
     
-    func startScoring(t: NSTimer) {
+    @objc func startScoring(t: NSTimer) {
         print("    Scoring -- ")
         state = "Scoring"
         
@@ -151,11 +152,11 @@ class Room: RiffleDomain {
             
             // If this isn't a demo player deal them a new card
             if !p.demo {
-                call(p.domain + "/draw", newAnswer, handler: nil)
+                call(p.domain + "/draw", newAnswer)
             }
         }
         
-        timer.startTimer(SCORE_TIME, selector: "startAnswering")
+        timer.startTimer(SCORE_TIME, selector: #selector(startAnswering))
     }
     
     
@@ -176,13 +177,13 @@ class Room: RiffleDomain {
             czar = player.czar ? nil : czar
             
             // remove the role from the player that left, ensuring they can't call our endpoints anymore
-            app.call("xs.demo.Bouncer/revokeDynamicRole", self.dynamicRoleId, "player", container.domain, [player.domain], handler: nil)
+            app.call("xs.demo.Bouncer/revokeDynamicRole", dynamicRoleId, "player", container.name, [player.domain])
         }
         
         // If there aren't enough players to play a full
         while players.count < 3 {
             let player = Player()
-            player.domain = app.domain + ".demo\(randomStringWithLength(4))"
+            player.domain = app.name + ".demo\(randomStringWithLength(4))"
             player.hand = answers.randomElements(10, remove: true)
             player.demo = true
             players.append(player)
