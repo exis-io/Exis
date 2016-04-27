@@ -95,8 +95,8 @@ protocol DeferredType {
 
 
 // The generic kind is the type of the next deferred
-class Deferred: DeferredType {
-    var next: [Deferred] = []
+class BaseDeferred: DeferredType {
+    var next: [BaseDeferred] = []
     var fired: Bool = false
     
     var callbackArgs: [AnyObject]?
@@ -117,7 +117,7 @@ class Deferred: DeferredType {
         // Instead, we slip that deferred into the chain between us and next, disconect the rest of the
         // chain from us and connect it to the new deferred
         if ret != nil && ret!.count == 1 {
-            if let continuation = ret![0] as? Deferred {
+            if let continuation = ret![0] as? BaseDeferred {
                 continuation.callbackArgs = callbackArgs
                 continuation.errbackArgs = errbackArgs
                 continuation.next = next
@@ -158,12 +158,12 @@ class Deferred: DeferredType {
 
 // Errback: String -> Void
 protocol EBStringVoid {
-    func error(fn: (String) -> ()) -> Deferred
+    func error(fn: (String) -> ()) -> BaseDeferred
 }
 
-extension Deferred: EBStringVoid {
-    func error(fn: String -> ())  -> Deferred {
-        let d = Deferred()
+extension BaseDeferred: EBStringVoid {
+    func error(fn: String -> ())  -> BaseDeferred {
+        let d = BaseDeferred()
         next.append(d)
         _error(constrainOneVoid(fn))
         return d
@@ -173,12 +173,12 @@ extension Deferred: EBStringVoid {
 
 // Callback: Void -> Void
 protocol VoidVoid {
-    func then(fn: () -> ()) -> Deferred
+    func then(fn: () -> ()) -> BaseDeferred
 }
 
-extension Deferred: VoidVoid {
-    func then(fn: () -> ())  -> Deferred {
-        let d = Deferred()
+extension BaseDeferred: VoidVoid {
+    func then(fn: () -> ())  -> BaseDeferred {
+        let d = BaseDeferred()
         next.append(d)
         _then(constrainVoidVoid(fn))
         return d
@@ -187,12 +187,12 @@ extension Deferred: VoidVoid {
 
 // Callback: Void -> Void
 protocol OneVoid {
-    func then<A: CN>(fn: A -> ()) -> Deferred
+    func then<A: CN>(fn: A -> ()) -> BaseDeferred
 }
 
-extension Deferred: OneVoid {
-    func then<A: CN>(fn: A -> ())  -> Deferred {
-        let d = Deferred()
+extension BaseDeferred: OneVoid {
+    func then<A: CN>(fn: A -> ())  -> BaseDeferred {
+        let d = BaseDeferred()
         next.append(d)
         _then(constrainOneVoid(fn))
         return d
@@ -200,12 +200,12 @@ extension Deferred: OneVoid {
 }
 
 protocol VoidOne {
-    func then<A: CN>(fn: () -> A) -> Deferred
+    func then<A: CN>(fn: () -> A) -> BaseDeferred
 }
 
-extension Deferred: VoidOne {
-    func then<A: CN>(fn: () -> A)  -> Deferred {
-        let d = Deferred()
+extension BaseDeferred: VoidOne {
+    func then<A: CN>(fn: () -> A)  -> BaseDeferred {
+        let d = BaseDeferred()
         next.append(d)
         _then(constrainVoidOne(fn))
         return d
@@ -214,12 +214,12 @@ extension Deferred: VoidOne {
 
 
 protocol VoidDeferred {
-    func then<A: Deferred>(fn: () -> A) -> Deferred
+    func then<A: BaseDeferred>(fn: () -> A) -> BaseDeferred
 }
 
-extension Deferred: VoidDeferred {
-    func then<A: Deferred>(fn: () -> A)  -> Deferred {
-        let d = Deferred()
+extension BaseDeferred: VoidDeferred {
+    func then<A: BaseDeferred>(fn: () -> A)  -> BaseDeferred {
+        let d = BaseDeferred()
         next.append(d)
         _then(constrainVoidOne(fn))
         return d
@@ -233,7 +233,7 @@ protocol ConstrainedVoidOne {
     func then<B: CN>(fn: B -> T) -> DeferredResults<T>
 }
 
-class DeferredResults<A: CN>: Deferred, ConstrainedVoidOne {
+class DeferredResults<A: CN>: BaseDeferred, ConstrainedVoidOne {
     func then<B: CN>(fn: B -> A)  -> DeferredResults<A> {
         let d = DeferredResults<A>()
         next.append(d)
@@ -242,7 +242,7 @@ class DeferredResults<A: CN>: Deferred, ConstrainedVoidOne {
     }
 }
 
-class DeferredParams<A: CN>: Deferred {
+class DeferredParams<A: CN>: BaseDeferred {
     func then<B: CN>(fn: A -> B)  -> DeferredParams<B> {
         let d = DeferredParams<B>()
         next.append(d)
@@ -264,7 +264,7 @@ protocol Invokable {
     func errback(args: [AnyObject])
 }
 
-extension Deferred: Invokable {}
+extension BaseDeferred: Invokable {}
 
 
 // Composition
@@ -273,15 +273,15 @@ extension Deferred: Invokable {}
 
 // A boring deferred that doesn't return anything terribly useful
 protocol DeferredVoid: EBStringVoid, VoidVoid, Invokable {}
-extension Deferred: DeferredVoid {}
+extension BaseDeferred: DeferredVoid {}
 
 // Allows deferred objects to be returned from within then blocks
 protocol DeferredChain: VoidDeferred, EBStringVoid, OneVoid, Invokable {}
-extension Deferred: DeferredChain {}
+extension BaseDeferred: DeferredChain {}
 
 // Allows non-deferred objects to be passed from block to block
 protocol DeferredValueChain: EBStringVoid, OneVoid, Invokable, VoidOne {}
-extension Deferred: DeferredValueChain {}
+extension BaseDeferred: DeferredValueChain {}
 
 // Results of then are constrained to the given type
 protocol DeferredConstrainedResults: ConstrainedVoidOne, EBStringVoid {}
@@ -327,7 +327,7 @@ extension DeferredParams: DeferredConstrainedParams {}
 // Exmaples and inline tests follow
 
 // Default, no args errback and callback
-//let d: DeferredVoid = Deferred()
+//let d: DeferredVoid = BaseDeferred()
 //
 //d.then {
 //    print("Default Then")

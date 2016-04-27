@@ -19,23 +19,59 @@ class OsxBugPlayground {
     
     func test() {
         
-        let d = Deferred()
-        let m = Deferred()
+        // Waiting for an internal deferred to resolve
+//        var d: DeferredChain = BaseDeferred()
+//        let f = BaseDeferred() // Some operation that returns a deferred, mocked
+//        
+//        f.then {
+//            let a = 2
+//            print(a)
+//        }
+//        
+//        d.then {
+//            let a = 1
+//            print(a)
+//            return f
+//        }.then {
+//            let b = 3
+//            print(b)
+//        }
+//        
         
-        d.then {
-            print("In d")
-            // return m
+        let d = DeferredParams<String>()
+        
+        d.then { s in
+            print("Have s!")
         }.then {
-            print("d is done")
+            let b = 2
+        }.error { err in
+            print(err)
         }
         
-        m.then {
-            print("In m")
-        }
-        
-        m.callback([])
-        d.callback([])
-        
+        d.callback(["asdf"])
+
+//        
+//        d.callback([])
+//        f.callback([])
+//        
+//
+//        let d = Deferred()
+//        let m = Deferred()
+//        
+////        d.then {
+////            print("In d")
+////            return m
+////        }.then {
+////            print("d is done")
+////        }
+//        
+//        m.then {
+//            print("In m")
+//        }
+//        
+//        m.callback([])
+//        d.callback([])
+//        
 //        let r = dmtest(Rat.self)
 //        print("Result \(r?.description)")
 //        

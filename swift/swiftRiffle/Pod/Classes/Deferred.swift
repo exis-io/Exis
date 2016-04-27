@@ -11,6 +11,7 @@
 import Foundation
 import Mantle
 
+
 public class Deferred: Handler {
     // Callback and Errback ids
     let cb = CBID()
@@ -90,13 +91,16 @@ public class Deferred: Handler {
         Session.handlers[eb] = nil
     }
     
+    public func then<A>(fn: () -> A) -> Deferred {
+        return _then() {a in
+            print("Caught Deferred")
+            fn()
+        }
+    }
+    
     public func then(fn: () -> ()) -> Deferred {
         return _then() { a in fn() }
     }
-    
-//    public func then(fn: () -> (Deferred)) -> Deferred {
-//        return _then() { a in fn() }
-//    }
     
     public func error(fn: (String) -> ()) -> Deferred {
         return _error(fn)
