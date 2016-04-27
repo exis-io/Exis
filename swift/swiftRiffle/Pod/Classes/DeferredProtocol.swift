@@ -14,7 +14,6 @@ protocol DeferredType {
     
     var callbackArgs: [Any]? { get set }
     var errbackArgs: [Any]? { get set }
-    
     func callback(args: [Any])
     func errback(args: [Any])
 }
@@ -38,9 +37,7 @@ public class BaseDeferred:  DeferredType, Handler {
     
     public init() {}
     
-    public func registerWithSession() {
-        cb = CBID()
-        eb = CBID()
+    public func registerWithSession(callback: UInt64? = CBID(), errback: UInt64? = CBID()) {
         Session.handlers[cb!] = self
         Session.handlers[eb!] = self
     }
