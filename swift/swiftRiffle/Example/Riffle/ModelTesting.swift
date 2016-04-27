@@ -28,13 +28,11 @@ class Modeler: Domain {
     override func onJoin() {
         
         // How many objects do we have?
-        Panther.count().then { (count: Int) in
-            print("Count: ", count)
+        Panther.count().then { n in
+            print("Count: ", n)
         }
         
-        // Panther.count().then
         
-//
 //        // Load all the cats
 //        Panther.all().then { (cats: [Panther]) in
 //            print("All cats: #\(cats.count)")

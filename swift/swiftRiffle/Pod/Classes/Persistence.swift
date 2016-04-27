@@ -47,10 +47,17 @@ extension Model {
         return manager != nil
     }
     
-    public class func count() -> OneDeferred<Int> {
+    public class func count() -> Defered<Int> {
         let r = OneDeferred<Int>()
+        let d = Defered<Int>()
+        
         manager.callCore("Count", deferred: r, args: ["\(self)"])
-        return r
+        
+        r.then { (a: Int) in
+            d.callback([a])
+        }
+        
+        return d
     }
     
     public func create() -> Deferred {
