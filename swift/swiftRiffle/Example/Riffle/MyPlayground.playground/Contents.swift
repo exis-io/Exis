@@ -66,7 +66,15 @@ func constrainVoidVoid(fn: () -> ())  -> BaseClosure<Void, Void> {
 }
 
 func constrainOneVoid<A>(fn: (A) -> ()) -> BaseClosure<A, Void> {
-    return BaseClosure(fn: fn).setCurry { a in fn(a[0] as! A); return [] }
+    return BaseClosure(fn: fn).setCurry { a in
+        if A.self == Void.self {
+            fn(() as! A)
+        } else {
+            fn(a[0] as! A)
+        }
+        
+        return []
+    }
 }
 
 func constrainVoidOne<A>(fn: () -> A) -> BaseClosure<Void, A> {
@@ -85,20 +93,11 @@ func accept<A, B>(fn: A -> B)  -> BaseClosure<A, B> {
     return BaseClosure(fn: fn)
 }
 
-accept() {
-    print("hi")
-}
 
-
-
-protocol BetterDeferredType {
-    func callback(args: [AnyObject])
-    func errback(args: [AnyObject])
-}
 
 struct DeferredData {
     // The chain of next deferreds
-    var next: [BetterDeferredType] = []
+    var next: [AbstractDeferred] = []
     
     // Automatically invoke callbacks and errbacks if not nil when given arguments
     var callbackArgs: [AnyObject]?
@@ -129,195 +128,239 @@ struct DeferredData {
     }
 }
 
-class AbstractDeferred: BetterDeferredType {
-    var data = DeferredData()
+class AbstractDeferred {
+    // Automatically invoke callbacks and errbacks if not nil when given arguments
+    var callbackArgs: [AnyObject]?
+    var errbackArgs: [AnyObject]?
     
-    func _then<T: BetterDeferredType>(fn: AnyClosureType, next: T) -> T {
-        data.next.append(next)
-        data._callback = fn
-        return next
+    // If an invocation has already occured then the args properties are already set
+    // We should invoke immediately
+    var _callback: AnyClosureType?
+    var _errback: AnyClosureType?
+    
+    // The next link in the chain
+    var next: [AbstractDeferred] = []
+    
+    
+    func _then<T: AbstractDeferred>(fn: AnyClosureType, nextDeferred: T) -> T {
+        next.append(nextDeferred)
+        if let a = callbackArgs { callback(a) }
+        _callback = fn
+        return nextDeferred
     }
     
-    func _error<T: BetterDeferredType>(fn: AnyClosureType, next: T) -> T {
-        data.next.append(next)
-        data._errback = fn
-        return next
+    func _error<T: AbstractDeferred>(fn: AnyClosureType, nextDeferred: T) -> T {
+        next.append(nextDeferred)
+        _errback = fn
+        if let a = errbackArgs { errback(a) }
+        return nextDeferred
     }
     
     func callback(args: [AnyObject]) {
-        data.invokeCallback(args)
+        callbackArgs = args
+        var ret: [AnyObject] = []
+        if let cb = _callback { ret = cb.call(args) }
+        for n in next { n.callback(ret) }
     }
     
     func errback(args: [AnyObject]) {
-        data.invokeErrback(args)
-    }
-}
-
-class BasicDeferred: AbstractDeferred {
-    func then(fn: () -> ())  -> BasicDeferred {
-        return _then(constrainVoidVoid(fn), next: BasicDeferred())
+        errbackArgs = args
+        if let eb = _errback { eb.call(args) }
+        for n in next { n.errback(args) }
     }
     
-    func error(fn: String -> ())  -> BasicDeferred {
-        return _error(constrainOneVoid(fn), next: BasicDeferred())
+    func error(fn: String -> ()) -> Deferred<Void> {
+        return _error(constrainOneVoid(fn), nextDeferred: Deferred<Void>())
     }
 }
 
 
-class ChainedDeferred: AbstractDeferred {
-    func then<A, B>(fn: A -> B)  -> TypedDeferred<A> {
-        return _then(accept(fn), next: TypedDeferred<A>())
+class Deferred<A>: AbstractDeferred {
+    func then(fn: A -> ())  -> Deferred<Void> {
+        return _then(constrainOneVoid(fn), nextDeferred: Deferred<Void>())
     }
     
-    func error(fn: String -> ())  -> ChainedDeferred {
-        return _error(constrainOneVoid(fn), next: ChainedDeferred())
+    func chain(fn: () -> Deferred) -> Deferred<Void> {
+        let next = Deferred<Void>()
+        
+        _callback = constrainVoidVoid {
+            fn().next.append(next)
+        }
+        
+        return next
     }
     
-    override func callback(args: [AnyObject]) {
-        print("Called with \(args)")
-        super.callback(args)
+    func chain<T: CN>(fn: A -> Deferred<T>)  -> Deferred<T> {
+        let next = Deferred<T>()
+        
+        _callback = constrainOneVoid { (a: A) in
+            fn(a).then { s in
+                next.callback([s as! AnyObject])
+            }.error { s in
+                next.errback([s])
+            }
+        }
+        
+        return next
     }
 }
 
-// A deferred where the then block *must* accept some value A
-class TypedDeferred<A: CN>: AbstractDeferred {
-    func then(fn: A -> ())  -> TypedDeferred<A> {
-        return _then(constrainOneVoid(fn), next: TypedDeferred<A>())
-    }
-    
-    override func callback(args: [AnyObject]) {
-        print("Called with \(args)")
-        super.callback(args)
-    }
-}
 
 // Exmaples and inline tests follow
 
-
 // Default, no args errback and callback
-//_ = {
-//    let d = BasicDeferred()
-//
-//    d.then {
-//        print("Default Then")
-//        let a = 1
-//    }
-//
-//    d.callback([])
-//
-//    d.error { r in
-//        print("DefaultError")
-//        let b = 2
-//    }
-//
-//    d.errback(["Asdf"])
-//}()
-
-
-//// Default chaining
-//_ = {
-//    let d = BasicDeferred()
-//
-//    d.then {
-//        let a = 1
-//    }.then {
-//        let b = 2
-//    }
-//
-//    d.callback([])
-//
-//    d.error { e in
-//        let a = 3
-//    }.error { e in
-//        let b = 4
-//    }
-//
-//    d.errback([""])
-//}()
-
-
-//// Lazy callbacks- immediately fire callback handler if the chain has already been called back
-//_ = {
-//    var d = BasicDeferred()
-//    d.callback([])
-//
-//    d.then {
-//        let a = 1
-//    }.then {
-//        let b = 2
-//    }
-//
-//    d.errback([""])
-//
-//    d.error { e in
-//        let a = 1
-//    }.error { e in
-//        let b = 2
-//    }
-//}()
-
-
-// Waiting for an internal deferred to resolve
-//_ = {
-//    var d = ChainedDeferred()
-//    let f = BasicDeferred() // Some operation that returns a deferred, mocked
-//
-//    f.then {
-//        let a = 2
-//        print(a)
-//    }
-//
-//    d.then {
-//        let a = 1
-//        print(a)
-//        return f
-//    }.then {
-//        let b = 3
-//        print(b)
-//    }
-//
-//    d.callback([])
-//    f.callback([])
-//}()
-
-
-// Param constraints
 _ = {
-    var d = TypedDeferred<Int>()
-
-    d.then { a in
-        print("Have a: \(a)")
+    let d = Deferred<Void>()
+    
+    d.then {
+        print("Default Then")
         let a = 1
     }
+    
+    d.callback([])
+    
+    d.error { r in
+        print("DefaultError")
+        let b = 2
+    }
+    
+    d.errback(["Asdf"])
+    }()
 
+
+// Default chaining
+_ = {
+    let d = Deferred<Void>()
+    
+    d.then {
+        let a = 1
+    }.then {
+        let b = 2
+    }
+    
+    d.callback([])
+    
+    d.error { e in
+        let a = 3
+    }.error { e in
+        let b = 4
+    }
+    
+    d.errback([""])
+    }()
+
+
+// Lazy callbacks- immediately fire callback handler if the chain has already been called back
+_ = {
+    var d = Deferred<Void>()
+    d.callback([])
+    
+    d.then {
+        let a = 1
+        }.then {
+            let b = 2
+    }
+    
+    d.errback([""])
+    
+    d.error { e in
+        let a = 1
+    }.error { e in
+        let b = 2
+    }
+    }()
+
+
+ // Waiting for an internal deferred to resolve
+ _ = {
+     var d = Deferred<Void>()
+     let f = Deferred<Void>()
+     
+     // This is pretty close, but not quite there
+     f.then { s in
+        print(12)
+     }
+     
+     d.chain {
+        print(11)
+        return f
+     }.then {
+        print(13)
+     }
+     
+     d.callback([])
+     f.callback(["Hello"])
+ }()
+
+ 
+ // Param constraints
+ _ = {
+     var d = Deferred<()>()
+     var e = Deferred<String>()
+     
+     d.chain { () -> Deferred<String> in
+        let a = 1
+        return e
+     }.then { s in
+        print("Have", s)
+        let a = 2
+     }
+     
     d.callback([1])
+    e.callback(["Done!"])
+ }()
+*/
+
+// A Mix of the above two. Given a deferred that returns value in some known
+// type, returning that deferred should chain the following then as a callback of the appropriate type
+_ = {
+    var d = Deferred<Void>()
+    let f = Deferred<String>()
+
+    d.chain { () -> Deferred<String> in
+        print(1)
+        return f
+    }.then { s in
+        print(s)
+        print(2)
+    }.then {
+        print(3) // I dont take any args, since the block above me didnt reutn a deferred
+    }.error { err in
+        print("Error: \(err)")
+    }
+
+    d.callback([])
+    // f.callback(["Hello"])
+    f.errback(["early termination"])
 }()
 
 
-// Chain the results of one deferred to another in a type safe way
-// Can't really mix these very well with the deferred chains yet
-//var d: DeferredValueChain = BaseDeferred()
-//
-//d.then {
-//    return "Hello"
-//}.then { s in
-//    print("Have string \(s)!")
-//    print("I dont return anything!")
-//}.then {
-//    print("Done")
-//}
-//
-//d.callback([])
+// Returning a nested deferred twice
+_ = {
+    var d = Deferred<Void>()
+    let f = Deferred<String>()
+    let c = Deferred<Bool>()
+
+    d.chain { () -> Deferred<String> in
+        print(1)
+        return f
+    }.chain { str -> Deferred<Bool> in
+        print(2, str)
+        return c
+    }.then { bool in
+        print(3, bool)
+    }.error { err in
+        print("Error: \(err)")
+    }
+
+    // Comment out lines below and make sure the prints do or dont show up in order
+    d.callback([])
+    f.callback(["Hello"])
+    c.callback([true])
+    
+    // f.errback(["early termination"])
+}()
 
 
-//let d = DeferredParams<Int>()
-//
-//d.then { s in
-//    print("Have \(s)")
-//}.then {
-//    let b = 2
-//}
-//
-//d.callback([1])
 
 
