@@ -47,10 +47,16 @@ extension Model {
         return manager != nil
     }
     
-    public class func count() -> OneDeferred<Int> {
+    public class func count() -> DeferredParams<Int> {
         let r = OneDeferred<Int>()
+        let d = DeferredParams<Int>()
         manager.callCore("Count", deferred: r, args: ["\(self)"])
-        return r
+        
+        r.then { (a: Int) -> () in
+            d.callback([a])
+        }
+        
+        return d
     }
     
     public func create() -> Deferred {
@@ -87,11 +93,19 @@ extension Model {
 // Allow some operations to be perfromed on collections of models
 extension CollectionType where Generator.Element: Convertible, Generator.Element: Persistable {
     
-    public func save() -> Deferred {
+    public func save() -> DeferredChain {
         let manager = Generator.Element.getManager()!
         let name = Generator.Element.modelName()
         let serialized = self.map { $0.serialize() }
-        return manager.callCore("SaveMany", args: [name, serialized])
+        
+        let d = manager.callCore("SaveMany", args: [name, serialized])
+        let chain = BaseDeferred()
+        
+        d.then {
+            chain.callback([])
+        }
+        
+        return chain
     }
     
     public func destroy() -> Deferred {

@@ -254,7 +254,8 @@ extension Array : Property, BaseConvertible {
         }
         
         Riffle.warn("Array deserialize not given an array!")
-        return from
+        return []
+        // return from
     }
     
     public func serialize() -> Any {

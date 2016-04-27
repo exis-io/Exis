@@ -38,6 +38,8 @@ public class BaseDeferred:  DeferredType, Handler {
     public init() {}
     
     public func registerWithSession(callback: UInt64? = CBID(), errback: UInt64? = CBID()) {
+        cb = callback
+        eb = errback
         Session.handlers[cb!] = self
         Session.handlers[eb!] = self
     }
@@ -193,22 +195,22 @@ public class DeferredResults<A: PR>: BaseDeferred, ConstrainedVoidOne {
     }
 }
 
-public class DeferredParams<A: PR>: BaseDeferred {
+public class DeferredParams<A: PR>: BaseDeferred, BaseConvertible, Property {
     public override init() {}
     
-    func then<B: PR>(fn: A -> B)  -> DeferredParams<B> {
-        let d = DeferredParams<B>()
+    public func then<T: PR, B: DeferredParams<T>>(fn: A -> B)  -> DeferredParams<T> {
+        let d = DeferredParams<T>()
         next.append(d)
         _then(constrain(fn))
         return d
     }
     
-    //    func then(fn: A -> ()) -> DeferredChain {
-    //        let d = Deferred()
-    //        next.append(d)
-    //        _then(constrainOneVoid(fn))
-    //        return d
-    //    }
+    func then(fn: A -> ()) -> DeferredChain {
+        let d = BaseDeferred()
+        next.append(d)
+        _then(constrainOneVoid(fn))
+        return d
+    }
 }
 
 // Allows users or developers to invoke callbacks
@@ -243,3 +245,5 @@ extension DeferredResults: DeferredConstrainedResults {}
 // Parameters of then are constrained by the return of previous signature
 public protocol DeferredConstrainedParams: EBStringVoid {}
 extension DeferredParams: DeferredConstrainedParams {}
+
+

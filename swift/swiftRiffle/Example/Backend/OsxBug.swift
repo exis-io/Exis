@@ -38,7 +38,7 @@ class OsxBugPlayground {
 //        }
 //        
         
-        let d = DeferredParams<String>()
+        let d = DeferredParams<Int>()
         
         d.then { s in
             print("Have s!")

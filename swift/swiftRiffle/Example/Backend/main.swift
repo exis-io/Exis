@@ -11,7 +11,7 @@ import Riffle
 
 
 enum Test { case Auth0, Auth1, Domain, Model, OsxBugs}
-let CURRENTTEST = Test.OsxBugs  // Change me to change the current set of inline tests
+let CURRENTTEST = Test.Model  // Change me to change the current set of inline tests
 
 // Required helper method for OSX backends
 initTypes(External(String.self, String.self), External(Int.self, Int.self), External(Double.self, Double.self), External(Float.self, Float.self), External(Bool.self, Bool.self), External(Model.self, Model.self))
@@ -107,11 +107,12 @@ case .Domain:
 
     
 case .Model:
+
     let app = AppDomain(name: "xs.demo.damouse.model")
-    let modeler = Modeler(name: "moeerning", superdomain:app)
+    let modeler = Modeler(name: "meerning", superdomain:app)
     
     app.reconnect().error { reason in
-        app.login("moeerning").error { reason in
+        app.login("meerning").error { reason in
             print("Login failed: ", reason)
         }
     }

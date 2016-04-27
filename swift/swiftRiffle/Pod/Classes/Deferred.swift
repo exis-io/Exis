@@ -58,7 +58,7 @@ public class Deferred: Handler {
 
     public func callback(args: [Any]) -> Any? {
         callbackOccured = args
-        print(args)
+        
         if let f = callbackFuntion {
             if let d = f(args) as? Deferred {
                 print("Have a deferred")
