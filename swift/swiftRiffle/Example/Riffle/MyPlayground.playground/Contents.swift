@@ -200,7 +200,7 @@ extension Deferred: OneVoid {
 }
 
 protocol VoidOne {
-    func then(fn: () -> ()) -> Deferred
+    func then<A: CN>(fn: () -> A) -> Deferred
 }
 
 extension Deferred: VoidOne {
@@ -214,12 +214,12 @@ extension Deferred: VoidOne {
 
 
 protocol VoidDeferred {
-    func then<A: Deferred>(fn: () -> A) -> DeferredParams<A>
+    func then<A: Deferred>(fn: () -> A) -> Deferred
 }
 
 extension Deferred: VoidDeferred {
-    func then<A: Deferred>(fn: () -> A)  -> DeferredParams<A> {
-        let d = DeferredParams<A>()
+    func then<A: Deferred>(fn: () -> A)  -> Deferred {
+        let d = Deferred()
         next.append(d)
         _then(constrainVoidOne(fn))
         return d
@@ -242,14 +242,6 @@ class DeferredResults<A: CN>: Deferred, ConstrainedVoidOne {
     }
 }
 
-// Callback: A -> B where B is known and subsequent callbacks must accept B
-protocol ConstrainedOneVoid {
-    associatedtype T: Convertible
-    
-    func then<A: CN>(fn: T -> A)  -> DeferredParams<A>
-    func then(fn: T -> ()) -> DeferredChain
-}
-
 class DeferredParams<A: CN>: Deferred {
     func then<B: CN>(fn: A -> B)  -> DeferredParams<B> {
         let d = DeferredParams<B>()
@@ -258,12 +250,12 @@ class DeferredParams<A: CN>: Deferred {
         return d
     }
     
-    func then(fn: A -> ()) -> DeferredChain {
-        let d = Deferred()
-        next.append(d)
-        _then(constrainOneVoid(fn))
-        return d
-    }
+//    func then(fn: A -> ()) -> DeferredChain {
+//        let d = Deferred()
+//        next.append(d)
+//        _then(constrainOneVoid(fn))
+//        return d
+//    }
 }
 
 // Allows users or developers to invoke callbacks
@@ -284,15 +276,19 @@ protocol DeferredVoid: EBStringVoid, VoidVoid, Invokable {}
 extension Deferred: DeferredVoid {}
 
 // Allows deferred objects to be returned from within then blocks
-protocol DeferredChain: EBStringVoid, VoidVoid {}
+protocol DeferredChain: VoidDeferred, EBStringVoid, OneVoid, Invokable {}
 extension Deferred: DeferredChain {}
+
+// Allows non-deferred objects to be passed from block to block
+protocol DeferredValueChain: EBStringVoid, OneVoid, Invokable, VoidOne {}
+extension Deferred: DeferredValueChain {}
 
 // Results of then are constrained to the given type
 protocol DeferredConstrainedResults: ConstrainedVoidOne, EBStringVoid {}
 extension DeferredResults: DeferredConstrainedResults {}
 
 // Parameters of then are constrained by the return of previous signature
-protocol DeferredConstrainedParams: ConstrainedOneVoid, EBStringVoid {}
+protocol DeferredConstrainedParams: EBStringVoid {}
 extension DeferredParams: DeferredConstrainedParams {}
 
 
@@ -390,41 +386,62 @@ extension DeferredParams: DeferredConstrainedParams {}
 
 
 // Waiting for an internal deferred to resolve
-var d: DeferredChain = Deferred()
-let fakeOperation = Deferred() // Some operation that returns a deferred, mocked
-
-fakeOperation.then {
-    let a = 2
-    print(a)
-}
-
-d.then {
-    let a = 1
-    print(a)
-    return fakeOperation
-}.then {
-    let b = 3
-    print(b)
-}
-
-d.callback([])
-fakeOperation.callback([])
+//var d: DeferredChain = Deferred()
+//let f = Deferred() // Some operation that returns a deferred, mocked
+//
+//f.then {
+//    let a = 2
+//    print(a)
+//}
+//
+//d.then {
+//    let a = 1
+//    print(a)
+//    return f
+//}.then {
+//    let b = 3
+//    print(b)
+//}
+//
+//d.callback([])
+//f.callback([])
 
 
 
 // Chain the results of one deferred to another in a type safe way
-//let d = DeferredContinuing()
+// Can't really mix these very well with the deferred chains yet
+//var d: DeferredValueChain = Deferred()
 //
 //d.then {
 //    return "Hello"
-//    }.then { s in
-//        print("Have string \(s)!")
-//        print("I dont return anything!")
-//    }.then {
-//        print("Done")
+//}.then { s in
+//    print("Have string \(s)!")
+//    print("I dont return anything!")
+//}.then {
+//    print("Done")
 //}
 //
 //d.callback([])
+
+
+//let d = DeferredParams<String>()
+//
+//d.then { s in
+//    print("Have s!")
+//}.then {
+//    let b = 2
+//}
+//
+//d.callback(["asdf"])
+
+
+
+
+
+
+
+
+
 
 
 
