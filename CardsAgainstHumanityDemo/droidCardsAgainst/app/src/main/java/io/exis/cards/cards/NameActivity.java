@@ -118,11 +118,7 @@ public class NameActivity extends Activity {
 
     @Override
     public void onBackPressed(){
-        setName();
-        finish();
-        if(android.os.Build.VERSION.SDK_INT >= 21) {
-            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-        }
+        backClicked(background);
     }
 
     public void backClicked(View view){

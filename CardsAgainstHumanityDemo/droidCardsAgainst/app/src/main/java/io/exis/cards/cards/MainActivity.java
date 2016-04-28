@@ -70,19 +70,18 @@ public class MainActivity extends Activity {
 
         Log.d("onResume", "entered onResume");
 
-        try {
-            Bundle bundle = getIntent().getExtras();
-            screenName = bundle.getString("screenName", "");
-        }catch(NullPointerException e){
+        // try loading screen name from file
+        if(screenName.equals("")){
             screenName = preferences.getString("screenName", "");
-            if(screenName.equals("")){
-                Log.d("onResume", "unable to load screen name");
-                screenNameDisplay.setVisibility(View.INVISIBLE);
-            } else {
-                String name = getString(R.string.screen_name, screenName);
-                screenNameDisplay.setText(name);
-                screenNameDisplay.setVisibility(View.VISIBLE);
-            }
+        }
+
+        if(screenName.equals("")){
+            Log.d("onResume", "unable to load screen name");
+            screenNameDisplay.setVisibility(View.INVISIBLE);
+        }else{
+            String name = getString(R.string.screen_name, screenName);
+            screenNameDisplay.setText(name);
+            screenNameDisplay.setVisibility(View.VISIBLE);
         }
     }
 
@@ -98,22 +97,19 @@ public class MainActivity extends Activity {
     public void startNameActivity(View view) {
         Intent intent = new Intent(this, NameActivity.class);
         intent.putExtra("screenName", screenName);
+
+        startActivityForResult(intent, 1);
         if(android.os.Build.VERSION.SDK_INT >= 21) {
-            startActivityForResult(intent, 1, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-        }else{
-            startActivityForResult(intent, 1);
         }
     }
     public void startGameActivity(View view) {
         Intent intent = new Intent(view.getContext(), GameActivity.class);
         intent.putExtra("key_screen_name", screenName);
-        if(android.os.Build.VERSION.SDK_INT >= 21) {
-            view.getContext().startActivity(intent,
-                    ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+        view.getContext().startActivity(intent);
+
+        if(android.os.Build.VERSION.SDK_INT >= 21){
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-        }else{
-            view.getContext().startActivity(intent);
         }
     }
 
@@ -138,12 +134,10 @@ public class MainActivity extends Activity {
         if (requestCode == 1 && resultCode == RESULT_OK) {
             this.screenName = data.getStringExtra("screenName");
 
-            if(screenName.equals("")){
-                screenNameDisplay.setVisibility(View.INVISIBLE);
-            } else {
-                String name = getString(R.string.screen_name, screenName);
-                screenNameDisplay.setText(name);
-                screenNameDisplay.setVisibility(View.VISIBLE);
+            if(!screenName.equals("")){
+                Log.d("onActivityResult", "received screenName " + screenName);
+            }else{
+                Log.d("onActivityResult", "screen name blank!");
             }
         }
     }
