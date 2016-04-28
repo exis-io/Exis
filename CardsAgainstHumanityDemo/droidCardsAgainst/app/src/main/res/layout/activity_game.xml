@@ -56,7 +56,8 @@
         android:padding="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:gravity="center_vertical|center_horizontal" />
+        android:gravity="center_vertical|center_horizontal"
+        android:visibility="invisible" />
 
     <TextView
         android:text="@string/answer"
@@ -74,7 +75,8 @@
         android:layout_alignParentStart="true"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:gravity="center_vertical|center_horizontal" />
+        android:gravity="center_vertical|center_horizontal"
+        android:visibility="invisible" />
 
     <TextView
         android:text="@string/answer"
@@ -91,7 +93,8 @@
         android:padding="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:gravity="center_vertical|center_horizontal" />
+        android:gravity="center_vertical|center_horizontal"
+        android:visibility="invisible" />
 
     <TextView
         android:text="@string/answer"
@@ -108,7 +111,8 @@
         android:padding="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:gravity="center_vertical|center_horizontal" />
+        android:gravity="center_vertical|center_horizontal"
+        android:visibility="invisible" />
 
     <TextView
         android:text="@string/answer"
@@ -125,7 +129,8 @@
         android:padding="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:gravity="center_vertical|center_horizontal" />
+        android:gravity="center_vertical|center_horizontal"
+        android:visibility="invisible" />
 
     <TextView
         android:text="@string/room"

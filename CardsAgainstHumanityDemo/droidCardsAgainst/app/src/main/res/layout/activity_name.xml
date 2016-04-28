@@ -53,7 +53,7 @@
     <Button
         android:layout_height="wrap_content"
         android:layout_width="300dp"
-        android:text="&lt; Back"
+        android:text="Back"
         android:layout_centerHorizontal="true"
         android:id="@+id/button"
         android:onClick="backClicked"
@@ -61,6 +61,7 @@
         android:textColor="#ffffff"
         android:textSize="60sp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="20dp" />
+        android:layout_marginBottom="20dp"
+        android:textStyle="bold" />
 
 </RelativeLayout>

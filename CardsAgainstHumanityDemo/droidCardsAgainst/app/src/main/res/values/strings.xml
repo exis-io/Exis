@@ -11,7 +11,6 @@
     <string name="question"></string>
     <string name="answer"></string>
     <string name="room">Choose a card\n</string>
-    <string name="info">Network Mode</string>
     <string name="loading_questions">Loading Questions...</string>
     <string name="loading_answers">Loading Answers...</string>
     <string name="finished">Finished loading cards!</string>

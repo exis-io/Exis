@@ -74,11 +74,9 @@ public class Dealer extends Domain{
         Log.i("dealer::onJoin", player.playerID() + " joining");
         player.join();
     }
-
     public String ID(){
         return this.dealerID;
     }
-
     public void addPlayer(Player player){
         //if max capacity exceeded
         if(full()){
@@ -115,12 +113,10 @@ public class Dealer extends Domain{
         players.add(player);
         publish("joined", player.playerID());
     }//end addPlayer method
-
     // returns current czar
     private Player czar(){
         return players.get(czarNum);
     }
-
     public Card dealCard(Player player){
 
         Card card = generateAnswer();                       //generate new card to give to player
@@ -132,21 +128,17 @@ public class Dealer extends Domain{
         }
         return card;
     }//end dealCard method
-
     public boolean full() {
         return players.size() == ROOMCAP;
     }
-
     public static Card generateQuestion(){
         Collections.shuffle(questionDeck);
         return questionDeck.get(0);
     }//end generateCard method
-
     public static Card generateAnswer(){
         Collections.shuffle(answerDeck);
         return answerDeck.get(0);
     }//end generateCard method
-
     public ArrayList<Card> getNewHand(){
         ArrayList<Card> hand = new ArrayList<>();
         Card newCard = generateAnswer();
@@ -160,18 +152,15 @@ public class Dealer extends Domain{
 
         return hand;
     }// end getNewHand method
-
     public Player[] getPlayers(){
         return players.toArray(new Player[players.size()]);
     }//end getPlayers method
-
     public Card getQuestion(){
         if(questionCard == null){
             questionCard = generateQuestion();
         }
         return questionCard;
     }
-
     public void prepareGame(){
         if(questionDeck == null) {
             questionDeck = MainActivity.getQuestions();                //load all questions
@@ -182,15 +171,12 @@ public class Dealer extends Domain{
         Log.i("prepareGame", "questions has size " + questionDeck.size() +
                 ", answers has size " + answerDeck.size());
     }
-
-    // add dummies to fill room
-    public void addDummies(){
+    public void addDummies(){                                   // add dummies to fill room
         while(players.size() < ROOMCAP){
             addPlayer(new Player());
             dummyCount++;
         }
     }
-
     private void removeDummy(){
         for(Player p: players){
             if(p.dummy){
@@ -199,7 +185,6 @@ public class Dealer extends Domain{
             }
         }
     }
-
     public Object leave(String leavingPlayer){
         for(Player p: players){
             if(p.playerID().equals(leavingPlayer)){
@@ -212,9 +197,7 @@ public class Dealer extends Domain{
         publish("left", leavingPlayer);
         return null;
     }//end remove player method
-
-    // deal cards to all players
-    public void setPlayers(){
+    public void setPlayers(){                           // deal cards to all players
         for(int i=0; i<players.size(); i++){
             //give everyone 5 cards
             while(players.get(i).hand().size() < 5){
@@ -222,9 +205,7 @@ public class Dealer extends Domain{
             }
         }
     }//end setPlayers method
-
-    // dummies pick random winner
-    private void setWinner(String winningCard){
+    private void setWinner(String winningCard){                     // dummies pick random winner
         if(player.isCzar()){
             for(Player p:players){
                 if( winningCard.equals( answers.get(p.playerID()) ) ){
@@ -238,15 +219,14 @@ public class Dealer extends Domain{
             }
             winner = players.get(num);
             this.winningCard = (Card) answers.get(winner.playerID());
-            Log.i("setWinner", "winner=" + winner.playerID() + ", num=" + num);
         }
     }
-
-    //update czar to next player
-    private void updateCzar(){
+    private void updateCzar(){                          //update czar to next player
         players.get(czarNum).setCzar(false);
+        Log.d("update czar", "player " + czarNum + " (" + players.get(czarNum).playerID() + ") no longer czar");
         czarNum++;
         czarNum = czarNum % players.size();
+        Log.d("update czar", "player " + czarNum + " (" + players.get(czarNum).playerID() + ") set to czar");
         players.get(czarNum).setCzar(true);
     }// end updateCzar method
 
@@ -265,11 +245,9 @@ public class Dealer extends Domain{
     public void start(){
         //fill room with players
         addDummies();
-        updateCzar();
         int delay = 15000;
         runnable = new Runnable(){
             public void run() {
-                Log.i("dealer", "starting " + phase + " phase");
                 playGame(phase);
                 handler.postDelayed(this, delay);
             }
@@ -323,7 +301,7 @@ public class Dealer extends Domain{
 
                         ArrayList<Card> a = new ArrayList<Card>(answers.values());
                         Log.i(TAG, "publishing [picking, " +
-                                Card.printHand(a) +
+                                Card.printHand(a) + "\n" +
                                 duration + "]");
                         publish("picking", Card.serialize(Card.handToStrings(a)), duration);
 

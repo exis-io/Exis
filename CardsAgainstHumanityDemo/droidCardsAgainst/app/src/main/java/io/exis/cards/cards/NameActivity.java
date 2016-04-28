@@ -1,6 +1,7 @@
 package io.exis.cards.cards;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -119,11 +120,17 @@ public class NameActivity extends Activity {
     public void onBackPressed(){
         setName();
         finish();
+        if(android.os.Build.VERSION.SDK_INT >= 21) {
+            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+        }
     }
 
     public void backClicked(View view){
         setName();
         finish();
+        if(android.os.Build.VERSION.SDK_INT >= 21) {
+            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+        }
     }
     void setName(){
         if(!nameField.getText().toString().equals("") &&

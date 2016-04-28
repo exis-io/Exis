@@ -1,6 +1,7 @@
 package io.exis.cards.cards;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -97,12 +98,23 @@ public class MainActivity extends Activity {
     public void startNameActivity(View view) {
         Intent intent = new Intent(this, NameActivity.class);
         intent.putExtra("screenName", screenName);
-        startActivityForResult(intent, 1);
+        if(android.os.Build.VERSION.SDK_INT >= 21) {
+            startActivityForResult(intent, 1, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        }else{
+            startActivityForResult(intent, 1);
+        }
     }
     public void startGameActivity(View view) {
         Intent intent = new Intent(view.getContext(), GameActivity.class);
         intent.putExtra("key_screen_name", screenName);
-        view.getContext().startActivity(intent);
+        if(android.os.Build.VERSION.SDK_INT >= 21) {
+            view.getContext().startActivity(intent,
+                    ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        }else{
+            view.getContext().startActivity(intent);
+        }
     }
 
     @Override
@@ -121,7 +133,6 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
     }
-
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == RESULT_OK) {
@@ -136,7 +147,6 @@ public class MainActivity extends Activity {
             }
         }
     }
-
     public static Context getAppContext(){
         return MainActivity.context;
     }
