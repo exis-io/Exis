@@ -103,7 +103,7 @@ js:
 	rm main.js.map
 
 jsbrowser: js
-	browserify js/jsRiffle/index.js --standalone jsRiffle -o js/jsRiffle/release/jsRiffle.js
+	browserify js/jsRiffle/src/browser/browser-builder.js --standalone jsRiffle -o js/jsRiffle/release/jsRiffle.js
 	uglifyjs js/jsRiffle/release/jsRiffle.js -o js/jsRiffle/release/jsRiffle.min.js
 
 libriffmantle.so: 

@@ -1,20 +1,18 @@
 require('./go.js');
 var want = require('./want.js');
-var storage = require('./collections.js');
-var ws = require('./websocket.js');
 var pjson = require('../package.json');
 global.Q = require('q');
 
-global.WsFactory = require('./websocket').Factory;
 
 exports.want = want.want;
 exports.modelObject = want.ModelObject;
 exports.xsPromises = global.Q;
+var storage = require('./appliances/collections.js');
+exports.xsAuth = require('./appliances/auth.js');
+exports.xsBouncer = require('./appliances/bouncer.js');
+exports.xsContainers = require('./appliances/container.js');
+exports.xsReplay = require('./appliances/replay.js');
 exports.xsStorage = storage.Storage;
-exports.xsAuth = require('./auth.js');
-exports.xsBouncer = require('./bouncer.js');
-exports.xsContainers = require('./container.js');
-exports.xsReplay = require('./replay.js');
 
 exports.Domain = global.Domain.New;
 exports.version = pjson.version;
