@@ -19,7 +19,7 @@
     "id": 2667
   },
   {
-    "text": "If ________ came in two-fours, Canada would be more ________",
+    "text": "If ________ came in two-fours, Canada would be more fun",
     "id": 2668
   },
   {
