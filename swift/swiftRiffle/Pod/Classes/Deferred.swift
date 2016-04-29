@@ -73,12 +73,7 @@ public class Deferred: Handler, InvokableDeferred {
 
     public func callback(args: [Any]) -> Any? {
         callbackOccured = args
-        
-        if let f = callbackFuntion {
-            if let d = f(args) as? Deferred {
-                print("Have a deferred")
-            }
-        }
+        if let f = callbackFuntion { f(args) }
         if let n = next { n.callback(args) }
         return nil
     }

@@ -187,6 +187,33 @@ func logCats(cats: [Panther]) {
     for c in cats { print("\t", c.description, c._xsid) }
 }
 
+class Dig: Model {
+    var boo: Int?
+    var nib: String
+    
+    required init() {
+        nib = "Hello!"
+    }
+}
+
+class Dug: Dig {
+    var bee: Float?
+}
+
+func testSilver() {
+    let d = Dug()
+    let names = d.propertyNames()
+    
+    // print(names)
+    
+    genericAcceptor(Dig.self)
+}
+
+func genericAcceptor<T: Model>(t: T.Type) {
+    let ret = t.init()
+    
+    print(ret)
+}
 
 
 

@@ -30,14 +30,6 @@ class Player: Model {
     }
 }
 
-extension Player: Equatable {}
-
-// Used to compare two players together
-func ==(lhs: Player, rhs: Player) -> Bool {
-    return lhs.domain == rhs.domain
-}
-
-
 // Given a domain, return the player that matches that domain from an array. If the player is not 
 // present in the array retun nil
 func getPlayer(players: [Player], domain: String) -> Player? {

@@ -77,9 +77,16 @@ class Session {
             }
             
             if let handler = handlers[i] {
-                handler.invoke(i, args: args)
+                #if os(iOS)
+                    dispatch_async(dispatch_get_main_queue()) {
+                        handler.invoke(i, args: args)
+                    }
+                #else
+                    handler.invoke(i, args: args)
+                #endif
+                
             } else {
-                print("Unhandled invocation: \(i), \(args)")
+                // print("Unhandled invocation: \(i), \(args)")
             }
         }
         
@@ -103,8 +110,9 @@ class DomainHandler: Handler {
     }
     
     func invoke(id: UInt64, args: [Any]) {
-        // This is never called if the runloop is processing. Be careful with this
         self.curriedHandler(args)
+        
+        // This is never called if the runloop is processing. Be careful with this
         
 //        #if os(Linux)
 //            curriedHandler(args)

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9060" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="dYA-aB-PbI">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="dYA-aB-PbI">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
@@ -39,7 +39,6 @@
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="63o-Is-RPw">
                                         <rect key="frame" x="2" y="-14" width="30" height="128"/>
-                                        <animations/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="30" id="hWj-BA-h7k"/>
                                         </constraints>
@@ -52,14 +51,12 @@
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Waiting for round start..." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M21-Hh-XMu">
                                         <rect key="frame" x="36" y="0.0" width="554" height="100"/>
-                                        <animations/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" name="LiberationSans-Bold" family="Liberation Sans" pointSize="22"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
-                                <animations/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstItem="63o-Is-RPw" firstAttribute="centerY" secondItem="wOs-lQ-ALW" secondAttribute="centerY" id="1Lo-ho-pJl"/>
@@ -73,7 +70,6 @@
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="65" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="xuF-bi-CC7">
                                 <rect key="frame" x="0.0" y="120" width="600" height="354"/>
-                                <animations/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="card" rowHeight="65" id="R16-um-x8l" customClass="CardCell" customModule="ExAgainst" customModuleProvider="target">
@@ -88,14 +84,12 @@
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Card Card CArd" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0rn-nD-gx1">
                                                             <rect key="frame" x="10" y="10" width="564" height="29"/>
-                                                            <animations/>
                                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                             <fontDescription key="fontDescription" name="LiberationSans" family="Liberation Sans" pointSize="20"/>
                                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                     </subviews>
-                                                    <animations/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <constraints>
                                                         <constraint firstItem="0rn-nD-gx1" firstAttribute="leading" secondItem="Wir-cg-Fio" secondAttribute="leading" constant="10" id="4bW-uW-20u"/>
@@ -110,7 +104,6 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </view>
                                             </subviews>
-                                            <animations/>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <constraints>
                                                 <constraint firstAttribute="trailingMargin" secondItem="Wir-cg-Fio" secondAttribute="trailing" id="WFV-sH-dye"/>
@@ -119,7 +112,6 @@
                                                 <constraint firstAttribute="bottomMargin" secondItem="Wir-cg-Fio" secondAttribute="bottom" id="t83-TE-dEX"/>
                                             </constraints>
                                         </tableViewCellContentView>
-                                        <animations/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <connections>
                                             <outlet property="labelTitle" destination="0rn-nD-gx1" id="i4H-m6-aVf"/>
@@ -130,7 +122,6 @@
                             </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OqS-ng-Ih2" customClass="TickingView" customModule="ExAgainst" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="473" width="600" height="1"/>
-                                <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="oxw-c5-kSz"/>
@@ -138,7 +129,6 @@
                             </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="L2b-9W-dKb">
                                 <rect key="frame" x="0.0" y="474" width="600" height="126"/>
-                                <animations/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="126" id="n7x-HR-Eux"/>
@@ -159,7 +149,6 @@
                                             <subviews>
                                                 <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cQC-iK-wDT">
                                                     <rect key="frame" x="6" y="48" width="266" height="70"/>
-                                                    <animations/>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                     <userDefinedRuntimeAttributes>
                                                         <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -170,16 +159,14 @@
                                                         </userDefinedRuntimeAttribute>
                                                     </userDefinedRuntimeAttributes>
                                                 </view>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CC4-H5-YZF">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CC4-H5-YZF">
                                                     <rect key="frame" x="10" y="11" width="216" height="19"/>
-                                                    <animations/>
                                                     <fontDescription key="fontDescription" name="LiberationSans" family="Liberation Sans" pointSize="17"/>
                                                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="be5-T7-XkC" customClass="LTMorphingLabel" customModule="LTMorphingLabel">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="be5-T7-XkC" customClass="LTMorphingLabel" customModule="LTMorphingLabel">
                                                     <rect key="frame" x="226" y="11" width="42" height="19"/>
-                                                    <animations/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="42" id="TL8-cZ-1SP"/>
                                                     </constraints>
@@ -188,10 +175,8 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <animations/>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
-                                        <animations/>
                                         <constraints>
                                             <constraint firstItem="cQC-iK-wDT" firstAttribute="bottom" secondItem="tr6-xW-EtE" secondAttribute="bottomMargin" constant="4" id="254-tH-UQ2"/>
                                             <constraint firstItem="CC4-H5-YZF" firstAttribute="centerY" secondItem="tr6-xW-EtE" secondAttribute="centerY" id="5BF-IV-jQU"/>
@@ -243,13 +228,11 @@
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RQT-KT-eUA">
                                         <rect key="frame" x="20" y="0.0" width="560" height="126"/>
-                                        <animations/>
                                         <fontDescription key="fontDescription" name="LiberationSans-Bold" family="Liberation Sans" pointSize="23"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
-                                <animations/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="RQT-KT-eUA" secondAttribute="trailing" constant="20" id="Ek0-9F-ers"/>
@@ -267,7 +250,6 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                         </subviews>
-                        <animations/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="L2b-9W-dKb" secondAttribute="trailing" id="59I-uq-0y0"/>
@@ -332,13 +314,11 @@
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" horizontalCompressionResistancePriority="1000" misplaced="YES" text="Cards Against Humanity" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PSV-Mm-sa9">
                                                 <rect key="frame" x="35" y="0.0" width="318" height="300"/>
-                                                <animations/>
                                                 <fontDescription key="fontDescription" name="LiberationSans-Bold" family="Liberation Sans" pointSize="42"/>
                                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
-                                        <animations/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="PSV-Mm-sa9" secondAttribute="trailing" id="PtV-xP-3Cl"/>
@@ -352,10 +332,8 @@
                                         <subviews>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Logo" translatesAutoresizingMaskIntoConstraints="NO" id="lKG-A5-q37">
                                                 <rect key="frame" x="10" y="0.0" width="146" height="300"/>
-                                                <animations/>
                                             </imageView>
                                         </subviews>
-                                        <animations/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstItem="lKG-A5-q37" firstAttribute="leading" secondItem="T1u-1F-Xkk" secondAttribute="leading" constant="10" id="KJZ-s6-iSA"/>
@@ -365,7 +343,6 @@
                                         </constraints>
                                     </view>
                                 </subviews>
-                                <animations/>
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstItem="ElB-sa-qnn" firstAttribute="leading" secondItem="wmH-M0-3dJ" secondAttribute="leading" id="1NJ-Xl-dXP"/>
@@ -386,9 +363,8 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UHB-aJ-vrT" customClass="SpringView" customModule="Spring">
                                 <rect key="frame" x="20" y="450" width="560" height="150"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jf8-LM-Rao">
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jf8-LM-Rao">
                                         <rect key="frame" x="0.0" y="55" width="560" height="40"/>
-                                        <animations/>
                                         <fontDescription key="fontDescription" name="LiberationSans" family="Liberation Sans" pointSize="25"/>
                                         <state key="normal" title="Play">
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -398,7 +374,6 @@
                                         </connections>
                                     </button>
                                 </subviews>
-                                <animations/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstItem="jf8-LM-Rao" firstAttribute="centerY" secondItem="UHB-aJ-vrT" secondAttribute="centerY" id="COq-mc-CNk"/>
@@ -416,7 +391,6 @@
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g0a-Js-pY2">
                                         <rect key="frame" x="180" y="50" width="200" height="50"/>
-                                        <animations/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="50" id="YON-Wn-3G9"/>
                                             <constraint firstAttribute="width" constant="200" id="vEy-Wy-b8Q"/>
@@ -431,7 +405,6 @@
                                     </button>
                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Username" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="h8x-Ht-lcm">
                                         <rect key="frame" x="20" y="0.0" width="520" height="30"/>
-                                        <animations/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" name="LiberationSans" family="Liberation Sans" pointSize="15"/>
@@ -449,7 +422,6 @@
                                         </userDefinedRuntimeAttributes>
                                     </textField>
                                 </subviews>
-                                <animations/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstItem="g0a-Js-pY2" firstAttribute="top" secondItem="h8x-Ht-lcm" secondAttribute="bottom" constant="20" id="AAL-Ro-lzf"/>
@@ -472,7 +444,6 @@
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jkI-KQ-XtE" customClass="LTMorphingLabel" customModule="LTMorphingLabel">
                                 <rect key="frame" x="20" y="292" width="560" height="57"/>
-                                <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="57.5" id="MY9-Ow-gDb"/>
                                 </constraints>
@@ -481,7 +452,6 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
-                        <animations/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="jkI-KQ-XtE" firstAttribute="centerY" secondItem="44Z-ii-qof" secondAttribute="centerY" constant="20" id="0Bw-f9-W7B"/>

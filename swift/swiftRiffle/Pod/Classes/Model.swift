@@ -26,8 +26,13 @@ public class Model: Silvery, Property, CustomStringConvertible {
     }
     
     public func propertyNames() -> [String] {
+        // Call super on
         let ignored = ignoreProperties()
-         return Mirror(reflecting: self).children.filter { $0.label != nil && !ignored.contains($0.label!) }.map { $0.label! }
+         let keys = Mirror(reflecting: self).children.filter { $0.label != nil && !ignored.contains($0.label!) }.map { $0.label! }
+        
+        print("Property names: \(keys)")
+        
+        return keys
         
 //        var ret = ["xsid"]
 //        ret.appendContentsOf(Mirror(reflecting: self).children.filter { $0.label != nil && !ignored.contains($0.label!) }.map { $0.label! })
@@ -62,7 +67,6 @@ extension Model: Convertible {
         for n in ret.propertyNames() {
             let repr = "\(ret[n]!.dynamicType.representation())"
             
-            
             // JSON is returning ints as doubles. Correct that and this isn't needed: Json.swift line 882
             if repr == "int" {
                 if let value = json[n] as? Double {
@@ -76,9 +80,9 @@ extension Model: Convertible {
                 }
             }
                 
-            // Silvery cant understand assignments where the asigner is an AnyObject, so
+            // Silvery cant understand assignments where the asigner isnt an AnyObject, so
             else if let value = json[n] as? Bool where "\(repr)" == "bool" {
-                ret[n] = value
+                ret[n] = value ? true : false 
             }
             else if let value = json[n] as? Double where "\(repr)" == "double" || "\(repr)" == "float" {
                 ret[n] = value

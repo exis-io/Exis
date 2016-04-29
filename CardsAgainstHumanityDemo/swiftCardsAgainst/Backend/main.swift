@@ -11,12 +11,19 @@ import Riffle
 
 // Required helper method for OSX backends
 initTypes(External(String.self, String.self), External(Int.self, Int.self), External(Double.self, Double.self), External(Float.self, Float.self), External(Bool.self, Bool.self))
+class Caster: ExternalCaster {
+    func recode<A, T>(a: A, t: T.Type) -> T { return unsafeBitCast(a, T.self) }
+    func recodeString(a: String) -> String { return unsafeBitCast(a, String.self) }
+}
+
+caster = Caster()
+
 
 // Testing locally 
 Riffle.setFabricDev()
 Riffle.setLogLevelInfo()
 
-let app = Domain(name: "xs.demo.exis.cardsagainst")
+let app = AppDomain(name: "xs.demo.exis.cardsagainst")
 
 // How long each round takes, in seconds
 let ANSWER_TIME = 10.0
@@ -85,6 +92,8 @@ class Container: Domain {
 }
 
 let container = Container(name: "Osxcontainer.gamelogic", superdomain: app)
-container.join()
+
+app.login("Osxcontainer.gamelogic")
+
 NSRunLoop.currentRunLoop().run()
 

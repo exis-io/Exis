@@ -2,7 +2,7 @@ PODS:
   - IHKeyboardAvoiding (2.5)
   - LTMorphingLabel (0.0.9)
   - M13ProgressSuite (1.2.7)
-  - Riffle (0.2.47)
+  - Riffle (0.3.0)
   - Spring (1.0.3)
 
 DEPENDENCIES:
@@ -28,7 +28,7 @@ SPEC CHECKSUMS:
   IHKeyboardAvoiding: 8f14fed93405dd2c44ce070a26f780d9e477538c
   LTMorphingLabel: 4235a403f99f0e0e503389da660e0fec324549d9
   M13ProgressSuite: 03d194af6359da440641ba758aed5a18b0386a86
-  Riffle: 2d88a5d9edb8de3ccaa73716c876ca2014add52f
+  Riffle: 2ed686ebc1cda7e781fa15ff0bc68d7c5f8069af
   Spring: 3f02b5dc3308572ef177b3cad0fa7bbc4b0706f7
 
 PODFILE CHECKSUM: b25078c4058c4ddec3850d77c3fda30281a59f71

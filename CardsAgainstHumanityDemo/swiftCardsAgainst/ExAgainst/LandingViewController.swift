@@ -19,7 +19,7 @@ import IHKeyboardAvoiding
 import LTMorphingLabel
 
 
-class LandingViewController: UIViewController, Delegate {
+class LandingViewController: UIViewController, DomainDelegate {
     @IBOutlet weak var textfieldUsername: UITextField!
     @IBOutlet weak var buttonLogin: UIButton!
     @IBOutlet weak var viewLogo: SpringView!
@@ -27,7 +27,7 @@ class LandingViewController: UIViewController, Delegate {
     @IBOutlet weak var viewLogin: SpringView!
     @IBOutlet weak var labelTips: LTMorphingLabel!
     
-    var app: Domain!
+    var app: AppDomain!
     var me: Domain!
     var container: Domain!
     
@@ -43,6 +43,20 @@ class LandingViewController: UIViewController, Delegate {
         
         labelTips.morphingEffect = .Scale
         labelTips.text = tips[0]
+        
+        app = AppDomain(name: "xs.demo.exis.cardsagainst")
+        container = Domain(name: "Osxcontainer.gamelogic", superdomain: app)
+        app.delegate = self
+        
+        
+        // Always try to reconnect right away. If it succeeds, then a prebious session was found
+        app.reconnect().then { (name: String) in
+            print("Reconnecting as \(name)")
+            self.me = Domain(name: name, superdomain: self.app)
+            self.me.join()
+        }.error { err in
+            print("Reconnection failed. \(err)")
+        }
     }
     
     func onJoin() {
@@ -58,14 +72,12 @@ class LandingViewController: UIViewController, Delegate {
     
     @IBAction func login(sender: AnyObject) {
         textfieldUsername.resignFirstResponder()
-
-        app = Domain(name: "xs.demo.exis.cardsagainst")
-        container = Domain(name: "Osxcontainer.gamelogic", superdomain: app)
         
         me = Domain(name: textfieldUsername.text!, superdomain: app)
-        me.delegate = self
-        me.join()
-
+        
+        app.login(textfieldUsername.text!).error { reason in
+            print("Login failed: ", reason)
+        }
     }
     
     @IBAction func play(sender: AnyObject) {

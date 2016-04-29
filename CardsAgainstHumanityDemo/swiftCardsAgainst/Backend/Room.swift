@@ -177,7 +177,7 @@ class Room: Domain {
             czar = player.czar ? nil : czar
             
             // remove the role from the player that left, ensuring they can't call our endpoints anymore
-            app.call("xs.demo.Bouncer/revokeDynamicRole", dynamicRoleId, "player", container.name, [player.domain])
+            // app.call("xs.demo.Bouncer/revokeDynamicRole", dynamicRoleId, "player", container.name, [player.domain])
         }
         
         // If there aren't enough players to play a full
