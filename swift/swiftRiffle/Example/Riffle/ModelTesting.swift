@@ -188,25 +188,57 @@ func logCats(cats: [Panther]) {
 }
 
 class Dig: Model {
-    var boo: Int?
-    var nib: String
-    
-    required init() {
-        nib = "Hello!"
-    }
+    var a = "1"
+    var b = "2"
+    var c = "3"
+    var d = "4"
+    var e = "5"
+    var f = "3"
+    var g = "4"
+    var h = "5"
+    var i = "1"
+    var j = "2"
+    var k = "3"
+    var l = "4"
+    var m = "5"
+    var n = "3"
+    var o = "4"
+    var p = "5"
 }
 
-class Dug: Dig {
-    var bee: Float?
+class PlayerTest: Model {
+    var domain = ""
+    var b = ""
+    var a = ""
+    var v = ""
+    var score = 0
+//
+//    // var hand: [String] = []
+//    // var pick: String?
+    var czar = true
+    var demo = false
+    var zombie = false
+    
+    // override func ignoreProperties() -> [String] {
+    //    return ["hand", "pick", "zombie"]
+    // }
 }
 
 func testSilver() {
-    let b: Bool = true
-    let c: Bool = false
+    // testSizing(b, c)
+    var d = PlayerTest()
+//    d["zombie"] = false
+//    d["demo"] = false
+//    d["czar"] = false
+//    
+    print(d.czar)
+    d["czar"] = false
+    print(d.czar)
+    print("")
     
-    let any: Any = "asdf"
-    
-    testSizing(b, c)
+//    var d = Dig()
+//    d["a"] = "asdf"
+//    d["p"] = "p"
 }
 
 func genericAcceptor<T: Model>(t: T.Type) {

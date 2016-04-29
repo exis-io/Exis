@@ -18,15 +18,19 @@ class Dog: Model {
 }
 
 class Player: Model {
-    // var domain = ""
-    // var score = 0
+    var czar = true
+    var demo = false
+    
+    var domain = ""
+    var b = ""
+    var a = ""
+    var v = ""
+    var score = 0
     
     // var hand: [String] = []
     // var pick: String?
     
-     var czar = false
-     var demo = true
-     var zombie = false
+     // var zombie = false
     
 //    override func ignoreProperties() -> [String] {
 //        return ["hand", "pick", "zombie"]
@@ -59,7 +63,7 @@ class Receiver: Domain {
         
         subscribe("registerLargeModel") { (d: Player) in
             print("Success registerModel")
-            // assert(d.domain == player.domain)
+             assert(d.czar && !d.demo)
         }
         
         joinFinished()

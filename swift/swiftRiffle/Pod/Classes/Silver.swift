@@ -54,6 +54,7 @@ extension Silvery {
     // This does not take the "ignored" list into account wrt offsets, it just throws the conforming error and then nothing
     public mutating func setValue(value: Property?, forKey key: String) throws {
         print("Setting \(key) to \(value)")
+        
         var offset = 0
         for child in Mirror(reflecting: self).children {
             
@@ -79,7 +80,7 @@ extension Silvery {
     
     mutating func pointerAdvancedBy(offset: Int) -> UnsafePointer<Int> {
         if let object = self as? AnyObject {
-            return UnsafePointer(bitPattern: unsafeAddressOf(object).hashValue).advancedBy(offset + 2)
+            return UnsafePointer(bitPattern: unsafeAddressOf(object).hashValue).advancedBy(offset)
         } else {
             return withUnsafePointer(&self) { UnsafePointer($0).advancedBy(offset) }
         }
@@ -87,7 +88,6 @@ extension Silvery {
     
     mutating func codeValue(value: Property?, type: Any.Type, offset: Int) throws {
         let pointer = pointerAdvancedBy(offset)
-        
         if let optionalPropertyType = type as? OptionalProperty.Type, let propertyType = optionalPropertyType.propertyType() {
             if let unwrap = value {
                 var optionalValue = unwrap
@@ -99,7 +99,7 @@ extension Silvery {
         } else if let optionalValue = value {
             var sureValue = optionalValue
             try x(sureValue, isY: type)
-            print("Pointer: \(pointer)")
+
             sureValue.codeInto(pointer)
         }
     }
@@ -114,6 +114,9 @@ extension Silvery {
     
     public func valueForKey(key: String) throws -> Property? {
         var value: Property?
+        print(self.dynamicType)
+        let m = Mirror(reflecting: self)
+        
         for child in Mirror(reflecting: self).children {
             if child.label == key {
                 
