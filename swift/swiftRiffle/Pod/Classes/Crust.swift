@@ -111,21 +111,6 @@ class DomainHandler: Handler {
     
     func invoke(id: UInt64, args: [Any]) {
         self.curriedHandler(args)
-        
-        // This is never called if the runloop is processing. Be careful with this
-        
-//        #if os(Linux)
-//            curriedHandler(args)
-//        #else
-////            dispatch_async(dispatch_get_main_queue()) {
-////                print("Async invocation triggering")
-////                self.curriedHandler(args)
-////            }
-//            
-//            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
-//                self.curriedHandler(args)
-//            })
-//        #endif
     }
     
     func destroy() {

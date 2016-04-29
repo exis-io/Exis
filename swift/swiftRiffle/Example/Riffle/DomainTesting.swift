@@ -13,6 +13,8 @@ class Dog: Model {
     var name = "Fido"
     var age = 43
     var something: Double = 1.0
+    var dead = false
+    var alive = true
 }
 
 // Create an object
@@ -31,9 +33,9 @@ class Receiver: Domain {
     override func onJoin() {
         passingTests()
         
-        subscribe("stress") { (a: String) in
-            print("Success stress \(a)")
-        }
+//        subscribe("stress") { (a: String) in
+//            print("Success stress \(a)")
+//        }
         
         joinFinished()
     }
@@ -173,7 +175,7 @@ class Sender: Domain {
         }
 
         receiver.call("registerModelArrays", dogs).then { (d: [Dog]) in
-           assert(d[0].name == dog.name && d[0].age == dog.age && d[0].something == dog.something)
+           assert(d[0].name == dog.name && d[0].age == dog.age && d[0].something == dog.something && dog.alive == d[0].alive)
         }.error { reason in
            print("FAILURE ON CALL RETURN --- 2-9")
            print("\tREASON: \(reason)")

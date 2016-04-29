@@ -59,12 +59,17 @@ extension Model: Convertible {
         var ret = self.init()
         
         // Handle the id seperately
-        if let id = json["_xsid"] {
-            json["_xsid"] = nil
-            ret._xsid = UInt64(id as! String)!
-        }
+//        if let id = json["_xsid"] {
+//            json["_xsid"] = nil
+//            ret._xsid = UInt64(id as! String)!
+//        }
     
         for n in ret.propertyNames() {
+            if ret[n] == nil {
+                print("Have a problem with key \(n). It was not found on \(ret)")
+            }
+            
+            
             let repr = "\(ret[n]!.dynamicType.representation())"
             
             // JSON is returning ints as doubles. Correct that and this isn't needed: Json.swift line 882
@@ -82,7 +87,8 @@ extension Model: Convertible {
                 
             // Silvery cant understand assignments where the asigner isnt an AnyObject, so
             else if let value = json[n] as? Bool where "\(repr)" == "bool" {
-                ret[n] = value ? true : false 
+                let copy = value ? true : false
+                ret[n] = value
             }
             else if let value = json[n] as? Double where "\(repr)" == "double" || "\(repr)" == "float" {
                 ret[n] = value

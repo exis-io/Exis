@@ -129,7 +129,7 @@ class Room: Domain {
         // Choose a winner at random if the czar didn't choose one
         var pickers = players.filter { !$0.czar }
         var winner = pickers.randomElements(1, remove: false)[0]
-        
+        p
         if let domain = t.userInfo as? String {
             if let p = getPlayer(players, domain: domain) {
                 winner = p

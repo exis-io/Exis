@@ -24,9 +24,7 @@ class Player: Model {
     var zombie = false
     
     override func ignoreProperties() -> [String] {
-        var ignored = super.ignoreProperties()
-        ignored.appendContentsOf(["hand", "pick", "zombie"])
-        return ignored
+        return ["hand", "pick", "zombie"]
     }
 }
 

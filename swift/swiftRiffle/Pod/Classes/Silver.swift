@@ -54,25 +54,15 @@ extension Silvery {
     public mutating func setValue(value: Property?, forKey key: String) throws {
         var offset = 0
         for child in Mirror(reflecting: self).children {
+            guard let property = child.value.dynamicType as? Property.Type else { throw SilverError.TypeDoesNotConformToProperty(type: child.value.dynamicType) }
             
-            // OSX bug
-            var switched = child.value
-            
-            #if os(OSX)
-                switched = switchTypes(child.value)
-            #endif
-            
-            guard let property = switched.dynamicType as? Property.Type else { throw SilverError.TypeDoesNotConformToProperty(type: switched.dynamicType) }
+//            if let v = child.value as? Bool {
+//                print("Have a bool ")
+//            }
             
             if child.label == key {
-                print("Setting to \(child.label) from \(key) of value \(value). Type of incoming: \(value.dynamicType) type of receiver: \(switched.dynamicType)")
-                
-                if key == "demo" || key == "czar" {
-                    print(1)
-                }
-                
-                try self.codeValue(value, type: switched.dynamicType, offset: offset)
-                return 
+                try self.codeValue(value, type: child.value.dynamicType, offset: offset)
+                // return
             } else {
                 offset += property.size()
             }
@@ -98,15 +88,9 @@ extension Silvery {
                 nilValue.codeNilInto(pointer)
             }
         } else if let optionalValue = value {
-            print("Type is: \(type)")
             var sureValue = optionalValue
             try x(sureValue, isY: type)
-            
             sureValue.codeInto(pointer)
-            
-            if let t = type as? Bool {
-                
-            }
         }
     }
     
