@@ -5,6 +5,8 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+global.WsFactory = require('./src/node/websocket').Factory;
+global.xsOverHTTP = require('./src/node/xsNodeHttp')
 module.exports = require('./src/riffle');
  
 /**

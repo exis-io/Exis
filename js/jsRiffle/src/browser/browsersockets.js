@@ -12,7 +12,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
-var util = require('./util.js');
+var util = require('../util.js');
 
 
 function Factory (options) {
@@ -67,7 +67,7 @@ Factory.prototype.create = function () {
 
       (function () {
 
-         var WebSocket = require('ws'); // https://github.com/einaros/ws
+         //var WebSocket = require('ws'); // https://github.com/einaros/ws
          var websocket;
 
          var protocols;

@@ -1,20 +1,20 @@
 require('./go.js');
 var want = require('./want.js');
-var storage = require('./collections.js');
-var ws = require('./websocket.js');
 var pjson = require('../package.json');
 global.Q = require('q');
 
-global.WsFactory = require('./websocket').Factory;
 
 exports.want = want.want;
 exports.modelObject = want.ModelObject;
 exports.xsPromises = global.Q;
+var storage = require('./appliances/collections.js');
+exports.xsAuth = require('./appliances/auth.js');
+exports.xsBouncer = require('./appliances/bouncer.js');
+exports.xsContainers = require('./appliances/container.js');
+exports.xsReplay = require('./appliances/replay.js');
+exports.xsFileStorage = require('./appliances/filestorage.js');
 exports.xsStorage = storage.Storage;
-exports.xsAuth = require('./auth.js');
-exports.xsBouncer = require('./bouncer.js');
-exports.xsContainers = require('./container.js');
-exports.xsReplay = require('./replay.js');
+exports.setRegistrar = global.xsOverHTTP.setRegistrar;
 
 exports.Domain = global.Domain.New;
 exports.version = pjson.version;
@@ -28,6 +28,8 @@ global.NewID = function() {
 global.Renamer = function(domain) {
   for (var func in domain) {
     domain[func.substr(0, 1).toLowerCase() + func.substr(1)] = domain[func];
+    domain.login = global.xsOverHTTP.login.bind(domain);
+    domain.registerAccount = global.xsOverHTTP.registerAccount.bind(domain);
     delete domain[func];
   }
 }
