@@ -11,7 +11,7 @@ import Riffle
 
 
 enum Test { case Auth0, Auth1, Domain, Model, Sandbox, OsxBugs}
-let CURRENTTEST = Test.Sandbox  // Change me to change the current set of inline tests
+let CURRENTTEST = Test.Domain  // Change me to change the current set of inline tests
 
 // Required helper method for OSX backends
 initTypes(External(String.self, String.self), External(Int.self, Int.self), External(Double.self, Double.self), External(Float.self, Float.self), External(Bool.self, Bool.self), External(Model.self, Model.self))

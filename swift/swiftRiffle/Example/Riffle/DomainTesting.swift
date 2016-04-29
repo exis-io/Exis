@@ -17,9 +17,29 @@ class Dog: Model {
     var alive = true
 }
 
+class Player: Model {
+    // var domain = ""
+    // var score = 0
+    
+    // var hand: [String] = []
+    // var pick: String?
+    
+     var czar = false
+     var demo = true
+     var zombie = false
+    
+//    override func ignoreProperties() -> [String] {
+//        return ["hand", "pick", "zombie"]
+//    }
+}
+
+
 // Create an object
 let dog = Dog()
 let dogs = [dog, dog, dog]
+
+let player = Player()
+let players = [Player(), Player(), Player()]
 
 
 class Receiver: Domain {
@@ -31,11 +51,16 @@ class Receiver: Domain {
     }
     
     override func onJoin() {
-        passingTests()
+        // passingTests()
         
 //        subscribe("stress") { (a: String) in
 //            print("Success stress \(a)")
 //        }
+        
+        subscribe("registerLargeModel") { (d: Player) in
+            print("Success registerModel")
+            // assert(d.domain == player.domain)
+        }
         
         joinFinished()
     }
@@ -202,12 +227,14 @@ class Sender: Domain {
     
     override func onJoin() {
         print("Sender joined")
-        passingTests()
+        // passingTests()
 
         // Stress Testing
         // for _ in 0...50 {
         //    receiver.publish("stress", "asdfasdfasdf")
         // }
+        
+        receiver.publish("registerLargeModel", player)
         
         print("done")
         

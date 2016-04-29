@@ -81,25 +81,35 @@ class LandingViewController: UIViewController, DomainDelegate {
     }
     
     @IBAction func play(sender: AnyObject) {
-        container.call("play").then { (cards: [String], players: [Player], state: String, room: String) in
-            print("Play call returned!")
-            
-            let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("game") as! GameViewController
-            controller.currentPlayer = getPlayer(players, domain: self.me.name)
-            controller.currentPlayer.hand = cards
-            controller.players = players
-            
-            controller.state = state
-            controller.me = self.me
-            controller.app = self.app
-            controller.room = Domain(name: room, superdomain: self.container)
-            
-            // Gives the dealer permission to call "/draw" on us as needed
-            self.app.call("xs.demo.Bouncer/setPerm", self.container.name, self.me.name + "/draw")
-            presentControllerTranslucent(self, target: controller)
+        let dogs = [Dog(), Dog(), Dog()]
+        let dog = dogs[0]
+        
+        container.call("registerModelArrays", dogs).then { (d: [Dog]) in
+            assert(d[0].name == dog.name && d[0].age == dog.age && d[0].something == dog.something && dog.alive == d[0].alive)
         }.error { reason in
-            print("Play call failed: \(reason)")
+            print("FAILURE ON CALL RETURN --- 2-9")
+            print("\tREASON: \(reason)")
         }
+        
+//        container.call("play").then { (cards: [String], players: [Player], state: String, room: String) in
+//            print("Play call returned!")
+//            
+//            let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("game") as! GameViewController
+//            controller.currentPlayer = getPlayer(players, domain: self.me.name)
+//            controller.currentPlayer.hand = cards
+//            controller.players = players
+//            
+//            controller.state = state
+//            controller.me = self.me
+//            controller.app = self.app
+//            controller.room = Domain(name: room, superdomain: self.container)
+//            
+//            // Gives the dealer permission to call "/draw" on us as needed
+//            self.app.call("xs.demo.Bouncer/setPerm", self.container.name, self.me.name + "/draw")
+//            presentControllerTranslucent(self, target: controller)
+//        }.error { reason in
+//            print("Play call failed: \(reason)")
+//        }
     }
     
     func rotateText() {

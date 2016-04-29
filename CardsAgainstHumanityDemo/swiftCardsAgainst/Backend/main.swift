@@ -35,7 +35,6 @@ let EMPTY_TIME = 1.0
 class Container: Domain {
     var rooms: [Room] = []
     
-    
     override func onJoin() {
         print("Container joined as \(name)")
         app.subscribe("sessionLeft", playerLeft)
@@ -51,6 +50,12 @@ class Container: Domain {
 //            ["target": "\(name)/$/left", "verb":"s"],
 //            ["target": "\(name)/$/joined", "verb":"s"]
 //        ])
+        
+        
+        register("registerModelArrays") { (d: [Dog]) -> [Dog] in
+            print("Success registerModelArrays")
+            return d
+        }
     }
     
     

@@ -12,7 +12,7 @@ import Mantle
 public class Model: Silvery, Property, CustomStringConvertible {
     // This changes the offsets of pointers in Silvery and as such is very dangerous. If removed
     // subtract one from the literall offsets in pointerByOffset in Silver
-    public var _xsid = CBID()
+    // public var _xsid = CBID()
     
     required public init() {}
     
@@ -26,11 +26,9 @@ public class Model: Silvery, Property, CustomStringConvertible {
     }
     
     public func propertyNames() -> [String] {
-        // Call super on
         let ignored = ignoreProperties()
-         let keys = Mirror(reflecting: self).children.filter { $0.label != nil && !ignored.contains($0.label!) }.map { $0.label! }
+        let keys = Mirror(reflecting: self).children.filter { $0.label != nil && !ignored.contains($0.label!) }.map { $0.label! }
         
-        print("Property names: \(keys)")
         
         return keys
         
@@ -65,11 +63,6 @@ extension Model: Convertible {
 //        }
     
         for n in ret.propertyNames() {
-            if ret[n] == nil {
-                print("Have a problem with key \(n). It was not found on \(ret)")
-            }
-            
-            
             let repr = "\(ret[n]!.dynamicType.representation())"
             
             // JSON is returning ints as doubles. Correct that and this isn't needed: Json.swift line 882
@@ -88,7 +81,7 @@ extension Model: Convertible {
             // Silvery cant understand assignments where the asigner isnt an AnyObject, so
             else if let value = json[n] as? Bool where "\(repr)" == "bool" {
                 let copy = value ? true : false
-                ret[n] = value
+                ret[n] = copy
             }
             else if let value = json[n] as? Double where "\(repr)" == "double" || "\(repr)" == "float" {
                 ret[n] = value

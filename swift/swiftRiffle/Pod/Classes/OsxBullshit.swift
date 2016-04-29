@@ -117,6 +117,7 @@ func recode<A, T>(value: A, _ t: T.Type) -> T {
     if T.self == String.self  {
         let r = encodeString(value)
         return r as! T
+        // return caster!.recode(value, t: T.self)
     }
     
     return encode(value, t)
@@ -222,8 +223,6 @@ var count = 0
 
 public protocol ExternalCaster {
     func recodeString(a: String) -> String
-    //    func recode<T>(a: Bool, t: T.Type) -> T
-    
     func recode<A, T>(a: A, t: T.Type) -> T
 }
 

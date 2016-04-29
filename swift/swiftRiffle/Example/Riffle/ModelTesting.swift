@@ -184,7 +184,7 @@ class Modeler: Domain {
 
 func logCats(cats: [Panther]) {
     print("\nFound: \(cats.count)")
-    for c in cats { print("\t", c.description, c._xsid) }
+    for c in cats { print("\t", c.description, c.getId()) }
 }
 
 class Dig: Model {
@@ -201,12 +201,12 @@ class Dug: Dig {
 }
 
 func testSilver() {
-    let d = Dug()
-    let names = d.propertyNames()
+    let b: Bool = true
+    let c: Bool = false
     
-    // print(names)
+    let any: Any = "asdf"
     
-    genericAcceptor(Dig.self)
+    testSizing(b, c)
 }
 
 func genericAcceptor<T: Model>(t: T.Type) {

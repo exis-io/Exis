@@ -23,10 +23,26 @@ class Player: Model {
     var demo = true
     var zombie = false
     
+    
     override func ignoreProperties() -> [String] {
-        return ["hand", "pick", "zombie"]
+//        return ["hand", "pick", "zombie"]
+        return []
     }
 }
+
+class Dog: Model {
+    var name = "Fido"
+    var age = 43
+    var something: Double = 1.0
+    var dead = false
+    var alive = true
+    
+//    override func ignoreProperties() -> [String] {
+//        // return ["hand", "pick", "zombie"]
+//        return []
+//    }
+}
+
 
 // Given a domain, return the player that matches that domain from an array. If the player is not 
 // present in the array retun nil

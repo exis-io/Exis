@@ -31,10 +31,7 @@ public class Deferred: Handler, InvokableDeferred {
     
     
     // this should not be public
-    public init() {
-        Session.handlers[cb] = self
-        Session.handlers[eb] = self
-    }
+    public init() { }
     
     
     // A bridge between the new deferreds and the old deferreds

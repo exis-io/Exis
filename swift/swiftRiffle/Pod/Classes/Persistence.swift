@@ -18,7 +18,8 @@ public protocol Persistable {
 
 extension Model: Persistable {
     public func getId() -> UInt64 {
-        return _xsid
+        // return _xsid
+        return CBID()
     }
     
     public func modelName() -> String {
@@ -65,7 +66,7 @@ extension Model {
     }
     
     public func destroy() -> Deferred {
-        return Model.manager.callCore("Destroy", args: [modelName(), String(self._xsid)])
+        return Model.manager.callCore("Destroy", args: [modelName(), String(self.getId())])
     }
     
     public class func find<T: CollectionType where T.Generator.Element: Model>(query: [String: Any]) -> OneDeferred<T>! {
@@ -128,7 +129,7 @@ extension CollectionType where Generator.Element: Convertible, Generator.Element
 extension Model: Equatable {}
 
 public func ==(lhs: Model, rhs: Model) -> Bool {
-    return lhs._xsid == rhs._xsid
+    return lhs.getId() == rhs.getId()
 }
 
 

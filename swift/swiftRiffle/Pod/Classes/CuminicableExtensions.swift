@@ -66,11 +66,6 @@ extension Property {
     }
     
     mutating func codeInto(pointer: UnsafePointer<Int>) {
-        if self is Bool {
-            let target = UnsafeMutablePointer<Bool>(pointer) as! UnsafeMutablePointer<Bool>
-            print("Target: \(target)")
-        }
-        
         (UnsafeMutablePointer(pointer) as UnsafeMutablePointer<Self>).memory = self
     }
     
@@ -251,7 +246,6 @@ extension Array : Property, BaseConvertible {
             // Reconstruct values within the array
             for element in arr {
                 if let child = Generator.Element.self as? Convertible.Type {
-                    print("Have type \(child)")
                     ret.append(child.deserialize(element) as! Element)
                 }
             }

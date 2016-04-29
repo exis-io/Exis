@@ -22,6 +22,9 @@ import Mantle
  - parameter synchronous:   If set then "Send" will not return until the core finishes the operation, else it returns immediately
 */
 func sendCore(target: String, deferred: Deferred = Deferred(), address: UInt64 = 0, object: UInt64 = 0, args: [Any] = [], synchronous: Bool = false) -> Deferred {
+    Session.handlers[deferred.cb] = deferred
+    Session.handlers[deferred.eb] = deferred
+    
     var invocation: [Any] = [target, deferred.cb, deferred.eb, address, object]
     invocation.appendContentsOf(args)
     
@@ -44,7 +47,6 @@ public class CoreClass {
     }
     
     func callCore(target: String, deferred: Deferred = Deferred(), args: [Any] = [], synchronous: Bool = false) -> Deferred {
-        // print("Calling to core with args: \(args)")
         return sendCore(target, deferred: deferred, object: address, args: args, synchronous: synchronous)
     }
     
