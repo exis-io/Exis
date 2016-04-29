@@ -12,7 +12,9 @@ exports.xsAuth = require('./appliances/auth.js');
 exports.xsBouncer = require('./appliances/bouncer.js');
 exports.xsContainers = require('./appliances/container.js');
 exports.xsReplay = require('./appliances/replay.js');
+exports.xsFileStorage = require('./appliances/filestorage.js');
 exports.xsStorage = storage.Storage;
+exports.setRegistrar = global.xsOverHTTP.setRegistrar;
 
 exports.Domain = global.Domain.New;
 exports.version = pjson.version;
@@ -26,6 +28,8 @@ global.NewID = function() {
 global.Renamer = function(domain) {
   for (var func in domain) {
     domain[func.substr(0, 1).toLowerCase() + func.substr(1)] = domain[func];
+    domain.login = global.xsOverHTTP.login.bind(domain);
+    domain.registerAccount = global.xsOverHTTP.registerAccount.bind(domain);
     delete domain[func];
   }
 }

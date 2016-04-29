@@ -64,12 +64,29 @@ function makeCall(func, args){
   return this.conn.call.apply(this.conn, args);
 }
 
-FileStorage.prototype.uploadUserFile = function(){
-  return makeCall.bind(this, 'uploadUserFile', arguments)(); //TODO: Handle Post Request
+FileStorage.prototype.uploadUserFile = function(details){
+  if(!details || !details.name || !details.file){
+    throw "Error: Improper arguments.";
+  }
+  details.collection = details.collection || 'uploads';
+  //on node
+  if(global.process && global.process.versions.node){
+    return global.xsOverHTTP.uploadUserFile(details.file, details.name, details.collection, this.conn);
+  }else{
+    return this.conn.call('uploadUserFile', details.name, details.file.type, details.collection).then(global.xsOverHTTP.uploadFile.bind({}, details.file));
+  }
 };
 
-FileStorage.prototype.uploadFile = function(){
-  return makeCall.bind(this, 'uploadFile', arguments)(); //TODO: Handle Post Request
+FileStorage.prototype.uploadFile = function(details){
+  if(!details || !details.path || !details.file){
+    throw "Error: Improper arguments.";
+  }
+  //on node
+  if(global.process && global.process.versions.node){
+    return global.xsOverHTTP.uploadFile(details.file, details.path, this.conn);
+  }else{
+    return this.conn.call('uploadFile', details.path, details.file.type).then(global.xsOverHTTP.uploadFile.bind({}, details.file));
+  }
 };
 
 FileStorage.prototype.deleteUserFile = function(){
@@ -96,11 +113,11 @@ FileStorage.prototype.getFile = function(){
   return makeCall.bind(this, 'getFile', arguments)();
 };
 
-FileStorage.prototype.deleteUserCollection = function(){
+FileStorage.prototype.listUserCollection = function(){
   return makeCall.bind(this, 'listUserCollection', arguments)();
 };
 
-FileStorage.prototype.deleteCollection = function(){
+FileStorage.prototype.listCollection = function(){
   return makeCall.bind(this, 'listCollection', arguments)();
 };
 

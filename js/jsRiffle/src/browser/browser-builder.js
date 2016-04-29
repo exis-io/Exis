@@ -6,6 +6,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 //For building the browser versions to avoid bloating with unneccessary libs
-global.WsFactory = require('./browsersocket').Factory;
+global.WsFactory = require('./browsersockets').Factory;
 global.xsOverHTTP = require('./xsBrowserHttp')
 module.exports = require('../riffle');

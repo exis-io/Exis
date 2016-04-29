@@ -885,7 +885,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
     function $RiffleProvider() {
 
         var id = undefined;
-        var providerAPIExcludes = ['Application', 'Domain', 'modelObject', 'want', 'xsStorage', 'xsPromises'];
+        var providerAPIExcludes = ['Application', 'Domain', 'modelObject', 'want', 'xsStorage', 'xsPromises', 'xsFileStorage'];
         for(var key in jsRiffle){
           if(providerAPIExcludes.indexOf(key) === -1){
             this[key] = jsRiffle[key];
@@ -950,7 +950,24 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
             connection = new DomainWrapper(jsRiffle.Domain(id));
             connection.want = jsRiffle.want;
             connection.modelObject = jsRiffle.modelObject;
-            connection.xsStorage = jsRiffle.xsStorage;
+            connection.xsStorage = function(domain){
+              domain = domain || connection.linkDomain(connection.getName() + '.Storage');
+              return jsRiffle.xsStorage(domain);
+            };
+            connection.xsAuth = function(domain){
+              domain = domain || connection.linkDomain(connection.getName() + '.Auth');
+              return jsRiffle.xsAuth(domain);
+            };
+            connection.xsContainers = function(domain){
+              domain = domain || connection.linkDomain(connection.getName() + '.Container');
+              return jsRiffle.xsContainers(domain);
+            };
+            connection.xsReplay = function(domain){
+              domain = domain || connection.linkDomain(connection.getName() + '.Replay');
+              return jsRiffle.xsReplay(domain);
+            };
+            connection.xsBouncer = function(){return jsRiffle.xsBouncer(connection.linkDomain('xs.demo.Bouncer'));};
+            connection.xsFileStorage = function(){return jsRiffle.xsFileStorage(connection.linkDomain('xs.demo.FileStorage'));};
             connection.connected = false;
 
             

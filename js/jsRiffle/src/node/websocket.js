@@ -12,7 +12,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
-var util = require('./util.js');
+var util = require('../util.js');
 
 
 function Factory (options) {
