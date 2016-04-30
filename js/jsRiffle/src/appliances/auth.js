@@ -88,16 +88,18 @@ Auth.prototype.user_count = function(){
   return makeCall.bind(this, 'user_count', arguments)();
 };
 
+/*
 for(var fnc in Auth.prototype){
-  //docsForAppliance('Auth', fnc);
+  docsForAppliance('Auth', fnc);
 }
+*/
 
 function docsForAppliance(name, fnc){
     var c = "";
     c += '/**\n';
     c += ' * @memberof '+name+'\n';
     c += ' * @function ' + fnc + '\n';
-    c += ' * @see {@link /docs/appliances/'+name+' here} for documentation.\n'
+    c += ' * @see {@link /docs/appliances/'+name+'#'+fnc+ ' here} for documentation.\n'
     c += ' * @example\n';
     c += ' * '+name.toLowerCase()+'.'+fnc+'(...args).then(success, error);\n';
     c += ' */\n'

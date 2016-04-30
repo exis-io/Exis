@@ -14,6 +14,11 @@ START__0.4.9
 * [Bouncer](#Bouncer) Appliance API added.
 * [Container](#Container) Appliance API added.
 * [Replay](#Replay) Appliance API added.
+* [FileStorage](#FileStorage) Appliance API added for uploading files to Exis's Cloud Storage system.
+
+## Bug Fixes
+* Fixed a bug where login and register account didn't work properly in Node.JS
 
 END__0.4.9
+
 ## Changes in later upcoming versions

@@ -2,7 +2,7 @@ module.exports = xsBouncer;
 /**
  * @memberof jsRiffle
  * @function xsBouncer
- * @param {RiffleDomain} domain - A valid {@link RiffleDomain} that represents the {@link /docs/appliances/Storage Storage} appliance.
+ * @param {RiffleDomain} domain - A valid {@link RiffleDomain} 
  * @description Creates a new {@link Bouncer} class using the given properly formed {@link RiffleDomain}.
  * @returns {Bouncer} A new Bouncer object that can be used for interacting with a {@link /docs/appliances/Bouncer Bouncer} Appliance.
  * @example
@@ -136,14 +136,14 @@ Bouncer.prototype.setPerm = function(){
 for(var fnc in Bouncer.prototype){
   docsForAppliance('Bouncer', fnc);
 }
-
 */
+
 function docsForAppliance(name, fnc){
     var c = "";
     c += '/**\n';
     c += ' * @memberof '+name+'\n';
     c += ' * @function ' + fnc + '\n';
-    c += ' * @see {@link /docs/appliances/'+name+' here} for documentation.\n'
+    c += ' * @see {@link /docs/appliances/'+name+'#'+fnc+' here} for documentation.\n'
     c += ' * @example\n';
     c += ' * '+name.toLowerCase()+'.'+fnc+'(...args).then(success, error);\n';
     c += ' */\n'

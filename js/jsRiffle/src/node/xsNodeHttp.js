@@ -90,7 +90,12 @@ function register(body, promise, conn){
 
 function putUserObject(path, name, collection, conn, promise){
     conn.call('uploadUserFile', name, mimetype.lookup(path), collection).then(function(url){
-      var body = fs.readFileSync(path);
+      try{
+        var body = fs.readFileSync(path);
+      }catch (e){
+        promise.reject("Couldn't read file at specified path");
+        return;
+      }
       request.put({
         url: url,
         body: body,
@@ -115,7 +120,12 @@ function putUserObject(path, name, collection, conn, promise){
 
 function putObject(path, name, conn, promise){
     conn.call('uploadFile', name, mimetype.lookup(path)).then(function(url){
-      var body = fs.readFileSync(path);
+      try{
+        var body = fs.readFileSync(path);
+      }catch (e){
+        promise.reject("Couldn't read file at specified path");
+        return;
+      }
       request.put({
         url: url,
         body: body,

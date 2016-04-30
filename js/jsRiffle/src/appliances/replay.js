@@ -35,7 +35,7 @@ function xsReplay(domain){
  * var replay = jsRiffle.xsReplay(app.subdomain('Replay'));
  *
  * //get messages published to a channel between startts and stopts (seconds from epoch)
- * auth.getReplay('xs.demo.dev.app/messages', startts, stopts).then(handler, error);
+ * replay.getReplay('xs.demo.dev.app/messages', startts, stopts).then(handler, error);
  */
 
 function Replay(domain){
@@ -65,16 +65,18 @@ Replay.prototype.getReplay = function(){
 };
 
 
+/*
 for(var fnc in Replay.prototype){
-  //docsForAppliance('Replay', fnc);
+  docsForAppliance('Replay', fnc);
 }
+*/
 
 function docsForAppliance(name, fnc){
     var c = "";
     c += '/**\n';
     c += ' * @memberof '+name+'\n';
     c += ' * @function ' + fnc + '\n';
-    c += ' * @see {@link /docs/appliances/'+name+' here} for documentation.\n'
+    c += ' * @see {@link /docs/appliances/'+name+'#'+fnc+' here} for documentation.\n'
     c += ' * @example\n';
     c += ' * '+name.toLowerCase()+'.'+fnc+'(...args).then(success, error);\n';
     c += ' */\n'
