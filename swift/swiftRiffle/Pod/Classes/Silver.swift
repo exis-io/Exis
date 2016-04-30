@@ -80,7 +80,7 @@ extension Silvery {
     
     mutating func pointerAdvancedBy(offset: Int) -> UnsafePointer<Int> {
         if let object = self as? AnyObject {
-            return UnsafePointer(bitPattern: unsafeAddressOf(object).hashValue).advancedBy(offset)
+            return UnsafePointer(bitPattern: unsafeAddressOf(object).hashValue).advancedBy(offset + 2)
         } else {
             return withUnsafePointer(&self) { UnsafePointer($0).advancedBy(offset) }
         }
@@ -114,9 +114,7 @@ extension Silvery {
     
     public func valueForKey(key: String) throws -> Property? {
         var value: Property?
-        print(self.dynamicType)
         let m = Mirror(reflecting: self)
-        
         for child in Mirror(reflecting: self).children {
             if child.label == key {
                 
