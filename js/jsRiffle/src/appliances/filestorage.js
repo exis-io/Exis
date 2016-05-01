@@ -75,6 +75,9 @@ function makeCall(func, args){
  * @param {string | File} details.file  - The path to the file in Node.JS the File object in the Browser.
  * @param {string} details.name - The name to save the file to when it is uploaded.
  * @param {string=} user.collection - The collection or path to store the file to. Defaults to 'uploads'.
+ * @param {boolean=} details.correctOrientation - **Browser Only** This will attempt to correct an images orientation based
+ * on the EXIF Orientation data if any is present on the image. If no orientation is detected, or the file is not an image,
+ * or the platform doesn't support the implementation then the file will be uploaded as is.
  * @example
  * //create a domain representing a user of you app
  * var user = jsRiffle.Domain('xs.demo.dev.myapp.user');
@@ -102,7 +105,8 @@ FileStorage.prototype.uploadUserFile = function(details){
   if(global.process && global.process.versions.node){
     return global.xsOverHTTP.uploadUserFile(details.file, details.name, details.collection, this.conn);
   }else{
-    return this.conn.call('uploadUserFile', details.name, details.file.type, details.collection).then(global.xsOverHTTP.uploadFile.bind({}, details.file));
+    var correct = details.correctOrientation || false;
+    return this.conn.call('uploadUserFile', details.name, details.file.type, details.collection).then(global.xsOverHTTP.uploadFile.bind({}, details.file, correct));
   }
 };
 
@@ -111,8 +115,11 @@ FileStorage.prototype.uploadUserFile = function(details){
  * @function uploadFile
  * @description Upload a file to a registered app's FileStorage. This function only works for developers.
  * @param {object} details - An object containing the details and the file to upload.
- * @param {string | File} details.file  - The path to the file in Node.JS the File object in the Browser.
+ * @param {string | File | Blob} details.file  - The path to the file in Node.JS the File or Blob object in the Browser.
  * @param {string} details.path - The name to save the file to when it is uploaded starting with the app i.e. myapp/public/photo.jpg.
+ * @param {boolean=} details.correctOrientation - **Browser Only** This will attempt to correct an images orientation based
+ * on the EXIF Orientation data if any is present on the image. If no orientation is detected, or the file is not an image,
+ * or the platform doesn't support the implementation then the file will be uploaded as is.
  * @example
  * //create a domain representing your developer account
  * var me = jsRiffle.Domain('xs.demo.dev');
@@ -139,7 +146,8 @@ FileStorage.prototype.uploadFile = function(details){
   if(global.process && global.process.versions.node){
     return global.xsOverHTTP.uploadFile(details.file, details.path, this.conn);
   }else{
-    return this.conn.call('uploadFile', details.path, details.file.type).then(global.xsOverHTTP.uploadFile.bind({}, details.file));
+    var correct = details.correctOrientation || false;
+    return this.conn.call('uploadFile', details.path, details.file.type).then(global.xsOverHTTP.uploadFile.bind({}, details.file, correct));
   }
 };
 

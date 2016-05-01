@@ -50,6 +50,9 @@
  * @param {File} details.file  - The File object.
  * @param {string} details.name - The name to save the file to when it is uploaded.
  * @param {string=} user.collection - The collection or path to store the file to. Defaults to 'uploads'.
+ * @param {boolean=} details.correctOrientation - **Browser Only** This will attempt to correct an images orientation based
+ * on the EXIF Orientation data if any is present on the image. If no orientation is detected, or the file is not an image,
+ * or the platform doesn't support the implementation then the file will be uploaded as is.
  * @example
  *
  * //create a FileStorage instance using the domain
@@ -68,6 +71,9 @@
  * @param {object} details - An object containing the details and the file to upload.
  * @param {File} details.file  - The File object.
  * @param {string} details.path - The name to save the file to when it is uploaded starting with the app i.e. myapp/public/photo.jpg.
+ * @param {boolean=} details.correctOrientation - **Browser Only** This will attempt to correct an images orientation based
+ * on the EXIF Orientation data if any is present on the image. If no orientation is detected, or the file is not an image,
+ * or the platform doesn't support the implementation then the file will be uploaded as is.
  * @example
  *
  * //create a FileStorage instance using the domain

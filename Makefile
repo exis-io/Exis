@@ -104,6 +104,7 @@ js:
 
 jsbrowser: js
 	browserify js/jsRiffle/src/browser/browser-builder.js --standalone jsRiffle -o js/jsRiffle/release/jsRiffle.js
+	cat js/jsRiffle/release/image-orientation.js >> js/jsRiffle/release/jsRiffle.js
 	uglifyjs js/jsRiffle/release/jsRiffle.js -o js/jsRiffle/release/jsRiffle.min.js
 
 libriffmantle.so: 

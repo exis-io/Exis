@@ -31,11 +31,12 @@ exp.registerAccount = function(user){
   return p.promise;
 };
 
-exp.uploadFile = function(file, url){
+exp.uploadFile = function(file, correct, url){
   var p = Q.defer();
-  putObject(file, url, p);
+  putObject(file, correct, url, p);
   return p.promise;
 };
+
 
 function getToken(body, promise, conn){
 
@@ -86,32 +87,79 @@ function register(body, promise, conn){
   } 
 }
 
-function putObject(file, url, promise){
+function putObject(file, correct, url, promise){
 
-  if(XMLHttpRequest === undefined){
-    promise.reject('Error: XMLHttpRequest not found.');
+  if(correct){
+    correctOrientation(file, upload);
   }else{
-    var http = new XMLHttpRequest();
-    http.addEventListener("error", bad);
-    http.addEventListener("load", complete);
-    http.addEventListener("progress", progress);
-    if( http.upload ){
-      http.upload.onprogress = progress
-    }   
-    http.open('PUT', url);
-    http.send(file);
-    function bad(err){
-      promise.reject(err);
-    }   
-    function progress(res){
-      promise.notify(((res.loaded / res.total) * 100));
-    }   
-    function  complete(resp){
-      if(http.status ==200){
-        promise.resolve("File Uploaded.");
-      }else{
-        promise.reject("Error: ", http.responseText);
+    upload(file);
+  }
+
+  function upload(blob){
+    if(XMLHttpRequest === undefined){
+      promise.reject('Error: XMLHttpRequest not found.');
+    }else{
+      var http = new XMLHttpRequest();
+      http.addEventListener("error", bad);
+      http.addEventListener("load", complete);
+      http.addEventListener("progress", progress);
+      if( http.upload ){
+        http.upload.onprogress = progress
       }   
-    }   
+      http.open('PUT', url);
+      http.send(blob);
+      function bad(err){
+        promise.reject(err);
+      }   
+      function progress(res){
+        promise.notify(((res.loaded / res.total) * 100));
+      }   
+      function  complete(resp){
+        if(http.status ==200){
+          promise.resolve("File Uploaded.");
+        }else{
+          promise.reject("Error: ", http.responseText);
+        }   
+      }   
+    }
   }
 }
+
+var correctOrientation = function(file, callback){
+  if(file.type.match(/^image\//)){
+    try{
+      EXIF.getData(file, function() {
+        try{
+          var exif = EXIF.getTag(this, 'Orientation');
+          if(Number.isInteger(exif) && exif > 1){
+            loadImage(
+                file,
+                function (img) {
+                  try{
+                    if(img && img.toBlob){
+                      img.toBlob(function(blob){
+                        callback(blob);
+                      }, file.type);
+                      return;
+                    }
+                    callback(file);
+                  }catch(e){
+                    callback(file);
+                  }
+                },
+                {orientation: exif}
+            );
+          }else{
+            callback(file);
+          }
+        }catch(e){
+          callback(file);
+        }
+      });
+    }catch(e){
+      callback(file);
+    }
+  }else{
+    callback(file);
+  }
+};

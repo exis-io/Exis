@@ -21,4 +21,12 @@ START__0.4.9
 
 END__0.4.9
 
+START__0.4.10
+## Changes in v0.4.10
+* [Filestorage.uploadUserFile](#filestorage-uploaduserfile) and [Filestorage.uploadFile](#filestorage-uploadfile) accept an optional correctOrientation key as part of the details object which will attempt to fix the orientation of an image based on it's exif data before uploading it if set to true.
+
+## Bug Fixes
+
+END__0.4.10
+
 ## Changes in later upcoming versions
