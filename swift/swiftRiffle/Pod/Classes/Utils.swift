@@ -172,9 +172,10 @@ func switchTypeObject<A>(x: A) -> Any.Type {
     #endif
 }
 
-func encode<A>(var v:A) -> NSData {
+func encode<A>(v:A) -> NSData {
     // Returns the bytes from a swift variable
-    return withUnsafePointer(&v) { p in
+    var w = v
+    return withUnsafePointer(&w) { p in
         // print("Original: \(p), type: \(A.self), size: \(strideof(A.self))")
         return NSData(bytes: p, length: strideof(A))
     }
@@ -188,11 +189,12 @@ func recode<A, T>(value: A, _ t: T.Type) -> T {
     // print("From \(A.self) \(value) to \(T.self)")
     
     if T.self == Bool.self {
-        func encodeBool<A>(var v:A) -> Bool {
+        func encodeBool<A>(v:A) -> Bool {
             // Returns the bytes from a swift variable
-            return withUnsafePointer(&v) { p in
+            var w = v
+            return withUnsafePointer(&w) { p in
                 let s = unsafeBitCast(p, UnsafePointer<Bool>.self)
-                
+
                 return s.memory == true
             }
         }
@@ -203,17 +205,18 @@ func recode<A, T>(value: A, _ t: T.Type) -> T {
     if T.self == String.self  {
         
         // Grab the pointer, copy out the bytes into a new string, and return it
-        func encodeString<A>(var v:A) -> String {
-            return withUnsafePointer(&v) { p in
+        func encodeString<A>(v:A) -> String {
+            var w = v
+            return withUnsafePointer(&w) { p in
                 let s = unsafeBitCast(p, UnsafePointer<String>.self)
-                
+
                 let dat = s.memory.dataUsingEncoding(NSUTF8StringEncoding)!
                 let ret = NSString(data: dat, encoding: NSUTF8StringEncoding)
-                
+
                 return ret as! String
             }
         }
-        
+
         let r = encodeString(value)
         return r as! T
     }
@@ -224,7 +227,7 @@ func recode<A, T>(value: A, _ t: T.Type) -> T {
     
     let pointer = UnsafeMutablePointer<T>.alloc(sizeof(T.Type))
     
-    data.getBytes(pointer)
+    data.getBytes(pointer, length: sizeof(T.Type))
     return pointer.move()
 }
 

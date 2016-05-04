@@ -281,7 +281,7 @@ extension Array : Property, BaseConvertible {
         var ret: [Any] = []
         
         for child in self {
-            var switched = switchTypes(child)
+            let switched = switchTypes(child)
             if let convert = switched as? Convertible {
                 ret.append(convert.serialize())
             }
